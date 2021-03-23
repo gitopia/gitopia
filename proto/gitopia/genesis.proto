@@ -2,11 +2,13 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # genesis/proto/import
+import "gitopia/whois.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the capability module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
+		repeated Whois whoisList = 1; // this line is used by starport scaffolding # genesis/proto/stateField
 }
 
