@@ -1,7 +1,7 @@
 import { StdFee } from "@cosmjs/launchpad";
 import { OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateWhois } from "./types/gitopia/tx";
+import { MsgSetWhois } from "./types/gitopia/tx";
 import { MsgUpdateWhois } from "./types/gitopia/tx";
 import { MsgDeleteWhois } from "./types/gitopia/tx";
 interface TxClientOptions {
@@ -13,7 +13,7 @@ interface SignAndBroadcastOptions {
 }
 declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions) => Promise<{
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions) => Promise<import("@cosmjs/stargate").BroadcastTxResponse>;
-    msgCreateWhois: (data: MsgCreateWhois) => EncodeObject;
+    msgSetWhois: (data: MsgSetWhois) => EncodeObject;
     msgUpdateWhois: (data: MsgUpdateWhois) => EncodeObject;
     msgDeleteWhois: (data: MsgDeleteWhois) => EncodeObject;
 }>;

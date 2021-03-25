@@ -1,14 +1,13 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from "protobufjs/minimal";
-import * as Long from "long";
+import { Reader, Writer } from "protobufjs/minimal";
 import { Whois } from "../gitopia/whois";
 import { PageRequest, PageResponse, } from "../cosmos/base/query/v1beta1/pagination";
 export const protobufPackage = "gitopia.gitopia.gitopia";
-const baseQueryGetWhoisRequest = { id: 0 };
+const baseQueryGetWhoisRequest = { name: "" };
 export const QueryGetWhoisRequest = {
     encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
         }
         return writer;
     },
@@ -20,7 +19,7 @@ export const QueryGetWhoisRequest = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.id = longToNumber(reader.uint64());
+                    message.name = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -31,26 +30,26 @@ export const QueryGetWhoisRequest = {
     },
     fromJSON(object) {
         const message = { ...baseQueryGetWhoisRequest };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseQueryGetWhoisRequest };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         return message;
     },
@@ -254,25 +253,4 @@ export class QueryClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "WhoisAll", data);
         return promise.then((data) => QueryAllWhoisResponse.decode(new Reader(data)));
     }
-}
-var globalThis = (() => {
-    if (typeof globalThis !== "undefined")
-        return globalThis;
-    if (typeof self !== "undefined")
-        return self;
-    if (typeof window !== "undefined")
-        return window;
-    if (typeof global !== "undefined")
-        return global;
-    throw "Unable to locate global object";
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
 }

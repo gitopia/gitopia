@@ -1,39 +1,39 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
-export interface MsgCreateWhois {
+export interface MsgSetWhois {
     creator: string;
+    name: string;
     address: string;
 }
-export interface MsgCreateWhoisResponse {
-    id: number;
+export interface MsgSetWhoisResponse {
 }
 export interface MsgUpdateWhois {
     creator: string;
-    id: number;
+    name: string;
     address: string;
 }
 export interface MsgUpdateWhoisResponse {
 }
 export interface MsgDeleteWhois {
     creator: string;
-    id: number;
+    name: string;
 }
 export interface MsgDeleteWhoisResponse {
 }
-export declare const MsgCreateWhois: {
-    encode(message: MsgCreateWhois, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateWhois;
-    fromJSON(object: any): MsgCreateWhois;
-    toJSON(message: MsgCreateWhois): unknown;
-    fromPartial(object: DeepPartial<MsgCreateWhois>): MsgCreateWhois;
+export declare const MsgSetWhois: {
+    encode(message: MsgSetWhois, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetWhois;
+    fromJSON(object: any): MsgSetWhois;
+    toJSON(message: MsgSetWhois): unknown;
+    fromPartial(object: DeepPartial<MsgSetWhois>): MsgSetWhois;
 };
-export declare const MsgCreateWhoisResponse: {
-    encode(message: MsgCreateWhoisResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateWhoisResponse;
-    fromJSON(object: any): MsgCreateWhoisResponse;
-    toJSON(message: MsgCreateWhoisResponse): unknown;
-    fromPartial(object: DeepPartial<MsgCreateWhoisResponse>): MsgCreateWhoisResponse;
+export declare const MsgSetWhoisResponse: {
+    encode(_: MsgSetWhoisResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetWhoisResponse;
+    fromJSON(_: any): MsgSetWhoisResponse;
+    toJSON(_: MsgSetWhoisResponse): unknown;
+    fromPartial(_: DeepPartial<MsgSetWhoisResponse>): MsgSetWhoisResponse;
 };
 export declare const MsgUpdateWhois: {
     encode(message: MsgUpdateWhois, writer?: Writer): Writer;
@@ -66,14 +66,14 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
-    CreateWhois(request: MsgCreateWhois): Promise<MsgCreateWhoisResponse>;
+    SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
     UpdateWhois(request: MsgUpdateWhois): Promise<MsgUpdateWhoisResponse>;
     DeleteWhois(request: MsgDeleteWhois): Promise<MsgDeleteWhoisResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
-    CreateWhois(request: MsgCreateWhois): Promise<MsgCreateWhoisResponse>;
+    SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
     UpdateWhois(request: MsgUpdateWhois): Promise<MsgUpdateWhoisResponse>;
     DeleteWhois(request: MsgDeleteWhois): Promise<MsgDeleteWhoisResponse>;
 }

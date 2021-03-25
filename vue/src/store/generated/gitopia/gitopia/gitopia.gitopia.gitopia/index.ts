@@ -102,7 +102,7 @@ export default {
 		async QueryWhois({ commit, rootGetters, getters }, { options: { subscribe = false , all = false}, params: {...key}, query=null }) {
 			try {
 				
-				let value = query?(await (await initQueryClient(rootGetters)).queryWhois( key.id,  query)).data:(await (await initQueryClient(rootGetters)).queryWhois( key.id )).data
+				let value = query?(await (await initQueryClient(rootGetters)).queryWhois( key.name,  query)).data:(await (await initQueryClient(rootGetters)).queryWhois( key.name )).data
 				
 				commit('QUERY', { query: 'Whois', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryWhois', payload: { options: { all }, params: {...key},query }})
@@ -137,17 +137,17 @@ export default {
 			}
 		},
 		
-		async sendMsgCreateWhois({ rootGetters }, { value, fee, memo }) {
+		async sendMsgSetWhois({ rootGetters }, { value, fee, memo }) {
 			try {
-				const msg = await (await initTxClient(rootGetters)).msgCreateWhois(value)
+				const msg = await (await initTxClient(rootGetters)).msgSetWhois(value)
 				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
   gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgCreateWhois:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgSetWhois:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCreateWhois:Send', 'Could not broadcast Tx.')
+					throw new SpVuexError('TxClient:MsgSetWhois:Send', 'Could not broadcast Tx.')
 				}
 			}
 		},
@@ -180,15 +180,15 @@ export default {
 			}
 		},
 		
-		async MsgCreateWhois({ rootGetters }, { value }) {
+		async MsgSetWhois({ rootGetters }, { value }) {
 			try {
-				const msg = await (await initTxClient(rootGetters)).msgCreateWhois(value)
+				const msg = await (await initTxClient(rootGetters)).msgSetWhois(value)
 				return msg
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgCreateWhois:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgSetWhois:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgCreateWhois:Create', 'Could not create message.')
+					throw new SpVuexError('TxClient:MsgSetWhois:Create', 'Could not create message.')
 				}
 			}
 		},

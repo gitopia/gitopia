@@ -9,12 +9,9 @@
  * ---------------------------------------------------------------
  */
 
-export interface GitopiaMsgCreateWhoisResponse {
-  /** @format uint64 */
-  id?: string;
-}
-
 export type GitopiaMsgDeleteWhoisResponse = object;
+
+export type GitopiaMsgSetWhoisResponse = object;
 
 export type GitopiaMsgUpdateWhoisResponse = object;
 
@@ -39,9 +36,7 @@ export interface GitopiaQueryGetWhoisResponse {
 
 export interface GitopiaWhois {
   creator?: string;
-
-  /** @format uint64 */
-  id?: string;
+  name?: string;
   address?: string;
 }
 
@@ -341,11 +336,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryWhois
    * @summary this line is used by starport scaffolding # 2
-   * @request GET:/gitopia/gitopia/gitopia/whois/{id}
+   * @request GET:/gitopia/gitopia/gitopia/whois/{name}
    */
-  queryWhois = (id: string, params: RequestParams = {}) =>
+  queryWhois = (name: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetWhoisResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/whois/${id}`,
+      path: `/gitopia/gitopia/gitopia/whois/${name}`,
       method: "GET",
       format: "json",
       ...params,

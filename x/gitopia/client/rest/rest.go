@@ -28,7 +28,7 @@ func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 
 func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 4
-	r.HandleFunc("/gitopia/whois", createWhoisHandler(clientCtx)).Methods("POST")
+	r.HandleFunc("/gitopia/whois", setWhoisHandler(clientCtx)).Methods("POST")
 	r.HandleFunc("/gitopia/whois/{id}", updateWhoisHandler(clientCtx)).Methods("POST")
 	r.HandleFunc("/gitopia/whois/{id}", deleteWhoisHandler(clientCtx)).Methods("POST")
 

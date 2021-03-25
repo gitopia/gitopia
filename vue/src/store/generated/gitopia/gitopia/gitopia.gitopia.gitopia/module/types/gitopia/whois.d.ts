@@ -2,7 +2,7 @@ import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Whois {
     creator: string;
-    id: number;
+    name: string;
     address: string;
 }
 export declare const Whois: {

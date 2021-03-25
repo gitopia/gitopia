@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -52,13 +51,8 @@ func CmdShowWhois() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
 			params := &types.QueryGetWhoisRequest{
-				Id: id,
+				Name: args[0],
 			}
 
 			res, err := queryClient.Whois(context.Background(), params)

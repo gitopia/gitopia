@@ -1,22 +1,24 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from "protobufjs/minimal";
-import * as Long from "long";
+import { Reader, Writer } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
-const baseMsgCreateWhois = { creator: "", address: "" };
-export const MsgCreateWhois = {
+const baseMsgSetWhois = { creator: "", name: "", address: "" };
+export const MsgSetWhois = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
+        }
         if (message.address !== "") {
-            writer.uint32(18).string(message.address);
+            writer.uint32(26).string(message.address);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgCreateWhois };
+        const message = { ...baseMsgSetWhois };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -24,6 +26,9 @@ export const MsgCreateWhois = {
                     message.creator = reader.string();
                     break;
                 case 2:
+                    message.name = reader.string();
+                    break;
+                case 3:
                     message.address = reader.string();
                     break;
                 default:
@@ -34,12 +39,18 @@ export const MsgCreateWhois = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseMsgCreateWhois };
+        const message = { ...baseMsgSetWhois };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
         else {
             message.creator = "";
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
         }
         if (object.address !== undefined && object.address !== null) {
             message.address = String(object.address);
@@ -52,16 +63,23 @@ export const MsgCreateWhois = {
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
+        message.name !== undefined && (obj.name = message.name);
         message.address !== undefined && (obj.address = message.address);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseMsgCreateWhois };
+        const message = { ...baseMsgSetWhois };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
         else {
             message.creator = "";
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
         }
         if (object.address !== undefined && object.address !== null) {
             message.address = object.address;
@@ -72,24 +90,18 @@ export const MsgCreateWhois = {
         return message;
     },
 };
-const baseMsgCreateWhoisResponse = { id: 0 };
-export const MsgCreateWhoisResponse = {
-    encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
-        }
+const baseMsgSetWhoisResponse = {};
+export const MsgSetWhoisResponse = {
+    encode(_, writer = Writer.create()) {
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgCreateWhoisResponse };
+        const message = { ...baseMsgSetWhoisResponse };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
-                case 1:
-                    message.id = longToNumber(reader.uint64());
-                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -97,40 +109,27 @@ export const MsgCreateWhoisResponse = {
         }
         return message;
     },
-    fromJSON(object) {
-        const message = { ...baseMsgCreateWhoisResponse };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
+    fromJSON(_) {
+        const message = { ...baseMsgSetWhoisResponse };
         return message;
     },
-    toJSON(message) {
+    toJSON(_) {
         const obj = {};
-        message.id !== undefined && (obj.id = message.id);
         return obj;
     },
-    fromPartial(object) {
-        const message = { ...baseMsgCreateWhoisResponse };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
+    fromPartial(_) {
+        const message = { ...baseMsgSetWhoisResponse };
         return message;
     },
 };
-const baseMsgUpdateWhois = { creator: "", id: 0, address: "" };
+const baseMsgUpdateWhois = { creator: "", name: "", address: "" };
 export const MsgUpdateWhois = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
         }
         if (message.address !== "") {
             writer.uint32(26).string(message.address);
@@ -148,7 +147,7 @@ export const MsgUpdateWhois = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.name = reader.string();
                     break;
                 case 3:
                     message.address = reader.string();
@@ -168,11 +167,11 @@ export const MsgUpdateWhois = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         if (object.address !== undefined && object.address !== null) {
             message.address = String(object.address);
@@ -185,7 +184,7 @@ export const MsgUpdateWhois = {
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
         message.address !== undefined && (obj.address = message.address);
         return obj;
     },
@@ -197,11 +196,11 @@ export const MsgUpdateWhois = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         if (object.address !== undefined && object.address !== null) {
             message.address = object.address;
@@ -244,14 +243,14 @@ export const MsgUpdateWhoisResponse = {
         return message;
     },
 };
-const baseMsgDeleteWhois = { creator: "", id: 0 };
+const baseMsgDeleteWhois = { creator: "", name: "" };
 export const MsgDeleteWhois = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
         }
         return writer;
     },
@@ -266,7 +265,7 @@ export const MsgDeleteWhois = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.name = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -283,18 +282,18 @@ export const MsgDeleteWhois = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
         return obj;
     },
     fromPartial(object) {
@@ -305,11 +304,11 @@ export const MsgDeleteWhois = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.id = 0;
+            message.name = "";
         }
         return message;
     },
@@ -350,10 +349,10 @@ export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
     }
-    CreateWhois(request) {
-        const data = MsgCreateWhois.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateWhois", data);
-        return promise.then((data) => MsgCreateWhoisResponse.decode(new Reader(data)));
+    SetWhois(request) {
+        const data = MsgSetWhois.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetWhois", data);
+        return promise.then((data) => MsgSetWhoisResponse.decode(new Reader(data)));
     }
     UpdateWhois(request) {
         const data = MsgUpdateWhois.encode(request).finish();
@@ -365,25 +364,4 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteWhois", data);
         return promise.then((data) => MsgDeleteWhoisResponse.decode(new Reader(data)));
     }
-}
-var globalThis = (() => {
-    if (typeof globalThis !== "undefined")
-        return globalThis;
-    if (typeof self !== "undefined")
-        return self;
-    if (typeof window !== "undefined")
-        return window;
-    if (typeof global !== "undefined")
-        return global;
-    throw "Unable to locate global object";
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
 }

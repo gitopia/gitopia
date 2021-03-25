@@ -5,24 +5,25 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-var _ sdk.Msg = &MsgCreateWhois{}
+var _ sdk.Msg = &MsgSetWhois{}
 
-func NewMsgCreateWhois(creator string, address string) *MsgCreateWhois {
-	return &MsgCreateWhois{
+func NewMsgSetWhois(creator string, name string, address string) *MsgSetWhois {
+	return &MsgSetWhois{
 		Creator: creator,
+		Name: name,
 		Address: address,
 	}
 }
 
-func (msg *MsgCreateWhois) Route() string {
+func (msg *MsgSetWhois) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgCreateWhois) Type() string {
-	return "CreateWhois"
+func (msg *MsgSetWhois) Type() string {
+	return "SetWhois"
 }
 
-func (msg *MsgCreateWhois) GetSigners() []sdk.AccAddress {
+func (msg *MsgSetWhois) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -30,25 +31,28 @@ func (msg *MsgCreateWhois) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgCreateWhois) GetSignBytes() []byte {
+func (msg *MsgSetWhois) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgCreateWhois) ValidateBasic() error {
+func (msg *MsgSetWhois) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Name must be at least 3 characters long")
 	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateWhois{}
 
-func NewMsgUpdateWhois(creator string, id uint64, address string) *MsgUpdateWhois {
+func NewMsgUpdateWhois(creator string, name string, address string) *MsgUpdateWhois {
 	return &MsgUpdateWhois{
-		Id:      id,
 		Creator: creator,
+		Name: name,
 		Address: address,
 	}
 }
@@ -82,11 +86,11 @@ func (msg *MsgUpdateWhois) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateWhois{}
+var _ sdk.Msg = &MsgSetWhois{}
 
-func NewMsgDeleteWhois(creator string, id uint64) *MsgDeleteWhois {
+func NewMsgDeleteWhois(creator string, name string) *MsgDeleteWhois {
 	return &MsgDeleteWhois{
-		Id:      id,
+		Name: name,
 		Creator: creator,
 	}
 }

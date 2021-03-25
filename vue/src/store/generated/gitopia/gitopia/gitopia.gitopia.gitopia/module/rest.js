@@ -156,10 +156,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryWhois
          * @summary this line is used by starport scaffolding # 2
-         * @request GET:/gitopia/gitopia/gitopia/whois/{id}
+         * @request GET:/gitopia/gitopia/gitopia/whois/{name}
          */
-        this.queryWhois = (id, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/whois/${id}`,
+        this.queryWhois = (name, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/whois/${name}`,
             method: "GET",
             format: "json",
             ...params,

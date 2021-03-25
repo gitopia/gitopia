@@ -7,6 +7,6 @@ import "gogoproto/gogo.proto";
 
 message Whois {
   string creator = 1;
-  uint64 id = 2;
+  string name = 2;
   string address = 3; 
 }

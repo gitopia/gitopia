@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from "protobufjs/minimal";
-import * as Long from "long";
+import { Reader, Writer } from "protobufjs/minimal";
 import { Whois } from "../gitopia/whois";
 import {
   PageRequest,
@@ -11,7 +10,7 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetWhoisRequest {
-  id: number;
+  name: string;
 }
 
 export interface QueryGetWhoisResponse {
@@ -27,15 +26,15 @@ export interface QueryAllWhoisResponse {
   pagination: PageResponse | undefined;
 }
 
-const baseQueryGetWhoisRequest: object = { id: 0 };
+const baseQueryGetWhoisRequest: object = { name: "" };
 
 export const QueryGetWhoisRequest = {
   encode(
     message: QueryGetWhoisRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
     }
     return writer;
   },
@@ -48,7 +47,7 @@ export const QueryGetWhoisRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.name = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -60,26 +59,26 @@ export const QueryGetWhoisRequest = {
 
   fromJSON(object: any): QueryGetWhoisRequest {
     const message = { ...baseQueryGetWhoisRequest } as QueryGetWhoisRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.id = 0;
+      message.name = "";
     }
     return message;
   },
 
   toJSON(message: QueryGetWhoisRequest): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryGetWhoisRequest>): QueryGetWhoisRequest {
     const message = { ...baseQueryGetWhoisRequest } as QueryGetWhoisRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.id = 0;
+      message.name = "";
     }
     return message;
   },
@@ -342,16 +341,6 @@ interface Rpc {
   ): Promise<Uint8Array>;
 }
 
-declare var self: any | undefined;
-declare var window: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
-})();
-
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -362,15 +351,3 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-  }
-  return long.toNumber();
-}
-
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
-}

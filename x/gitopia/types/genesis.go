@@ -20,13 +20,13 @@ func DefaultGenesis() *GenesisState {
 func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # genesis/types/validate
 	// Check for duplicated ID in whois
-	whoisIdMap := make(map[uint64]bool)
+	whoisNameMap := make(map[string]bool)
 
 	for _, elem := range gs.WhoisList {
-		if _, ok := whoisIdMap[elem.Id]; ok {
+		if _, ok := whoisNameMap[elem.Name]; ok {
 			return fmt.Errorf("duplicated id for whois")
 		}
-		whoisIdMap[elem.Id] = true
+		whoisNameMap[elem.Name] = true
 	}
 
 	return nil

@@ -2,25 +2,24 @@ package rest
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gorilla/mux"
 )
 
-type createWhoisRequest struct {
+type setWhoisRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`
+	Name    string       `json:"name"`
 	Address string       `json:"address"`
 }
 
-func createWhoisHandler(clientCtx client.Context) http.HandlerFunc {
+func setWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req createWhoisRequest
+		var req setWhoisRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -39,8 +38,9 @@ func createWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedAddress := req.Address
 
-		msg := types.NewMsgCreateWhois(
+		msg := types.NewMsgSetWhois(
 			req.Creator,
+			req.Name,
 			parsedAddress,
 		)
 
@@ -51,15 +51,12 @@ func createWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 type updateWhoisRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`
+	Name    string       `json:"name"`
 	Address string       `json:"address"`
 }
 
 func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-		if err != nil {
-			return
-		}
 
 		var req updateWhoisRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
@@ -72,7 +69,7 @@ func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		_, err = sdk.AccAddressFromBech32(req.Creator)
+		_, err := sdk.AccAddressFromBech32(req.Creator)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -82,7 +79,7 @@ func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgUpdateWhois(
 			req.Creator,
-			id,
+			req.Name,
 			parsedAddress,
 		)
 
@@ -93,14 +90,11 @@ func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 type deleteWhoisRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`
+	Name    string       `json:"name"`
 }
 
 func deleteWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-		if err != nil {
-			return
-		}
 
 		var req deleteWhoisRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
@@ -113,7 +107,7 @@ func deleteWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		_, err = sdk.AccAddressFromBech32(req.Creator)
+		_, err := sdk.AccAddressFromBech32(req.Creator)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -121,7 +115,7 @@ func deleteWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 
 		msg := types.NewMsgDeleteWhois(
 			req.Creator,
-			id,
+			req.Name,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

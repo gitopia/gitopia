@@ -4,13 +4,13 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateWhois } from "./types/gitopia/tx";
+import { MsgSetWhois } from "./types/gitopia/tx";
 import { MsgUpdateWhois } from "./types/gitopia/tx";
 import { MsgDeleteWhois } from "./types/gitopia/tx";
 
 
 const types = [
-  ["/gitopia.gitopia.gitopia.MsgCreateWhois", MsgCreateWhois],
+  ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
   ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
   ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
   
@@ -40,7 +40,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee=defaultFee, memo=null }: SignAndBroadcastOptions) => memo?client.signAndBroadcast(address, msgs, fee,memo):client.signAndBroadcast(address, msgs, fee),
-    msgCreateWhois: (data: MsgCreateWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateWhois", value: data }),
+    msgSetWhois: (data: MsgSetWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
     msgUpdateWhois: (data: MsgUpdateWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
     msgDeleteWhois: (data: MsgDeleteWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
     

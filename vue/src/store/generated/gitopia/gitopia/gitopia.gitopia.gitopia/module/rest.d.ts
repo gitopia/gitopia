@@ -1,8 +1,5 @@
-export interface GitopiaMsgCreateWhoisResponse {
-    /** @format uint64 */
-    id?: string;
-}
 export declare type GitopiaMsgDeleteWhoisResponse = object;
+export declare type GitopiaMsgSetWhoisResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
 export interface GitopiaQueryAllWhoisResponse {
     Whois?: GitopiaWhois[];
@@ -22,8 +19,7 @@ export interface GitopiaQueryGetWhoisResponse {
 }
 export interface GitopiaWhois {
     creator?: string;
-    /** @format uint64 */
-    id?: string;
+    name?: string;
     address?: string;
 }
 export interface ProtobufAny {
@@ -164,8 +160,8 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryWhois
      * @summary this line is used by starport scaffolding # 2
-     * @request GET:/gitopia/gitopia/gitopia/whois/{id}
+     * @request GET:/gitopia/gitopia/gitopia/whois/{name}
      */
-    queryWhois: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetWhoisResponse, RpcStatus>>;
+    queryWhois: (name: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetWhoisResponse, RpcStatus>>;
 }
 export {};

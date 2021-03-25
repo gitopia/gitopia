@@ -4,7 +4,7 @@ import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/paginati
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetWhoisRequest {
-    id: number;
+    name: string;
 }
 export interface QueryGetWhoisResponse {
     Whois: Whois | undefined;
