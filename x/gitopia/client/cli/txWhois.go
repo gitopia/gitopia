@@ -13,7 +13,7 @@ func CmdCreateWhois() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-whois [name] [address]",
 		Short: "Creates a new whois",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName := string(args[0])
 			argsAddress := string(args[1])
