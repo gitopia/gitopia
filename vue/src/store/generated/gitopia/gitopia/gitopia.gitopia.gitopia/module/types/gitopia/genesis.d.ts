@@ -1,9 +1,12 @@
+import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the capability module's genesis state. */
 export interface GenesisState {
     /** this line is used by starport scaffolding # genesis/proto/state */
+    userList: User[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     whoisList: Whois[];
 }
 export declare const GenesisState: {

@@ -25,3 +25,8 @@ const (
 	WhoisKey      = "Whois-value-"
 	WhoisCountKey = "Whois-count-"
 )
+
+const (
+	UserKey      = "User-value-"
+	UserCountKey = "User-count-"
+)

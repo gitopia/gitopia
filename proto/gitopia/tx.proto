@@ -8,12 +8,67 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
+  rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
+  rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateUser {
+  string creator = 1;
+  string username = 2;
+  string usernameGithub = 3;
+  string avatarUrl = 4;
+  string followers = 5;
+  string following = 6;
+  string repositories = 7;
+  string repositories_archived = 8;
+  string organizations = 9;
+  string starred_repos = 10;
+  string subscriptions = 11;
+  string email = 12;
+  string bio = 13;
+  string createdAt = 14;
+  string updatedAt = 15;
+  string extensions = 16;
+}
+
+message MsgCreateUserResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateUser {
+  string creator = 1;
+  uint64 id = 2;
+  string username = 3;
+  string usernameGithub = 4;
+  string avatarUrl = 5;
+  string followers = 6;
+  string following = 7;
+  string repositories = 8;
+  string repositories_archived = 9;
+  string organizations = 10;
+  string starred_repos = 11;
+  string subscriptions = 12;
+  string email = 13;
+  string bio = 14;
+  string createdAt = 15;
+  string updatedAt = 16;
+  string extensions = 17;
+}
+
+message MsgUpdateUserResponse { }
+
+message MsgDeleteUser {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteUserResponse { }
+
 message MsgSetWhois {
   string creator = 1;
   string name = 2;

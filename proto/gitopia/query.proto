@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "gitopia/user.proto";
 import "gitopia/whois.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
@@ -11,6 +12,13 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
+	}
+	rpc UserAll(QueryAllUserRequest) returns (QueryAllUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user";
+	}
+
 	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois/{name}";
 	}
@@ -21,6 +29,22 @@ service Query {
 }
 
 // this line is used by starport scaffolding # 3
+message QueryGetUserRequest {
+	uint64 id = 1;
+}
+
+message QueryGetUserResponse {
+	User User = 1;
+}
+
+message QueryAllUserRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllUserResponse {
+	repeated User User = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
 message QueryGetWhoisRequest {
 	string name = 1;
 }

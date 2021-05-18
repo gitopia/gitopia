@@ -11,6 +11,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # genesis/types/default
+		UserList:  []*User{},
 		WhoisList: []*Whois{},
 	}
 }
@@ -19,6 +20,15 @@ func DefaultGenesis() *GenesisState {
 // failure.
 func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # genesis/types/validate
+	// Check for duplicated ID in user
+	userIdMap := make(map[uint64]bool)
+
+	for _, elem := range gs.UserList {
+		if _, ok := userIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for user")
+		}
+		userIdMap[elem.Id] = true
+	}
 	// Check for duplicated ID in whois
 	whoisNameMap := make(map[string]bool)
 

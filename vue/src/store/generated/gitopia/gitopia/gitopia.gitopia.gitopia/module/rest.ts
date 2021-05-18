@@ -9,11 +9,35 @@
  * ---------------------------------------------------------------
  */
 
+export interface GitopiaMsgCreateUserResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
+export type GitopiaMsgDeleteUserResponse = object;
+
 export type GitopiaMsgDeleteWhoisResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
 
+export type GitopiaMsgUpdateUserResponse = object;
+
 export type GitopiaMsgUpdateWhoisResponse = object;
+
+export interface GitopiaQueryAllUserResponse {
+  User?: GitopiaUser[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
 
 export interface GitopiaQueryAllWhoisResponse {
   Whois?: GitopiaWhois[];
@@ -30,8 +54,34 @@ export interface GitopiaQueryAllWhoisResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryGetUserResponse {
+  User?: GitopiaUser;
+}
+
 export interface GitopiaQueryGetWhoisResponse {
   Whois?: GitopiaWhois;
+}
+
+export interface GitopiaUser {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  username?: string;
+  usernameGithub?: string;
+  avatarUrl?: string;
+  followers?: string;
+  following?: string;
+  repositories?: string;
+  repositoriesArchived?: string;
+  organizations?: string;
+  starredRepos?: string;
+  subscriptions?: string;
+  email?: string;
+  bio?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  extensions?: string;
 }
 
 export interface GitopiaWhois {
@@ -310,6 +360,46 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryUserAll
+   * @request GET:/gitopia/gitopia/gitopia/user
+   */
+  queryUserAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllUserResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/user`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryUser
+   * @summary this line is used by starport scaffolding # 2
+   * @request GET:/gitopia/gitopia/gitopia/user/{id}
+   */
+  queryUser = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetUserResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/user/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryWhoisAll
    * @request GET:/gitopia/gitopia/gitopia/whois
    */
@@ -335,7 +425,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryWhois
-   * @summary this line is used by starport scaffolding # 2
    * @request GET:/gitopia/gitopia/gitopia/whois/{name}
    */
   queryWhois = (name: string, params: RequestParams = {}) =>

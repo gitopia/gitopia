@@ -1,0 +1,26 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message User {
+  string creator = 1;
+  uint64 id = 2;
+  string username = 3; 
+  string usernameGithub = 4; 
+  string avatarUrl = 5; 
+  string followers = 6; 
+  string following = 7; 
+  string repositories = 8; 
+  string repositories_archived = 9; 
+  string organizations = 10; 
+  string starred_repos = 11; 
+  string subscriptions = 12; 
+  string email = 13; 
+  string bio = 14; 
+  string createdAt = 15; 
+  string updatedAt = 16; 
+  string extensions = 17; 
+}
