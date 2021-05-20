@@ -2,18 +2,18 @@
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
+import { MsgSetWhois } from "./types/gitopia/tx";
 import { MsgUpdateWhois } from "./types/gitopia/tx";
+import { MsgCreateUser } from "./types/gitopia/tx";
 import { MsgUpdateUser } from "./types/gitopia/tx";
 import { MsgDeleteWhois } from "./types/gitopia/tx";
-import { MsgSetWhois } from "./types/gitopia/tx";
-import { MsgCreateUser } from "./types/gitopia/tx";
 import { MsgDeleteUser } from "./types/gitopia/tx";
 const types = [
+    ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
     ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
+    ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
     ["/gitopia.gitopia.gitopia.MsgUpdateUser", MsgUpdateUser],
     ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
-    ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
-    ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
     ["/gitopia.gitopia.gitopia.MsgDeleteUser", MsgDeleteUser],
 ];
 const registry = new Registry(types);
@@ -28,11 +28,11 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     const { address } = (await wallet.getAccounts())[0];
     return {
         signAndBroadcast: (msgs, { fee = defaultFee, memo = null }) => memo ? client.signAndBroadcast(address, msgs, fee, memo) : client.signAndBroadcast(address, msgs, fee),
+        msgSetWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
         msgUpdateWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
+        msgCreateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
         msgUpdateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUser", value: data }),
         msgDeleteWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
-        msgSetWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
-        msgCreateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
         msgDeleteUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: data }),
     };
 };

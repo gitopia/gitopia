@@ -6,17 +6,17 @@ export interface User {
     username: string;
     usernameGithub: string;
     avatarUrl: string;
-    followers: string;
-    following: string;
-    repositories: string;
-    repositoriesArchived: string;
-    organizations: string;
-    starredRepos: string;
+    followers: number[];
+    following: number[];
+    repositories: number[];
+    repositoriesArchived: number[];
+    organizations: number[];
+    starredRepos: number[];
     subscriptions: string;
     email: string;
     bio: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: number;
+    updatedAt: number;
     extensions: string;
 }
 export declare const User: {

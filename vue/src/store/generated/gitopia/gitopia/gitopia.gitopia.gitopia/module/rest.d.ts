@@ -46,16 +46,18 @@ export interface GitopiaUser {
     username?: string;
     usernameGithub?: string;
     avatarUrl?: string;
-    followers?: string;
-    following?: string;
-    repositories?: string;
-    repositoriesArchived?: string;
-    organizations?: string;
-    starredRepos?: string;
+    followers?: string[];
+    following?: string[];
+    repositories?: string[];
+    repositoriesArchived?: string[];
+    organizations?: string[];
+    starredRepos?: string[];
     subscriptions?: string;
     email?: string;
     bio?: string;
+    /** @format int64 */
     createdAt?: string;
+    /** @format int64 */
     updatedAt?: string;
     extensions?: string;
 }

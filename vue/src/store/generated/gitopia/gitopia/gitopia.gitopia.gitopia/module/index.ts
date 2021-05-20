@@ -4,20 +4,20 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
+import { MsgSetWhois } from "./types/gitopia/tx";
 import { MsgUpdateWhois } from "./types/gitopia/tx";
+import { MsgCreateUser } from "./types/gitopia/tx";
 import { MsgUpdateUser } from "./types/gitopia/tx";
 import { MsgDeleteWhois } from "./types/gitopia/tx";
-import { MsgSetWhois } from "./types/gitopia/tx";
-import { MsgCreateUser } from "./types/gitopia/tx";
 import { MsgDeleteUser } from "./types/gitopia/tx";
 
 
 const types = [
+  ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
   ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
+  ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
   ["/gitopia.gitopia.gitopia.MsgUpdateUser", MsgUpdateUser],
   ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
-  ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
-  ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
   ["/gitopia.gitopia.gitopia.MsgDeleteUser", MsgDeleteUser],
   
 ];
@@ -46,11 +46,11 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee=defaultFee, memo=null }: SignAndBroadcastOptions) => memo?client.signAndBroadcast(address, msgs, fee,memo):client.signAndBroadcast(address, msgs, fee),
+    msgSetWhois: (data: MsgSetWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
     msgUpdateWhois: (data: MsgUpdateWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
+    msgCreateUser: (data: MsgCreateUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
     msgUpdateUser: (data: MsgUpdateUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUser", value: data }),
     msgDeleteWhois: (data: MsgDeleteWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
-    msgSetWhois: (data: MsgSetWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
-    msgCreateUser: (data: MsgCreateUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
     msgDeleteUser: (data: MsgDeleteUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: data }),
     
   };

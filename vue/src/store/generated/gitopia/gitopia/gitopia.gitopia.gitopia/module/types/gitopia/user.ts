@@ -10,17 +10,17 @@ export interface User {
   username: string;
   usernameGithub: string;
   avatarUrl: string;
-  followers: string;
-  following: string;
-  repositories: string;
-  repositoriesArchived: string;
-  organizations: string;
-  starredRepos: string;
+  followers: number[];
+  following: number[];
+  repositories: number[];
+  repositoriesArchived: number[];
+  organizations: number[];
+  starredRepos: number[];
   subscriptions: string;
   email: string;
   bio: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
   extensions: string;
 }
 
@@ -30,17 +30,17 @@ const baseUser: object = {
   username: "",
   usernameGithub: "",
   avatarUrl: "",
-  followers: "",
-  following: "",
-  repositories: "",
-  repositoriesArchived: "",
-  organizations: "",
-  starredRepos: "",
+  followers: 0,
+  following: 0,
+  repositories: 0,
+  repositoriesArchived: 0,
+  organizations: 0,
+  starredRepos: 0,
   subscriptions: "",
   email: "",
   bio: "",
-  createdAt: "",
-  updatedAt: "",
+  createdAt: 0,
+  updatedAt: 0,
   extensions: "",
 };
 
@@ -61,24 +61,36 @@ export const User = {
     if (message.avatarUrl !== "") {
       writer.uint32(42).string(message.avatarUrl);
     }
-    if (message.followers !== "") {
-      writer.uint32(50).string(message.followers);
+    writer.uint32(50).fork();
+    for (const v of message.followers) {
+      writer.uint64(v);
     }
-    if (message.following !== "") {
-      writer.uint32(58).string(message.following);
+    writer.ldelim();
+    writer.uint32(58).fork();
+    for (const v of message.following) {
+      writer.uint64(v);
     }
-    if (message.repositories !== "") {
-      writer.uint32(66).string(message.repositories);
+    writer.ldelim();
+    writer.uint32(66).fork();
+    for (const v of message.repositories) {
+      writer.uint64(v);
     }
-    if (message.repositoriesArchived !== "") {
-      writer.uint32(74).string(message.repositoriesArchived);
+    writer.ldelim();
+    writer.uint32(74).fork();
+    for (const v of message.repositoriesArchived) {
+      writer.uint64(v);
     }
-    if (message.organizations !== "") {
-      writer.uint32(82).string(message.organizations);
+    writer.ldelim();
+    writer.uint32(82).fork();
+    for (const v of message.organizations) {
+      writer.uint64(v);
     }
-    if (message.starredRepos !== "") {
-      writer.uint32(90).string(message.starredRepos);
+    writer.ldelim();
+    writer.uint32(90).fork();
+    for (const v of message.starredRepos) {
+      writer.uint64(v);
     }
+    writer.ldelim();
     if (message.subscriptions !== "") {
       writer.uint32(98).string(message.subscriptions);
     }
@@ -88,11 +100,11 @@ export const User = {
     if (message.bio !== "") {
       writer.uint32(114).string(message.bio);
     }
-    if (message.createdAt !== "") {
-      writer.uint32(122).string(message.createdAt);
+    if (message.createdAt !== 0) {
+      writer.uint32(120).int64(message.createdAt);
     }
-    if (message.updatedAt !== "") {
-      writer.uint32(130).string(message.updatedAt);
+    if (message.updatedAt !== 0) {
+      writer.uint32(128).int64(message.updatedAt);
     }
     if (message.extensions !== "") {
       writer.uint32(138).string(message.extensions);
@@ -104,6 +116,12 @@ export const User = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseUser } as User;
+    message.followers = [];
+    message.following = [];
+    message.repositories = [];
+    message.repositoriesArchived = [];
+    message.organizations = [];
+    message.starredRepos = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -123,22 +141,68 @@ export const User = {
           message.avatarUrl = reader.string();
           break;
         case 6:
-          message.followers = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.followers.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.followers.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 7:
-          message.following = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.following.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.following.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 8:
-          message.repositories = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.repositories.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.repositories.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 9:
-          message.repositoriesArchived = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.repositoriesArchived.push(
+                longToNumber(reader.uint64() as Long)
+              );
+            }
+          } else {
+            message.repositoriesArchived.push(
+              longToNumber(reader.uint64() as Long)
+            );
+          }
           break;
         case 10:
-          message.organizations = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.organizations.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.organizations.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 11:
-          message.starredRepos = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.starredRepos.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.starredRepos.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 12:
           message.subscriptions = reader.string();
@@ -150,10 +214,10 @@ export const User = {
           message.bio = reader.string();
           break;
         case 15:
-          message.createdAt = reader.string();
+          message.createdAt = longToNumber(reader.int64() as Long);
           break;
         case 16:
-          message.updatedAt = reader.string();
+          message.updatedAt = longToNumber(reader.int64() as Long);
           break;
         case 17:
           message.extensions = reader.string();
@@ -168,6 +232,12 @@ export const User = {
 
   fromJSON(object: any): User {
     const message = { ...baseUser } as User;
+    message.followers = [];
+    message.following = [];
+    message.repositories = [];
+    message.repositoriesArchived = [];
+    message.organizations = [];
+    message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -194,37 +264,37 @@ export const User = {
       message.avatarUrl = "";
     }
     if (object.followers !== undefined && object.followers !== null) {
-      message.followers = String(object.followers);
-    } else {
-      message.followers = "";
+      for (const e of object.followers) {
+        message.followers.push(Number(e));
+      }
     }
     if (object.following !== undefined && object.following !== null) {
-      message.following = String(object.following);
-    } else {
-      message.following = "";
+      for (const e of object.following) {
+        message.following.push(Number(e));
+      }
     }
     if (object.repositories !== undefined && object.repositories !== null) {
-      message.repositories = String(object.repositories);
-    } else {
-      message.repositories = "";
+      for (const e of object.repositories) {
+        message.repositories.push(Number(e));
+      }
     }
     if (
       object.repositoriesArchived !== undefined &&
       object.repositoriesArchived !== null
     ) {
-      message.repositoriesArchived = String(object.repositoriesArchived);
-    } else {
-      message.repositoriesArchived = "";
+      for (const e of object.repositoriesArchived) {
+        message.repositoriesArchived.push(Number(e));
+      }
     }
     if (object.organizations !== undefined && object.organizations !== null) {
-      message.organizations = String(object.organizations);
-    } else {
-      message.organizations = "";
+      for (const e of object.organizations) {
+        message.organizations.push(Number(e));
+      }
     }
     if (object.starredRepos !== undefined && object.starredRepos !== null) {
-      message.starredRepos = String(object.starredRepos);
-    } else {
-      message.starredRepos = "";
+      for (const e of object.starredRepos) {
+        message.starredRepos.push(Number(e));
+      }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {
       message.subscriptions = String(object.subscriptions);
@@ -242,14 +312,14 @@ export const User = {
       message.bio = "";
     }
     if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = String(object.createdAt);
+      message.createdAt = Number(object.createdAt);
     } else {
-      message.createdAt = "";
+      message.createdAt = 0;
     }
     if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = String(object.updatedAt);
+      message.updatedAt = Number(object.updatedAt);
     } else {
-      message.updatedAt = "";
+      message.updatedAt = 0;
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = String(object.extensions);
@@ -267,16 +337,36 @@ export const User = {
     message.usernameGithub !== undefined &&
       (obj.usernameGithub = message.usernameGithub);
     message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
-    message.followers !== undefined && (obj.followers = message.followers);
-    message.following !== undefined && (obj.following = message.following);
-    message.repositories !== undefined &&
-      (obj.repositories = message.repositories);
-    message.repositoriesArchived !== undefined &&
-      (obj.repositoriesArchived = message.repositoriesArchived);
-    message.organizations !== undefined &&
-      (obj.organizations = message.organizations);
-    message.starredRepos !== undefined &&
-      (obj.starredRepos = message.starredRepos);
+    if (message.followers) {
+      obj.followers = message.followers.map((e) => e);
+    } else {
+      obj.followers = [];
+    }
+    if (message.following) {
+      obj.following = message.following.map((e) => e);
+    } else {
+      obj.following = [];
+    }
+    if (message.repositories) {
+      obj.repositories = message.repositories.map((e) => e);
+    } else {
+      obj.repositories = [];
+    }
+    if (message.repositoriesArchived) {
+      obj.repositoriesArchived = message.repositoriesArchived.map((e) => e);
+    } else {
+      obj.repositoriesArchived = [];
+    }
+    if (message.organizations) {
+      obj.organizations = message.organizations.map((e) => e);
+    } else {
+      obj.organizations = [];
+    }
+    if (message.starredRepos) {
+      obj.starredRepos = message.starredRepos.map((e) => e);
+    } else {
+      obj.starredRepos = [];
+    }
     message.subscriptions !== undefined &&
       (obj.subscriptions = message.subscriptions);
     message.email !== undefined && (obj.email = message.email);
@@ -289,6 +379,12 @@ export const User = {
 
   fromPartial(object: DeepPartial<User>): User {
     const message = { ...baseUser } as User;
+    message.followers = [];
+    message.following = [];
+    message.repositories = [];
+    message.repositoriesArchived = [];
+    message.organizations = [];
+    message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -315,37 +411,37 @@ export const User = {
       message.avatarUrl = "";
     }
     if (object.followers !== undefined && object.followers !== null) {
-      message.followers = object.followers;
-    } else {
-      message.followers = "";
+      for (const e of object.followers) {
+        message.followers.push(e);
+      }
     }
     if (object.following !== undefined && object.following !== null) {
-      message.following = object.following;
-    } else {
-      message.following = "";
+      for (const e of object.following) {
+        message.following.push(e);
+      }
     }
     if (object.repositories !== undefined && object.repositories !== null) {
-      message.repositories = object.repositories;
-    } else {
-      message.repositories = "";
+      for (const e of object.repositories) {
+        message.repositories.push(e);
+      }
     }
     if (
       object.repositoriesArchived !== undefined &&
       object.repositoriesArchived !== null
     ) {
-      message.repositoriesArchived = object.repositoriesArchived;
-    } else {
-      message.repositoriesArchived = "";
+      for (const e of object.repositoriesArchived) {
+        message.repositoriesArchived.push(e);
+      }
     }
     if (object.organizations !== undefined && object.organizations !== null) {
-      message.organizations = object.organizations;
-    } else {
-      message.organizations = "";
+      for (const e of object.organizations) {
+        message.organizations.push(e);
+      }
     }
     if (object.starredRepos !== undefined && object.starredRepos !== null) {
-      message.starredRepos = object.starredRepos;
-    } else {
-      message.starredRepos = "";
+      for (const e of object.starredRepos) {
+        message.starredRepos.push(e);
+      }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {
       message.subscriptions = object.subscriptions;
@@ -365,12 +461,12 @@ export const User = {
     if (object.createdAt !== undefined && object.createdAt !== null) {
       message.createdAt = object.createdAt;
     } else {
-      message.createdAt = "";
+      message.createdAt = 0;
     }
     if (object.updatedAt !== undefined && object.updatedAt !== null) {
       message.updatedAt = object.updatedAt;
     } else {
-      message.updatedAt = "";
+      message.updatedAt = 0;
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = object.extensions;

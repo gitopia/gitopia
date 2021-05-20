@@ -2,11 +2,11 @@ import { txClient, queryClient } from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
-import { ValidatorSigningInfo } from "./module/types/cosmos/slashing/v1beta1/slashing"
-import { Params } from "./module/types/cosmos/slashing/v1beta1/slashing"
 import { SigningInfo } from "./module/types/cosmos/slashing/v1beta1/genesis"
 import { ValidatorMissedBlocks } from "./module/types/cosmos/slashing/v1beta1/genesis"
 import { MissedBlock } from "./module/types/cosmos/slashing/v1beta1/genesis"
+import { ValidatorSigningInfo } from "./module/types/cosmos/slashing/v1beta1/slashing"
+import { Params } from "./module/types/cosmos/slashing/v1beta1/slashing"
 
 
 async function initTxClient(vuexGetters) {
@@ -39,11 +39,11 @@ const getDefaultState = () => {
         SigningInfos: {},
         
         _Structure: {
-            ValidatorSigningInfo: getStructure(ValidatorSigningInfo.fromPartial({})),
-            Params: getStructure(Params.fromPartial({})),
             SigningInfo: getStructure(SigningInfo.fromPartial({})),
             ValidatorMissedBlocks: getStructure(ValidatorMissedBlocks.fromPartial({})),
             MissedBlock: getStructure(MissedBlock.fromPartial({})),
+            ValidatorSigningInfo: getStructure(ValidatorSigningInfo.fromPartial({})),
+            Params: getStructure(Params.fromPartial({})),
             
 		},
 		_Subscriptions: new Set(),
