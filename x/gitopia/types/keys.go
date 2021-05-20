@@ -30,3 +30,8 @@ const (
 	UserKey      = "User-value-"
 	UserCountKey = "User-count-"
 )
+
+const (
+	RepositoryKey      = "Repository-value-"
+	RepositoryCountKey = "Repository-count-"
+)

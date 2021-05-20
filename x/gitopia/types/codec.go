@@ -9,6 +9,10 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepository{}, "gitopia/UpdateRepository", nil)
+	cdc.RegisterConcrete(&MsgDeleteRepository{}, "gitopia/DeleteRepository", nil)
+
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
 	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
@@ -21,6 +25,11 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	// this line is used by starport scaffolding # 3
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateRepository{},
+		&MsgUpdateRepository{},
+		&MsgDeleteRepository{},
+	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateUser{},
 		&MsgUpdateUser{},

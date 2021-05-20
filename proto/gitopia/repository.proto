@@ -1,0 +1,32 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message Repository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3; 
+  string owner = 4; 
+  string description = 5; 
+  string forks = 6; 
+  string branches = 7; 
+  string tags = 8; 
+  string subscribers = 9; 
+  string commits = 10; 
+  string issuesOpen = 11; 
+  string issuesClosed = 12; 
+  string pulls = 13; 
+  string labels = 14; 
+  string releases = 15; 
+  string createdAt = 16; 
+  string updatedAt = 17; 
+  string pushedAt = 18; 
+  string stargazers = 19; 
+  string archived = 20; 
+  string license = 21; 
+  string defaultBranch = 22; 
+  string extensions = 23; 
+}

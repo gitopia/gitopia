@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 import { Writer, Reader } from "protobufjs/minimal";
@@ -8,6 +9,8 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the capability module's genesis state. */
 export interface GenesisState {
   /** this line is used by starport scaffolding # genesis/proto/state */
+  repositoryList: Repository[];
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
   userList: User[];
   /** this line is used by starport scaffolding # genesis/proto/stateField */
   whoisList: Whois[];
@@ -17,6 +20,9 @@ const baseGenesisState: object = {};
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.repositoryList) {
+      Repository.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
     for (const v of message.userList) {
       User.encode(v!, writer.uint32(18).fork()).ldelim();
     }
@@ -30,11 +36,17 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 3:
+          message.repositoryList.push(
+            Repository.decode(reader, reader.uint32())
+          );
+          break;
         case 2:
           message.userList.push(User.decode(reader, reader.uint32()));
           break;
@@ -51,8 +63,14 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.repositoryList !== undefined && object.repositoryList !== null) {
+      for (const e of object.repositoryList) {
+        message.repositoryList.push(Repository.fromJSON(e));
+      }
+    }
     if (object.userList !== undefined && object.userList !== null) {
       for (const e of object.userList) {
         message.userList.push(User.fromJSON(e));
@@ -68,6 +86,13 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.repositoryList) {
+      obj.repositoryList = message.repositoryList.map((e) =>
+        e ? Repository.toJSON(e) : undefined
+      );
+    } else {
+      obj.repositoryList = [];
+    }
     if (message.userList) {
       obj.userList = message.userList.map((e) =>
         e ? User.toJSON(e) : undefined
@@ -87,8 +112,14 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.repositoryList !== undefined && object.repositoryList !== null) {
+      for (const e of object.repositoryList) {
+        message.repositoryList.push(Repository.fromPartial(e));
+      }
+    }
     if (object.userList !== undefined && object.userList !== null) {
       for (const e of object.userList) {
         message.userList.push(User.fromPartial(e));

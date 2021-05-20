@@ -9,10 +9,17 @@
  * ---------------------------------------------------------------
  */
 
+export interface GitopiaMsgCreateRepositoryResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateUserResponse {
   /** @format uint64 */
   id?: string;
 }
+
+export type GitopiaMsgDeleteRepositoryResponse = object;
 
 export type GitopiaMsgDeleteUserResponse = object;
 
@@ -20,9 +27,26 @@ export type GitopiaMsgDeleteWhoisResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
 
+export type GitopiaMsgUpdateRepositoryResponse = object;
+
 export type GitopiaMsgUpdateUserResponse = object;
 
 export type GitopiaMsgUpdateWhoisResponse = object;
+
+export interface GitopiaQueryAllRepositoryResponse {
+  Repository?: GitopiaRepository[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
 
 export interface GitopiaQueryAllUserResponse {
   User?: GitopiaUser[];
@@ -54,12 +78,44 @@ export interface GitopiaQueryAllWhoisResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryGetRepositoryResponse {
+  Repository?: GitopiaRepository;
+}
+
 export interface GitopiaQueryGetUserResponse {
   User?: GitopiaUser;
 }
 
 export interface GitopiaQueryGetWhoisResponse {
   Whois?: GitopiaWhois;
+}
+
+export interface GitopiaRepository {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  name?: string;
+  owner?: string;
+  description?: string;
+  forks?: string;
+  branches?: string;
+  tags?: string;
+  subscribers?: string;
+  commits?: string;
+  issuesOpen?: string;
+  issuesClosed?: string;
+  pulls?: string;
+  labels?: string;
+  releases?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  pushedAt?: string;
+  stargazers?: string;
+  archived?: string;
+  license?: string;
+  defaultBranch?: string;
+  extensions?: string;
 }
 
 export interface GitopiaUser {
@@ -364,6 +420,46 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryRepositoryAll
+   * @request GET:/gitopia/gitopia/gitopia/repository
+   */
+  queryRepositoryAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepository
+   * @summary this line is used by starport scaffolding # 2
+   * @request GET:/gitopia/gitopia/gitopia/repository/{id}
+   */
+  queryRepository = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryUserAll
    * @request GET:/gitopia/gitopia/gitopia/user
    */
@@ -389,7 +485,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryUser
-   * @summary this line is used by starport scaffolding # 2
    * @request GET:/gitopia/gitopia/gitopia/user/{id}
    */
   queryUser = (id: string, params: RequestParams = {}) =>

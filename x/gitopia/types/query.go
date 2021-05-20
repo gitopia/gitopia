@@ -9,3 +9,8 @@ const (
 	QueryGetUser  = "get-user"
 	QueryListUser = "list-user"
 )
+
+const (
+	QueryGetRepository  = "get-repository"
+	QueryListRepository = "list-repository"
+)

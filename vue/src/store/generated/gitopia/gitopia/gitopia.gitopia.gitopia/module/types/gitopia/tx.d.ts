@@ -1,6 +1,66 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
+export interface MsgCreateRepository {
+    creator: string;
+    name: string;
+    owner: string;
+    description: string;
+    forks: string;
+    branches: string;
+    tags: string;
+    subscribers: string;
+    commits: string;
+    issuesOpen: string;
+    issuesClosed: string;
+    pulls: string;
+    labels: string;
+    releases: string;
+    createdAt: string;
+    updatedAt: string;
+    pushedAt: string;
+    stargazers: string;
+    archived: string;
+    license: string;
+    defaultBranch: string;
+    extensions: string;
+}
+export interface MsgCreateRepositoryResponse {
+    id: number;
+}
+export interface MsgUpdateRepository {
+    creator: string;
+    id: number;
+    name: string;
+    owner: string;
+    description: string;
+    forks: string;
+    branches: string;
+    tags: string;
+    subscribers: string;
+    commits: string;
+    issuesOpen: string;
+    issuesClosed: string;
+    pulls: string;
+    labels: string;
+    releases: string;
+    createdAt: string;
+    updatedAt: string;
+    pushedAt: string;
+    stargazers: string;
+    archived: string;
+    license: string;
+    defaultBranch: string;
+    extensions: string;
+}
+export interface MsgUpdateRepositoryResponse {
+}
+export interface MsgDeleteRepository {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteRepositoryResponse {
+}
 export interface MsgCreateUser {
     creator: string;
     username: string;
@@ -69,6 +129,48 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgCreateRepository: {
+    encode(message: MsgCreateRepository, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateRepository;
+    fromJSON(object: any): MsgCreateRepository;
+    toJSON(message: MsgCreateRepository): unknown;
+    fromPartial(object: DeepPartial<MsgCreateRepository>): MsgCreateRepository;
+};
+export declare const MsgCreateRepositoryResponse: {
+    encode(message: MsgCreateRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateRepositoryResponse;
+    fromJSON(object: any): MsgCreateRepositoryResponse;
+    toJSON(message: MsgCreateRepositoryResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateRepositoryResponse>): MsgCreateRepositoryResponse;
+};
+export declare const MsgUpdateRepository: {
+    encode(message: MsgUpdateRepository, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
+    fromJSON(object: any): MsgUpdateRepository;
+    toJSON(message: MsgUpdateRepository): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateRepository>): MsgUpdateRepository;
+};
+export declare const MsgUpdateRepositoryResponse: {
+    encode(_: MsgUpdateRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryResponse;
+    fromJSON(_: any): MsgUpdateRepositoryResponse;
+    toJSON(_: MsgUpdateRepositoryResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateRepositoryResponse>): MsgUpdateRepositoryResponse;
+};
+export declare const MsgDeleteRepository: {
+    encode(message: MsgDeleteRepository, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteRepository;
+    fromJSON(object: any): MsgDeleteRepository;
+    toJSON(message: MsgDeleteRepository): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteRepository>): MsgDeleteRepository;
+};
+export declare const MsgDeleteRepositoryResponse: {
+    encode(_: MsgDeleteRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteRepositoryResponse;
+    fromJSON(_: any): MsgDeleteRepositoryResponse;
+    toJSON(_: MsgDeleteRepositoryResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteRepositoryResponse>): MsgDeleteRepositoryResponse;
+};
 export declare const MsgCreateUser: {
     encode(message: MsgCreateUser, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateUser;
@@ -156,6 +258,9 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
+    CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
+    DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
@@ -166,6 +271,9 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
+    DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
