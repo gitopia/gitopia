@@ -13,23 +13,9 @@ import (
 )
 
 type createUserRequest struct {
-	BaseReq               rest.BaseReq `json:"base_req"`
-	Creator               string       `json:"creator"`
-	Username              string       `json:"username"`
-	UsernameGithub        string       `json:"usernameGithub"`
-	AvatarUrl             string       `json:"avatarUrl"`
-	Followers             string       `json:"followers"`
-	Following             string       `json:"following"`
-	Repositories          string       `json:"repositories"`
-	Repositories_archived string       `json:"repositories_archived"`
-	Organizations         string       `json:"organizations"`
-	Starred_repos         string       `json:"starred_repos"`
-	Subscriptions         string       `json:"subscriptions"`
-	Email                 string       `json:"email"`
-	Bio                   string       `json:"bio"`
-	CreatedAt             string       `json:"createdAt"`
-	UpdatedAt             string       `json:"updatedAt"`
-	Extensions            string       `json:"extensions"`
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Creator  string       `json:"creator"`
+	Username string       `json:"username"`
 }
 
 func createUserHandler(clientCtx client.Context) http.HandlerFunc {
@@ -53,51 +39,9 @@ func createUserHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedUsername := req.Username
 
-		parsedUsernameGithub := req.UsernameGithub
-
-		parsedAvatarUrl := req.AvatarUrl
-
-		parsedFollowers := req.Followers
-
-		parsedFollowing := req.Following
-
-		parsedRepositories := req.Repositories
-
-		parsedRepositories_archived := req.Repositories_archived
-
-		parsedOrganizations := req.Organizations
-
-		parsedStarred_repos := req.Starred_repos
-
-		parsedSubscriptions := req.Subscriptions
-
-		parsedEmail := req.Email
-
-		parsedBio := req.Bio
-
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
-		parsedExtensions := req.Extensions
-
 		msg := types.NewMsgCreateUser(
 			req.Creator,
 			parsedUsername,
-			parsedUsernameGithub,
-			parsedAvatarUrl,
-			parsedFollowers,
-			parsedFollowing,
-			parsedRepositories,
-			parsedRepositories_archived,
-			parsedOrganizations,
-			parsedStarred_repos,
-			parsedSubscriptions,
-			parsedEmail,
-			parsedBio,
-			parsedCreatedAt,
-			parsedUpdatedAt,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

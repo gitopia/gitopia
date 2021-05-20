@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetUserCount get the total number of user
@@ -42,41 +43,13 @@ func (k Keeper) AppendUser(
 	ctx sdk.Context,
 	creator string,
 	username string,
-	usernameGithub string,
-	avatarUrl string,
-	followers string,
-	following string,
-	repositories string,
-	repositories_archived string,
-	organizations string,
-	starred_repos string,
-	subscriptions string,
-	email string,
-	bio string,
-	createdAt string,
-	updatedAt string,
-	extensions string,
 ) uint64 {
 	// Create the user
 	count := k.GetUserCount(ctx)
 	var user = types.User{
-		Creator:               creator,
-		Id:                    count,
-		Username:              username,
-		UsernameGithub:        usernameGithub,
-		AvatarUrl:             avatarUrl,
-		Followers:             followers,
-		Following:             following,
-		Repositories:          repositories,
-		Repositories_archived: repositories_archived,
-		Organizations:         organizations,
-		Starred_repos:         starred_repos,
-		Subscriptions:         subscriptions,
-		Email:                 email,
-		Bio:                   bio,
-		CreatedAt:             createdAt,
-		UpdatedAt:             updatedAt,
-		Extensions:            extensions,
+		Creator:  creator,
+		Id:       count,
+		Username: username,
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))

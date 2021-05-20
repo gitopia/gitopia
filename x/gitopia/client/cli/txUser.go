@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
 	"strconv"
+
+	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -12,32 +13,18 @@ import (
 
 func CmdCreateUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-user [username] [usernameGithub] [avatarUrl] [followers] [following] [repositories] [repositories_archived] [organizations] [starred_repos] [subscriptions] [email] [bio] [createdAt] [updatedAt] [extensions]",
+		Use:   "create-user [username]",
 		Short: "Creates a new user",
-		Args:  cobra.ExactArgs(15),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsUsername := string(args[0])
-			argsUsernameGithub := string(args[1])
-			argsAvatarUrl := string(args[2])
-			argsFollowers := string(args[3])
-			argsFollowing := string(args[4])
-			argsRepositories := string(args[5])
-			argsRepositories_archived := string(args[6])
-			argsOrganizations := string(args[7])
-			argsStarred_repos := string(args[8])
-			argsSubscriptions := string(args[9])
-			argsEmail := string(args[10])
-			argsBio := string(args[11])
-			argsCreatedAt := string(args[12])
-			argsUpdatedAt := string(args[13])
-			argsExtensions := string(args[14])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateUser(clientCtx.GetFromAddress().String(), string(argsUsername), string(argsUsernameGithub), string(argsAvatarUrl), string(argsFollowers), string(argsFollowing), string(argsRepositories), string(argsRepositories_archived), string(argsOrganizations), string(argsStarred_repos), string(argsSubscriptions), string(argsEmail), string(argsBio), string(argsCreatedAt), string(argsUpdatedAt), string(argsExtensions))
+			msg := types.NewMsgCreateUser(clientCtx.GetFromAddress().String(), string(argsUsername))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

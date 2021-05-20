@@ -7,24 +7,10 @@ import (
 
 var _ sdk.Msg = &MsgCreateUser{}
 
-func NewMsgCreateUser(creator string, username string, usernameGithub string, avatarUrl string, followers string, following string, repositories string, repositories_archived string, organizations string, starred_repos string, subscriptions string, email string, bio string, createdAt string, updatedAt string, extensions string) *MsgCreateUser {
+func NewMsgCreateUser(creator string, username string) *MsgCreateUser {
 	return &MsgCreateUser{
-		Creator:               creator,
-		Username:              username,
-		UsernameGithub:        usernameGithub,
-		AvatarUrl:             avatarUrl,
-		Followers:             followers,
-		Following:             following,
-		Repositories:          repositories,
-		Repositories_archived: repositories_archived,
-		Organizations:         organizations,
-		Starred_repos:         starred_repos,
-		Subscriptions:         subscriptions,
-		Email:                 email,
-		Bio:                   bio,
-		CreatedAt:             createdAt,
-		UpdatedAt:             updatedAt,
-		Extensions:            extensions,
+		Creator:  creator,
+		Username: username,
 	}
 }
 
@@ -54,6 +40,9 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Username) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Name must be at least 3 characters long")
+	}
 	return nil
 }
 
@@ -61,23 +50,23 @@ var _ sdk.Msg = &MsgUpdateUser{}
 
 func NewMsgUpdateUser(creator string, id uint64, username string, usernameGithub string, avatarUrl string, followers string, following string, repositories string, repositories_archived string, organizations string, starred_repos string, subscriptions string, email string, bio string, createdAt string, updatedAt string, extensions string) *MsgUpdateUser {
 	return &MsgUpdateUser{
-		Id:                    id,
-		Creator:               creator,
-		Username:              username,
-		UsernameGithub:        usernameGithub,
-		AvatarUrl:             avatarUrl,
-		Followers:             followers,
-		Following:             following,
-		Repositories:          repositories,
-		Repositories_archived: repositories_archived,
-		Organizations:         organizations,
-		Starred_repos:         starred_repos,
-		Subscriptions:         subscriptions,
-		Email:                 email,
-		Bio:                   bio,
-		CreatedAt:             createdAt,
-		UpdatedAt:             updatedAt,
-		Extensions:            extensions,
+		Id:                   id,
+		Creator:              creator,
+		Username:             username,
+		UsernameGithub:       usernameGithub,
+		AvatarUrl:            avatarUrl,
+		Followers:            followers,
+		Following:            following,
+		Repositories:         repositories,
+		RepositoriesArchived: repositories_archived,
+		Organizations:        organizations,
+		StarredRepos:         starred_repos,
+		Subscriptions:        subscriptions,
+		Email:                email,
+		Bio:                  bio,
+		CreatedAt:            createdAt,
+		UpdatedAt:            updatedAt,
+		Extensions:           extensions,
 	}
 }
 
