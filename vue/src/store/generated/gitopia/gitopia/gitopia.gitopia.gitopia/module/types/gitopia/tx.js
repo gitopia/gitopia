@@ -2,6 +2,865 @@
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseMsgCreateComment = {
+    creator: "",
+    parentId: "",
+    commentIid: "",
+    body: "",
+    attachments: "",
+    diffHunk: "",
+    path: "",
+    system: "",
+    authorId: "",
+    authorAssociation: "",
+    createdAt: "",
+    updatedAt: "",
+    commentType: "",
+    extensions: "",
+};
+export const MsgCreateComment = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.parentId !== "") {
+            writer.uint32(18).string(message.parentId);
+        }
+        if (message.commentIid !== "") {
+            writer.uint32(26).string(message.commentIid);
+        }
+        if (message.body !== "") {
+            writer.uint32(34).string(message.body);
+        }
+        if (message.attachments !== "") {
+            writer.uint32(42).string(message.attachments);
+        }
+        if (message.diffHunk !== "") {
+            writer.uint32(50).string(message.diffHunk);
+        }
+        if (message.path !== "") {
+            writer.uint32(58).string(message.path);
+        }
+        if (message.system !== "") {
+            writer.uint32(66).string(message.system);
+        }
+        if (message.authorId !== "") {
+            writer.uint32(74).string(message.authorId);
+        }
+        if (message.authorAssociation !== "") {
+            writer.uint32(82).string(message.authorAssociation);
+        }
+        if (message.createdAt !== "") {
+            writer.uint32(90).string(message.createdAt);
+        }
+        if (message.updatedAt !== "") {
+            writer.uint32(98).string(message.updatedAt);
+        }
+        if (message.commentType !== "") {
+            writer.uint32(106).string(message.commentType);
+        }
+        if (message.extensions !== "") {
+            writer.uint32(114).string(message.extensions);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgCreateComment };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.parentId = reader.string();
+                    break;
+                case 3:
+                    message.commentIid = reader.string();
+                    break;
+                case 4:
+                    message.body = reader.string();
+                    break;
+                case 5:
+                    message.attachments = reader.string();
+                    break;
+                case 6:
+                    message.diffHunk = reader.string();
+                    break;
+                case 7:
+                    message.path = reader.string();
+                    break;
+                case 8:
+                    message.system = reader.string();
+                    break;
+                case 9:
+                    message.authorId = reader.string();
+                    break;
+                case 10:
+                    message.authorAssociation = reader.string();
+                    break;
+                case 11:
+                    message.createdAt = reader.string();
+                    break;
+                case 12:
+                    message.updatedAt = reader.string();
+                    break;
+                case 13:
+                    message.commentType = reader.string();
+                    break;
+                case 14:
+                    message.extensions = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgCreateComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.parentId !== undefined && object.parentId !== null) {
+            message.parentId = String(object.parentId);
+        }
+        else {
+            message.parentId = "";
+        }
+        if (object.commentIid !== undefined && object.commentIid !== null) {
+            message.commentIid = String(object.commentIid);
+        }
+        else {
+            message.commentIid = "";
+        }
+        if (object.body !== undefined && object.body !== null) {
+            message.body = String(object.body);
+        }
+        else {
+            message.body = "";
+        }
+        if (object.attachments !== undefined && object.attachments !== null) {
+            message.attachments = String(object.attachments);
+        }
+        else {
+            message.attachments = "";
+        }
+        if (object.diffHunk !== undefined && object.diffHunk !== null) {
+            message.diffHunk = String(object.diffHunk);
+        }
+        else {
+            message.diffHunk = "";
+        }
+        if (object.path !== undefined && object.path !== null) {
+            message.path = String(object.path);
+        }
+        else {
+            message.path = "";
+        }
+        if (object.system !== undefined && object.system !== null) {
+            message.system = String(object.system);
+        }
+        else {
+            message.system = "";
+        }
+        if (object.authorId !== undefined && object.authorId !== null) {
+            message.authorId = String(object.authorId);
+        }
+        else {
+            message.authorId = "";
+        }
+        if (object.authorAssociation !== undefined &&
+            object.authorAssociation !== null) {
+            message.authorAssociation = String(object.authorAssociation);
+        }
+        else {
+            message.authorAssociation = "";
+        }
+        if (object.createdAt !== undefined && object.createdAt !== null) {
+            message.createdAt = String(object.createdAt);
+        }
+        else {
+            message.createdAt = "";
+        }
+        if (object.updatedAt !== undefined && object.updatedAt !== null) {
+            message.updatedAt = String(object.updatedAt);
+        }
+        else {
+            message.updatedAt = "";
+        }
+        if (object.commentType !== undefined && object.commentType !== null) {
+            message.commentType = String(object.commentType);
+        }
+        else {
+            message.commentType = "";
+        }
+        if (object.extensions !== undefined && object.extensions !== null) {
+            message.extensions = String(object.extensions);
+        }
+        else {
+            message.extensions = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.parentId !== undefined && (obj.parentId = message.parentId);
+        message.commentIid !== undefined && (obj.commentIid = message.commentIid);
+        message.body !== undefined && (obj.body = message.body);
+        message.attachments !== undefined &&
+            (obj.attachments = message.attachments);
+        message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
+        message.path !== undefined && (obj.path = message.path);
+        message.system !== undefined && (obj.system = message.system);
+        message.authorId !== undefined && (obj.authorId = message.authorId);
+        message.authorAssociation !== undefined &&
+            (obj.authorAssociation = message.authorAssociation);
+        message.createdAt !== undefined && (obj.createdAt = message.createdAt);
+        message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+        message.commentType !== undefined &&
+            (obj.commentType = message.commentType);
+        message.extensions !== undefined && (obj.extensions = message.extensions);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgCreateComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.parentId !== undefined && object.parentId !== null) {
+            message.parentId = object.parentId;
+        }
+        else {
+            message.parentId = "";
+        }
+        if (object.commentIid !== undefined && object.commentIid !== null) {
+            message.commentIid = object.commentIid;
+        }
+        else {
+            message.commentIid = "";
+        }
+        if (object.body !== undefined && object.body !== null) {
+            message.body = object.body;
+        }
+        else {
+            message.body = "";
+        }
+        if (object.attachments !== undefined && object.attachments !== null) {
+            message.attachments = object.attachments;
+        }
+        else {
+            message.attachments = "";
+        }
+        if (object.diffHunk !== undefined && object.diffHunk !== null) {
+            message.diffHunk = object.diffHunk;
+        }
+        else {
+            message.diffHunk = "";
+        }
+        if (object.path !== undefined && object.path !== null) {
+            message.path = object.path;
+        }
+        else {
+            message.path = "";
+        }
+        if (object.system !== undefined && object.system !== null) {
+            message.system = object.system;
+        }
+        else {
+            message.system = "";
+        }
+        if (object.authorId !== undefined && object.authorId !== null) {
+            message.authorId = object.authorId;
+        }
+        else {
+            message.authorId = "";
+        }
+        if (object.authorAssociation !== undefined &&
+            object.authorAssociation !== null) {
+            message.authorAssociation = object.authorAssociation;
+        }
+        else {
+            message.authorAssociation = "";
+        }
+        if (object.createdAt !== undefined && object.createdAt !== null) {
+            message.createdAt = object.createdAt;
+        }
+        else {
+            message.createdAt = "";
+        }
+        if (object.updatedAt !== undefined && object.updatedAt !== null) {
+            message.updatedAt = object.updatedAt;
+        }
+        else {
+            message.updatedAt = "";
+        }
+        if (object.commentType !== undefined && object.commentType !== null) {
+            message.commentType = object.commentType;
+        }
+        else {
+            message.commentType = "";
+        }
+        if (object.extensions !== undefined && object.extensions !== null) {
+            message.extensions = object.extensions;
+        }
+        else {
+            message.extensions = "";
+        }
+        return message;
+    },
+};
+const baseMsgCreateCommentResponse = { id: 0 };
+export const MsgCreateCommentResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgCreateCommentResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgCreateCommentResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgCreateCommentResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgUpdateComment = {
+    creator: "",
+    id: 0,
+    parentId: "",
+    commentIid: "",
+    body: "",
+    attachments: "",
+    diffHunk: "",
+    path: "",
+    system: "",
+    authorId: "",
+    authorAssociation: "",
+    createdAt: "",
+    updatedAt: "",
+    commentType: "",
+    extensions: "",
+};
+export const MsgUpdateComment = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.parentId !== "") {
+            writer.uint32(26).string(message.parentId);
+        }
+        if (message.commentIid !== "") {
+            writer.uint32(34).string(message.commentIid);
+        }
+        if (message.body !== "") {
+            writer.uint32(42).string(message.body);
+        }
+        if (message.attachments !== "") {
+            writer.uint32(50).string(message.attachments);
+        }
+        if (message.diffHunk !== "") {
+            writer.uint32(58).string(message.diffHunk);
+        }
+        if (message.path !== "") {
+            writer.uint32(66).string(message.path);
+        }
+        if (message.system !== "") {
+            writer.uint32(74).string(message.system);
+        }
+        if (message.authorId !== "") {
+            writer.uint32(82).string(message.authorId);
+        }
+        if (message.authorAssociation !== "") {
+            writer.uint32(90).string(message.authorAssociation);
+        }
+        if (message.createdAt !== "") {
+            writer.uint32(98).string(message.createdAt);
+        }
+        if (message.updatedAt !== "") {
+            writer.uint32(106).string(message.updatedAt);
+        }
+        if (message.commentType !== "") {
+            writer.uint32(114).string(message.commentType);
+        }
+        if (message.extensions !== "") {
+            writer.uint32(122).string(message.extensions);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgUpdateComment };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.parentId = reader.string();
+                    break;
+                case 4:
+                    message.commentIid = reader.string();
+                    break;
+                case 5:
+                    message.body = reader.string();
+                    break;
+                case 6:
+                    message.attachments = reader.string();
+                    break;
+                case 7:
+                    message.diffHunk = reader.string();
+                    break;
+                case 8:
+                    message.path = reader.string();
+                    break;
+                case 9:
+                    message.system = reader.string();
+                    break;
+                case 10:
+                    message.authorId = reader.string();
+                    break;
+                case 11:
+                    message.authorAssociation = reader.string();
+                    break;
+                case 12:
+                    message.createdAt = reader.string();
+                    break;
+                case 13:
+                    message.updatedAt = reader.string();
+                    break;
+                case 14:
+                    message.commentType = reader.string();
+                    break;
+                case 15:
+                    message.extensions = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgUpdateComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.parentId !== undefined && object.parentId !== null) {
+            message.parentId = String(object.parentId);
+        }
+        else {
+            message.parentId = "";
+        }
+        if (object.commentIid !== undefined && object.commentIid !== null) {
+            message.commentIid = String(object.commentIid);
+        }
+        else {
+            message.commentIid = "";
+        }
+        if (object.body !== undefined && object.body !== null) {
+            message.body = String(object.body);
+        }
+        else {
+            message.body = "";
+        }
+        if (object.attachments !== undefined && object.attachments !== null) {
+            message.attachments = String(object.attachments);
+        }
+        else {
+            message.attachments = "";
+        }
+        if (object.diffHunk !== undefined && object.diffHunk !== null) {
+            message.diffHunk = String(object.diffHunk);
+        }
+        else {
+            message.diffHunk = "";
+        }
+        if (object.path !== undefined && object.path !== null) {
+            message.path = String(object.path);
+        }
+        else {
+            message.path = "";
+        }
+        if (object.system !== undefined && object.system !== null) {
+            message.system = String(object.system);
+        }
+        else {
+            message.system = "";
+        }
+        if (object.authorId !== undefined && object.authorId !== null) {
+            message.authorId = String(object.authorId);
+        }
+        else {
+            message.authorId = "";
+        }
+        if (object.authorAssociation !== undefined &&
+            object.authorAssociation !== null) {
+            message.authorAssociation = String(object.authorAssociation);
+        }
+        else {
+            message.authorAssociation = "";
+        }
+        if (object.createdAt !== undefined && object.createdAt !== null) {
+            message.createdAt = String(object.createdAt);
+        }
+        else {
+            message.createdAt = "";
+        }
+        if (object.updatedAt !== undefined && object.updatedAt !== null) {
+            message.updatedAt = String(object.updatedAt);
+        }
+        else {
+            message.updatedAt = "";
+        }
+        if (object.commentType !== undefined && object.commentType !== null) {
+            message.commentType = String(object.commentType);
+        }
+        else {
+            message.commentType = "";
+        }
+        if (object.extensions !== undefined && object.extensions !== null) {
+            message.extensions = String(object.extensions);
+        }
+        else {
+            message.extensions = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.parentId !== undefined && (obj.parentId = message.parentId);
+        message.commentIid !== undefined && (obj.commentIid = message.commentIid);
+        message.body !== undefined && (obj.body = message.body);
+        message.attachments !== undefined &&
+            (obj.attachments = message.attachments);
+        message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
+        message.path !== undefined && (obj.path = message.path);
+        message.system !== undefined && (obj.system = message.system);
+        message.authorId !== undefined && (obj.authorId = message.authorId);
+        message.authorAssociation !== undefined &&
+            (obj.authorAssociation = message.authorAssociation);
+        message.createdAt !== undefined && (obj.createdAt = message.createdAt);
+        message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+        message.commentType !== undefined &&
+            (obj.commentType = message.commentType);
+        message.extensions !== undefined && (obj.extensions = message.extensions);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgUpdateComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.parentId !== undefined && object.parentId !== null) {
+            message.parentId = object.parentId;
+        }
+        else {
+            message.parentId = "";
+        }
+        if (object.commentIid !== undefined && object.commentIid !== null) {
+            message.commentIid = object.commentIid;
+        }
+        else {
+            message.commentIid = "";
+        }
+        if (object.body !== undefined && object.body !== null) {
+            message.body = object.body;
+        }
+        else {
+            message.body = "";
+        }
+        if (object.attachments !== undefined && object.attachments !== null) {
+            message.attachments = object.attachments;
+        }
+        else {
+            message.attachments = "";
+        }
+        if (object.diffHunk !== undefined && object.diffHunk !== null) {
+            message.diffHunk = object.diffHunk;
+        }
+        else {
+            message.diffHunk = "";
+        }
+        if (object.path !== undefined && object.path !== null) {
+            message.path = object.path;
+        }
+        else {
+            message.path = "";
+        }
+        if (object.system !== undefined && object.system !== null) {
+            message.system = object.system;
+        }
+        else {
+            message.system = "";
+        }
+        if (object.authorId !== undefined && object.authorId !== null) {
+            message.authorId = object.authorId;
+        }
+        else {
+            message.authorId = "";
+        }
+        if (object.authorAssociation !== undefined &&
+            object.authorAssociation !== null) {
+            message.authorAssociation = object.authorAssociation;
+        }
+        else {
+            message.authorAssociation = "";
+        }
+        if (object.createdAt !== undefined && object.createdAt !== null) {
+            message.createdAt = object.createdAt;
+        }
+        else {
+            message.createdAt = "";
+        }
+        if (object.updatedAt !== undefined && object.updatedAt !== null) {
+            message.updatedAt = object.updatedAt;
+        }
+        else {
+            message.updatedAt = "";
+        }
+        if (object.commentType !== undefined && object.commentType !== null) {
+            message.commentType = object.commentType;
+        }
+        else {
+            message.commentType = "";
+        }
+        if (object.extensions !== undefined && object.extensions !== null) {
+            message.extensions = object.extensions;
+        }
+        else {
+            message.extensions = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdateCommentResponse = {};
+export const MsgUpdateCommentResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateCommentResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdateCommentResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdateCommentResponse,
+        };
+        return message;
+    },
+};
+const baseMsgDeleteComment = { creator: "", id: 0 };
+export const MsgDeleteComment = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgDeleteComment };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgDeleteComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgDeleteComment };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgDeleteCommentResponse = {};
+export const MsgDeleteCommentResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgDeleteCommentResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgDeleteCommentResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgDeleteCommentResponse,
+        };
+        return message;
+    },
+};
 const baseMsgCreateIssue = {
     creator: "",
     title: "",
@@ -3197,6 +4056,21 @@ export const MsgDeleteWhoisResponse = {
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
+    }
+    CreateComment(request) {
+        const data = MsgCreateComment.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateComment", data);
+        return promise.then((data) => MsgCreateCommentResponse.decode(new Reader(data)));
+    }
+    UpdateComment(request) {
+        const data = MsgUpdateComment.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateComment", data);
+        return promise.then((data) => MsgUpdateCommentResponse.decode(new Reader(data)));
+    }
+    DeleteComment(request) {
+        const data = MsgDeleteComment.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteComment", data);
+        return promise.then((data) => MsgDeleteCommentResponse.decode(new Reader(data)));
     }
     CreateIssue(request) {
         const data = MsgCreateIssue.encode(request).finish();

@@ -1,11 +1,12 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Issue } from "../gitopia/issue";
+import { Comment } from "../gitopia/comment";
 import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
+import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
@@ -13,6 +14,23 @@ import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetCommentRequest {
+  id: number;
+}
+
+export interface QueryGetCommentResponse {
+  Comment: Comment | undefined;
+}
+
+export interface QueryAllCommentRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllCommentResponse {
+  Comment: Comment[];
+  pagination: PageResponse | undefined;
+}
+
 export interface QueryGetIssueRequest {
   id: number;
 }
@@ -80,6 +98,296 @@ export interface QueryAllWhoisResponse {
   Whois: Whois[];
   pagination: PageResponse | undefined;
 }
+
+const baseQueryGetCommentRequest: object = { id: 0 };
+
+export const QueryGetCommentRequest = {
+  encode(
+    message: QueryGetCommentRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetCommentRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetCommentRequest } as QueryGetCommentRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommentRequest {
+    const message = { ...baseQueryGetCommentRequest } as QueryGetCommentRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommentRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommentRequest>
+  ): QueryGetCommentRequest {
+    const message = { ...baseQueryGetCommentRequest } as QueryGetCommentRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetCommentResponse: object = {};
+
+export const QueryGetCommentResponse = {
+  encode(
+    message: QueryGetCommentResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.Comment !== undefined) {
+      Comment.encode(message.Comment, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetCommentResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetCommentResponse,
+    } as QueryGetCommentResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Comment = Comment.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommentResponse {
+    const message = {
+      ...baseQueryGetCommentResponse,
+    } as QueryGetCommentResponse;
+    if (object.Comment !== undefined && object.Comment !== null) {
+      message.Comment = Comment.fromJSON(object.Comment);
+    } else {
+      message.Comment = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommentResponse): unknown {
+    const obj: any = {};
+    message.Comment !== undefined &&
+      (obj.Comment = message.Comment
+        ? Comment.toJSON(message.Comment)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommentResponse>
+  ): QueryGetCommentResponse {
+    const message = {
+      ...baseQueryGetCommentResponse,
+    } as QueryGetCommentResponse;
+    if (object.Comment !== undefined && object.Comment !== null) {
+      message.Comment = Comment.fromPartial(object.Comment);
+    } else {
+      message.Comment = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllCommentRequest: object = {};
+
+export const QueryAllCommentRequest = {
+  encode(
+    message: QueryAllCommentRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllCommentRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllCommentRequest {
+    const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllCommentRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllCommentRequest>
+  ): QueryAllCommentRequest {
+    const message = { ...baseQueryAllCommentRequest } as QueryAllCommentRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllCommentResponse: object = {};
+
+export const QueryAllCommentResponse = {
+  encode(
+    message: QueryAllCommentResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.Comment) {
+      Comment.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllCommentResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllCommentResponse,
+    } as QueryAllCommentResponse;
+    message.Comment = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Comment.push(Comment.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllCommentResponse {
+    const message = {
+      ...baseQueryAllCommentResponse,
+    } as QueryAllCommentResponse;
+    message.Comment = [];
+    if (object.Comment !== undefined && object.Comment !== null) {
+      for (const e of object.Comment) {
+        message.Comment.push(Comment.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllCommentResponse): unknown {
+    const obj: any = {};
+    if (message.Comment) {
+      obj.Comment = message.Comment.map((e) =>
+        e ? Comment.toJSON(e) : undefined
+      );
+    } else {
+      obj.Comment = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllCommentResponse>
+  ): QueryAllCommentResponse {
+    const message = {
+      ...baseQueryAllCommentResponse,
+    } as QueryAllCommentResponse;
+    message.Comment = [];
+    if (object.Comment !== undefined && object.Comment !== null) {
+      for (const e of object.Comment) {
+        message.Comment.push(Comment.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
 
 const baseQueryGetIssueRequest: object = { id: 0 };
 
@@ -1204,6 +1512,8 @@ export const QueryAllWhoisResponse = {
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** this line is used by starport scaffolding # 2 */
+  Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
+  CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
   Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
   IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
   Repository(
@@ -1223,6 +1533,32 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
+  Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse> {
+    const data = QueryGetCommentRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "Comment",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetCommentResponse.decode(new Reader(data))
+    );
+  }
+
+  CommentAll(
+    request: QueryAllCommentRequest
+  ): Promise<QueryAllCommentResponse> {
+    const data = QueryAllCommentRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "CommentAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllCommentResponse.decode(new Reader(data))
+    );
+  }
+
   Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse> {
     const data = QueryGetIssueRequest.encode(request).finish();
     const promise = this.rpc.request(

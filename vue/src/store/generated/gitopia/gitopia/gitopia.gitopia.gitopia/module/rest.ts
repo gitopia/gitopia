@@ -9,6 +9,26 @@
  * ---------------------------------------------------------------
  */
 
+export interface GitopiaComment {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  parentId?: string;
+  commentIid?: string;
+  body?: string;
+  attachments?: string;
+  diffHunk?: string;
+  path?: string;
+  system?: string;
+  authorId?: string;
+  authorAssociation?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  commentType?: string;
+  extensions?: string;
+}
+
 export interface GitopiaIssue {
   creator?: string;
 
@@ -52,6 +72,11 @@ export interface GitopiaMsgChangeIssueStateResponse {
   state?: string;
 }
 
+export interface GitopiaMsgCreateCommentResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateIssueResponse {
   /** @format uint64 */
   id?: string;
@@ -67,6 +92,8 @@ export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
 
+export type GitopiaMsgDeleteCommentResponse = object;
+
 export type GitopiaMsgDeleteIssueResponse = object;
 
 export type GitopiaMsgDeleteRepositoryResponse = object;
@@ -77,6 +104,8 @@ export type GitopiaMsgDeleteWhoisResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
 
+export type GitopiaMsgUpdateCommentResponse = object;
+
 export type GitopiaMsgUpdateIssueResponse = object;
 
 export type GitopiaMsgUpdateRepositoryResponse = object;
@@ -84,6 +113,21 @@ export type GitopiaMsgUpdateRepositoryResponse = object;
 export type GitopiaMsgUpdateUserResponse = object;
 
 export type GitopiaMsgUpdateWhoisResponse = object;
+
+export interface GitopiaQueryAllCommentResponse {
+  Comment?: GitopiaComment[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
 
 export interface GitopiaQueryAllIssueResponse {
   Issue?: GitopiaIssue[];
@@ -143,6 +187,10 @@ export interface GitopiaQueryAllWhoisResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryGetCommentResponse {
+  Comment?: GitopiaComment;
 }
 
 export interface GitopiaQueryGetIssueResponse {
@@ -494,6 +542,46 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryCommentAll
+   * @request GET:/gitopia/gitopia/gitopia/comment
+   */
+  queryCommentAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/comment`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryComment
+   * @summary this line is used by starport scaffolding # 2
+   * @request GET:/gitopia/gitopia/gitopia/comment/{id}
+   */
+  queryComment = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/comment/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryIssueAll
    * @request GET:/gitopia/gitopia/gitopia/issue
    */
@@ -519,7 +607,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryIssue
-   * @summary this line is used by starport scaffolding # 2
    * @request GET:/gitopia/gitopia/gitopia/issue/{id}
    */
   queryIssue = (id: string, params: RequestParams = {}) =>

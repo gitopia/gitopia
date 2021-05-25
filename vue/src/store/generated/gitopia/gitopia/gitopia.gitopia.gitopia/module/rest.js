@@ -140,6 +140,34 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryCommentAll
+         * @request GET:/gitopia/gitopia/gitopia/comment
+         */
+        this.queryCommentAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/comment`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryComment
+         * @summary this line is used by starport scaffolding # 2
+         * @request GET:/gitopia/gitopia/gitopia/comment/{id}
+         */
+        this.queryComment = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/comment/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryIssueAll
          * @request GET:/gitopia/gitopia/gitopia/issue
          */
@@ -155,7 +183,6 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryIssue
-         * @summary this line is used by starport scaffolding # 2
          * @request GET:/gitopia/gitopia/gitopia/issue/{id}
          */
         this.queryIssue = (id, params = {}) => this.request({

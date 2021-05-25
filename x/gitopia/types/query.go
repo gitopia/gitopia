@@ -19,3 +19,8 @@ const (
 	QueryGetIssue  = "get-issue"
 	QueryListIssue = "list-issue"
 )
+
+const (
+	QueryGetComment  = "get-comment"
+	QueryListComment = "list-comment"
+)

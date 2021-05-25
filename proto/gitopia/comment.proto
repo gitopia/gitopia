@@ -1,0 +1,24 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message Comment {
+  string creator = 1;
+  uint64 id = 2;
+  string parentId = 3; 
+  string commentIid = 4; 
+  string body = 5; 
+  string attachments = 6; 
+  string diffHunk = 7; 
+  string path = 8; 
+  string system = 9; 
+  string authorId = 10; 
+  string authorAssociation = 11; 
+  string createdAt = 12; 
+  string updatedAt = 13; 
+  string commentType = 14; 
+  string extensions = 15; 
+}

@@ -40,3 +40,8 @@ const (
 	IssueKey      = "Issue-value-"
 	IssueCountKey = "Issue-count-"
 )
+
+const (
+	CommentKey      = "Comment-value-"
+	CommentCountKey = "Comment-count-"
+)

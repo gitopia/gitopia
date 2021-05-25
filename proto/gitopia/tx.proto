@@ -8,6 +8,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
+  rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
+  rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
   rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
   rpc ChangeIssueState(MsgChangeIssueState) returns (MsgChangeIssueStateResponse);
@@ -24,6 +27,54 @@ service Msg {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateComment {
+  string creator = 1;
+  string parentId = 2;
+  string commentIid = 3;
+  string body = 4;
+  string attachments = 5;
+  string diffHunk = 6;
+  string path = 7;
+  string system = 8;
+  string authorId = 9;
+  string authorAssociation = 10;
+  string createdAt = 11;
+  string updatedAt = 12;
+  string commentType = 13;
+  string extensions = 14;
+}
+
+message MsgCreateCommentResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateComment {
+  string creator = 1;
+  uint64 id = 2;
+  string parentId = 3;
+  string commentIid = 4;
+  string body = 5;
+  string attachments = 6;
+  string diffHunk = 7;
+  string path = 8;
+  string system = 9;
+  string authorId = 10;
+  string authorAssociation = 11;
+  string createdAt = 12;
+  string updatedAt = 13;
+  string commentType = 14;
+  string extensions = 15;
+}
+
+message MsgUpdateCommentResponse { }
+
+message MsgDeleteComment {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteCommentResponse { }
+
 message MsgCreateIssue {
   string creator = 1;
   string title = 2;
