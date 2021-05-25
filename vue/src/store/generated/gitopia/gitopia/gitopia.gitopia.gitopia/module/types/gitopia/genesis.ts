@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
@@ -9,6 +10,8 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the capability module's genesis state. */
 export interface GenesisState {
   /** this line is used by starport scaffolding # genesis/proto/state */
+  issueList: Issue[];
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
   repositoryList: Repository[];
   /** this line is used by starport scaffolding # genesis/proto/stateField */
   userList: User[];
@@ -20,6 +23,9 @@ const baseGenesisState: object = {};
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.issueList) {
+      Issue.encode(v!, writer.uint32(34).fork()).ldelim();
+    }
     for (const v of message.repositoryList) {
       Repository.encode(v!, writer.uint32(26).fork()).ldelim();
     }
@@ -36,12 +42,16 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 4:
+          message.issueList.push(Issue.decode(reader, reader.uint32()));
+          break;
         case 3:
           message.repositoryList.push(
             Repository.decode(reader, reader.uint32())
@@ -63,9 +73,15 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.issueList !== undefined && object.issueList !== null) {
+      for (const e of object.issueList) {
+        message.issueList.push(Issue.fromJSON(e));
+      }
+    }
     if (object.repositoryList !== undefined && object.repositoryList !== null) {
       for (const e of object.repositoryList) {
         message.repositoryList.push(Repository.fromJSON(e));
@@ -86,6 +102,13 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.issueList) {
+      obj.issueList = message.issueList.map((e) =>
+        e ? Issue.toJSON(e) : undefined
+      );
+    } else {
+      obj.issueList = [];
+    }
     if (message.repositoryList) {
       obj.repositoryList = message.repositoryList.map((e) =>
         e ? Repository.toJSON(e) : undefined
@@ -112,9 +135,15 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.issueList !== undefined && object.issueList !== null) {
+      for (const e of object.issueList) {
+        message.issueList.push(Issue.fromPartial(e));
+      }
+    }
     if (object.repositoryList !== undefined && object.repositoryList !== null) {
       for (const e of object.repositoryList) {
         message.repositoryList.push(Repository.fromPartial(e));

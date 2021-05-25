@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # genesis/proto/import
+import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
@@ -11,6 +12,7 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // GenesisState defines the capability module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
+		repeated Issue issueList = 4; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated Repository repositoryList = 3; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated User userList = 2; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated Whois whoisList = 1; // this line is used by starport scaffolding # genesis/proto/stateField

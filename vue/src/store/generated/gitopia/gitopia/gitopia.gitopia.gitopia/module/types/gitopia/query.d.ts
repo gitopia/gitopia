@@ -1,10 +1,24 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Repository } from "../gitopia/repository";
+import { Issue } from "../gitopia/issue";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetIssueRequest {
+    id: number;
+}
+export interface QueryGetIssueResponse {
+    Issue: Issue | undefined;
+}
+export interface QueryAllIssueRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllIssueResponse {
+    Issue: Issue[];
+    pagination: PageResponse | undefined;
+}
 export interface QueryGetRepositoryRequest {
     id: number;
 }
@@ -44,6 +58,34 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetIssueRequest: {
+    encode(message: QueryGetIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetIssueRequest;
+    fromJSON(object: any): QueryGetIssueRequest;
+    toJSON(message: QueryGetIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetIssueRequest>): QueryGetIssueRequest;
+};
+export declare const QueryGetIssueResponse: {
+    encode(message: QueryGetIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetIssueResponse;
+    fromJSON(object: any): QueryGetIssueResponse;
+    toJSON(message: QueryGetIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetIssueResponse>): QueryGetIssueResponse;
+};
+export declare const QueryAllIssueRequest: {
+    encode(message: QueryAllIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllIssueRequest;
+    fromJSON(object: any): QueryAllIssueRequest;
+    toJSON(message: QueryAllIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllIssueRequest>): QueryAllIssueRequest;
+};
+export declare const QueryAllIssueResponse: {
+    encode(message: QueryAllIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllIssueResponse;
+    fromJSON(object: any): QueryAllIssueResponse;
+    toJSON(message: QueryAllIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllIssueResponse>): QueryAllIssueResponse;
+};
 export declare const QueryGetRepositoryRequest: {
     encode(message: QueryGetRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryRequest;
@@ -131,6 +173,8 @@ export declare const QueryAllWhoisResponse: {
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** this line is used by starport scaffolding # 2 */
+    Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
+    IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
@@ -141,6 +185,8 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
+    IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;

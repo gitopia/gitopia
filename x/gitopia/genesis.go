@@ -10,6 +10,14 @@ import (
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	// this line is used by starport scaffolding # genesis/module/init
+	// Set all the issue
+	for _, elem := range genState.IssueList {
+		k.SetIssue(ctx, *elem)
+	}
+
+	// Set issue count
+	k.SetIssueCount(ctx, uint64(len(genState.IssueList)))
+
 	// Set all the repository
 	for _, elem := range genState.RepositoryList {
 		k.SetRepository(ctx, *elem)
@@ -41,6 +49,13 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
 	// this line is used by starport scaffolding # genesis/module/export
+	// Get all issue
+	issueList := k.GetAllIssue(ctx)
+	for _, elem := range issueList {
+		elem := elem
+		genesis.IssueList = append(genesis.IssueList, &elem)
+	}
+
 	// Get all repository
 	repositoryList := k.GetAllRepository(ctx)
 	for _, elem := range repositoryList {

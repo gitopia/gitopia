@@ -1,6 +1,56 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
+export interface MsgCreateIssue {
+    creator: string;
+    iid: string;
+    title: string;
+    state: string;
+    description: string;
+    authorId: string;
+    comments: string;
+    pullRequests: string;
+    repositoryId: string;
+    labels: string;
+    weight: string;
+    assigneesId: string;
+    createdAt: string;
+    updatedAt: string;
+    closedAt: string;
+    closedBy: string;
+    extensions: string;
+}
+export interface MsgCreateIssueResponse {
+    id: number;
+}
+export interface MsgUpdateIssue {
+    creator: string;
+    id: number;
+    iid: string;
+    title: string;
+    state: string;
+    description: string;
+    authorId: string;
+    comments: string;
+    pullRequests: string;
+    repositoryId: string;
+    labels: string;
+    weight: string;
+    assigneesId: string;
+    createdAt: string;
+    updatedAt: string;
+    closedAt: string;
+    closedBy: string;
+    extensions: string;
+}
+export interface MsgUpdateIssueResponse {
+}
+export interface MsgDeleteIssue {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteIssueResponse {
+}
 export interface MsgCreateRepository {
     creator: string;
     name: string;
@@ -129,6 +179,48 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgCreateIssue: {
+    encode(message: MsgCreateIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateIssue;
+    fromJSON(object: any): MsgCreateIssue;
+    toJSON(message: MsgCreateIssue): unknown;
+    fromPartial(object: DeepPartial<MsgCreateIssue>): MsgCreateIssue;
+};
+export declare const MsgCreateIssueResponse: {
+    encode(message: MsgCreateIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateIssueResponse;
+    fromJSON(object: any): MsgCreateIssueResponse;
+    toJSON(message: MsgCreateIssueResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateIssueResponse>): MsgCreateIssueResponse;
+};
+export declare const MsgUpdateIssue: {
+    encode(message: MsgUpdateIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssue;
+    fromJSON(object: any): MsgUpdateIssue;
+    toJSON(message: MsgUpdateIssue): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue;
+};
+export declare const MsgUpdateIssueResponse: {
+    encode(_: MsgUpdateIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueResponse;
+    fromJSON(_: any): MsgUpdateIssueResponse;
+    toJSON(_: MsgUpdateIssueResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
+};
+export declare const MsgDeleteIssue: {
+    encode(message: MsgDeleteIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
+    fromJSON(object: any): MsgDeleteIssue;
+    toJSON(message: MsgDeleteIssue): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteIssue>): MsgDeleteIssue;
+};
+export declare const MsgDeleteIssueResponse: {
+    encode(_: MsgDeleteIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssueResponse;
+    fromJSON(_: any): MsgDeleteIssueResponse;
+    toJSON(_: MsgDeleteIssueResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteIssueResponse>): MsgDeleteIssueResponse;
+};
 export declare const MsgCreateRepository: {
     encode(message: MsgCreateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateRepository;
@@ -258,6 +350,9 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
+    CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
+    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
@@ -271,6 +366,9 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
+    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;

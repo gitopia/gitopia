@@ -1,3 +1,28 @@
+export interface GitopiaIssue {
+    creator?: string;
+    /** @format uint64 */
+    id?: string;
+    iid?: string;
+    title?: string;
+    state?: string;
+    description?: string;
+    authorId?: string;
+    comments?: string;
+    pullRequests?: string;
+    repositoryId?: string;
+    labels?: string;
+    weight?: string;
+    assigneesId?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    closedAt?: string;
+    closedBy?: string;
+    extensions?: string;
+}
+export interface GitopiaMsgCreateIssueResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export interface GitopiaMsgCreateRepositoryResponse {
     /** @format uint64 */
     id?: string;
@@ -6,13 +31,28 @@ export interface GitopiaMsgCreateUserResponse {
     /** @format uint64 */
     id?: string;
 }
+export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;
+export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
+export interface GitopiaQueryAllIssueResponse {
+    Issue?: GitopiaIssue[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryResponse {
     Repository?: GitopiaRepository[];
     /**
@@ -51,6 +91,9 @@ export interface GitopiaQueryAllWhoisResponse {
      *  }
      */
     pagination?: V1Beta1PageResponse;
+}
+export interface GitopiaQueryGetIssueResponse {
+    Issue?: GitopiaIssue;
 }
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
@@ -230,10 +273,32 @@ export declare class HttpClient<SecurityDataType = unknown> {
     request: <T = any, E = any>({ body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams) => Promise<HttpResponse<T, E>>;
 }
 /**
- * @title gitopia/query.proto
+ * @title gitopia/tx.proto
  * @version version not set
  */
 export declare class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryIssueAll
+     * @request GET:/gitopia/gitopia/gitopia/issue
+     */
+    queryIssueAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllIssueResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryIssue
+     * @summary this line is used by starport scaffolding # 2
+     * @request GET:/gitopia/gitopia/gitopia/issue/{id}
+     */
+    queryIssue: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetIssueResponse, RpcStatus>>;
     /**
      * No description
      *
@@ -252,7 +317,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryRepository
-     * @summary this line is used by starport scaffolding # 2
      * @request GET:/gitopia/gitopia/gitopia/repository/{id}
      */
     queryRepository: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryResponse, RpcStatus>>;

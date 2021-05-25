@@ -35,3 +35,8 @@ const (
 	RepositoryKey      = "Repository-value-"
 	RepositoryCountKey = "Repository-count-"
 )
+
+const (
+	IssueKey      = "Issue-value-"
+	IssueCountKey = "Issue-count-"
+)
