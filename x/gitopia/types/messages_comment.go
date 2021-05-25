@@ -7,11 +7,10 @@ import (
 
 var _ sdk.Msg = &MsgCreateComment{}
 
-func NewMsgCreateComment(creator string, parentId string, commentIid string, body string, attachments string, diffHunk string, path string, system string, authorId string, authorAssociation string, createdAt string, updatedAt string, commentType string, extensions string) *MsgCreateComment {
+func NewMsgCreateComment(creator string, parentId uint64, body string, attachments []string, diffHunk string, path string, system bool, authorId uint64, authorAssociation string, commentType string) *MsgCreateComment {
 	return &MsgCreateComment{
 		Creator:           creator,
 		ParentId:          parentId,
-		CommentIid:        commentIid,
 		Body:              body,
 		Attachments:       attachments,
 		DiffHunk:          diffHunk,
@@ -19,10 +18,7 @@ func NewMsgCreateComment(creator string, parentId string, commentIid string, bod
 		System:            system,
 		AuthorId:          authorId,
 		AuthorAssociation: authorAssociation,
-		CreatedAt:         createdAt,
-		UpdatedAt:         updatedAt,
 		CommentType:       commentType,
-		Extensions:        extensions,
 	}
 }
 
@@ -57,23 +53,12 @@ func (msg *MsgCreateComment) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateComment{}
 
-func NewMsgUpdateComment(creator string, id uint64, parentId string, commentIid string, body string, attachments string, diffHunk string, path string, system string, authorId string, authorAssociation string, createdAt string, updatedAt string, commentType string, extensions string) *MsgUpdateComment {
+func NewMsgUpdateComment(creator string, id uint64, body string, attachments []string) *MsgUpdateComment {
 	return &MsgUpdateComment{
-		Id:                id,
-		Creator:           creator,
-		ParentId:          parentId,
-		CommentIid:        commentIid,
-		Body:              body,
-		Attachments:       attachments,
-		DiffHunk:          diffHunk,
-		Path:              path,
-		System:            system,
-		AuthorId:          authorId,
-		AuthorAssociation: authorAssociation,
-		CreatedAt:         createdAt,
-		UpdatedAt:         updatedAt,
-		CommentType:       commentType,
-		Extensions:        extensions,
+		Id:          id,
+		Creator:     creator,
+		Body:        body,
+		Attachments: attachments,
 	}
 }
 

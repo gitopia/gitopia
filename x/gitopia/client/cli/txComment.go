@@ -1,8 +1,10 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
 	"strconv"
+	"strings"
+
+	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -12,30 +14,38 @@ import (
 
 func CmdCreateComment() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-comment [parentId] [commentIid] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [createdAt] [updatedAt] [commentType] [extensions]",
+		Use:   "create-comment [parentId] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [commentType]",
 		Short: "Creates a new comment",
-		Args:  cobra.ExactArgs(13),
+		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsParentId := string(args[0])
-			argsCommentIid := string(args[1])
-			argsBody := string(args[2])
-			argsAttachments := string(args[3])
-			argsDiffHunk := string(args[4])
-			argsPath := string(args[5])
-			argsSystem := string(args[6])
-			argsAuthorId := string(args[7])
-			argsAuthorAssociation := string(args[8])
-			argsCreatedAt := string(args[9])
-			argsUpdatedAt := string(args[10])
-			argsCommentType := string(args[11])
-			argsExtensions := string(args[12])
+			argsParentId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsBody := string(args[1])
+			argsAttachments := strings.Split(args[2], ",")
+			argsDiffHunk := string(args[3])
+			argsPath := string(args[4])
+			argsSystem, err := strconv.ParseBool(args[5])
+			if err != nil {
+				return err
+			}
+
+			argsAuthorId, err := strconv.ParseUint(args[6], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsAuthorAssociation := string(args[7])
+			argsCommentType := string(args[8])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), string(argsParentId), string(argsCommentIid), string(argsBody), string(argsAttachments), string(argsDiffHunk), string(argsPath), string(argsSystem), string(argsAuthorId), string(argsAuthorAssociation), string(argsCreatedAt), string(argsUpdatedAt), string(argsCommentType), string(argsExtensions))
+			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), argsParentId, string(argsBody), argsAttachments, string(argsDiffHunk), string(argsPath), argsSystem, argsAuthorId, string(argsAuthorAssociation), string(argsCommentType))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -50,35 +60,24 @@ func CmdCreateComment() *cobra.Command {
 
 func CmdUpdateComment() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-comment [id] [parentId] [commentIid] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [createdAt] [updatedAt] [commentType] [extensions]",
+		Use:   "update-comment [id] [body] [attachments]",
 		Short: "Update a comment",
-		Args:  cobra.ExactArgs(14),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			argsParentId := string(args[1])
-			argsCommentIid := string(args[2])
-			argsBody := string(args[3])
-			argsAttachments := string(args[4])
-			argsDiffHunk := string(args[5])
-			argsPath := string(args[6])
-			argsSystem := string(args[7])
-			argsAuthorId := string(args[8])
-			argsAuthorAssociation := string(args[9])
-			argsCreatedAt := string(args[10])
-			argsUpdatedAt := string(args[11])
-			argsCommentType := string(args[12])
-			argsExtensions := string(args[13])
+			argsBody := string(args[1])
+			argsAttachments := strings.Split(args[2], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateComment(clientCtx.GetFromAddress().String(), id, string(argsParentId), string(argsCommentIid), string(argsBody), string(argsAttachments), string(argsDiffHunk), string(argsPath), string(argsSystem), string(argsAuthorId), string(argsAuthorAssociation), string(argsCreatedAt), string(argsUpdatedAt), string(argsCommentType), string(argsExtensions))
+			msg := types.NewMsgUpdateComment(clientCtx.GetFromAddress().String(), id, string(argsBody), argsAttachments)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -93,7 +92,7 @@ func CmdUpdateComment() *cobra.Command {
 
 func CmdDeleteComment() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-comment [id] [parentId] [commentIid] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [createdAt] [updatedAt] [commentType] [extensions]",
+		Use:   "delete-comment [id]",
 		Short: "Delete a comment by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetCommentCount get the total number of comment
@@ -41,17 +42,17 @@ func (k Keeper) SetCommentCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendComment(
 	ctx sdk.Context,
 	creator string,
-	parentId string,
-	commentIid string,
+	parentId uint64,
+	commentIid uint64,
 	body string,
-	attachments string,
+	attachments []string,
 	diffHunk string,
 	path string,
-	system string,
-	authorId string,
+	system bool,
+	authorId uint64,
 	authorAssociation string,
-	createdAt string,
-	updatedAt string,
+	createdAt int64,
+	updatedAt int64,
 	commentType string,
 	extensions string,
 ) uint64 {

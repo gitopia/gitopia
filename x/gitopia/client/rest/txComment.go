@@ -15,19 +15,15 @@ import (
 type createCommentRequest struct {
 	BaseReq           rest.BaseReq `json:"base_req"`
 	Creator           string       `json:"creator"`
-	ParentId          string       `json:"parentId"`
-	CommentIid        string       `json:"commentIid"`
+	ParentId          uint64       `json:"parent_id"`
 	Body              string       `json:"body"`
-	Attachments       string       `json:"attachments"`
-	DiffHunk          string       `json:"diffHunk"`
+	Attachments       []string     `json:"attachments"`
+	DiffHunk          string       `json:"diff_hunk"`
 	Path              string       `json:"path"`
-	System            string       `json:"system"`
-	AuthorId          string       `json:"authorId"`
-	AuthorAssociation string       `json:"authorAssociation"`
-	CreatedAt         string       `json:"createdAt"`
-	UpdatedAt         string       `json:"updatedAt"`
-	CommentType       string       `json:"commentType"`
-	Extensions        string       `json:"extensions"`
+	System            bool         `json:"system"`
+	AuthorId          uint64       `json:"author_id"`
+	AuthorAssociation string       `json:"author_association"`
+	CommentType       string       `json:"comment_type"`
 }
 
 func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
@@ -51,8 +47,6 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedParentId := req.ParentId
 
-		parsedCommentIid := req.CommentIid
-
 		parsedBody := req.Body
 
 		parsedAttachments := req.Attachments
@@ -67,18 +61,11 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedAuthorAssociation := req.AuthorAssociation
 
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
 		parsedCommentType := req.CommentType
-
-		parsedExtensions := req.Extensions
 
 		msg := types.NewMsgCreateComment(
 			req.Creator,
 			parsedParentId,
-			parsedCommentIid,
 			parsedBody,
 			parsedAttachments,
 			parsedDiffHunk,
@@ -86,10 +73,7 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 			parsedSystem,
 			parsedAuthorId,
 			parsedAuthorAssociation,
-			parsedCreatedAt,
-			parsedUpdatedAt,
 			parsedCommentType,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
@@ -97,21 +81,10 @@ func createCommentHandler(clientCtx client.Context) http.HandlerFunc {
 }
 
 type updateCommentRequest struct {
-	BaseReq           rest.BaseReq `json:"base_req"`
-	Creator           string       `json:"creator"`
-	ParentId          string       `json:"parentId"`
-	CommentIid        string       `json:"commentIid"`
-	Body              string       `json:"body"`
-	Attachments       string       `json:"attachments"`
-	DiffHunk          string       `json:"diffHunk"`
-	Path              string       `json:"path"`
-	System            string       `json:"system"`
-	AuthorId          string       `json:"authorId"`
-	AuthorAssociation string       `json:"authorAssociation"`
-	CreatedAt         string       `json:"createdAt"`
-	UpdatedAt         string       `json:"updatedAt"`
-	CommentType       string       `json:"commentType"`
-	Extensions        string       `json:"extensions"`
+	BaseReq     rest.BaseReq `json:"base_req"`
+	Creator     string       `json:"creator"`
+	Body        string       `json:"body"`
+	Attachments []string     `json:"attachments"`
 }
 
 func updateCommentHandler(clientCtx client.Context) http.HandlerFunc {
@@ -138,48 +111,15 @@ func updateCommentHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedParentId := req.ParentId
-
-		parsedCommentIid := req.CommentIid
-
 		parsedBody := req.Body
 
 		parsedAttachments := req.Attachments
 
-		parsedDiffHunk := req.DiffHunk
-
-		parsedPath := req.Path
-
-		parsedSystem := req.System
-
-		parsedAuthorId := req.AuthorId
-
-		parsedAuthorAssociation := req.AuthorAssociation
-
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
-		parsedCommentType := req.CommentType
-
-		parsedExtensions := req.Extensions
-
 		msg := types.NewMsgUpdateComment(
 			req.Creator,
 			id,
-			parsedParentId,
-			parsedCommentIid,
 			parsedBody,
 			parsedAttachments,
-			parsedDiffHunk,
-			parsedPath,
-			parsedSystem,
-			parsedAuthorId,
-			parsedAuthorAssociation,
-			parsedCreatedAt,
-			parsedUpdatedAt,
-			parsedCommentType,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
