@@ -2,7 +2,6 @@ import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface User {
     creator: string;
-    id: number;
     username: string;
     usernameGithub: string;
     avatarUrl: string;

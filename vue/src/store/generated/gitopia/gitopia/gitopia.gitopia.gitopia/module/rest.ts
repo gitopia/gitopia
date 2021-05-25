@@ -98,21 +98,27 @@ export interface GitopiaRepository {
   name?: string;
   owner?: string;
   description?: string;
-  forks?: string;
+  forks?: string[];
   branches?: string;
   tags?: string;
   subscribers?: string;
   commits?: string;
-  issuesOpen?: string;
-  issuesClosed?: string;
-  pulls?: string;
+  issuesOpen?: string[];
+  issuesClosed?: string[];
+  pulls?: string[];
   labels?: string;
   releases?: string;
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
+
+  /** @format int64 */
   pushedAt?: string;
-  stargazers?: string;
-  archived?: string;
+  stargazers?: string[];
+  archived?: boolean;
   license?: string;
   defaultBranch?: string;
   extensions?: string;
@@ -120,9 +126,6 @@ export interface GitopiaRepository {
 
 export interface GitopiaUser {
   creator?: string;
-
-  /** @format uint64 */
-  id?: string;
   username?: string;
   usernameGithub?: string;
   avatarUrl?: string;

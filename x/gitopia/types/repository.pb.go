@@ -24,29 +24,29 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Repository struct {
-	Creator       string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id            uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Owner         string `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	Description   string `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Forks         string `protobuf:"bytes,6,opt,name=forks,proto3" json:"forks,omitempty"`
-	Branches      string `protobuf:"bytes,7,opt,name=branches,proto3" json:"branches,omitempty"`
-	Tags          string `protobuf:"bytes,8,opt,name=tags,proto3" json:"tags,omitempty"`
-	Subscribers   string `protobuf:"bytes,9,opt,name=subscribers,proto3" json:"subscribers,omitempty"`
-	Commits       string `protobuf:"bytes,10,opt,name=commits,proto3" json:"commits,omitempty"`
-	IssuesOpen    string `protobuf:"bytes,11,opt,name=issuesOpen,proto3" json:"issuesOpen,omitempty"`
-	IssuesClosed  string `protobuf:"bytes,12,opt,name=issuesClosed,proto3" json:"issuesClosed,omitempty"`
-	Pulls         string `protobuf:"bytes,13,opt,name=pulls,proto3" json:"pulls,omitempty"`
-	Labels        string `protobuf:"bytes,14,opt,name=labels,proto3" json:"labels,omitempty"`
-	Releases      string `protobuf:"bytes,15,opt,name=releases,proto3" json:"releases,omitempty"`
-	CreatedAt     string `protobuf:"bytes,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt     string `protobuf:"bytes,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	PushedAt      string `protobuf:"bytes,18,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
-	Stargazers    string `protobuf:"bytes,19,opt,name=stargazers,proto3" json:"stargazers,omitempty"`
-	Archived      string `protobuf:"bytes,20,opt,name=archived,proto3" json:"archived,omitempty"`
-	License       string `protobuf:"bytes,21,opt,name=license,proto3" json:"license,omitempty"`
-	DefaultBranch string `protobuf:"bytes,22,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
-	Extensions    string `protobuf:"bytes,23,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Creator       string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id            uint64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string   `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Owner         string   `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Description   string   `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Forks         []uint64 `protobuf:"varint,6,rep,packed,name=forks,proto3" json:"forks,omitempty"`
+	Branches      string   `protobuf:"bytes,7,opt,name=branches,proto3" json:"branches,omitempty"`
+	Tags          string   `protobuf:"bytes,8,opt,name=tags,proto3" json:"tags,omitempty"`
+	Subscribers   string   `protobuf:"bytes,9,opt,name=subscribers,proto3" json:"subscribers,omitempty"`
+	Commits       string   `protobuf:"bytes,10,opt,name=commits,proto3" json:"commits,omitempty"`
+	IssuesOpen    []uint64 `protobuf:"varint,11,rep,packed,name=issuesOpen,proto3" json:"issuesOpen,omitempty"`
+	IssuesClosed  []uint64 `protobuf:"varint,12,rep,packed,name=issuesClosed,proto3" json:"issuesClosed,omitempty"`
+	Pulls         []uint64 `protobuf:"varint,13,rep,packed,name=pulls,proto3" json:"pulls,omitempty"`
+	Labels        string   `protobuf:"bytes,14,opt,name=labels,proto3" json:"labels,omitempty"`
+	Releases      string   `protobuf:"bytes,15,opt,name=releases,proto3" json:"releases,omitempty"`
+	CreatedAt     int64    `protobuf:"varint,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt     int64    `protobuf:"varint,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	PushedAt      int64    `protobuf:"varint,18,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
+	Stargazers    []uint64 `protobuf:"varint,19,rep,packed,name=stargazers,proto3" json:"stargazers,omitempty"`
+	Archived      bool     `protobuf:"varint,20,opt,name=archived,proto3" json:"archived,omitempty"`
+	License       string   `protobuf:"bytes,21,opt,name=license,proto3" json:"license,omitempty"`
+	DefaultBranch string   `protobuf:"bytes,22,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
+	Extensions    string   `protobuf:"bytes,23,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *Repository) Reset()         { *m = Repository{} }
@@ -117,11 +117,11 @@ func (m *Repository) GetDescription() string {
 	return ""
 }
 
-func (m *Repository) GetForks() string {
+func (m *Repository) GetForks() []uint64 {
 	if m != nil {
 		return m.Forks
 	}
-	return ""
+	return nil
 }
 
 func (m *Repository) GetBranches() string {
@@ -152,25 +152,25 @@ func (m *Repository) GetCommits() string {
 	return ""
 }
 
-func (m *Repository) GetIssuesOpen() string {
+func (m *Repository) GetIssuesOpen() []uint64 {
 	if m != nil {
 		return m.IssuesOpen
 	}
-	return ""
+	return nil
 }
 
-func (m *Repository) GetIssuesClosed() string {
+func (m *Repository) GetIssuesClosed() []uint64 {
 	if m != nil {
 		return m.IssuesClosed
 	}
-	return ""
+	return nil
 }
 
-func (m *Repository) GetPulls() string {
+func (m *Repository) GetPulls() []uint64 {
 	if m != nil {
 		return m.Pulls
 	}
-	return ""
+	return nil
 }
 
 func (m *Repository) GetLabels() string {
@@ -187,39 +187,39 @@ func (m *Repository) GetReleases() string {
 	return ""
 }
 
-func (m *Repository) GetCreatedAt() string {
+func (m *Repository) GetCreatedAt() int64 {
 	if m != nil {
 		return m.CreatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Repository) GetUpdatedAt() string {
+func (m *Repository) GetUpdatedAt() int64 {
 	if m != nil {
 		return m.UpdatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Repository) GetPushedAt() string {
+func (m *Repository) GetPushedAt() int64 {
 	if m != nil {
 		return m.PushedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Repository) GetStargazers() string {
+func (m *Repository) GetStargazers() []uint64 {
 	if m != nil {
 		return m.Stargazers
 	}
-	return ""
+	return nil
 }
 
-func (m *Repository) GetArchived() string {
+func (m *Repository) GetArchived() bool {
 	if m != nil {
 		return m.Archived
 	}
-	return ""
+	return false
 }
 
 func (m *Repository) GetLicense() string {
@@ -250,36 +250,36 @@ func init() {
 func init() { proto.RegisterFile("gitopia/repository.proto", fileDescriptor_771033d6361900fa) }
 
 var fileDescriptor_771033d6361900fa = []byte{
-	// 449 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x52, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0x8d, 0x43, 0x92, 0x36, 0xdb, 0x0f, 0x60, 0x09, 0xed, 0xa8, 0x42, 0x56, 0x54, 0x71, 0xa8,
-	0x38, 0x24, 0x07, 0x7e, 0x01, 0x85, 0x3b, 0x52, 0x8e, 0xdc, 0xd6, 0xf6, 0xd4, 0x59, 0xe1, 0x78,
-	0x57, 0x3b, 0x6b, 0x68, 0xf9, 0x01, 0x9c, 0xf9, 0x59, 0x1c, 0x7b, 0xe4, 0x88, 0x92, 0x3f, 0x82,
-	0x76, 0xd6, 0x76, 0x52, 0x4e, 0x9e, 0xf7, 0xde, 0xcc, 0x3c, 0xbd, 0xf1, 0x0a, 0x28, 0xb5, 0x37,
-	0x56, 0xab, 0xa5, 0x43, 0x6b, 0x48, 0x7b, 0xe3, 0x1e, 0x16, 0xd6, 0x19, 0x6f, 0xe4, 0x65, 0xab,
-	0x2c, 0xfe, 0xfb, 0x5e, 0xcd, 0x4a, 0x53, 0x1a, 0xee, 0x59, 0x86, 0x2a, 0xb6, 0x5f, 0xff, 0x1c,
-	0x0b, 0xb1, 0xea, 0x77, 0x48, 0x10, 0x47, 0xb9, 0x43, 0xe5, 0x8d, 0x83, 0x64, 0x9e, 0xdc, 0x4c,
-	0x57, 0x1d, 0x94, 0xe7, 0x62, 0xa8, 0x0b, 0x18, 0xce, 0x93, 0x9b, 0xd1, 0x6a, 0xa8, 0x0b, 0x29,
-	0xc5, 0xa8, 0x56, 0x1b, 0x84, 0x67, 0xdc, 0xc6, 0xb5, 0x9c, 0x89, 0xb1, 0xf9, 0x5e, 0xa3, 0x83,
-	0x11, 0x93, 0x11, 0xc8, 0xb9, 0x38, 0x29, 0x90, 0x72, 0xa7, 0xad, 0xd7, 0xa6, 0x86, 0x31, 0x6b,
-	0x87, 0x54, 0x98, 0xbb, 0x33, 0xee, 0x2b, 0xc1, 0x24, 0xce, 0x31, 0x90, 0x57, 0xe2, 0x38, 0x73,
-	0xaa, 0xce, 0xd7, 0x48, 0x70, 0xc4, 0x42, 0x8f, 0x83, 0xbb, 0x57, 0x25, 0xc1, 0x71, 0x74, 0x0f,
-	0x75, 0xf0, 0xa1, 0x26, 0x0b, 0x5b, 0x33, 0x74, 0x04, 0xd3, 0xe8, 0x73, 0x40, 0x71, 0x3a, 0xb3,
-	0xd9, 0x68, 0x4f, 0x20, 0xda, 0x74, 0x11, 0xca, 0x54, 0x08, 0x4d, 0xd4, 0x20, 0x7d, 0xb6, 0x58,
-	0xc3, 0x09, 0x8b, 0x07, 0x8c, 0xbc, 0x16, 0xa7, 0x11, 0x7d, 0xac, 0x0c, 0x61, 0x01, 0xa7, 0xdc,
-	0xf1, 0x84, 0x0b, 0x29, 0x6c, 0x53, 0x55, 0x04, 0x67, 0x31, 0x05, 0x03, 0x79, 0x21, 0x26, 0x95,
-	0xca, 0xb0, 0x22, 0x38, 0x67, 0xba, 0x45, 0x21, 0x9d, 0xc3, 0x0a, 0x15, 0x21, 0xc1, 0xf3, 0x98,
-	0xae, 0xc3, 0xf2, 0x8d, 0x98, 0xf2, 0xd9, 0xb1, 0xf8, 0xe0, 0xe1, 0x05, 0x8b, 0x7b, 0x22, 0xa8,
-	0x8d, 0x2d, 0x5a, 0xf5, 0x65, 0x54, 0x7b, 0x22, 0xec, 0xb5, 0x0d, 0xad, 0x59, 0x94, 0x71, 0x6f,
-	0x87, 0x43, 0x4a, 0xf2, 0xca, 0x95, 0xea, 0x47, 0x38, 0xd0, 0xab, 0x98, 0x72, 0xcf, 0x84, 0x59,
-	0xe5, 0xf2, 0xb5, 0xfe, 0x86, 0x05, 0xcc, 0xe2, 0x6c, 0x87, 0xc3, 0xed, 0x2a, 0x9d, 0x63, 0x4d,
-	0x08, 0xaf, 0xe3, 0xed, 0x5a, 0x28, 0xdf, 0x8a, 0xb3, 0x02, 0xef, 0x54, 0x53, 0xf9, 0x5b, 0xfe,
-	0x3d, 0x70, 0xc1, 0xfa, 0x53, 0x32, 0x78, 0xe3, 0xbd, 0xc7, 0x9a, 0xb4, 0xa9, 0x09, 0x2e, 0xa3,
-	0xf7, 0x9e, 0xb9, 0xfd, 0xf4, 0x7b, 0x9b, 0x26, 0x8f, 0xdb, 0x34, 0xf9, 0xbb, 0x4d, 0x93, 0x5f,
-	0xbb, 0x74, 0xf0, 0xb8, 0x4b, 0x07, 0x7f, 0x76, 0xe9, 0xe0, 0xcb, 0xbb, 0x52, 0xfb, 0x75, 0x93,
-	0x2d, 0x72, 0xb3, 0x59, 0x76, 0xcf, 0xbe, 0xfb, 0xde, 0xf7, 0x95, 0x7f, 0xb0, 0x48, 0xd9, 0x84,
-	0x5f, 0xf5, 0xfb, 0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x79, 0x6a, 0x25, 0xb2, 0x20, 0x03, 0x00,
-	0x00,
+	// 458 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x52, 0x4d, 0x73, 0xd3, 0x30,
+	0x10, 0x8d, 0xf3, 0xd5, 0x44, 0xfd, 0x00, 0x44, 0x68, 0x77, 0x3a, 0x8c, 0xc7, 0xd3, 0xe1, 0xe0,
+	0xe1, 0x90, 0x1c, 0xf8, 0x05, 0x14, 0xee, 0xcc, 0xf8, 0xc8, 0x4d, 0xb6, 0xb7, 0x8e, 0x06, 0xc7,
+	0xd2, 0x68, 0x65, 0x68, 0xf9, 0x01, 0x9c, 0xf9, 0x59, 0x1c, 0x7b, 0xe4, 0xc8, 0x24, 0x7f, 0x84,
+	0x91, 0xe4, 0xb8, 0x49, 0x4f, 0xda, 0xf7, 0xde, 0x6a, 0x9f, 0xdf, 0x5a, 0x0c, 0x2a, 0x69, 0x95,
+	0x96, 0x62, 0x65, 0x50, 0x2b, 0x92, 0x56, 0x99, 0x87, 0xa5, 0x36, 0xca, 0x2a, 0x7e, 0xd5, 0x29,
+	0xcb, 0x67, 0xe7, 0xf5, 0xa2, 0x52, 0x95, 0xf2, 0x3d, 0x2b, 0x57, 0x85, 0xf6, 0x9b, 0x5f, 0x13,
+	0xc6, 0xb2, 0x7e, 0x06, 0x07, 0x76, 0x52, 0x18, 0x14, 0x56, 0x19, 0x88, 0x92, 0x28, 0x9d, 0x67,
+	0x7b, 0xc8, 0x2f, 0xd8, 0x50, 0x96, 0x30, 0x4c, 0xa2, 0x74, 0x9c, 0x0d, 0x65, 0xc9, 0x39, 0x1b,
+	0x37, 0x62, 0x83, 0x30, 0xf2, 0x6d, 0xbe, 0xe6, 0x0b, 0x36, 0x51, 0x3f, 0x1a, 0x34, 0x30, 0xf6,
+	0x64, 0x00, 0x3c, 0x61, 0xa7, 0x25, 0x52, 0x61, 0xa4, 0xb6, 0x52, 0x35, 0x30, 0xf1, 0xda, 0x21,
+	0xe5, 0xee, 0xdd, 0x29, 0xf3, 0x8d, 0x60, 0x9a, 0x8c, 0xd2, 0x71, 0x16, 0x00, 0xbf, 0x66, 0xb3,
+	0xdc, 0x88, 0xa6, 0x58, 0x23, 0xc1, 0x89, 0xbf, 0xd4, 0x63, 0xe7, 0x6e, 0x45, 0x45, 0x30, 0x0b,
+	0xee, 0xae, 0x76, 0x3e, 0xd4, 0xe6, 0x6e, 0x6a, 0x8e, 0x86, 0x60, 0x1e, 0x7c, 0x0e, 0x28, 0x9f,
+	0x4e, 0x6d, 0x36, 0xd2, 0x12, 0xb0, 0x2e, 0x5d, 0x80, 0x3c, 0x66, 0x4c, 0x12, 0xb5, 0x48, 0x5f,
+	0x34, 0x36, 0x70, 0xea, 0x3f, 0xe3, 0x80, 0xe1, 0x37, 0xec, 0x2c, 0xa0, 0x4f, 0xb5, 0x22, 0x2c,
+	0xe1, 0xcc, 0x77, 0x1c, 0x71, 0x2e, 0x85, 0x6e, 0xeb, 0x9a, 0xe0, 0x3c, 0xa4, 0xf0, 0x80, 0x5f,
+	0xb2, 0x69, 0x2d, 0x72, 0xac, 0x09, 0x2e, 0xbc, 0x65, 0x87, 0x5c, 0x3a, 0x83, 0x35, 0x0a, 0x42,
+	0x82, 0x17, 0x21, 0xdd, 0x1e, 0xf3, 0xb7, 0x6c, 0xee, 0xd7, 0x8e, 0xe5, 0x47, 0x0b, 0x2f, 0x93,
+	0x28, 0x1d, 0x65, 0x4f, 0x84, 0x53, 0x5b, 0x5d, 0x76, 0xea, 0xab, 0xa0, 0xf6, 0x84, 0x9b, 0xab,
+	0x5b, 0x5a, 0x7b, 0x91, 0x7b, 0xb1, 0xc7, 0x2e, 0x25, 0x59, 0x61, 0x2a, 0xf1, 0xd3, 0x2d, 0xe8,
+	0x75, 0x48, 0xf9, 0xc4, 0xb8, 0xbb, 0xc2, 0x14, 0x6b, 0xf9, 0x1d, 0x4b, 0x58, 0x24, 0x51, 0x3a,
+	0xcb, 0x7a, 0xec, 0x76, 0x57, 0xcb, 0x02, 0x1b, 0x42, 0x78, 0x13, 0x76, 0xd7, 0x41, 0xfe, 0x8e,
+	0x9d, 0x97, 0x78, 0x27, 0xda, 0xda, 0xde, 0xfa, 0xdf, 0x03, 0x97, 0x5e, 0x3f, 0x26, 0x9d, 0x37,
+	0xde, 0x5b, 0x6c, 0x48, 0xaa, 0x86, 0xe0, 0xca, 0xb7, 0x1c, 0x30, 0xb7, 0x9f, 0xff, 0x6c, 0xe3,
+	0xe8, 0x71, 0x1b, 0x47, 0xff, 0xb6, 0x71, 0xf4, 0x7b, 0x17, 0x0f, 0x1e, 0x77, 0xf1, 0xe0, 0xef,
+	0x2e, 0x1e, 0x7c, 0x7d, 0x5f, 0x49, 0xbb, 0x6e, 0xf3, 0x65, 0xa1, 0x36, 0xab, 0xfd, 0xb3, 0xdf,
+	0x9f, 0xf7, 0x7d, 0x65, 0x1f, 0x34, 0x52, 0x3e, 0xf5, 0xaf, 0xfa, 0xc3, 0xff, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0xaf, 0x2f, 0x44, 0x83, 0x20, 0x03, 0x00, 0x00,
 }
 
 func (m *Repository) Marshal() (dAtA []byte, err error) {
@@ -329,50 +329,58 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0xaa
 	}
-	if len(m.Archived) > 0 {
-		i -= len(m.Archived)
-		copy(dAtA[i:], m.Archived)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Archived)))
+	if m.Archived {
+		i--
+		if m.Archived {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xa2
+		dAtA[i] = 0xa0
 	}
 	if len(m.Stargazers) > 0 {
-		i -= len(m.Stargazers)
-		copy(dAtA[i:], m.Stargazers)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Stargazers)))
+		dAtA2 := make([]byte, len(m.Stargazers)*10)
+		var j1 int
+		for _, num := range m.Stargazers {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintRepository(dAtA, i, uint64(j1))
 		i--
 		dAtA[i] = 0x1
 		i--
 		dAtA[i] = 0x9a
 	}
-	if len(m.PushedAt) > 0 {
-		i -= len(m.PushedAt)
-		copy(dAtA[i:], m.PushedAt)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.PushedAt)))
+	if m.PushedAt != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.PushedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x92
+		dAtA[i] = 0x90
 	}
-	if len(m.UpdatedAt) > 0 {
-		i -= len(m.UpdatedAt)
-		copy(dAtA[i:], m.UpdatedAt)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.UpdatedAt)))
+	if m.UpdatedAt != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.UpdatedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x8a
+		dAtA[i] = 0x88
 	}
-	if len(m.CreatedAt) > 0 {
-		i -= len(m.CreatedAt)
-		copy(dAtA[i:], m.CreatedAt)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.CreatedAt)))
+	if m.CreatedAt != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.CreatedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x82
+		dAtA[i] = 0x80
 	}
 	if len(m.Releases) > 0 {
 		i -= len(m.Releases)
@@ -389,23 +397,56 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x72
 	}
 	if len(m.Pulls) > 0 {
-		i -= len(m.Pulls)
-		copy(dAtA[i:], m.Pulls)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Pulls)))
+		dAtA4 := make([]byte, len(m.Pulls)*10)
+		var j3 int
+		for _, num := range m.Pulls {
+			for num >= 1<<7 {
+				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j3++
+			}
+			dAtA4[j3] = uint8(num)
+			j3++
+		}
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintRepository(dAtA, i, uint64(j3))
 		i--
 		dAtA[i] = 0x6a
 	}
 	if len(m.IssuesClosed) > 0 {
-		i -= len(m.IssuesClosed)
-		copy(dAtA[i:], m.IssuesClosed)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.IssuesClosed)))
+		dAtA6 := make([]byte, len(m.IssuesClosed)*10)
+		var j5 int
+		for _, num := range m.IssuesClosed {
+			for num >= 1<<7 {
+				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j5++
+			}
+			dAtA6[j5] = uint8(num)
+			j5++
+		}
+		i -= j5
+		copy(dAtA[i:], dAtA6[:j5])
+		i = encodeVarintRepository(dAtA, i, uint64(j5))
 		i--
 		dAtA[i] = 0x62
 	}
 	if len(m.IssuesOpen) > 0 {
-		i -= len(m.IssuesOpen)
-		copy(dAtA[i:], m.IssuesOpen)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.IssuesOpen)))
+		dAtA8 := make([]byte, len(m.IssuesOpen)*10)
+		var j7 int
+		for _, num := range m.IssuesOpen {
+			for num >= 1<<7 {
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j7++
+			}
+			dAtA8[j7] = uint8(num)
+			j7++
+		}
+		i -= j7
+		copy(dAtA[i:], dAtA8[:j7])
+		i = encodeVarintRepository(dAtA, i, uint64(j7))
 		i--
 		dAtA[i] = 0x5a
 	}
@@ -438,9 +479,20 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x3a
 	}
 	if len(m.Forks) > 0 {
-		i -= len(m.Forks)
-		copy(dAtA[i:], m.Forks)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Forks)))
+		dAtA10 := make([]byte, len(m.Forks)*10)
+		var j9 int
+		for _, num := range m.Forks {
+			for num >= 1<<7 {
+				dAtA10[j9] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j9++
+			}
+			dAtA10[j9] = uint8(num)
+			j9++
+		}
+		i -= j9
+		copy(dAtA[i:], dAtA10[:j9])
+		i = encodeVarintRepository(dAtA, i, uint64(j9))
 		i--
 		dAtA[i] = 0x32
 	}
@@ -516,9 +568,12 @@ func (m *Repository) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
-	l = len(m.Forks)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
+	if len(m.Forks) > 0 {
+		l = 0
+		for _, e := range m.Forks {
+			l += sovRepository(uint64(e))
+		}
+		n += 1 + sovRepository(uint64(l)) + l
 	}
 	l = len(m.Branches)
 	if l > 0 {
@@ -536,17 +591,26 @@ func (m *Repository) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
-	l = len(m.IssuesOpen)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
+	if len(m.IssuesOpen) > 0 {
+		l = 0
+		for _, e := range m.IssuesOpen {
+			l += sovRepository(uint64(e))
+		}
+		n += 1 + sovRepository(uint64(l)) + l
 	}
-	l = len(m.IssuesClosed)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
+	if len(m.IssuesClosed) > 0 {
+		l = 0
+		for _, e := range m.IssuesClosed {
+			l += sovRepository(uint64(e))
+		}
+		n += 1 + sovRepository(uint64(l)) + l
 	}
-	l = len(m.Pulls)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
+	if len(m.Pulls) > 0 {
+		l = 0
+		for _, e := range m.Pulls {
+			l += sovRepository(uint64(e))
+		}
+		n += 1 + sovRepository(uint64(l)) + l
 	}
 	l = len(m.Labels)
 	if l > 0 {
@@ -556,25 +620,24 @@ func (m *Repository) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
-	l = len(m.CreatedAt)
-	if l > 0 {
-		n += 2 + l + sovRepository(uint64(l))
+	if m.CreatedAt != 0 {
+		n += 2 + sovRepository(uint64(m.CreatedAt))
 	}
-	l = len(m.UpdatedAt)
-	if l > 0 {
-		n += 2 + l + sovRepository(uint64(l))
+	if m.UpdatedAt != 0 {
+		n += 2 + sovRepository(uint64(m.UpdatedAt))
 	}
-	l = len(m.PushedAt)
-	if l > 0 {
-		n += 2 + l + sovRepository(uint64(l))
+	if m.PushedAt != 0 {
+		n += 2 + sovRepository(uint64(m.PushedAt))
 	}
-	l = len(m.Stargazers)
-	if l > 0 {
-		n += 2 + l + sovRepository(uint64(l))
+	if len(m.Stargazers) > 0 {
+		l = 0
+		for _, e := range m.Stargazers {
+			l += sovRepository(uint64(e))
+		}
+		n += 2 + sovRepository(uint64(l)) + l
 	}
-	l = len(m.Archived)
-	if l > 0 {
-		n += 2 + l + sovRepository(uint64(l))
+	if m.Archived {
+		n += 3
 	}
 	l = len(m.License)
 	if l > 0 {
@@ -774,37 +837,81 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Forks", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Forks = append(m.Forks, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthRepository
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthRepository
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
+				elementCount = count
+				if elementCount != 0 && len(m.Forks) == 0 {
+					m.Forks = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRepository
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Forks = append(m.Forks, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Forks", wireType)
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Forks = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Branches", wireType)
@@ -934,101 +1041,233 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			m.Commits = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 11:
-			if wireType != 2 {
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.IssuesOpen = append(m.IssuesOpen, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthRepository
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthRepository
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.IssuesOpen) == 0 {
+					m.IssuesOpen = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRepository
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.IssuesOpen = append(m.IssuesOpen, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field IssuesOpen", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
+		case 12:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.IssuesClosed = append(m.IssuesClosed, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthRepository
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthRepository
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IssuesOpen = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 12:
-			if wireType != 2 {
+				elementCount = count
+				if elementCount != 0 && len(m.IssuesClosed) == 0 {
+					m.IssuesClosed = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRepository
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.IssuesClosed = append(m.IssuesClosed, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field IssuesClosed", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
+		case 13:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Pulls = append(m.Pulls, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthRepository
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthRepository
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IssuesClosed = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 13:
-			if wireType != 2 {
+				elementCount = count
+				if elementCount != 0 && len(m.Pulls) == 0 {
+					m.Pulls = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRepository
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Pulls = append(m.Pulls, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Pulls", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Pulls = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 14:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
@@ -1094,10 +1333,10 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			m.Releases = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 16:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
-			var stringLen uint64
+			m.CreatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRepository
@@ -1107,29 +1346,16 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.CreatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CreatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 17:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
-			var stringLen uint64
+			m.UpdatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRepository
@@ -1139,29 +1365,16 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.UpdatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 18:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PushedAt", wireType)
 			}
-			var stringLen uint64
+			m.PushedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRepository
@@ -1171,61 +1384,92 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.PushedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PushedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 19:
-			if wireType != 2 {
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Stargazers = append(m.Stargazers, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRepository
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthRepository
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthRepository
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Stargazers) == 0 {
+					m.Stargazers = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRepository
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Stargazers = append(m.Stargazers, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stargazers", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Stargazers = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 20:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Archived", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRepository
@@ -1235,24 +1479,12 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Archived = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.Archived = bool(v != 0)
 		case 21:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field License", wireType)

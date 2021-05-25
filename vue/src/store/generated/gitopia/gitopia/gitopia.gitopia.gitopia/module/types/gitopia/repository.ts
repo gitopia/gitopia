@@ -10,21 +10,21 @@ export interface Repository {
   name: string;
   owner: string;
   description: string;
-  forks: string;
+  forks: number[];
   branches: string;
   tags: string;
   subscribers: string;
   commits: string;
-  issuesOpen: string;
-  issuesClosed: string;
-  pulls: string;
+  issuesOpen: number[];
+  issuesClosed: number[];
+  pulls: number[];
   labels: string;
   releases: string;
-  createdAt: string;
-  updatedAt: string;
-  pushedAt: string;
-  stargazers: string;
-  archived: string;
+  createdAt: number;
+  updatedAt: number;
+  pushedAt: number;
+  stargazers: number[];
+  archived: boolean;
   license: string;
   defaultBranch: string;
   extensions: string;
@@ -36,21 +36,21 @@ const baseRepository: object = {
   name: "",
   owner: "",
   description: "",
-  forks: "",
+  forks: 0,
   branches: "",
   tags: "",
   subscribers: "",
   commits: "",
-  issuesOpen: "",
-  issuesClosed: "",
-  pulls: "",
+  issuesOpen: 0,
+  issuesClosed: 0,
+  pulls: 0,
   labels: "",
   releases: "",
-  createdAt: "",
-  updatedAt: "",
-  pushedAt: "",
-  stargazers: "",
-  archived: "",
+  createdAt: 0,
+  updatedAt: 0,
+  pushedAt: 0,
+  stargazers: 0,
+  archived: false,
   license: "",
   defaultBranch: "",
   extensions: "",
@@ -73,9 +73,11 @@ export const Repository = {
     if (message.description !== "") {
       writer.uint32(42).string(message.description);
     }
-    if (message.forks !== "") {
-      writer.uint32(50).string(message.forks);
+    writer.uint32(50).fork();
+    for (const v of message.forks) {
+      writer.uint64(v);
     }
+    writer.ldelim();
     if (message.branches !== "") {
       writer.uint32(58).string(message.branches);
     }
@@ -88,35 +90,43 @@ export const Repository = {
     if (message.commits !== "") {
       writer.uint32(82).string(message.commits);
     }
-    if (message.issuesOpen !== "") {
-      writer.uint32(90).string(message.issuesOpen);
+    writer.uint32(90).fork();
+    for (const v of message.issuesOpen) {
+      writer.uint64(v);
     }
-    if (message.issuesClosed !== "") {
-      writer.uint32(98).string(message.issuesClosed);
+    writer.ldelim();
+    writer.uint32(98).fork();
+    for (const v of message.issuesClosed) {
+      writer.uint64(v);
     }
-    if (message.pulls !== "") {
-      writer.uint32(106).string(message.pulls);
+    writer.ldelim();
+    writer.uint32(106).fork();
+    for (const v of message.pulls) {
+      writer.uint64(v);
     }
+    writer.ldelim();
     if (message.labels !== "") {
       writer.uint32(114).string(message.labels);
     }
     if (message.releases !== "") {
       writer.uint32(122).string(message.releases);
     }
-    if (message.createdAt !== "") {
-      writer.uint32(130).string(message.createdAt);
+    if (message.createdAt !== 0) {
+      writer.uint32(128).int64(message.createdAt);
     }
-    if (message.updatedAt !== "") {
-      writer.uint32(138).string(message.updatedAt);
+    if (message.updatedAt !== 0) {
+      writer.uint32(136).int64(message.updatedAt);
     }
-    if (message.pushedAt !== "") {
-      writer.uint32(146).string(message.pushedAt);
+    if (message.pushedAt !== 0) {
+      writer.uint32(144).int64(message.pushedAt);
     }
-    if (message.stargazers !== "") {
-      writer.uint32(154).string(message.stargazers);
+    writer.uint32(154).fork();
+    for (const v of message.stargazers) {
+      writer.uint64(v);
     }
-    if (message.archived !== "") {
-      writer.uint32(162).string(message.archived);
+    writer.ldelim();
+    if (message.archived === true) {
+      writer.uint32(160).bool(message.archived);
     }
     if (message.license !== "") {
       writer.uint32(170).string(message.license);
@@ -134,6 +144,11 @@ export const Repository = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRepository } as Repository;
+    message.forks = [];
+    message.issuesOpen = [];
+    message.issuesClosed = [];
+    message.pulls = [];
+    message.stargazers = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -153,7 +168,14 @@ export const Repository = {
           message.description = reader.string();
           break;
         case 6:
-          message.forks = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.forks.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.forks.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 7:
           message.branches = reader.string();
@@ -168,13 +190,34 @@ export const Repository = {
           message.commits = reader.string();
           break;
         case 11:
-          message.issuesOpen = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.issuesOpen.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.issuesOpen.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 12:
-          message.issuesClosed = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.issuesClosed.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.issuesClosed.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 13:
-          message.pulls = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.pulls.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.pulls.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 14:
           message.labels = reader.string();
@@ -183,19 +226,26 @@ export const Repository = {
           message.releases = reader.string();
           break;
         case 16:
-          message.createdAt = reader.string();
+          message.createdAt = longToNumber(reader.int64() as Long);
           break;
         case 17:
-          message.updatedAt = reader.string();
+          message.updatedAt = longToNumber(reader.int64() as Long);
           break;
         case 18:
-          message.pushedAt = reader.string();
+          message.pushedAt = longToNumber(reader.int64() as Long);
           break;
         case 19:
-          message.stargazers = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.stargazers.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.stargazers.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 20:
-          message.archived = reader.string();
+          message.archived = reader.bool();
           break;
         case 21:
           message.license = reader.string();
@@ -216,6 +266,11 @@ export const Repository = {
 
   fromJSON(object: any): Repository {
     const message = { ...baseRepository } as Repository;
+    message.forks = [];
+    message.issuesOpen = [];
+    message.issuesClosed = [];
+    message.pulls = [];
+    message.stargazers = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -242,9 +297,9 @@ export const Repository = {
       message.description = "";
     }
     if (object.forks !== undefined && object.forks !== null) {
-      message.forks = String(object.forks);
-    } else {
-      message.forks = "";
+      for (const e of object.forks) {
+        message.forks.push(Number(e));
+      }
     }
     if (object.branches !== undefined && object.branches !== null) {
       message.branches = String(object.branches);
@@ -267,19 +322,19 @@ export const Repository = {
       message.commits = "";
     }
     if (object.issuesOpen !== undefined && object.issuesOpen !== null) {
-      message.issuesOpen = String(object.issuesOpen);
-    } else {
-      message.issuesOpen = "";
+      for (const e of object.issuesOpen) {
+        message.issuesOpen.push(Number(e));
+      }
     }
     if (object.issuesClosed !== undefined && object.issuesClosed !== null) {
-      message.issuesClosed = String(object.issuesClosed);
-    } else {
-      message.issuesClosed = "";
+      for (const e of object.issuesClosed) {
+        message.issuesClosed.push(Number(e));
+      }
     }
     if (object.pulls !== undefined && object.pulls !== null) {
-      message.pulls = String(object.pulls);
-    } else {
-      message.pulls = "";
+      for (const e of object.pulls) {
+        message.pulls.push(Number(e));
+      }
     }
     if (object.labels !== undefined && object.labels !== null) {
       message.labels = String(object.labels);
@@ -292,29 +347,29 @@ export const Repository = {
       message.releases = "";
     }
     if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = String(object.createdAt);
+      message.createdAt = Number(object.createdAt);
     } else {
-      message.createdAt = "";
+      message.createdAt = 0;
     }
     if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = String(object.updatedAt);
+      message.updatedAt = Number(object.updatedAt);
     } else {
-      message.updatedAt = "";
+      message.updatedAt = 0;
     }
     if (object.pushedAt !== undefined && object.pushedAt !== null) {
-      message.pushedAt = String(object.pushedAt);
+      message.pushedAt = Number(object.pushedAt);
     } else {
-      message.pushedAt = "";
+      message.pushedAt = 0;
     }
     if (object.stargazers !== undefined && object.stargazers !== null) {
-      message.stargazers = String(object.stargazers);
-    } else {
-      message.stargazers = "";
+      for (const e of object.stargazers) {
+        message.stargazers.push(Number(e));
+      }
     }
     if (object.archived !== undefined && object.archived !== null) {
-      message.archived = String(object.archived);
+      message.archived = Boolean(object.archived);
     } else {
-      message.archived = "";
+      message.archived = false;
     }
     if (object.license !== undefined && object.license !== null) {
       message.license = String(object.license);
@@ -342,22 +397,41 @@ export const Repository = {
     message.owner !== undefined && (obj.owner = message.owner);
     message.description !== undefined &&
       (obj.description = message.description);
-    message.forks !== undefined && (obj.forks = message.forks);
+    if (message.forks) {
+      obj.forks = message.forks.map((e) => e);
+    } else {
+      obj.forks = [];
+    }
     message.branches !== undefined && (obj.branches = message.branches);
     message.tags !== undefined && (obj.tags = message.tags);
     message.subscribers !== undefined &&
       (obj.subscribers = message.subscribers);
     message.commits !== undefined && (obj.commits = message.commits);
-    message.issuesOpen !== undefined && (obj.issuesOpen = message.issuesOpen);
-    message.issuesClosed !== undefined &&
-      (obj.issuesClosed = message.issuesClosed);
-    message.pulls !== undefined && (obj.pulls = message.pulls);
+    if (message.issuesOpen) {
+      obj.issuesOpen = message.issuesOpen.map((e) => e);
+    } else {
+      obj.issuesOpen = [];
+    }
+    if (message.issuesClosed) {
+      obj.issuesClosed = message.issuesClosed.map((e) => e);
+    } else {
+      obj.issuesClosed = [];
+    }
+    if (message.pulls) {
+      obj.pulls = message.pulls.map((e) => e);
+    } else {
+      obj.pulls = [];
+    }
     message.labels !== undefined && (obj.labels = message.labels);
     message.releases !== undefined && (obj.releases = message.releases);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
     message.pushedAt !== undefined && (obj.pushedAt = message.pushedAt);
-    message.stargazers !== undefined && (obj.stargazers = message.stargazers);
+    if (message.stargazers) {
+      obj.stargazers = message.stargazers.map((e) => e);
+    } else {
+      obj.stargazers = [];
+    }
     message.archived !== undefined && (obj.archived = message.archived);
     message.license !== undefined && (obj.license = message.license);
     message.defaultBranch !== undefined &&
@@ -368,6 +442,11 @@ export const Repository = {
 
   fromPartial(object: DeepPartial<Repository>): Repository {
     const message = { ...baseRepository } as Repository;
+    message.forks = [];
+    message.issuesOpen = [];
+    message.issuesClosed = [];
+    message.pulls = [];
+    message.stargazers = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -394,9 +473,9 @@ export const Repository = {
       message.description = "";
     }
     if (object.forks !== undefined && object.forks !== null) {
-      message.forks = object.forks;
-    } else {
-      message.forks = "";
+      for (const e of object.forks) {
+        message.forks.push(e);
+      }
     }
     if (object.branches !== undefined && object.branches !== null) {
       message.branches = object.branches;
@@ -419,19 +498,19 @@ export const Repository = {
       message.commits = "";
     }
     if (object.issuesOpen !== undefined && object.issuesOpen !== null) {
-      message.issuesOpen = object.issuesOpen;
-    } else {
-      message.issuesOpen = "";
+      for (const e of object.issuesOpen) {
+        message.issuesOpen.push(e);
+      }
     }
     if (object.issuesClosed !== undefined && object.issuesClosed !== null) {
-      message.issuesClosed = object.issuesClosed;
-    } else {
-      message.issuesClosed = "";
+      for (const e of object.issuesClosed) {
+        message.issuesClosed.push(e);
+      }
     }
     if (object.pulls !== undefined && object.pulls !== null) {
-      message.pulls = object.pulls;
-    } else {
-      message.pulls = "";
+      for (const e of object.pulls) {
+        message.pulls.push(e);
+      }
     }
     if (object.labels !== undefined && object.labels !== null) {
       message.labels = object.labels;
@@ -446,27 +525,27 @@ export const Repository = {
     if (object.createdAt !== undefined && object.createdAt !== null) {
       message.createdAt = object.createdAt;
     } else {
-      message.createdAt = "";
+      message.createdAt = 0;
     }
     if (object.updatedAt !== undefined && object.updatedAt !== null) {
       message.updatedAt = object.updatedAt;
     } else {
-      message.updatedAt = "";
+      message.updatedAt = 0;
     }
     if (object.pushedAt !== undefined && object.pushedAt !== null) {
       message.pushedAt = object.pushedAt;
     } else {
-      message.pushedAt = "";
+      message.pushedAt = 0;
     }
     if (object.stargazers !== undefined && object.stargazers !== null) {
-      message.stargazers = object.stargazers;
-    } else {
-      message.stargazers = "";
+      for (const e of object.stargazers) {
+        message.stargazers.push(e);
+      }
     }
     if (object.archived !== undefined && object.archived !== null) {
       message.archived = object.archived;
     } else {
-      message.archived = "";
+      message.archived = false;
     }
     if (object.license !== undefined && object.license !== null) {
       message.license = object.license;

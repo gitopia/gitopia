@@ -6,25 +6,25 @@ import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "
 import { Api } from "./rest";
 import { MsgUpdateRepository } from "./types/gitopia/tx";
 import { MsgDeleteRepository } from "./types/gitopia/tx";
-import { MsgDeleteWhois } from "./types/gitopia/tx";
 import { MsgDeleteUser } from "./types/gitopia/tx";
-import { MsgCreateRepository } from "./types/gitopia/tx";
-import { MsgSetWhois } from "./types/gitopia/tx";
-import { MsgUpdateWhois } from "./types/gitopia/tx";
 import { MsgUpdateUser } from "./types/gitopia/tx";
+import { MsgDeleteWhois } from "./types/gitopia/tx";
 import { MsgCreateUser } from "./types/gitopia/tx";
+import { MsgUpdateWhois } from "./types/gitopia/tx";
+import { MsgSetWhois } from "./types/gitopia/tx";
+import { MsgCreateRepository } from "./types/gitopia/tx";
 
 
 const types = [
   ["/gitopia.gitopia.gitopia.MsgUpdateRepository", MsgUpdateRepository],
   ["/gitopia.gitopia.gitopia.MsgDeleteRepository", MsgDeleteRepository],
-  ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
   ["/gitopia.gitopia.gitopia.MsgDeleteUser", MsgDeleteUser],
-  ["/gitopia.gitopia.gitopia.MsgCreateRepository", MsgCreateRepository],
-  ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
-  ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
   ["/gitopia.gitopia.gitopia.MsgUpdateUser", MsgUpdateUser],
+  ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
   ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
+  ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
+  ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
+  ["/gitopia.gitopia.gitopia.MsgCreateRepository", MsgCreateRepository],
   
 ];
 
@@ -54,13 +54,13 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     signAndBroadcast: (msgs: EncodeObject[], { fee=defaultFee, memo=null }: SignAndBroadcastOptions) => memo?client.signAndBroadcast(address, msgs, fee,memo):client.signAndBroadcast(address, msgs, fee),
     msgUpdateRepository: (data: MsgUpdateRepository): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepository", value: data }),
     msgDeleteRepository: (data: MsgDeleteRepository): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRepository", value: data }),
-    msgDeleteWhois: (data: MsgDeleteWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
     msgDeleteUser: (data: MsgDeleteUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: data }),
-    msgCreateRepository: (data: MsgCreateRepository): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: data }),
-    msgSetWhois: (data: MsgSetWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
-    msgUpdateWhois: (data: MsgUpdateWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
     msgUpdateUser: (data: MsgUpdateUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUser", value: data }),
+    msgDeleteWhois: (data: MsgDeleteWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
     msgCreateUser: (data: MsgCreateUser): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
+    msgUpdateWhois: (data: MsgUpdateWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
+    msgSetWhois: (data: MsgSetWhois): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
+    msgCreateRepository: (data: MsgCreateRepository): EncodeObject => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: data }),
     
   };
 };

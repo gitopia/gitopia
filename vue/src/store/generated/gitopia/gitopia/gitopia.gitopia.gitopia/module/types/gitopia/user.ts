@@ -6,7 +6,6 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 
 export interface User {
   creator: string;
-  id: number;
   username: string;
   usernameGithub: string;
   avatarUrl: string;
@@ -26,7 +25,6 @@ export interface User {
 
 const baseUser: object = {
   creator: "",
-  id: 0,
   username: "",
   usernameGithub: "",
   avatarUrl: "",
@@ -49,65 +47,62 @@ export const User = {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
     if (message.username !== "") {
-      writer.uint32(26).string(message.username);
+      writer.uint32(18).string(message.username);
     }
     if (message.usernameGithub !== "") {
-      writer.uint32(34).string(message.usernameGithub);
+      writer.uint32(26).string(message.usernameGithub);
     }
     if (message.avatarUrl !== "") {
-      writer.uint32(42).string(message.avatarUrl);
+      writer.uint32(34).string(message.avatarUrl);
     }
-    writer.uint32(50).fork();
+    writer.uint32(42).fork();
     for (const v of message.followers) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(58).fork();
+    writer.uint32(50).fork();
     for (const v of message.following) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(66).fork();
+    writer.uint32(58).fork();
     for (const v of message.repositories) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(74).fork();
+    writer.uint32(66).fork();
     for (const v of message.repositoriesArchived) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(82).fork();
+    writer.uint32(74).fork();
     for (const v of message.organizations) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(90).fork();
+    writer.uint32(82).fork();
     for (const v of message.starredRepos) {
       writer.uint64(v);
     }
     writer.ldelim();
     if (message.subscriptions !== "") {
-      writer.uint32(98).string(message.subscriptions);
+      writer.uint32(90).string(message.subscriptions);
     }
     if (message.email !== "") {
-      writer.uint32(106).string(message.email);
+      writer.uint32(98).string(message.email);
     }
     if (message.bio !== "") {
-      writer.uint32(114).string(message.bio);
+      writer.uint32(106).string(message.bio);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(120).int64(message.createdAt);
+      writer.uint32(112).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(128).int64(message.updatedAt);
+      writer.uint32(120).int64(message.updatedAt);
     }
     if (message.extensions !== "") {
-      writer.uint32(138).string(message.extensions);
+      writer.uint32(130).string(message.extensions);
     }
     return writer;
   },
@@ -129,18 +124,15 @@ export const User = {
           message.creator = reader.string();
           break;
         case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
           message.username = reader.string();
           break;
-        case 4:
+        case 3:
           message.usernameGithub = reader.string();
           break;
-        case 5:
+        case 4:
           message.avatarUrl = reader.string();
           break;
-        case 6:
+        case 5:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -150,7 +142,7 @@ export const User = {
             message.followers.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 7:
+        case 6:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -160,7 +152,7 @@ export const User = {
             message.following.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 8:
+        case 7:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -170,7 +162,7 @@ export const User = {
             message.repositories.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 9:
+        case 8:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -184,7 +176,7 @@ export const User = {
             );
           }
           break;
-        case 10:
+        case 9:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -194,7 +186,7 @@ export const User = {
             message.organizations.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 11:
+        case 10:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -204,22 +196,22 @@ export const User = {
             message.starredRepos.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 12:
+        case 11:
           message.subscriptions = reader.string();
           break;
-        case 13:
+        case 12:
           message.email = reader.string();
           break;
-        case 14:
+        case 13:
           message.bio = reader.string();
           break;
-        case 15:
+        case 14:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 15:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 16:
           message.extensions = reader.string();
           break;
         default:
@@ -242,11 +234,6 @@ export const User = {
       message.creator = String(object.creator);
     } else {
       message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
     }
     if (object.username !== undefined && object.username !== null) {
       message.username = String(object.username);
@@ -332,7 +319,6 @@ export const User = {
   toJSON(message: User): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
     message.username !== undefined && (obj.username = message.username);
     message.usernameGithub !== undefined &&
       (obj.usernameGithub = message.usernameGithub);
@@ -389,11 +375,6 @@ export const User = {
       message.creator = object.creator;
     } else {
       message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
     }
     if (object.username !== undefined && object.username !== null) {
       message.username = object.username;
