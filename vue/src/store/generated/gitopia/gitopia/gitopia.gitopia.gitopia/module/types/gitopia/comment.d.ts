@@ -3,17 +3,17 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Comment {
     creator: string;
     id: number;
-    parentId: string;
-    commentIid: string;
+    parentId: number;
+    commentIid: number;
     body: string;
-    attachments: string;
+    attachments: string[];
     diffHunk: string;
     path: string;
-    system: string;
-    authorId: string;
+    system: boolean;
+    authorId: number;
     authorAssociation: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: number;
+    updatedAt: number;
     commentType: string;
     extensions: string;
 }

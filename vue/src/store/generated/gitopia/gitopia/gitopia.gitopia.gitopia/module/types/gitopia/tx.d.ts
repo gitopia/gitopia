@@ -3,19 +3,15 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateComment {
     creator: string;
-    parentId: string;
-    commentIid: string;
+    parentId: number;
     body: string;
-    attachments: string;
+    attachments: string[];
     diffHunk: string;
     path: string;
-    system: string;
-    authorId: string;
+    system: boolean;
+    authorId: number;
     authorAssociation: string;
-    createdAt: string;
-    updatedAt: string;
     commentType: string;
-    extensions: string;
 }
 export interface MsgCreateCommentResponse {
     id: number;
@@ -23,19 +19,8 @@ export interface MsgCreateCommentResponse {
 export interface MsgUpdateComment {
     creator: string;
     id: number;
-    parentId: string;
-    commentIid: string;
     body: string;
-    attachments: string;
-    diffHunk: string;
-    path: string;
-    system: string;
-    authorId: string;
-    authorAssociation: string;
-    createdAt: string;
-    updatedAt: string;
-    commentType: string;
-    extensions: string;
+    attachments: string[];
 }
 export interface MsgUpdateCommentResponse {
 }

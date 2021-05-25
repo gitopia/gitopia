@@ -195,22 +195,6 @@ export default {
                 return {};
             }
         },
-        async sendMsgConnectionOpenConfirm({ rootGetters }, { value, fee, memo }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgConnectionOpenConfirm(value);
-                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Send', 'Could not broadcast Tx.');
-                }
-            }
-        },
         async sendMsgConnectionOpenInit({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value);
@@ -224,6 +208,22 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgConnectionOpenInit:Send', 'Could not broadcast Tx.');
+                }
+            }
+        },
+        async sendMsgConnectionOpenConfirm({ rootGetters }, { value, fee, memo }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgConnectionOpenConfirm(value);
+                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Send', 'Could not broadcast Tx.');
                 }
             }
         },
@@ -259,20 +259,6 @@ export default {
                 }
             }
         },
-        async MsgConnectionOpenConfirm({ rootGetters }, { value }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgConnectionOpenConfirm(value);
-                return msg;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Create', 'Could not create message.');
-                }
-            }
-        },
         async MsgConnectionOpenInit({ rootGetters }, { value }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value);
@@ -284,6 +270,20 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgConnectionOpenInit:Create', 'Could not create message.');
+                }
+            }
+        },
+        async MsgConnectionOpenConfirm({ rootGetters }, { value }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgConnectionOpenConfirm(value);
+                return msg;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Create', 'Could not create message.');
                 }
             }
         },

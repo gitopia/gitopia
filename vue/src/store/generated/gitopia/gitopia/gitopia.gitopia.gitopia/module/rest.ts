@@ -14,16 +14,26 @@ export interface GitopiaComment {
 
   /** @format uint64 */
   id?: string;
+
+  /** @format uint64 */
   parentId?: string;
+
+  /** @format uint64 */
   commentIid?: string;
   body?: string;
-  attachments?: string;
+  attachments?: string[];
   diffHunk?: string;
   path?: string;
-  system?: string;
+  system?: boolean;
+
+  /** @format uint64 */
   authorId?: string;
   authorAssociation?: string;
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
   commentType?: string;
   extensions?: string;

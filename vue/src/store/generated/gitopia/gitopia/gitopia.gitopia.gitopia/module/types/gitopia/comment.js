@@ -5,17 +5,17 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseComment = {
     creator: "",
     id: 0,
-    parentId: "",
-    commentIid: "",
+    parentId: 0,
+    commentIid: 0,
     body: "",
     attachments: "",
     diffHunk: "",
     path: "",
-    system: "",
-    authorId: "",
+    system: false,
+    authorId: 0,
     authorAssociation: "",
-    createdAt: "",
-    updatedAt: "",
+    createdAt: 0,
+    updatedAt: 0,
     commentType: "",
     extensions: "",
 };
@@ -27,17 +27,17 @@ export const Comment = {
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
         }
-        if (message.parentId !== "") {
-            writer.uint32(26).string(message.parentId);
+        if (message.parentId !== 0) {
+            writer.uint32(24).uint64(message.parentId);
         }
-        if (message.commentIid !== "") {
-            writer.uint32(34).string(message.commentIid);
+        if (message.commentIid !== 0) {
+            writer.uint32(32).uint64(message.commentIid);
         }
         if (message.body !== "") {
             writer.uint32(42).string(message.body);
         }
-        if (message.attachments !== "") {
-            writer.uint32(50).string(message.attachments);
+        for (const v of message.attachments) {
+            writer.uint32(50).string(v);
         }
         if (message.diffHunk !== "") {
             writer.uint32(58).string(message.diffHunk);
@@ -45,20 +45,20 @@ export const Comment = {
         if (message.path !== "") {
             writer.uint32(66).string(message.path);
         }
-        if (message.system !== "") {
-            writer.uint32(74).string(message.system);
+        if (message.system === true) {
+            writer.uint32(72).bool(message.system);
         }
-        if (message.authorId !== "") {
-            writer.uint32(82).string(message.authorId);
+        if (message.authorId !== 0) {
+            writer.uint32(80).uint64(message.authorId);
         }
         if (message.authorAssociation !== "") {
             writer.uint32(90).string(message.authorAssociation);
         }
-        if (message.createdAt !== "") {
-            writer.uint32(98).string(message.createdAt);
+        if (message.createdAt !== 0) {
+            writer.uint32(96).int64(message.createdAt);
         }
-        if (message.updatedAt !== "") {
-            writer.uint32(106).string(message.updatedAt);
+        if (message.updatedAt !== 0) {
+            writer.uint32(104).int64(message.updatedAt);
         }
         if (message.commentType !== "") {
             writer.uint32(114).string(message.commentType);
@@ -72,6 +72,7 @@ export const Comment = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseComment };
+        message.attachments = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -82,16 +83,16 @@ export const Comment = {
                     message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.parentId = reader.string();
+                    message.parentId = longToNumber(reader.uint64());
                     break;
                 case 4:
-                    message.commentIid = reader.string();
+                    message.commentIid = longToNumber(reader.uint64());
                     break;
                 case 5:
                     message.body = reader.string();
                     break;
                 case 6:
-                    message.attachments = reader.string();
+                    message.attachments.push(reader.string());
                     break;
                 case 7:
                     message.diffHunk = reader.string();
@@ -100,19 +101,19 @@ export const Comment = {
                     message.path = reader.string();
                     break;
                 case 9:
-                    message.system = reader.string();
+                    message.system = reader.bool();
                     break;
                 case 10:
-                    message.authorId = reader.string();
+                    message.authorId = longToNumber(reader.uint64());
                     break;
                 case 11:
                     message.authorAssociation = reader.string();
                     break;
                 case 12:
-                    message.createdAt = reader.string();
+                    message.createdAt = longToNumber(reader.int64());
                     break;
                 case 13:
-                    message.updatedAt = reader.string();
+                    message.updatedAt = longToNumber(reader.int64());
                     break;
                 case 14:
                     message.commentType = reader.string();
@@ -129,6 +130,7 @@ export const Comment = {
     },
     fromJSON(object) {
         const message = { ...baseComment };
+        message.attachments = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -142,16 +144,16 @@ export const Comment = {
             message.id = 0;
         }
         if (object.parentId !== undefined && object.parentId !== null) {
-            message.parentId = String(object.parentId);
+            message.parentId = Number(object.parentId);
         }
         else {
-            message.parentId = "";
+            message.parentId = 0;
         }
         if (object.commentIid !== undefined && object.commentIid !== null) {
-            message.commentIid = String(object.commentIid);
+            message.commentIid = Number(object.commentIid);
         }
         else {
-            message.commentIid = "";
+            message.commentIid = 0;
         }
         if (object.body !== undefined && object.body !== null) {
             message.body = String(object.body);
@@ -160,10 +162,9 @@ export const Comment = {
             message.body = "";
         }
         if (object.attachments !== undefined && object.attachments !== null) {
-            message.attachments = String(object.attachments);
-        }
-        else {
-            message.attachments = "";
+            for (const e of object.attachments) {
+                message.attachments.push(String(e));
+            }
         }
         if (object.diffHunk !== undefined && object.diffHunk !== null) {
             message.diffHunk = String(object.diffHunk);
@@ -178,16 +179,16 @@ export const Comment = {
             message.path = "";
         }
         if (object.system !== undefined && object.system !== null) {
-            message.system = String(object.system);
+            message.system = Boolean(object.system);
         }
         else {
-            message.system = "";
+            message.system = false;
         }
         if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = String(object.authorId);
+            message.authorId = Number(object.authorId);
         }
         else {
-            message.authorId = "";
+            message.authorId = 0;
         }
         if (object.authorAssociation !== undefined &&
             object.authorAssociation !== null) {
@@ -197,16 +198,16 @@ export const Comment = {
             message.authorAssociation = "";
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = String(object.createdAt);
+            message.createdAt = Number(object.createdAt);
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = String(object.updatedAt);
+            message.updatedAt = Number(object.updatedAt);
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.commentType !== undefined && object.commentType !== null) {
             message.commentType = String(object.commentType);
@@ -229,8 +230,12 @@ export const Comment = {
         message.parentId !== undefined && (obj.parentId = message.parentId);
         message.commentIid !== undefined && (obj.commentIid = message.commentIid);
         message.body !== undefined && (obj.body = message.body);
-        message.attachments !== undefined &&
-            (obj.attachments = message.attachments);
+        if (message.attachments) {
+            obj.attachments = message.attachments.map((e) => e);
+        }
+        else {
+            obj.attachments = [];
+        }
         message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
         message.path !== undefined && (obj.path = message.path);
         message.system !== undefined && (obj.system = message.system);
@@ -246,6 +251,7 @@ export const Comment = {
     },
     fromPartial(object) {
         const message = { ...baseComment };
+        message.attachments = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -262,13 +268,13 @@ export const Comment = {
             message.parentId = object.parentId;
         }
         else {
-            message.parentId = "";
+            message.parentId = 0;
         }
         if (object.commentIid !== undefined && object.commentIid !== null) {
             message.commentIid = object.commentIid;
         }
         else {
-            message.commentIid = "";
+            message.commentIid = 0;
         }
         if (object.body !== undefined && object.body !== null) {
             message.body = object.body;
@@ -277,10 +283,9 @@ export const Comment = {
             message.body = "";
         }
         if (object.attachments !== undefined && object.attachments !== null) {
-            message.attachments = object.attachments;
-        }
-        else {
-            message.attachments = "";
+            for (const e of object.attachments) {
+                message.attachments.push(e);
+            }
         }
         if (object.diffHunk !== undefined && object.diffHunk !== null) {
             message.diffHunk = object.diffHunk;
@@ -298,13 +303,13 @@ export const Comment = {
             message.system = object.system;
         }
         else {
-            message.system = "";
+            message.system = false;
         }
         if (object.authorId !== undefined && object.authorId !== null) {
             message.authorId = object.authorId;
         }
         else {
-            message.authorId = "";
+            message.authorId = 0;
         }
         if (object.authorAssociation !== undefined &&
             object.authorAssociation !== null) {
@@ -317,13 +322,13 @@ export const Comment = {
             message.createdAt = object.createdAt;
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
             message.updatedAt = object.updatedAt;
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.commentType !== undefined && object.commentType !== null) {
             message.commentType = object.commentType;
