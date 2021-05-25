@@ -92,6 +92,45 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgChangeIssueState{}
+
+func NewMsgChangeIssueState(creator string, id uint64, closedBy uint64) *MsgChangeIssueState {
+	return &MsgChangeIssueState{
+		Id:       id,
+		Creator:  creator,
+		ClosedBy: closedBy,
+	}
+}
+
+func (msg *MsgChangeIssueState) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgChangeIssueState) Type() string {
+	return "ChangeIssueState"
+}
+
+func (msg *MsgChangeIssueState) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgChangeIssueState) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgChangeIssueState) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgCreateIssue{}
 
 func NewMsgDeleteIssue(creator string, id uint64) *MsgDeleteIssue {

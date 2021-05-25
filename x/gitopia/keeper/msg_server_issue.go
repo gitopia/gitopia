@@ -92,6 +92,41 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	return &types.MsgUpdateIssueResponse{}, nil
 }
 
+func (k msgServer) ChangeIssueState(goCtx context.Context, msg *types.MsgChangeIssueState) (*types.MsgChangeIssueStateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	if issue.State == "open" {
+		issue.State = "closed"
+		issue.ClosedBy = msg.ClosedBy
+		issue.ClosedAt = time.Now().Unix()
+	} else if issue.State == "closed" {
+		issue.State = "open"
+		issue.ClosedBy = 0
+		issue.ClosedAt = time.Time{}.Unix()
+	} else {
+		/* TODO: specify error */
+		return nil, sdkerrors.Error{}
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgChangeIssueStateResponse{
+		State: issue.State,
+	}, nil
+}
+
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

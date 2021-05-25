@@ -130,6 +130,48 @@ func updateIssueHandler(clientCtx client.Context) http.HandlerFunc {
 	}
 }
 
+type changeIssueStateRequest struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	Creator  string       `json:"creator"`
+	ClosedBy uint64       `json:"closed_by"`
+}
+
+func changeIssueStateHandler(clientCtx client.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+		if err != nil {
+			return
+		}
+
+		var req changeIssueStateRequest
+		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		_, err = sdk.AccAddressFromBech32(req.Creator)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		parsedClosedBy := req.ClosedBy
+
+		msg := types.NewMsgChangeIssueState(
+			req.Creator,
+			id,
+			parsedClosedBy,
+		)
+
+		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
+	}
+}
+
 type deleteIssueRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`

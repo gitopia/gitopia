@@ -10,6 +10,7 @@ service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
   rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
+  rpc ChangeIssueState(MsgChangeIssueState) returns (MsgChangeIssueStateResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
@@ -49,6 +50,16 @@ message MsgUpdateIssue {
 }
 
 message MsgUpdateIssueResponse { }
+
+message MsgChangeIssueState {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 closedBy = 3;
+}
+
+message MsgChangeIssueStateResponse {
+  string state = 1;
+}
 
 message MsgDeleteIssue {
   string creator = 1;
