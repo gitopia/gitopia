@@ -31,13 +31,13 @@ func (gs GenesisState) Validate() error {
 		repositoryIdMap[elem.Id] = true
 	}
 	// Check for duplicated ID in user
-	userIdMap := make(map[uint64]bool)
+	userIdMap := make(map[string]bool)
 
 	for _, elem := range gs.UserList {
-		if _, ok := userIdMap[elem.Id]; ok {
+		if _, ok := userIdMap[elem.Creator]; ok {
 			return fmt.Errorf("duplicated id for user")
 		}
-		userIdMap[elem.Id] = true
+		userIdMap[elem.Creator] = true
 	}
 	// Check for duplicated ID in whois
 	whoisNameMap := make(map[string]bool)

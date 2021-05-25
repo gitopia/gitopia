@@ -13,29 +13,11 @@ import (
 )
 
 type createRepositoryRequest struct {
-	BaseReq       rest.BaseReq `json:"base_req"`
-	Creator       string       `json:"creator"`
-	Name          string       `json:"name"`
-	Owner         string       `json:"owner"`
-	Description   string       `json:"description"`
-	Forks         string       `json:"forks"`
-	Branches      string       `json:"branches"`
-	Tags          string       `json:"tags"`
-	Subscribers   string       `json:"subscribers"`
-	Commits       string       `json:"commits"`
-	IssuesOpen    string       `json:"issuesOpen"`
-	IssuesClosed  string       `json:"issuesClosed"`
-	Pulls         string       `json:"pulls"`
-	Labels        string       `json:"labels"`
-	Releases      string       `json:"releases"`
-	CreatedAt     string       `json:"createdAt"`
-	UpdatedAt     string       `json:"updatedAt"`
-	PushedAt      string       `json:"pushedAt"`
-	Stargazers    string       `json:"stargazers"`
-	Archived      string       `json:"archived"`
-	License       string       `json:"license"`
-	DefaultBranch string       `json:"defaultBranch"`
-	Extensions    string       `json:"extensions"`
+	BaseReq     rest.BaseReq `json:"base_req"`
+	Creator     string       `json:"creator"`
+	Name        string       `json:"name"`
+	Owner       string       `json:"owner"`
+	Description string       `json:"description"`
 }
 
 func createRepositoryHandler(clientCtx client.Context) http.HandlerFunc {
@@ -63,65 +45,11 @@ func createRepositoryHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedDescription := req.Description
 
-		parsedForks := req.Forks
-
-		parsedBranches := req.Branches
-
-		parsedTags := req.Tags
-
-		parsedSubscribers := req.Subscribers
-
-		parsedCommits := req.Commits
-
-		parsedIssuesOpen := req.IssuesOpen
-
-		parsedIssuesClosed := req.IssuesClosed
-
-		parsedPulls := req.Pulls
-
-		parsedLabels := req.Labels
-
-		parsedReleases := req.Releases
-
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
-		parsedPushedAt := req.PushedAt
-
-		parsedStargazers := req.Stargazers
-
-		parsedArchived := req.Archived
-
-		parsedLicense := req.License
-
-		parsedDefaultBranch := req.DefaultBranch
-
-		parsedExtensions := req.Extensions
-
 		msg := types.NewMsgCreateRepository(
 			req.Creator,
 			parsedName,
 			parsedOwner,
 			parsedDescription,
-			parsedForks,
-			parsedBranches,
-			parsedTags,
-			parsedSubscribers,
-			parsedCommits,
-			parsedIssuesOpen,
-			parsedIssuesClosed,
-			parsedPulls,
-			parsedLabels,
-			parsedReleases,
-			parsedCreatedAt,
-			parsedUpdatedAt,
-			parsedPushedAt,
-			parsedStargazers,
-			parsedArchived,
-			parsedLicense,
-			parsedDefaultBranch,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

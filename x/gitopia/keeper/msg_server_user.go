@@ -12,15 +12,13 @@ import (
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	id := k.AppendUser(
+	k.AppendUser(
 		ctx,
 		msg.Creator,
 		msg.Username,
 	)
 
-	return &types.MsgCreateUserResponse{
-		Id: id,
-	}, nil
+	return &types.MsgCreateUserResponse{}, nil
 }
 
 func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (*types.MsgUpdateUserResponse, error) {
@@ -28,7 +26,6 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 
 	var user = types.User{
 		Creator:        msg.Creator,
-		Id:             msg.Id,
 		Username:       msg.Username,
 		UsernameGithub: msg.UsernameGithub,
 		AvatarUrl:      msg.AvatarUrl,

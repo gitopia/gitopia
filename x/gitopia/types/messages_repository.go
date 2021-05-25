@@ -7,30 +7,12 @@ import (
 
 var _ sdk.Msg = &MsgCreateRepository{}
 
-func NewMsgCreateRepository(creator string, name string, owner string, description string, forks string, branches string, tags string, subscribers string, commits string, issuesOpen string, issuesClosed string, pulls string, labels string, releases string, createdAt string, updatedAt string, pushedAt string, stargazers string, archived string, license string, defaultBranch string, extensions string) *MsgCreateRepository {
+func NewMsgCreateRepository(creator string, name string, owner string, description string) *MsgCreateRepository {
 	return &MsgCreateRepository{
-		Creator:       creator,
-		Name:          name,
-		Owner:         owner,
-		Description:   description,
-		Forks:         forks,
-		Branches:      branches,
-		Tags:          tags,
-		Subscribers:   subscribers,
-		Commits:       commits,
-		IssuesOpen:    issuesOpen,
-		IssuesClosed:  issuesClosed,
-		Pulls:         pulls,
-		Labels:        labels,
-		Releases:      releases,
-		CreatedAt:     createdAt,
-		UpdatedAt:     updatedAt,
-		PushedAt:      pushedAt,
-		Stargazers:    stargazers,
-		Archived:      archived,
-		License:       license,
-		DefaultBranch: defaultBranch,
-		Extensions:    extensions,
+		Creator:     creator,
+		Name:        name,
+		Owner:       owner,
+		Description: description,
 	}
 }
 
@@ -59,6 +41,9 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
 	return nil
 }

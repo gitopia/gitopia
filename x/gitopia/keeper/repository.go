@@ -2,11 +2,18 @@ package keeper
 
 import (
 	"encoding/binary"
+	"encoding/json"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
+
+type Owner struct {
+	Type string
+	ID   uint64
+}
 
 // GetRepositoryCount get the total number of repository
 func (k Keeper) GetRepositoryCount(ctx sdk.Context) uint64 {
@@ -44,24 +51,6 @@ func (k Keeper) AppendRepository(
 	name string,
 	owner string,
 	description string,
-	forks string,
-	branches string,
-	tags string,
-	subscribers string,
-	commits string,
-	issuesOpen string,
-	issuesClosed string,
-	pulls string,
-	labels string,
-	releases string,
-	createdAt string,
-	updatedAt string,
-	pushedAt string,
-	stargazers string,
-	archived string,
-	license string,
-	defaultBranch string,
-	extensions string,
 ) uint64 {
 	// Create the repository
 	count := k.GetRepositoryCount(ctx)
@@ -71,24 +60,7 @@ func (k Keeper) AppendRepository(
 		Name:          name,
 		Owner:         owner,
 		Description:   description,
-		Forks:         forks,
-		Branches:      branches,
-		Tags:          tags,
-		Subscribers:   subscribers,
-		Commits:       commits,
-		IssuesOpen:    issuesOpen,
-		IssuesClosed:  issuesClosed,
-		Pulls:         pulls,
-		Labels:        labels,
-		Releases:      releases,
-		CreatedAt:     createdAt,
-		UpdatedAt:     updatedAt,
-		PushedAt:      pushedAt,
-		Stargazers:    stargazers,
-		Archived:      archived,
-		License:       license,
-		DefaultBranch: defaultBranch,
-		Extensions:    extensions,
+		DefaultBranch: "master",
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
@@ -97,6 +69,18 @@ func (k Keeper) AppendRepository(
 
 	// Update repository count
 	k.SetRepositoryCount(ctx, count+1)
+
+	// Update user/organization repositories
+	var o Owner
+	json.Unmarshal([]byte(owner), &o)
+
+	if o.Type == "User" {
+		user := k.GetUser(ctx, o.ID)
+		user.Repositories = append(user.Repositories, repository.Id)
+		k.SetUser(ctx, user)
+	} else if o.Type == "Organization" {
+		// Todo
+	}
 
 	return count
 }
