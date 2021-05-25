@@ -3,35 +3,62 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
+func assignIid(ctx sdk.Context, k msgServer, repo types.Repository, repoId uint64) (uint64, error) {
+	if !k.HasRepository(ctx, repoId) {
+		return 0, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("Repository Id %d doesn't exist", repoId))
+	}
+	var len = uint64(len(repo.IssuesOpen) + len(repo.IssuesClosed) + 1)
+	return len, nil
+}
+
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	repo := k.GetRepository(ctx, msg.RepositoryId)
+
+	iid, err := assignIid(ctx, k, repo, msg.RepositoryId)
+	if err != nil {
+		return nil, err
+	}
+	state := string("open")
+	comments := []uint64{}
+	pullRequests := []uint64{}
+	createdAt := time.Now().Unix()
+	updatedAt := time.Now().Unix()
+	closedAt := time.Time{}.Unix()
+	closedBy := uint64(0)
+	extensions := string("")
 
 	id := k.AppendIssue(
 		ctx,
 		msg.Creator,
-		msg.Iid,
+		iid,
 		msg.Title,
-		msg.State,
+		state,
 		msg.Description,
 		msg.AuthorId,
-		msg.Comments,
-		msg.PullRequests,
+		comments,
+		pullRequests,
 		msg.RepositoryId,
 		msg.Labels,
 		msg.Weight,
 		msg.AssigneesId,
-		msg.CreatedAt,
-		msg.UpdatedAt,
-		msg.ClosedAt,
-		msg.ClosedBy,
-		msg.Extensions,
+		createdAt,
+		updatedAt,
+		closedAt,
+		closedBy,
+		extensions,
 	)
+
+	/* Append Issue in the respective Repository */
+	repo.IssuesOpen = append(repo.IssuesOpen, id)
+	k.SetRepository(ctx, repo)
 
 	return &types.MsgCreateIssueResponse{
 		Id: id,
@@ -41,26 +68,14 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue) (*types.MsgUpdateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var issue = types.Issue{
-		Creator:      msg.Creator,
-		Id:           msg.Id,
-		Iid:          msg.Iid,
-		Title:        msg.Title,
-		State:        msg.State,
-		Description:  msg.Description,
-		AuthorId:     msg.AuthorId,
-		Comments:     msg.Comments,
-		PullRequests: msg.PullRequests,
-		RepositoryId: msg.RepositoryId,
-		Labels:       msg.Labels,
-		Weight:       msg.Weight,
-		AssigneesId:  msg.AssigneesId,
-		CreatedAt:    msg.CreatedAt,
-		UpdatedAt:    msg.UpdatedAt,
-		ClosedAt:     msg.ClosedAt,
-		ClosedBy:     msg.ClosedBy,
-		Extensions:   msg.Extensions,
-	}
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	issue.Title = msg.Title
+	issue.Description = msg.Description
+	issue.Labels = msg.Labels
+	issue.Weight = msg.Weight
+	issue.UpdatedAt = time.Now().Unix()
+	issue.AssigneesId = msg.AssigneesId
 
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {

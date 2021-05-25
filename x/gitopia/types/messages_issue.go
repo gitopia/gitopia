@@ -7,25 +7,16 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, iid string, title string, state string, description string, authorId string, comments string, pullRequests string, repositoryId string, labels string, weight string, assigneesId string, createdAt string, updatedAt string, closedAt string, closedBy string, extensions string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, authorId uint64, repositoryId uint64, labels []string, weight uint64, assigneesId []uint64) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
-		Iid:          iid,
 		Title:        title,
-		State:        state,
 		Description:  description,
 		AuthorId:     authorId,
-		Comments:     comments,
-		PullRequests: pullRequests,
 		RepositoryId: repositoryId,
 		Labels:       labels,
 		Weight:       weight,
 		AssigneesId:  assigneesId,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		ClosedAt:     closedAt,
-		ClosedBy:     closedBy,
-		Extensions:   extensions,
 	}
 }
 
@@ -60,26 +51,15 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateIssue{}
 
-func NewMsgUpdateIssue(creator string, id uint64, iid string, title string, state string, description string, authorId string, comments string, pullRequests string, repositoryId string, labels string, weight string, assigneesId string, createdAt string, updatedAt string, closedAt string, closedBy string, extensions string) *MsgUpdateIssue {
+func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assigneesId []uint64) *MsgUpdateIssue {
 	return &MsgUpdateIssue{
-		Id:           id,
-		Creator:      creator,
-		Iid:          iid,
-		Title:        title,
-		State:        state,
-		Description:  description,
-		AuthorId:     authorId,
-		Comments:     comments,
-		PullRequests: pullRequests,
-		RepositoryId: repositoryId,
-		Labels:       labels,
-		Weight:       weight,
-		AssigneesId:  assigneesId,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		ClosedAt:     closedAt,
-		ClosedBy:     closedBy,
-		Extensions:   extensions,
+		Id:          id,
+		Creator:     creator,
+		Title:       title,
+		Description: description,
+		Labels:      labels,
+		Weight:      weight,
+		AssigneesId: assigneesId,
 	}
 }
 

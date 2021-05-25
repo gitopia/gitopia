@@ -25,22 +25,13 @@ service Msg {
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateIssue {
   string creator = 1;
-  string iid = 2;
-  string title = 3;
-  string state = 4;
-  string description = 5;
-  string authorId = 6;
-  string comments = 7;
-  string pullRequests = 8;
-  string repositoryId = 9;
-  string labels = 10;
-  string weight = 11;
-  string assigneesId = 12;
-  string createdAt = 13;
-  string updatedAt = 14;
-  string closedAt = 15;
-  string closedBy = 16;
-  string extensions = 17;
+  string title = 2;
+  string description = 3;
+  uint64 authorId = 4;
+  uint64 repositoryId = 5;
+  repeated string labels = 6;
+  uint64 weight = 7;
+  repeated uint64 assigneesId = 8;
 }
 
 message MsgCreateIssueResponse {
@@ -50,22 +41,11 @@ message MsgCreateIssueResponse {
 message MsgUpdateIssue {
   string creator = 1;
   uint64 id = 2;
-  string iid = 3;
-  string title = 4;
-  string state = 5;
-  string description = 6;
-  string authorId = 7;
-  string comments = 8;
-  string pullRequests = 9;
-  string repositoryId = 10;
-  string labels = 11;
-  string weight = 12;
-  string assigneesId = 13;
-  string createdAt = 14;
-  string updatedAt = 15;
-  string closedAt = 16;
-  string closedBy = 17;
-  string extensions = 18;
+  string title = 3;
+  string description = 4;
+  repeated string labels = 5;
+  uint64 weight = 6;
+  repeated uint64 assigneesId = 7;
 }
 
 message MsgUpdateIssueResponse { }

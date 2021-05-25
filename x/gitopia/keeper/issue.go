@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetIssueCount get the total number of issue
@@ -41,21 +42,21 @@ func (k Keeper) SetIssueCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendIssue(
 	ctx sdk.Context,
 	creator string,
-	iid string,
+	iid uint64,
 	title string,
 	state string,
 	description string,
-	authorId string,
-	comments string,
-	pullRequests string,
-	repositoryId string,
-	labels string,
-	weight string,
-	assigneesId string,
-	createdAt string,
-	updatedAt string,
-	closedAt string,
-	closedBy string,
+	authorId uint64,
+	comments []uint64,
+	pullRequests []uint64,
+	repositoryId uint64,
+	labels []string,
+	weight uint64,
+	assigneesId []uint64,
+	createdAt int64,
+	updatedAt int64,
+	closedAt int64,
+	closedBy uint64,
 	extensions string,
 ) uint64 {
 	// Create the issue

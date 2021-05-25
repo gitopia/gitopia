@@ -1,8 +1,10 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
 	"strconv"
+	"strings"
+
+	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -10,35 +12,51 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
+func sliceAtoi(str []string) ([]uint64, error) {
+	si := make([]uint64, 0, len(str))
+	for _, a := range str {
+		i, err := strconv.ParseUint(a, 10, 64)
+		if err != nil {
+			return si, err
+		}
+		si = append(si, i)
+	}
+	return si, nil
+}
+
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [iid] [title] [state] [description] [authorId] [comments] [pullRequests] [repositoryId] [labels] [weight] [assigneesId] [createdAt] [updatedAt] [closedAt] [closedBy] [extensions]",
+		Use:   "create-issue [title] [description] [authorId] [repositoryId] [labels] [weight] [assigneesId]",
 		Short: "Creates a new issue",
-		Args:  cobra.ExactArgs(16),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsIid := string(args[0])
-			argsTitle := string(args[1])
-			argsState := string(args[2])
-			argsDescription := string(args[3])
-			argsAuthorId := string(args[4])
-			argsComments := string(args[5])
-			argsPullRequests := string(args[6])
-			argsRepositoryId := string(args[7])
-			argsLabels := string(args[8])
-			argsWeight := string(args[9])
-			argsAssigneesId := string(args[10])
-			argsCreatedAt := string(args[11])
-			argsUpdatedAt := string(args[12])
-			argsClosedAt := string(args[13])
-			argsClosedBy := string(args[14])
-			argsExtensions := string(args[15])
+			argsTitle := string(args[0])
+			argsDescription := string(args[1])
+			argsAuthorId, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsRepositoryId, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsLabels := strings.Split(args[4], ",")
+			argsWeight, err := strconv.ParseUint(args[5], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsAssigneesId := strings.Split(args[6], ",")
+			assigneesId, err := sliceAtoi(argsAssigneesId)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsIid), string(argsTitle), string(argsState), string(argsDescription), string(argsAuthorId), string(argsComments), string(argsPullRequests), string(argsRepositoryId), string(argsLabels), string(argsWeight), string(argsAssigneesId), string(argsCreatedAt), string(argsUpdatedAt), string(argsClosedAt), string(argsClosedBy), string(argsExtensions))
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsAuthorId, argsRepositoryId, argsLabels, argsWeight, assigneesId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -53,38 +71,34 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue [id] [iid] [title] [state] [description] [authorId] [comments] [pullRequests] [repositoryId] [labels] [weight] [assigneesId] [createdAt] [updatedAt] [closedAt] [closedBy] [extensions]",
+		Use:   "update-issue [id] [title] [description] [labels] [weight] [assigneesId]",
 		Short: "Update a issue",
-		Args:  cobra.ExactArgs(17),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			argsIid := string(args[1])
-			argsTitle := string(args[2])
-			argsState := string(args[3])
-			argsDescription := string(args[4])
-			argsAuthorId := string(args[5])
-			argsComments := string(args[6])
-			argsPullRequests := string(args[7])
-			argsRepositoryId := string(args[8])
-			argsLabels := string(args[9])
-			argsWeight := string(args[10])
-			argsAssigneesId := string(args[11])
-			argsCreatedAt := string(args[12])
-			argsUpdatedAt := string(args[13])
-			argsClosedAt := string(args[14])
-			argsClosedBy := string(args[15])
-			argsExtensions := string(args[16])
+			argsTitle := string(args[1])
+			argsDescription := string(args[2])
+			argsLabels := strings.Split(args[3], ",")
+			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsAssigneesId := strings.Split(args[5], ",")
+			assigneesId, err := sliceAtoi(argsAssigneesId)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsIid), string(argsTitle), string(argsState), string(argsDescription), string(argsAuthorId), string(argsComments), string(argsPullRequests), string(argsRepositoryId), string(argsLabels), string(argsWeight), string(argsAssigneesId), string(argsCreatedAt), string(argsUpdatedAt), string(argsClosedAt), string(argsClosedBy), string(argsExtensions))
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, assigneesId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -99,7 +113,7 @@ func CmdUpdateIssue() *cobra.Command {
 
 func CmdDeleteIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-issue [id] [iid] [title] [state] [description] [authorId] [comments] [pullRequests] [repositoryId] [labels] [weight] [assigneesId] [createdAt] [updatedAt] [closedAt] [closedBy] [extensions]",
+		Use:   "delete-issue [id]",
 		Short: "Delete a issue by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

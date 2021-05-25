@@ -15,22 +15,13 @@ import (
 type createIssueRequest struct {
 	BaseReq      rest.BaseReq `json:"base_req"`
 	Creator      string       `json:"creator"`
-	Iid          string       `json:"iid"`
 	Title        string       `json:"title"`
-	State        string       `json:"state"`
 	Description  string       `json:"description"`
-	AuthorId     string       `json:"authorId"`
-	Comments     string       `json:"comments"`
-	PullRequests string       `json:"pullRequests"`
-	RepositoryId string       `json:"repositoryId"`
-	Labels       string       `json:"labels"`
-	Weight       string       `json:"weight"`
-	AssigneesId  string       `json:"assigneesId"`
-	CreatedAt    string       `json:"createdAt"`
-	UpdatedAt    string       `json:"updatedAt"`
-	ClosedAt     string       `json:"closedAt"`
-	ClosedBy     string       `json:"closedBy"`
-	Extensions   string       `json:"extensions"`
+	AuthorId     uint64       `json:"author_id"`
+	RepositoryId uint64       `json:"repository_id"`
+	Labels       []string     `json:"labels"`
+	Weight       uint64       `json:"weight"`
+	AssigneesId  []uint64     `json:"assignees_id"`
 }
 
 func createIssueHandler(clientCtx client.Context) http.HandlerFunc {
@@ -52,19 +43,11 @@ func createIssueHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedIid := req.Iid
-
 		parsedTitle := req.Title
-
-		parsedState := req.State
 
 		parsedDescription := req.Description
 
 		parsedAuthorId := req.AuthorId
-
-		parsedComments := req.Comments
-
-		parsedPullRequests := req.PullRequests
 
 		parsedRepositoryId := req.RepositoryId
 
@@ -74,34 +57,15 @@ func createIssueHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedAssigneesId := req.AssigneesId
 
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
-		parsedClosedAt := req.ClosedAt
-
-		parsedClosedBy := req.ClosedBy
-
-		parsedExtensions := req.Extensions
-
 		msg := types.NewMsgCreateIssue(
 			req.Creator,
-			parsedIid,
 			parsedTitle,
-			parsedState,
 			parsedDescription,
 			parsedAuthorId,
-			parsedComments,
-			parsedPullRequests,
 			parsedRepositoryId,
 			parsedLabels,
 			parsedWeight,
 			parsedAssigneesId,
-			parsedCreatedAt,
-			parsedUpdatedAt,
-			parsedClosedAt,
-			parsedClosedBy,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
@@ -109,24 +73,13 @@ func createIssueHandler(clientCtx client.Context) http.HandlerFunc {
 }
 
 type updateIssueRequest struct {
-	BaseReq      rest.BaseReq `json:"base_req"`
-	Creator      string       `json:"creator"`
-	Iid          string       `json:"iid"`
-	Title        string       `json:"title"`
-	State        string       `json:"state"`
-	Description  string       `json:"description"`
-	AuthorId     string       `json:"authorId"`
-	Comments     string       `json:"comments"`
-	PullRequests string       `json:"pullRequests"`
-	RepositoryId string       `json:"repositoryId"`
-	Labels       string       `json:"labels"`
-	Weight       string       `json:"weight"`
-	AssigneesId  string       `json:"assigneesId"`
-	CreatedAt    string       `json:"createdAt"`
-	UpdatedAt    string       `json:"updatedAt"`
-	ClosedAt     string       `json:"closedAt"`
-	ClosedBy     string       `json:"closedBy"`
-	Extensions   string       `json:"extensions"`
+	BaseReq     rest.BaseReq `json:"base_req"`
+	Creator     string       `json:"creator"`
+	Title       string       `json:"title"`
+	Description string       `json:"description"`
+	Labels      []string     `json:"labels"`
+	Weight      uint64       `json:"weight"`
+	AssigneesId []uint64     `json:"assignees_id"`
 }
 
 func updateIssueHandler(clientCtx client.Context) http.HandlerFunc {
@@ -153,21 +106,9 @@ func updateIssueHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedIid := req.Iid
-
 		parsedTitle := req.Title
 
-		parsedState := req.State
-
 		parsedDescription := req.Description
-
-		parsedAuthorId := req.AuthorId
-
-		parsedComments := req.Comments
-
-		parsedPullRequests := req.PullRequests
-
-		parsedRepositoryId := req.RepositoryId
 
 		parsedLabels := req.Labels
 
@@ -175,35 +116,14 @@ func updateIssueHandler(clientCtx client.Context) http.HandlerFunc {
 
 		parsedAssigneesId := req.AssigneesId
 
-		parsedCreatedAt := req.CreatedAt
-
-		parsedUpdatedAt := req.UpdatedAt
-
-		parsedClosedAt := req.ClosedAt
-
-		parsedClosedBy := req.ClosedBy
-
-		parsedExtensions := req.Extensions
-
 		msg := types.NewMsgUpdateIssue(
 			req.Creator,
 			id,
-			parsedIid,
 			parsedTitle,
-			parsedState,
 			parsedDescription,
-			parsedAuthorId,
-			parsedComments,
-			parsedPullRequests,
-			parsedRepositoryId,
 			parsedLabels,
 			parsedWeight,
 			parsedAssigneesId,
-			parsedCreatedAt,
-			parsedUpdatedAt,
-			parsedClosedAt,
-			parsedClosedBy,
-			parsedExtensions,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
