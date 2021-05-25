@@ -3,22 +3,13 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateIssue {
     creator: string;
-    iid: string;
     title: string;
-    state: string;
     description: string;
-    authorId: string;
-    comments: string;
-    pullRequests: string;
-    repositoryId: string;
-    labels: string;
-    weight: string;
-    assigneesId: string;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string;
-    closedBy: string;
-    extensions: string;
+    authorId: number;
+    repositoryId: number;
+    labels: string[];
+    weight: number;
+    assigneesId: number[];
 }
 export interface MsgCreateIssueResponse {
     id: number;
@@ -26,24 +17,21 @@ export interface MsgCreateIssueResponse {
 export interface MsgUpdateIssue {
     creator: string;
     id: number;
-    iid: string;
     title: string;
-    state: string;
     description: string;
-    authorId: string;
-    comments: string;
-    pullRequests: string;
-    repositoryId: string;
-    labels: string;
-    weight: string;
-    assigneesId: string;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string;
-    closedBy: string;
-    extensions: string;
+    labels: string[];
+    weight: number;
+    assigneesId: number[];
 }
 export interface MsgUpdateIssueResponse {
+}
+export interface MsgChangeIssueState {
+    creator: string;
+    id: number;
+    closedBy: number;
+}
+export interface MsgChangeIssueStateResponse {
+    state: string;
 }
 export interface MsgDeleteIssue {
     creator: string;
@@ -207,6 +195,20 @@ export declare const MsgUpdateIssueResponse: {
     toJSON(_: MsgUpdateIssueResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
 };
+export declare const MsgChangeIssueState: {
+    encode(message: MsgChangeIssueState, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState;
+    fromJSON(object: any): MsgChangeIssueState;
+    toJSON(message: MsgChangeIssueState): unknown;
+    fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState;
+};
+export declare const MsgChangeIssueStateResponse: {
+    encode(message: MsgChangeIssueStateResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueStateResponse;
+    fromJSON(object: any): MsgChangeIssueStateResponse;
+    toJSON(message: MsgChangeIssueStateResponse): unknown;
+    fromPartial(object: DeepPartial<MsgChangeIssueStateResponse>): MsgChangeIssueStateResponse;
+};
 export declare const MsgDeleteIssue: {
     encode(message: MsgDeleteIssue, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
@@ -352,6 +354,7 @@ export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
@@ -368,6 +371,7 @@ export declare class MsgClientImpl implements Msg {
     constructor(rpc: Rpc);
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;

@@ -3,21 +3,21 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Issue {
     creator: string;
     id: number;
-    iid: string;
+    iid: number;
     title: string;
     state: string;
     description: string;
-    authorId: string;
-    comments: string;
-    pullRequests: string;
-    repositoryId: string;
-    labels: string;
-    weight: string;
-    assigneesId: string;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string;
-    closedBy: string;
+    authorId: number;
+    comments: number[];
+    pullRequests: number[];
+    repositoryId: number;
+    labels: string[];
+    weight: number;
+    assigneesId: number[];
+    createdAt: number;
+    updatedAt: number;
+    closedAt: number;
+    closedBy: number;
     extensions: string;
 }
 export declare const Issue: {

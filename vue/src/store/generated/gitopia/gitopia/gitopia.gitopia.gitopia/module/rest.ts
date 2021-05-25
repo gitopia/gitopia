@@ -14,22 +14,42 @@ export interface GitopiaIssue {
 
   /** @format uint64 */
   id?: string;
+
+  /** @format uint64 */
   iid?: string;
   title?: string;
   state?: string;
   description?: string;
+
+  /** @format uint64 */
   authorId?: string;
-  comments?: string;
-  pullRequests?: string;
+  comments?: string[];
+  pullRequests?: string[];
+
+  /** @format uint64 */
   repositoryId?: string;
-  labels?: string;
+  labels?: string[];
+
+  /** @format uint64 */
   weight?: string;
-  assigneesId?: string;
+  assigneesId?: string[];
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
+
+  /** @format int64 */
   closedAt?: string;
+
+  /** @format uint64 */
   closedBy?: string;
   extensions?: string;
+}
+
+export interface GitopiaMsgChangeIssueStateResponse {
+  state?: string;
 }
 
 export interface GitopiaMsgCreateIssueResponse {

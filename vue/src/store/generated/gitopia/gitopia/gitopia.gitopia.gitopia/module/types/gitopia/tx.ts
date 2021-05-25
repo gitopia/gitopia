@@ -7,22 +7,13 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateIssue {
   creator: string;
-  iid: string;
   title: string;
-  state: string;
   description: string;
-  authorId: string;
-  comments: string;
-  pullRequests: string;
-  repositoryId: string;
-  labels: string;
-  weight: string;
-  assigneesId: string;
-  createdAt: string;
-  updatedAt: string;
-  closedAt: string;
-  closedBy: string;
-  extensions: string;
+  authorId: number;
+  repositoryId: number;
+  labels: string[];
+  weight: number;
+  assigneesId: number[];
 }
 
 export interface MsgCreateIssueResponse {
@@ -32,25 +23,24 @@ export interface MsgCreateIssueResponse {
 export interface MsgUpdateIssue {
   creator: string;
   id: number;
-  iid: string;
   title: string;
-  state: string;
   description: string;
-  authorId: string;
-  comments: string;
-  pullRequests: string;
-  repositoryId: string;
-  labels: string;
-  weight: string;
-  assigneesId: string;
-  createdAt: string;
-  updatedAt: string;
-  closedAt: string;
-  closedBy: string;
-  extensions: string;
+  labels: string[];
+  weight: number;
+  assigneesId: number[];
 }
 
 export interface MsgUpdateIssueResponse {}
+
+export interface MsgChangeIssueState {
+  creator: string;
+  id: number;
+  closedBy: number;
+}
+
+export interface MsgChangeIssueStateResponse {
+  state: string;
+}
 
 export interface MsgDeleteIssue {
   creator: string;
@@ -200,22 +190,13 @@ export interface MsgDeleteWhoisResponse {}
 
 const baseMsgCreateIssue: object = {
   creator: "",
-  iid: "",
   title: "",
-  state: "",
   description: "",
-  authorId: "",
-  comments: "",
-  pullRequests: "",
-  repositoryId: "",
+  authorId: 0,
+  repositoryId: 0,
   labels: "",
-  weight: "",
-  assigneesId: "",
-  createdAt: "",
-  updatedAt: "",
-  closedAt: "",
-  closedBy: "",
-  extensions: "",
+  weight: 0,
+  assigneesId: 0,
 };
 
 export const MsgCreateIssue = {
@@ -223,54 +204,29 @@ export const MsgCreateIssue = {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.iid !== "") {
-      writer.uint32(18).string(message.iid);
-    }
     if (message.title !== "") {
-      writer.uint32(26).string(message.title);
-    }
-    if (message.state !== "") {
-      writer.uint32(34).string(message.state);
+      writer.uint32(18).string(message.title);
     }
     if (message.description !== "") {
-      writer.uint32(42).string(message.description);
+      writer.uint32(26).string(message.description);
     }
-    if (message.authorId !== "") {
-      writer.uint32(50).string(message.authorId);
+    if (message.authorId !== 0) {
+      writer.uint32(32).uint64(message.authorId);
     }
-    if (message.comments !== "") {
-      writer.uint32(58).string(message.comments);
+    if (message.repositoryId !== 0) {
+      writer.uint32(40).uint64(message.repositoryId);
     }
-    if (message.pullRequests !== "") {
-      writer.uint32(66).string(message.pullRequests);
+    for (const v of message.labels) {
+      writer.uint32(50).string(v!);
     }
-    if (message.repositoryId !== "") {
-      writer.uint32(74).string(message.repositoryId);
+    if (message.weight !== 0) {
+      writer.uint32(56).uint64(message.weight);
     }
-    if (message.labels !== "") {
-      writer.uint32(82).string(message.labels);
+    writer.uint32(66).fork();
+    for (const v of message.assigneesId) {
+      writer.uint64(v);
     }
-    if (message.weight !== "") {
-      writer.uint32(90).string(message.weight);
-    }
-    if (message.assigneesId !== "") {
-      writer.uint32(98).string(message.assigneesId);
-    }
-    if (message.createdAt !== "") {
-      writer.uint32(106).string(message.createdAt);
-    }
-    if (message.updatedAt !== "") {
-      writer.uint32(114).string(message.updatedAt);
-    }
-    if (message.closedAt !== "") {
-      writer.uint32(122).string(message.closedAt);
-    }
-    if (message.closedBy !== "") {
-      writer.uint32(130).string(message.closedBy);
-    }
-    if (message.extensions !== "") {
-      writer.uint32(138).string(message.extensions);
-    }
+    writer.ldelim();
     return writer;
   },
 
@@ -278,6 +234,8 @@ export const MsgCreateIssue = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -285,52 +243,32 @@ export const MsgCreateIssue = {
           message.creator = reader.string();
           break;
         case 2:
-          message.iid = reader.string();
-          break;
-        case 3:
           message.title = reader.string();
           break;
-        case 4:
-          message.state = reader.string();
-          break;
-        case 5:
+        case 3:
           message.description = reader.string();
           break;
+        case 4:
+          message.authorId = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
         case 6:
-          message.authorId = reader.string();
+          message.labels.push(reader.string());
           break;
         case 7:
-          message.comments = reader.string();
+          message.weight = longToNumber(reader.uint64() as Long);
           break;
         case 8:
-          message.pullRequests = reader.string();
-          break;
-        case 9:
-          message.repositoryId = reader.string();
-          break;
-        case 10:
-          message.labels = reader.string();
-          break;
-        case 11:
-          message.weight = reader.string();
-          break;
-        case 12:
-          message.assigneesId = reader.string();
-          break;
-        case 13:
-          message.createdAt = reader.string();
-          break;
-        case 14:
-          message.updatedAt = reader.string();
-          break;
-        case 15:
-          message.closedAt = reader.string();
-          break;
-        case 16:
-          message.closedBy = reader.string();
-          break;
-        case 17:
-          message.extensions = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.assigneesId.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.assigneesId.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         default:
           reader.skipType(tag & 7);
@@ -342,25 +280,17 @@ export const MsgCreateIssue = {
 
   fromJSON(object: any): MsgCreateIssue {
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
       message.creator = "";
     }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = String(object.iid);
-    } else {
-      message.iid = "";
-    }
     if (object.title !== undefined && object.title !== null) {
       message.title = String(object.title);
     } else {
       message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = String(object.state);
-    } else {
-      message.state = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
@@ -368,64 +298,29 @@ export const MsgCreateIssue = {
       message.description = "";
     }
     if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = String(object.authorId);
+      message.authorId = Number(object.authorId);
     } else {
-      message.authorId = "";
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      message.comments = String(object.comments);
-    } else {
-      message.comments = "";
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      message.pullRequests = String(object.pullRequests);
-    } else {
-      message.pullRequests = "";
+      message.authorId = 0;
     }
     if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = String(object.repositoryId);
+      message.repositoryId = Number(object.repositoryId);
     } else {
-      message.repositoryId = "";
+      message.repositoryId = 0;
     }
     if (object.labels !== undefined && object.labels !== null) {
-      message.labels = String(object.labels);
-    } else {
-      message.labels = "";
+      for (const e of object.labels) {
+        message.labels.push(String(e));
+      }
     }
     if (object.weight !== undefined && object.weight !== null) {
-      message.weight = String(object.weight);
+      message.weight = Number(object.weight);
     } else {
-      message.weight = "";
+      message.weight = 0;
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      message.assigneesId = String(object.assigneesId);
-    } else {
-      message.assigneesId = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = String(object.createdAt);
-    } else {
-      message.createdAt = "";
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = String(object.updatedAt);
-    } else {
-      message.updatedAt = "";
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = String(object.closedAt);
-    } else {
-      message.closedAt = "";
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = String(object.closedBy);
-    } else {
-      message.closedBy = "";
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
-    } else {
-      message.extensions = "";
+      for (const e of object.assigneesId) {
+        message.assigneesId.push(Number(e));
+      }
     }
     return message;
   },
@@ -433,50 +328,39 @@ export const MsgCreateIssue = {
   toJSON(message: MsgCreateIssue): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.iid !== undefined && (obj.iid = message.iid);
     message.title !== undefined && (obj.title = message.title);
-    message.state !== undefined && (obj.state = message.state);
     message.description !== undefined &&
       (obj.description = message.description);
     message.authorId !== undefined && (obj.authorId = message.authorId);
-    message.comments !== undefined && (obj.comments = message.comments);
-    message.pullRequests !== undefined &&
-      (obj.pullRequests = message.pullRequests);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
-    message.labels !== undefined && (obj.labels = message.labels);
+    if (message.labels) {
+      obj.labels = message.labels.map((e) => e);
+    } else {
+      obj.labels = [];
+    }
     message.weight !== undefined && (obj.weight = message.weight);
-    message.assigneesId !== undefined &&
-      (obj.assigneesId = message.assigneesId);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.closedAt !== undefined && (obj.closedAt = message.closedAt);
-    message.closedBy !== undefined && (obj.closedBy = message.closedBy);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
+    if (message.assigneesId) {
+      obj.assigneesId = message.assigneesId.map((e) => e);
+    } else {
+      obj.assigneesId = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgCreateIssue>): MsgCreateIssue {
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
       message.creator = "";
     }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = object.iid;
-    } else {
-      message.iid = "";
-    }
     if (object.title !== undefined && object.title !== null) {
       message.title = object.title;
     } else {
       message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = object.state;
-    } else {
-      message.state = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
@@ -486,62 +370,27 @@ export const MsgCreateIssue = {
     if (object.authorId !== undefined && object.authorId !== null) {
       message.authorId = object.authorId;
     } else {
-      message.authorId = "";
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      message.comments = object.comments;
-    } else {
-      message.comments = "";
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      message.pullRequests = object.pullRequests;
-    } else {
-      message.pullRequests = "";
+      message.authorId = 0;
     }
     if (object.repositoryId !== undefined && object.repositoryId !== null) {
       message.repositoryId = object.repositoryId;
     } else {
-      message.repositoryId = "";
+      message.repositoryId = 0;
     }
     if (object.labels !== undefined && object.labels !== null) {
-      message.labels = object.labels;
-    } else {
-      message.labels = "";
+      for (const e of object.labels) {
+        message.labels.push(e);
+      }
     }
     if (object.weight !== undefined && object.weight !== null) {
       message.weight = object.weight;
     } else {
-      message.weight = "";
+      message.weight = 0;
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      message.assigneesId = object.assigneesId;
-    } else {
-      message.assigneesId = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = "";
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = "";
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = object.closedAt;
-    } else {
-      message.closedAt = "";
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = object.closedBy;
-    } else {
-      message.closedBy = "";
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
-    } else {
-      message.extensions = "";
+      for (const e of object.assigneesId) {
+        message.assigneesId.push(e);
+      }
     }
     return message;
   },
@@ -610,22 +459,11 @@ export const MsgCreateIssueResponse = {
 const baseMsgUpdateIssue: object = {
   creator: "",
   id: 0,
-  iid: "",
   title: "",
-  state: "",
   description: "",
-  authorId: "",
-  comments: "",
-  pullRequests: "",
-  repositoryId: "",
   labels: "",
-  weight: "",
-  assigneesId: "",
-  createdAt: "",
-  updatedAt: "",
-  closedAt: "",
-  closedBy: "",
-  extensions: "",
+  weight: 0,
+  assigneesId: 0,
 };
 
 export const MsgUpdateIssue = {
@@ -636,54 +474,23 @@ export const MsgUpdateIssue = {
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
     }
-    if (message.iid !== "") {
-      writer.uint32(26).string(message.iid);
-    }
     if (message.title !== "") {
-      writer.uint32(34).string(message.title);
-    }
-    if (message.state !== "") {
-      writer.uint32(42).string(message.state);
+      writer.uint32(26).string(message.title);
     }
     if (message.description !== "") {
-      writer.uint32(50).string(message.description);
+      writer.uint32(34).string(message.description);
     }
-    if (message.authorId !== "") {
-      writer.uint32(58).string(message.authorId);
+    for (const v of message.labels) {
+      writer.uint32(42).string(v!);
     }
-    if (message.comments !== "") {
-      writer.uint32(66).string(message.comments);
+    if (message.weight !== 0) {
+      writer.uint32(48).uint64(message.weight);
     }
-    if (message.pullRequests !== "") {
-      writer.uint32(74).string(message.pullRequests);
+    writer.uint32(58).fork();
+    for (const v of message.assigneesId) {
+      writer.uint64(v);
     }
-    if (message.repositoryId !== "") {
-      writer.uint32(82).string(message.repositoryId);
-    }
-    if (message.labels !== "") {
-      writer.uint32(90).string(message.labels);
-    }
-    if (message.weight !== "") {
-      writer.uint32(98).string(message.weight);
-    }
-    if (message.assigneesId !== "") {
-      writer.uint32(106).string(message.assigneesId);
-    }
-    if (message.createdAt !== "") {
-      writer.uint32(114).string(message.createdAt);
-    }
-    if (message.updatedAt !== "") {
-      writer.uint32(122).string(message.updatedAt);
-    }
-    if (message.closedAt !== "") {
-      writer.uint32(130).string(message.closedAt);
-    }
-    if (message.closedBy !== "") {
-      writer.uint32(138).string(message.closedBy);
-    }
-    if (message.extensions !== "") {
-      writer.uint32(146).string(message.extensions);
-    }
+    writer.ldelim();
     return writer;
   },
 
@@ -691,6 +498,8 @@ export const MsgUpdateIssue = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -701,52 +510,26 @@ export const MsgUpdateIssue = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.iid = reader.string();
-          break;
-        case 4:
           message.title = reader.string();
           break;
-        case 5:
-          message.state = reader.string();
-          break;
-        case 6:
+        case 4:
           message.description = reader.string();
           break;
+        case 5:
+          message.labels.push(reader.string());
+          break;
+        case 6:
+          message.weight = longToNumber(reader.uint64() as Long);
+          break;
         case 7:
-          message.authorId = reader.string();
-          break;
-        case 8:
-          message.comments = reader.string();
-          break;
-        case 9:
-          message.pullRequests = reader.string();
-          break;
-        case 10:
-          message.repositoryId = reader.string();
-          break;
-        case 11:
-          message.labels = reader.string();
-          break;
-        case 12:
-          message.weight = reader.string();
-          break;
-        case 13:
-          message.assigneesId = reader.string();
-          break;
-        case 14:
-          message.createdAt = reader.string();
-          break;
-        case 15:
-          message.updatedAt = reader.string();
-          break;
-        case 16:
-          message.closedAt = reader.string();
-          break;
-        case 17:
-          message.closedBy = reader.string();
-          break;
-        case 18:
-          message.extensions = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.assigneesId.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.assigneesId.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         default:
           reader.skipType(tag & 7);
@@ -758,6 +541,8 @@ export const MsgUpdateIssue = {
 
   fromJSON(object: any): MsgUpdateIssue {
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -768,85 +553,30 @@ export const MsgUpdateIssue = {
     } else {
       message.id = 0;
     }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = String(object.iid);
-    } else {
-      message.iid = "";
-    }
     if (object.title !== undefined && object.title !== null) {
       message.title = String(object.title);
     } else {
       message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = String(object.state);
-    } else {
-      message.state = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
     } else {
       message.description = "";
     }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = String(object.authorId);
-    } else {
-      message.authorId = "";
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      message.comments = String(object.comments);
-    } else {
-      message.comments = "";
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      message.pullRequests = String(object.pullRequests);
-    } else {
-      message.pullRequests = "";
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = String(object.repositoryId);
-    } else {
-      message.repositoryId = "";
-    }
     if (object.labels !== undefined && object.labels !== null) {
-      message.labels = String(object.labels);
-    } else {
-      message.labels = "";
+      for (const e of object.labels) {
+        message.labels.push(String(e));
+      }
     }
     if (object.weight !== undefined && object.weight !== null) {
-      message.weight = String(object.weight);
+      message.weight = Number(object.weight);
     } else {
-      message.weight = "";
+      message.weight = 0;
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      message.assigneesId = String(object.assigneesId);
-    } else {
-      message.assigneesId = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = String(object.createdAt);
-    } else {
-      message.createdAt = "";
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = String(object.updatedAt);
-    } else {
-      message.updatedAt = "";
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = String(object.closedAt);
-    } else {
-      message.closedAt = "";
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = String(object.closedBy);
-    } else {
-      message.closedBy = "";
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
-    } else {
-      message.extensions = "";
+      for (const e of object.assigneesId) {
+        message.assigneesId.push(Number(e));
+      }
     }
     return message;
   },
@@ -855,31 +585,27 @@ export const MsgUpdateIssue = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
-    message.iid !== undefined && (obj.iid = message.iid);
     message.title !== undefined && (obj.title = message.title);
-    message.state !== undefined && (obj.state = message.state);
     message.description !== undefined &&
       (obj.description = message.description);
-    message.authorId !== undefined && (obj.authorId = message.authorId);
-    message.comments !== undefined && (obj.comments = message.comments);
-    message.pullRequests !== undefined &&
-      (obj.pullRequests = message.pullRequests);
-    message.repositoryId !== undefined &&
-      (obj.repositoryId = message.repositoryId);
-    message.labels !== undefined && (obj.labels = message.labels);
+    if (message.labels) {
+      obj.labels = message.labels.map((e) => e);
+    } else {
+      obj.labels = [];
+    }
     message.weight !== undefined && (obj.weight = message.weight);
-    message.assigneesId !== undefined &&
-      (obj.assigneesId = message.assigneesId);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.closedAt !== undefined && (obj.closedAt = message.closedAt);
-    message.closedBy !== undefined && (obj.closedBy = message.closedBy);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
+    if (message.assigneesId) {
+      obj.assigneesId = message.assigneesId.map((e) => e);
+    } else {
+      obj.assigneesId = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue {
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
+    message.labels = [];
+    message.assigneesId = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -890,85 +616,30 @@ export const MsgUpdateIssue = {
     } else {
       message.id = 0;
     }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = object.iid;
-    } else {
-      message.iid = "";
-    }
     if (object.title !== undefined && object.title !== null) {
       message.title = object.title;
     } else {
       message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = object.state;
-    } else {
-      message.state = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
     } else {
       message.description = "";
     }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = object.authorId;
-    } else {
-      message.authorId = "";
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      message.comments = object.comments;
-    } else {
-      message.comments = "";
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      message.pullRequests = object.pullRequests;
-    } else {
-      message.pullRequests = "";
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = object.repositoryId;
-    } else {
-      message.repositoryId = "";
-    }
     if (object.labels !== undefined && object.labels !== null) {
-      message.labels = object.labels;
-    } else {
-      message.labels = "";
+      for (const e of object.labels) {
+        message.labels.push(e);
+      }
     }
     if (object.weight !== undefined && object.weight !== null) {
       message.weight = object.weight;
     } else {
-      message.weight = "";
+      message.weight = 0;
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      message.assigneesId = object.assigneesId;
-    } else {
-      message.assigneesId = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = "";
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = "";
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = object.closedAt;
-    } else {
-      message.closedAt = "";
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = object.closedBy;
-    } else {
-      message.closedBy = "";
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
-    } else {
-      message.extensions = "";
+      for (const e of object.assigneesId) {
+        message.assigneesId.push(e);
+      }
     }
     return message;
   },
@@ -1008,6 +679,167 @@ export const MsgUpdateIssueResponse = {
 
   fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse {
     const message = { ...baseMsgUpdateIssueResponse } as MsgUpdateIssueResponse;
+    return message;
+  },
+};
+
+const baseMsgChangeIssueState: object = { creator: "", id: 0, closedBy: 0 };
+
+export const MsgChangeIssueState = {
+  encode(
+    message: MsgChangeIssueState,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.closedBy !== 0) {
+      writer.uint32(24).uint64(message.closedBy);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.closedBy = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgChangeIssueState {
+    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.closedBy !== undefined && object.closedBy !== null) {
+      message.closedBy = Number(object.closedBy);
+    } else {
+      message.closedBy = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgChangeIssueState): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.closedBy !== undefined && (obj.closedBy = message.closedBy);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState {
+    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.closedBy !== undefined && object.closedBy !== null) {
+      message.closedBy = object.closedBy;
+    } else {
+      message.closedBy = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgChangeIssueStateResponse: object = { state: "" };
+
+export const MsgChangeIssueStateResponse = {
+  encode(
+    message: MsgChangeIssueStateResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.state !== "") {
+      writer.uint32(10).string(message.state);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgChangeIssueStateResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgChangeIssueStateResponse,
+    } as MsgChangeIssueStateResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.state = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgChangeIssueStateResponse {
+    const message = {
+      ...baseMsgChangeIssueStateResponse,
+    } as MsgChangeIssueStateResponse;
+    if (object.state !== undefined && object.state !== null) {
+      message.state = String(object.state);
+    } else {
+      message.state = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgChangeIssueStateResponse): unknown {
+    const obj: any = {};
+    message.state !== undefined && (obj.state = message.state);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgChangeIssueStateResponse>
+  ): MsgChangeIssueStateResponse {
+    const message = {
+      ...baseMsgChangeIssueStateResponse,
+    } as MsgChangeIssueStateResponse;
+    if (object.state !== undefined && object.state !== null) {
+      message.state = object.state;
+    } else {
+      message.state = "";
+    }
     return message;
   },
 };
@@ -3545,6 +3377,9 @@ export interface Msg {
   /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
   UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+  ChangeIssueState(
+    request: MsgChangeIssueState
+  ): Promise<MsgChangeIssueStateResponse>;
   DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
   CreateRepository(
     request: MsgCreateRepository
@@ -3589,6 +3424,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdateIssueResponse.decode(new Reader(data))
+    );
+  }
+
+  ChangeIssueState(
+    request: MsgChangeIssueState
+  ): Promise<MsgChangeIssueStateResponse> {
+    const data = MsgChangeIssueState.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "ChangeIssueState",
+      data
+    );
+    return promise.then((data) =>
+      MsgChangeIssueStateResponse.decode(new Reader(data))
     );
   }
 

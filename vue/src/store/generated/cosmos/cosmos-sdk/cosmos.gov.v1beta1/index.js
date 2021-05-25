@@ -297,22 +297,6 @@ export default {
                 }
             }
         },
-        async sendMsgDeposit({ rootGetters }, { value, fee, memo }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgDeposit(value);
-                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgDeposit:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgDeposit:Send', 'Could not broadcast Tx.');
-                }
-            }
-        },
         async sendMsgSubmitProposal({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgSubmitProposal(value);
@@ -326,6 +310,22 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgSubmitProposal:Send', 'Could not broadcast Tx.');
+                }
+            }
+        },
+        async sendMsgDeposit({ rootGetters }, { value, fee, memo }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgDeposit(value);
+                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgDeposit:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgDeposit:Send', 'Could not broadcast Tx.');
                 }
             }
         },
@@ -343,20 +343,6 @@ export default {
                 }
             }
         },
-        async MsgDeposit({ rootGetters }, { value }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgDeposit(value);
-                return msg;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgDeposit:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgDeposit:Create', 'Could not create message.');
-                }
-            }
-        },
         async MsgSubmitProposal({ rootGetters }, { value }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgSubmitProposal(value);
@@ -368,6 +354,20 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgSubmitProposal:Create', 'Could not create message.');
+                }
+            }
+        },
+        async MsgDeposit({ rootGetters }, { value }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgDeposit(value);
+                return msg;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgDeposit:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgDeposit:Create', 'Could not create message.');
                 }
             }
         },

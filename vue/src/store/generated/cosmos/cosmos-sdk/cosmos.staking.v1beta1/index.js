@@ -471,38 +471,6 @@ export default {
                 return {};
             }
         },
-        async sendMsgCreateValidator({ rootGetters }, { value, fee, memo }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgCreateValidator(value);
-                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgCreateValidator:Send', 'Could not broadcast Tx.');
-                }
-            }
-        },
-        async sendMsgBeginRedelegate({ rootGetters }, { value, fee, memo }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgBeginRedelegate(value);
-                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Send', 'Could not broadcast Tx.');
-                }
-            }
-        },
         async sendMsgUndelegate({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgUndelegate(value);
@@ -519,19 +487,19 @@ export default {
                 }
             }
         },
-        async sendMsgEditValidator({ rootGetters }, { value, fee, memo }) {
+        async sendMsgCreateValidator({ rootGetters }, { value, fee, memo }) {
             try {
-                const msg = await (await initTxClient(rootGetters)).msgEditValidator(value);
+                const msg = await (await initTxClient(rootGetters)).msgCreateValidator(value);
                 const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgEditValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgEditValidator:Send', 'Could not broadcast Tx.');
+                    throw new SpVuexError('TxClient:MsgCreateValidator:Send', 'Could not broadcast Tx.');
                 }
             }
         },
@@ -551,31 +519,35 @@ export default {
                 }
             }
         },
-        async MsgCreateValidator({ rootGetters }, { value }) {
+        async sendMsgEditValidator({ rootGetters }, { value, fee, memo }) {
             try {
-                const msg = await (await initTxClient(rootGetters)).msgCreateValidator(value);
-                return msg;
+                const msg = await (await initTxClient(rootGetters)).msgEditValidator(value);
+                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgEditValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgCreateValidator:Create', 'Could not create message.');
+                    throw new SpVuexError('TxClient:MsgEditValidator:Send', 'Could not broadcast Tx.');
                 }
             }
         },
-        async MsgBeginRedelegate({ rootGetters }, { value }) {
+        async sendMsgBeginRedelegate({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgBeginRedelegate(value);
-                return msg;
+                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e.toString() == 'wallet is required') {
                     throw new SpVuexError('TxClient:MsgBeginRedelegate:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Create', 'Could not create message.');
+                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Send', 'Could not broadcast Tx.');
                 }
             }
         },
@@ -593,17 +565,17 @@ export default {
                 }
             }
         },
-        async MsgEditValidator({ rootGetters }, { value }) {
+        async MsgCreateValidator({ rootGetters }, { value }) {
             try {
-                const msg = await (await initTxClient(rootGetters)).msgEditValidator(value);
+                const msg = await (await initTxClient(rootGetters)).msgCreateValidator(value);
                 return msg;
             }
             catch (e) {
                 if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgEditValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgCreateValidator:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgEditValidator:Create', 'Could not create message.');
+                    throw new SpVuexError('TxClient:MsgCreateValidator:Create', 'Could not create message.');
                 }
             }
         },
@@ -618,6 +590,34 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgDelegate:Create', 'Could not create message.');
+                }
+            }
+        },
+        async MsgEditValidator({ rootGetters }, { value }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgEditValidator(value);
+                return msg;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgEditValidator:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgEditValidator:Create', 'Could not create message.');
+                }
+            }
+        },
+        async MsgBeginRedelegate({ rootGetters }, { value }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgBeginRedelegate(value);
+                return msg;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgBeginRedelegate:Create', 'Could not create message.');
                 }
             }
         },

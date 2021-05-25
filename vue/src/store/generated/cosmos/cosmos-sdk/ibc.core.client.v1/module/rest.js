@@ -130,7 +130,7 @@ export class HttpClient {
     }
 }
 /**
- * @title ibc/core/client/v1/query.proto
+ * @title ibc/core/client/v1/tx.proto
  * @version version not set
  */
 export class Api extends HttpClient {

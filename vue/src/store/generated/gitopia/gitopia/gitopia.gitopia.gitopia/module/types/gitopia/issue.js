@@ -5,21 +5,21 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseIssue = {
     creator: "",
     id: 0,
-    iid: "",
+    iid: 0,
     title: "",
     state: "",
     description: "",
-    authorId: "",
-    comments: "",
-    pullRequests: "",
-    repositoryId: "",
+    authorId: 0,
+    comments: 0,
+    pullRequests: 0,
+    repositoryId: 0,
     labels: "",
-    weight: "",
-    assigneesId: "",
-    createdAt: "",
-    updatedAt: "",
-    closedAt: "",
-    closedBy: "",
+    weight: 0,
+    assigneesId: 0,
+    createdAt: 0,
+    updatedAt: 0,
+    closedAt: 0,
+    closedBy: 0,
     extensions: "",
 };
 export const Issue = {
@@ -30,8 +30,8 @@ export const Issue = {
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
         }
-        if (message.iid !== "") {
-            writer.uint32(26).string(message.iid);
+        if (message.iid !== 0) {
+            writer.uint32(24).uint64(message.iid);
         }
         if (message.title !== "") {
             writer.uint32(34).string(message.title);
@@ -42,38 +42,44 @@ export const Issue = {
         if (message.description !== "") {
             writer.uint32(50).string(message.description);
         }
-        if (message.authorId !== "") {
-            writer.uint32(58).string(message.authorId);
+        if (message.authorId !== 0) {
+            writer.uint32(56).uint64(message.authorId);
         }
-        if (message.comments !== "") {
-            writer.uint32(66).string(message.comments);
+        writer.uint32(66).fork();
+        for (const v of message.comments) {
+            writer.uint64(v);
         }
-        if (message.pullRequests !== "") {
-            writer.uint32(74).string(message.pullRequests);
+        writer.ldelim();
+        writer.uint32(74).fork();
+        for (const v of message.pullRequests) {
+            writer.uint64(v);
         }
-        if (message.repositoryId !== "") {
-            writer.uint32(82).string(message.repositoryId);
+        writer.ldelim();
+        if (message.repositoryId !== 0) {
+            writer.uint32(80).uint64(message.repositoryId);
         }
-        if (message.labels !== "") {
-            writer.uint32(90).string(message.labels);
+        for (const v of message.labels) {
+            writer.uint32(90).string(v);
         }
-        if (message.weight !== "") {
-            writer.uint32(98).string(message.weight);
+        if (message.weight !== 0) {
+            writer.uint32(96).uint64(message.weight);
         }
-        if (message.assigneesId !== "") {
-            writer.uint32(106).string(message.assigneesId);
+        writer.uint32(106).fork();
+        for (const v of message.assigneesId) {
+            writer.uint64(v);
         }
-        if (message.createdAt !== "") {
-            writer.uint32(114).string(message.createdAt);
+        writer.ldelim();
+        if (message.createdAt !== 0) {
+            writer.uint32(112).int64(message.createdAt);
         }
-        if (message.updatedAt !== "") {
-            writer.uint32(122).string(message.updatedAt);
+        if (message.updatedAt !== 0) {
+            writer.uint32(120).int64(message.updatedAt);
         }
-        if (message.closedAt !== "") {
-            writer.uint32(130).string(message.closedAt);
+        if (message.closedAt !== 0) {
+            writer.uint32(128).int64(message.closedAt);
         }
-        if (message.closedBy !== "") {
-            writer.uint32(138).string(message.closedBy);
+        if (message.closedBy !== 0) {
+            writer.uint32(136).uint64(message.closedBy);
         }
         if (message.extensions !== "") {
             writer.uint32(146).string(message.extensions);
@@ -84,6 +90,10 @@ export const Issue = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseIssue };
+        message.comments = [];
+        message.pullRequests = [];
+        message.labels = [];
+        message.assigneesId = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -94,7 +104,7 @@ export const Issue = {
                     message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.iid = reader.string();
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 case 4:
                     message.title = reader.string();
@@ -106,37 +116,61 @@ export const Issue = {
                     message.description = reader.string();
                     break;
                 case 7:
-                    message.authorId = reader.string();
+                    message.authorId = longToNumber(reader.uint64());
                     break;
                 case 8:
-                    message.comments = reader.string();
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.comments.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.comments.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 9:
-                    message.pullRequests = reader.string();
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.pullRequests.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.pullRequests.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 10:
-                    message.repositoryId = reader.string();
+                    message.repositoryId = longToNumber(reader.uint64());
                     break;
                 case 11:
-                    message.labels = reader.string();
+                    message.labels.push(reader.string());
                     break;
                 case 12:
-                    message.weight = reader.string();
+                    message.weight = longToNumber(reader.uint64());
                     break;
                 case 13:
-                    message.assigneesId = reader.string();
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.assigneesId.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.assigneesId.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 14:
-                    message.createdAt = reader.string();
+                    message.createdAt = longToNumber(reader.int64());
                     break;
                 case 15:
-                    message.updatedAt = reader.string();
+                    message.updatedAt = longToNumber(reader.int64());
                     break;
                 case 16:
-                    message.closedAt = reader.string();
+                    message.closedAt = longToNumber(reader.int64());
                     break;
                 case 17:
-                    message.closedBy = reader.string();
+                    message.closedBy = longToNumber(reader.uint64());
                     break;
                 case 18:
                     message.extensions = reader.string();
@@ -150,6 +184,10 @@ export const Issue = {
     },
     fromJSON(object) {
         const message = { ...baseIssue };
+        message.comments = [];
+        message.pullRequests = [];
+        message.labels = [];
+        message.assigneesId = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -163,10 +201,10 @@ export const Issue = {
             message.id = 0;
         }
         if (object.iid !== undefined && object.iid !== null) {
-            message.iid = String(object.iid);
+            message.iid = Number(object.iid);
         }
         else {
-            message.iid = "";
+            message.iid = 0;
         }
         if (object.title !== undefined && object.title !== null) {
             message.title = String(object.title);
@@ -187,70 +225,66 @@ export const Issue = {
             message.description = "";
         }
         if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = String(object.authorId);
+            message.authorId = Number(object.authorId);
         }
         else {
-            message.authorId = "";
+            message.authorId = 0;
         }
         if (object.comments !== undefined && object.comments !== null) {
-            message.comments = String(object.comments);
-        }
-        else {
-            message.comments = "";
+            for (const e of object.comments) {
+                message.comments.push(Number(e));
+            }
         }
         if (object.pullRequests !== undefined && object.pullRequests !== null) {
-            message.pullRequests = String(object.pullRequests);
-        }
-        else {
-            message.pullRequests = "";
+            for (const e of object.pullRequests) {
+                message.pullRequests.push(Number(e));
+            }
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = String(object.repositoryId);
+            message.repositoryId = Number(object.repositoryId);
         }
         else {
-            message.repositoryId = "";
+            message.repositoryId = 0;
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = String(object.labels);
-        }
-        else {
-            message.labels = "";
+            for (const e of object.labels) {
+                message.labels.push(String(e));
+            }
         }
         if (object.weight !== undefined && object.weight !== null) {
-            message.weight = String(object.weight);
+            message.weight = Number(object.weight);
         }
         else {
-            message.weight = "";
+            message.weight = 0;
         }
         if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            message.assigneesId = String(object.assigneesId);
-        }
-        else {
-            message.assigneesId = "";
+            for (const e of object.assigneesId) {
+                message.assigneesId.push(Number(e));
+            }
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = String(object.createdAt);
+            message.createdAt = Number(object.createdAt);
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = String(object.updatedAt);
+            message.updatedAt = Number(object.updatedAt);
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.closedAt !== undefined && object.closedAt !== null) {
-            message.closedAt = String(object.closedAt);
+            message.closedAt = Number(object.closedAt);
         }
         else {
-            message.closedAt = "";
+            message.closedAt = 0;
         }
         if (object.closedBy !== undefined && object.closedBy !== null) {
-            message.closedBy = String(object.closedBy);
+            message.closedBy = Number(object.closedBy);
         }
         else {
-            message.closedBy = "";
+            message.closedBy = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = String(object.extensions);
@@ -270,15 +304,33 @@ export const Issue = {
         message.description !== undefined &&
             (obj.description = message.description);
         message.authorId !== undefined && (obj.authorId = message.authorId);
-        message.comments !== undefined && (obj.comments = message.comments);
-        message.pullRequests !== undefined &&
-            (obj.pullRequests = message.pullRequests);
+        if (message.comments) {
+            obj.comments = message.comments.map((e) => e);
+        }
+        else {
+            obj.comments = [];
+        }
+        if (message.pullRequests) {
+            obj.pullRequests = message.pullRequests.map((e) => e);
+        }
+        else {
+            obj.pullRequests = [];
+        }
         message.repositoryId !== undefined &&
             (obj.repositoryId = message.repositoryId);
-        message.labels !== undefined && (obj.labels = message.labels);
+        if (message.labels) {
+            obj.labels = message.labels.map((e) => e);
+        }
+        else {
+            obj.labels = [];
+        }
         message.weight !== undefined && (obj.weight = message.weight);
-        message.assigneesId !== undefined &&
-            (obj.assigneesId = message.assigneesId);
+        if (message.assigneesId) {
+            obj.assigneesId = message.assigneesId.map((e) => e);
+        }
+        else {
+            obj.assigneesId = [];
+        }
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
         message.closedAt !== undefined && (obj.closedAt = message.closedAt);
@@ -288,6 +340,10 @@ export const Issue = {
     },
     fromPartial(object) {
         const message = { ...baseIssue };
+        message.comments = [];
+        message.pullRequests = [];
+        message.labels = [];
+        message.assigneesId = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -304,7 +360,7 @@ export const Issue = {
             message.iid = object.iid;
         }
         else {
-            message.iid = "";
+            message.iid = 0;
         }
         if (object.title !== undefined && object.title !== null) {
             message.title = object.title;
@@ -328,67 +384,63 @@ export const Issue = {
             message.authorId = object.authorId;
         }
         else {
-            message.authorId = "";
+            message.authorId = 0;
         }
         if (object.comments !== undefined && object.comments !== null) {
-            message.comments = object.comments;
-        }
-        else {
-            message.comments = "";
+            for (const e of object.comments) {
+                message.comments.push(e);
+            }
         }
         if (object.pullRequests !== undefined && object.pullRequests !== null) {
-            message.pullRequests = object.pullRequests;
-        }
-        else {
-            message.pullRequests = "";
+            for (const e of object.pullRequests) {
+                message.pullRequests.push(e);
+            }
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
             message.repositoryId = object.repositoryId;
         }
         else {
-            message.repositoryId = "";
+            message.repositoryId = 0;
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = object.labels;
-        }
-        else {
-            message.labels = "";
+            for (const e of object.labels) {
+                message.labels.push(e);
+            }
         }
         if (object.weight !== undefined && object.weight !== null) {
             message.weight = object.weight;
         }
         else {
-            message.weight = "";
+            message.weight = 0;
         }
         if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            message.assigneesId = object.assigneesId;
-        }
-        else {
-            message.assigneesId = "";
+            for (const e of object.assigneesId) {
+                message.assigneesId.push(e);
+            }
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
             message.createdAt = object.createdAt;
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
             message.updatedAt = object.updatedAt;
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.closedAt !== undefined && object.closedAt !== null) {
             message.closedAt = object.closedAt;
         }
         else {
-            message.closedAt = "";
+            message.closedAt = 0;
         }
         if (object.closedBy !== undefined && object.closedBy !== null) {
             message.closedBy = object.closedBy;
         }
         else {
-            message.closedBy = "";
+            message.closedBy = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = object.extensions;
