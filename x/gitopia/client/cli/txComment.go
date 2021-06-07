@@ -6,6 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/spf13/cast"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -15,7 +17,7 @@ import (
 func CmdCreateComment() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-comment [parentId] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [commentType]",
-		Short: "Creates a new comment",
+		Short: "Create a new comment",
 		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsParentId, err := strconv.ParseUint(args[0], 10, 64)
@@ -23,10 +25,19 @@ func CmdCreateComment() *cobra.Command {
 				return err
 			}
 
-			argsBody := string(args[1])
+			argsBody, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
 			argsAttachments := strings.Split(args[2], ",")
-			argsDiffHunk := string(args[3])
-			argsPath := string(args[4])
+			argsDiffHunk, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+			argsPath, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
 			argsSystem, err := strconv.ParseBool(args[5])
 			if err != nil {
 				return err
@@ -37,8 +48,14 @@ func CmdCreateComment() *cobra.Command {
 				return err
 			}
 
-			argsAuthorAssociation := string(args[7])
-			argsCommentType := string(args[8])
+			argsAuthorAssociation, err := cast.ToStringE(args[7])
+			if err != nil {
+				return err
+			}
+			argsCommentType, err := cast.ToStringE(args[8])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -69,7 +86,11 @@ func CmdUpdateComment() *cobra.Command {
 				return err
 			}
 
-			argsBody := string(args[1])
+			argsBody, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
 			argsAttachments := strings.Split(args[2], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)

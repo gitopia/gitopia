@@ -99,7 +99,7 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateUser{}
+var _ sdk.Msg = &MsgDeleteUser{}
 
 func NewMsgDeleteUser(creator string, id uint64) *MsgDeleteUser {
 	return &MsgDeleteUser{

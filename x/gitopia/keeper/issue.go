@@ -41,50 +41,17 @@ func (k Keeper) SetIssueCount(ctx sdk.Context, count uint64) {
 // AppendIssue appends a issue in the store with a new id and update the count
 func (k Keeper) AppendIssue(
 	ctx sdk.Context,
-	creator string,
-	iid uint64,
-	title string,
-	state string,
-	description string,
-	authorId uint64,
-	comments []uint64,
-	pullRequests []uint64,
-	repositoryId uint64,
-	labels []string,
-	weight uint64,
-	assigneesId []uint64,
-	createdAt int64,
-	updatedAt int64,
-	closedAt int64,
-	closedBy uint64,
-	extensions string,
+	issue types.Issue,
 ) uint64 {
 	// Create the issue
 	count := k.GetIssueCount(ctx)
-	var issue = types.Issue{
-		Creator:      creator,
-		Id:           count,
-		Iid:          iid,
-		Title:        title,
-		State:        state,
-		Description:  description,
-		AuthorId:     authorId,
-		Comments:     comments,
-		PullRequests: pullRequests,
-		RepositoryId: repositoryId,
-		Labels:       labels,
-		Weight:       weight,
-		AssigneesId:  assigneesId,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		ClosedAt:     closedAt,
-		ClosedBy:     closedBy,
-		Extensions:   extensions,
-	}
+
+	// Set the ID of the appended value
+	issue.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	value := k.cdc.MustMarshalBinaryBare(&issue)
-	store.Set(GetIssueIDBytes(issue.Id), value)
+	appendedValue := k.cdc.MustMarshalBinaryBare(&issue)
+	store.Set(GetIssueIDBytes(issue.Id), appendedValue)
 
 	// Update issue count
 	k.SetIssueCount(ctx, count+1)

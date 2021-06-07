@@ -41,44 +41,17 @@ func (k Keeper) SetCommentCount(ctx sdk.Context, count uint64) {
 // AppendComment appends a comment in the store with a new id and update the count
 func (k Keeper) AppendComment(
 	ctx sdk.Context,
-	creator string,
-	parentId uint64,
-	commentIid uint64,
-	body string,
-	attachments []string,
-	diffHunk string,
-	path string,
-	system bool,
-	authorId uint64,
-	authorAssociation string,
-	createdAt int64,
-	updatedAt int64,
-	commentType string,
-	extensions string,
+	comment types.Comment,
 ) uint64 {
 	// Create the comment
 	count := k.GetCommentCount(ctx)
-	var comment = types.Comment{
-		Creator:           creator,
-		Id:                count,
-		ParentId:          parentId,
-		CommentIid:        commentIid,
-		Body:              body,
-		Attachments:       attachments,
-		DiffHunk:          diffHunk,
-		Path:              path,
-		System:            system,
-		AuthorId:          authorId,
-		AuthorAssociation: authorAssociation,
-		CreatedAt:         createdAt,
-		UpdatedAt:         updatedAt,
-		CommentType:       commentType,
-		Extensions:        extensions,
-	}
+
+	// Set the ID of the appended value
+	comment.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	value := k.cdc.MustMarshalBinaryBare(&comment)
-	store.Set(GetCommentIDBytes(comment.Id), value)
+	appendedValue := k.cdc.MustMarshalBinaryBare(&comment)
+	store.Set(GetCommentIDBytes(comment.Id), appendedValue)
 
 	// Update comment count
 	k.SetCommentCount(ctx, count+1)

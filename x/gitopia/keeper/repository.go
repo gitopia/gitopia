@@ -47,32 +47,24 @@ func (k Keeper) SetRepositoryCount(ctx sdk.Context, count uint64) {
 // AppendRepository appends a repository in the store with a new id and update the count
 func (k Keeper) AppendRepository(
 	ctx sdk.Context,
-	creator string,
-	name string,
-	owner string,
-	description string,
+	repository types.Repository,
 ) uint64 {
 	// Create the repository
 	count := k.GetRepositoryCount(ctx)
-	var repository = types.Repository{
-		Creator:       creator,
-		Id:            count,
-		Name:          name,
-		Owner:         owner,
-		Description:   description,
-		DefaultBranch: "master",
-	}
+
+	// Set the ID of the appended value
+	repository.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	value := k.cdc.MustMarshalBinaryBare(&repository)
-	store.Set(GetRepositoryIDBytes(repository.Id), value)
+	appendedValue := k.cdc.MustMarshalBinaryBare(&repository)
+	store.Set(GetRepositoryIDBytes(repository.Id), appendedValue)
 
 	// Update repository count
 	k.SetRepositoryCount(ctx, count+1)
 
 	// Update user/organization repositories
 	var o Owner
-	json.Unmarshal([]byte(owner), &o)
+	json.Unmarshal([]byte(repository.Owner), &o)
 
 	if o.Type == "User" {
 		user := k.GetUser(ctx, o.ID)

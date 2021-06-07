@@ -12,12 +12,16 @@ import (
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	var repository = types.Repository{
+		Creator:     msg.Creator,
+		Name:        msg.Name,
+		Owner:       msg.Owner,
+		Description: msg.Description,
+	}
+
 	id := k.AppendRepository(
 		ctx,
-		msg.Creator,
-		msg.Name,
-		msg.Owner,
-		msg.Description,
+		repository,
 	)
 
 	return &types.MsgCreateRepositoryResponse{
