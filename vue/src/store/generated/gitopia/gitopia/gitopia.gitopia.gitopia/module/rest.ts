@@ -544,7 +544,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title gitopia/tx.proto
+ * @title gitopia/comment.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -553,6 +553,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryCommentAll
+   * @summary Queries a list of comment items.
    * @request GET:/gitopia/gitopia/gitopia/comment
    */
   queryCommentAll = (
@@ -577,7 +578,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryComment
-   * @summary this line is used by starport scaffolding # 2
+   * @summary Queries a comment by id.
    * @request GET:/gitopia/gitopia/gitopia/comment/{id}
    */
   queryComment = (id: string, params: RequestParams = {}) =>
@@ -593,6 +594,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryIssueAll
+   * @summary Queries a list of issue items.
    * @request GET:/gitopia/gitopia/gitopia/issue
    */
   queryIssueAll = (
@@ -617,6 +619,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryIssue
+   * @summary Queries a issue by id.
    * @request GET:/gitopia/gitopia/gitopia/issue/{id}
    */
   queryIssue = (id: string, params: RequestParams = {}) =>
@@ -632,6 +635,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepositoryAll
+   * @summary Queries a list of repository items.
    * @request GET:/gitopia/gitopia/gitopia/repository
    */
   queryRepositoryAll = (
@@ -656,6 +660,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepository
+   * @summary Queries a repository by id.
    * @request GET:/gitopia/gitopia/gitopia/repository/{id}
    */
   queryRepository = (id: string, params: RequestParams = {}) =>
@@ -671,6 +676,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryUserAll
+   * @summary Queries a list of user items.
    * @request GET:/gitopia/gitopia/gitopia/user
    */
   queryUserAll = (
@@ -695,6 +701,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryUser
+   * @summary Queries a user by id.
    * @request GET:/gitopia/gitopia/gitopia/user/{id}
    */
   queryUser = (id: string, params: RequestParams = {}) =>
@@ -710,6 +717,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryWhoisAll
+   * @summary Queries a list of whois items.
    * @request GET:/gitopia/gitopia/gitopia/whois
    */
   queryWhoisAll = (
@@ -734,6 +742,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryWhois
+   * @summary Queries a whois by id.
    * @request GET:/gitopia/gitopia/gitopia/whois/{name}
    */
   queryWhois = (name: string, params: RequestParams = {}) =>

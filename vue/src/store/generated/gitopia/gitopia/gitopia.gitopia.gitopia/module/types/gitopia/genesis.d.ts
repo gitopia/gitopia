@@ -1,22 +1,32 @@
+import { Writer, Reader } from "protobufjs/minimal";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
-import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
-/** GenesisState defines the capability module's genesis state. */
+/** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
     /** this line is used by starport scaffolding # genesis/proto/state */
     commentList: Comment[];
     /** this line is used by starport scaffolding # genesis/proto/stateField */
+    commentCount: number;
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     issueList: Issue[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
+    issueCount: number;
     /** this line is used by starport scaffolding # genesis/proto/stateField */
     repositoryList: Repository[];
     /** this line is used by starport scaffolding # genesis/proto/stateField */
+    repositoryCount: number;
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     userList: User[];
     /** this line is used by starport scaffolding # genesis/proto/stateField */
+    userCount: number;
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     whoisList: Whois[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
+    whoisCount: number;
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

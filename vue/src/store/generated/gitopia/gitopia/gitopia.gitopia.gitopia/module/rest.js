@@ -130,7 +130,7 @@ export class HttpClient {
     }
 }
 /**
- * @title gitopia/tx.proto
+ * @title gitopia/comment.proto
  * @version version not set
  */
 export class Api extends HttpClient {
@@ -141,6 +141,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryCommentAll
+         * @summary Queries a list of comment items.
          * @request GET:/gitopia/gitopia/gitopia/comment
          */
         this.queryCommentAll = (query, params = {}) => this.request({
@@ -155,7 +156,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryComment
-         * @summary this line is used by starport scaffolding # 2
+         * @summary Queries a comment by id.
          * @request GET:/gitopia/gitopia/gitopia/comment/{id}
          */
         this.queryComment = (id, params = {}) => this.request({
@@ -169,6 +170,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryIssueAll
+         * @summary Queries a list of issue items.
          * @request GET:/gitopia/gitopia/gitopia/issue
          */
         this.queryIssueAll = (query, params = {}) => this.request({
@@ -183,6 +185,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryIssue
+         * @summary Queries a issue by id.
          * @request GET:/gitopia/gitopia/gitopia/issue/{id}
          */
         this.queryIssue = (id, params = {}) => this.request({
@@ -196,6 +199,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryRepositoryAll
+         * @summary Queries a list of repository items.
          * @request GET:/gitopia/gitopia/gitopia/repository
          */
         this.queryRepositoryAll = (query, params = {}) => this.request({
@@ -210,6 +214,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryRepository
+         * @summary Queries a repository by id.
          * @request GET:/gitopia/gitopia/gitopia/repository/{id}
          */
         this.queryRepository = (id, params = {}) => this.request({
@@ -223,6 +228,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryUserAll
+         * @summary Queries a list of user items.
          * @request GET:/gitopia/gitopia/gitopia/user
          */
         this.queryUserAll = (query, params = {}) => this.request({
@@ -237,6 +243,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryUser
+         * @summary Queries a user by id.
          * @request GET:/gitopia/gitopia/gitopia/user/{id}
          */
         this.queryUser = (id, params = {}) => this.request({
@@ -250,6 +257,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryWhoisAll
+         * @summary Queries a list of whois items.
          * @request GET:/gitopia/gitopia/gitopia/whois
          */
         this.queryWhoisAll = (query, params = {}) => this.request({
@@ -264,6 +272,7 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryWhois
+         * @summary Queries a whois by id.
          * @request GET:/gitopia/gitopia/gitopia/whois/{name}
          */
         this.queryWhois = (name, params = {}) => this.request({
