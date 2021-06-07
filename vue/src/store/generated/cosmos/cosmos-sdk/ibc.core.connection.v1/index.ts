@@ -207,17 +207,17 @@ export default {
 			}
 		},
 		
-		async sendMsgConnectionOpenAck({ rootGetters }, { value, fee, memo }) {
+		async sendMsgConnectionOpenInit({ rootGetters }, { value, fee, memo }) {
 			try {
-				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenAck(value)
+				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value)
 				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
   gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Send', 'Could not broadcast Tx.')
+					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Send', 'Could not broadcast Tx.')
 				}
 			}
 		},
@@ -235,20 +235,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgConnectionOpenInit({ rootGetters }, { value, fee, memo }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value)
-				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
-  gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Send', 'Could not broadcast Tx.')
-				}
-			}
-		},
 		async sendMsgConnectionOpenTry({ rootGetters }, { value, fee, memo }) {
 			try {
 				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenTry(value)
@@ -263,16 +249,30 @@ export default {
 				}
 			}
 		},
-		
-		async MsgConnectionOpenAck({ rootGetters }, { value }) {
+		async sendMsgConnectionOpenAck({ rootGetters }, { value, fee, memo }) {
 			try {
 				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenAck(value)
-				return msg
+				const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], {fee: { amount: fee, 
+  gas: "200000" }, memo})
+				return result
 			} catch (e) {
 				if (e.toString()=='wallet is required') {
 					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Create', 'Could not create message.')
+					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Send', 'Could not broadcast Tx.')
+				}
+			}
+		},
+		
+		async MsgConnectionOpenInit({ rootGetters }, { value }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value)
+				return msg
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Create', 'Could not create message.')
 				}
 			}
 		},
@@ -288,18 +288,6 @@ export default {
 				}
 			}
 		},
-		async MsgConnectionOpenInit({ rootGetters }, { value }) {
-			try {
-				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenInit(value)
-				return msg
-			} catch (e) {
-				if (e.toString()=='wallet is required') {
-					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgConnectionOpenInit:Create', 'Could not create message.')
-				}
-			}
-		},
 		async MsgConnectionOpenTry({ rootGetters }, { value }) {
 			try {
 				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenTry(value)
@@ -309,6 +297,18 @@ export default {
 					throw new SpVuexError('TxClient:MsgConnectionOpenTry:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgConnectionOpenTry:Create', 'Could not create message.')
+				}
+			}
+		},
+		async MsgConnectionOpenAck({ rootGetters }, { value }) {
+			try {
+				const msg = await (await initTxClient(rootGetters)).msgConnectionOpenAck(value)
+				return msg
+			} catch (e) {
+				if (e.toString()=='wallet is required') {
+					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgConnectionOpenAck:Create', 'Could not create message.')
 				}
 			}
 		},

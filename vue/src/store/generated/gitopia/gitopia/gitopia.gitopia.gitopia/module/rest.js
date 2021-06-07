@@ -130,12 +130,67 @@ export class HttpClient {
     }
 }
 /**
- * @title gitopia/query.proto
+ * @title gitopia/tx.proto
  * @version version not set
  */
 export class Api extends HttpClient {
     constructor() {
         super(...arguments);
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCommentAll
+         * @request GET:/gitopia/gitopia/gitopia/comment
+         */
+        this.queryCommentAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/comment`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryComment
+         * @summary this line is used by starport scaffolding # 2
+         * @request GET:/gitopia/gitopia/gitopia/comment/{id}
+         */
+        this.queryComment = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/comment/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryIssueAll
+         * @request GET:/gitopia/gitopia/gitopia/issue
+         */
+        this.queryIssueAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/issue`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryIssue
+         * @request GET:/gitopia/gitopia/gitopia/issue/{id}
+         */
+        this.queryIssue = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/issue/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
         /**
          * No description
          *
@@ -155,7 +210,6 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryRepository
-         * @summary this line is used by starport scaffolding # 2
          * @request GET:/gitopia/gitopia/gitopia/repository/{id}
          */
         this.queryRepository = (id, params = {}) => this.request({

@@ -1,10 +1,38 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Repository } from "../gitopia/repository";
+import { Comment } from "../gitopia/comment";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Issue } from "../gitopia/issue";
+import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetCommentRequest {
+    id: number;
+}
+export interface QueryGetCommentResponse {
+    Comment: Comment | undefined;
+}
+export interface QueryAllCommentRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllCommentResponse {
+    Comment: Comment[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetIssueRequest {
+    id: number;
+}
+export interface QueryGetIssueResponse {
+    Issue: Issue | undefined;
+}
+export interface QueryAllIssueRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllIssueResponse {
+    Issue: Issue[];
+    pagination: PageResponse | undefined;
+}
 export interface QueryGetRepositoryRequest {
     id: number;
 }
@@ -44,6 +72,62 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetCommentRequest: {
+    encode(message: QueryGetCommentRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetCommentRequest;
+    fromJSON(object: any): QueryGetCommentRequest;
+    toJSON(message: QueryGetCommentRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetCommentRequest>): QueryGetCommentRequest;
+};
+export declare const QueryGetCommentResponse: {
+    encode(message: QueryGetCommentResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetCommentResponse;
+    fromJSON(object: any): QueryGetCommentResponse;
+    toJSON(message: QueryGetCommentResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetCommentResponse>): QueryGetCommentResponse;
+};
+export declare const QueryAllCommentRequest: {
+    encode(message: QueryAllCommentRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllCommentRequest;
+    fromJSON(object: any): QueryAllCommentRequest;
+    toJSON(message: QueryAllCommentRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllCommentRequest>): QueryAllCommentRequest;
+};
+export declare const QueryAllCommentResponse: {
+    encode(message: QueryAllCommentResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllCommentResponse;
+    fromJSON(object: any): QueryAllCommentResponse;
+    toJSON(message: QueryAllCommentResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllCommentResponse>): QueryAllCommentResponse;
+};
+export declare const QueryGetIssueRequest: {
+    encode(message: QueryGetIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetIssueRequest;
+    fromJSON(object: any): QueryGetIssueRequest;
+    toJSON(message: QueryGetIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetIssueRequest>): QueryGetIssueRequest;
+};
+export declare const QueryGetIssueResponse: {
+    encode(message: QueryGetIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetIssueResponse;
+    fromJSON(object: any): QueryGetIssueResponse;
+    toJSON(message: QueryGetIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetIssueResponse>): QueryGetIssueResponse;
+};
+export declare const QueryAllIssueRequest: {
+    encode(message: QueryAllIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllIssueRequest;
+    fromJSON(object: any): QueryAllIssueRequest;
+    toJSON(message: QueryAllIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllIssueRequest>): QueryAllIssueRequest;
+};
+export declare const QueryAllIssueResponse: {
+    encode(message: QueryAllIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllIssueResponse;
+    fromJSON(object: any): QueryAllIssueResponse;
+    toJSON(message: QueryAllIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllIssueResponse>): QueryAllIssueResponse;
+};
 export declare const QueryGetRepositoryRequest: {
     encode(message: QueryGetRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryRequest;
@@ -131,6 +215,10 @@ export declare const QueryAllWhoisResponse: {
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** this line is used by starport scaffolding # 2 */
+    Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
+    CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
+    Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
+    IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
@@ -141,6 +229,10 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
+    CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
+    Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
+    IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;

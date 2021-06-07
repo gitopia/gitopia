@@ -2,7 +2,6 @@ import { txClient, queryClient } from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
-import { Balance } from "./module/types/cosmos/bank/v1beta1/genesis"
 import { Params } from "./module/types/cosmos/bank/v1beta1/bank"
 import { SendEnabled } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Input } from "./module/types/cosmos/bank/v1beta1/bank"
@@ -10,6 +9,7 @@ import { Output } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Supply } from "./module/types/cosmos/bank/v1beta1/bank"
 import { DenomUnit } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Metadata } from "./module/types/cosmos/bank/v1beta1/bank"
+import { Balance } from "./module/types/cosmos/bank/v1beta1/genesis"
 
 
 async function initTxClient(vuexGetters) {
@@ -46,7 +46,6 @@ const getDefaultState = () => {
         DenomsMetadata: {},
         
         _Structure: {
-            Balance: getStructure(Balance.fromPartial({})),
             Params: getStructure(Params.fromPartial({})),
             SendEnabled: getStructure(SendEnabled.fromPartial({})),
             Input: getStructure(Input.fromPartial({})),
@@ -54,6 +53,7 @@ const getDefaultState = () => {
             Supply: getStructure(Supply.fromPartial({})),
             DenomUnit: getStructure(DenomUnit.fromPartial({})),
             Metadata: getStructure(Metadata.fromPartial({})),
+            Balance: getStructure(Balance.fromPartial({})),
             
 		},
 		_Subscriptions: new Set(),

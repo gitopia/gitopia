@@ -14,3 +14,13 @@ const (
 	QueryGetRepository  = "get-repository"
 	QueryListRepository = "list-repository"
 )
+
+const (
+	QueryGetIssue  = "get-issue"
+	QueryListIssue = "list-issue"
+)
+
+const (
+	QueryGetComment  = "get-comment"
+	QueryListComment = "list-comment"
+)

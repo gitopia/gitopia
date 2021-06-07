@@ -9,6 +9,89 @@
  * ---------------------------------------------------------------
  */
 
+export interface GitopiaComment {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  parentId?: string;
+
+  /** @format uint64 */
+  commentIid?: string;
+  body?: string;
+  attachments?: string[];
+  diffHunk?: string;
+  path?: string;
+  system?: boolean;
+
+  /** @format uint64 */
+  authorId?: string;
+  authorAssociation?: string;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+  commentType?: string;
+  extensions?: string;
+}
+
+export interface GitopiaIssue {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  iid?: string;
+  title?: string;
+  state?: string;
+  description?: string;
+
+  /** @format uint64 */
+  authorId?: string;
+  comments?: string[];
+  pullRequests?: string[];
+
+  /** @format uint64 */
+  repositoryId?: string;
+  labels?: string[];
+
+  /** @format uint64 */
+  weight?: string;
+  assigneesId?: string[];
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+
+  /** @format int64 */
+  closedAt?: string;
+
+  /** @format uint64 */
+  closedBy?: string;
+  extensions?: string;
+}
+
+export interface GitopiaMsgChangeIssueStateResponse {
+  state?: string;
+}
+
+export interface GitopiaMsgCreateCommentResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
+export interface GitopiaMsgCreateIssueResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateRepositoryResponse {
   /** @format uint64 */
   id?: string;
@@ -19,6 +102,10 @@ export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
 
+export type GitopiaMsgDeleteCommentResponse = object;
+
+export type GitopiaMsgDeleteIssueResponse = object;
+
 export type GitopiaMsgDeleteRepositoryResponse = object;
 
 export type GitopiaMsgDeleteUserResponse = object;
@@ -27,11 +114,45 @@ export type GitopiaMsgDeleteWhoisResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
 
+export type GitopiaMsgUpdateCommentResponse = object;
+
+export type GitopiaMsgUpdateIssueResponse = object;
+
 export type GitopiaMsgUpdateRepositoryResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
 
 export type GitopiaMsgUpdateWhoisResponse = object;
+
+export interface GitopiaQueryAllCommentResponse {
+  Comment?: GitopiaComment[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryAllIssueResponse {
+  Issue?: GitopiaIssue[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
 
 export interface GitopiaQueryAllRepositoryResponse {
   Repository?: GitopiaRepository[];
@@ -76,6 +197,14 @@ export interface GitopiaQueryAllWhoisResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryGetCommentResponse {
+  Comment?: GitopiaComment;
+}
+
+export interface GitopiaQueryGetIssueResponse {
+  Issue?: GitopiaIssue;
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
@@ -415,10 +544,89 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title gitopia/query.proto
+ * @title gitopia/tx.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryCommentAll
+   * @request GET:/gitopia/gitopia/gitopia/comment
+   */
+  queryCommentAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/comment`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryComment
+   * @summary this line is used by starport scaffolding # 2
+   * @request GET:/gitopia/gitopia/gitopia/comment/{id}
+   */
+  queryComment = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/comment/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssueAll
+   * @request GET:/gitopia/gitopia/gitopia/issue
+   */
+  queryIssueAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllIssueResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/issue`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssue
+   * @request GET:/gitopia/gitopia/gitopia/issue/{id}
+   */
+  queryIssue = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetIssueResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/issue/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
@@ -448,7 +656,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepository
-   * @summary this line is used by starport scaffolding # 2
    * @request GET:/gitopia/gitopia/gitopia/repository/{id}
    */
   queryRepository = (id: string, params: RequestParams = {}) =>

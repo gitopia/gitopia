@@ -8,6 +8,13 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
+  rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
+  rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
+  rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
+  rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
+  rpc ChangeIssueState(MsgChangeIssueState) returns (MsgChangeIssueStateResponse);
+  rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
@@ -20,6 +27,83 @@ service Msg {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateComment {
+  string creator = 1;
+  uint64 parentId = 2;
+  string body = 3;
+  repeated string attachments = 4;
+  string diffHunk = 5;
+  string path = 6;
+  bool system = 7;
+  uint64 authorId = 8;
+  string authorAssociation = 9;
+  string commentType = 10;
+}
+
+message MsgCreateCommentResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateComment {
+  string creator = 1;
+  uint64 id = 2;
+  string body = 3;
+  repeated string attachments = 4;
+}
+
+message MsgUpdateCommentResponse { }
+
+message MsgDeleteComment {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteCommentResponse { }
+
+message MsgCreateIssue {
+  string creator = 1;
+  string title = 2;
+  string description = 3;
+  uint64 authorId = 4;
+  uint64 repositoryId = 5;
+  repeated string labels = 6;
+  uint64 weight = 7;
+  repeated uint64 assigneesId = 8;
+}
+
+message MsgCreateIssueResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateIssue {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+  string description = 4;
+  repeated string labels = 5;
+  uint64 weight = 6;
+  repeated uint64 assigneesId = 7;
+}
+
+message MsgUpdateIssueResponse { }
+
+message MsgChangeIssueState {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 closedBy = 3;
+}
+
+message MsgChangeIssueStateResponse {
+  string state = 1;
+}
+
+message MsgDeleteIssue {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteIssueResponse { }
+
 message MsgCreateRepository {
   string creator = 1;
   string name = 2;

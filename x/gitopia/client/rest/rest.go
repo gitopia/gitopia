@@ -23,10 +23,22 @@ func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(clientCtx, r)
 	registerTxHandlers(clientCtx, r)
 
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
 }
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 3
+	r.HandleFunc("/gitopia/comments/{id}", getCommentHandler(clientCtx)).Methods("GET")
+	r.HandleFunc("/gitopia/comments", listCommentHandler(clientCtx)).Methods("GET")
+
+	r.HandleFunc("/gitopia/issues/{id}", getIssueHandler(clientCtx)).Methods("GET")
+	r.HandleFunc("/gitopia/issues", listIssueHandler(clientCtx)).Methods("GET")
+
 	r.HandleFunc("/gitopia/repositories/{id}", getRepositoryHandler(clientCtx)).Methods("GET")
 	r.HandleFunc("/gitopia/repositories", listRepositoryHandler(clientCtx)).Methods("GET")
 
@@ -40,6 +52,14 @@ func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 
 func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 4
+	r.HandleFunc("/gitopia/comments", createCommentHandler(clientCtx)).Methods("POST")
+	r.HandleFunc("/gitopia/comments/{id}", updateCommentHandler(clientCtx)).Methods("POST")
+	r.HandleFunc("/gitopia/comments/{id}", deleteCommentHandler(clientCtx)).Methods("POST")
+
+	r.HandleFunc("/gitopia/issues", createIssueHandler(clientCtx)).Methods("POST")
+	r.HandleFunc("/gitopia/issues/{id}", updateIssueHandler(clientCtx)).Methods("POST")
+	r.HandleFunc("/gitopia/issues/{id}", deleteIssueHandler(clientCtx)).Methods("POST")
+
 	r.HandleFunc("/gitopia/repositories", createRepositoryHandler(clientCtx)).Methods("POST")
 	r.HandleFunc("/gitopia/repositories/{id}", updateRepositoryHandler(clientCtx)).Methods("POST")
 	r.HandleFunc("/gitopia/repositories/{id}", deleteRepositoryHandler(clientCtx)).Methods("POST")

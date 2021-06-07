@@ -1,3 +1,5 @@
+import { Comment } from "../gitopia/comment";
+import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
@@ -6,6 +8,10 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the capability module's genesis state. */
 export interface GenesisState {
     /** this line is used by starport scaffolding # genesis/proto/state */
+    commentList: Comment[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
+    issueList: Issue[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     repositoryList: Repository[];
     /** this line is used by starport scaffolding # genesis/proto/stateField */
     userList: User[];

@@ -1,6 +1,73 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
+export interface MsgCreateComment {
+    creator: string;
+    parentId: number;
+    body: string;
+    attachments: string[];
+    diffHunk: string;
+    path: string;
+    system: boolean;
+    authorId: number;
+    authorAssociation: string;
+    commentType: string;
+}
+export interface MsgCreateCommentResponse {
+    id: number;
+}
+export interface MsgUpdateComment {
+    creator: string;
+    id: number;
+    body: string;
+    attachments: string[];
+}
+export interface MsgUpdateCommentResponse {
+}
+export interface MsgDeleteComment {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteCommentResponse {
+}
+export interface MsgCreateIssue {
+    creator: string;
+    title: string;
+    description: string;
+    authorId: number;
+    repositoryId: number;
+    labels: string[];
+    weight: number;
+    assigneesId: number[];
+}
+export interface MsgCreateIssueResponse {
+    id: number;
+}
+export interface MsgUpdateIssue {
+    creator: string;
+    id: number;
+    title: string;
+    description: string;
+    labels: string[];
+    weight: number;
+    assigneesId: number[];
+}
+export interface MsgUpdateIssueResponse {
+}
+export interface MsgChangeIssueState {
+    creator: string;
+    id: number;
+    closedBy: number;
+}
+export interface MsgChangeIssueStateResponse {
+    state: string;
+}
+export interface MsgDeleteIssue {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteIssueResponse {
+}
 export interface MsgCreateRepository {
     creator: string;
     name: string;
@@ -129,6 +196,104 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgCreateComment: {
+    encode(message: MsgCreateComment, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateComment;
+    fromJSON(object: any): MsgCreateComment;
+    toJSON(message: MsgCreateComment): unknown;
+    fromPartial(object: DeepPartial<MsgCreateComment>): MsgCreateComment;
+};
+export declare const MsgCreateCommentResponse: {
+    encode(message: MsgCreateCommentResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateCommentResponse;
+    fromJSON(object: any): MsgCreateCommentResponse;
+    toJSON(message: MsgCreateCommentResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateCommentResponse>): MsgCreateCommentResponse;
+};
+export declare const MsgUpdateComment: {
+    encode(message: MsgUpdateComment, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateComment;
+    fromJSON(object: any): MsgUpdateComment;
+    toJSON(message: MsgUpdateComment): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateComment>): MsgUpdateComment;
+};
+export declare const MsgUpdateCommentResponse: {
+    encode(_: MsgUpdateCommentResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateCommentResponse;
+    fromJSON(_: any): MsgUpdateCommentResponse;
+    toJSON(_: MsgUpdateCommentResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateCommentResponse>): MsgUpdateCommentResponse;
+};
+export declare const MsgDeleteComment: {
+    encode(message: MsgDeleteComment, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteComment;
+    fromJSON(object: any): MsgDeleteComment;
+    toJSON(message: MsgDeleteComment): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteComment>): MsgDeleteComment;
+};
+export declare const MsgDeleteCommentResponse: {
+    encode(_: MsgDeleteCommentResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteCommentResponse;
+    fromJSON(_: any): MsgDeleteCommentResponse;
+    toJSON(_: MsgDeleteCommentResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteCommentResponse>): MsgDeleteCommentResponse;
+};
+export declare const MsgCreateIssue: {
+    encode(message: MsgCreateIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateIssue;
+    fromJSON(object: any): MsgCreateIssue;
+    toJSON(message: MsgCreateIssue): unknown;
+    fromPartial(object: DeepPartial<MsgCreateIssue>): MsgCreateIssue;
+};
+export declare const MsgCreateIssueResponse: {
+    encode(message: MsgCreateIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateIssueResponse;
+    fromJSON(object: any): MsgCreateIssueResponse;
+    toJSON(message: MsgCreateIssueResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateIssueResponse>): MsgCreateIssueResponse;
+};
+export declare const MsgUpdateIssue: {
+    encode(message: MsgUpdateIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssue;
+    fromJSON(object: any): MsgUpdateIssue;
+    toJSON(message: MsgUpdateIssue): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue;
+};
+export declare const MsgUpdateIssueResponse: {
+    encode(_: MsgUpdateIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueResponse;
+    fromJSON(_: any): MsgUpdateIssueResponse;
+    toJSON(_: MsgUpdateIssueResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
+};
+export declare const MsgChangeIssueState: {
+    encode(message: MsgChangeIssueState, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState;
+    fromJSON(object: any): MsgChangeIssueState;
+    toJSON(message: MsgChangeIssueState): unknown;
+    fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState;
+};
+export declare const MsgChangeIssueStateResponse: {
+    encode(message: MsgChangeIssueStateResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueStateResponse;
+    fromJSON(object: any): MsgChangeIssueStateResponse;
+    toJSON(message: MsgChangeIssueStateResponse): unknown;
+    fromPartial(object: DeepPartial<MsgChangeIssueStateResponse>): MsgChangeIssueStateResponse;
+};
+export declare const MsgDeleteIssue: {
+    encode(message: MsgDeleteIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
+    fromJSON(object: any): MsgDeleteIssue;
+    toJSON(message: MsgDeleteIssue): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteIssue>): MsgDeleteIssue;
+};
+export declare const MsgDeleteIssueResponse: {
+    encode(_: MsgDeleteIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssueResponse;
+    fromJSON(_: any): MsgDeleteIssueResponse;
+    toJSON(_: MsgDeleteIssueResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteIssueResponse>): MsgDeleteIssueResponse;
+};
 export declare const MsgCreateRepository: {
     encode(message: MsgCreateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateRepository;
@@ -258,6 +423,13 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
+    CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
+    UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
+    DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
+    CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
+    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
+    DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
@@ -271,6 +443,13 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
+    UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
+    DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
+    CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
+    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
+    DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;

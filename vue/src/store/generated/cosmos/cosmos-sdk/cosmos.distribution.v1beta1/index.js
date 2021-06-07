@@ -301,6 +301,22 @@ export default {
                 return {};
             }
         },
+        async sendMsgWithdrawDelegatorReward({ rootGetters }, { value, fee, memo }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgWithdrawDelegatorReward(value);
+                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Send', 'Could not broadcast Tx.');
+                }
+            }
+        },
         async sendMsgFundCommunityPool({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgFundCommunityPool(value);
@@ -333,22 +349,6 @@ export default {
                 }
             }
         },
-        async sendMsgWithdrawDelegatorReward({ rootGetters }, { value, fee, memo }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgWithdrawDelegatorReward(value);
-                const result = await (await initTxClient(rootGetters)).signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Send', 'Could not broadcast Tx.');
-                }
-            }
-        },
         async sendMsgSetWithdrawAddress({ rootGetters }, { value, fee, memo }) {
             try {
                 const msg = await (await initTxClient(rootGetters)).msgSetWithdrawAddress(value);
@@ -362,6 +362,20 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgSetWithdrawAddress:Send', 'Could not broadcast Tx.');
+                }
+            }
+        },
+        async MsgWithdrawDelegatorReward({ rootGetters }, { value }) {
+            try {
+                const msg = await (await initTxClient(rootGetters)).msgWithdrawDelegatorReward(value);
+                return msg;
+            }
+            catch (e) {
+                if (e.toString() == 'wallet is required') {
+                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Create', 'Could not create message.');
                 }
             }
         },
@@ -390,20 +404,6 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgWithdrawValidatorCommission:Create', 'Could not create message.');
-                }
-            }
-        },
-        async MsgWithdrawDelegatorReward({ rootGetters }, { value }) {
-            try {
-                const msg = await (await initTxClient(rootGetters)).msgWithdrawDelegatorReward(value);
-                return msg;
-            }
-            catch (e) {
-                if (e.toString() == 'wallet is required') {
-                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgWithdrawDelegatorReward:Create', 'Could not create message.');
                 }
             }
         },

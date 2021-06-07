@@ -1,8 +1,8 @@
 import { StdFee } from "@cosmjs/launchpad";
 import { OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateValidator } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgBeginRedelegate } from "./types/cosmos/staking/v1beta1/tx";
+import { MsgCreateValidator } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgUndelegate } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgEditValidator } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgDelegate } from "./types/cosmos/staking/v1beta1/tx";
@@ -15,8 +15,8 @@ interface SignAndBroadcastOptions {
 }
 declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions) => Promise<{
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions) => Promise<import("@cosmjs/stargate").BroadcastTxResponse>;
-    msgCreateValidator: (data: MsgCreateValidator) => EncodeObject;
     msgBeginRedelegate: (data: MsgBeginRedelegate) => EncodeObject;
+    msgCreateValidator: (data: MsgCreateValidator) => EncodeObject;
     msgUndelegate: (data: MsgUndelegate) => EncodeObject;
     msgEditValidator: (data: MsgEditValidator) => EncodeObject;
     msgDelegate: (data: MsgDelegate) => EncodeObject;
