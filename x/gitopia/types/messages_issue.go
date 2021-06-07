@@ -131,7 +131,7 @@ func (msg *MsgChangeIssueState) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateIssue{}
+var _ sdk.Msg = &MsgDeleteIssue{}
 
 func NewMsgDeleteIssue(creator string, id uint64) *MsgDeleteIssue {
 	return &MsgDeleteIssue{

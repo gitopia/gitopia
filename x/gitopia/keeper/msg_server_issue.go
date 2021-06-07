@@ -35,25 +35,29 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	closedBy := uint64(0)
 	extensions := string("")
 
+	var issue = types.Issue{
+		Creator:      msg.Creator,
+		Iid:          iid,
+		Title:        msg.Title,
+		State:        state,
+		Description:  msg.Description,
+		AuthorId:     msg.AuthorId,
+		Comments:     comments,
+		PullRequests: pullRequests,
+		RepositoryId: msg.RepositoryId,
+		Labels:       msg.Labels,
+		Weight:       msg.Weight,
+		AssigneesId:  msg.AssigneesId,
+		CreatedAt:    createdAt,
+		UpdatedAt:    updatedAt,
+		ClosedAt:     closedAt,
+		ClosedBy:     closedBy,
+		Extensions:   extensions,
+	}
+
 	id := k.AppendIssue(
 		ctx,
-		msg.Creator,
-		iid,
-		msg.Title,
-		state,
-		msg.Description,
-		msg.AuthorId,
-		comments,
-		pullRequests,
-		msg.RepositoryId,
-		msg.Labels,
-		msg.Weight,
-		msg.AssigneesId,
-		createdAt,
-		updatedAt,
-		closedAt,
-		closedBy,
-		extensions,
+		issue,
 	)
 
 	/* Append Issue in the respective Repository */

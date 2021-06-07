@@ -5,6 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/spf13/cast"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -14,12 +16,21 @@ import (
 func CmdCreateRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-repository [name] [owner] [description]",
-		Short: "Creates a new repository",
+		Short: "Create a new repository",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsName := string(args[0])
-			argsOwner := string(args[1])
-			argsDescription := string(args[2])
+			argsName, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+			argsOwner, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

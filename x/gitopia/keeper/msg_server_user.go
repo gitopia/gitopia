@@ -12,10 +12,14 @@ import (
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	var user = types.User{
+		Creator:  msg.Creator,
+		Username: msg.Username,
+	}
+
 	k.AppendUser(
 		ctx,
-		msg.Creator,
-		msg.Username,
+		user,
 	)
 
 	return &types.MsgCreateUserResponse{}, nil

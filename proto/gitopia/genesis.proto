@@ -10,13 +10,18 @@ import "gitopia/whois.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
-// GenesisState defines the capability module's genesis state.
+// GenesisState defines the gitopia module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
-		repeated Comment commentList = 5; // this line is used by starport scaffolding # genesis/proto/stateField
-		repeated Issue issueList = 4; // this line is used by starport scaffolding # genesis/proto/stateField
-		repeated Repository repositoryList = 3; // this line is used by starport scaffolding # genesis/proto/stateField
-		repeated User userList = 2; // this line is used by starport scaffolding # genesis/proto/stateField
+		repeated Comment commentList = 9; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 commentCount = 10; // this line is used by starport scaffolding # genesis/proto/stateField
+		repeated Issue issueList = 7; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 issueCount = 8; // this line is used by starport scaffolding # genesis/proto/stateField
+		repeated Repository repositoryList = 5; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 repositoryCount = 6; // this line is used by starport scaffolding # genesis/proto/stateField
+		repeated User userList = 3; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 userCount = 4; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated Whois whoisList = 1; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 whoisCount = 2; // this line is used by starport scaffolding # genesis/proto/stateField
+    // this line is used by starport scaffolding # ibc/genesis/proto
 }
-

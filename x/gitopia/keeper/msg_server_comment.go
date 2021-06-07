@@ -30,22 +30,26 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	updatedAt := time.Now().Unix()
 	extensions := string("")
 
+	var comment = types.Comment{
+		Creator:           msg.Creator,
+		ParentId:          msg.ParentId,
+		CommentIid:        commentIid,
+		Body:              msg.Body,
+		Attachments:       msg.Attachments,
+		DiffHunk:          msg.DiffHunk,
+		Path:              msg.Path,
+		System:            msg.System,
+		AuthorId:          msg.AuthorId,
+		AuthorAssociation: msg.AuthorAssociation,
+		CreatedAt:         createdAt,
+		UpdatedAt:         updatedAt,
+		CommentType:       msg.CommentType,
+		Extensions:        extensions,
+	}
+
 	id := k.AppendComment(
 		ctx,
-		msg.Creator,
-		msg.ParentId,
-		commentIid,
-		msg.Body,
-		msg.Attachments,
-		msg.DiffHunk,
-		msg.Path,
-		msg.System,
-		msg.AuthorId,
-		msg.AuthorAssociation,
-		createdAt,
-		updatedAt,
-		msg.CommentType,
-		extensions,
+		comment,
 	)
 
 	/* Append Comment in the parent issue */

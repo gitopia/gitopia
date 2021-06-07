@@ -16,7 +16,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 
 	// Set comment count
-	k.SetCommentCount(ctx, uint64(len(genState.CommentList)))
+	k.SetCommentCount(ctx, genState.CommentCount)
 
 	// Set all the issue
 	for _, elem := range genState.IssueList {
@@ -24,7 +24,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 
 	// Set issue count
-	k.SetIssueCount(ctx, uint64(len(genState.IssueList)))
+	k.SetIssueCount(ctx, genState.IssueCount)
 
 	// Set all the repository
 	for _, elem := range genState.RepositoryList {
@@ -32,7 +32,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 
 	// Set repository count
-	k.SetRepositoryCount(ctx, uint64(len(genState.RepositoryList)))
+	k.SetRepositoryCount(ctx, genState.RepositoryCount)
 
 	// Set all the user
 	for _, elem := range genState.UserList {
@@ -40,7 +40,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 
 	// Set user count
-	k.SetUserCount(ctx, uint64(len(genState.UserList)))
+	k.SetUserCount(ctx, genState.UserCount)
 
 	// Set all the whois
 	for _, elem := range genState.WhoisList {
@@ -48,7 +48,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 
 	// Set whois count
-	k.SetWhoisCount(ctx, uint64(len(genState.WhoisList)))
+	k.SetWhoisCount(ctx, genState.WhoisCount)
 
 }
 
@@ -64,12 +64,18 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genesis.CommentList = append(genesis.CommentList, &elem)
 	}
 
+	// Set the current count
+	genesis.CommentCount = k.GetCommentCount(ctx)
+
 	// Get all issue
 	issueList := k.GetAllIssue(ctx)
 	for _, elem := range issueList {
 		elem := elem
 		genesis.IssueList = append(genesis.IssueList, &elem)
 	}
+
+	// Set the current count
+	genesis.IssueCount = k.GetIssueCount(ctx)
 
 	// Get all repository
 	repositoryList := k.GetAllRepository(ctx)
@@ -78,6 +84,9 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genesis.RepositoryList = append(genesis.RepositoryList, &elem)
 	}
 
+	// Set the current count
+	genesis.RepositoryCount = k.GetRepositoryCount(ctx)
+
 	// Get all user
 	userList := k.GetAllUser(ctx)
 	for _, elem := range userList {
@@ -85,12 +94,20 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genesis.UserList = append(genesis.UserList, &elem)
 	}
 
+	// Set the current count
+	genesis.UserCount = k.GetUserCount(ctx)
+
 	// Get all whois
 	whoisList := k.GetAllWhois(ctx)
 	for _, elem := range whoisList {
 		elem := elem
 		genesis.WhoisList = append(genesis.WhoisList, &elem)
 	}
+
+	// Set the current count
+	genesis.WhoisCount = k.GetWhoisCount(ctx)
+
+	// this line is used by starport scaffolding # ibc/genesis/export
 
 	return genesis
 }

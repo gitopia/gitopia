@@ -6,6 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/spf13/cast"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -27,11 +29,17 @@ func sliceAtoi(str []string) ([]uint64, error) {
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-issue [title] [description] [authorId] [repositoryId] [labels] [weight] [assigneesId]",
-		Short: "Creates a new issue",
+		Short: "Create a new issue",
 		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsTitle := string(args[0])
-			argsDescription := string(args[1])
+			argsTitle, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
 			argsAuthorId, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
@@ -80,8 +88,14 @@ func CmdUpdateIssue() *cobra.Command {
 				return err
 			}
 
-			argsTitle := string(args[1])
-			argsDescription := string(args[2])
+			argsTitle, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
 			argsLabels := strings.Split(args[3], ",")
 			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {

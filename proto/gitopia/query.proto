@@ -15,37 +15,53 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+
+	// Queries a comment by id.
 	rpc Comment(QueryGetCommentRequest) returns (QueryGetCommentResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment/{id}";
 	}
+
+	// Queries a list of comment items.
 	rpc CommentAll(QueryAllCommentRequest) returns (QueryAllCommentResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment";
 	}
 
+	// Queries a issue by id.
 	rpc Issue(QueryGetIssueRequest) returns (QueryGetIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue/{id}";
 	}
+
+	// Queries a list of issue items.
 	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
 	}
 
+	// Queries a repository by id.
 	rpc Repository(QueryGetRepositoryRequest) returns (QueryGetRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}";
 	}
+
+	// Queries a list of repository items.
 	rpc RepositoryAll(QueryAllRepositoryRequest) returns (QueryAllRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository";
 	}
 
+	// Queries a user by id.
 	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
 	}
+
+	// Queries a list of user items.
 	rpc UserAll(QueryAllUserRequest) returns (QueryAllUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user";
 	}
 
+	// Queries a whois by id.
 	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois/{name}";
 	}
+
+	// Queries a list of whois items.
 	rpc WhoisAll(QueryAllWhoisRequest) returns (QueryAllWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois";
 	}

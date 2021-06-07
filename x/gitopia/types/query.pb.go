@@ -1045,16 +1045,25 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// this line is used by starport scaffolding # 2
+	// Queries a comment by id.
 	Comment(ctx context.Context, in *QueryGetCommentRequest, opts ...grpc.CallOption) (*QueryGetCommentResponse, error)
+	// Queries a list of comment items.
 	CommentAll(ctx context.Context, in *QueryAllCommentRequest, opts ...grpc.CallOption) (*QueryAllCommentResponse, error)
+	// Queries a issue by id.
 	Issue(ctx context.Context, in *QueryGetIssueRequest, opts ...grpc.CallOption) (*QueryGetIssueResponse, error)
+	// Queries a list of issue items.
 	IssueAll(ctx context.Context, in *QueryAllIssueRequest, opts ...grpc.CallOption) (*QueryAllIssueResponse, error)
+	// Queries a repository by id.
 	Repository(ctx context.Context, in *QueryGetRepositoryRequest, opts ...grpc.CallOption) (*QueryGetRepositoryResponse, error)
+	// Queries a list of repository items.
 	RepositoryAll(ctx context.Context, in *QueryAllRepositoryRequest, opts ...grpc.CallOption) (*QueryAllRepositoryResponse, error)
+	// Queries a user by id.
 	User(ctx context.Context, in *QueryGetUserRequest, opts ...grpc.CallOption) (*QueryGetUserResponse, error)
+	// Queries a list of user items.
 	UserAll(ctx context.Context, in *QueryAllUserRequest, opts ...grpc.CallOption) (*QueryAllUserResponse, error)
+	// Queries a whois by id.
 	Whois(ctx context.Context, in *QueryGetWhoisRequest, opts ...grpc.CallOption) (*QueryGetWhoisResponse, error)
+	// Queries a list of whois items.
 	WhoisAll(ctx context.Context, in *QueryAllWhoisRequest, opts ...grpc.CallOption) (*QueryAllWhoisResponse, error)
 }
 
@@ -1158,16 +1167,25 @@ func (c *queryClient) WhoisAll(ctx context.Context, in *QueryAllWhoisRequest, op
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// this line is used by starport scaffolding # 2
+	// Queries a comment by id.
 	Comment(context.Context, *QueryGetCommentRequest) (*QueryGetCommentResponse, error)
+	// Queries a list of comment items.
 	CommentAll(context.Context, *QueryAllCommentRequest) (*QueryAllCommentResponse, error)
+	// Queries a issue by id.
 	Issue(context.Context, *QueryGetIssueRequest) (*QueryGetIssueResponse, error)
+	// Queries a list of issue items.
 	IssueAll(context.Context, *QueryAllIssueRequest) (*QueryAllIssueResponse, error)
+	// Queries a repository by id.
 	Repository(context.Context, *QueryGetRepositoryRequest) (*QueryGetRepositoryResponse, error)
+	// Queries a list of repository items.
 	RepositoryAll(context.Context, *QueryAllRepositoryRequest) (*QueryAllRepositoryResponse, error)
+	// Queries a user by id.
 	User(context.Context, *QueryGetUserRequest) (*QueryGetUserResponse, error)
+	// Queries a list of user items.
 	UserAll(context.Context, *QueryAllUserRequest) (*QueryAllUserResponse, error)
+	// Queries a whois by id.
 	Whois(context.Context, *QueryGetWhoisRequest) (*QueryGetWhoisResponse, error)
+	// Queries a list of whois items.
 	WhoisAll(context.Context, *QueryAllWhoisRequest) (*QueryAllWhoisResponse, error)
 }
 

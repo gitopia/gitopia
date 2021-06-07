@@ -5,6 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/spf13/cast"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -14,10 +16,13 @@ import (
 func CmdCreateUser() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-user [username]",
-		Short: "Creates a new user",
+		Short: "Create a new user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsUsername := string(args[0])
+			argsUsername, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

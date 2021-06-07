@@ -107,7 +107,7 @@ func (msg *MsgUpdateRepository) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateRepository{}
+var _ sdk.Msg = &MsgDeleteRepository{}
 
 func NewMsgDeleteRepository(creator string, id uint64) *MsgDeleteRepository {
 	return &MsgDeleteRepository{

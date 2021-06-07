@@ -22,14 +22,19 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// GenesisState defines the capability module's genesis state.
+// GenesisState defines the gitopia module's genesis state.
 type GenesisState struct {
 	// this line is used by starport scaffolding # genesis/proto/state
-	CommentList    []*Comment    `protobuf:"bytes,5,rep,name=commentList,proto3" json:"commentList,omitempty"`
-	IssueList      []*Issue      `protobuf:"bytes,4,rep,name=issueList,proto3" json:"issueList,omitempty"`
-	RepositoryList []*Repository `protobuf:"bytes,3,rep,name=repositoryList,proto3" json:"repositoryList,omitempty"`
-	UserList       []*User       `protobuf:"bytes,2,rep,name=userList,proto3" json:"userList,omitempty"`
-	WhoisList      []*Whois      `protobuf:"bytes,1,rep,name=whoisList,proto3" json:"whoisList,omitempty"`
+	CommentList     []*Comment    `protobuf:"bytes,9,rep,name=commentList,proto3" json:"commentList,omitempty"`
+	CommentCount    uint64        `protobuf:"varint,10,opt,name=commentCount,proto3" json:"commentCount,omitempty"`
+	IssueList       []*Issue      `protobuf:"bytes,7,rep,name=issueList,proto3" json:"issueList,omitempty"`
+	IssueCount      uint64        `protobuf:"varint,8,opt,name=issueCount,proto3" json:"issueCount,omitempty"`
+	RepositoryList  []*Repository `protobuf:"bytes,5,rep,name=repositoryList,proto3" json:"repositoryList,omitempty"`
+	RepositoryCount uint64        `protobuf:"varint,6,opt,name=repositoryCount,proto3" json:"repositoryCount,omitempty"`
+	UserList        []*User       `protobuf:"bytes,3,rep,name=userList,proto3" json:"userList,omitempty"`
+	UserCount       uint64        `protobuf:"varint,4,opt,name=userCount,proto3" json:"userCount,omitempty"`
+	WhoisList       []*Whois      `protobuf:"bytes,1,rep,name=whoisList,proto3" json:"whoisList,omitempty"`
+	WhoisCount      uint64        `protobuf:"varint,2,opt,name=whoisCount,proto3" json:"whoisCount,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -72,11 +77,25 @@ func (m *GenesisState) GetCommentList() []*Comment {
 	return nil
 }
 
+func (m *GenesisState) GetCommentCount() uint64 {
+	if m != nil {
+		return m.CommentCount
+	}
+	return 0
+}
+
 func (m *GenesisState) GetIssueList() []*Issue {
 	if m != nil {
 		return m.IssueList
 	}
 	return nil
+}
+
+func (m *GenesisState) GetIssueCount() uint64 {
+	if m != nil {
+		return m.IssueCount
+	}
+	return 0
 }
 
 func (m *GenesisState) GetRepositoryList() []*Repository {
@@ -86,11 +105,25 @@ func (m *GenesisState) GetRepositoryList() []*Repository {
 	return nil
 }
 
+func (m *GenesisState) GetRepositoryCount() uint64 {
+	if m != nil {
+		return m.RepositoryCount
+	}
+	return 0
+}
+
 func (m *GenesisState) GetUserList() []*User {
 	if m != nil {
 		return m.UserList
 	}
 	return nil
+}
+
+func (m *GenesisState) GetUserCount() uint64 {
+	if m != nil {
+		return m.UserCount
+	}
+	return 0
 }
 
 func (m *GenesisState) GetWhoisList() []*Whois {
@@ -100,6 +133,13 @@ func (m *GenesisState) GetWhoisList() []*Whois {
 	return nil
 }
 
+func (m *GenesisState) GetWhoisCount() uint64 {
+	if m != nil {
+		return m.WhoisCount
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*GenesisState)(nil), "gitopia.gitopia.gitopia.GenesisState")
 }
@@ -107,25 +147,29 @@ func init() {
 func init() { proto.RegisterFile("gitopia/genesis.proto", fileDescriptor_fe28ed7a80acf9ab) }
 
 var fileDescriptor_fe28ed7a80acf9ab = []byte{
-	// 285 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4d, 0xcf, 0x2c, 0xc9,
-	0x2f, 0xc8, 0x4c, 0xd4, 0x4f, 0x4f, 0xcd, 0x4b, 0x2d, 0xce, 0x2c, 0xd6, 0x2b, 0x28, 0xca, 0x2f,
-	0xc9, 0x17, 0x12, 0x87, 0x0a, 0xeb, 0xa1, 0xd1, 0x52, 0x70, 0xf5, 0xc9, 0xf9, 0xb9, 0xb9, 0xa9,
-	0x79, 0x25, 0x10, 0xf5, 0x52, 0xc2, 0x30, 0xe1, 0xcc, 0xe2, 0xe2, 0xd2, 0x54, 0xa8, 0xa0, 0x04,
-	0x4c, 0xb0, 0x28, 0xb5, 0x20, 0xbf, 0x38, 0xb3, 0x24, 0xbf, 0xa8, 0x12, 0x2a, 0x23, 0x04, 0x93,
-	0x29, 0x2d, 0x4e, 0x2d, 0x42, 0x37, 0xa2, 0x3c, 0x23, 0x1f, 0xe6, 0x0e, 0xa5, 0x6b, 0x4c, 0x5c,
-	0x3c, 0xee, 0x10, 0x97, 0x05, 0x97, 0x24, 0x96, 0xa4, 0x0a, 0x39, 0x71, 0x71, 0x43, 0x6d, 0xf6,
-	0xc9, 0x2c, 0x2e, 0x91, 0x60, 0x55, 0x60, 0xd6, 0xe0, 0x36, 0x52, 0xd0, 0xc3, 0xe1, 0x5c, 0x3d,
-	0x67, 0x88, 0xda, 0x20, 0x64, 0x4d, 0x42, 0x36, 0x5c, 0x9c, 0x60, 0x67, 0x82, 0x4d, 0x60, 0x01,
-	0x9b, 0x20, 0x87, 0xd3, 0x04, 0x4f, 0x90, 0xca, 0x20, 0x84, 0x06, 0x21, 0x6f, 0x2e, 0x3e, 0x84,
-	0x7f, 0xc0, 0x46, 0x30, 0x83, 0x8d, 0x50, 0xc6, 0x69, 0x44, 0x10, 0x5c, 0x79, 0x10, 0x9a, 0x56,
-	0x21, 0x4b, 0x2e, 0x0e, 0x50, 0x10, 0x80, 0x8d, 0x61, 0x02, 0x1b, 0x23, 0x8b, 0xd3, 0x98, 0xd0,
-	0xe2, 0xd4, 0xa2, 0x20, 0xb8, 0x72, 0x90, 0x2f, 0xc0, 0x21, 0x05, 0xd6, 0xcb, 0x48, 0xc0, 0x17,
-	0xe1, 0x20, 0x95, 0x41, 0x08, 0x0d, 0x4e, 0x2e, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7,
-	0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x84, 0xc7, 0x72, 0x0c, 0x17, 0x1e, 0xcb, 0x31, 0xdc, 0x78, 0x2c,
-	0xc7, 0x10, 0xa5, 0x95, 0x9e, 0x59, 0x92, 0x51, 0x9a, 0xa4, 0x97, 0x9c, 0x9f, 0xab, 0x0f, 0x4f,
-	0x1c, 0x50, 0xba, 0x02, 0xce, 0x2a, 0xa9, 0x2c, 0x48, 0x2d, 0x4e, 0x62, 0x03, 0xc7, 0x92, 0x31,
-	0x20, 0x00, 0x00, 0xff, 0xff, 0xc1, 0x64, 0x01, 0x74, 0x46, 0x02, 0x00, 0x00,
+	// 352 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xc1, 0x4a, 0x33, 0x31,
+	0x14, 0x85, 0x3b, 0x7f, 0xfb, 0xd7, 0xf6, 0xb6, 0x28, 0x44, 0xc4, 0x52, 0x34, 0x94, 0xba, 0x29,
+	0x2e, 0xa6, 0xa0, 0x2b, 0xc1, 0x55, 0x2b, 0x88, 0xe8, 0x2a, 0x22, 0x82, 0xbb, 0xb6, 0x84, 0x36,
+	0x8b, 0x36, 0xc3, 0x24, 0x83, 0x76, 0xeb, 0x13, 0xf8, 0x58, 0x2e, 0xbb, 0x74, 0x29, 0x9d, 0x17,
+	0x91, 0xdc, 0x64, 0x26, 0x75, 0x60, 0x70, 0x95, 0xe4, 0xe4, 0xdc, 0xf3, 0xdd, 0xb9, 0x13, 0x38,
+	0x9a, 0x0b, 0x2d, 0x23, 0x31, 0x19, 0xce, 0xf9, 0x8a, 0x2b, 0xa1, 0xc2, 0x28, 0x96, 0x5a, 0x92,
+	0x63, 0x27, 0x87, 0x85, 0xb5, 0x9b, 0xfb, 0x67, 0x72, 0xb9, 0xe4, 0x2b, 0x6d, 0xfd, 0xdd, 0xc3,
+	0x4c, 0x16, 0x4a, 0x25, 0xdc, 0x89, 0x9d, 0x4c, 0x8c, 0x79, 0x24, 0x95, 0xd0, 0x32, 0x5e, 0xbb,
+	0x1b, 0x92, 0xdd, 0x24, 0x8a, 0xc7, 0xc5, 0x88, 0xd7, 0x85, 0xcc, 0xfa, 0xe8, 0xbf, 0xd7, 0xa0,
+	0x7d, 0x6b, 0x3b, 0x7b, 0xd4, 0x13, 0xcd, 0xc9, 0x08, 0x5a, 0x8e, 0xfc, 0x20, 0x94, 0xee, 0x34,
+	0x7b, 0xd5, 0x41, 0xeb, 0xa2, 0x17, 0x96, 0xb4, 0x1b, 0x8e, 0xad, 0x97, 0xed, 0x16, 0x91, 0x3e,
+	0xb4, 0xdd, 0x71, 0x2c, 0x93, 0x95, 0xee, 0x40, 0x2f, 0x18, 0xd4, 0xd8, 0x2f, 0x8d, 0x5c, 0x43,
+	0x13, 0x3f, 0x05, 0x29, 0x7b, 0x48, 0xa1, 0xa5, 0x94, 0x3b, 0xe3, 0x64, 0xbe, 0x80, 0x50, 0x00,
+	0x3c, 0xd8, 0xfc, 0x06, 0xe6, 0xef, 0x28, 0xe4, 0x1e, 0xf6, 0xfd, 0x4c, 0x10, 0xf1, 0x1f, 0x11,
+	0x67, 0xa5, 0x08, 0x96, 0xdb, 0x59, 0xa1, 0x94, 0x0c, 0xe0, 0xc0, 0x2b, 0x96, 0x58, 0x47, 0x62,
+	0x51, 0x26, 0x57, 0xd0, 0x30, 0x03, 0x47, 0x60, 0x15, 0x81, 0xa7, 0xa5, 0xc0, 0x27, 0xc5, 0x63,
+	0x96, 0xdb, 0xc9, 0x09, 0x34, 0xcd, 0xde, 0xc6, 0xd7, 0x30, 0xde, 0x0b, 0x66, 0x5a, 0xf8, 0xd7,
+	0x30, 0x39, 0xf8, 0x63, 0x5a, 0xcf, 0xc6, 0xc9, 0x7c, 0x81, 0x99, 0x16, 0x1e, 0x6c, 0xf8, 0x3f,
+	0x3b, 0x2d, 0xaf, 0x8c, 0x6e, 0x3e, 0xb7, 0x34, 0xd8, 0x6c, 0x69, 0xf0, 0xbd, 0xa5, 0xc1, 0x47,
+	0x4a, 0x2b, 0x9b, 0x94, 0x56, 0xbe, 0x52, 0x5a, 0x79, 0x39, 0x9f, 0x0b, 0xbd, 0x48, 0xa6, 0xe1,
+	0x4c, 0x2e, 0x87, 0xf9, 0x43, 0x76, 0xeb, 0x5b, 0xbe, 0xd3, 0xeb, 0x88, 0xab, 0x69, 0x1d, 0x5f,
+	0xd4, 0xe5, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x5d, 0xb4, 0xa1, 0x76, 0xf2, 0x02, 0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -148,6 +192,11 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.CommentCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.CommentCount))
+		i--
+		dAtA[i] = 0x50
+	}
 	if len(m.CommentList) > 0 {
 		for iNdEx := len(m.CommentList) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -159,8 +208,13 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x2a
+			dAtA[i] = 0x4a
 		}
+	}
+	if m.IssueCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.IssueCount))
+		i--
+		dAtA[i] = 0x40
 	}
 	if len(m.IssueList) > 0 {
 		for iNdEx := len(m.IssueList) - 1; iNdEx >= 0; iNdEx-- {
@@ -173,8 +227,13 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x22
+			dAtA[i] = 0x3a
 		}
+	}
+	if m.RepositoryCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.RepositoryCount))
+		i--
+		dAtA[i] = 0x30
 	}
 	if len(m.RepositoryList) > 0 {
 		for iNdEx := len(m.RepositoryList) - 1; iNdEx >= 0; iNdEx-- {
@@ -187,8 +246,13 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x1a
+			dAtA[i] = 0x2a
 		}
+	}
+	if m.UserCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.UserCount))
+		i--
+		dAtA[i] = 0x20
 	}
 	if len(m.UserList) > 0 {
 		for iNdEx := len(m.UserList) - 1; iNdEx >= 0; iNdEx-- {
@@ -201,8 +265,13 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintGenesis(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0x1a
 		}
+	}
+	if m.WhoisCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.WhoisCount))
+		i--
+		dAtA[i] = 0x10
 	}
 	if len(m.WhoisList) > 0 {
 		for iNdEx := len(m.WhoisList) - 1; iNdEx >= 0; iNdEx-- {
@@ -244,11 +313,17 @@ func (m *GenesisState) Size() (n int) {
 			n += 1 + l + sovGenesis(uint64(l))
 		}
 	}
+	if m.WhoisCount != 0 {
+		n += 1 + sovGenesis(uint64(m.WhoisCount))
+	}
 	if len(m.UserList) > 0 {
 		for _, e := range m.UserList {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
+	}
+	if m.UserCount != 0 {
+		n += 1 + sovGenesis(uint64(m.UserCount))
 	}
 	if len(m.RepositoryList) > 0 {
 		for _, e := range m.RepositoryList {
@@ -256,17 +331,26 @@ func (m *GenesisState) Size() (n int) {
 			n += 1 + l + sovGenesis(uint64(l))
 		}
 	}
+	if m.RepositoryCount != 0 {
+		n += 1 + sovGenesis(uint64(m.RepositoryCount))
+	}
 	if len(m.IssueList) > 0 {
 		for _, e := range m.IssueList {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
 	}
+	if m.IssueCount != 0 {
+		n += 1 + sovGenesis(uint64(m.IssueCount))
+	}
 	if len(m.CommentList) > 0 {
 		for _, e := range m.CommentList {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
+	}
+	if m.CommentCount != 0 {
+		n += 1 + sovGenesis(uint64(m.CommentCount))
 	}
 	return n
 }
@@ -341,6 +425,25 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field WhoisCount", wireType)
+			}
+			m.WhoisCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.WhoisCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserList", wireType)
 			}
@@ -374,7 +477,26 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserCount", wireType)
+			}
+			m.UserCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UserCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryList", wireType)
 			}
@@ -408,7 +530,26 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryCount", wireType)
+			}
+			m.RepositoryCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IssueList", wireType)
 			}
@@ -442,7 +583,26 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 5:
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IssueCount", wireType)
+			}
+			m.IssueCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.IssueCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CommentList", wireType)
 			}
@@ -476,6 +636,25 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommentCount", wireType)
+			}
+			m.CommentCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommentCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenesis(dAtA[iNdEx:])

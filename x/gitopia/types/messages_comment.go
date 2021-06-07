@@ -91,7 +91,7 @@ func (msg *MsgUpdateComment) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateComment{}
+var _ sdk.Msg = &MsgDeleteComment{}
 
 func NewMsgDeleteComment(creator string, id uint64) *MsgDeleteComment {
 	return &MsgDeleteComment{

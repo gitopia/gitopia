@@ -214,16 +214,25 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
-    /** this line is used by starport scaffolding # 2 */
+    /** Queries a comment by id. */
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
+    /** Queries a list of comment items. */
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
+    /** Queries a issue by id. */
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
+    /** Queries a list of issue items. */
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
+    /** Queries a repository by id. */
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
+    /** Queries a list of repository items. */
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
+    /** Queries a user by id. */
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
+    /** Queries a list of user items. */
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
+    /** Queries a whois by id. */
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
+    /** Queries a list of whois items. */
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
 }
 export declare class QueryClientImpl implements Query {

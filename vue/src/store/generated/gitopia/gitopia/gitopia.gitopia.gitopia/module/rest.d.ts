@@ -329,7 +329,7 @@ export declare class HttpClient<SecurityDataType = unknown> {
     request: <T = any, E = any>({ body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams) => Promise<HttpResponse<T, E>>;
 }
 /**
- * @title gitopia/tx.proto
+ * @title gitopia/comment.proto
  * @version version not set
  */
 export declare class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -338,6 +338,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryCommentAll
+     * @summary Queries a list of comment items.
      * @request GET:/gitopia/gitopia/gitopia/comment
      */
     queryCommentAll: (query?: {
@@ -351,7 +352,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryComment
-     * @summary this line is used by starport scaffolding # 2
+     * @summary Queries a comment by id.
      * @request GET:/gitopia/gitopia/gitopia/comment/{id}
      */
     queryComment: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetCommentResponse, RpcStatus>>;
@@ -360,6 +361,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryIssueAll
+     * @summary Queries a list of issue items.
      * @request GET:/gitopia/gitopia/gitopia/issue
      */
     queryIssueAll: (query?: {
@@ -373,6 +375,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryIssue
+     * @summary Queries a issue by id.
      * @request GET:/gitopia/gitopia/gitopia/issue/{id}
      */
     queryIssue: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetIssueResponse, RpcStatus>>;
@@ -381,6 +384,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryRepositoryAll
+     * @summary Queries a list of repository items.
      * @request GET:/gitopia/gitopia/gitopia/repository
      */
     queryRepositoryAll: (query?: {
@@ -394,6 +398,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryRepository
+     * @summary Queries a repository by id.
      * @request GET:/gitopia/gitopia/gitopia/repository/{id}
      */
     queryRepository: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryResponse, RpcStatus>>;
@@ -402,6 +407,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryUserAll
+     * @summary Queries a list of user items.
      * @request GET:/gitopia/gitopia/gitopia/user
      */
     queryUserAll: (query?: {
@@ -415,6 +421,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryUser
+     * @summary Queries a user by id.
      * @request GET:/gitopia/gitopia/gitopia/user/{id}
      */
     queryUser: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetUserResponse, RpcStatus>>;
@@ -423,6 +430,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryWhoisAll
+     * @summary Queries a list of whois items.
      * @request GET:/gitopia/gitopia/gitopia/whois
      */
     queryWhoisAll: (query?: {
@@ -436,6 +444,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryWhois
+     * @summary Queries a whois by id.
      * @request GET:/gitopia/gitopia/gitopia/whois/{name}
      */
     queryWhois: (name: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetWhoisResponse, RpcStatus>>;

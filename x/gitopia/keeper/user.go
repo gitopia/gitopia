@@ -41,20 +41,15 @@ func (k Keeper) SetUserCount(ctx sdk.Context, count uint64) {
 // AppendUser appends a user in the store with a new id and update the count
 func (k Keeper) AppendUser(
 	ctx sdk.Context,
-	creator string,
-	username string,
+	user types.User,
 ) uint64 {
 	// Create the user
 	count := k.GetUserCount(ctx)
-	var user = types.User{
-		Creator:  creator,
-		Username: username,
-	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	value := k.cdc.MustMarshalBinaryBare(&user)
-	key := []byte(types.UserKey + creator)
-	store.Set(key, value)
+	appendedValue := k.cdc.MustMarshalBinaryBare(&user)
+	key := []byte(types.UserKey + user.Creator)
+	store.Set(key, appendedValue)
 
 	// Update user count
 	k.SetUserCount(ctx, count+1)
