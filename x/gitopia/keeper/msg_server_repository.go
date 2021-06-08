@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,11 +13,16 @@ import (
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	createdAt := time.Now().Unix()
+	updatedAt := time.Now().Unix()
+
 	var repository = types.Repository{
 		Creator:     msg.Creator,
 		Name:        msg.Name,
 		Owner:       msg.Owner,
 		Description: msg.Description,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
 	}
 
 	id := k.AppendRepository(
