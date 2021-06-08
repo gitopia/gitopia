@@ -15,14 +15,16 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 	createdAt := time.Now().Unix()
 	updatedAt := time.Now().Unix()
+	defaultBranch := string("master")
 
 	var repository = types.Repository{
-		Creator:     msg.Creator,
-		Name:        msg.Name,
-		Owner:       msg.Owner,
-		Description: msg.Description,
-		CreatedAt:   createdAt,
-		UpdatedAt:   updatedAt,
+		Creator:       msg.Creator,
+		Name:          msg.Name,
+		Owner:         msg.Owner,
+		Description:   msg.Description,
+		DefaultBranch: defaultBranch,
+		CreatedAt:     createdAt,
+		UpdatedAt:     updatedAt,
 	}
 
 	id := k.AppendRepository(
