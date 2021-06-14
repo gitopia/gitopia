@@ -20,6 +20,7 @@ service Msg {
   rpc ChangeIssueState(MsgChangeIssueState) returns (MsgChangeIssueStateResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
+  rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
@@ -118,6 +119,15 @@ message MsgCreateRepository {
 message MsgCreateRepositoryResponse {
   uint64 id = 1;
 }
+
+message MsgCreateBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string commitSHA = 4;
+}
+
+message MsgCreateBranchResponse { }
 
 message MsgUpdateRepository {
   string creator = 1;

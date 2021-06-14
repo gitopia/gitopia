@@ -37,6 +37,34 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	}, nil
 }
 
+func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var repository = k.GetRepository(ctx, msg.Id)
+
+	if len(repository.Branches) == 0 {
+		repository.Branches = map[string]string{
+			msg.Name: msg.CommitSHA,
+		}
+	} else {
+		repository.Branches[msg.Name] = msg.CommitSHA
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgCreateBranchResponse{}, nil
+}
+
 func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateRepository) (*types.MsgUpdateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
