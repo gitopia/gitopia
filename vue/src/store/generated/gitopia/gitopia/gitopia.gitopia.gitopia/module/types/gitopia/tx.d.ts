@@ -73,24 +73,6 @@ export interface MsgCreateRepository {
     name: string;
     owner: string;
     description: string;
-    forks: string;
-    branches: string;
-    tags: string;
-    subscribers: string;
-    commits: string;
-    issuesOpen: string;
-    issuesClosed: string;
-    pulls: string;
-    labels: string;
-    releases: string;
-    createdAt: string;
-    updatedAt: string;
-    pushedAt: string;
-    stargazers: string;
-    archived: string;
-    license: string;
-    defaultBranch: string;
-    extensions: string;
 }
 export interface MsgCreateRepositoryResponse {
     id: number;
@@ -101,24 +83,9 @@ export interface MsgUpdateRepository {
     name: string;
     owner: string;
     description: string;
-    forks: string;
-    branches: string;
-    tags: string;
-    subscribers: string;
-    commits: string;
-    issuesOpen: string;
-    issuesClosed: string;
-    pulls: string;
     labels: string;
-    releases: string;
-    createdAt: string;
-    updatedAt: string;
-    pushedAt: string;
-    stargazers: string;
-    archived: string;
     license: string;
     defaultBranch: string;
-    extensions: string;
 }
 export interface MsgUpdateRepositoryResponse {
 }

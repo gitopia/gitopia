@@ -5,18 +5,19 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgConnectionOpenInit } from "./types/ibc/core/connection/v1/tx";
-import { MsgConnectionOpenConfirm } from "./types/ibc/core/connection/v1/tx";
-import { MsgConnectionOpenTry } from "./types/ibc/core/connection/v1/tx";
 import { MsgConnectionOpenAck } from "./types/ibc/core/connection/v1/tx";
+import { MsgConnectionOpenTry } from "./types/ibc/core/connection/v1/tx";
+import { MsgConnectionOpenConfirm } from "./types/ibc/core/connection/v1/tx";
 
 
 const types = [
   ["/ibc.core.connection.v1.MsgConnectionOpenInit", MsgConnectionOpenInit],
-  ["/ibc.core.connection.v1.MsgConnectionOpenConfirm", MsgConnectionOpenConfirm],
-  ["/ibc.core.connection.v1.MsgConnectionOpenTry", MsgConnectionOpenTry],
   ["/ibc.core.connection.v1.MsgConnectionOpenAck", MsgConnectionOpenAck],
+  ["/ibc.core.connection.v1.MsgConnectionOpenTry", MsgConnectionOpenTry],
+  ["/ibc.core.connection.v1.MsgConnectionOpenConfirm", MsgConnectionOpenConfirm],
   
 ];
+export const MissingWalletError = new Error("wallet is required");
 
 const registry = new Registry(<any>types);
 
@@ -35,17 +36,17 @@ interface SignAndBroadcastOptions {
 }
 
 const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions = { addr: "http://localhost:26657" }) => {
-  if (!wallet) throw new Error("wallet is required");
+  if (!wallet) throw MissingWalletError;
 
   const client = await SigningStargateClient.connectWithSigner(addr, wallet, { registry });
   const { address } = (await wallet.getAccounts())[0];
 
   return {
-    signAndBroadcast: (msgs: EncodeObject[], { fee=defaultFee, memo=null }: SignAndBroadcastOptions) => memo?client.signAndBroadcast(address, msgs, fee,memo):client.signAndBroadcast(address, msgs, fee),
+    signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgConnectionOpenInit: (data: MsgConnectionOpenInit): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenInit", value: data }),
-    msgConnectionOpenConfirm: (data: MsgConnectionOpenConfirm): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenConfirm", value: data }),
-    msgConnectionOpenTry: (data: MsgConnectionOpenTry): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenTry", value: data }),
     msgConnectionOpenAck: (data: MsgConnectionOpenAck): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenAck", value: data }),
+    msgConnectionOpenTry: (data: MsgConnectionOpenTry): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenTry", value: data }),
+    msgConnectionOpenConfirm: (data: MsgConnectionOpenConfirm): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenConfirm", value: data }),
     
   };
 };
