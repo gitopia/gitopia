@@ -57,3 +57,21 @@ func (k Keeper) Repository(c context.Context, req *types.QueryGetRepositoryReque
 
 	return &types.QueryGetRepositoryResponse{Repository: &repository}, nil
 }
+
+func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest) (*types.QueryGetAllBranchResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.Id) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
+
+	return &types.QueryGetAllBranchResponse{Branches: repository.GetBranches()}, nil
+}
