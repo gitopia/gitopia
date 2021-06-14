@@ -93,6 +93,15 @@ export interface MsgCreateRepositoryResponse {
   id: number;
 }
 
+export interface MsgCreateBranch {
+  creator: string;
+  id: number;
+  name: string;
+  commitSHA: string;
+}
+
+export interface MsgCreateBranchResponse {}
+
 export interface MsgUpdateRepository {
   creator: string;
   id: number;
@@ -1731,6 +1740,163 @@ export const MsgCreateRepositoryResponse = {
     } else {
       message.id = 0;
     }
+    return message;
+  },
+};
+
+const baseMsgCreateBranch: object = {
+  creator: "",
+  id: 0,
+  name: "",
+  commitSHA: "",
+};
+
+export const MsgCreateBranch = {
+  encode(message: MsgCreateBranch, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
+    if (message.commitSHA !== "") {
+      writer.uint32(34).string(message.commitSHA);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateBranch {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateBranch } as MsgCreateBranch;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.name = reader.string();
+          break;
+        case 4:
+          message.commitSHA = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateBranch {
+    const message = { ...baseMsgCreateBranch } as MsgCreateBranch;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
+    }
+    if (object.commitSHA !== undefined && object.commitSHA !== null) {
+      message.commitSHA = String(object.commitSHA);
+    } else {
+      message.commitSHA = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateBranch): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
+    message.commitSHA !== undefined && (obj.commitSHA = message.commitSHA);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateBranch>): MsgCreateBranch {
+    const message = { ...baseMsgCreateBranch } as MsgCreateBranch;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
+    }
+    if (object.commitSHA !== undefined && object.commitSHA !== null) {
+      message.commitSHA = object.commitSHA;
+    } else {
+      message.commitSHA = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateBranchResponse: object = {};
+
+export const MsgCreateBranchResponse = {
+  encode(_: MsgCreateBranchResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateBranchResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgCreateBranchResponse,
+    } as MsgCreateBranchResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateBranchResponse {
+    const message = {
+      ...baseMsgCreateBranchResponse,
+    } as MsgCreateBranchResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCreateBranchResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgCreateBranchResponse>
+  ): MsgCreateBranchResponse {
+    const message = {
+      ...baseMsgCreateBranchResponse,
+    } as MsgCreateBranchResponse;
     return message;
   },
 };
@@ -3385,6 +3551,7 @@ export interface Msg {
   CreateRepository(
     request: MsgCreateRepository
   ): Promise<MsgCreateRepositoryResponse>;
+  CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
   UpdateRepository(
     request: MsgUpdateRepository
   ): Promise<MsgUpdateRepositoryResponse>;
@@ -3501,6 +3668,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse> {
+    const data = MsgCreateBranch.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "CreateBranch",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateBranchResponse.decode(new Reader(data))
     );
   }
 

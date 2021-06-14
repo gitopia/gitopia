@@ -82,6 +82,8 @@ export interface GitopiaMsgChangeIssueStateResponse {
   state?: string;
 }
 
+export type GitopiaMsgCreateBranchResponse = object;
+
 export interface GitopiaMsgCreateCommentResponse {
   /** @format uint64 */
   id?: string;
@@ -199,6 +201,10 @@ export interface GitopiaQueryAllWhoisResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryGetAllBranchResponse {
+  Branches?: Record<string, string>;
+}
+
 export interface GitopiaQueryGetCommentResponse {
   Comment?: GitopiaComment;
 }
@@ -228,7 +234,7 @@ export interface GitopiaRepository {
   owner?: string;
   description?: string;
   forks?: string[];
-  branches?: string;
+  branches?: Record<string, string>;
   tags?: string;
   subscribers?: string;
   commits?: string;
@@ -666,6 +672,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRepository = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/repository/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBranchAll
+   * @summary Queries a repository by id.
+   * @request GET:/gitopia/gitopia/gitopia/repository/{id}/branches
+   */
+  queryBranchAll = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetAllBranchResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${id}/branches`,
       method: "GET",
       format: "json",
       ...params,

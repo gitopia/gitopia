@@ -77,6 +77,14 @@ export interface MsgCreateRepository {
 export interface MsgCreateRepositoryResponse {
     id: number;
 }
+export interface MsgCreateBranch {
+    creator: string;
+    id: number;
+    name: string;
+    commitSHA: string;
+}
+export interface MsgCreateBranchResponse {
+}
 export interface MsgUpdateRepository {
     creator: string;
     id: number;
@@ -275,6 +283,20 @@ export declare const MsgCreateRepositoryResponse: {
     toJSON(message: MsgCreateRepositoryResponse): unknown;
     fromPartial(object: DeepPartial<MsgCreateRepositoryResponse>): MsgCreateRepositoryResponse;
 };
+export declare const MsgCreateBranch: {
+    encode(message: MsgCreateBranch, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateBranch;
+    fromJSON(object: any): MsgCreateBranch;
+    toJSON(message: MsgCreateBranch): unknown;
+    fromPartial(object: DeepPartial<MsgCreateBranch>): MsgCreateBranch;
+};
+export declare const MsgCreateBranchResponse: {
+    encode(_: MsgCreateBranchResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateBranchResponse;
+    fromJSON(_: any): MsgCreateBranchResponse;
+    toJSON(_: MsgCreateBranchResponse): unknown;
+    fromPartial(_: DeepPartial<MsgCreateBranchResponse>): MsgCreateBranchResponse;
+};
 export declare const MsgUpdateRepository: {
     encode(message: MsgUpdateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
@@ -398,6 +420,7 @@ export interface Msg {
     ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
@@ -418,6 +441,7 @@ export declare class MsgClientImpl implements Msg {
     ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;

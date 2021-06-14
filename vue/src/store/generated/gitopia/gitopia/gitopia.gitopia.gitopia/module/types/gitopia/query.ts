@@ -56,6 +56,19 @@ export interface QueryGetRepositoryResponse {
   Repository: Repository | undefined;
 }
 
+export interface QueryGetAllBranchRequest {
+  id: number;
+}
+
+export interface QueryGetAllBranchResponse {
+  Branches: { [key: string]: string };
+}
+
+export interface QueryGetAllBranchResponse_BranchesEntry {
+  key: string;
+  value: string;
+}
+
 export interface QueryAllRepositoryRequest {
   pagination: PageRequest | undefined;
 }
@@ -800,6 +813,252 @@ export const QueryGetRepositoryResponse = {
   },
 };
 
+const baseQueryGetAllBranchRequest: object = { id: 0 };
+
+export const QueryGetAllBranchRequest = {
+  encode(
+    message: QueryGetAllBranchRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetAllBranchRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetAllBranchRequest,
+    } as QueryGetAllBranchRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllBranchRequest {
+    const message = {
+      ...baseQueryGetAllBranchRequest,
+    } as QueryGetAllBranchRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllBranchRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllBranchRequest>
+  ): QueryGetAllBranchRequest {
+    const message = {
+      ...baseQueryGetAllBranchRequest,
+    } as QueryGetAllBranchRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetAllBranchResponse: object = {};
+
+export const QueryGetAllBranchResponse = {
+  encode(
+    message: QueryGetAllBranchResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    Object.entries(message.Branches).forEach(([key, value]) => {
+      QueryGetAllBranchResponse_BranchesEntry.encode(
+        { key: key as any, value },
+        writer.uint32(10).fork()
+      ).ldelim();
+    });
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetAllBranchResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetAllBranchResponse,
+    } as QueryGetAllBranchResponse;
+    message.Branches = {};
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          const entry1 = QueryGetAllBranchResponse_BranchesEntry.decode(
+            reader,
+            reader.uint32()
+          );
+          if (entry1.value !== undefined) {
+            message.Branches[entry1.key] = entry1.value;
+          }
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllBranchResponse {
+    const message = {
+      ...baseQueryGetAllBranchResponse,
+    } as QueryGetAllBranchResponse;
+    message.Branches = {};
+    if (object.Branches !== undefined && object.Branches !== null) {
+      Object.entries(object.Branches).forEach(([key, value]) => {
+        message.Branches[key] = String(value);
+      });
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllBranchResponse): unknown {
+    const obj: any = {};
+    obj.Branches = {};
+    if (message.Branches) {
+      Object.entries(message.Branches).forEach(([k, v]) => {
+        obj.Branches[k] = v;
+      });
+    }
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllBranchResponse>
+  ): QueryGetAllBranchResponse {
+    const message = {
+      ...baseQueryGetAllBranchResponse,
+    } as QueryGetAllBranchResponse;
+    message.Branches = {};
+    if (object.Branches !== undefined && object.Branches !== null) {
+      Object.entries(object.Branches).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.Branches[key] = String(value);
+        }
+      });
+    }
+    return message;
+  },
+};
+
+const baseQueryGetAllBranchResponse_BranchesEntry: object = {
+  key: "",
+  value: "",
+};
+
+export const QueryGetAllBranchResponse_BranchesEntry = {
+  encode(
+    message: QueryGetAllBranchResponse_BranchesEntry,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetAllBranchResponse_BranchesEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetAllBranchResponse_BranchesEntry,
+    } as QueryGetAllBranchResponse_BranchesEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllBranchResponse_BranchesEntry {
+    const message = {
+      ...baseQueryGetAllBranchResponse_BranchesEntry,
+    } as QueryGetAllBranchResponse_BranchesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = String(object.value);
+    } else {
+      message.value = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllBranchResponse_BranchesEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllBranchResponse_BranchesEntry>
+  ): QueryGetAllBranchResponse_BranchesEntry {
+    const message = {
+      ...baseQueryGetAllBranchResponse_BranchesEntry,
+    } as QueryGetAllBranchResponse_BranchesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = "";
+    }
+    return message;
+  },
+};
+
 const baseQueryAllRepositoryRequest: object = {};
 
 export const QueryAllRepositoryRequest = {
@@ -1527,6 +1786,10 @@ export interface Query {
   RepositoryAll(
     request: QueryAllRepositoryRequest
   ): Promise<QueryAllRepositoryResponse>;
+  /** Queries a repository by id. */
+  BranchAll(
+    request: QueryGetAllBranchRequest
+  ): Promise<QueryGetAllBranchResponse>;
   /** Queries a user by id. */
   User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
   /** Queries a list of user items. */
@@ -1617,6 +1880,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
+  BranchAll(
+    request: QueryGetAllBranchRequest
+  ): Promise<QueryGetAllBranchResponse> {
+    const data = QueryGetAllBranchRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "BranchAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetAllBranchResponse.decode(new Reader(data))
     );
   }
 

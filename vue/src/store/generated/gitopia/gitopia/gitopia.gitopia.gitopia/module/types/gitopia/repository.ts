@@ -11,7 +11,7 @@ export interface Repository {
   owner: string;
   description: string;
   forks: number[];
-  branches: string;
+  branches: { [key: string]: string };
   tags: string;
   subscribers: string;
   commits: string;
@@ -30,6 +30,11 @@ export interface Repository {
   extensions: string;
 }
 
+export interface Repository_BranchesEntry {
+  key: string;
+  value: string;
+}
+
 const baseRepository: object = {
   creator: "",
   id: 0,
@@ -37,7 +42,6 @@ const baseRepository: object = {
   owner: "",
   description: "",
   forks: 0,
-  branches: "",
   tags: "",
   subscribers: "",
   commits: "",
@@ -78,9 +82,12 @@ export const Repository = {
       writer.uint64(v);
     }
     writer.ldelim();
-    if (message.branches !== "") {
-      writer.uint32(58).string(message.branches);
-    }
+    Object.entries(message.branches).forEach(([key, value]) => {
+      Repository_BranchesEntry.encode(
+        { key: key as any, value },
+        writer.uint32(58).fork()
+      ).ldelim();
+    });
     if (message.tags !== "") {
       writer.uint32(66).string(message.tags);
     }
@@ -145,6 +152,7 @@ export const Repository = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRepository } as Repository;
     message.forks = [];
+    message.branches = {};
     message.issuesOpen = [];
     message.issuesClosed = [];
     message.pulls = [];
@@ -178,7 +186,13 @@ export const Repository = {
           }
           break;
         case 7:
-          message.branches = reader.string();
+          const entry7 = Repository_BranchesEntry.decode(
+            reader,
+            reader.uint32()
+          );
+          if (entry7.value !== undefined) {
+            message.branches[entry7.key] = entry7.value;
+          }
           break;
         case 8:
           message.tags = reader.string();
@@ -267,6 +281,7 @@ export const Repository = {
   fromJSON(object: any): Repository {
     const message = { ...baseRepository } as Repository;
     message.forks = [];
+    message.branches = {};
     message.issuesOpen = [];
     message.issuesClosed = [];
     message.pulls = [];
@@ -302,9 +317,9 @@ export const Repository = {
       }
     }
     if (object.branches !== undefined && object.branches !== null) {
-      message.branches = String(object.branches);
-    } else {
-      message.branches = "";
+      Object.entries(object.branches).forEach(([key, value]) => {
+        message.branches[key] = String(value);
+      });
     }
     if (object.tags !== undefined && object.tags !== null) {
       message.tags = String(object.tags);
@@ -402,7 +417,12 @@ export const Repository = {
     } else {
       obj.forks = [];
     }
-    message.branches !== undefined && (obj.branches = message.branches);
+    obj.branches = {};
+    if (message.branches) {
+      Object.entries(message.branches).forEach(([k, v]) => {
+        obj.branches[k] = v;
+      });
+    }
     message.tags !== undefined && (obj.tags = message.tags);
     message.subscribers !== undefined &&
       (obj.subscribers = message.subscribers);
@@ -443,6 +463,7 @@ export const Repository = {
   fromPartial(object: DeepPartial<Repository>): Repository {
     const message = { ...baseRepository } as Repository;
     message.forks = [];
+    message.branches = {};
     message.issuesOpen = [];
     message.issuesClosed = [];
     message.pulls = [];
@@ -478,9 +499,11 @@ export const Repository = {
       }
     }
     if (object.branches !== undefined && object.branches !== null) {
-      message.branches = object.branches;
-    } else {
-      message.branches = "";
+      Object.entries(object.branches).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.branches[key] = String(value);
+        }
+      });
     }
     if (object.tags !== undefined && object.tags !== null) {
       message.tags = object.tags;
@@ -561,6 +584,92 @@ export const Repository = {
       message.extensions = object.extensions;
     } else {
       message.extensions = "";
+    }
+    return message;
+  },
+};
+
+const baseRepository_BranchesEntry: object = { key: "", value: "" };
+
+export const Repository_BranchesEntry = {
+  encode(
+    message: Repository_BranchesEntry,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): Repository_BranchesEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseRepository_BranchesEntry,
+    } as Repository_BranchesEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Repository_BranchesEntry {
+    const message = {
+      ...baseRepository_BranchesEntry,
+    } as Repository_BranchesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = String(object.value);
+    } else {
+      message.value = "";
+    }
+    return message;
+  },
+
+  toJSON(message: Repository_BranchesEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<Repository_BranchesEntry>
+  ): Repository_BranchesEntry {
+    const message = {
+      ...baseRepository_BranchesEntry,
+    } as Repository_BranchesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = "";
     }
     return message;
   },

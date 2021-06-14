@@ -7,7 +7,9 @@ export interface Repository {
     owner: string;
     description: string;
     forks: number[];
-    branches: string;
+    branches: {
+        [key: string]: string;
+    };
     tags: string;
     subscribers: string;
     commits: string;
@@ -25,12 +27,23 @@ export interface Repository {
     defaultBranch: string;
     extensions: string;
 }
+export interface Repository_BranchesEntry {
+    key: string;
+    value: string;
+}
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;
     fromJSON(object: any): Repository;
     toJSON(message: Repository): unknown;
     fromPartial(object: DeepPartial<Repository>): Repository;
+};
+export declare const Repository_BranchesEntry: {
+    encode(message: Repository_BranchesEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): Repository_BranchesEntry;
+    fromJSON(object: any): Repository_BranchesEntry;
+    toJSON(message: Repository_BranchesEntry): unknown;
+    fromPartial(object: DeepPartial<Repository_BranchesEntry>): Repository_BranchesEntry;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

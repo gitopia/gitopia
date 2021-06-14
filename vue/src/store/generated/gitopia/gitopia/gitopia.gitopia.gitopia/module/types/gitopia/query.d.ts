@@ -39,6 +39,18 @@ export interface QueryGetRepositoryRequest {
 export interface QueryGetRepositoryResponse {
     Repository: Repository | undefined;
 }
+export interface QueryGetAllBranchRequest {
+    id: number;
+}
+export interface QueryGetAllBranchResponse {
+    Branches: {
+        [key: string]: string;
+    };
+}
+export interface QueryGetAllBranchResponse_BranchesEntry {
+    key: string;
+    value: string;
+}
 export interface QueryAllRepositoryRequest {
     pagination: PageRequest | undefined;
 }
@@ -142,6 +154,27 @@ export declare const QueryGetRepositoryResponse: {
     toJSON(message: QueryGetRepositoryResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetRepositoryResponse>): QueryGetRepositoryResponse;
 };
+export declare const QueryGetAllBranchRequest: {
+    encode(message: QueryGetAllBranchRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllBranchRequest;
+    fromJSON(object: any): QueryGetAllBranchRequest;
+    toJSON(message: QueryGetAllBranchRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllBranchRequest>): QueryGetAllBranchRequest;
+};
+export declare const QueryGetAllBranchResponse: {
+    encode(message: QueryGetAllBranchResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllBranchResponse;
+    fromJSON(object: any): QueryGetAllBranchResponse;
+    toJSON(message: QueryGetAllBranchResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllBranchResponse>): QueryGetAllBranchResponse;
+};
+export declare const QueryGetAllBranchResponse_BranchesEntry: {
+    encode(message: QueryGetAllBranchResponse_BranchesEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllBranchResponse_BranchesEntry;
+    fromJSON(object: any): QueryGetAllBranchResponse_BranchesEntry;
+    toJSON(message: QueryGetAllBranchResponse_BranchesEntry): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllBranchResponse_BranchesEntry>): QueryGetAllBranchResponse_BranchesEntry;
+};
 export declare const QueryAllRepositoryRequest: {
     encode(message: QueryAllRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryRequest;
@@ -226,6 +259,8 @@ export interface Query {
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     /** Queries a list of repository items. */
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
+    /** Queries a repository by id. */
+    BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     /** Queries a user by id. */
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     /** Queries a list of user items. */
@@ -244,6 +279,7 @@ export declare class QueryClientImpl implements Query {
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
+    BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;

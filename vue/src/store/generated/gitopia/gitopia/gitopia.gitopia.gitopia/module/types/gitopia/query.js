@@ -611,6 +611,210 @@ export const QueryGetRepositoryResponse = {
         return message;
     },
 };
+const baseQueryGetAllBranchRequest = { id: 0 };
+export const QueryGetAllBranchRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetAllBranchRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetAllBranchRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetAllBranchRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseQueryGetAllBranchResponse = {};
+export const QueryGetAllBranchResponse = {
+    encode(message, writer = Writer.create()) {
+        Object.entries(message.Branches).forEach(([key, value]) => {
+            QueryGetAllBranchResponse_BranchesEntry.encode({ key: key, value }, writer.uint32(10).fork()).ldelim();
+        });
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetAllBranchResponse,
+        };
+        message.Branches = {};
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    const entry1 = QueryGetAllBranchResponse_BranchesEntry.decode(reader, reader.uint32());
+                    if (entry1.value !== undefined) {
+                        message.Branches[entry1.key] = entry1.value;
+                    }
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetAllBranchResponse,
+        };
+        message.Branches = {};
+        if (object.Branches !== undefined && object.Branches !== null) {
+            Object.entries(object.Branches).forEach(([key, value]) => {
+                message.Branches[key] = String(value);
+            });
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        obj.Branches = {};
+        if (message.Branches) {
+            Object.entries(message.Branches).forEach(([k, v]) => {
+                obj.Branches[k] = v;
+            });
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetAllBranchResponse,
+        };
+        message.Branches = {};
+        if (object.Branches !== undefined && object.Branches !== null) {
+            Object.entries(object.Branches).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    message.Branches[key] = String(value);
+                }
+            });
+        }
+        return message;
+    },
+};
+const baseQueryGetAllBranchResponse_BranchesEntry = {
+    key: "",
+    value: "",
+};
+export const QueryGetAllBranchResponse_BranchesEntry = {
+    encode(message, writer = Writer.create()) {
+        if (message.key !== "") {
+            writer.uint32(10).string(message.key);
+        }
+        if (message.value !== "") {
+            writer.uint32(18).string(message.value);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetAllBranchResponse_BranchesEntry,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.key = reader.string();
+                    break;
+                case 2:
+                    message.value = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetAllBranchResponse_BranchesEntry,
+        };
+        if (object.key !== undefined && object.key !== null) {
+            message.key = String(object.key);
+        }
+        else {
+            message.key = "";
+        }
+        if (object.value !== undefined && object.value !== null) {
+            message.value = String(object.value);
+        }
+        else {
+            message.value = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.key !== undefined && (obj.key = message.key);
+        message.value !== undefined && (obj.value = message.value);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetAllBranchResponse_BranchesEntry,
+        };
+        if (object.key !== undefined && object.key !== null) {
+            message.key = object.key;
+        }
+        else {
+            message.key = "";
+        }
+        if (object.value !== undefined && object.value !== null) {
+            message.value = object.value;
+        }
+        else {
+            message.value = "";
+        }
+        return message;
+    },
+};
 const baseQueryAllRepositoryRequest = {};
 export const QueryAllRepositoryRequest = {
     encode(message, writer = Writer.create()) {
@@ -1261,6 +1465,11 @@ export class QueryClientImpl {
         const data = QueryAllRepositoryRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryAll", data);
         return promise.then((data) => QueryAllRepositoryResponse.decode(new Reader(data)));
+    }
+    BranchAll(request) {
+        const data = QueryGetAllBranchRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "BranchAll", data);
+        return promise.then((data) => QueryGetAllBranchResponse.decode(new Reader(data)));
     }
     User(request) {
         const data = QueryGetUserRequest.encode(request).finish();
