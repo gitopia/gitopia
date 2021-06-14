@@ -40,31 +40,15 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateRepository) (*types.MsgUpdateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var repository = types.Repository{
-		Creator:     msg.Creator,
-		Id:          msg.Id,
-		Name:        msg.Name,
-		Owner:       msg.Owner,
-		Description: msg.Description,
-		// Forks:         msg.Forks,
-		Branches:    msg.Branches,
-		Tags:        msg.Tags,
-		Subscribers: msg.Subscribers,
-		Commits:     msg.Commits,
-		// IssuesOpen:    msg.IssuesOpen,
-		// IssuesClosed:  msg.IssuesClosed,
-		// Pulls:         msg.Pulls,
-		Labels:   msg.Labels,
-		Releases: msg.Releases,
-		// CreatedAt:     msg.CreatedAt,
-		// UpdatedAt:     msg.UpdatedAt,
-		// PushedAt:      msg.PushedAt,
-		// Stargazers:    msg.Stargazers,
-		// Archived:      msg.Archived,
-		License:       msg.License,
-		DefaultBranch: msg.DefaultBranch,
-		Extensions:    msg.Extensions,
-	}
+	var repository = k.GetRepository(ctx, msg.Id)
+
+	repository.Name = msg.Name
+	repository.Owner = msg.Owner
+	repository.Description = msg.Description
+	repository.Labels = msg.Labels
+	repository.UpdatedAt = time.Now().Unix()
+	repository.License = msg.License
+	repository.DefaultBranch = msg.DefaultBranch
 
 	// Checks that the element exists
 	if !k.HasRepository(ctx, msg.Id) {

@@ -52,43 +52,46 @@ func CmdCreateRepository() *cobra.Command {
 
 func CmdUpdateRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-repository [id] [name] [owner] [description] [forks] [branches] [tags] [subscribers] [commits] [issuesOpen] [issuesClosed] [pulls] [labels] [releases] [createdAt] [updatedAt] [pushedAt] [stargazers] [archived] [license] [defaultBranch] [extensions]",
+		Use:   "update-repository [id] [name] [owner] [description] [labels] [license] [defaultBranch]",
 		Short: "Update a repository",
-		Args:  cobra.ExactArgs(22),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			argsName := string(args[1])
-			argsOwner := string(args[2])
-			argsDescription := string(args[3])
-			argsForks := string(args[4])
-			argsBranches := string(args[5])
-			argsTags := string(args[6])
-			argsSubscribers := string(args[7])
-			argsCommits := string(args[8])
-			argsIssuesOpen := string(args[9])
-			argsIssuesClosed := string(args[10])
-			argsPulls := string(args[11])
-			argsLabels := string(args[12])
-			argsReleases := string(args[13])
-			argsCreatedAt := string(args[14])
-			argsUpdatedAt := string(args[15])
-			argsPushedAt := string(args[16])
-			argsStargazers := string(args[17])
-			argsArchived := string(args[18])
-			argsLicense := string(args[19])
-			argsDefaultBranch := string(args[20])
-			argsExtensions := string(args[21])
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsOwner, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+			argsLabels, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
+			argsLicense, err := cast.ToStringE(args[5])
+			if err != nil {
+				return err
+			}
+			argsDefaultBranch, err := cast.ToStringE(args[6])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateRepository(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsOwner), string(argsDescription), string(argsForks), string(argsBranches), string(argsTags), string(argsSubscribers), string(argsCommits), string(argsIssuesOpen), string(argsIssuesClosed), string(argsPulls), string(argsLabels), string(argsReleases), string(argsCreatedAt), string(argsUpdatedAt), string(argsPushedAt), string(argsStargazers), string(argsArchived), string(argsLicense), string(argsDefaultBranch), string(argsExtensions))
+			msg := types.NewMsgUpdateRepository(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsOwner), string(argsDescription), string(argsLabels), string(argsLicense), string(argsDefaultBranch))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -103,7 +106,7 @@ func CmdUpdateRepository() *cobra.Command {
 
 func CmdDeleteRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-repository [id] [name] [owner] [description] [forks] [branches] [tags] [subscribers] [commits] [issuesOpen] [issuesClosed] [pulls] [labels] [releases] [createdAt] [updatedAt] [pushedAt] [stargazers] [archived] [license] [defaultBranch] [extensions]",
+		Use:   "delete-repository [id]",
 		Short: "Delete a repository by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

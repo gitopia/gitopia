@@ -50,31 +50,16 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateRepository{}
 
-func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, forks string, branches string, tags string, subscribers string, commits string, issuesOpen string, issuesClosed string, pulls string, labels string, releases string, createdAt string, updatedAt string, pushedAt string, stargazers string, archived string, license string, defaultBranch string, extensions string) *MsgUpdateRepository {
+func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, labels string, license string, defaultBranch string) *MsgUpdateRepository {
 	return &MsgUpdateRepository{
 		Id:            id,
 		Creator:       creator,
 		Name:          name,
 		Owner:         owner,
 		Description:   description,
-		Forks:         forks,
-		Branches:      branches,
-		Tags:          tags,
-		Subscribers:   subscribers,
-		Commits:       commits,
-		IssuesOpen:    issuesOpen,
-		IssuesClosed:  issuesClosed,
-		Pulls:         pulls,
 		Labels:        labels,
-		Releases:      releases,
-		CreatedAt:     createdAt,
-		UpdatedAt:     updatedAt,
-		PushedAt:      pushedAt,
-		Stargazers:    stargazers,
-		Archived:      archived,
 		License:       license,
 		DefaultBranch: defaultBranch,
-		Extensions:    extensions,
 	}
 }
 
