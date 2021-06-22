@@ -66,28 +66,31 @@ func (k Keeper) SetUser(ctx sdk.Context, user types.User) {
 }
 
 // GetUser returns a user from its id
-func (k Keeper) GetUser(ctx sdk.Context, id uint64) types.User {
+func (k Keeper) GetUser(ctx sdk.Context, id string) types.User {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	var user types.User
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetUserIDBytes(id)), &user)
+	key := []byte(types.UserKey + id)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
 	return user
 }
 
 // HasUser checks if the user exists in the store
-func (k Keeper) HasUser(ctx sdk.Context, id uint64) bool {
+func (k Keeper) HasUser(ctx sdk.Context, id string) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	return store.Has(GetUserIDBytes(id))
+	key := []byte(types.UserKey + id)
+	return store.Has(key)
 }
 
 // GetUserOwner returns the creator of the user
-func (k Keeper) GetUserOwner(ctx sdk.Context, id uint64) string {
+func (k Keeper) GetUserOwner(ctx sdk.Context, id string) string {
 	return k.GetUser(ctx, id).Creator
 }
 
 // RemoveUser removes a user from the store
-func (k Keeper) RemoveUser(ctx sdk.Context, id uint64) {
+func (k Keeper) RemoveUser(ctx sdk.Context, id string) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	store.Delete(GetUserIDBytes(id))
+	key := []byte(types.UserKey + id)
+	store.Delete(key)
 }
 
 // GetAllUser returns all user

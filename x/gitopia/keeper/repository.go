@@ -12,7 +12,7 @@ import (
 
 type Owner struct {
 	Type string
-	ID   uint64
+	ID   string
 }
 
 // GetRepositoryCount get the total number of repository

@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"strconv"
-
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/cast"
@@ -48,10 +46,7 @@ func CmdUpdateUser() *cobra.Command {
 		Short: "Update a user",
 		Args:  cobra.ExactArgs(16),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
+			id := string(args[0])
 
 			argsUsername := string(args[1])
 			argsUsernameGithub := string(args[2])
@@ -93,10 +88,7 @@ func CmdDeleteUser() *cobra.Command {
 		Short: "Delete a user by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
+			id := string(args[0])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

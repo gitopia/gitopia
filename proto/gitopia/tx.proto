@@ -169,12 +169,12 @@ message MsgCreateUser {
 }
 
 message MsgCreateUserResponse {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message MsgUpdateUser {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string username = 3;
   string usernameGithub = 4;
   string avatarUrl = 5;
@@ -196,7 +196,7 @@ message MsgUpdateUserResponse { }
 
 message MsgDeleteUser {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
 }
 
 message MsgDeleteUserResponse { }

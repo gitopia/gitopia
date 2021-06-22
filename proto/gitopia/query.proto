@@ -131,7 +131,7 @@ message QueryAllRepositoryResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 message QueryGetUserRequest {
-	uint64 id = 1;
+	string id = 1;
 }
 
 message QueryGetUserResponse {

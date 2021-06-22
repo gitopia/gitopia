@@ -53,7 +53,8 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetUserIDBytes(req.Id)), &user)
+	key := []byte(types.UserKey + req.Id)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
 
 	return &types.QueryGetUserResponse{User: &user}, nil
 }
