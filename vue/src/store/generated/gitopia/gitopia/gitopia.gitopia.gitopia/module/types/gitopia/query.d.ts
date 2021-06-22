@@ -59,7 +59,7 @@ export interface QueryAllRepositoryResponse {
     pagination: PageResponse | undefined;
 }
 export interface QueryGetUserRequest {
-    id: number;
+    id: string;
 }
 export interface QueryGetUserResponse {
     User: User | undefined;

@@ -2,41 +2,41 @@
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgDeleteRepository } from "./types/gitopia/tx";
-import { MsgUpdateUser } from "./types/gitopia/tx";
-import { MsgDeleteUser } from "./types/gitopia/tx";
-import { MsgUpdateWhois } from "./types/gitopia/tx";
-import { MsgSetWhois } from "./types/gitopia/tx";
+import { MsgCreateIssue } from "./types/gitopia/tx";
 import { MsgCreateBranch } from "./types/gitopia/tx";
 import { MsgDeleteWhois } from "./types/gitopia/tx";
-import { MsgDeleteIssue } from "./types/gitopia/tx";
-import { MsgUpdateIssue } from "./types/gitopia/tx";
-import { MsgUpdateComment } from "./types/gitopia/tx";
-import { MsgDeleteComment } from "./types/gitopia/tx";
-import { MsgCreateRepository } from "./types/gitopia/tx";
-import { MsgCreateIssue } from "./types/gitopia/tx";
-import { MsgUpdateRepository } from "./types/gitopia/tx";
-import { MsgChangeIssueState } from "./types/gitopia/tx";
-import { MsgCreateComment } from "./types/gitopia/tx";
 import { MsgCreateUser } from "./types/gitopia/tx";
+import { MsgCreateComment } from "./types/gitopia/tx";
+import { MsgDeleteComment } from "./types/gitopia/tx";
+import { MsgDeleteUser } from "./types/gitopia/tx";
+import { MsgUpdateWhois } from "./types/gitopia/tx";
+import { MsgUpdateRepository } from "./types/gitopia/tx";
+import { MsgUpdateUser } from "./types/gitopia/tx";
+import { MsgSetWhois } from "./types/gitopia/tx";
+import { MsgUpdateIssue } from "./types/gitopia/tx";
+import { MsgChangeIssueState } from "./types/gitopia/tx";
+import { MsgUpdateComment } from "./types/gitopia/tx";
+import { MsgCreateRepository } from "./types/gitopia/tx";
+import { MsgDeleteRepository } from "./types/gitopia/tx";
+import { MsgDeleteIssue } from "./types/gitopia/tx";
 const types = [
-    ["/gitopia.gitopia.gitopia.MsgDeleteRepository", MsgDeleteRepository],
-    ["/gitopia.gitopia.gitopia.MsgUpdateUser", MsgUpdateUser],
-    ["/gitopia.gitopia.gitopia.MsgDeleteUser", MsgDeleteUser],
-    ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
-    ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
+    ["/gitopia.gitopia.gitopia.MsgCreateIssue", MsgCreateIssue],
     ["/gitopia.gitopia.gitopia.MsgCreateBranch", MsgCreateBranch],
     ["/gitopia.gitopia.gitopia.MsgDeleteWhois", MsgDeleteWhois],
-    ["/gitopia.gitopia.gitopia.MsgDeleteIssue", MsgDeleteIssue],
-    ["/gitopia.gitopia.gitopia.MsgUpdateIssue", MsgUpdateIssue],
-    ["/gitopia.gitopia.gitopia.MsgUpdateComment", MsgUpdateComment],
-    ["/gitopia.gitopia.gitopia.MsgDeleteComment", MsgDeleteComment],
-    ["/gitopia.gitopia.gitopia.MsgCreateRepository", MsgCreateRepository],
-    ["/gitopia.gitopia.gitopia.MsgCreateIssue", MsgCreateIssue],
-    ["/gitopia.gitopia.gitopia.MsgUpdateRepository", MsgUpdateRepository],
-    ["/gitopia.gitopia.gitopia.MsgChangeIssueState", MsgChangeIssueState],
-    ["/gitopia.gitopia.gitopia.MsgCreateComment", MsgCreateComment],
     ["/gitopia.gitopia.gitopia.MsgCreateUser", MsgCreateUser],
+    ["/gitopia.gitopia.gitopia.MsgCreateComment", MsgCreateComment],
+    ["/gitopia.gitopia.gitopia.MsgDeleteComment", MsgDeleteComment],
+    ["/gitopia.gitopia.gitopia.MsgDeleteUser", MsgDeleteUser],
+    ["/gitopia.gitopia.gitopia.MsgUpdateWhois", MsgUpdateWhois],
+    ["/gitopia.gitopia.gitopia.MsgUpdateRepository", MsgUpdateRepository],
+    ["/gitopia.gitopia.gitopia.MsgUpdateUser", MsgUpdateUser],
+    ["/gitopia.gitopia.gitopia.MsgSetWhois", MsgSetWhois],
+    ["/gitopia.gitopia.gitopia.MsgUpdateIssue", MsgUpdateIssue],
+    ["/gitopia.gitopia.gitopia.MsgChangeIssueState", MsgChangeIssueState],
+    ["/gitopia.gitopia.gitopia.MsgUpdateComment", MsgUpdateComment],
+    ["/gitopia.gitopia.gitopia.MsgCreateRepository", MsgCreateRepository],
+    ["/gitopia.gitopia.gitopia.MsgDeleteRepository", MsgDeleteRepository],
+    ["/gitopia.gitopia.gitopia.MsgDeleteIssue", MsgDeleteIssue],
 ];
 export const MissingWalletError = new Error("wallet is required");
 const registry = new Registry(types);
@@ -51,23 +51,23 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     const { address } = (await wallet.getAccounts())[0];
     return {
         signAndBroadcast: (msgs, { fee, memo } = { fee: defaultFee, memo: "" }) => client.signAndBroadcast(address, msgs, fee, memo),
-        msgDeleteRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRepository", value: data }),
-        msgUpdateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUser", value: data }),
-        msgDeleteUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: data }),
-        msgUpdateWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
-        msgSetWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
+        msgCreateIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateIssue", value: data }),
         msgCreateBranch: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateBranch", value: data }),
         msgDeleteWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteWhois", value: data }),
-        msgDeleteIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteIssue", value: data }),
-        msgUpdateIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateIssue", value: data }),
-        msgUpdateComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateComment", value: data }),
-        msgDeleteComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteComment", value: data }),
-        msgCreateRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: data }),
-        msgCreateIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateIssue", value: data }),
-        msgUpdateRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepository", value: data }),
-        msgChangeIssueState: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgChangeIssueState", value: data }),
-        msgCreateComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateComment", value: data }),
         msgCreateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: data }),
+        msgCreateComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateComment", value: data }),
+        msgDeleteComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteComment", value: data }),
+        msgDeleteUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: data }),
+        msgUpdateWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateWhois", value: data }),
+        msgUpdateRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepository", value: data }),
+        msgUpdateUser: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUser", value: data }),
+        msgSetWhois: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgSetWhois", value: data }),
+        msgUpdateIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateIssue", value: data }),
+        msgChangeIssueState: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgChangeIssueState", value: data }),
+        msgUpdateComment: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateComment", value: data }),
+        msgCreateRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: data }),
+        msgDeleteRepository: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRepository", value: data }),
+        msgDeleteIssue: (data) => ({ typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteIssue", value: data }),
     };
 };
 const queryClient = async ({ addr: addr } = { addr: "http://localhost:1317" }) => {

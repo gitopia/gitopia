@@ -2335,11 +2335,11 @@ export const MsgCreateUser = {
         return message;
     },
 };
-const baseMsgCreateUserResponse = { id: 0 };
+const baseMsgCreateUserResponse = { id: "" };
 export const MsgCreateUserResponse = {
     encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
         }
         return writer;
     },
@@ -2351,7 +2351,7 @@ export const MsgCreateUserResponse = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2363,10 +2363,10 @@ export const MsgCreateUserResponse = {
     fromJSON(object) {
         const message = { ...baseMsgCreateUserResponse };
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
@@ -2381,14 +2381,14 @@ export const MsgCreateUserResponse = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
 };
 const baseMsgUpdateUser = {
     creator: "",
-    id: 0,
+    id: "",
     username: "",
     usernameGithub: "",
     avatarUrl: "",
@@ -2410,8 +2410,8 @@ export const MsgUpdateUser = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         if (message.username !== "") {
             writer.uint32(26).string(message.username);
@@ -2471,7 +2471,7 @@ export const MsgUpdateUser = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 case 3:
                     message.username = reader.string();
@@ -2534,10 +2534,10 @@ export const MsgUpdateUser = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.username !== undefined && object.username !== null) {
             message.username = String(object.username);
@@ -2671,7 +2671,7 @@ export const MsgUpdateUser = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.username !== undefined && object.username !== null) {
             message.username = object.username;
@@ -2799,14 +2799,14 @@ export const MsgUpdateUserResponse = {
         return message;
     },
 };
-const baseMsgDeleteUser = { creator: "", id: 0 };
+const baseMsgDeleteUser = { creator: "", id: "" };
 export const MsgDeleteUser = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         return writer;
     },
@@ -2821,7 +2821,7 @@ export const MsgDeleteUser = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2839,10 +2839,10 @@ export const MsgDeleteUser = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
@@ -2864,7 +2864,7 @@ export const MsgDeleteUser = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },

@@ -67,7 +67,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
     id?: string;
 }
 export interface GitopiaMsgCreateUserResponse {
-    /** @format uint64 */
     id?: string;
 }
 export declare type GitopiaMsgDeleteCommentResponse = object;

@@ -100,7 +100,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
 }
 
 export interface GitopiaMsgCreateUserResponse {
-  /** @format uint64 */
   id?: string;
 }
 

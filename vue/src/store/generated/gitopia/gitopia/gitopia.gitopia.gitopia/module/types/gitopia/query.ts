@@ -79,7 +79,7 @@ export interface QueryAllRepositoryResponse {
 }
 
 export interface QueryGetUserRequest {
-  id: number;
+  id: string;
 }
 
 export interface QueryGetUserResponse {
@@ -1232,15 +1232,15 @@ export const QueryAllRepositoryResponse = {
   },
 };
 
-const baseQueryGetUserRequest: object = { id: 0 };
+const baseQueryGetUserRequest: object = { id: "" };
 
 export const QueryGetUserRequest = {
   encode(
     message: QueryGetUserRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     return writer;
   },
@@ -1253,7 +1253,7 @@ export const QueryGetUserRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.id = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1266,9 +1266,9 @@ export const QueryGetUserRequest = {
   fromJSON(object: any): QueryGetUserRequest {
     const message = { ...baseQueryGetUserRequest } as QueryGetUserRequest;
     if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+      message.id = String(object.id);
     } else {
-      message.id = 0;
+      message.id = "";
     }
     return message;
   },
@@ -1284,7 +1284,7 @@ export const QueryGetUserRequest = {
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = 0;
+      message.id = "";
     }
     return message;
   },

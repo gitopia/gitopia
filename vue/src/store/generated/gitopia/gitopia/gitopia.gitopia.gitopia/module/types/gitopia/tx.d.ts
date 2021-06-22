@@ -122,11 +122,11 @@ export interface MsgCreateUser {
     extensions: string;
 }
 export interface MsgCreateUserResponse {
-    id: number;
+    id: string;
 }
 export interface MsgUpdateUser {
     creator: string;
-    id: number;
+    id: string;
     username: string;
     usernameGithub: string;
     avatarUrl: string;
@@ -147,7 +147,7 @@ export interface MsgUpdateUserResponse {
 }
 export interface MsgDeleteUser {
     creator: string;
-    id: number;
+    id: string;
 }
 export interface MsgDeleteUserResponse {
 }

@@ -960,11 +960,11 @@ export const QueryAllRepositoryResponse = {
         return message;
     },
 };
-const baseQueryGetUserRequest = { id: 0 };
+const baseQueryGetUserRequest = { id: "" };
 export const QueryGetUserRequest = {
     encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
         }
         return writer;
     },
@@ -976,7 +976,7 @@ export const QueryGetUserRequest = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -988,10 +988,10 @@ export const QueryGetUserRequest = {
     fromJSON(object) {
         const message = { ...baseQueryGetUserRequest };
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
@@ -1006,7 +1006,7 @@ export const QueryGetUserRequest = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
