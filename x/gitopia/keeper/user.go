@@ -42,7 +42,7 @@ func (k Keeper) SetUserCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendUser(
 	ctx sdk.Context,
 	user types.User,
-) uint64 {
+) string {
 	// Create the user
 	count := k.GetUserCount(ctx)
 
@@ -54,7 +54,15 @@ func (k Keeper) AppendUser(
 	// Update user count
 	k.SetUserCount(ctx, count+1)
 
-	return count
+	// Update whois
+	var whois = types.Whois{
+		Creator: user.Creator,
+		Name: user.Username,
+		Address: user.Creator,
+	}
+	k.SetWhois(ctx, user.Username, whois)
+
+	return user.Creator
 }
 
 // SetUser set a specific user in the store
