@@ -14,12 +14,13 @@ message User {
   repeated uint64 following = 6; 
   repeated uint64 repositories = 7; 
   repeated uint64 repositories_archived = 8; 
-  repeated uint64 organizations = 9; 
-  repeated uint64 starred_repos = 10; 
-  string subscriptions = 11; 
-  string email = 12; 
-  string bio = 13; 
-  int64 createdAt = 14; 
-  int64 updatedAt = 15; 
-  string extensions = 16; 
+  map<string, uint64> repositoryNames = 9; 
+  repeated uint64 organizations = 10; 
+  repeated uint64 starred_repos = 11; 
+  string subscriptions = 12; 
+  string email = 13; 
+  string bio = 14; 
+  int64 createdAt = 15; 
+  int64 updatedAt = 16; 
+  string extensions = 17; 
 }

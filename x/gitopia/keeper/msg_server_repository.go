@@ -42,13 +42,12 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 
 	var repository = k.GetRepository(ctx, msg.Id)
 
-	if len(repository.Branches) == 0 {
-		repository.Branches = map[string]string{
-			msg.Name: msg.CommitSHA,
-		}
-	} else {
-		repository.Branches[msg.Name] = msg.CommitSHA
+	// Initialize the map if it's nil
+	if repository.Branches == nil {
+		repository.Branches = make(map[string]string)
 	}
+
+	repository.Branches[msg.Name] = msg.CommitSHA
 
 	// Checks that the element exists
 	if !k.HasRepository(ctx, msg.Id) {
