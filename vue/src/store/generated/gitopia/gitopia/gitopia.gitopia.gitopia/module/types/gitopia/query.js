@@ -1196,6 +1196,266 @@ export const QueryAllUserResponse = {
         return message;
     },
 };
+const baseQueryAllUserRepositoryRequest = { id: "" };
+export const QueryAllUserRepositoryRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllUserRepositoryRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllUserRepositoryRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = String(object.id);
+        }
+        else {
+            message.id = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllUserRepositoryRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = "";
+        }
+        return message;
+    },
+};
+const baseQueryAllUserRepositoryResponse = {};
+export const QueryAllUserRepositoryResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Repository) {
+            Repository.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllUserRepositoryResponse,
+        };
+        message.Repository = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Repository.push(Repository.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllUserRepositoryResponse,
+        };
+        message.Repository = [];
+        if (object.Repository !== undefined && object.Repository !== null) {
+            for (const e of object.Repository) {
+                message.Repository.push(Repository.fromJSON(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Repository) {
+            obj.Repository = message.Repository.map((e) => e ? Repository.toJSON(e) : undefined);
+        }
+        else {
+            obj.Repository = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllUserRepositoryResponse,
+        };
+        message.Repository = [];
+        if (object.Repository !== undefined && object.Repository !== null) {
+            for (const e of object.Repository) {
+                message.Repository.push(Repository.fromPartial(e));
+            }
+        }
+        return message;
+    },
+};
+const baseQueryGetUserRepositoryRequest = {
+    userId: "",
+    repositoryName: "",
+};
+export const QueryGetUserRepositoryRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetUserRepositoryRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetUserRepositoryRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetUserRepositoryRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+};
+const baseQueryGetUserRepositoryResponse = {};
+export const QueryGetUserRepositoryResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Repository !== undefined) {
+            Repository.encode(message.Repository, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetUserRepositoryResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Repository = Repository.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetUserRepositoryResponse,
+        };
+        if (object.Repository !== undefined && object.Repository !== null) {
+            message.Repository = Repository.fromJSON(object.Repository);
+        }
+        else {
+            message.Repository = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Repository !== undefined &&
+            (obj.Repository = message.Repository
+                ? Repository.toJSON(message.Repository)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetUserRepositoryResponse,
+        };
+        if (object.Repository !== undefined && object.Repository !== null) {
+            message.Repository = Repository.fromPartial(object.Repository);
+        }
+        else {
+            message.Repository = undefined;
+        }
+        return message;
+    },
+};
 const baseQueryGetWhoisRequest = { name: "" };
 export const QueryGetWhoisRequest = {
     encode(message, writer = Writer.create()) {
@@ -1480,6 +1740,16 @@ export class QueryClientImpl {
         const data = QueryAllUserRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "UserAll", data);
         return promise.then((data) => QueryAllUserResponse.decode(new Reader(data)));
+    }
+    UserRepositoryAll(request) {
+        const data = QueryAllUserRepositoryRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "UserRepositoryAll", data);
+        return promise.then((data) => QueryAllUserRepositoryResponse.decode(new Reader(data)));
+    }
+    UserRepository(request) {
+        const data = QueryGetUserRepositoryRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "UserRepository", data);
+        return promise.then((data) => QueryGetUserRepositoryResponse.decode(new Reader(data)));
     }
     Whois(request) {
         const data = QueryGetWhoisRequest.encode(request).finish();

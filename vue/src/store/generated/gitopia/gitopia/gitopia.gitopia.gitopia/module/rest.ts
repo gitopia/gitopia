@@ -170,6 +170,10 @@ export interface GitopiaQueryAllRepositoryResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllUserRepositoryResponse {
+  Repository?: GitopiaRepository[];
+}
+
 export interface GitopiaQueryAllUserResponse {
   User?: GitopiaUser[];
 
@@ -213,6 +217,10 @@ export interface GitopiaQueryGetIssueResponse {
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
+  Repository?: GitopiaRepository;
+}
+
+export interface GitopiaQueryGetUserRepositoryResponse {
   Repository?: GitopiaRepository;
 }
 
@@ -267,6 +275,7 @@ export interface GitopiaUser {
   following?: string[];
   repositories?: string[];
   repositoriesArchived?: string[];
+  repositoryNames?: Record<string, string>;
   organizations?: string[];
   starredRepos?: string[];
   subscriptions?: string;
@@ -696,6 +705,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryUserRepository
+   * @summary Queries a repository by user id and repository name
+   * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
+   */
+  queryUserRepository = (userId: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetUserRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${userId}/${repositoryName}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryUserAll
    * @summary Queries a list of user items.
    * @request GET:/gitopia/gitopia/gitopia/user
@@ -728,6 +753,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryUser = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetUserResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/user/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryUserRepositoryAll
+   * @summary Queries a list of user repositories.
+   * @request GET:/gitopia/gitopia/gitopia/user/{id}/repositories
+   */
+  queryUserRepositoryAll = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryAllUserRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/user/${id}/repositories`,
       method: "GET",
       format: "json",
       ...params,

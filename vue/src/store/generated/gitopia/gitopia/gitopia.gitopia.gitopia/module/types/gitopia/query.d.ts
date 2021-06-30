@@ -71,6 +71,19 @@ export interface QueryAllUserResponse {
     User: User[];
     pagination: PageResponse | undefined;
 }
+export interface QueryAllUserRepositoryRequest {
+    id: string;
+}
+export interface QueryAllUserRepositoryResponse {
+    Repository: Repository[];
+}
+export interface QueryGetUserRepositoryRequest {
+    userId: string;
+    repositoryName: string;
+}
+export interface QueryGetUserRepositoryResponse {
+    Repository: Repository | undefined;
+}
 export interface QueryGetWhoisRequest {
     name: string;
 }
@@ -217,6 +230,34 @@ export declare const QueryAllUserResponse: {
     toJSON(message: QueryAllUserResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllUserResponse>): QueryAllUserResponse;
 };
+export declare const QueryAllUserRepositoryRequest: {
+    encode(message: QueryAllUserRepositoryRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllUserRepositoryRequest;
+    fromJSON(object: any): QueryAllUserRepositoryRequest;
+    toJSON(message: QueryAllUserRepositoryRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllUserRepositoryRequest>): QueryAllUserRepositoryRequest;
+};
+export declare const QueryAllUserRepositoryResponse: {
+    encode(message: QueryAllUserRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllUserRepositoryResponse;
+    fromJSON(object: any): QueryAllUserRepositoryResponse;
+    toJSON(message: QueryAllUserRepositoryResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllUserRepositoryResponse>): QueryAllUserRepositoryResponse;
+};
+export declare const QueryGetUserRepositoryRequest: {
+    encode(message: QueryGetUserRepositoryRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetUserRepositoryRequest;
+    fromJSON(object: any): QueryGetUserRepositoryRequest;
+    toJSON(message: QueryGetUserRepositoryRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetUserRepositoryRequest>): QueryGetUserRepositoryRequest;
+};
+export declare const QueryGetUserRepositoryResponse: {
+    encode(message: QueryGetUserRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetUserRepositoryResponse;
+    fromJSON(object: any): QueryGetUserRepositoryResponse;
+    toJSON(message: QueryGetUserRepositoryResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetUserRepositoryResponse>): QueryGetUserRepositoryResponse;
+};
 export declare const QueryGetWhoisRequest: {
     encode(message: QueryGetWhoisRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetWhoisRequest;
@@ -265,6 +306,10 @@ export interface Query {
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     /** Queries a list of user items. */
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
+    /** Queries a list of user repositories. */
+    UserRepositoryAll(request: QueryAllUserRepositoryRequest): Promise<QueryAllUserRepositoryResponse>;
+    /** Queries a repository by user id and repository name */
+    UserRepository(request: QueryGetUserRepositoryRequest): Promise<QueryGetUserRepositoryResponse>;
     /** Queries a whois by id. */
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     /** Queries a list of whois items. */
@@ -282,6 +327,8 @@ export declare class QueryClientImpl implements Query {
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
+    UserRepositoryAll(request: QueryAllUserRepositoryRequest): Promise<QueryAllUserRepositoryResponse>;
+    UserRepository(request: QueryGetUserRepositoryRequest): Promise<QueryGetUserRepositoryResponse>;
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
 }

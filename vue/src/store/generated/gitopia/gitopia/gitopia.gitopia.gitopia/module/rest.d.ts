@@ -119,6 +119,9 @@ export interface GitopiaQueryAllRepositoryResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllUserRepositoryResponse {
+    Repository?: GitopiaRepository[];
+}
 export interface GitopiaQueryAllUserResponse {
     User?: GitopiaUser[];
     /**
@@ -155,6 +158,9 @@ export interface GitopiaQueryGetIssueResponse {
     Issue?: GitopiaIssue;
 }
 export interface GitopiaQueryGetRepositoryResponse {
+    Repository?: GitopiaRepository;
+}
+export interface GitopiaQueryGetUserRepositoryResponse {
     Repository?: GitopiaRepository;
 }
 export interface GitopiaQueryGetUserResponse {
@@ -201,6 +207,7 @@ export interface GitopiaUser {
     following?: string[];
     repositories?: string[];
     repositoriesArchived?: string[];
+    repositoryNames?: Record<string, string>;
     organizations?: string[];
     starredRepos?: string[];
     subscriptions?: string;
@@ -418,6 +425,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryUserRepository
+     * @summary Queries a repository by user id and repository name
+     * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
+     */
+    queryUserRepository: (userId: string, repositoryName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetUserRepositoryResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryUserAll
      * @summary Queries a list of user items.
      * @request GET:/gitopia/gitopia/gitopia/user
@@ -437,6 +453,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/user/{id}
      */
     queryUser: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetUserResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryUserRepositoryAll
+     * @summary Queries a list of user repositories.
+     * @request GET:/gitopia/gitopia/gitopia/user/{id}/repositories
+     */
+    queryUserRepositoryAll: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllUserRepositoryResponse, RpcStatus>>;
     /**
      * No description
      *
