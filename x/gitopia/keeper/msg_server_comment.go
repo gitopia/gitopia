@@ -27,7 +27,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		return nil, err
 	}
 	createdAt := time.Now().Unix()
-	updatedAt := time.Now().Unix()
+	updatedAt := createdAt
 	extensions := string("")
 
 	var comment = types.Comment{

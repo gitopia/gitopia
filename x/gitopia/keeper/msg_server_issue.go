@@ -30,7 +30,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	comments := []uint64{}
 	pullRequests := []uint64{}
 	createdAt := time.Now().Unix()
-	updatedAt := time.Now().Unix()
+	updatedAt := createdAt
 	closedAt := time.Time{}.Unix()
 	closedBy := uint64(0)
 	extensions := string("")

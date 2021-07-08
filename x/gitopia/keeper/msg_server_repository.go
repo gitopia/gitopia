@@ -14,7 +14,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	createdAt := time.Now().Unix()
-	updatedAt := time.Now().Unix()
+	updatedAt := createdAt
 	defaultBranch := string("master")
 
 	var repository = types.Repository{
