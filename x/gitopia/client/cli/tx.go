@@ -43,6 +43,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCreateRepository())
 	cmd.AddCommand(CmdCreateBranch())
 	cmd.AddCommand(CmdSetDefaultBranch())
+	cmd.AddCommand(CmdDeleteBranch())
 	cmd.AddCommand(CmdUpdateRepository())
 	cmd.AddCommand(CmdDeleteRepository())
 

@@ -22,6 +22,7 @@ service Msg {
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
+  rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
@@ -137,6 +138,14 @@ message MsgSetDefaultBranch {
 }
 
 message MsgSetDefaultBranchResponse { }
+
+message MsgDeleteBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteBranchResponse { }
 
 message MsgUpdateRepository {
   string creator = 1;

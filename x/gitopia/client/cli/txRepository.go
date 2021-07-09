@@ -122,6 +122,40 @@ func CmdSetDefaultBranch() *cobra.Command {
 	return cmd
 }
 
+func CmdDeleteBranch() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-branch [repo id] [branch name]",
+		Short: "Delete a branch",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteBranch(clientCtx.GetFromAddress().String(), id, string(argsName))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-repository [id] [name] [owner] [description] [labels] [license] [defaultBranch]",

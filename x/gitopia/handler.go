@@ -58,6 +58,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.SetDefaultBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgDeleteBranch:
+			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgUpdateRepository:
 			res, err := msgServer.UpdateRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
