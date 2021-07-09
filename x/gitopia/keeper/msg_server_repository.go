@@ -64,6 +64,33 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 	return &types.MsgCreateBranchResponse{}, nil
 }
 
+func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefaultBranch) (*types.MsgSetDefaultBranchResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var repository = k.GetRepository(ctx, msg.Id)
+
+	// Change DefaultBranch only if branch exists
+	if _, exists := repository.Branches[msg.Name]; exists {
+		repository.DefaultBranch = msg.Name
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch %v doesn't exist", msg.Name))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgSetDefaultBranchResponse{}, nil
+}
+
 func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateRepository) (*types.MsgUpdateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
