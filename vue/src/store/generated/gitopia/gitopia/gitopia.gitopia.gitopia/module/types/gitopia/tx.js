@@ -1633,6 +1633,133 @@ export const MsgCreateBranchResponse = {
         return message;
     },
 };
+const baseMsgSetDefaultBranch = { creator: "", id: 0, name: "" };
+export const MsgSetDefaultBranch = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(26).string(message.name);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgSetDefaultBranch };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgSetDefaultBranch };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgSetDefaultBranch };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        return message;
+    },
+};
+const baseMsgSetDefaultBranchResponse = {};
+export const MsgSetDefaultBranchResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgSetDefaultBranchResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgSetDefaultBranchResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgSetDefaultBranchResponse,
+        };
+        return message;
+    },
+};
 const baseMsgUpdateRepository = {
     creator: "",
     id: 0,
@@ -3293,6 +3420,11 @@ export class MsgClientImpl {
         const data = MsgCreateBranch.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateBranch", data);
         return promise.then((data) => MsgCreateBranchResponse.decode(new Reader(data)));
+    }
+    SetDefaultBranch(request) {
+        const data = MsgSetDefaultBranch.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetDefaultBranch", data);
+        return promise.then((data) => MsgSetDefaultBranchResponse.decode(new Reader(data)));
     }
     UpdateRepository(request) {
         const data = MsgUpdateRepository.encode(request).finish();

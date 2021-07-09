@@ -74,6 +74,7 @@ export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
+export declare type GitopiaMsgSetDefaultBranchResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;
 export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;

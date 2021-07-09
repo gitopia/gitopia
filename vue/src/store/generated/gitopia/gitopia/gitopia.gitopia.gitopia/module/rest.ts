@@ -113,6 +113,8 @@ export type GitopiaMsgDeleteUserResponse = object;
 
 export type GitopiaMsgDeleteWhoisResponse = object;
 
+export type GitopiaMsgSetDefaultBranchResponse = object;
+
 export type GitopiaMsgSetWhoisResponse = object;
 
 export type GitopiaMsgUpdateCommentResponse = object;
