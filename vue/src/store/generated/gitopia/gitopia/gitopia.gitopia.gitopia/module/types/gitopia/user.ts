@@ -13,6 +13,7 @@ export interface User {
   following: number[];
   repositories: number[];
   repositoriesArchived: number[];
+  repositoryNames: { [key: string]: number };
   organizations: number[];
   starredRepos: number[];
   subscriptions: string;
@@ -21,6 +22,11 @@ export interface User {
   createdAt: number;
   updatedAt: number;
   extensions: string;
+}
+
+export interface User_RepositoryNamesEntry {
+  key: string;
+  value: number;
 }
 
 const baseUser: object = {
@@ -76,33 +82,39 @@ export const User = {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(74).fork();
+    Object.entries(message.repositoryNames).forEach(([key, value]) => {
+      User_RepositoryNamesEntry.encode(
+        { key: key as any, value },
+        writer.uint32(74).fork()
+      ).ldelim();
+    });
+    writer.uint32(82).fork();
     for (const v of message.organizations) {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(82).fork();
+    writer.uint32(90).fork();
     for (const v of message.starredRepos) {
       writer.uint64(v);
     }
     writer.ldelim();
     if (message.subscriptions !== "") {
-      writer.uint32(90).string(message.subscriptions);
+      writer.uint32(98).string(message.subscriptions);
     }
     if (message.email !== "") {
-      writer.uint32(98).string(message.email);
+      writer.uint32(106).string(message.email);
     }
     if (message.bio !== "") {
-      writer.uint32(106).string(message.bio);
+      writer.uint32(114).string(message.bio);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(112).int64(message.createdAt);
+      writer.uint32(120).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(120).int64(message.updatedAt);
+      writer.uint32(128).int64(message.updatedAt);
     }
     if (message.extensions !== "") {
-      writer.uint32(130).string(message.extensions);
+      writer.uint32(138).string(message.extensions);
     }
     return writer;
   },
@@ -115,6 +127,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.repositoriesArchived = [];
+    message.repositoryNames = {};
     message.organizations = [];
     message.starredRepos = [];
     while (reader.pos < end) {
@@ -177,6 +190,15 @@ export const User = {
           }
           break;
         case 9:
+          const entry9 = User_RepositoryNamesEntry.decode(
+            reader,
+            reader.uint32()
+          );
+          if (entry9.value !== undefined) {
+            message.repositoryNames[entry9.key] = entry9.value;
+          }
+          break;
+        case 10:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -186,7 +208,7 @@ export const User = {
             message.organizations.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 10:
+        case 11:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -196,22 +218,22 @@ export const User = {
             message.starredRepos.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 11:
+        case 12:
           message.subscriptions = reader.string();
           break;
-        case 12:
+        case 13:
           message.email = reader.string();
           break;
-        case 13:
+        case 14:
           message.bio = reader.string();
           break;
-        case 14:
+        case 15:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 15:
+        case 16:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 17:
           message.extensions = reader.string();
           break;
         default:
@@ -228,6 +250,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.repositoriesArchived = [];
+    message.repositoryNames = {};
     message.organizations = [];
     message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
@@ -272,6 +295,14 @@ export const User = {
       for (const e of object.repositoriesArchived) {
         message.repositoriesArchived.push(Number(e));
       }
+    }
+    if (
+      object.repositoryNames !== undefined &&
+      object.repositoryNames !== null
+    ) {
+      Object.entries(object.repositoryNames).forEach(([key, value]) => {
+        message.repositoryNames[key] = Number(value);
+      });
     }
     if (object.organizations !== undefined && object.organizations !== null) {
       for (const e of object.organizations) {
@@ -343,6 +374,12 @@ export const User = {
     } else {
       obj.repositoriesArchived = [];
     }
+    obj.repositoryNames = {};
+    if (message.repositoryNames) {
+      Object.entries(message.repositoryNames).forEach(([k, v]) => {
+        obj.repositoryNames[k] = v;
+      });
+    }
     if (message.organizations) {
       obj.organizations = message.organizations.map((e) => e);
     } else {
@@ -369,6 +406,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.repositoriesArchived = [];
+    message.repositoryNames = {};
     message.organizations = [];
     message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
@@ -414,6 +452,16 @@ export const User = {
         message.repositoriesArchived.push(e);
       }
     }
+    if (
+      object.repositoryNames !== undefined &&
+      object.repositoryNames !== null
+    ) {
+      Object.entries(object.repositoryNames).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.repositoryNames[key] = Number(value);
+        }
+      });
+    }
     if (object.organizations !== undefined && object.organizations !== null) {
       for (const e of object.organizations) {
         message.organizations.push(e);
@@ -453,6 +501,92 @@ export const User = {
       message.extensions = object.extensions;
     } else {
       message.extensions = "";
+    }
+    return message;
+  },
+};
+
+const baseUser_RepositoryNamesEntry: object = { key: "", value: 0 };
+
+export const User_RepositoryNamesEntry = {
+  encode(
+    message: User_RepositoryNamesEntry,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== 0) {
+      writer.uint32(16).uint64(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): User_RepositoryNamesEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseUser_RepositoryNamesEntry,
+    } as User_RepositoryNamesEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = reader.string();
+          break;
+        case 2:
+          message.value = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): User_RepositoryNamesEntry {
+    const message = {
+      ...baseUser_RepositoryNamesEntry,
+    } as User_RepositoryNamesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = String(object.key);
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = Number(object.value);
+    } else {
+      message.value = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: User_RepositoryNamesEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<User_RepositoryNamesEntry>
+  ): User_RepositoryNamesEntry {
+    const message = {
+      ...baseUser_RepositoryNamesEntry,
+    } as User_RepositoryNamesEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = "";
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = 0;
     }
     return message;
   },

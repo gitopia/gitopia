@@ -12,17 +12,27 @@ import (
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if user exists already
+	if (k.HasUser(ctx, msg.Creator)) {
+		return &types.MsgCreateUserResponse{}, fmt.Errorf("user already exists: %v", msg.Creator)
+	}
+
+	// Check if username is available
+	if (k.HasWhois(ctx, msg.Username)) {
+		return &types.MsgCreateUserResponse{}, fmt.Errorf("username is already taken: %v", msg.Username)
+	}
+
 	var user = types.User{
 		Creator:  msg.Creator,
 		Username: msg.Username,
 	}
 
-	k.AppendUser(
+	id := k.AppendUser(
 		ctx,
 		user,
 	)
 
-	return &types.MsgCreateUserResponse{}, nil
+	return &types.MsgCreateUserResponse{Id: id}, nil
 }
 
 func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (*types.MsgUpdateUserResponse, error) {

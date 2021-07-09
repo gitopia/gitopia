@@ -9,6 +9,9 @@ export interface User {
     following: number[];
     repositories: number[];
     repositoriesArchived: number[];
+    repositoryNames: {
+        [key: string]: number;
+    };
     organizations: number[];
     starredRepos: number[];
     subscriptions: string;
@@ -18,12 +21,23 @@ export interface User {
     updatedAt: number;
     extensions: string;
 }
+export interface User_RepositoryNamesEntry {
+    key: string;
+    value: number;
+}
 export declare const User: {
     encode(message: User, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): User;
     fromJSON(object: any): User;
     toJSON(message: User): unknown;
     fromPartial(object: DeepPartial<User>): User;
+};
+export declare const User_RepositoryNamesEntry: {
+    encode(message: User_RepositoryNamesEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): User_RepositoryNamesEntry;
+    fromJSON(object: any): User_RepositoryNamesEntry;
+    toJSON(message: User_RepositoryNamesEntry): unknown;
+    fromPartial(object: DeepPartial<User_RepositoryNamesEntry>): User_RepositoryNamesEntry;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

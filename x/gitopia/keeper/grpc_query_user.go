@@ -53,7 +53,63 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetUserIDBytes(req.Id)), &user)
+	key := []byte(types.UserKey + req.Id)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
 
 	return &types.QueryGetUserResponse{User: &user}, nil
+}
+
+func (k Keeper) UserRepositoryAll(c context.Context, req *types.QueryAllUserRepositoryRequest) (*types.QueryAllUserRepositoryResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var repositories []*types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.Id) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.Id)
+	k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	
+	for _, repositoryId := range user.Repositories {
+		var repository types.Repository
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+		repositories = append(repositories, &repository)
+	}
+
+	return &types.QueryAllUserRepositoryResponse{Repository: repositories}, nil
+}
+
+func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserRepositoryRequest) (*types.QueryGetUserRepositoryResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.UserId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.UserId)
+	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+
+		return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
+	}
+	
+	return nil, sdkerrors.ErrKeyNotFound
 }

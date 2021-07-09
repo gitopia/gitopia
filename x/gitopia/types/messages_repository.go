@@ -48,33 +48,58 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgCreateBranch{}
+
+func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string) *MsgCreateBranch {
+	return &MsgCreateBranch{
+		Id:        id,
+		Creator:   creator,
+		Name:      name,
+		CommitSHA: commitSHA,
+	}
+}
+
+func (msg *MsgCreateBranch) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCreateBranch) Type() string {
+	return "CreateBranch"
+}
+
+func (msg *MsgCreateBranch) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCreateBranch) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCreateBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateRepository{}
 
-func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, forks string, branches string, tags string, subscribers string, commits string, issuesOpen string, issuesClosed string, pulls string, labels string, releases string, createdAt string, updatedAt string, pushedAt string, stargazers string, archived string, license string, defaultBranch string, extensions string) *MsgUpdateRepository {
+func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, labels string, license string, defaultBranch string) *MsgUpdateRepository {
 	return &MsgUpdateRepository{
 		Id:            id,
 		Creator:       creator,
 		Name:          name,
 		Owner:         owner,
 		Description:   description,
-		Forks:         forks,
-		Branches:      branches,
-		Tags:          tags,
-		Subscribers:   subscribers,
-		Commits:       commits,
-		IssuesOpen:    issuesOpen,
-		IssuesClosed:  issuesClosed,
-		Pulls:         pulls,
 		Labels:        labels,
-		Releases:      releases,
-		CreatedAt:     createdAt,
-		UpdatedAt:     updatedAt,
-		PushedAt:      pushedAt,
-		Stargazers:    stargazers,
-		Archived:      archived,
 		License:       license,
 		DefaultBranch: defaultBranch,
-		Extensions:    extensions,
 	}
 }
 

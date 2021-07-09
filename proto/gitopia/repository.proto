@@ -12,7 +12,7 @@ message Repository {
   string owner = 4; 
   string description = 5; 
   repeated uint64 forks = 6; 
-  string branches = 7; 
+  map<string, string> branches = 7;
   string tags = 8; 
   string subscribers = 9; 
   string commits = 10; 

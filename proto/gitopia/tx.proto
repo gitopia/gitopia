@@ -20,6 +20,7 @@ service Msg {
   rpc ChangeIssueState(MsgChangeIssueState) returns (MsgChangeIssueStateResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
+  rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
@@ -113,29 +114,20 @@ message MsgCreateRepository {
   string name = 2;
   string owner = 3;
   string description = 4;
-  string forks = 5;
-  string branches = 6;
-  string tags = 7;
-  string subscribers = 8;
-  string commits = 9;
-  string issuesOpen = 10;
-  string issuesClosed = 11;
-  string pulls = 12;
-  string labels = 13;
-  string releases = 14;
-  string createdAt = 15;
-  string updatedAt = 16;
-  string pushedAt = 17;
-  string stargazers = 18;
-  string archived = 19;
-  string license = 20;
-  string defaultBranch = 21;
-  string extensions = 22;
 }
 
 message MsgCreateRepositoryResponse {
   uint64 id = 1;
 }
+
+message MsgCreateBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string commitSHA = 4;
+}
+
+message MsgCreateBranchResponse { }
 
 message MsgUpdateRepository {
   string creator = 1;
@@ -143,24 +135,9 @@ message MsgUpdateRepository {
   string name = 3;
   string owner = 4;
   string description = 5;
-  string forks = 6;
-  string branches = 7;
-  string tags = 8;
-  string subscribers = 9;
-  string commits = 10;
-  string issuesOpen = 11;
-  string issuesClosed = 12;
-  string pulls = 13;
-  string labels = 14;
-  string releases = 15;
-  string createdAt = 16;
-  string updatedAt = 17;
-  string pushedAt = 18;
-  string stargazers = 19;
-  string archived = 20;
-  string license = 21;
-  string defaultBranch = 22;
-  string extensions = 23;
+  string labels = 6;
+  string license = 7;
+  string defaultBranch = 8;
 }
 
 message MsgUpdateRepositoryResponse { }
@@ -192,12 +169,12 @@ message MsgCreateUser {
 }
 
 message MsgCreateUserResponse {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message MsgUpdateUser {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string username = 3;
   string usernameGithub = 4;
   string avatarUrl = 5;
@@ -219,7 +196,7 @@ message MsgUpdateUserResponse { }
 
 message MsgDeleteUser {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
 }
 
 message MsgDeleteUserResponse { }

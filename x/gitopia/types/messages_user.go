@@ -48,7 +48,7 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateUser{}
 
-func NewMsgUpdateUser(creator string, id uint64, username string, usernameGithub string, avatarUrl string, followers string, following string, repositories string, repositories_archived string, organizations string, starred_repos string, subscriptions string, email string, bio string, createdAt string, updatedAt string, extensions string) *MsgUpdateUser {
+func NewMsgUpdateUser(creator string, id string, username string, usernameGithub string, avatarUrl string, followers string, following string, repositories string, repositories_archived string, organizations string, starred_repos string, subscriptions string, email string, bio string, createdAt string, updatedAt string, extensions string) *MsgUpdateUser {
 	return &MsgUpdateUser{
 		Id:                   id,
 		Creator:              creator,
@@ -101,7 +101,7 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteUser{}
 
-func NewMsgDeleteUser(creator string, id uint64) *MsgDeleteUser {
+func NewMsgDeleteUser(creator string, id string) *MsgDeleteUser {
 	return &MsgDeleteUser{
 		Id:      id,
 		Creator: creator,

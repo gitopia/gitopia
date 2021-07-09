@@ -227,6 +227,34 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryBranchAll
+         * @summary Queries a repository by id.
+         * @request GET:/gitopia/gitopia/gitopia/repository/{id}/branches
+         */
+        this.queryBranchAll = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/repository/${id}/branches`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryUserRepository
+         * @summary Queries a repository by user id and repository name
+         * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
+         */
+        this.queryUserRepository = (userId, repositoryName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/repository/${userId}/${repositoryName}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryUserAll
          * @summary Queries a list of user items.
          * @request GET:/gitopia/gitopia/gitopia/user
@@ -248,6 +276,20 @@ export class Api extends HttpClient {
          */
         this.queryUser = (id, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/user/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryUserRepositoryAll
+         * @summary Queries a list of user repositories.
+         * @request GET:/gitopia/gitopia/gitopia/user/{id}/repositories
+         */
+        this.queryUserRepositoryAll = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/user/${id}/repositories`,
             method: "GET",
             format: "json",
             ...params,

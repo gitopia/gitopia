@@ -46,6 +46,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository";
 	}
 
+	// Queries a repository by id.
+	rpc BranchAll(QueryGetAllBranchRequest) returns (QueryGetAllBranchResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/branches";
+	}
+
 	// Queries a user by id.
 	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
@@ -54,6 +59,16 @@ service Query {
 	// Queries a list of user items.
 	rpc UserAll(QueryAllUserRequest) returns (QueryAllUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user";
+	}
+
+	// Queries a list of user repositories.
+	rpc UserRepositoryAll(QueryAllUserRepositoryRequest) returns (QueryAllUserRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repositories";
+	}
+
+	// Queries a repository by user id and repository name
+	rpc UserRepository(QueryGetUserRepositoryRequest) returns (QueryGetUserRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{user_id}/{repository_name}";
 	}
 
 	// Queries a whois by id.
@@ -109,6 +124,14 @@ message QueryGetRepositoryResponse {
 	Repository Repository = 1;
 }
 
+message QueryGetAllBranchRequest {
+	uint64 id = 1;
+}
+
+message QueryGetAllBranchResponse {
+	map<string, string> Branches = 1;
+}
+
 message QueryAllRepositoryRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
@@ -118,7 +141,7 @@ message QueryAllRepositoryResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 message QueryGetUserRequest {
-	uint64 id = 1;
+	string id = 1;
 }
 
 message QueryGetUserResponse {
@@ -133,6 +156,24 @@ message QueryAllUserResponse {
 	repeated User User = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
+message QueryAllUserRepositoryRequest {
+	string id = 1;
+}
+
+message QueryAllUserRepositoryResponse {
+	repeated Repository Repository = 1;
+}
+
+message QueryGetUserRepositoryRequest {
+	string user_id = 1;
+	string repository_name = 2;
+}
+
+message QueryGetUserRepositoryResponse {
+	Repository Repository = 1;
+}
+
 message QueryGetWhoisRequest {
 	string name = 1;
 }

@@ -12,7 +12,7 @@ import (
 
 type Owner struct {
 	Type string
-	ID   uint64
+	ID   string
 }
 
 // GetRepositoryCount get the total number of repository
@@ -69,6 +69,16 @@ func (k Keeper) AppendRepository(
 	if o.Type == "User" {
 		user := k.GetUser(ctx, o.ID)
 		user.Repositories = append(user.Repositories, repository.Id)
+		
+		// Repository name lookup
+
+		// Initialize the map if it's nil
+		if user.RepositoryNames == nil {
+			user.RepositoryNames = make(map[string]uint64)
+		}
+
+		user.RepositoryNames[repository.Name] = repository.Id
+		
 		k.SetUser(ctx, user)
 	} else if o.Type == "Organization" {
 		// Todo
