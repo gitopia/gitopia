@@ -110,6 +110,14 @@ export interface MsgSetDefaultBranch {
 
 export interface MsgSetDefaultBranchResponse {}
 
+export interface MsgDeleteBranch {
+  creator: string;
+  id: number;
+  name: string;
+}
+
+export interface MsgDeleteBranchResponse {}
+
 export interface MsgUpdateRepository {
   creator: string;
   id: number;
@@ -2053,6 +2061,141 @@ export const MsgSetDefaultBranchResponse = {
   },
 };
 
+const baseMsgDeleteBranch: object = { creator: "", id: 0, name: "" };
+
+export const MsgDeleteBranch = {
+  encode(message: MsgDeleteBranch, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteBranch {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteBranch } as MsgDeleteBranch;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.name = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteBranch {
+    const message = { ...baseMsgDeleteBranch } as MsgDeleteBranch;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteBranch): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteBranch>): MsgDeleteBranch {
+    const message = { ...baseMsgDeleteBranch } as MsgDeleteBranch;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgDeleteBranchResponse: object = {};
+
+export const MsgDeleteBranchResponse = {
+  encode(_: MsgDeleteBranchResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteBranchResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgDeleteBranchResponse,
+    } as MsgDeleteBranchResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgDeleteBranchResponse {
+    const message = {
+      ...baseMsgDeleteBranchResponse,
+    } as MsgDeleteBranchResponse;
+    return message;
+  },
+
+  toJSON(_: MsgDeleteBranchResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgDeleteBranchResponse>
+  ): MsgDeleteBranchResponse {
+    const message = {
+      ...baseMsgDeleteBranchResponse,
+    } as MsgDeleteBranchResponse;
+    return message;
+  },
+};
+
 const baseMsgUpdateRepository: object = {
   creator: "",
   id: 0,
@@ -3707,6 +3850,7 @@ export interface Msg {
   SetDefaultBranch(
     request: MsgSetDefaultBranch
   ): Promise<MsgSetDefaultBranchResponse>;
+  DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
   UpdateRepository(
     request: MsgUpdateRepository
   ): Promise<MsgUpdateRepositoryResponse>;
@@ -3849,6 +3993,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgSetDefaultBranchResponse.decode(new Reader(data))
+    );
+  }
+
+  DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse> {
+    const data = MsgDeleteBranch.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "DeleteBranch",
+      data
+    );
+    return promise.then((data) =>
+      MsgDeleteBranchResponse.decode(new Reader(data))
     );
   }
 

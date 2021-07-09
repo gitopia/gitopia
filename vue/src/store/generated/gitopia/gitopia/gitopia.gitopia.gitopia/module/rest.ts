@@ -103,6 +103,8 @@ export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
 
+export type GitopiaMsgDeleteBranchResponse = object;
+
 export type GitopiaMsgDeleteCommentResponse = object;
 
 export type GitopiaMsgDeleteIssueResponse = object;

@@ -69,6 +69,7 @@ export interface GitopiaMsgCreateRepositoryResponse {
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
 }
+export declare type GitopiaMsgDeleteBranchResponse = object;
 export declare type GitopiaMsgDeleteCommentResponse = object;
 export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
