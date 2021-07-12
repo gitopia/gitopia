@@ -67,8 +67,6 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefaultBranch) (*types.MsgSetDefaultBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var repository = k.GetRepository(ctx, msg.Id)
-
 	// Checks that the element exists
 	if !k.HasRepository(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
@@ -78,6 +76,8 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
+
+	var repository = k.GetRepository(ctx, msg.Id)
 
 	// Change DefaultBranch only if branch exists
 	if _, exists := repository.Branches[msg.Name]; exists {
@@ -94,8 +94,6 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranch) (*types.MsgDeleteBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var repository = k.GetRepository(ctx, msg.Id)
-
 	// Checks that the element exists
 	if !k.HasRepository(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
@@ -105,6 +103,8 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
+
+	var repository = k.GetRepository(ctx, msg.Id)
 
 	// Delete only if branch exists and is not default branch
 	if _, exists := repository.Branches[msg.Name]; exists {
