@@ -88,6 +88,84 @@ func (msg *MsgCreateBranch) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgSetDefaultBranch{}
+
+func NewMsgSetDefaultBranch(creator string, id uint64, name string) *MsgSetDefaultBranch {
+	return &MsgSetDefaultBranch{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgSetDefaultBranch) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgSetDefaultBranch) Type() string {
+	return "SetDefaultBranch"
+}
+
+func (msg *MsgSetDefaultBranch) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgSetDefaultBranch) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgSetDefaultBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgDeleteBranch{}
+
+func NewMsgDeleteBranch(creator string, id uint64, name string) *MsgDeleteBranch {
+	return &MsgDeleteBranch{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgDeleteBranch) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgDeleteBranch) Type() string {
+	return "SetDefaultBranch"
+}
+
+func (msg *MsgDeleteBranch) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgDeleteBranch) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDeleteBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateRepository{}
 
 func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, labels string, license string, defaultBranch string) *MsgUpdateRepository {
