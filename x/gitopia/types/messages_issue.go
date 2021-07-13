@@ -7,12 +7,11 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, authorId uint64, repositoryId uint64, labels []string, weight uint64, assigneesId []uint64) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assigneesId []uint64) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
 		Description:  description,
-		AuthorId:     authorId,
 		RepositoryId: repositoryId,
 		Labels:       labels,
 		Weight:       weight,

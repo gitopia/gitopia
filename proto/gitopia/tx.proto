@@ -71,11 +71,10 @@ message MsgCreateIssue {
   string creator = 1;
   string title = 2;
   string description = 3;
-  uint64 authorId = 4;
-  uint64 repositoryId = 5;
-  repeated string labels = 6;
-  uint64 weight = 7;
-  repeated uint64 assigneesId = 8;
+  uint64 repositoryId = 4;
+  repeated string labels = 5;
+  uint64 weight = 6;
+  repeated uint64 assigneesId = 7;
 }
 
 message MsgCreateIssueResponse {

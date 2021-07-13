@@ -28,9 +28,9 @@ func sliceAtoi(str []string) ([]uint64, error) {
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [title] [description] [authorId] [repositoryId] [labels] [weight] [assigneesId]",
+		Use:   "create-issue [title] [description] [repositoryId] [labels] [weight] [assigneesId]",
 		Short: "Create a new issue",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsTitle, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -40,20 +40,16 @@ func CmdCreateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsAuthorId, err := strconv.ParseUint(args[2], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsRepositoryId, err := strconv.ParseUint(args[3], 10, 64)
+			argsLabels := strings.Split(args[3], ",")
+			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsLabels := strings.Split(args[4], ",")
-			argsWeight, err := strconv.ParseUint(args[5], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsAssigneesId := strings.Split(args[6], ",")
+			argsAssigneesId := strings.Split(args[5], ",")
 			assigneesId, err := sliceAtoi(argsAssigneesId)
 			if err != nil {
 				return err
@@ -64,7 +60,7 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsAuthorId, argsRepositoryId, argsLabels, argsWeight, assigneesId)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, assigneesId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

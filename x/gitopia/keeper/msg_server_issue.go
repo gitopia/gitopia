@@ -41,7 +41,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		Title:        msg.Title,
 		State:        state,
 		Description:  msg.Description,
-		AuthorId:     msg.AuthorId,
 		Comments:     comments,
 		PullRequests: pullRequests,
 		RepositoryId: msg.RepositoryId,
