@@ -42,9 +42,8 @@ message MsgCreateComment {
   string diffHunk = 5;
   string path = 6;
   bool system = 7;
-  uint64 authorId = 8;
-  string authorAssociation = 9;
-  string commentType = 10;
+  string authorAssociation = 8;
+  string commentType = 9;
 }
 
 message MsgCreateCommentResponse {

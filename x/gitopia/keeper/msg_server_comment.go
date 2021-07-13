@@ -39,7 +39,6 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		DiffHunk:          msg.DiffHunk,
 		Path:              msg.Path,
 		System:            msg.System,
-		AuthorId:          msg.AuthorId,
 		AuthorAssociation: msg.AuthorAssociation,
 		CreatedAt:         createdAt,
 		UpdatedAt:         updatedAt,
