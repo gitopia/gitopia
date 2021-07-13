@@ -249,8 +249,7 @@ export interface GitopiaRepository {
   tags?: string;
   subscribers?: string;
   commits?: string;
-  issuesOpen?: string[];
-  issuesClosed?: string[];
+  issues?: string[];
   pulls?: string[];
   labels?: string;
   releases?: string;

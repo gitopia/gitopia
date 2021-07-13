@@ -12,8 +12,7 @@ const baseRepository = {
     tags: "",
     subscribers: "",
     commits: "",
-    issuesOpen: 0,
-    issuesClosed: 0,
+    issues: 0,
     pulls: 0,
     labels: "",
     releases: "",
@@ -61,51 +60,46 @@ export const Repository = {
             writer.uint32(82).string(message.commits);
         }
         writer.uint32(90).fork();
-        for (const v of message.issuesOpen) {
+        for (const v of message.issues) {
             writer.uint64(v);
         }
         writer.ldelim();
         writer.uint32(98).fork();
-        for (const v of message.issuesClosed) {
-            writer.uint64(v);
-        }
-        writer.ldelim();
-        writer.uint32(106).fork();
         for (const v of message.pulls) {
             writer.uint64(v);
         }
         writer.ldelim();
         if (message.labels !== "") {
-            writer.uint32(114).string(message.labels);
+            writer.uint32(106).string(message.labels);
         }
         if (message.releases !== "") {
-            writer.uint32(122).string(message.releases);
+            writer.uint32(114).string(message.releases);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(128).int64(message.createdAt);
+            writer.uint32(120).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(136).int64(message.updatedAt);
+            writer.uint32(128).int64(message.updatedAt);
         }
         if (message.pushedAt !== 0) {
-            writer.uint32(144).int64(message.pushedAt);
+            writer.uint32(136).int64(message.pushedAt);
         }
-        writer.uint32(154).fork();
+        writer.uint32(146).fork();
         for (const v of message.stargazers) {
             writer.uint64(v);
         }
         writer.ldelim();
         if (message.archived === true) {
-            writer.uint32(160).bool(message.archived);
+            writer.uint32(152).bool(message.archived);
         }
         if (message.license !== "") {
-            writer.uint32(170).string(message.license);
+            writer.uint32(162).string(message.license);
         }
         if (message.defaultBranch !== "") {
-            writer.uint32(178).string(message.defaultBranch);
+            writer.uint32(170).string(message.defaultBranch);
         }
         if (message.extensions !== "") {
-            writer.uint32(186).string(message.extensions);
+            writer.uint32(178).string(message.extensions);
         }
         return writer;
     },
@@ -115,8 +109,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = {};
-        message.issuesOpen = [];
-        message.issuesClosed = [];
+        message.issues = [];
         message.pulls = [];
         message.stargazers = [];
         while (reader.pos < end) {
@@ -167,25 +160,14 @@ export const Repository = {
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
-                            message.issuesOpen.push(longToNumber(reader.uint64()));
+                            message.issues.push(longToNumber(reader.uint64()));
                         }
                     }
                     else {
-                        message.issuesOpen.push(longToNumber(reader.uint64()));
+                        message.issues.push(longToNumber(reader.uint64()));
                     }
                     break;
                 case 12:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.issuesClosed.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.issuesClosed.push(longToNumber(reader.uint64()));
-                    }
-                    break;
-                case 13:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -196,22 +178,22 @@ export const Repository = {
                         message.pulls.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 14:
+                case 13:
                     message.labels = reader.string();
                     break;
-                case 15:
+                case 14:
                     message.releases = reader.string();
                     break;
-                case 16:
+                case 15:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 17:
+                case 16:
                     message.updatedAt = longToNumber(reader.int64());
                     break;
-                case 18:
+                case 17:
                     message.pushedAt = longToNumber(reader.int64());
                     break;
-                case 19:
+                case 18:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -222,16 +204,16 @@ export const Repository = {
                         message.stargazers.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 20:
+                case 19:
                     message.archived = reader.bool();
                     break;
-                case 21:
+                case 20:
                     message.license = reader.string();
                     break;
-                case 22:
+                case 21:
                     message.defaultBranch = reader.string();
                     break;
-                case 23:
+                case 22:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -245,8 +227,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = {};
-        message.issuesOpen = [];
-        message.issuesClosed = [];
+        message.issues = [];
         message.pulls = [];
         message.stargazers = [];
         if (object.creator !== undefined && object.creator !== null) {
@@ -307,14 +288,9 @@ export const Repository = {
         else {
             message.commits = "";
         }
-        if (object.issuesOpen !== undefined && object.issuesOpen !== null) {
-            for (const e of object.issuesOpen) {
-                message.issuesOpen.push(Number(e));
-            }
-        }
-        if (object.issuesClosed !== undefined && object.issuesClosed !== null) {
-            for (const e of object.issuesClosed) {
-                message.issuesClosed.push(Number(e));
+        if (object.issues !== undefined && object.issues !== null) {
+            for (const e of object.issues) {
+                message.issues.push(Number(e));
             }
         }
         if (object.pulls !== undefined && object.pulls !== null) {
@@ -407,17 +383,11 @@ export const Repository = {
         message.subscribers !== undefined &&
             (obj.subscribers = message.subscribers);
         message.commits !== undefined && (obj.commits = message.commits);
-        if (message.issuesOpen) {
-            obj.issuesOpen = message.issuesOpen.map((e) => e);
+        if (message.issues) {
+            obj.issues = message.issues.map((e) => e);
         }
         else {
-            obj.issuesOpen = [];
-        }
-        if (message.issuesClosed) {
-            obj.issuesClosed = message.issuesClosed.map((e) => e);
-        }
-        else {
-            obj.issuesClosed = [];
+            obj.issues = [];
         }
         if (message.pulls) {
             obj.pulls = message.pulls.map((e) => e);
@@ -447,8 +417,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = {};
-        message.issuesOpen = [];
-        message.issuesClosed = [];
+        message.issues = [];
         message.pulls = [];
         message.stargazers = [];
         if (object.creator !== undefined && object.creator !== null) {
@@ -511,14 +480,9 @@ export const Repository = {
         else {
             message.commits = "";
         }
-        if (object.issuesOpen !== undefined && object.issuesOpen !== null) {
-            for (const e of object.issuesOpen) {
-                message.issuesOpen.push(e);
-            }
-        }
-        if (object.issuesClosed !== undefined && object.issuesClosed !== null) {
-            for (const e of object.issuesClosed) {
-                message.issuesClosed.push(e);
+        if (object.issues !== undefined && object.issues !== null) {
+            for (const e of object.issues) {
+                message.issues.push(e);
             }
         }
         if (object.pulls !== undefined && object.pulls !== null) {

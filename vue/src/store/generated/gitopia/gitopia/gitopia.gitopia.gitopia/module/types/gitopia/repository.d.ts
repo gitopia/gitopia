@@ -13,8 +13,7 @@ export interface Repository {
     tags: string;
     subscribers: string;
     commits: string;
-    issuesOpen: number[];
-    issuesClosed: number[];
+    issues: number[];
     pulls: number[];
     labels: string;
     releases: string;
