@@ -14,7 +14,7 @@ func assignIid(ctx sdk.Context, k msgServer, repo types.Repository, repoId uint6
 	if !k.HasRepository(ctx, repoId) {
 		return 0, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("Repository Id %d doesn't exist", repoId))
 	}
-	var len = uint64(len(repo.IssuesOpen) + len(repo.IssuesClosed) + 1)
+	var len = uint64(len(repo.Issues) + 1)
 	return len, nil
 }
 
@@ -61,7 +61,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	)
 
 	/* Append Issue in the respective Repository */
-	repo.IssuesOpen = append(repo.IssuesOpen, id)
+	repo.Issues = append(repo.Issues, id)
 	k.SetRepository(ctx, repo)
 
 	return &types.MsgCreateIssueResponse{
