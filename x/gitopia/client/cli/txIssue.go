@@ -121,10 +121,10 @@ func CmdUpdateIssue() *cobra.Command {
 	return cmd
 }
 
-func CmdChangeIssueState() *cobra.Command {
+func CmdToggleIssueState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "change-issue-state [id] [closedBy]",
-		Short: "Changes issue state",
+		Use:   "toggle-issue-state [id] [closedBy]",
+		Short: "Toggles issue state",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
@@ -142,7 +142,7 @@ func CmdChangeIssueState() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgChangeIssueState(clientCtx.GetFromAddress().String(), id, argsClosedBy)
+			msg := types.NewMsgToggleIssueState(clientCtx.GetFromAddress().String(), id, argsClosedBy)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

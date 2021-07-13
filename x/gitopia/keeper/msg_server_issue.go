@@ -95,7 +95,7 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	return &types.MsgUpdateIssueResponse{}, nil
 }
 
-func (k msgServer) ChangeIssueState(goCtx context.Context, msg *types.MsgChangeIssueState) (*types.MsgChangeIssueStateResponse, error) {
+func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleIssueState) (*types.MsgToggleIssueStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	var issue = k.GetIssue(ctx, msg.Id)
@@ -125,7 +125,7 @@ func (k msgServer) ChangeIssueState(goCtx context.Context, msg *types.MsgChangeI
 
 	k.SetIssue(ctx, issue)
 
-	return &types.MsgChangeIssueStateResponse{
+	return &types.MsgToggleIssueStateResponse{
 		State: issue.State,
 	}, nil
 }

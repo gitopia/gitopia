@@ -91,25 +91,25 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgChangeIssueState{}
+var _ sdk.Msg = &MsgToggleIssueState{}
 
-func NewMsgChangeIssueState(creator string, id uint64, closedBy uint64) *MsgChangeIssueState {
-	return &MsgChangeIssueState{
+func NewMsgToggleIssueState(creator string, id uint64, closedBy uint64) *MsgToggleIssueState {
+	return &MsgToggleIssueState{
 		Id:       id,
 		Creator:  creator,
 		ClosedBy: closedBy,
 	}
 }
 
-func (msg *MsgChangeIssueState) Route() string {
+func (msg *MsgToggleIssueState) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgChangeIssueState) Type() string {
-	return "ChangeIssueState"
+func (msg *MsgToggleIssueState) Type() string {
+	return "ToggleIssueState"
 }
 
-func (msg *MsgChangeIssueState) GetSigners() []sdk.AccAddress {
+func (msg *MsgToggleIssueState) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -117,12 +117,12 @@ func (msg *MsgChangeIssueState) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgChangeIssueState) GetSignBytes() []byte {
+func (msg *MsgToggleIssueState) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgChangeIssueState) ValidateBasic() error {
+func (msg *MsgToggleIssueState) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
