@@ -93,11 +93,10 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgToggleIssueState{}
 
-func NewMsgToggleIssueState(creator string, id uint64, closedBy uint64) *MsgToggleIssueState {
+func NewMsgToggleIssueState(creator string, id uint64) *MsgToggleIssueState {
 	return &MsgToggleIssueState{
-		Id:       id,
-		Creator:  creator,
-		ClosedBy: closedBy,
+		Id:      id,
+		Creator: creator,
 	}
 }
 

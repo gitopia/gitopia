@@ -32,7 +32,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	createdAt := time.Now().Unix()
 	updatedAt := createdAt
 	closedAt := time.Time{}.Unix()
-	closedBy := uint64(0)
 	extensions := string("")
 
 	var issue = types.Issue{
@@ -50,7 +49,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
 		ClosedAt:     closedAt,
-		ClosedBy:     closedBy,
 		Extensions:   extensions,
 	}
 
@@ -102,11 +100,11 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 	if issue.State == "open" {
 		issue.State = "closed"
-		issue.ClosedBy = msg.ClosedBy
+		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = time.Now().Unix()
 	} else if issue.State == "closed" {
 		issue.State = "open"
-		issue.ClosedBy = 0
+		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
 	} else {
 		/* TODO: specify error */
