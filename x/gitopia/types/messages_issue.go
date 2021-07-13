@@ -46,10 +46,16 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
+	unique := make(map[string]bool, len(msg.AssigneesId))
 	for _, asgId := range msg.AssigneesId {
 		_, err := sdk.AccAddressFromBech32(asgId)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+		}
+		if !unique[asgId] {
+			unique[asgId] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assigneesId (%s)", asgId)
 		}
 	}
 	return nil
@@ -95,11 +101,16 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-
+	unique := make(map[string]bool, len(msg.AssigneesId))
 	for _, asgId := range msg.AssigneesId {
 		_, err := sdk.AccAddressFromBech32(asgId)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+		}
+		if !unique[asgId] {
+			unique[asgId] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assigneesId (%s)", asgId)
 		}
 	}
 	return nil
