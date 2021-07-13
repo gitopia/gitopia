@@ -45,7 +45,7 @@ export interface MsgCreateIssue {
   repositoryId: number;
   labels: string[];
   weight: number;
-  assigneesId: number[];
+  assigneesId: string[];
 }
 
 export interface MsgCreateIssueResponse {
@@ -59,7 +59,7 @@ export interface MsgUpdateIssue {
   description: string;
   labels: string[];
   weight: number;
-  assigneesId: number[];
+  assigneesId: string[];
 }
 
 export interface MsgUpdateIssueResponse {}
@@ -815,7 +815,7 @@ const baseMsgCreateIssue: object = {
   repositoryId: 0,
   labels: "",
   weight: 0,
-  assigneesId: 0,
+  assigneesId: "",
 };
 
 export const MsgCreateIssue = {
@@ -838,11 +838,9 @@ export const MsgCreateIssue = {
     if (message.weight !== 0) {
       writer.uint32(48).uint64(message.weight);
     }
-    writer.uint32(58).fork();
     for (const v of message.assigneesId) {
-      writer.uint64(v);
+      writer.uint32(58).string(v!);
     }
-    writer.ldelim();
     return writer;
   },
 
@@ -874,14 +872,7 @@ export const MsgCreateIssue = {
           message.weight = longToNumber(reader.uint64() as Long);
           break;
         case 7:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.assigneesId.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.assigneesId.push(longToNumber(reader.uint64() as Long));
-          }
+          message.assigneesId.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -927,7 +918,7 @@ export const MsgCreateIssue = {
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
       for (const e of object.assigneesId) {
-        message.assigneesId.push(Number(e));
+        message.assigneesId.push(String(e));
       }
     }
     return message;
@@ -1065,7 +1056,7 @@ const baseMsgUpdateIssue: object = {
   description: "",
   labels: "",
   weight: 0,
-  assigneesId: 0,
+  assigneesId: "",
 };
 
 export const MsgUpdateIssue = {
@@ -1088,11 +1079,9 @@ export const MsgUpdateIssue = {
     if (message.weight !== 0) {
       writer.uint32(48).uint64(message.weight);
     }
-    writer.uint32(58).fork();
     for (const v of message.assigneesId) {
-      writer.uint64(v);
+      writer.uint32(58).string(v!);
     }
-    writer.ldelim();
     return writer;
   },
 
@@ -1124,14 +1113,7 @@ export const MsgUpdateIssue = {
           message.weight = longToNumber(reader.uint64() as Long);
           break;
         case 7:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.assigneesId.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.assigneesId.push(longToNumber(reader.uint64() as Long));
-          }
+          message.assigneesId.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1177,7 +1159,7 @@ export const MsgUpdateIssue = {
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
       for (const e of object.assigneesId) {
-        message.assigneesId.push(Number(e));
+        message.assigneesId.push(String(e));
       }
     }
     return message;

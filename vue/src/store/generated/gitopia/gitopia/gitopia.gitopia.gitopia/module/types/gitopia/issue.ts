@@ -16,7 +16,7 @@ export interface Issue {
   repositoryId: number;
   labels: string[];
   weight: number;
-  assigneesId: number[];
+  assigneesId: string[];
   createdAt: number;
   updatedAt: number;
   closedAt: number;
@@ -36,7 +36,7 @@ const baseIssue: object = {
   repositoryId: 0,
   labels: "",
   weight: 0,
-  assigneesId: 0,
+  assigneesId: "",
   createdAt: 0,
   updatedAt: 0,
   closedAt: 0,
@@ -83,11 +83,9 @@ export const Issue = {
     if (message.weight !== 0) {
       writer.uint32(88).uint64(message.weight);
     }
-    writer.uint32(98).fork();
     for (const v of message.assigneesId) {
-      writer.uint64(v);
+      writer.uint32(98).string(v!);
     }
-    writer.ldelim();
     if (message.createdAt !== 0) {
       writer.uint32(104).int64(message.createdAt);
     }
@@ -165,14 +163,7 @@ export const Issue = {
           message.weight = longToNumber(reader.uint64() as Long);
           break;
         case 12:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.assigneesId.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.assigneesId.push(longToNumber(reader.uint64() as Long));
-          }
+          message.assigneesId.push(reader.string());
           break;
         case 13:
           message.createdAt = longToNumber(reader.int64() as Long);
@@ -260,7 +251,7 @@ export const Issue = {
     }
     if (object.assigneesId !== undefined && object.assigneesId !== null) {
       for (const e of object.assigneesId) {
-        message.assigneesId.push(Number(e));
+        message.assigneesId.push(String(e));
       }
     }
     if (object.createdAt !== undefined && object.createdAt !== null) {

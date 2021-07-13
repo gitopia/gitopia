@@ -37,7 +37,7 @@ export interface MsgCreateIssue {
     repositoryId: number;
     labels: string[];
     weight: number;
-    assigneesId: number[];
+    assigneesId: string[];
 }
 export interface MsgCreateIssueResponse {
     id: number;
@@ -49,7 +49,7 @@ export interface MsgUpdateIssue {
     description: string;
     labels: string[];
     weight: number;
-    assigneesId: number[];
+    assigneesId: string[];
 }
 export interface MsgUpdateIssueResponse {
 }

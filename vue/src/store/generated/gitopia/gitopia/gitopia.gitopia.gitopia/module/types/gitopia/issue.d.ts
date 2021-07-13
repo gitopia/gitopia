@@ -12,7 +12,7 @@ export interface Issue {
     repositoryId: number;
     labels: string[];
     weight: number;
-    assigneesId: number[];
+    assigneesId: string[];
     createdAt: number;
     updatedAt: number;
     closedAt: number;

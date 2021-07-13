@@ -574,7 +574,7 @@ const baseMsgCreateIssue = {
     repositoryId: 0,
     labels: "",
     weight: 0,
-    assigneesId: 0,
+    assigneesId: "",
 };
 export const MsgCreateIssue = {
     encode(message, writer = Writer.create()) {
@@ -596,11 +596,9 @@ export const MsgCreateIssue = {
         if (message.weight !== 0) {
             writer.uint32(48).uint64(message.weight);
         }
-        writer.uint32(58).fork();
         for (const v of message.assigneesId) {
-            writer.uint64(v);
+            writer.uint32(58).string(v);
         }
-        writer.ldelim();
         return writer;
     },
     decode(input, length) {
@@ -631,15 +629,7 @@ export const MsgCreateIssue = {
                     message.weight = longToNumber(reader.uint64());
                     break;
                 case 7:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.assigneesId.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.assigneesId.push(longToNumber(reader.uint64()));
-                    }
+                    message.assigneesId.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -689,7 +679,7 @@ export const MsgCreateIssue = {
         }
         if (object.assigneesId !== undefined && object.assigneesId !== null) {
             for (const e of object.assigneesId) {
-                message.assigneesId.push(Number(e));
+                message.assigneesId.push(String(e));
             }
         }
         return message;
@@ -822,7 +812,7 @@ const baseMsgUpdateIssue = {
     description: "",
     labels: "",
     weight: 0,
-    assigneesId: 0,
+    assigneesId: "",
 };
 export const MsgUpdateIssue = {
     encode(message, writer = Writer.create()) {
@@ -844,11 +834,9 @@ export const MsgUpdateIssue = {
         if (message.weight !== 0) {
             writer.uint32(48).uint64(message.weight);
         }
-        writer.uint32(58).fork();
         for (const v of message.assigneesId) {
-            writer.uint64(v);
+            writer.uint32(58).string(v);
         }
-        writer.ldelim();
         return writer;
     },
     decode(input, length) {
@@ -879,15 +867,7 @@ export const MsgUpdateIssue = {
                     message.weight = longToNumber(reader.uint64());
                     break;
                 case 7:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.assigneesId.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.assigneesId.push(longToNumber(reader.uint64()));
-                    }
+                    message.assigneesId.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -937,7 +917,7 @@ export const MsgUpdateIssue = {
         }
         if (object.assigneesId !== undefined && object.assigneesId !== null) {
             for (const e of object.assigneesId) {
-                message.assigneesId.push(Number(e));
+                message.assigneesId.push(String(e));
             }
         }
         return message;
