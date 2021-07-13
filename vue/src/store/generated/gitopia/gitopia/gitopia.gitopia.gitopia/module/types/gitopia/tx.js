@@ -571,7 +571,6 @@ const baseMsgCreateIssue = {
     creator: "",
     title: "",
     description: "",
-    authorId: 0,
     repositoryId: 0,
     labels: "",
     weight: 0,
@@ -588,19 +587,16 @@ export const MsgCreateIssue = {
         if (message.description !== "") {
             writer.uint32(26).string(message.description);
         }
-        if (message.authorId !== 0) {
-            writer.uint32(32).uint64(message.authorId);
-        }
         if (message.repositoryId !== 0) {
-            writer.uint32(40).uint64(message.repositoryId);
+            writer.uint32(32).uint64(message.repositoryId);
         }
         for (const v of message.labels) {
-            writer.uint32(50).string(v);
+            writer.uint32(42).string(v);
         }
         if (message.weight !== 0) {
-            writer.uint32(56).uint64(message.weight);
+            writer.uint32(48).uint64(message.weight);
         }
-        writer.uint32(66).fork();
+        writer.uint32(58).fork();
         for (const v of message.assigneesId) {
             writer.uint64(v);
         }
@@ -626,18 +622,15 @@ export const MsgCreateIssue = {
                     message.description = reader.string();
                     break;
                 case 4:
-                    message.authorId = longToNumber(reader.uint64());
-                    break;
-                case 5:
                     message.repositoryId = longToNumber(reader.uint64());
                     break;
-                case 6:
+                case 5:
                     message.labels.push(reader.string());
                     break;
-                case 7:
+                case 6:
                     message.weight = longToNumber(reader.uint64());
                     break;
-                case 8:
+                case 7:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -677,12 +670,6 @@ export const MsgCreateIssue = {
         else {
             message.description = "";
         }
-        if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = Number(object.authorId);
-        }
-        else {
-            message.authorId = 0;
-        }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
             message.repositoryId = Number(object.repositoryId);
         }
@@ -713,7 +700,6 @@ export const MsgCreateIssue = {
         message.title !== undefined && (obj.title = message.title);
         message.description !== undefined &&
             (obj.description = message.description);
-        message.authorId !== undefined && (obj.authorId = message.authorId);
         message.repositoryId !== undefined &&
             (obj.repositoryId = message.repositoryId);
         if (message.labels) {
@@ -752,12 +738,6 @@ export const MsgCreateIssue = {
         }
         else {
             message.description = "";
-        }
-        if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = object.authorId;
-        }
-        else {
-            message.authorId = 0;
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
             message.repositoryId = object.repositoryId;

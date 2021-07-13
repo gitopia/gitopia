@@ -50,9 +50,6 @@ export interface GitopiaIssue {
   title?: string;
   state?: string;
   description?: string;
-
-  /** @format uint64 */
-  authorId?: string;
   comments?: string[];
   pullRequests?: string[];
 

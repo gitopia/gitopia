@@ -34,7 +34,6 @@ export interface MsgCreateIssue {
     creator: string;
     title: string;
     description: string;
-    authorId: number;
     repositoryId: number;
     labels: string[];
     weight: number;

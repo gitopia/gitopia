@@ -7,7 +7,6 @@ export interface Issue {
     title: string;
     state: string;
     description: string;
-    authorId: number;
     comments: number[];
     pullRequests: number[];
     repositoryId: number;
