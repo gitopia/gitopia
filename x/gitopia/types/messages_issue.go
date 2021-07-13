@@ -45,6 +45,13 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	for _, asgId := range msg.AssigneesId {
+		_, err := sdk.AccAddressFromBech32(asgId)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+		}
+	}
 	return nil
 }
 
@@ -87,6 +94,13 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	for _, asgId := range msg.AssigneesId {
+		_, err := sdk.AccAddressFromBech32(asgId)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+		}
 	}
 	return nil
 }
