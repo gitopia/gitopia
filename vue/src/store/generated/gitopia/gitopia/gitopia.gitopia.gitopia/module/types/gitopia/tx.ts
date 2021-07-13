@@ -64,13 +64,13 @@ export interface MsgUpdateIssue {
 
 export interface MsgUpdateIssueResponse {}
 
-export interface MsgChangeIssueState {
+export interface MsgToggleIssueState {
   creator: string;
   id: number;
   closedBy: number;
 }
 
-export interface MsgChangeIssueStateResponse {
+export interface MsgToggleIssueStateResponse {
   state: string;
 }
 
@@ -1286,11 +1286,11 @@ export const MsgUpdateIssueResponse = {
   },
 };
 
-const baseMsgChangeIssueState: object = { creator: "", id: 0, closedBy: 0 };
+const baseMsgToggleIssueState: object = { creator: "", id: 0, closedBy: 0 };
 
-export const MsgChangeIssueState = {
+export const MsgToggleIssueState = {
   encode(
-    message: MsgChangeIssueState,
+    message: MsgToggleIssueState,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.creator !== "") {
@@ -1305,10 +1305,10 @@ export const MsgChangeIssueState = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState {
+  decode(input: Reader | Uint8Array, length?: number): MsgToggleIssueState {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1329,8 +1329,8 @@ export const MsgChangeIssueState = {
     return message;
   },
 
-  fromJSON(object: any): MsgChangeIssueState {
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+  fromJSON(object: any): MsgToggleIssueState {
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -1349,7 +1349,7 @@ export const MsgChangeIssueState = {
     return message;
   },
 
-  toJSON(message: MsgChangeIssueState): unknown {
+  toJSON(message: MsgToggleIssueState): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
@@ -1357,8 +1357,8 @@ export const MsgChangeIssueState = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState {
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+  fromPartial(object: DeepPartial<MsgToggleIssueState>): MsgToggleIssueState {
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -1378,11 +1378,11 @@ export const MsgChangeIssueState = {
   },
 };
 
-const baseMsgChangeIssueStateResponse: object = { state: "" };
+const baseMsgToggleIssueStateResponse: object = { state: "" };
 
-export const MsgChangeIssueStateResponse = {
+export const MsgToggleIssueStateResponse = {
   encode(
-    message: MsgChangeIssueStateResponse,
+    message: MsgToggleIssueStateResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.state !== "") {
@@ -1394,12 +1394,12 @@ export const MsgChangeIssueStateResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): MsgChangeIssueStateResponse {
+  ): MsgToggleIssueStateResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1414,10 +1414,10 @@ export const MsgChangeIssueStateResponse = {
     return message;
   },
 
-  fromJSON(object: any): MsgChangeIssueStateResponse {
+  fromJSON(object: any): MsgToggleIssueStateResponse {
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     if (object.state !== undefined && object.state !== null) {
       message.state = String(object.state);
     } else {
@@ -1426,18 +1426,18 @@ export const MsgChangeIssueStateResponse = {
     return message;
   },
 
-  toJSON(message: MsgChangeIssueStateResponse): unknown {
+  toJSON(message: MsgToggleIssueStateResponse): unknown {
     const obj: any = {};
     message.state !== undefined && (obj.state = message.state);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<MsgChangeIssueStateResponse>
-  ): MsgChangeIssueStateResponse {
+    object: DeepPartial<MsgToggleIssueStateResponse>
+  ): MsgToggleIssueStateResponse {
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     if (object.state !== undefined && object.state !== null) {
       message.state = object.state;
     } else {
@@ -3820,9 +3820,9 @@ export interface Msg {
   DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
   CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
   UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
-  ChangeIssueState(
-    request: MsgChangeIssueState
-  ): Promise<MsgChangeIssueStateResponse>;
+  ToggleIssueState(
+    request: MsgToggleIssueState
+  ): Promise<MsgToggleIssueStateResponse>;
   DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
   CreateRepository(
     request: MsgCreateRepository
@@ -3911,17 +3911,17 @@ export class MsgClientImpl implements Msg {
     );
   }
 
-  ChangeIssueState(
-    request: MsgChangeIssueState
-  ): Promise<MsgChangeIssueStateResponse> {
-    const data = MsgChangeIssueState.encode(request).finish();
+  ToggleIssueState(
+    request: MsgToggleIssueState
+  ): Promise<MsgToggleIssueStateResponse> {
+    const data = MsgToggleIssueState.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Msg",
-      "ChangeIssueState",
+      "ToggleIssueState",
       data
     );
     return promise.then((data) =>
-      MsgChangeIssueStateResponse.decode(new Reader(data))
+      MsgToggleIssueStateResponse.decode(new Reader(data))
     );
   }
 

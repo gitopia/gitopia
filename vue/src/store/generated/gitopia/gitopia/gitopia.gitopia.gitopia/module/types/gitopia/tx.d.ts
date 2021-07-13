@@ -53,12 +53,12 @@ export interface MsgUpdateIssue {
 }
 export interface MsgUpdateIssueResponse {
 }
-export interface MsgChangeIssueState {
+export interface MsgToggleIssueState {
     creator: string;
     id: number;
     closedBy: number;
 }
-export interface MsgChangeIssueStateResponse {
+export interface MsgToggleIssueStateResponse {
     state: string;
 }
 export interface MsgDeleteIssue {
@@ -254,19 +254,19 @@ export declare const MsgUpdateIssueResponse: {
     toJSON(_: MsgUpdateIssueResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
 };
-export declare const MsgChangeIssueState: {
-    encode(message: MsgChangeIssueState, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState;
-    fromJSON(object: any): MsgChangeIssueState;
-    toJSON(message: MsgChangeIssueState): unknown;
-    fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState;
+export declare const MsgToggleIssueState: {
+    encode(message: MsgToggleIssueState, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleIssueState;
+    fromJSON(object: any): MsgToggleIssueState;
+    toJSON(message: MsgToggleIssueState): unknown;
+    fromPartial(object: DeepPartial<MsgToggleIssueState>): MsgToggleIssueState;
 };
-export declare const MsgChangeIssueStateResponse: {
-    encode(message: MsgChangeIssueStateResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueStateResponse;
-    fromJSON(object: any): MsgChangeIssueStateResponse;
-    toJSON(message: MsgChangeIssueStateResponse): unknown;
-    fromPartial(object: DeepPartial<MsgChangeIssueStateResponse>): MsgChangeIssueStateResponse;
+export declare const MsgToggleIssueStateResponse: {
+    encode(message: MsgToggleIssueStateResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleIssueStateResponse;
+    fromJSON(object: any): MsgToggleIssueStateResponse;
+    toJSON(message: MsgToggleIssueStateResponse): unknown;
+    fromPartial(object: DeepPartial<MsgToggleIssueStateResponse>): MsgToggleIssueStateResponse;
 };
 export declare const MsgDeleteIssue: {
     encode(message: MsgDeleteIssue, writer?: Writer): Writer;
@@ -458,7 +458,7 @@ export interface Msg {
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
-    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
+    ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
@@ -481,7 +481,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
-    ChangeIssueState(request: MsgChangeIssueState): Promise<MsgChangeIssueStateResponse>;
+    ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;

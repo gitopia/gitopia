@@ -48,9 +48,6 @@ export interface GitopiaIssue {
     closedBy?: string;
     extensions?: string;
 }
-export interface GitopiaMsgChangeIssueStateResponse {
-    state?: string;
-}
 export declare type GitopiaMsgCreateBranchResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
     /** @format uint64 */
@@ -75,6 +72,9 @@ export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
 export declare type GitopiaMsgSetDefaultBranchResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;
+export interface GitopiaMsgToggleIssueStateResponse {
+    state?: string;
+}
 export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;

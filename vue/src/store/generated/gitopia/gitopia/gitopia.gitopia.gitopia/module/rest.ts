@@ -75,10 +75,6 @@ export interface GitopiaIssue {
   extensions?: string;
 }
 
-export interface GitopiaMsgChangeIssueStateResponse {
-  state?: string;
-}
-
 export type GitopiaMsgCreateBranchResponse = object;
 
 export interface GitopiaMsgCreateCommentResponse {
@@ -115,6 +111,10 @@ export type GitopiaMsgDeleteWhoisResponse = object;
 export type GitopiaMsgSetDefaultBranchResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
+
+export interface GitopiaMsgToggleIssueStateResponse {
+  state?: string;
+}
 
 export type GitopiaMsgUpdateCommentResponse = object;
 

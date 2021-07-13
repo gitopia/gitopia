@@ -1043,8 +1043,8 @@ export const MsgUpdateIssueResponse = {
         return message;
     },
 };
-const baseMsgChangeIssueState = { creator: "", id: 0, closedBy: 0 };
-export const MsgChangeIssueState = {
+const baseMsgToggleIssueState = { creator: "", id: 0, closedBy: 0 };
+export const MsgToggleIssueState = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
@@ -1060,7 +1060,7 @@ export const MsgChangeIssueState = {
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgChangeIssueState };
+        const message = { ...baseMsgToggleIssueState };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -1081,7 +1081,7 @@ export const MsgChangeIssueState = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseMsgChangeIssueState };
+        const message = { ...baseMsgToggleIssueState };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -1110,7 +1110,7 @@ export const MsgChangeIssueState = {
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseMsgChangeIssueState };
+        const message = { ...baseMsgToggleIssueState };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -1132,8 +1132,8 @@ export const MsgChangeIssueState = {
         return message;
     },
 };
-const baseMsgChangeIssueStateResponse = { state: "" };
-export const MsgChangeIssueStateResponse = {
+const baseMsgToggleIssueStateResponse = { state: "" };
+export const MsgToggleIssueStateResponse = {
     encode(message, writer = Writer.create()) {
         if (message.state !== "") {
             writer.uint32(10).string(message.state);
@@ -1144,7 +1144,7 @@ export const MsgChangeIssueStateResponse = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = {
-            ...baseMsgChangeIssueStateResponse,
+            ...baseMsgToggleIssueStateResponse,
         };
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -1161,7 +1161,7 @@ export const MsgChangeIssueStateResponse = {
     },
     fromJSON(object) {
         const message = {
-            ...baseMsgChangeIssueStateResponse,
+            ...baseMsgToggleIssueStateResponse,
         };
         if (object.state !== undefined && object.state !== null) {
             message.state = String(object.state);
@@ -1178,7 +1178,7 @@ export const MsgChangeIssueStateResponse = {
     },
     fromPartial(object) {
         const message = {
-            ...baseMsgChangeIssueStateResponse,
+            ...baseMsgToggleIssueStateResponse,
         };
         if (object.state !== undefined && object.state !== null) {
             message.state = object.state;
@@ -3508,10 +3508,10 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateIssue", data);
         return promise.then((data) => MsgUpdateIssueResponse.decode(new Reader(data)));
     }
-    ChangeIssueState(request) {
-        const data = MsgChangeIssueState.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ChangeIssueState", data);
-        return promise.then((data) => MsgChangeIssueStateResponse.decode(new Reader(data)));
+    ToggleIssueState(request) {
+        const data = MsgToggleIssueState.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleIssueState", data);
+        return promise.then((data) => MsgToggleIssueStateResponse.decode(new Reader(data)));
     }
     DeleteIssue(request) {
         const data = MsgDeleteIssue.encode(request).finish();
