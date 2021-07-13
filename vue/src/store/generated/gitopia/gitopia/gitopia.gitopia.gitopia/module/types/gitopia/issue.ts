@@ -20,7 +20,7 @@ export interface Issue {
   createdAt: number;
   updatedAt: number;
   closedAt: number;
-  closedBy: number;
+  closedBy: string;
   extensions: string;
 }
 
@@ -40,7 +40,7 @@ const baseIssue: object = {
   createdAt: 0,
   updatedAt: 0,
   closedAt: 0,
-  closedBy: 0,
+  closedBy: "",
   extensions: "",
 };
 
@@ -97,8 +97,8 @@ export const Issue = {
     if (message.closedAt !== 0) {
       writer.uint32(120).int64(message.closedAt);
     }
-    if (message.closedBy !== 0) {
-      writer.uint32(128).uint64(message.closedBy);
+    if (message.closedBy !== "") {
+      writer.uint32(130).string(message.closedBy);
     }
     if (message.extensions !== "") {
       writer.uint32(138).string(message.extensions);
@@ -184,7 +184,7 @@ export const Issue = {
           message.closedAt = longToNumber(reader.int64() as Long);
           break;
         case 16:
-          message.closedBy = longToNumber(reader.uint64() as Long);
+          message.closedBy = reader.string();
           break;
         case 17:
           message.extensions = reader.string();
@@ -279,9 +279,9 @@ export const Issue = {
       message.closedAt = 0;
     }
     if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = Number(object.closedBy);
+      message.closedBy = String(object.closedBy);
     } else {
-      message.closedBy = 0;
+      message.closedBy = "";
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = String(object.extensions);
@@ -415,7 +415,7 @@ export const Issue = {
     if (object.closedBy !== undefined && object.closedBy !== null) {
       message.closedBy = object.closedBy;
     } else {
-      message.closedBy = 0;
+      message.closedBy = "";
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = object.extensions;

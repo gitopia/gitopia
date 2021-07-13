@@ -67,7 +67,6 @@ export interface MsgUpdateIssueResponse {}
 export interface MsgToggleIssueState {
   creator: string;
   id: number;
-  closedBy: number;
 }
 
 export interface MsgToggleIssueStateResponse {
@@ -1286,7 +1285,7 @@ export const MsgUpdateIssueResponse = {
   },
 };
 
-const baseMsgToggleIssueState: object = { creator: "", id: 0, closedBy: 0 };
+const baseMsgToggleIssueState: object = { creator: "", id: 0 };
 
 export const MsgToggleIssueState = {
   encode(
@@ -1298,9 +1297,6 @@ export const MsgToggleIssueState = {
     }
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
-    }
-    if (message.closedBy !== 0) {
-      writer.uint32(24).uint64(message.closedBy);
     }
     return writer;
   },
@@ -1317,9 +1313,6 @@ export const MsgToggleIssueState = {
           break;
         case 2:
           message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
-          message.closedBy = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -1341,11 +1334,6 @@ export const MsgToggleIssueState = {
     } else {
       message.id = 0;
     }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = Number(object.closedBy);
-    } else {
-      message.closedBy = 0;
-    }
     return message;
   },
 
@@ -1353,7 +1341,6 @@ export const MsgToggleIssueState = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
-    message.closedBy !== undefined && (obj.closedBy = message.closedBy);
     return obj;
   },
 
@@ -1368,11 +1355,6 @@ export const MsgToggleIssueState = {
       message.id = object.id;
     } else {
       message.id = 0;
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = object.closedBy;
-    } else {
-      message.closedBy = 0;
     }
     return message;
   },

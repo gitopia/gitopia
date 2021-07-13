@@ -1043,7 +1043,7 @@ export const MsgUpdateIssueResponse = {
         return message;
     },
 };
-const baseMsgToggleIssueState = { creator: "", id: 0, closedBy: 0 };
+const baseMsgToggleIssueState = { creator: "", id: 0 };
 export const MsgToggleIssueState = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
@@ -1051,9 +1051,6 @@ export const MsgToggleIssueState = {
         }
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
-        }
-        if (message.closedBy !== 0) {
-            writer.uint32(24).uint64(message.closedBy);
         }
         return writer;
     },
@@ -1069,9 +1066,6 @@ export const MsgToggleIssueState = {
                     break;
                 case 2:
                     message.id = longToNumber(reader.uint64());
-                    break;
-                case 3:
-                    message.closedBy = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1094,19 +1088,12 @@ export const MsgToggleIssueState = {
         else {
             message.id = 0;
         }
-        if (object.closedBy !== undefined && object.closedBy !== null) {
-            message.closedBy = Number(object.closedBy);
-        }
-        else {
-            message.closedBy = 0;
-        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.id !== undefined && (obj.id = message.id);
-        message.closedBy !== undefined && (obj.closedBy = message.closedBy);
         return obj;
     },
     fromPartial(object) {
@@ -1122,12 +1109,6 @@ export const MsgToggleIssueState = {
         }
         else {
             message.id = 0;
-        }
-        if (object.closedBy !== undefined && object.closedBy !== null) {
-            message.closedBy = object.closedBy;
-        }
-        else {
-            message.closedBy = 0;
         }
         return message;
     },

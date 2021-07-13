@@ -16,7 +16,7 @@ export interface Issue {
     createdAt: number;
     updatedAt: number;
     closedAt: number;
-    closedBy: number;
+    closedBy: string;
     extensions: string;
 }
 export declare const Issue: {

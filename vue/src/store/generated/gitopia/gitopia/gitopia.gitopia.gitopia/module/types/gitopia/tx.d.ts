@@ -56,7 +56,6 @@ export interface MsgUpdateIssueResponse {
 export interface MsgToggleIssueState {
     creator: string;
     id: number;
-    closedBy: number;
 }
 export interface MsgToggleIssueStateResponse {
     state: string;

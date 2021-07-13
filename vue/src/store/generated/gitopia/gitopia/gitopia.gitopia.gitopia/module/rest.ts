@@ -69,8 +69,6 @@ export interface GitopiaIssue {
 
   /** @format int64 */
   closedAt?: string;
-
-  /** @format uint64 */
   closedBy?: string;
   extensions?: string;
 }
