@@ -13,7 +13,6 @@ export interface MsgCreateComment {
   diffHunk: string;
   path: string;
   system: boolean;
-  authorId: number;
   authorAssociation: string;
   commentType: string;
 }
@@ -219,7 +218,6 @@ const baseMsgCreateComment: object = {
   diffHunk: "",
   path: "",
   system: false,
-  authorId: 0,
   authorAssociation: "",
   commentType: "",
 };
@@ -247,14 +245,11 @@ export const MsgCreateComment = {
     if (message.system === true) {
       writer.uint32(56).bool(message.system);
     }
-    if (message.authorId !== 0) {
-      writer.uint32(64).uint64(message.authorId);
-    }
     if (message.authorAssociation !== "") {
-      writer.uint32(74).string(message.authorAssociation);
+      writer.uint32(66).string(message.authorAssociation);
     }
     if (message.commentType !== "") {
-      writer.uint32(82).string(message.commentType);
+      writer.uint32(74).string(message.commentType);
     }
     return writer;
   },
@@ -289,12 +284,9 @@ export const MsgCreateComment = {
           message.system = reader.bool();
           break;
         case 8:
-          message.authorId = longToNumber(reader.uint64() as Long);
-          break;
-        case 9:
           message.authorAssociation = reader.string();
           break;
-        case 10:
+        case 9:
           message.commentType = reader.string();
           break;
         default:
@@ -343,11 +335,6 @@ export const MsgCreateComment = {
     } else {
       message.system = false;
     }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = Number(object.authorId);
-    } else {
-      message.authorId = 0;
-    }
     if (
       object.authorAssociation !== undefined &&
       object.authorAssociation !== null
@@ -377,7 +364,6 @@ export const MsgCreateComment = {
     message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
     message.path !== undefined && (obj.path = message.path);
     message.system !== undefined && (obj.system = message.system);
-    message.authorId !== undefined && (obj.authorId = message.authorId);
     message.authorAssociation !== undefined &&
       (obj.authorAssociation = message.authorAssociation);
     message.commentType !== undefined &&
@@ -422,11 +408,6 @@ export const MsgCreateComment = {
       message.system = object.system;
     } else {
       message.system = false;
-    }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = object.authorId;
-    } else {
-      message.authorId = 0;
     }
     if (
       object.authorAssociation !== undefined &&

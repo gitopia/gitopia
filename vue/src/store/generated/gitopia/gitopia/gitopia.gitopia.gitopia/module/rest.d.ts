@@ -11,8 +11,6 @@ export interface GitopiaComment {
     diffHunk?: string;
     path?: string;
     system?: boolean;
-    /** @format uint64 */
-    authorId?: string;
     authorAssociation?: string;
     /** @format int64 */
     createdAt?: string;

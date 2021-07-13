@@ -9,7 +9,6 @@ export interface MsgCreateComment {
     diffHunk: string;
     path: string;
     system: boolean;
-    authorId: number;
     authorAssociation: string;
     commentType: string;
 }
