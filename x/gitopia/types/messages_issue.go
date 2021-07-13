@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assigneesId []uint64) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assigneesId []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
@@ -50,7 +50,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateIssue{}
 
-func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assigneesId []uint64) *MsgUpdateIssue {
+func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assigneesId []string) *MsgUpdateIssue {
 	return &MsgUpdateIssue{
 		Id:          id,
 		Creator:     creator,

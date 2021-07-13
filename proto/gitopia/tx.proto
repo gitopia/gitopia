@@ -74,7 +74,7 @@ message MsgCreateIssue {
   uint64 repositoryId = 4;
   repeated string labels = 5;
   uint64 weight = 6;
-  repeated uint64 assigneesId = 7;
+  repeated string assigneesId = 7;
 }
 
 message MsgCreateIssueResponse {
@@ -88,7 +88,7 @@ message MsgUpdateIssue {
   string description = 4;
   repeated string labels = 5;
   uint64 weight = 6;
-  repeated uint64 assigneesId = 7;
+  repeated string assigneesId = 7;
 }
 
 message MsgUpdateIssueResponse { }

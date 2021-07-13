@@ -50,17 +50,13 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 			argsAssigneesId := strings.Split(args[5], ",")
-			assigneesId, err := sliceAtoi(argsAssigneesId)
-			if err != nil {
-				return err
-			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, assigneesId)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssigneesId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -98,17 +94,13 @@ func CmdUpdateIssue() *cobra.Command {
 				return err
 			}
 			argsAssigneesId := strings.Split(args[5], ",")
-			assigneesId, err := sliceAtoi(argsAssigneesId)
-			if err != nil {
-				return err
-			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, assigneesId)
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssigneesId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
