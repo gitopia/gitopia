@@ -10,7 +10,6 @@ export interface Comment {
     diffHunk: string;
     path: string;
     system: boolean;
-    authorId: number;
     authorAssociation: string;
     createdAt: number;
     updatedAt: number;

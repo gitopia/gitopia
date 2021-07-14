@@ -16,9 +16,9 @@ import (
 
 func CmdCreateComment() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-comment [parentId] [body] [attachments] [diffHunk] [path] [system] [authorId] [authorAssociation] [commentType]",
+		Use:   "create-comment [parentId] [body] [attachments] [diffHunk] [path] [system] [authorAssociation] [commentType]",
 		Short: "Create a new comment",
-		Args:  cobra.ExactArgs(9),
+		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsParentId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -43,16 +43,11 @@ func CmdCreateComment() *cobra.Command {
 				return err
 			}
 
-			argsAuthorId, err := strconv.ParseUint(args[6], 10, 64)
+			argsAuthorAssociation, err := cast.ToStringE(args[6])
 			if err != nil {
 				return err
 			}
-
-			argsAuthorAssociation, err := cast.ToStringE(args[7])
-			if err != nil {
-				return err
-			}
-			argsCommentType, err := cast.ToStringE(args[8])
+			argsCommentType, err := cast.ToStringE(args[7])
 			if err != nil {
 				return err
 			}
@@ -62,7 +57,7 @@ func CmdCreateComment() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), argsParentId, string(argsBody), argsAttachments, string(argsDiffHunk), string(argsPath), argsSystem, argsAuthorId, string(argsAuthorAssociation), string(argsCommentType))
+			msg := types.NewMsgCreateComment(clientCtx.GetFromAddress().String(), argsParentId, string(argsBody), argsAttachments, string(argsDiffHunk), string(argsPath), argsSystem, string(argsAuthorAssociation), string(argsCommentType))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

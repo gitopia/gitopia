@@ -25,9 +25,6 @@ export interface GitopiaComment {
   diffHunk?: string;
   path?: string;
   system?: boolean;
-
-  /** @format uint64 */
-  authorId?: string;
   authorAssociation?: string;
 
   /** @format int64 */
@@ -50,9 +47,6 @@ export interface GitopiaIssue {
   title?: string;
   state?: string;
   description?: string;
-
-  /** @format uint64 */
-  authorId?: string;
   comments?: string[];
   pullRequests?: string[];
 
@@ -62,7 +56,7 @@ export interface GitopiaIssue {
 
   /** @format uint64 */
   weight?: string;
-  assigneesId?: string[];
+  assignees?: string[];
 
   /** @format int64 */
   createdAt?: string;
@@ -72,14 +66,8 @@ export interface GitopiaIssue {
 
   /** @format int64 */
   closedAt?: string;
-
-  /** @format uint64 */
   closedBy?: string;
   extensions?: string;
-}
-
-export interface GitopiaMsgChangeIssueStateResponse {
-  state?: string;
 }
 
 export type GitopiaMsgCreateBranchResponse = object;
@@ -118,6 +106,10 @@ export type GitopiaMsgDeleteWhoisResponse = object;
 export type GitopiaMsgSetDefaultBranchResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
+
+export interface GitopiaMsgToggleIssueStateResponse {
+  state?: string;
+}
 
 export type GitopiaMsgUpdateCommentResponse = object;
 

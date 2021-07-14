@@ -13,7 +13,6 @@ export interface MsgCreateComment {
   diffHunk: string;
   path: string;
   system: boolean;
-  authorId: number;
   authorAssociation: string;
   commentType: string;
 }
@@ -42,11 +41,10 @@ export interface MsgCreateIssue {
   creator: string;
   title: string;
   description: string;
-  authorId: number;
   repositoryId: number;
   labels: string[];
   weight: number;
-  assigneesId: number[];
+  assignees: string[];
 }
 
 export interface MsgCreateIssueResponse {
@@ -60,18 +58,17 @@ export interface MsgUpdateIssue {
   description: string;
   labels: string[];
   weight: number;
-  assigneesId: number[];
+  assignees: string[];
 }
 
 export interface MsgUpdateIssueResponse {}
 
-export interface MsgChangeIssueState {
+export interface MsgToggleIssueState {
   creator: string;
   id: number;
-  closedBy: number;
 }
 
-export interface MsgChangeIssueStateResponse {
+export interface MsgToggleIssueStateResponse {
   state: string;
 }
 
@@ -221,7 +218,6 @@ const baseMsgCreateComment: object = {
   diffHunk: "",
   path: "",
   system: false,
-  authorId: 0,
   authorAssociation: "",
   commentType: "",
 };
@@ -249,14 +245,11 @@ export const MsgCreateComment = {
     if (message.system === true) {
       writer.uint32(56).bool(message.system);
     }
-    if (message.authorId !== 0) {
-      writer.uint32(64).uint64(message.authorId);
-    }
     if (message.authorAssociation !== "") {
-      writer.uint32(74).string(message.authorAssociation);
+      writer.uint32(66).string(message.authorAssociation);
     }
     if (message.commentType !== "") {
-      writer.uint32(82).string(message.commentType);
+      writer.uint32(74).string(message.commentType);
     }
     return writer;
   },
@@ -291,12 +284,9 @@ export const MsgCreateComment = {
           message.system = reader.bool();
           break;
         case 8:
-          message.authorId = longToNumber(reader.uint64() as Long);
-          break;
-        case 9:
           message.authorAssociation = reader.string();
           break;
-        case 10:
+        case 9:
           message.commentType = reader.string();
           break;
         default:
@@ -345,11 +335,6 @@ export const MsgCreateComment = {
     } else {
       message.system = false;
     }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = Number(object.authorId);
-    } else {
-      message.authorId = 0;
-    }
     if (
       object.authorAssociation !== undefined &&
       object.authorAssociation !== null
@@ -379,7 +364,6 @@ export const MsgCreateComment = {
     message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
     message.path !== undefined && (obj.path = message.path);
     message.system !== undefined && (obj.system = message.system);
-    message.authorId !== undefined && (obj.authorId = message.authorId);
     message.authorAssociation !== undefined &&
       (obj.authorAssociation = message.authorAssociation);
     message.commentType !== undefined &&
@@ -424,11 +408,6 @@ export const MsgCreateComment = {
       message.system = object.system;
     } else {
       message.system = false;
-    }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = object.authorId;
-    } else {
-      message.authorId = 0;
     }
     if (
       object.authorAssociation !== undefined &&
@@ -814,11 +793,10 @@ const baseMsgCreateIssue: object = {
   creator: "",
   title: "",
   description: "",
-  authorId: 0,
   repositoryId: 0,
   labels: "",
   weight: 0,
-  assigneesId: 0,
+  assignees: "",
 };
 
 export const MsgCreateIssue = {
@@ -832,23 +810,18 @@ export const MsgCreateIssue = {
     if (message.description !== "") {
       writer.uint32(26).string(message.description);
     }
-    if (message.authorId !== 0) {
-      writer.uint32(32).uint64(message.authorId);
-    }
     if (message.repositoryId !== 0) {
-      writer.uint32(40).uint64(message.repositoryId);
+      writer.uint32(32).uint64(message.repositoryId);
     }
     for (const v of message.labels) {
-      writer.uint32(50).string(v!);
+      writer.uint32(42).string(v!);
     }
     if (message.weight !== 0) {
-      writer.uint32(56).uint64(message.weight);
+      writer.uint32(48).uint64(message.weight);
     }
-    writer.uint32(66).fork();
-    for (const v of message.assigneesId) {
-      writer.uint64(v);
+    for (const v of message.assignees) {
+      writer.uint32(58).string(v!);
     }
-    writer.ldelim();
     return writer;
   },
 
@@ -857,7 +830,7 @@ export const MsgCreateIssue = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -871,26 +844,16 @@ export const MsgCreateIssue = {
           message.description = reader.string();
           break;
         case 4:
-          message.authorId = longToNumber(reader.uint64() as Long);
-          break;
-        case 5:
           message.repositoryId = longToNumber(reader.uint64() as Long);
           break;
-        case 6:
+        case 5:
           message.labels.push(reader.string());
           break;
-        case 7:
+        case 6:
           message.weight = longToNumber(reader.uint64() as Long);
           break;
-        case 8:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.assigneesId.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.assigneesId.push(longToNumber(reader.uint64() as Long));
-          }
+        case 7:
+          message.assignees.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -903,7 +866,7 @@ export const MsgCreateIssue = {
   fromJSON(object: any): MsgCreateIssue {
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -918,11 +881,6 @@ export const MsgCreateIssue = {
       message.description = String(object.description);
     } else {
       message.description = "";
-    }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = Number(object.authorId);
-    } else {
-      message.authorId = 0;
     }
     if (object.repositoryId !== undefined && object.repositoryId !== null) {
       message.repositoryId = Number(object.repositoryId);
@@ -939,9 +897,9 @@ export const MsgCreateIssue = {
     } else {
       message.weight = 0;
     }
-    if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      for (const e of object.assigneesId) {
-        message.assigneesId.push(Number(e));
+    if (object.assignees !== undefined && object.assignees !== null) {
+      for (const e of object.assignees) {
+        message.assignees.push(String(e));
       }
     }
     return message;
@@ -953,7 +911,6 @@ export const MsgCreateIssue = {
     message.title !== undefined && (obj.title = message.title);
     message.description !== undefined &&
       (obj.description = message.description);
-    message.authorId !== undefined && (obj.authorId = message.authorId);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
     if (message.labels) {
@@ -962,10 +919,10 @@ export const MsgCreateIssue = {
       obj.labels = [];
     }
     message.weight !== undefined && (obj.weight = message.weight);
-    if (message.assigneesId) {
-      obj.assigneesId = message.assigneesId.map((e) => e);
+    if (message.assignees) {
+      obj.assignees = message.assignees.map((e) => e);
     } else {
-      obj.assigneesId = [];
+      obj.assignees = [];
     }
     return obj;
   },
@@ -973,7 +930,7 @@ export const MsgCreateIssue = {
   fromPartial(object: DeepPartial<MsgCreateIssue>): MsgCreateIssue {
     const message = { ...baseMsgCreateIssue } as MsgCreateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -988,11 +945,6 @@ export const MsgCreateIssue = {
       message.description = object.description;
     } else {
       message.description = "";
-    }
-    if (object.authorId !== undefined && object.authorId !== null) {
-      message.authorId = object.authorId;
-    } else {
-      message.authorId = 0;
     }
     if (object.repositoryId !== undefined && object.repositoryId !== null) {
       message.repositoryId = object.repositoryId;
@@ -1009,9 +961,9 @@ export const MsgCreateIssue = {
     } else {
       message.weight = 0;
     }
-    if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      for (const e of object.assigneesId) {
-        message.assigneesId.push(e);
+    if (object.assignees !== undefined && object.assignees !== null) {
+      for (const e of object.assignees) {
+        message.assignees.push(e);
       }
     }
     return message;
@@ -1085,7 +1037,7 @@ const baseMsgUpdateIssue: object = {
   description: "",
   labels: "",
   weight: 0,
-  assigneesId: 0,
+  assignees: "",
 };
 
 export const MsgUpdateIssue = {
@@ -1108,11 +1060,9 @@ export const MsgUpdateIssue = {
     if (message.weight !== 0) {
       writer.uint32(48).uint64(message.weight);
     }
-    writer.uint32(58).fork();
-    for (const v of message.assigneesId) {
-      writer.uint64(v);
+    for (const v of message.assignees) {
+      writer.uint32(58).string(v!);
     }
-    writer.ldelim();
     return writer;
   },
 
@@ -1121,7 +1071,7 @@ export const MsgUpdateIssue = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1144,14 +1094,7 @@ export const MsgUpdateIssue = {
           message.weight = longToNumber(reader.uint64() as Long);
           break;
         case 7:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.assigneesId.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.assigneesId.push(longToNumber(reader.uint64() as Long));
-          }
+          message.assignees.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -1164,7 +1107,7 @@ export const MsgUpdateIssue = {
   fromJSON(object: any): MsgUpdateIssue {
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -1195,9 +1138,9 @@ export const MsgUpdateIssue = {
     } else {
       message.weight = 0;
     }
-    if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      for (const e of object.assigneesId) {
-        message.assigneesId.push(Number(e));
+    if (object.assignees !== undefined && object.assignees !== null) {
+      for (const e of object.assignees) {
+        message.assignees.push(String(e));
       }
     }
     return message;
@@ -1216,10 +1159,10 @@ export const MsgUpdateIssue = {
       obj.labels = [];
     }
     message.weight !== undefined && (obj.weight = message.weight);
-    if (message.assigneesId) {
-      obj.assigneesId = message.assigneesId.map((e) => e);
+    if (message.assignees) {
+      obj.assignees = message.assignees.map((e) => e);
     } else {
-      obj.assigneesId = [];
+      obj.assignees = [];
     }
     return obj;
   },
@@ -1227,7 +1170,7 @@ export const MsgUpdateIssue = {
   fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue {
     const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
     message.labels = [];
-    message.assigneesId = [];
+    message.assignees = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -1258,9 +1201,9 @@ export const MsgUpdateIssue = {
     } else {
       message.weight = 0;
     }
-    if (object.assigneesId !== undefined && object.assigneesId !== null) {
-      for (const e of object.assigneesId) {
-        message.assigneesId.push(e);
+    if (object.assignees !== undefined && object.assignees !== null) {
+      for (const e of object.assignees) {
+        message.assignees.push(e);
       }
     }
     return message;
@@ -1305,11 +1248,11 @@ export const MsgUpdateIssueResponse = {
   },
 };
 
-const baseMsgChangeIssueState: object = { creator: "", id: 0, closedBy: 0 };
+const baseMsgToggleIssueState: object = { creator: "", id: 0 };
 
-export const MsgChangeIssueState = {
+export const MsgToggleIssueState = {
   encode(
-    message: MsgChangeIssueState,
+    message: MsgToggleIssueState,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.creator !== "") {
@@ -1318,16 +1261,13 @@ export const MsgChangeIssueState = {
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
     }
-    if (message.closedBy !== 0) {
-      writer.uint32(24).uint64(message.closedBy);
-    }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MsgChangeIssueState {
+  decode(input: Reader | Uint8Array, length?: number): MsgToggleIssueState {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1337,9 +1277,6 @@ export const MsgChangeIssueState = {
         case 2:
           message.id = longToNumber(reader.uint64() as Long);
           break;
-        case 3:
-          message.closedBy = longToNumber(reader.uint64() as Long);
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1348,8 +1285,8 @@ export const MsgChangeIssueState = {
     return message;
   },
 
-  fromJSON(object: any): MsgChangeIssueState {
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+  fromJSON(object: any): MsgToggleIssueState {
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -1360,24 +1297,18 @@ export const MsgChangeIssueState = {
     } else {
       message.id = 0;
     }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = Number(object.closedBy);
-    } else {
-      message.closedBy = 0;
-    }
     return message;
   },
 
-  toJSON(message: MsgChangeIssueState): unknown {
+  toJSON(message: MsgToggleIssueState): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
-    message.closedBy !== undefined && (obj.closedBy = message.closedBy);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MsgChangeIssueState>): MsgChangeIssueState {
-    const message = { ...baseMsgChangeIssueState } as MsgChangeIssueState;
+  fromPartial(object: DeepPartial<MsgToggleIssueState>): MsgToggleIssueState {
+    const message = { ...baseMsgToggleIssueState } as MsgToggleIssueState;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -1388,20 +1319,15 @@ export const MsgChangeIssueState = {
     } else {
       message.id = 0;
     }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = object.closedBy;
-    } else {
-      message.closedBy = 0;
-    }
     return message;
   },
 };
 
-const baseMsgChangeIssueStateResponse: object = { state: "" };
+const baseMsgToggleIssueStateResponse: object = { state: "" };
 
-export const MsgChangeIssueStateResponse = {
+export const MsgToggleIssueStateResponse = {
   encode(
-    message: MsgChangeIssueStateResponse,
+    message: MsgToggleIssueStateResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.state !== "") {
@@ -1413,12 +1339,12 @@ export const MsgChangeIssueStateResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): MsgChangeIssueStateResponse {
+  ): MsgToggleIssueStateResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1433,10 +1359,10 @@ export const MsgChangeIssueStateResponse = {
     return message;
   },
 
-  fromJSON(object: any): MsgChangeIssueStateResponse {
+  fromJSON(object: any): MsgToggleIssueStateResponse {
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     if (object.state !== undefined && object.state !== null) {
       message.state = String(object.state);
     } else {
@@ -1445,18 +1371,18 @@ export const MsgChangeIssueStateResponse = {
     return message;
   },
 
-  toJSON(message: MsgChangeIssueStateResponse): unknown {
+  toJSON(message: MsgToggleIssueStateResponse): unknown {
     const obj: any = {};
     message.state !== undefined && (obj.state = message.state);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<MsgChangeIssueStateResponse>
-  ): MsgChangeIssueStateResponse {
+    object: DeepPartial<MsgToggleIssueStateResponse>
+  ): MsgToggleIssueStateResponse {
     const message = {
-      ...baseMsgChangeIssueStateResponse,
-    } as MsgChangeIssueStateResponse;
+      ...baseMsgToggleIssueStateResponse,
+    } as MsgToggleIssueStateResponse;
     if (object.state !== undefined && object.state !== null) {
       message.state = object.state;
     } else {
@@ -3839,9 +3765,9 @@ export interface Msg {
   DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
   CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
   UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
-  ChangeIssueState(
-    request: MsgChangeIssueState
-  ): Promise<MsgChangeIssueStateResponse>;
+  ToggleIssueState(
+    request: MsgToggleIssueState
+  ): Promise<MsgToggleIssueStateResponse>;
   DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
   CreateRepository(
     request: MsgCreateRepository
@@ -3930,17 +3856,17 @@ export class MsgClientImpl implements Msg {
     );
   }
 
-  ChangeIssueState(
-    request: MsgChangeIssueState
-  ): Promise<MsgChangeIssueStateResponse> {
-    const data = MsgChangeIssueState.encode(request).finish();
+  ToggleIssueState(
+    request: MsgToggleIssueState
+  ): Promise<MsgToggleIssueStateResponse> {
+    const data = MsgToggleIssueState.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Msg",
-      "ChangeIssueState",
+      "ToggleIssueState",
       data
     );
     return promise.then((data) =>
-      MsgChangeIssueStateResponse.decode(new Reader(data))
+      MsgToggleIssueStateResponse.decode(new Reader(data))
     );
   }
 

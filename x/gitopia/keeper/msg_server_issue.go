@@ -32,7 +32,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	createdAt := time.Now().Unix()
 	updatedAt := createdAt
 	closedAt := time.Time{}.Unix()
-	closedBy := uint64(0)
 	extensions := string("")
 
 	var issue = types.Issue{
@@ -41,17 +40,15 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		Title:        msg.Title,
 		State:        state,
 		Description:  msg.Description,
-		AuthorId:     msg.AuthorId,
 		Comments:     comments,
 		PullRequests: pullRequests,
 		RepositoryId: msg.RepositoryId,
 		Labels:       msg.Labels,
 		Weight:       msg.Weight,
-		AssigneesId:  msg.AssigneesId,
+		Assignees:    msg.Assignees,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
 		ClosedAt:     closedAt,
-		ClosedBy:     closedBy,
 		Extensions:   extensions,
 	}
 
@@ -79,7 +76,7 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	issue.Labels = msg.Labels
 	issue.Weight = msg.Weight
 	issue.UpdatedAt = time.Now().Unix()
-	issue.AssigneesId = msg.AssigneesId
+	issue.Assignees = msg.Assignees
 
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {
@@ -96,18 +93,18 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	return &types.MsgUpdateIssueResponse{}, nil
 }
 
-func (k msgServer) ChangeIssueState(goCtx context.Context, msg *types.MsgChangeIssueState) (*types.MsgChangeIssueStateResponse, error) {
+func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleIssueState) (*types.MsgToggleIssueStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	var issue = k.GetIssue(ctx, msg.Id)
 
 	if issue.State == "open" {
 		issue.State = "closed"
-		issue.ClosedBy = msg.ClosedBy
+		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = time.Now().Unix()
 	} else if issue.State == "closed" {
 		issue.State = "open"
-		issue.ClosedBy = 0
+		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
 	} else {
 		/* TODO: specify error */
@@ -126,7 +123,7 @@ func (k msgServer) ChangeIssueState(goCtx context.Context, msg *types.MsgChangeI
 
 	k.SetIssue(ctx, issue)
 
-	return &types.MsgChangeIssueStateResponse{
+	return &types.MsgToggleIssueStateResponse{
 		State: issue.State,
 	}, nil
 }

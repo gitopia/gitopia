@@ -12,7 +12,6 @@ const baseComment = {
     diffHunk: "",
     path: "",
     system: false,
-    authorId: 0,
     authorAssociation: "",
     createdAt: 0,
     updatedAt: 0,
@@ -48,23 +47,20 @@ export const Comment = {
         if (message.system === true) {
             writer.uint32(72).bool(message.system);
         }
-        if (message.authorId !== 0) {
-            writer.uint32(80).uint64(message.authorId);
-        }
         if (message.authorAssociation !== "") {
-            writer.uint32(90).string(message.authorAssociation);
+            writer.uint32(82).string(message.authorAssociation);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(96).int64(message.createdAt);
+            writer.uint32(88).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(104).int64(message.updatedAt);
+            writer.uint32(96).int64(message.updatedAt);
         }
         if (message.commentType !== "") {
-            writer.uint32(114).string(message.commentType);
+            writer.uint32(106).string(message.commentType);
         }
         if (message.extensions !== "") {
-            writer.uint32(122).string(message.extensions);
+            writer.uint32(114).string(message.extensions);
         }
         return writer;
     },
@@ -104,21 +100,18 @@ export const Comment = {
                     message.system = reader.bool();
                     break;
                 case 10:
-                    message.authorId = longToNumber(reader.uint64());
-                    break;
-                case 11:
                     message.authorAssociation = reader.string();
                     break;
-                case 12:
+                case 11:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 13:
+                case 12:
                     message.updatedAt = longToNumber(reader.int64());
                     break;
-                case 14:
+                case 13:
                     message.commentType = reader.string();
                     break;
-                case 15:
+                case 14:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -184,12 +177,6 @@ export const Comment = {
         else {
             message.system = false;
         }
-        if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = Number(object.authorId);
-        }
-        else {
-            message.authorId = 0;
-        }
         if (object.authorAssociation !== undefined &&
             object.authorAssociation !== null) {
             message.authorAssociation = String(object.authorAssociation);
@@ -239,7 +226,6 @@ export const Comment = {
         message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
         message.path !== undefined && (obj.path = message.path);
         message.system !== undefined && (obj.system = message.system);
-        message.authorId !== undefined && (obj.authorId = message.authorId);
         message.authorAssociation !== undefined &&
             (obj.authorAssociation = message.authorAssociation);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
@@ -304,12 +290,6 @@ export const Comment = {
         }
         else {
             message.system = false;
-        }
-        if (object.authorId !== undefined && object.authorId !== null) {
-            message.authorId = object.authorId;
-        }
-        else {
-            message.authorId = 0;
         }
         if (object.authorAssociation !== undefined &&
             object.authorAssociation !== null) {

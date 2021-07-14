@@ -28,9 +28,9 @@ func sliceAtoi(str []string) ([]uint64, error) {
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [title] [description] [authorId] [repositoryId] [labels] [weight] [assigneesId]",
+		Use:   "create-issue [title] [description] [repositoryId] [labels] [weight] [assignees]",
 		Short: "Create a new issue",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsTitle, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -40,31 +40,23 @@ func CmdCreateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsAuthorId, err := strconv.ParseUint(args[2], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsRepositoryId, err := strconv.ParseUint(args[3], 10, 64)
+			argsLabels := strings.Split(args[3], ",")
+			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsLabels := strings.Split(args[4], ",")
-			argsWeight, err := strconv.ParseUint(args[5], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsAssigneesId := strings.Split(args[6], ",")
-			assigneesId, err := sliceAtoi(argsAssigneesId)
-			if err != nil {
-				return err
-			}
+			argsAssignees := strings.Split(args[5], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsAuthorId, argsRepositoryId, argsLabels, argsWeight, assigneesId)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -79,7 +71,7 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue [id] [title] [description] [labels] [weight] [assigneesId]",
+		Use:   "update-issue [id] [title] [description] [labels] [weight] [assignees]",
 		Short: "Update a issue",
 		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -101,18 +93,14 @@ func CmdUpdateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsAssigneesId := strings.Split(args[5], ",")
-			assigneesId, err := sliceAtoi(argsAssigneesId)
-			if err != nil {
-				return err
-			}
+			argsAssignees := strings.Split(args[5], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, assigneesId)
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -125,18 +113,13 @@ func CmdUpdateIssue() *cobra.Command {
 	return cmd
 }
 
-func CmdChangeIssueState() *cobra.Command {
+func CmdToggleIssueState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "change-issue-state [id] [closedBy]",
-		Short: "Changes issue state",
-		Args:  cobra.ExactArgs(2),
+		Use:   "toggle-issue-state [id]",
+		Short: "Toggles issue state",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			argsClosedBy, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -146,7 +129,7 @@ func CmdChangeIssueState() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgChangeIssueState(clientCtx.GetFromAddress().String(), id, argsClosedBy)
+			msg := types.NewMsgToggleIssueState(clientCtx.GetFromAddress().String(), id)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

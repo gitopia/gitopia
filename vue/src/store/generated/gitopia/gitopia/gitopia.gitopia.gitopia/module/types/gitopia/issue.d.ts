@@ -7,17 +7,16 @@ export interface Issue {
     title: string;
     state: string;
     description: string;
-    authorId: number;
     comments: number[];
     pullRequests: number[];
     repositoryId: number;
     labels: string[];
     weight: number;
-    assigneesId: number[];
+    assignees: string[];
     createdAt: number;
     updatedAt: number;
     closedAt: number;
-    closedBy: number;
+    closedBy: string;
     extensions: string;
 }
 export declare const Issue: {

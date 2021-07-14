@@ -7,16 +7,15 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, authorId uint64, repositoryId uint64, labels []string, weight uint64, assigneesId []uint64) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assignees []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
 		Description:  description,
-		AuthorId:     authorId,
 		RepositoryId: repositoryId,
 		Labels:       labels,
 		Weight:       weight,
-		AssigneesId:  assigneesId,
+		Assignees:    assignees,
 	}
 }
 
@@ -46,12 +45,25 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	unique := make(map[string]bool, len(msg.Assignees))
+	for _, assignee := range msg.Assignees {
+		_, err := sdk.AccAddressFromBech32(assignee)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
+		}
+		if !unique[assignee] {
+			unique[assignee] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+		}
+	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateIssue{}
 
-func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assigneesId []uint64) *MsgUpdateIssue {
+func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assignees []string) *MsgUpdateIssue {
 	return &MsgUpdateIssue{
 		Id:          id,
 		Creator:     creator,
@@ -59,7 +71,7 @@ func NewMsgUpdateIssue(creator string, id uint64, title string, description stri
 		Description: description,
 		Labels:      labels,
 		Weight:      weight,
-		AssigneesId: assigneesId,
+		Assignees:   assignees,
 	}
 }
 
@@ -89,28 +101,39 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	unique := make(map[string]bool, len(msg.Assignees))
+	for _, assignee := range msg.Assignees {
+		_, err := sdk.AccAddressFromBech32(assignee)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
+		}
+		if !unique[assignee] {
+			unique[assignee] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+		}
+	}
 	return nil
 }
 
-var _ sdk.Msg = &MsgChangeIssueState{}
+var _ sdk.Msg = &MsgToggleIssueState{}
 
-func NewMsgChangeIssueState(creator string, id uint64, closedBy uint64) *MsgChangeIssueState {
-	return &MsgChangeIssueState{
-		Id:       id,
-		Creator:  creator,
-		ClosedBy: closedBy,
+func NewMsgToggleIssueState(creator string, id uint64) *MsgToggleIssueState {
+	return &MsgToggleIssueState{
+		Id:      id,
+		Creator: creator,
 	}
 }
 
-func (msg *MsgChangeIssueState) Route() string {
+func (msg *MsgToggleIssueState) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgChangeIssueState) Type() string {
-	return "ChangeIssueState"
+func (msg *MsgToggleIssueState) Type() string {
+	return "ToggleIssueState"
 }
 
-func (msg *MsgChangeIssueState) GetSigners() []sdk.AccAddress {
+func (msg *MsgToggleIssueState) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -118,12 +141,12 @@ func (msg *MsgChangeIssueState) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgChangeIssueState) GetSignBytes() []byte {
+func (msg *MsgToggleIssueState) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgChangeIssueState) ValidateBasic() error {
+func (msg *MsgToggleIssueState) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)

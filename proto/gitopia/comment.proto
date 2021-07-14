@@ -14,11 +14,10 @@ message Comment {
   repeated string attachments = 6; 
   string diffHunk = 7; 
   string path = 8; 
-  bool system = 9; 
-  uint64 authorId = 10; 
-  string authorAssociation = 11; 
-  int64 createdAt = 12; 
-  int64 updatedAt = 13; 
-  string commentType = 14; 
-  string extensions = 15; 
+  bool system = 9;
+  string authorAssociation = 10;
+  int64 createdAt = 11;
+  int64 updatedAt = 12;
+  string commentType = 13;
+  string extensions = 14;
 }
