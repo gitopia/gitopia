@@ -55,7 +55,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		if !unique[assignee] {
 			unique[assignee] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assignee (%s)", assignee)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
 		}
 	}
 	return nil
@@ -110,7 +110,7 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 		if !unique[assignee] {
 			unique[assignee] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assignee (%s)", assignee)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
 		}
 	}
 	return nil
