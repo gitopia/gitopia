@@ -554,7 +554,7 @@ const baseMsgCreateIssue = {
     repositoryId: 0,
     labels: "",
     weight: 0,
-    assigneesId: "",
+    assignees: "",
 };
 export const MsgCreateIssue = {
     encode(message, writer = Writer.create()) {
@@ -576,7 +576,7 @@ export const MsgCreateIssue = {
         if (message.weight !== 0) {
             writer.uint32(48).uint64(message.weight);
         }
-        for (const v of message.assigneesId) {
+        for (const v of message.assignees) {
             writer.uint32(58).string(v);
         }
         return writer;
@@ -586,7 +586,7 @@ export const MsgCreateIssue = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgCreateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -609,7 +609,7 @@ export const MsgCreateIssue = {
                     message.weight = longToNumber(reader.uint64());
                     break;
                 case 7:
-                    message.assigneesId.push(reader.string());
+                    message.assignees.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -621,7 +621,7 @@ export const MsgCreateIssue = {
     fromJSON(object) {
         const message = { ...baseMsgCreateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -657,9 +657,9 @@ export const MsgCreateIssue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(String(e));
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(String(e));
             }
         }
         return message;
@@ -679,18 +679,18 @@ export const MsgCreateIssue = {
             obj.labels = [];
         }
         message.weight !== undefined && (obj.weight = message.weight);
-        if (message.assigneesId) {
-            obj.assigneesId = message.assigneesId.map((e) => e);
+        if (message.assignees) {
+            obj.assignees = message.assignees.map((e) => e);
         }
         else {
-            obj.assigneesId = [];
+            obj.assignees = [];
         }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseMsgCreateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -726,9 +726,9 @@ export const MsgCreateIssue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(e);
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(e);
             }
         }
         return message;
@@ -792,7 +792,7 @@ const baseMsgUpdateIssue = {
     description: "",
     labels: "",
     weight: 0,
-    assigneesId: "",
+    assignees: "",
 };
 export const MsgUpdateIssue = {
     encode(message, writer = Writer.create()) {
@@ -814,7 +814,7 @@ export const MsgUpdateIssue = {
         if (message.weight !== 0) {
             writer.uint32(48).uint64(message.weight);
         }
-        for (const v of message.assigneesId) {
+        for (const v of message.assignees) {
             writer.uint32(58).string(v);
         }
         return writer;
@@ -824,7 +824,7 @@ export const MsgUpdateIssue = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgUpdateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -847,7 +847,7 @@ export const MsgUpdateIssue = {
                     message.weight = longToNumber(reader.uint64());
                     break;
                 case 7:
-                    message.assigneesId.push(reader.string());
+                    message.assignees.push(reader.string());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -859,7 +859,7 @@ export const MsgUpdateIssue = {
     fromJSON(object) {
         const message = { ...baseMsgUpdateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -895,9 +895,9 @@ export const MsgUpdateIssue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(String(e));
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(String(e));
             }
         }
         return message;
@@ -916,18 +916,18 @@ export const MsgUpdateIssue = {
             obj.labels = [];
         }
         message.weight !== undefined && (obj.weight = message.weight);
-        if (message.assigneesId) {
-            obj.assigneesId = message.assigneesId.map((e) => e);
+        if (message.assignees) {
+            obj.assignees = message.assignees.map((e) => e);
         }
         else {
-            obj.assigneesId = [];
+            obj.assignees = [];
         }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseMsgUpdateIssue };
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -963,9 +963,9 @@ export const MsgUpdateIssue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(e);
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(e);
             }
         }
         return message;

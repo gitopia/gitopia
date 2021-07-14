@@ -14,7 +14,7 @@ const baseIssue = {
     repositoryId: 0,
     labels: "",
     weight: 0,
-    assigneesId: "",
+    assignees: "",
     createdAt: 0,
     updatedAt: 0,
     closedAt: 0,
@@ -60,7 +60,7 @@ export const Issue = {
         if (message.weight !== 0) {
             writer.uint32(88).uint64(message.weight);
         }
-        for (const v of message.assigneesId) {
+        for (const v of message.assignees) {
             writer.uint32(98).string(v);
         }
         if (message.createdAt !== 0) {
@@ -87,7 +87,7 @@ export const Issue = {
         message.comments = [];
         message.pullRequests = [];
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -141,7 +141,7 @@ export const Issue = {
                     message.weight = longToNumber(reader.uint64());
                     break;
                 case 12:
-                    message.assigneesId.push(reader.string());
+                    message.assignees.push(reader.string());
                     break;
                 case 13:
                     message.createdAt = longToNumber(reader.int64());
@@ -170,7 +170,7 @@ export const Issue = {
         message.comments = [];
         message.pullRequests = [];
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -234,9 +234,9 @@ export const Issue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(String(e));
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(String(e));
             }
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
@@ -301,11 +301,11 @@ export const Issue = {
             obj.labels = [];
         }
         message.weight !== undefined && (obj.weight = message.weight);
-        if (message.assigneesId) {
-            obj.assigneesId = message.assigneesId.map((e) => e);
+        if (message.assignees) {
+            obj.assignees = message.assignees.map((e) => e);
         }
         else {
-            obj.assigneesId = [];
+            obj.assignees = [];
         }
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
@@ -319,7 +319,7 @@ export const Issue = {
         message.comments = [];
         message.pullRequests = [];
         message.labels = [];
-        message.assigneesId = [];
+        message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -383,9 +383,9 @@ export const Issue = {
         else {
             message.weight = 0;
         }
-        if (object.assigneesId !== undefined && object.assigneesId !== null) {
-            for (const e of object.assigneesId) {
-                message.assigneesId.push(e);
+        if (object.assignees !== undefined && object.assignees !== null) {
+            for (const e of object.assignees) {
+                message.assignees.push(e);
             }
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {

@@ -56,7 +56,7 @@ export interface GitopiaIssue {
 
   /** @format uint64 */
   weight?: string;
-  assigneesId?: string[];
+  assignees?: string[];
 
   /** @format int64 */
   createdAt?: string;
