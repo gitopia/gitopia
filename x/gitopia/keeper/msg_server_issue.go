@@ -45,7 +45,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		RepositoryId: msg.RepositoryId,
 		Labels:       msg.Labels,
 		Weight:       msg.Weight,
-		AssigneesId:  msg.AssigneesId,
+		Assignees:    msg.Assignees,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
 		ClosedAt:     closedAt,
@@ -76,7 +76,7 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	issue.Labels = msg.Labels
 	issue.Weight = msg.Weight
 	issue.UpdatedAt = time.Now().Unix()
-	issue.AssigneesId = msg.AssigneesId
+	issue.Assignees = msg.Assignees
 
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {

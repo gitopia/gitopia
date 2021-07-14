@@ -17,7 +17,7 @@ message Issue {
   uint64 repositoryId = 9;
   repeated string labels = 10;
   uint64 weight = 11;
-  repeated string assigneesId = 12;
+  repeated string assignees = 12;
   int64 createdAt = 13;
   int64 updatedAt = 14;
   int64 closedAt = 15;

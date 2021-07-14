@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assigneesId []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assignees []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
@@ -15,7 +15,7 @@ func NewMsgCreateIssue(creator string, title string, description string, reposit
 		RepositoryId: repositoryId,
 		Labels:       labels,
 		Weight:       weight,
-		AssigneesId:  assigneesId,
+		Assignees:    assignees,
 	}
 }
 
@@ -46,16 +46,16 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	unique := make(map[string]bool, len(msg.AssigneesId))
-	for _, asgId := range msg.AssigneesId {
-		_, err := sdk.AccAddressFromBech32(asgId)
+	unique := make(map[string]bool, len(msg.Assignees))
+	for _, assignee := range msg.Assignees {
+		_, err := sdk.AccAddressFromBech32(assignee)
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
 		}
-		if !unique[asgId] {
-			unique[asgId] = true
+		if !unique[assignee] {
+			unique[assignee] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assigneesId (%s)", asgId)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assignee (%s)", assignee)
 		}
 	}
 	return nil
@@ -63,7 +63,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateIssue{}
 
-func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assigneesId []string) *MsgUpdateIssue {
+func NewMsgUpdateIssue(creator string, id uint64, title string, description string, labels []string, weight uint64, assignees []string) *MsgUpdateIssue {
 	return &MsgUpdateIssue{
 		Id:          id,
 		Creator:     creator,
@@ -71,7 +71,7 @@ func NewMsgUpdateIssue(creator string, id uint64, title string, description stri
 		Description: description,
 		Labels:      labels,
 		Weight:      weight,
-		AssigneesId: assigneesId,
+		Assignees:   assignees,
 	}
 }
 
@@ -101,16 +101,16 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	unique := make(map[string]bool, len(msg.AssigneesId))
-	for _, asgId := range msg.AssigneesId {
-		_, err := sdk.AccAddressFromBech32(asgId)
+	unique := make(map[string]bool, len(msg.Assignees))
+	for _, assignee := range msg.Assignees {
+		_, err := sdk.AccAddressFromBech32(assignee)
 		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assigneesId (%s)", err)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
 		}
-		if !unique[asgId] {
-			unique[asgId] = true
+		if !unique[assignee] {
+			unique[assignee] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assigneesId (%s)", asgId)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate assignee (%s)", assignee)
 		}
 	}
 	return nil

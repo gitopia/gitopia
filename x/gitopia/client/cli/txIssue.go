@@ -28,7 +28,7 @@ func sliceAtoi(str []string) ([]uint64, error) {
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [title] [description] [repositoryId] [labels] [weight] [assigneesId]",
+		Use:   "create-issue [title] [description] [repositoryId] [labels] [weight] [assignees]",
 		Short: "Create a new issue",
 		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -49,14 +49,14 @@ func CmdCreateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsAssigneesId := strings.Split(args[5], ",")
+			argsAssignees := strings.Split(args[5], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssigneesId)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -71,7 +71,7 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue [id] [title] [description] [labels] [weight] [assigneesId]",
+		Use:   "update-issue [id] [title] [description] [labels] [weight] [assignees]",
 		Short: "Update a issue",
 		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -93,14 +93,14 @@ func CmdUpdateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsAssigneesId := strings.Split(args[5], ",")
+			argsAssignees := strings.Split(args[5], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssigneesId)
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
