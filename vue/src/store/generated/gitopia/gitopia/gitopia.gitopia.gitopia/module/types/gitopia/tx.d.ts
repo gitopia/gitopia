@@ -52,6 +52,13 @@ export interface MsgUpdateIssue {
 }
 export interface MsgUpdateIssueResponse {
 }
+export interface MsgUpdateIssueTitle {
+    creator: string;
+    id: number;
+    title: string;
+}
+export interface MsgUpdateIssueTitleResponse {
+}
 export interface MsgToggleIssueState {
     creator: string;
     id: number;
@@ -251,6 +258,20 @@ export declare const MsgUpdateIssueResponse: {
     fromJSON(_: any): MsgUpdateIssueResponse;
     toJSON(_: MsgUpdateIssueResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
+};
+export declare const MsgUpdateIssueTitle: {
+    encode(message: MsgUpdateIssueTitle, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueTitle;
+    fromJSON(object: any): MsgUpdateIssueTitle;
+    toJSON(message: MsgUpdateIssueTitle): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateIssueTitle>): MsgUpdateIssueTitle;
+};
+export declare const MsgUpdateIssueTitleResponse: {
+    encode(_: MsgUpdateIssueTitleResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueTitleResponse;
+    fromJSON(_: any): MsgUpdateIssueTitleResponse;
+    toJSON(_: MsgUpdateIssueTitleResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateIssueTitleResponse>): MsgUpdateIssueTitleResponse;
 };
 export declare const MsgToggleIssueState: {
     encode(message: MsgToggleIssueState, writer?: Writer): Writer;
@@ -456,6 +477,7 @@ export interface Msg {
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
@@ -479,6 +501,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
     UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
+    UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;

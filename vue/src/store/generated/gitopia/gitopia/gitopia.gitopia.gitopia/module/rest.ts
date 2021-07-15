@@ -115,6 +115,8 @@ export type GitopiaMsgUpdateCommentResponse = object;
 
 export type GitopiaMsgUpdateIssueResponse = object;
 
+export type GitopiaMsgUpdateIssueTitleResponse = object;
+
 export type GitopiaMsgUpdateRepositoryResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
