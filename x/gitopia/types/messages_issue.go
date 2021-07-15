@@ -158,6 +158,48 @@ func (msg *MsgUpdateIssueTitle) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateIssueDescription{}
+
+func NewMsgUpdateIssueDescription(creator string, id uint64, description string) *MsgUpdateIssueDescription {
+	return &MsgUpdateIssueDescription{
+		Id:          id,
+		Creator:     creator,
+		Description: description,
+	}
+}
+
+func (msg *MsgUpdateIssueDescription) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateIssueDescription) Type() string {
+	return "UpdateIssueDescription"
+}
+
+func (msg *MsgUpdateIssueDescription) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateIssueDescription) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateIssueDescription) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgToggleIssueState{}
 
 func NewMsgToggleIssueState(creator string, id uint64) *MsgToggleIssueState {
