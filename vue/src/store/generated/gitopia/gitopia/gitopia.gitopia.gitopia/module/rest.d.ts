@@ -73,6 +73,7 @@ export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
 }
 export declare type GitopiaMsgUpdateCommentResponse = object;
+export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;

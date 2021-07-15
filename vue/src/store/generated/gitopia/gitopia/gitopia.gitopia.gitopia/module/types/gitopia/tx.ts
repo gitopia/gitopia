@@ -71,6 +71,14 @@ export interface MsgUpdateIssueTitle {
 
 export interface MsgUpdateIssueTitleResponse {}
 
+export interface MsgUpdateIssueDescription {
+  creator: string;
+  id: number;
+  description: string;
+}
+
+export interface MsgUpdateIssueDescriptionResponse {}
+
 export interface MsgToggleIssueState {
   creator: string;
   id: number;
@@ -1396,6 +1404,166 @@ export const MsgUpdateIssueTitleResponse = {
     const message = {
       ...baseMsgUpdateIssueTitleResponse,
     } as MsgUpdateIssueTitleResponse;
+    return message;
+  },
+};
+
+const baseMsgUpdateIssueDescription: object = {
+  creator: "",
+  id: 0,
+  description: "",
+};
+
+export const MsgUpdateIssueDescription = {
+  encode(
+    message: MsgUpdateIssueDescription,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateIssueDescription {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateIssueDescription,
+    } as MsgUpdateIssueDescription;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.description = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateIssueDescription {
+    const message = {
+      ...baseMsgUpdateIssueDescription,
+    } as MsgUpdateIssueDescription;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.description !== undefined && object.description !== null) {
+      message.description = String(object.description);
+    } else {
+      message.description = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateIssueDescription): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.description !== undefined &&
+      (obj.description = message.description);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgUpdateIssueDescription>
+  ): MsgUpdateIssueDescription {
+    const message = {
+      ...baseMsgUpdateIssueDescription,
+    } as MsgUpdateIssueDescription;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.description !== undefined && object.description !== null) {
+      message.description = object.description;
+    } else {
+      message.description = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateIssueDescriptionResponse: object = {};
+
+export const MsgUpdateIssueDescriptionResponse = {
+  encode(
+    _: MsgUpdateIssueDescriptionResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateIssueDescriptionResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateIssueDescriptionResponse,
+    } as MsgUpdateIssueDescriptionResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateIssueDescriptionResponse {
+    const message = {
+      ...baseMsgUpdateIssueDescriptionResponse,
+    } as MsgUpdateIssueDescriptionResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateIssueDescriptionResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdateIssueDescriptionResponse>
+  ): MsgUpdateIssueDescriptionResponse {
+    const message = {
+      ...baseMsgUpdateIssueDescriptionResponse,
+    } as MsgUpdateIssueDescriptionResponse;
     return message;
   },
 };
@@ -3920,6 +4088,9 @@ export interface Msg {
   UpdateIssueTitle(
     request: MsgUpdateIssueTitle
   ): Promise<MsgUpdateIssueTitleResponse>;
+  UpdateIssueDescription(
+    request: MsgUpdateIssueDescription
+  ): Promise<MsgUpdateIssueDescriptionResponse>;
   ToggleIssueState(
     request: MsgToggleIssueState
   ): Promise<MsgToggleIssueStateResponse>;
@@ -4022,6 +4193,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdateIssueTitleResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateIssueDescription(
+    request: MsgUpdateIssueDescription
+  ): Promise<MsgUpdateIssueDescriptionResponse> {
+    const data = MsgUpdateIssueDescription.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdateIssueDescription",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateIssueDescriptionResponse.decode(new Reader(data))
     );
   }
 
