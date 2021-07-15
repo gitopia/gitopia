@@ -116,6 +116,48 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateIssueTitle{}
+
+func NewMsgUpdateIssueTitle(creator string, id uint64, title string) *MsgUpdateIssueTitle {
+	return &MsgUpdateIssueTitle{
+		Id:      id,
+		Creator: creator,
+		Title:   title,
+	}
+}
+
+func (msg *MsgUpdateIssueTitle) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateIssueTitle) Type() string {
+	return "UpdateIssueTitle"
+}
+
+func (msg *MsgUpdateIssueTitle) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateIssueTitle) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateIssueTitle) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Title) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgToggleIssueState{}
 
 func NewMsgToggleIssueState(creator string, id uint64) *MsgToggleIssueState {

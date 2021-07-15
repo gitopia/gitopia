@@ -93,6 +93,29 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	return &types.MsgUpdateIssueResponse{}, nil
 }
 
+func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateIssueTitle) (*types.MsgUpdateIssueTitleResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	issue.Title = msg.Title
+	issue.UpdatedAt = time.Now().Unix()
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgUpdateIssueTitleResponse{}, nil
+}
+
 func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleIssueState) (*types.MsgToggleIssueStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

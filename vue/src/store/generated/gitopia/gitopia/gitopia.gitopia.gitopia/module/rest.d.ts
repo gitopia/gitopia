@@ -74,6 +74,7 @@ export interface GitopiaMsgToggleIssueStateResponse {
 }
 export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
+export declare type GitopiaMsgUpdateIssueTitleResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;

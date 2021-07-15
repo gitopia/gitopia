@@ -17,6 +17,7 @@ service Msg {
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
   rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
+  rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
@@ -91,6 +92,14 @@ message MsgUpdateIssue {
 }
 
 message MsgUpdateIssueResponse { }
+
+message MsgUpdateIssueTitle {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+}
+
+message MsgUpdateIssueTitleResponse { }
 
 message MsgToggleIssueState {
   string creator = 1;
