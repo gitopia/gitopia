@@ -124,6 +124,52 @@ func (msg *MsgCreateBranch) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgRenameRepository{}
+
+func NewMsgRenameRepository(creator string, id uint64, name string) *MsgRenameRepository {
+	return &MsgRenameRepository{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgRenameRepository) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRenameRepository) Type() string {
+	return "SetDefaultBranch"
+}
+
+func (msg *MsgRenameRepository) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRenameRepository) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRenameRepository) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+	}
+	sanitized := IsRepositoryNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgSetDefaultBranch{}
 
 func NewMsgSetDefaultBranch(creator string, id uint64, name string) *MsgSetDefaultBranch {
