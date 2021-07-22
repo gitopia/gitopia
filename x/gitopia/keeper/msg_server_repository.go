@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -12,6 +13,30 @@ import (
 
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var o Owner
+	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+
+	var user types.User
+	if o.Type == "User" {
+		user = k.GetUser(ctx, o.ID)
+		if _, exists := user.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
+	} else if o.Type == "Organization" {
+		// Todo
+	}
 
 	createdAt := time.Now().Unix()
 	updatedAt := createdAt
@@ -31,6 +56,24 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		ctx,
 		repository,
 	)
+
+	// Update user/organization repositories
+	if o.Type == "User" {
+		user.Repositories = append(user.Repositories, id)
+
+		// Repository name lookup
+
+		// Initialize the map if it's nil
+		if user.RepositoryNames == nil {
+			user.RepositoryNames = make(map[string]uint64)
+		}
+
+		user.RepositoryNames[repository.Name] = id
+
+		k.SetUser(ctx, user)
+	} else if o.Type == "Organization" {
+		// Todo
+	}
 
 	return &types.MsgCreateRepositoryResponse{
 		Id: id,

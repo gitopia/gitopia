@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -61,28 +60,6 @@ func (k Keeper) AppendRepository(
 
 	// Update repository count
 	k.SetRepositoryCount(ctx, count+1)
-
-	// Update user/organization repositories
-	var o Owner
-	json.Unmarshal([]byte(repository.Owner), &o)
-
-	if o.Type == "User" {
-		user := k.GetUser(ctx, o.ID)
-		user.Repositories = append(user.Repositories, repository.Id)
-		
-		// Repository name lookup
-
-		// Initialize the map if it's nil
-		if user.RepositoryNames == nil {
-			user.RepositoryNames = make(map[string]uint64)
-		}
-
-		user.RepositoryNames[repository.Name] = repository.Id
-		
-		k.SetUser(ctx, user)
-	} else if o.Type == "Organization" {
-		// Todo
-	}
 
 	return count
 }
