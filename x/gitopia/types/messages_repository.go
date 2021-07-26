@@ -14,25 +14,16 @@ type Owner struct {
 
 func IsTitleChar(c rune) bool {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-		(c >= '0' && c <= '9') || c == '.' || c == '_'
+		(c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-'
 }
 
-func SanitizeRepositoryName(msg *string) {
-	var res []rune
-	space := 2
-
+func IsRepositoryNameSanitized(msg *string) bool {
 	for _, c := range *msg {
-		if IsTitleChar(c) {
-			if space == 1 {
-				res = append(res, '-')
-			}
-			space = 0
-			res = append(res, c)
-		} else {
-			space |= 1
+		if !IsTitleChar(c) {
+			return false
 		}
 	}
-	*msg = string(res)
+	return true
 }
 
 var _ sdk.Msg = &MsgCreateRepository{}
@@ -72,7 +63,10 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	SanitizeRepositoryName(&msg.Name)
+	sanitized := IsRepositoryNameSanitized(&msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
