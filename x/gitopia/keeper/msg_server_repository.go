@@ -95,6 +95,24 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 
 	var repository = k.GetRepository(ctx, msg.Id)
 
+	var o Owner
+	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+	if o.Type == "User" {
+		user := k.GetUser(ctx, o.ID)
+		if _, exists := user.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
+
+		delete(user.RepositoryNames, repository.Name)
+		user.RepositoryNames[msg.Name] = repository.Id
+
+		k.SetUser(ctx, user)
+	} else if o.Type == "Organization" {
+		// Todo
+	}
+
 	repository.Name = msg.Name
 
 	k.SetRepository(ctx, repository)
