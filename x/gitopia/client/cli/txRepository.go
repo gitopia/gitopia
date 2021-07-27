@@ -50,6 +50,40 @@ func CmdCreateRepository() *cobra.Command {
 	return cmd
 }
 
+func CmdRenameRepository() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "rename-repository [id] [name]",
+		Short: "Rename repository",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRenameRepository(clientCtx.GetFromAddress().String(), id, string(argsName))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdCreateBranch() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-branch [repo id] [branch name] [commit SHA]",

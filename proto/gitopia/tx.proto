@@ -22,6 +22,7 @@ service Msg {
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
+  rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
@@ -136,6 +137,14 @@ message MsgCreateRepository {
 message MsgCreateRepositoryResponse {
   uint64 id = 1;
 }
+
+message MsgRenameRepository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgRenameRepositoryResponse { }
 
 message MsgCreateBranch {
   string creator = 1;
