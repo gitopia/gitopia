@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -13,8 +14,7 @@ type Owner struct {
 }
 
 func IsTitleChar(c rune) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-		(c >= '0' && c <= '9') || c == '.' || c == '_' || c == '-'
+	return unicode.IsLetter(c) || unicode.IsDigit(c) || c == '.' || c == '_' || c == '-'
 }
 
 func IsRepositoryNameSanitized(msg *string) bool {
