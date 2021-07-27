@@ -17,8 +17,8 @@ func IsTitleChar(c rune) bool {
 	return unicode.IsLetter(c) || unicode.IsDigit(c) || c == '.' || c == '_' || c == '-'
 }
 
-func IsRepositoryNameSanitized(msg *string) bool {
-	for _, c := range *msg {
+func IsRepositoryNameSanitized(msg string) bool {
+	for _, c := range msg {
 		if !IsTitleChar(c) {
 			return false
 		}
@@ -63,7 +63,7 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	sanitized := IsRepositoryNameSanitized(&msg.Name)
+	sanitized := IsRepositoryNameSanitized(msg.Name)
 	if !sanitized {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
 	}
