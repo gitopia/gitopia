@@ -97,19 +97,19 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+	if msg.Creator != owner.ID {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var repository = k.GetRepository(ctx, msg.Id)
+	repository := k.GetRepository(ctx, msg.Id)
 
-	var o Owner
-	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		user := k.GetUser(ctx, o.ID)
+	if owner.Type == "User" {
+		user := k.GetUser(ctx, owner.ID)
 		if _, exists := user.RepositoryNames[msg.Name]; exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
 		}
@@ -118,7 +118,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		user.RepositoryNames[msg.Name] = repository.Id
 
 		k.SetUser(ctx, user)
-	} else if o.Type == "Organization" {
+	} else if owner.Type == "Organization" {
 		// Todo
 	}
 
@@ -132,6 +132,20 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != owner.ID {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
 	var repository = k.GetRepository(ctx, msg.Id)
 
 	// Initialize the map if it's nil
@@ -140,16 +154,6 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 	}
 
 	repository.Branches[msg.Name] = msg.CommitSHA
-
-	// Checks that the element exists
-	if !k.HasRepository(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	k.SetRepository(ctx, repository)
 
@@ -164,8 +168,12 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+	if msg.Creator != owner.ID {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
@@ -191,8 +199,12 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+	if msg.Creator != owner.ID {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
@@ -220,7 +232,6 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 	var repository = k.GetRepository(ctx, msg.Id)
 
 	repository.Name = msg.Name
-	repository.Owner = msg.Owner
 	repository.Description = msg.Description
 	repository.Labels = msg.Labels
 	repository.UpdatedAt = time.Now().Unix()
@@ -232,8 +243,12 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+	if msg.Creator != owner.ID {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
@@ -248,20 +263,22 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	if !k.HasRepository(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
+
+	owner, err := k.GetRepositoryOwner(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != owner.ID {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	var repository = k.GetRepository(ctx, msg.Id)
 
-	var o Owner
-	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		user := k.GetUser(ctx, o.ID)
+	if owner.Type == "User" {
+		user := k.GetUser(ctx, owner.ID)
 		if _, exists := user.RepositoryNames[repository.Name]; !exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositoryNames", repository.Name, o.ID))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositoryNames", repository.Name, owner.ID))
 		}
 
 		delete(user.RepositoryNames, repository.Name)
@@ -270,11 +287,11 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		if i, ok := ElementExists(user.Repositories, repository.Id); ok {
 			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
 		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in user %v repositories", repository.Id, o.ID))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in user %v repositories", repository.Id, owner.ID))
 		}
 
 		k.SetUser(ctx, user)
-	} else if o.Type == "Organization" {
+	} else if owner.Type == "Organization" {
 		// Todo
 	}
 
