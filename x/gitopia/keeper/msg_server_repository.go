@@ -11,6 +11,15 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
+func ElementExists(s []uint64, val uint64) (int, bool) {
+	for i, v := range s {
+		if v == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -241,6 +250,32 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	}
 	if msg.Creator != k.GetRepositoryOwner(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var repository = k.GetRepository(ctx, msg.Id)
+
+	var o Owner
+	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+	if o.Type == "User" {
+		user := k.GetUser(ctx, o.ID)
+		if _, exists := user.RepositoryNames[repository.Name]; !exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositoryNames", repository.Name, o.ID))
+		}
+
+		delete(user.RepositoryNames, repository.Name)
+
+		// Checks if repository exists
+		if i, r := ElementExists(user.Repositories, repository.Id); r {
+			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in user %v repositories", repository.Id, o.ID))
+		}
+
+		k.SetUser(ctx, user)
+	} else if o.Type == "Organization" {
+		// Todo
 	}
 
 	k.RemoveRepository(ctx, msg.Id)
