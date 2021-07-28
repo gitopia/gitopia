@@ -267,7 +267,7 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		delete(user.RepositoryNames, repository.Name)
 
 		// Checks if repository exists
-		if i, r := ElementExists(user.Repositories, repository.Id); r {
+		if i, ok := ElementExists(user.Repositories, repository.Id); ok {
 			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in user %v repositories", repository.Id, o.ID))
