@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
@@ -8,6 +9,7 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseGenesisState = {
+    organizationCount: 0,
     commentCount: 0,
     issueCount: 0,
     repositoryCount: 0,
@@ -16,6 +18,12 @@ const baseGenesisState = {
 };
 export const GenesisState = {
     encode(message, writer = Writer.create()) {
+        for (const v of message.organizationList) {
+            Organization.encode(v, writer.uint32(90).fork()).ldelim();
+        }
+        if (message.organizationCount !== 0) {
+            writer.uint32(96).uint64(message.organizationCount);
+        }
         for (const v of message.commentList) {
             Comment.encode(v, writer.uint32(74).fork()).ldelim();
         }
@@ -52,6 +60,7 @@ export const GenesisState = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseGenesisState };
+        message.organizationList = [];
         message.commentList = [];
         message.issueList = [];
         message.repositoryList = [];
@@ -60,6 +69,12 @@ export const GenesisState = {
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
+                case 11:
+                    message.organizationList.push(Organization.decode(reader, reader.uint32()));
+                    break;
+                case 12:
+                    message.organizationCount = longToNumber(reader.uint64());
+                    break;
                 case 9:
                     message.commentList.push(Comment.decode(reader, reader.uint32()));
                     break;
@@ -99,11 +114,25 @@ export const GenesisState = {
     },
     fromJSON(object) {
         const message = { ...baseGenesisState };
+        message.organizationList = [];
         message.commentList = [];
         message.issueList = [];
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.organizationList !== undefined &&
+            object.organizationList !== null) {
+            for (const e of object.organizationList) {
+                message.organizationList.push(Organization.fromJSON(e));
+            }
+        }
+        if (object.organizationCount !== undefined &&
+            object.organizationCount !== null) {
+            message.organizationCount = Number(object.organizationCount);
+        }
+        else {
+            message.organizationCount = 0;
+        }
         if (object.commentList !== undefined && object.commentList !== null) {
             for (const e of object.commentList) {
                 message.commentList.push(Comment.fromJSON(e));
@@ -164,6 +193,14 @@ export const GenesisState = {
     },
     toJSON(message) {
         const obj = {};
+        if (message.organizationList) {
+            obj.organizationList = message.organizationList.map((e) => e ? Organization.toJSON(e) : undefined);
+        }
+        else {
+            obj.organizationList = [];
+        }
+        message.organizationCount !== undefined &&
+            (obj.organizationCount = message.organizationCount);
         if (message.commentList) {
             obj.commentList = message.commentList.map((e) => e ? Comment.toJSON(e) : undefined);
         }
@@ -205,11 +242,25 @@ export const GenesisState = {
     },
     fromPartial(object) {
         const message = { ...baseGenesisState };
+        message.organizationList = [];
         message.commentList = [];
         message.issueList = [];
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.organizationList !== undefined &&
+            object.organizationList !== null) {
+            for (const e of object.organizationList) {
+                message.organizationList.push(Organization.fromPartial(e));
+            }
+        }
+        if (object.organizationCount !== undefined &&
+            object.organizationCount !== null) {
+            message.organizationCount = object.organizationCount;
+        }
+        else {
+            message.organizationCount = 0;
+        }
         if (object.commentList !== undefined && object.commentList !== null) {
             for (const e of object.commentList) {
                 message.commentList.push(Comment.fromPartial(e));

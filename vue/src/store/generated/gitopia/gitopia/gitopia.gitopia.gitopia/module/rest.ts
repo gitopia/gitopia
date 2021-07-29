@@ -82,6 +82,11 @@ export interface GitopiaMsgCreateIssueResponse {
   id?: string;
 }
 
+export interface GitopiaMsgCreateOrganizationResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateRepositoryResponse {
   /** @format uint64 */
   id?: string;
@@ -96,6 +101,8 @@ export type GitopiaMsgDeleteBranchResponse = object;
 export type GitopiaMsgDeleteCommentResponse = object;
 
 export type GitopiaMsgDeleteIssueResponse = object;
+
+export type GitopiaMsgDeleteOrganizationResponse = object;
 
 export type GitopiaMsgDeleteRepositoryResponse = object;
 
@@ -121,11 +128,36 @@ export type GitopiaMsgUpdateIssueResponse = object;
 
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
+export type GitopiaMsgUpdateOrganizationResponse = object;
+
 export type GitopiaMsgUpdateRepositoryResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
 
 export type GitopiaMsgUpdateWhoisResponse = object;
+
+export interface GitopiaOrganization {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  name?: string;
+  avatarUrl?: string;
+  followers?: string;
+  following?: string;
+  repositories?: string;
+  repositoryNames?: string;
+  teams?: string;
+  members?: string;
+  location?: string;
+  email?: string;
+  website?: string;
+  verified?: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  extensions?: string;
+}
 
 export interface GitopiaQueryAllCommentResponse {
   Comment?: GitopiaComment[];
@@ -144,6 +176,21 @@ export interface GitopiaQueryAllCommentResponse {
 
 export interface GitopiaQueryAllIssueResponse {
   Issue?: GitopiaIssue[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryAllOrganizationResponse {
+  Organization?: GitopiaOrganization[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -216,6 +263,10 @@ export interface GitopiaQueryGetCommentResponse {
 
 export interface GitopiaQueryGetIssueResponse {
   Issue?: GitopiaIssue;
+}
+
+export interface GitopiaQueryGetOrganizationResponse {
+  Organization?: GitopiaOrganization;
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
@@ -640,6 +691,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryIssue = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetIssueResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/issue/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrganizationAll
+   * @summary Queries a list of organization items.
+   * @request GET:/gitopia/gitopia/gitopia/organization
+   */
+  queryOrganizationAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllOrganizationResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/organization`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrganization
+   * @summary Queries a organization by id.
+   * @request GET:/gitopia/gitopia/gitopia/organization/{id}
+   */
+  queryOrganization = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetOrganizationResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/organization/${id}`,
       method: "GET",
       format: "json",
       ...params,

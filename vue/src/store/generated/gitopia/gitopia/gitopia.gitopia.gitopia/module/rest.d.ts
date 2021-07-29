@@ -54,6 +54,10 @@ export interface GitopiaMsgCreateIssueResponse {
     /** @format uint64 */
     id?: string;
 }
+export interface GitopiaMsgCreateOrganizationResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export interface GitopiaMsgCreateRepositoryResponse {
     /** @format uint64 */
     id?: string;
@@ -64,6 +68,7 @@ export interface GitopiaMsgCreateUserResponse {
 export declare type GitopiaMsgDeleteBranchResponse = object;
 export declare type GitopiaMsgDeleteCommentResponse = object;
 export declare type GitopiaMsgDeleteIssueResponse = object;
+export declare type GitopiaMsgDeleteOrganizationResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
@@ -77,9 +82,31 @@ export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
+export declare type GitopiaMsgUpdateOrganizationResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
+export interface GitopiaOrganization {
+    creator?: string;
+    /** @format uint64 */
+    id?: string;
+    name?: string;
+    avatarUrl?: string;
+    followers?: string;
+    following?: string;
+    repositories?: string;
+    repositoryNames?: string;
+    teams?: string;
+    members?: string;
+    location?: string;
+    email?: string;
+    website?: string;
+    verified?: string;
+    description?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    extensions?: string;
+}
 export interface GitopiaQueryAllCommentResponse {
     Comment?: GitopiaComment[];
     /**
@@ -95,6 +122,19 @@ export interface GitopiaQueryAllCommentResponse {
 }
 export interface GitopiaQueryAllIssueResponse {
     Issue?: GitopiaIssue[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface GitopiaQueryAllOrganizationResponse {
+    Organization?: GitopiaOrganization[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -156,6 +196,9 @@ export interface GitopiaQueryGetCommentResponse {
 }
 export interface GitopiaQueryGetIssueResponse {
     Issue?: GitopiaIssue;
+}
+export interface GitopiaQueryGetOrganizationResponse {
+    Organization?: GitopiaOrganization;
 }
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
@@ -388,6 +431,29 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/issue/{id}
      */
     queryIssue: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetIssueResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryOrganizationAll
+     * @summary Queries a list of organization items.
+     * @request GET:/gitopia/gitopia/gitopia/organization
+     */
+    queryOrganizationAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllOrganizationResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryOrganization
+     * @summary Queries a organization by id.
+     * @request GET:/gitopia/gitopia/gitopia/organization/{id}
+     */
+    queryOrganization: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetOrganizationResponse, RpcStatus>>;
     /**
      * No description
      *

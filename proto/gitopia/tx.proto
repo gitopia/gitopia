@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "gitopia/organization.proto";
 import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
@@ -12,6 +13,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
+  rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
@@ -37,6 +41,60 @@ service Msg {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateOrganization {
+  string creator = 1;
+  string name = 2;
+  string avatarUrl = 3;
+  string followers = 4;
+  string following = 5;
+  string repositories = 6;
+  string repositoryNames = 7;
+  string teams = 8;
+  string members = 9;
+  string location = 10;
+  string email = 11;
+  string website = 12;
+  string verified = 13;
+  string description = 14;
+  string createdAt = 15;
+  string updatedAt = 16;
+  string extensions = 17;
+}
+
+message MsgCreateOrganizationResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateOrganization {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string avatarUrl = 4;
+  string followers = 5;
+  string following = 6;
+  string repositories = 7;
+  string repositoryNames = 8;
+  string teams = 9;
+  string members = 10;
+  string location = 11;
+  string email = 12;
+  string website = 13;
+  string verified = 14;
+  string description = 15;
+  string createdAt = 16;
+  string updatedAt = 17;
+  string extensions = 18;
+}
+
+message MsgUpdateOrganizationResponse { }
+
+message MsgDeleteOrganization {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteOrganizationResponse { }
+
 message MsgCreateComment {
   string creator = 1;
   uint64 parentId = 2;

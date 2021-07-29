@@ -1,4 +1,5 @@
 import { Writer, Reader } from "protobufjs/minimal";
+import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
@@ -8,6 +9,10 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
     /** this line is used by starport scaffolding # genesis/proto/state */
+    organizationList: Organization[];
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
+    organizationCount: number;
+    /** this line is used by starport scaffolding # genesis/proto/stateField */
     commentList: Comment[];
     /** this line is used by starport scaffolding # genesis/proto/stateField */
     commentCount: number;

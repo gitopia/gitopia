@@ -1,6 +1,56 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
+export interface MsgCreateOrganization {
+    creator: string;
+    name: string;
+    avatarUrl: string;
+    followers: string;
+    following: string;
+    repositories: string;
+    repositoryNames: string;
+    teams: string;
+    members: string;
+    location: string;
+    email: string;
+    website: string;
+    verified: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    extensions: string;
+}
+export interface MsgCreateOrganizationResponse {
+    id: number;
+}
+export interface MsgUpdateOrganization {
+    creator: string;
+    id: number;
+    name: string;
+    avatarUrl: string;
+    followers: string;
+    following: string;
+    repositories: string;
+    repositoryNames: string;
+    teams: string;
+    members: string;
+    location: string;
+    email: string;
+    website: string;
+    verified: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+    extensions: string;
+}
+export interface MsgUpdateOrganizationResponse {
+}
+export interface MsgDeleteOrganization {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteOrganizationResponse {
+}
 export interface MsgCreateComment {
     creator: string;
     parentId: number;
@@ -203,6 +253,48 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgCreateOrganization: {
+    encode(message: MsgCreateOrganization, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateOrganization;
+    fromJSON(object: any): MsgCreateOrganization;
+    toJSON(message: MsgCreateOrganization): unknown;
+    fromPartial(object: DeepPartial<MsgCreateOrganization>): MsgCreateOrganization;
+};
+export declare const MsgCreateOrganizationResponse: {
+    encode(message: MsgCreateOrganizationResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateOrganizationResponse;
+    fromJSON(object: any): MsgCreateOrganizationResponse;
+    toJSON(message: MsgCreateOrganizationResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateOrganizationResponse>): MsgCreateOrganizationResponse;
+};
+export declare const MsgUpdateOrganization: {
+    encode(message: MsgUpdateOrganization, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganization;
+    fromJSON(object: any): MsgUpdateOrganization;
+    toJSON(message: MsgUpdateOrganization): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateOrganization>): MsgUpdateOrganization;
+};
+export declare const MsgUpdateOrganizationResponse: {
+    encode(_: MsgUpdateOrganizationResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationResponse;
+    fromJSON(_: any): MsgUpdateOrganizationResponse;
+    toJSON(_: MsgUpdateOrganizationResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateOrganizationResponse>): MsgUpdateOrganizationResponse;
+};
+export declare const MsgDeleteOrganization: {
+    encode(message: MsgDeleteOrganization, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteOrganization;
+    fromJSON(object: any): MsgDeleteOrganization;
+    toJSON(message: MsgDeleteOrganization): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteOrganization>): MsgDeleteOrganization;
+};
+export declare const MsgDeleteOrganizationResponse: {
+    encode(_: MsgDeleteOrganizationResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteOrganizationResponse;
+    fromJSON(_: any): MsgDeleteOrganizationResponse;
+    toJSON(_: MsgDeleteOrganizationResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteOrganizationResponse>): MsgDeleteOrganizationResponse;
+};
 export declare const MsgCreateComment: {
     encode(message: MsgCreateComment, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateComment;
@@ -514,6 +606,9 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
+    CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
+    UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
@@ -540,6 +635,9 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
+    UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;

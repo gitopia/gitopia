@@ -77,7 +77,7 @@ func (k Keeper) UserRepositoryAll(c context.Context, req *types.QueryAllUserRepo
 	k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
 
 	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	
+
 	for _, repositoryId := range user.Repositories {
 		var repository types.Repository
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
@@ -110,6 +110,6 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 
 		return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
 	}
-	
+
 	return nil, sdkerrors.ErrKeyNotFound
 }

@@ -49,3 +49,8 @@ const (
 	CommentKey      = "Comment-value-"
 	CommentCountKey = "Comment-count-"
 )
+
+const (
+	OrganizationKey      = "Organization-value-"
+	OrganizationCountKey = "Organization-count-"
+)
