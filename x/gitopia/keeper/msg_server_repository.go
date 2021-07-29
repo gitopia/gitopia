@@ -133,15 +133,20 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	if err != nil {
 		return nil, err
 	}
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != owner.ID {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	repository := k.GetRepository(ctx, msg.Id)
 
 	if owner.Type == "User" {
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != owner.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+		if !k.HasUser(ctx, owner.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", owner.ID))
+		}
+
 		user := k.GetUser(ctx, owner.ID)
+
 		if _, exists := user.RepositoryNames[msg.Name]; exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
 		}
@@ -151,7 +156,29 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 
 		k.SetUser(ctx, user)
 	} else if owner.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(owner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", owner.ID))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+
+		if _, exists := organization.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
+
+		delete(organization.RepositoryNames, repository.Name)
+		organization.RepositoryNames[msg.Name] = repository.Id
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	repository.Name = msg.Name
