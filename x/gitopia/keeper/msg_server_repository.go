@@ -327,15 +327,19 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	if err != nil {
 		return nil, err
 	}
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != owner.ID {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	var repository = k.GetRepository(ctx, msg.Id)
 
 	if owner.Type == "User" {
+		if msg.Creator != owner.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+		if !k.HasUser(ctx, owner.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", owner.ID))
+		}
+
 		user := k.GetUser(ctx, owner.ID)
+
 		if _, exists := user.RepositoryNames[repository.Name]; !exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositoryNames", repository.Name, owner.ID))
 		}
@@ -351,7 +355,33 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 
 		k.SetUser(ctx, user)
 	} else if owner.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(owner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", owner.ID))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+
+		if _, exists := organization.RepositoryNames[repository.Name]; !exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in organization %v repositoryNames", repository.Name, organization.Name))
+		}
+
+		delete(organization.RepositoryNames, repository.Name)
+
+		if i, ok := ElementExists(organization.Repositories, repository.Id); ok {
+			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in organization %v repositories", repository.Id, organization.Name))
+		}
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	k.RemoveRepository(ctx, msg.Id)
