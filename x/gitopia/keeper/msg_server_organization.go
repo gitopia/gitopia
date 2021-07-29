@@ -13,6 +13,15 @@ import (
 func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreateOrganization) (*types.MsgCreateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
 	createdAt := time.Now().Unix()
 	updatedAt := createdAt
 	members := map[string]string{msg.Creator: "Owner"}
@@ -32,6 +41,11 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 		ctx,
 		organization,
 	)
+
+	// Update user Organizations
+	user := k.GetUser(ctx, msg.Creator)
+	user.Organizations = append(user.Organizations, id)
+	k.SetUser(ctx, user)
 
 	return &types.MsgCreateOrganizationResponse{
 		Id: id,
