@@ -30,8 +30,12 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 	var user types.User
 	if o.Type == "User" {
-		if !k.HasUser(ctx, msg.Creator) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+		if msg.Creator != o.ID {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
+		}
+
+		if !k.HasUser(ctx, o.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", o.ID))
 		}
 
 		// Checks if the the msg sender is the same as the current owner
