@@ -4,21 +4,7 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface MsgCreateOrganization {
     creator: string;
     name: string;
-    avatarUrl: string;
-    followers: string;
-    following: string;
-    repositories: string;
-    repositoryNames: string;
-    teams: string;
-    members: string;
-    location: string;
-    email: string;
-    website: string;
-    verified: string;
     description: string;
-    createdAt: string;
-    updatedAt: string;
-    extensions: string;
 }
 export interface MsgCreateOrganizationResponse {
     id: number;
@@ -28,20 +14,10 @@ export interface MsgUpdateOrganization {
     id: number;
     name: string;
     avatarUrl: string;
-    followers: string;
-    following: string;
-    repositories: string;
-    repositoryNames: string;
-    teams: string;
-    members: string;
     location: string;
     email: string;
     website: string;
-    verified: string;
     description: string;
-    createdAt: string;
-    updatedAt: string;
-    extensions: string;
 }
 export interface MsgUpdateOrganizationResponse {
 }

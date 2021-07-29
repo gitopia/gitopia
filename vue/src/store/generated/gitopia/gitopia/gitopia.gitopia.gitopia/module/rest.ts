@@ -143,18 +143,22 @@ export interface GitopiaOrganization {
   id?: string;
   name?: string;
   avatarUrl?: string;
-  followers?: string;
-  following?: string;
-  repositories?: string;
-  repositoryNames?: string;
-  teams?: string;
-  members?: string;
+  followers?: string[];
+  following?: string[];
+  repositories?: string[];
+  repositoryNames?: Record<string, string>;
+  teams?: string[];
+  members?: Record<string, string>;
   location?: string;
   email?: string;
   website?: string;
-  verified?: string;
+  verified?: boolean;
   description?: string;
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
   extensions?: string;
 }

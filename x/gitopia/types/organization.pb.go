@@ -24,24 +24,24 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Organization struct {
-	Creator         string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id              uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Name            string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	AvatarUrl       string `protobuf:"bytes,4,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
-	Followers       string `protobuf:"bytes,5,opt,name=followers,proto3" json:"followers,omitempty"`
-	Following       string `protobuf:"bytes,6,opt,name=following,proto3" json:"following,omitempty"`
-	Repositories    string `protobuf:"bytes,7,opt,name=repositories,proto3" json:"repositories,omitempty"`
-	RepositoryNames string `protobuf:"bytes,8,opt,name=repositoryNames,proto3" json:"repositoryNames,omitempty"`
-	Teams           string `protobuf:"bytes,9,opt,name=teams,proto3" json:"teams,omitempty"`
-	Members         string `protobuf:"bytes,10,opt,name=members,proto3" json:"members,omitempty"`
-	Location        string `protobuf:"bytes,11,opt,name=location,proto3" json:"location,omitempty"`
-	Email           string `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
-	Website         string `protobuf:"bytes,13,opt,name=website,proto3" json:"website,omitempty"`
-	Verified        string `protobuf:"bytes,14,opt,name=verified,proto3" json:"verified,omitempty"`
-	Description     string `protobuf:"bytes,15,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedAt       string `protobuf:"bytes,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt       string `protobuf:"bytes,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Extensions      string `protobuf:"bytes,18,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Creator         string            `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id              uint64            `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Name            string            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarUrl       string            `protobuf:"bytes,4,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
+	Followers       []uint64          `protobuf:"varint,5,rep,packed,name=followers,proto3" json:"followers,omitempty"`
+	Following       []uint64          `protobuf:"varint,6,rep,packed,name=following,proto3" json:"following,omitempty"`
+	Repositories    []uint64          `protobuf:"varint,7,rep,packed,name=repositories,proto3" json:"repositories,omitempty"`
+	RepositoryNames map[string]uint64 `protobuf:"bytes,8,rep,name=repositoryNames,proto3" json:"repositoryNames,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Teams           []uint64          `protobuf:"varint,9,rep,packed,name=teams,proto3" json:"teams,omitempty"`
+	Members         map[string]string `protobuf:"bytes,10,rep,name=members,proto3" json:"members,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Location        string            `protobuf:"bytes,11,opt,name=location,proto3" json:"location,omitempty"`
+	Email           string            `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
+	Website         string            `protobuf:"bytes,13,opt,name=website,proto3" json:"website,omitempty"`
+	Verified        bool              `protobuf:"varint,14,opt,name=verified,proto3" json:"verified,omitempty"`
+	Description     string            `protobuf:"bytes,15,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt       int64             `protobuf:"varint,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt       int64             `protobuf:"varint,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Extensions      string            `protobuf:"bytes,18,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *Organization) Reset()         { *m = Organization{} }
@@ -105,46 +105,46 @@ func (m *Organization) GetAvatarUrl() string {
 	return ""
 }
 
-func (m *Organization) GetFollowers() string {
+func (m *Organization) GetFollowers() []uint64 {
 	if m != nil {
 		return m.Followers
 	}
-	return ""
+	return nil
 }
 
-func (m *Organization) GetFollowing() string {
+func (m *Organization) GetFollowing() []uint64 {
 	if m != nil {
 		return m.Following
 	}
-	return ""
+	return nil
 }
 
-func (m *Organization) GetRepositories() string {
+func (m *Organization) GetRepositories() []uint64 {
 	if m != nil {
 		return m.Repositories
 	}
-	return ""
+	return nil
 }
 
-func (m *Organization) GetRepositoryNames() string {
+func (m *Organization) GetRepositoryNames() map[string]uint64 {
 	if m != nil {
 		return m.RepositoryNames
 	}
-	return ""
+	return nil
 }
 
-func (m *Organization) GetTeams() string {
+func (m *Organization) GetTeams() []uint64 {
 	if m != nil {
 		return m.Teams
 	}
-	return ""
+	return nil
 }
 
-func (m *Organization) GetMembers() string {
+func (m *Organization) GetMembers() map[string]string {
 	if m != nil {
 		return m.Members
 	}
-	return ""
+	return nil
 }
 
 func (m *Organization) GetLocation() string {
@@ -168,11 +168,11 @@ func (m *Organization) GetWebsite() string {
 	return ""
 }
 
-func (m *Organization) GetVerified() string {
+func (m *Organization) GetVerified() bool {
 	if m != nil {
 		return m.Verified
 	}
-	return ""
+	return false
 }
 
 func (m *Organization) GetDescription() string {
@@ -182,18 +182,18 @@ func (m *Organization) GetDescription() string {
 	return ""
 }
 
-func (m *Organization) GetCreatedAt() string {
+func (m *Organization) GetCreatedAt() int64 {
 	if m != nil {
 		return m.CreatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Organization) GetUpdatedAt() string {
+func (m *Organization) GetUpdatedAt() int64 {
 	if m != nil {
 		return m.UpdatedAt
 	}
-	return ""
+	return 0
 }
 
 func (m *Organization) GetExtensions() string {
@@ -205,37 +205,44 @@ func (m *Organization) GetExtensions() string {
 
 func init() {
 	proto.RegisterType((*Organization)(nil), "gitopia.gitopia.gitopia.Organization")
+	proto.RegisterMapType((map[string]string)(nil), "gitopia.gitopia.gitopia.Organization.MembersEntry")
+	proto.RegisterMapType((map[string]uint64)(nil), "gitopia.gitopia.gitopia.Organization.RepositoryNamesEntry")
 }
 
 func init() { proto.RegisterFile("gitopia/organization.proto", fileDescriptor_2866e48a11710e51) }
 
 var fileDescriptor_2866e48a11710e51 = []byte{
-	// 389 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x92, 0xcd, 0xee, 0xd2, 0x40,
-	0x14, 0xc5, 0x29, 0xf6, 0xff, 0xc1, 0x80, 0xa0, 0x13, 0x12, 0x6f, 0x88, 0x69, 0x08, 0x2b, 0xe2,
-	0x02, 0x16, 0x3e, 0x81, 0xc6, 0xb5, 0x26, 0x24, 0x6e, 0xdc, 0x4d, 0xdb, 0x4b, 0xbd, 0x49, 0xdb,
-	0x69, 0x66, 0x86, 0x2f, 0x1f, 0xc1, 0x95, 0x8f, 0xe5, 0x92, 0xa5, 0x4b, 0x03, 0x2f, 0x62, 0x66,
-	0xa6, 0x2d, 0x95, 0xd5, 0xdc, 0x73, 0x7e, 0x27, 0x07, 0xe6, 0x76, 0xd8, 0x2c, 0x23, 0x23, 0x2b,
-	0x12, 0x6b, 0xa9, 0x32, 0x51, 0xd2, 0x0f, 0x61, 0x48, 0x96, 0xab, 0x4a, 0x49, 0x23, 0xf9, 0x9b,
-	0x9a, 0xad, 0xee, 0xce, 0xd9, 0x34, 0x93, 0x99, 0x74, 0x99, 0xb5, 0x9d, 0x7c, 0x7c, 0xf1, 0x33,
-	0x64, 0xa3, 0x2f, 0x9d, 0x16, 0x0e, 0xec, 0x29, 0x51, 0x28, 0x8c, 0x54, 0x10, 0xcc, 0x83, 0xe5,
-	0x60, 0xd3, 0x48, 0x3e, 0x66, 0x7d, 0x4a, 0xa1, 0x3f, 0x0f, 0x96, 0xe1, 0xa6, 0x4f, 0x29, 0xe7,
-	0x2c, 0x2c, 0x45, 0x81, 0xf0, 0xc2, 0xc5, 0xdc, 0xcc, 0xdf, 0xb2, 0x81, 0xd8, 0x0b, 0x23, 0xd4,
-	0x57, 0x95, 0x43, 0xe8, 0xc0, 0xcd, 0xb0, 0x74, 0x2b, 0xf3, 0x5c, 0x1e, 0x50, 0x69, 0x78, 0xf0,
-	0xb4, 0x35, 0x6e, 0x94, 0xca, 0x0c, 0x1e, 0xbb, 0x94, 0xca, 0x8c, 0x2f, 0xd8, 0x48, 0x61, 0x25,
-	0x35, 0x19, 0xa9, 0x08, 0x35, 0x3c, 0xb9, 0xc0, 0x7f, 0x1e, 0x5f, 0xb2, 0x49, 0xab, 0x4f, 0x9f,
-	0x45, 0x81, 0x1a, 0x9e, 0x5d, 0xec, 0xde, 0xe6, 0x53, 0xf6, 0x60, 0x50, 0x14, 0x1a, 0x06, 0x8e,
-	0x7b, 0x61, 0xef, 0x5e, 0x60, 0x11, 0xdb, 0x7f, 0xc7, 0xfc, 0xdd, 0x6b, 0xc9, 0x67, 0xec, 0x39,
-	0x97, 0x89, 0xdb, 0x10, 0x0c, 0x1d, 0x6a, 0xb5, 0xed, 0xc2, 0x42, 0x50, 0x0e, 0x23, 0xdf, 0xe5,
-	0x84, 0xed, 0x3a, 0x60, 0xac, 0xc9, 0x20, 0xbc, 0xf4, 0x5d, 0xb5, 0xb4, 0x5d, 0x7b, 0x54, 0xb4,
-	0x25, 0x4c, 0x61, 0xec, 0xbb, 0x1a, 0xcd, 0xe7, 0x6c, 0x98, 0xa2, 0x4e, 0x14, 0x55, 0xee, 0xa7,
-	0x26, 0x0e, 0x77, 0x2d, 0xbb, 0x25, 0xf7, 0x41, 0x30, 0xfd, 0x60, 0xe0, 0x95, 0xdf, 0x52, 0x6b,
-	0x58, 0xba, 0xab, 0xd2, 0x9a, 0xbe, 0xf6, 0xb4, 0x35, 0x78, 0xc4, 0x18, 0x1e, 0x0d, 0x96, 0x9a,
-	0x64, 0xa9, 0x81, 0x3b, 0xdc, 0x71, 0x3e, 0x7e, 0xfa, 0x7d, 0x89, 0x82, 0xf3, 0x25, 0x0a, 0xfe,
-	0x5e, 0xa2, 0xe0, 0xd7, 0x35, 0xea, 0x9d, 0xaf, 0x51, 0xef, 0xcf, 0x35, 0xea, 0x7d, 0x7b, 0x97,
-	0x91, 0xf9, 0xbe, 0x8b, 0x57, 0x89, 0x2c, 0xd6, 0xcd, 0xe3, 0x6b, 0xce, 0x63, 0x3b, 0x99, 0x53,
-	0x85, 0x3a, 0x7e, 0x74, 0x2f, 0xeb, 0xfd, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x39, 0x9f,
-	0xe8, 0xa6, 0x02, 0x00, 0x00,
+	// 475 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xcb, 0x6e, 0xd3, 0x40,
+	0x14, 0xcd, 0xe4, 0xd1, 0x24, 0x37, 0xa1, 0x2d, 0xa3, 0x48, 0x8c, 0x2c, 0x64, 0x59, 0x5d, 0x59,
+	0x2c, 0x1c, 0xa9, 0x6c, 0x50, 0x76, 0x54, 0xb0, 0xe3, 0x21, 0x59, 0x62, 0xc3, 0x6e, 0x12, 0xdf,
+	0x9a, 0x11, 0xb6, 0xc7, 0x9a, 0x99, 0xa4, 0x0d, 0x5f, 0xc1, 0x67, 0xb1, 0xec, 0x92, 0x25, 0x4a,
+	0xfe, 0x82, 0x15, 0x9a, 0xb1, 0xe3, 0xb8, 0x15, 0x88, 0xae, 0x7c, 0xcf, 0x39, 0xf7, 0xe1, 0xfb,
+	0x18, 0xf0, 0x52, 0x61, 0x64, 0x29, 0xf8, 0x5c, 0xaa, 0x94, 0x17, 0xe2, 0x1b, 0x37, 0x42, 0x16,
+	0x51, 0xa9, 0xa4, 0x91, 0xf4, 0x59, 0xad, 0x45, 0x0f, 0xbe, 0xde, 0x2c, 0x95, 0xa9, 0x74, 0x3e,
+	0x73, 0x6b, 0x55, 0xee, 0x17, 0xbf, 0x07, 0x30, 0xfd, 0xd8, 0xca, 0x42, 0x19, 0x0c, 0x57, 0x0a,
+	0xb9, 0x91, 0x8a, 0x91, 0x80, 0x84, 0xe3, 0xf8, 0x00, 0xe9, 0x29, 0x74, 0x45, 0xc2, 0xba, 0x01,
+	0x09, 0xfb, 0x71, 0x57, 0x24, 0x94, 0x42, 0xbf, 0xe0, 0x39, 0xb2, 0x9e, 0x73, 0x73, 0x36, 0x7d,
+	0x0e, 0x63, 0xbe, 0xe1, 0x86, 0xab, 0x4f, 0x2a, 0x63, 0x7d, 0x27, 0x1c, 0x09, 0xab, 0x5e, 0xcb,
+	0x2c, 0x93, 0x37, 0xa8, 0x34, 0x1b, 0x04, 0xbd, 0xb0, 0x1f, 0x1f, 0x89, 0xa3, 0x2a, 0x8a, 0x94,
+	0x9d, 0xb4, 0x55, 0x51, 0xa4, 0xf4, 0x02, 0xa6, 0x0a, 0x4b, 0xa9, 0x85, 0x91, 0x4a, 0xa0, 0x66,
+	0x43, 0xe7, 0x70, 0x8f, 0xa3, 0x09, 0x9c, 0x35, 0x78, 0xfb, 0x81, 0xe7, 0xa8, 0xd9, 0x28, 0xe8,
+	0x85, 0x93, 0xcb, 0x45, 0xf4, 0x8f, 0xa9, 0x44, 0xed, 0xde, 0xa3, 0xf8, 0x7e, 0xf0, 0xdb, 0xc2,
+	0xa8, 0x6d, 0xfc, 0x30, 0x25, 0x9d, 0xc1, 0xc0, 0x20, 0xcf, 0x35, 0x1b, 0xbb, 0x5f, 0xa8, 0x00,
+	0x7d, 0x07, 0xc3, 0x1c, 0xf3, 0xa5, 0xed, 0x0c, 0x5c, 0xcd, 0xcb, 0xc7, 0xd5, 0x7c, 0x5f, 0x05,
+	0x55, 0xb5, 0x0e, 0x29, 0xa8, 0x07, 0xa3, 0x4c, 0xae, 0x9c, 0x07, 0x9b, 0xb8, 0x31, 0x36, 0xd8,
+	0xd6, 0xc7, 0x9c, 0x8b, 0x8c, 0x4d, 0x9d, 0x50, 0x01, 0xbb, 0xb7, 0x1b, 0x5c, 0x6a, 0x61, 0x90,
+	0x3d, 0xa9, 0xf6, 0x56, 0x43, 0x9b, 0x6b, 0x83, 0x4a, 0x5c, 0x0b, 0x4c, 0xd8, 0x69, 0x40, 0xc2,
+	0x51, 0xdc, 0x60, 0x1a, 0xc0, 0x24, 0x41, 0xbd, 0x52, 0xa2, 0x74, 0xa5, 0xce, 0x5c, 0x64, 0x9b,
+	0xb2, 0x5b, 0x71, 0x07, 0x80, 0xc9, 0x6b, 0xc3, 0xce, 0x03, 0x12, 0xf6, 0xe2, 0x23, 0x61, 0xd5,
+	0x75, 0x99, 0xd4, 0xea, 0xd3, 0x4a, 0x6d, 0x08, 0xea, 0x03, 0xe0, 0xad, 0xc1, 0x42, 0x0b, 0x59,
+	0x68, 0x46, 0x5d, 0xf2, 0x16, 0xe3, 0x5d, 0xc1, 0xec, 0x6f, 0x23, 0xa7, 0xe7, 0xd0, 0xfb, 0x8a,
+	0xdb, 0xfa, 0xfe, 0xac, 0x69, 0x7b, 0xde, 0xf0, 0x6c, 0x8d, 0xf5, 0xf9, 0x55, 0x60, 0xd1, 0x7d,
+	0x45, 0xbc, 0x05, 0x4c, 0xdb, 0x23, 0xfc, 0x5f, 0xec, 0xb8, 0x15, 0x7b, 0xf5, 0xe6, 0xc7, 0xce,
+	0x27, 0x77, 0x3b, 0x9f, 0xfc, 0xda, 0xf9, 0xe4, 0xfb, 0xde, 0xef, 0xdc, 0xed, 0xfd, 0xce, 0xcf,
+	0xbd, 0xdf, 0xf9, 0xfc, 0x22, 0x15, 0xe6, 0xcb, 0x7a, 0x19, 0xad, 0x64, 0x3e, 0x3f, 0x3c, 0xb6,
+	0xc3, 0xf7, 0xb6, 0xb1, 0xcc, 0xb6, 0x44, 0xbd, 0x3c, 0x71, 0x2f, 0xe9, 0xe5, 0x9f, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x32, 0xe7, 0xf1, 0x2e, 0x96, 0x03, 0x00, 0x00,
 }
 
 func (m *Organization) Marshal() (dAtA []byte, err error) {
@@ -267,23 +274,19 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x92
 	}
-	if len(m.UpdatedAt) > 0 {
-		i -= len(m.UpdatedAt)
-		copy(dAtA[i:], m.UpdatedAt)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.UpdatedAt)))
+	if m.UpdatedAt != 0 {
+		i = encodeVarintOrganization(dAtA, i, uint64(m.UpdatedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x8a
+		dAtA[i] = 0x88
 	}
-	if len(m.CreatedAt) > 0 {
-		i -= len(m.CreatedAt)
-		copy(dAtA[i:], m.CreatedAt)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.CreatedAt)))
+	if m.CreatedAt != 0 {
+		i = encodeVarintOrganization(dAtA, i, uint64(m.CreatedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x82
+		dAtA[i] = 0x80
 	}
 	if len(m.Description) > 0 {
 		i -= len(m.Description)
@@ -292,12 +295,15 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x7a
 	}
-	if len(m.Verified) > 0 {
-		i -= len(m.Verified)
-		copy(dAtA[i:], m.Verified)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Verified)))
+	if m.Verified {
 		i--
-		dAtA[i] = 0x72
+		if m.Verified {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x70
 	}
 	if len(m.Website) > 0 {
 		i -= len(m.Website)
@@ -321,44 +327,110 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x5a
 	}
 	if len(m.Members) > 0 {
-		i -= len(m.Members)
-		copy(dAtA[i:], m.Members)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Members)))
-		i--
-		dAtA[i] = 0x52
+		for k := range m.Members {
+			v := m.Members[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintOrganization(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintOrganization(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOrganization(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x52
+		}
 	}
 	if len(m.Teams) > 0 {
-		i -= len(m.Teams)
-		copy(dAtA[i:], m.Teams)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Teams)))
+		dAtA2 := make([]byte, len(m.Teams)*10)
+		var j1 int
+		for _, num := range m.Teams {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintOrganization(dAtA, i, uint64(j1))
 		i--
 		dAtA[i] = 0x4a
 	}
 	if len(m.RepositoryNames) > 0 {
-		i -= len(m.RepositoryNames)
-		copy(dAtA[i:], m.RepositoryNames)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.RepositoryNames)))
-		i--
-		dAtA[i] = 0x42
+		for k := range m.RepositoryNames {
+			v := m.RepositoryNames[k]
+			baseI := i
+			i = encodeVarintOrganization(dAtA, i, uint64(v))
+			i--
+			dAtA[i] = 0x10
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintOrganization(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOrganization(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x42
+		}
 	}
 	if len(m.Repositories) > 0 {
-		i -= len(m.Repositories)
-		copy(dAtA[i:], m.Repositories)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Repositories)))
+		dAtA4 := make([]byte, len(m.Repositories)*10)
+		var j3 int
+		for _, num := range m.Repositories {
+			for num >= 1<<7 {
+				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j3++
+			}
+			dAtA4[j3] = uint8(num)
+			j3++
+		}
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintOrganization(dAtA, i, uint64(j3))
 		i--
 		dAtA[i] = 0x3a
 	}
 	if len(m.Following) > 0 {
-		i -= len(m.Following)
-		copy(dAtA[i:], m.Following)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Following)))
+		dAtA6 := make([]byte, len(m.Following)*10)
+		var j5 int
+		for _, num := range m.Following {
+			for num >= 1<<7 {
+				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j5++
+			}
+			dAtA6[j5] = uint8(num)
+			j5++
+		}
+		i -= j5
+		copy(dAtA[i:], dAtA6[:j5])
+		i = encodeVarintOrganization(dAtA, i, uint64(j5))
 		i--
 		dAtA[i] = 0x32
 	}
 	if len(m.Followers) > 0 {
-		i -= len(m.Followers)
-		copy(dAtA[i:], m.Followers)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Followers)))
+		dAtA8 := make([]byte, len(m.Followers)*10)
+		var j7 int
+		for _, num := range m.Followers {
+			for num >= 1<<7 {
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j7++
+			}
+			dAtA8[j7] = uint8(num)
+			j7++
+		}
+		i -= j7
+		copy(dAtA[i:], dAtA8[:j7])
+		i = encodeVarintOrganization(dAtA, i, uint64(j7))
 		i--
 		dAtA[i] = 0x2a
 	}
@@ -423,29 +495,49 @@ func (m *Organization) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
-	l = len(m.Followers)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.Followers) > 0 {
+		l = 0
+		for _, e := range m.Followers {
+			l += sovOrganization(uint64(e))
+		}
+		n += 1 + sovOrganization(uint64(l)) + l
 	}
-	l = len(m.Following)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.Following) > 0 {
+		l = 0
+		for _, e := range m.Following {
+			l += sovOrganization(uint64(e))
+		}
+		n += 1 + sovOrganization(uint64(l)) + l
 	}
-	l = len(m.Repositories)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.Repositories) > 0 {
+		l = 0
+		for _, e := range m.Repositories {
+			l += sovOrganization(uint64(e))
+		}
+		n += 1 + sovOrganization(uint64(l)) + l
 	}
-	l = len(m.RepositoryNames)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.RepositoryNames) > 0 {
+		for k, v := range m.RepositoryNames {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovOrganization(uint64(len(k))) + 1 + sovOrganization(uint64(v))
+			n += mapEntrySize + 1 + sovOrganization(uint64(mapEntrySize))
+		}
 	}
-	l = len(m.Teams)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.Teams) > 0 {
+		l = 0
+		for _, e := range m.Teams {
+			l += sovOrganization(uint64(e))
+		}
+		n += 1 + sovOrganization(uint64(l)) + l
 	}
-	l = len(m.Members)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if len(m.Members) > 0 {
+		for k, v := range m.Members {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovOrganization(uint64(len(k))) + 1 + len(v) + sovOrganization(uint64(len(v)))
+			n += mapEntrySize + 1 + sovOrganization(uint64(mapEntrySize))
+		}
 	}
 	l = len(m.Location)
 	if l > 0 {
@@ -459,21 +551,18 @@ func (m *Organization) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
-	l = len(m.Verified)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if m.Verified {
+		n += 2
 	}
 	l = len(m.Description)
 	if l > 0 {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
-	l = len(m.CreatedAt)
-	if l > 0 {
-		n += 2 + l + sovOrganization(uint64(l))
+	if m.CreatedAt != 0 {
+		n += 2 + sovOrganization(uint64(m.CreatedAt))
 	}
-	l = len(m.UpdatedAt)
-	if l > 0 {
-		n += 2 + l + sovOrganization(uint64(l))
+	if m.UpdatedAt != 0 {
+		n += 2 + sovOrganization(uint64(m.UpdatedAt))
 	}
 	l = len(m.Extensions)
 	if l > 0 {
@@ -633,106 +722,238 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			m.AvatarUrl = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 5:
-			if wireType != 2 {
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Followers = append(m.Followers, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Followers) == 0 {
+					m.Followers = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Followers = append(m.Followers, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Followers", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOrganization
+		case 6:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Following = append(m.Following, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Followers = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
+				elementCount = count
+				if elementCount != 0 && len(m.Following) == 0 {
+					m.Following = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Following = append(m.Following, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Following", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOrganization
+		case 7:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Repositories = append(m.Repositories, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Following = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
+				elementCount = count
+				if elementCount != 0 && len(m.Repositories) == 0 {
+					m.Repositories = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Repositories = append(m.Repositories, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Repositories", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOrganization
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Repositories = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryNames", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -742,61 +963,186 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthOrganization
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthOrganization
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.RepositoryNames = string(dAtA[iNdEx:postIndex])
+			if m.RepositoryNames == nil {
+				m.RepositoryNames = make(map[string]uint64)
+			}
+			var mapkey string
+			var mapvalue uint64
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOrganization(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.RepositoryNames[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Teams", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOrganization
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Teams = append(m.Teams, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthOrganization
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
+				elementCount = count
+				if elementCount != 0 && len(m.Teams) == 0 {
+					m.Teams = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Teams = append(m.Teams, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Teams", wireType)
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Teams = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Members", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -806,23 +1152,118 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthOrganization
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthOrganization
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Members = string(dAtA[iNdEx:postIndex])
+			if m.Members == nil {
+				m.Members = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOrganization
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOrganization
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOrganization(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthOrganization
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Members[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 11:
 			if wireType != 2 {
@@ -921,10 +1362,10 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			m.Website = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 14:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Verified", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -934,24 +1375,12 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Verified = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.Verified = bool(v != 0)
 		case 15:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
@@ -985,10 +1414,10 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 16:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
-			var stringLen uint64
+			m.CreatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -998,29 +1427,16 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.CreatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CreatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 17:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
-			var stringLen uint64
+			m.UpdatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -1030,24 +1446,11 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.UpdatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 18:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Extensions", wireType)
