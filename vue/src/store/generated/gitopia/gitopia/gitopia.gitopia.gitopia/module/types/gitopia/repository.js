@@ -98,8 +98,11 @@ export const Repository = {
         if (message.defaultBranch !== "") {
             writer.uint32(170).string(message.defaultBranch);
         }
+        Object.entries(message.collaborators).forEach(([key, value]) => {
+            Repository_CollaboratorsEntry.encode({ key: key, value }, writer.uint32(178).fork()).ldelim();
+        });
         if (message.extensions !== "") {
-            writer.uint32(178).string(message.extensions);
+            writer.uint32(186).string(message.extensions);
         }
         return writer;
     },
@@ -112,6 +115,7 @@ export const Repository = {
         message.issues = [];
         message.pulls = [];
         message.stargazers = [];
+        message.collaborators = {};
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -214,6 +218,12 @@ export const Repository = {
                     message.defaultBranch = reader.string();
                     break;
                 case 22:
+                    const entry22 = Repository_CollaboratorsEntry.decode(reader, reader.uint32());
+                    if (entry22.value !== undefined) {
+                        message.collaborators[entry22.key] = entry22.value;
+                    }
+                    break;
+                case 23:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -230,6 +240,7 @@ export const Repository = {
         message.issues = [];
         message.pulls = [];
         message.stargazers = [];
+        message.collaborators = {};
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -351,6 +362,11 @@ export const Repository = {
         else {
             message.defaultBranch = "";
         }
+        if (object.collaborators !== undefined && object.collaborators !== null) {
+            Object.entries(object.collaborators).forEach(([key, value]) => {
+                message.collaborators[key] = String(value);
+            });
+        }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = String(object.extensions);
         }
@@ -410,6 +426,12 @@ export const Repository = {
         message.license !== undefined && (obj.license = message.license);
         message.defaultBranch !== undefined &&
             (obj.defaultBranch = message.defaultBranch);
+        obj.collaborators = {};
+        if (message.collaborators) {
+            Object.entries(message.collaborators).forEach(([k, v]) => {
+                obj.collaborators[k] = v;
+            });
+        }
         message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
@@ -420,6 +442,7 @@ export const Repository = {
         message.issues = [];
         message.pulls = [];
         message.stargazers = [];
+        message.collaborators = {};
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -543,6 +566,13 @@ export const Repository = {
         else {
             message.defaultBranch = "";
         }
+        if (object.collaborators !== undefined && object.collaborators !== null) {
+            Object.entries(object.collaborators).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    message.collaborators[key] = String(value);
+                }
+            });
+        }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = object.extensions;
         }
@@ -612,6 +642,82 @@ export const Repository_BranchesEntry = {
     fromPartial(object) {
         const message = {
             ...baseRepository_BranchesEntry,
+        };
+        if (object.key !== undefined && object.key !== null) {
+            message.key = object.key;
+        }
+        else {
+            message.key = "";
+        }
+        if (object.value !== undefined && object.value !== null) {
+            message.value = object.value;
+        }
+        else {
+            message.value = "";
+        }
+        return message;
+    },
+};
+const baseRepository_CollaboratorsEntry = { key: "", value: "" };
+export const Repository_CollaboratorsEntry = {
+    encode(message, writer = Writer.create()) {
+        if (message.key !== "") {
+            writer.uint32(10).string(message.key);
+        }
+        if (message.value !== "") {
+            writer.uint32(18).string(message.value);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseRepository_CollaboratorsEntry,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.key = reader.string();
+                    break;
+                case 2:
+                    message.value = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseRepository_CollaboratorsEntry,
+        };
+        if (object.key !== undefined && object.key !== null) {
+            message.key = String(object.key);
+        }
+        else {
+            message.key = "";
+        }
+        if (object.value !== undefined && object.value !== null) {
+            message.value = String(object.value);
+        }
+        else {
+            message.value = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.key !== undefined && (obj.key = message.key);
+        message.value !== undefined && (obj.value = message.value);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseRepository_CollaboratorsEntry,
         };
         if (object.key !== undefined && object.key !== null) {
             message.key = object.key;

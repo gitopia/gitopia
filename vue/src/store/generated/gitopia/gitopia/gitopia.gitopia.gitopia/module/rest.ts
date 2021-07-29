@@ -319,6 +319,7 @@ export interface GitopiaRepository {
   archived?: boolean;
   license?: string;
   defaultBranch?: string;
+  collaborators?: Record<string, string>;
   extensions?: string;
 }
 
