@@ -44,21 +44,7 @@ service Msg {
 message MsgCreateOrganization {
   string creator = 1;
   string name = 2;
-  string avatarUrl = 3;
-  string followers = 4;
-  string following = 5;
-  string repositories = 6;
-  string repositoryNames = 7;
-  string teams = 8;
-  string members = 9;
-  string location = 10;
-  string email = 11;
-  string website = 12;
-  string verified = 13;
-  string description = 14;
-  string createdAt = 15;
-  string updatedAt = 16;
-  string extensions = 17;
+  string description = 3;
 }
 
 message MsgCreateOrganizationResponse {
@@ -70,20 +56,10 @@ message MsgUpdateOrganization {
   uint64 id = 2;
   string name = 3;
   string avatarUrl = 4;
-  string followers = 5;
-  string following = 6;
-  string repositories = 7;
-  string repositoryNames = 8;
-  string teams = 9;
-  string members = 10;
-  string location = 11;
-  string email = 12;
-  string website = 13;
-  string verified = 14;
-  string description = 15;
-  string createdAt = 16;
-  string updatedAt = 17;
-  string extensions = 18;
+  string location = 5;
+  string email = 6;
+  string website = 7;
+  string description = 8;
 }
 
 message MsgUpdateOrganizationResponse { }

@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,24 +13,19 @@ import (
 func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreateOrganization) (*types.MsgCreateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	createdAt := time.Now().Unix()
+	updatedAt := createdAt
+	members := map[string]string{msg.Creator: "Owner"}
+	verified := false
+
 	var organization = types.Organization{
-		Creator:         msg.Creator,
-		Name:            msg.Name,
-		AvatarUrl:       msg.AvatarUrl,
-		Followers:       msg.Followers,
-		Following:       msg.Following,
-		Repositories:    msg.Repositories,
-		RepositoryNames: msg.RepositoryNames,
-		Teams:           msg.Teams,
-		Members:         msg.Members,
-		Location:        msg.Location,
-		Email:           msg.Email,
-		Website:         msg.Website,
-		Verified:        msg.Verified,
-		Description:     msg.Description,
-		CreatedAt:       msg.CreatedAt,
-		UpdatedAt:       msg.UpdatedAt,
-		Extensions:      msg.Extensions,
+		Creator:     msg.Creator,
+		Name:        msg.Name,
+		Description: msg.Description,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
+		Members:     members,
+		Verified:    verified,
 	}
 
 	id := k.AppendOrganization(
@@ -45,36 +41,25 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdateOrganization) (*types.MsgUpdateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var organization = types.Organization{
-		Creator:         msg.Creator,
-		Id:              msg.Id,
-		Name:            msg.Name,
-		AvatarUrl:       msg.AvatarUrl,
-		Followers:       msg.Followers,
-		Following:       msg.Following,
-		Repositories:    msg.Repositories,
-		RepositoryNames: msg.RepositoryNames,
-		Teams:           msg.Teams,
-		Members:         msg.Members,
-		Location:        msg.Location,
-		Email:           msg.Email,
-		Website:         msg.Website,
-		Verified:        msg.Verified,
-		Description:     msg.Description,
-		CreatedAt:       msg.CreatedAt,
-		UpdatedAt:       msg.UpdatedAt,
-		Extensions:      msg.Extensions,
-	}
-
 	// Checks that the element exists
 	if !k.HasOrganization(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	organization := k.GetOrganization(ctx, msg.Id)
+
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetOrganizationOwner(ctx, msg.Id) {
+	if organization.Members[msg.Creator] != "Owner" {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
+
+	organization.Name = msg.Name
+	organization.AvatarUrl = msg.AvatarUrl
+	organization.Location = msg.Location
+	organization.Email = msg.Email
+	organization.Website = msg.Website
+	organization.Description = msg.Description
+	organization.UpdatedAt = time.Now().Unix()
 
 	k.SetOrganization(ctx, organization)
 

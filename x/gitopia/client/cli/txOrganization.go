@@ -15,71 +15,15 @@ import (
 
 func CmdCreateOrganization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-organization [name] [avatarUrl] [followers] [following] [repositories] [repositoryNames] [teams] [members] [location] [email] [website] [verified] [description] [createdAt] [updatedAt] [extensions]",
+		Use:   "create-organization [name] [description]",
 		Short: "Create a new organization",
-		Args:  cobra.ExactArgs(16),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
-			argsAvatarUrl, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-			argsFollowers, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsFollowing, err := cast.ToStringE(args[3])
-			if err != nil {
-				return err
-			}
-			argsRepositories, err := cast.ToStringE(args[4])
-			if err != nil {
-				return err
-			}
-			argsRepositoryNames, err := cast.ToStringE(args[5])
-			if err != nil {
-				return err
-			}
-			argsTeams, err := cast.ToStringE(args[6])
-			if err != nil {
-				return err
-			}
-			argsMembers, err := cast.ToStringE(args[7])
-			if err != nil {
-				return err
-			}
-			argsLocation, err := cast.ToStringE(args[8])
-			if err != nil {
-				return err
-			}
-			argsEmail, err := cast.ToStringE(args[9])
-			if err != nil {
-				return err
-			}
-			argsWebsite, err := cast.ToStringE(args[10])
-			if err != nil {
-				return err
-			}
-			argsVerified, err := cast.ToStringE(args[11])
-			if err != nil {
-				return err
-			}
-			argsDescription, err := cast.ToStringE(args[12])
-			if err != nil {
-				return err
-			}
-			argsCreatedAt, err := cast.ToStringE(args[13])
-			if err != nil {
-				return err
-			}
-			argsUpdatedAt, err := cast.ToStringE(args[14])
-			if err != nil {
-				return err
-			}
-			argsExtensions, err := cast.ToStringE(args[15])
+			argsDescription, err := cast.ToStringE(args[1])
 			if err != nil {
 				return err
 			}
@@ -89,7 +33,7 @@ func CmdCreateOrganization() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateOrganization(clientCtx.GetFromAddress().String(), argsName, argsAvatarUrl, argsFollowers, argsFollowing, argsRepositories, argsRepositoryNames, argsTeams, argsMembers, argsLocation, argsEmail, argsWebsite, argsVerified, argsDescription, argsCreatedAt, argsUpdatedAt, argsExtensions)
+			msg := types.NewMsgCreateOrganization(clientCtx.GetFromAddress().String(), argsName, argsDescription)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -104,9 +48,9 @@ func CmdCreateOrganization() *cobra.Command {
 
 func CmdUpdateOrganization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization [id] [name] [avatarUrl] [followers] [following] [repositories] [repositoryNames] [teams] [members] [location] [email] [website] [verified] [description] [createdAt] [updatedAt] [extensions]",
+		Use:   "update-organization [id] [name] [avatarUrl] [location] [email] [website] [description]",
 		Short: "Update a organization",
-		Args:  cobra.ExactArgs(17),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -123,72 +67,22 @@ func CmdUpdateOrganization() *cobra.Command {
 				return err
 			}
 
-			argsFollowers, err := cast.ToStringE(args[3])
+			argsLocation, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
 
-			argsFollowing, err := cast.ToStringE(args[4])
+			argsEmail, err := cast.ToStringE(args[4])
 			if err != nil {
 				return err
 			}
 
-			argsRepositories, err := cast.ToStringE(args[5])
+			argsWebsite, err := cast.ToStringE(args[5])
 			if err != nil {
 				return err
 			}
 
-			argsRepositoryNames, err := cast.ToStringE(args[6])
-			if err != nil {
-				return err
-			}
-
-			argsTeams, err := cast.ToStringE(args[7])
-			if err != nil {
-				return err
-			}
-
-			argsMembers, err := cast.ToStringE(args[8])
-			if err != nil {
-				return err
-			}
-
-			argsLocation, err := cast.ToStringE(args[9])
-			if err != nil {
-				return err
-			}
-
-			argsEmail, err := cast.ToStringE(args[10])
-			if err != nil {
-				return err
-			}
-
-			argsWebsite, err := cast.ToStringE(args[11])
-			if err != nil {
-				return err
-			}
-
-			argsVerified, err := cast.ToStringE(args[12])
-			if err != nil {
-				return err
-			}
-
-			argsDescription, err := cast.ToStringE(args[13])
-			if err != nil {
-				return err
-			}
-
-			argsCreatedAt, err := cast.ToStringE(args[14])
-			if err != nil {
-				return err
-			}
-
-			argsUpdatedAt, err := cast.ToStringE(args[15])
-			if err != nil {
-				return err
-			}
-
-			argsExtensions, err := cast.ToStringE(args[16])
+			argsDescription, err := cast.ToStringE(args[6])
 			if err != nil {
 				return err
 			}
@@ -198,7 +92,7 @@ func CmdUpdateOrganization() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganization(clientCtx.GetFromAddress().String(), id, argsName, argsAvatarUrl, argsFollowers, argsFollowing, argsRepositories, argsRepositoryNames, argsTeams, argsMembers, argsLocation, argsEmail, argsWebsite, argsVerified, argsDescription, argsCreatedAt, argsUpdatedAt, argsExtensions)
+			msg := types.NewMsgUpdateOrganization(clientCtx.GetFromAddress().String(), id, argsName, argsAvatarUrl, argsLocation, argsEmail, argsWebsite, argsDescription)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

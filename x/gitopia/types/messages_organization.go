@@ -7,25 +7,11 @@ import (
 
 var _ sdk.Msg = &MsgCreateOrganization{}
 
-func NewMsgCreateOrganization(creator string, name string, avatarUrl string, followers string, following string, repositories string, repositoryNames string, teams string, members string, location string, email string, website string, verified string, description string, createdAt string, updatedAt string, extensions string) *MsgCreateOrganization {
+func NewMsgCreateOrganization(creator string, name string, description string) *MsgCreateOrganization {
 	return &MsgCreateOrganization{
-		Creator:         creator,
-		Name:            name,
-		AvatarUrl:       avatarUrl,
-		Followers:       followers,
-		Following:       following,
-		Repositories:    repositories,
-		RepositoryNames: repositoryNames,
-		Teams:           teams,
-		Members:         members,
-		Location:        location,
-		Email:           email,
-		Website:         website,
-		Verified:        verified,
-		Description:     description,
-		CreatedAt:       createdAt,
-		UpdatedAt:       updatedAt,
-		Extensions:      extensions,
+		Creator:     creator,
+		Name:        name,
+		Description: description,
 	}
 }
 
@@ -60,26 +46,16 @@ func (msg *MsgCreateOrganization) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateOrganization{}
 
-func NewMsgUpdateOrganization(creator string, id uint64, name string, avatarUrl string, followers string, following string, repositories string, repositoryNames string, teams string, members string, location string, email string, website string, verified string, description string, createdAt string, updatedAt string, extensions string) *MsgUpdateOrganization {
+func NewMsgUpdateOrganization(creator string, id uint64, name string, avatarUrl string, location string, email string, website string, description string) *MsgUpdateOrganization {
 	return &MsgUpdateOrganization{
-		Id:              id,
-		Creator:         creator,
-		Name:            name,
-		AvatarUrl:       avatarUrl,
-		Followers:       followers,
-		Following:       following,
-		Repositories:    repositories,
-		RepositoryNames: repositoryNames,
-		Teams:           teams,
-		Members:         members,
-		Location:        location,
-		Email:           email,
-		Website:         website,
-		Verified:        verified,
-		Description:     description,
-		CreatedAt:       createdAt,
-		UpdatedAt:       updatedAt,
-		Extensions:      extensions,
+		Id:          id,
+		Creator:     creator,
+		Name:        name,
+		AvatarUrl:   avatarUrl,
+		Location:    location,
+		Email:       email,
+		Website:     website,
+		Description: description,
 	}
 }
 

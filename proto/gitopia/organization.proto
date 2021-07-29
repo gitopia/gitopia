@@ -10,18 +10,18 @@ message Organization {
   uint64 id = 2;
   string name = 3; 
   string avatarUrl = 4; 
-  string followers = 5; 
-  string following = 6; 
-  string repositories = 7; 
-  string repositoryNames = 8; 
-  string teams = 9; 
-  string members = 10; 
+  repeated uint64 followers = 5; 
+  repeated uint64 following = 6; 
+  repeated uint64 repositories = 7; 
+  map<string, uint64> repositoryNames = 8; 
+  repeated uint64 teams = 9; 
+  map<string, string> members = 10; 
   string location = 11; 
   string email = 12; 
   string website = 13; 
-  string verified = 14; 
+  bool verified = 14; 
   string description = 15; 
-  string createdAt = 16; 
-  string updatedAt = 17; 
+  int64 createdAt = 16; 
+  int64 updatedAt = 17; 
   string extensions = 18; 
 }
