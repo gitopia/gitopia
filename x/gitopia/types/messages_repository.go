@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"strconv"
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -70,15 +71,22 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
+
 	var o Owner
 	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
 	}
-	_, err = sdk.AccAddressFromBech32(o.ID)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if o.Type != "User" && o.Type != "Organisation" {
+	if o.Type == "User" {
+		_, err = sdk.AccAddressFromBech32(o.ID)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		}
+	} else if o.Type == "Organization" {
+		_, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+	} else {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
 	}
 	return nil

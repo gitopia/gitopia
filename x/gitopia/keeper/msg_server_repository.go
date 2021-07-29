@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,6 +30,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	}
 
 	var user types.User
+	var organization types.Organization
 	if o.Type == "User" {
 		if msg.Creator != o.ID {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
@@ -48,7 +50,24 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
 		}
 	} else if o.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", o.ID))
+		}
+
+		organization = k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		if _, exists := organization.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
 	}
 
 	createdAt := time.Now().Unix()
@@ -85,7 +104,16 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 		k.SetUser(ctx, user)
 	} else if o.Type == "Organization" {
-		// Todo
+		organization.Repositories = append(organization.Repositories, id)
+
+		// Initialize the map if it's nil
+		if organization.RepositoryNames == nil {
+			organization.RepositoryNames = make(map[string]uint64)
+		}
+
+		organization.RepositoryNames[repository.Name] = id
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	return &types.MsgCreateRepositoryResponse{
