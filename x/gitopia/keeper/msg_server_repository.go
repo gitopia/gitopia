@@ -23,15 +23,6 @@ func ElementExists(s []uint64, val uint64) (int, bool) {
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
 	var o Owner
 	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
@@ -39,6 +30,15 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 	var user types.User
 	if o.Type == "User" {
+		if !k.HasUser(ctx, msg.Creator) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+		}
+
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
 		user = k.GetUser(ctx, o.ID)
 		if _, exists := user.RepositoryNames[msg.Name]; exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
