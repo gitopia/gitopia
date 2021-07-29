@@ -13,12 +13,12 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if user exists already
-	if (k.HasUser(ctx, msg.Creator)) {
+	if k.HasUser(ctx, msg.Creator) {
 		return &types.MsgCreateUserResponse{}, fmt.Errorf("user already exists: %v", msg.Creator)
 	}
 
 	// Check if username is available
-	if (k.HasWhois(ctx, msg.Username)) {
+	if k.HasWhois(ctx, msg.Username) {
 		return &types.MsgCreateUserResponse{}, fmt.Errorf("username is already taken: %v", msg.Username)
 	}
 

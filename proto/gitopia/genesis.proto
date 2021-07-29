@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # genesis/proto/import
+import "gitopia/organization.proto";
 import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
@@ -13,6 +14,8 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
     // this line is used by starport scaffolding # genesis/proto/state
+		repeated Organization organizationList = 11; // this line is used by starport scaffolding # genesis/proto/stateField
+		uint64 organizationCount = 12; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated Comment commentList = 9; // this line is used by starport scaffolding # genesis/proto/stateField
 		uint64 commentCount = 10; // this line is used by starport scaffolding # genesis/proto/stateField
 		repeated Issue issueList = 7; // this line is used by starport scaffolding # genesis/proto/stateField

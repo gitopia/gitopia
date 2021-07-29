@@ -198,6 +198,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryOrganizationAll
+         * @summary Queries a list of organization items.
+         * @request GET:/gitopia/gitopia/gitopia/organization
+         */
+        this.queryOrganizationAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryOrganization
+         * @summary Queries a organization by id.
+         * @request GET:/gitopia/gitopia/gitopia/organization/{id}
+         */
+        this.queryOrganization = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRepositoryAll
          * @summary Queries a list of repository items.
          * @request GET:/gitopia/gitopia/gitopia/repository

@@ -1,13 +1,276 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Comment } from "../gitopia/comment";
+import { Organization } from "../gitopia/organization";
 import { PageRequest, PageResponse, } from "../cosmos/base/query/v1beta1/pagination";
+import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseQueryGetOrganizationRequest = { id: 0 };
+export const QueryGetOrganizationRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetOrganizationRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetOrganizationRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetOrganizationRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseQueryGetOrganizationResponse = {};
+export const QueryGetOrganizationResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Organization !== undefined) {
+            Organization.encode(message.Organization, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetOrganizationResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Organization = Organization.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetOrganizationResponse,
+        };
+        if (object.Organization !== undefined && object.Organization !== null) {
+            message.Organization = Organization.fromJSON(object.Organization);
+        }
+        else {
+            message.Organization = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Organization !== undefined &&
+            (obj.Organization = message.Organization
+                ? Organization.toJSON(message.Organization)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetOrganizationResponse,
+        };
+        if (object.Organization !== undefined && object.Organization !== null) {
+            message.Organization = Organization.fromPartial(object.Organization);
+        }
+        else {
+            message.Organization = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllOrganizationRequest = {};
+export const QueryAllOrganizationRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllOrganizationRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllOrganizationRequest,
+        };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllOrganizationRequest,
+        };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllOrganizationResponse = {};
+export const QueryAllOrganizationResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Organization) {
+            Organization.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllOrganizationResponse,
+        };
+        message.Organization = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Organization.push(Organization.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllOrganizationResponse,
+        };
+        message.Organization = [];
+        if (object.Organization !== undefined && object.Organization !== null) {
+            for (const e of object.Organization) {
+                message.Organization.push(Organization.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Organization) {
+            obj.Organization = message.Organization.map((e) => e ? Organization.toJSON(e) : undefined);
+        }
+        else {
+            obj.Organization = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllOrganizationResponse,
+        };
+        message.Organization = [];
+        if (object.Organization !== undefined && object.Organization !== null) {
+            for (const e of object.Organization) {
+                message.Organization.push(Organization.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
 const baseQueryGetCommentRequest = { id: 0 };
 export const QueryGetCommentRequest = {
     encode(message, writer = Writer.create()) {
@@ -1695,6 +1958,16 @@ export const QueryAllWhoisResponse = {
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
+    }
+    Organization(request) {
+        const data = QueryGetOrganizationRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "Organization", data);
+        return promise.then((data) => QueryGetOrganizationResponse.decode(new Reader(data)));
+    }
+    OrganizationAll(request) {
+        const data = QueryAllOrganizationRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "OrganizationAll", data);
+        return promise.then((data) => QueryAllOrganizationResponse.decode(new Reader(data)));
     }
     Comment(request) {
         const data = QueryGetCommentRequest.encode(request).finish();

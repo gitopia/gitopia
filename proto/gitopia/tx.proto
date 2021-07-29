@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "gitopia/organization.proto";
 import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
@@ -12,6 +13,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
+  rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
@@ -37,6 +41,36 @@ service Msg {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateOrganization {
+  string creator = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message MsgCreateOrganizationResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateOrganization {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string avatarUrl = 4;
+  string location = 5;
+  string email = 6;
+  string website = 7;
+  string description = 8;
+}
+
+message MsgUpdateOrganizationResponse { }
+
+message MsgDeleteOrganization {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteOrganizationResponse { }
+
 message MsgCreateComment {
   string creator = 1;
   uint64 parentId = 2;

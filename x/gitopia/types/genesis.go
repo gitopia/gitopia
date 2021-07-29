@@ -13,11 +13,12 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
 		// this line is used by starport scaffolding # genesis/types/default
-		CommentList:    []*Comment{},
-		IssueList:      []*Issue{},
-		RepositoryList: []*Repository{},
-		UserList:       []*User{},
-		WhoisList:      []*Whois{},
+		OrganizationList: []*Organization{},
+		CommentList:      []*Comment{},
+		IssueList:        []*Issue{},
+		RepositoryList:   []*Repository{},
+		UserList:         []*User{},
+		WhoisList:        []*Whois{},
 	}
 }
 
@@ -27,6 +28,15 @@ func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # ibc/genesistype/validate
 
 	// this line is used by starport scaffolding # genesis/types/validate
+	// Check for duplicated ID in organization
+	organizationIdMap := make(map[uint64]bool)
+
+	for _, elem := range gs.OrganizationList {
+		if _, ok := organizationIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for organization")
+		}
+		organizationIdMap[elem.Id] = true
+	}
 	// Check for duplicated ID in comment
 	commentIdMap := make(map[uint64]bool)
 
