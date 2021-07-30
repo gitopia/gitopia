@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,28 +24,50 @@ func ElementExists(s []uint64, val uint64) (int, bool) {
 func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateRepository) (*types.MsgCreateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
 	var o Owner
 	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
 	}
 
 	var user types.User
+	var organization types.Organization
 	if o.Type == "User" {
+		if msg.Creator != o.ID {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
+		}
+
+		if !k.HasUser(ctx, o.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", o.ID))
+		}
+
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
 		user = k.GetUser(ctx, o.ID)
 		if _, exists := user.RepositoryNames[msg.Name]; exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
 		}
 	} else if o.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", o.ID))
+		}
+
+		organization = k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		if _, exists := organization.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
 	}
 
 	createdAt := time.Now().Unix()
@@ -81,7 +104,16 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 		k.SetUser(ctx, user)
 	} else if o.Type == "Organization" {
-		// Todo
+		organization.Repositories = append(organization.Repositories, id)
+
+		// Initialize the map if it's nil
+		if organization.RepositoryNames == nil {
+			organization.RepositoryNames = make(map[string]uint64)
+		}
+
+		organization.RepositoryNames[repository.Name] = id
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	return &types.MsgCreateRepositoryResponse{
@@ -101,15 +133,20 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	if err != nil {
 		return nil, err
 	}
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != owner.ID {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	repository := k.GetRepository(ctx, msg.Id)
 
 	if owner.Type == "User" {
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != owner.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+		if !k.HasUser(ctx, owner.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", owner.ID))
+		}
+
 		user := k.GetUser(ctx, owner.ID)
+
 		if _, exists := user.RepositoryNames[msg.Name]; exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
 		}
@@ -119,7 +156,29 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 
 		k.SetUser(ctx, user)
 	} else if owner.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(owner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", owner.ID))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+
+		if _, exists := organization.RepositoryNames[msg.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", msg.Name))
+		}
+
+		delete(organization.RepositoryNames, repository.Name)
+		organization.RepositoryNames[msg.Name] = repository.Id
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	repository.Name = msg.Name
@@ -268,15 +327,19 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	if err != nil {
 		return nil, err
 	}
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != owner.ID {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	var repository = k.GetRepository(ctx, msg.Id)
 
 	if owner.Type == "User" {
+		if msg.Creator != owner.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+		if !k.HasUser(ctx, owner.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", owner.ID))
+		}
+
 		user := k.GetUser(ctx, owner.ID)
+
 		if _, exists := user.RepositoryNames[repository.Name]; !exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositoryNames", repository.Name, owner.ID))
 		}
@@ -292,7 +355,33 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 
 		k.SetUser(ctx, user)
 	} else if owner.Type == "Organization" {
-		// Todo
+		orgId, err := strconv.ParseUint(owner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", owner.ID))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+
+		if _, exists := organization.RepositoryNames[repository.Name]; !exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in organization %v repositoryNames", repository.Name, organization.Name))
+		}
+
+		delete(organization.RepositoryNames, repository.Name)
+
+		if i, ok := ElementExists(organization.Repositories, repository.Id); ok {
+			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in organization %v repositories", repository.Id, organization.Name))
+		}
+
+		k.SetOrganization(ctx, organization)
 	}
 
 	k.RemoveRepository(ctx, msg.Id)

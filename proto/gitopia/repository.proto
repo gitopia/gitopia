@@ -27,5 +27,6 @@ message Repository {
   bool archived = 19;
   string license = 20;
   string defaultBranch = 21;
-  string extensions = 22;
+  map<string, string> collaborators = 22;
+  string extensions = 23;
 }

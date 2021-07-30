@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,6 +21,11 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	// Checks if the the msg sender is the same as the current owner
 	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	// Check if username is available
+	if k.HasWhois(ctx, msg.Name) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name %v already taken", msg.Name))
 	}
 
 	createdAt := time.Now().Unix()
@@ -46,6 +52,19 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	user := k.GetUser(ctx, msg.Creator)
 	user.Organizations = append(user.Organizations, id)
 	k.SetUser(ctx, user)
+
+	// Update whois
+	var whois = types.Whois{
+		Creator: msg.Creator,
+		Name:    msg.Name,
+		Address: strconv.FormatUint(id, 10),
+	}
+
+	k.Keeper.SetWhois(
+		ctx,
+		msg.Name,
+		whois,
+	)
 
 	return &types.MsgCreateOrganizationResponse{
 		Id: id,
