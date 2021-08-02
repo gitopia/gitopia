@@ -128,6 +128,8 @@ export type GitopiaMsgUpdateIssueResponse = object;
 
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
+export type GitopiaMsgUpdateOrganizationMemberResponse = object;
+
 export type GitopiaMsgUpdateOrganizationResponse = object;
 
 export type GitopiaMsgUpdateRepositoryResponse = object;

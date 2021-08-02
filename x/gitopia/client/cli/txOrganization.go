@@ -46,6 +46,45 @@ func CmdCreateOrganization() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateOrganizationMember() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-organization-member [id] [user] [role]",
+		Short: "Add organization member",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsUser, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			argsRole, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateOrganizationMember(clientCtx.GetFromAddress().String(), id, argsUser, argsRole)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateOrganization() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-organization [id] [name] [avatarUrl] [location] [email] [website] [description]",

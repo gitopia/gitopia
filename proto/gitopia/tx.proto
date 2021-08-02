@@ -14,6 +14,7 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
@@ -50,6 +51,15 @@ message MsgCreateOrganization {
 message MsgCreateOrganizationResponse {
   uint64 id = 1;
 }
+
+message MsgUpdateOrganizationMember {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+  string role = 4;
+}
+
+message MsgUpdateOrganizationMemberResponse { }
 
 message MsgUpdateOrganization {
   string creator = 1;

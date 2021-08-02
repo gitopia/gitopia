@@ -71,6 +71,36 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	}, nil
 }
 
+func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.MsgUpdateOrganizationMember) (*types.MsgUpdateOrganizationMemberResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator %v doesn't exist", msg.Creator))
+	}
+
+	if !k.HasUser(ctx, msg.User) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.User))
+	}
+
+	// Checks that the element exists
+	if !k.HasOrganization(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	organization := k.GetOrganization(ctx, msg.Id)
+
+	// Checks if the the msg sender is the same as the current owner
+	if organization.Members[msg.Creator] != "Owner" {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	organization.Members[msg.User] = msg.Role
+
+	k.SetOrganization(ctx, organization)
+
+	return &types.MsgUpdateOrganizationMemberResponse{}, nil
+}
+
 func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdateOrganization) (*types.MsgUpdateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

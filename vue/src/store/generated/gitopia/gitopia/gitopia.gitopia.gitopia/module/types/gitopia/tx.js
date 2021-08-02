@@ -153,6 +153,163 @@ export const MsgCreateOrganizationResponse = {
         return message;
     },
 };
+const baseMsgUpdateOrganizationMember = {
+    creator: "",
+    id: 0,
+    user: "",
+    role: "",
+};
+export const MsgUpdateOrganizationMember = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.user !== "") {
+            writer.uint32(26).string(message.user);
+        }
+        if (message.role !== "") {
+            writer.uint32(34).string(message.role);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateOrganizationMember,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.user = reader.string();
+                    break;
+                case 4:
+                    message.role = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgUpdateOrganizationMember,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.user !== undefined && object.user !== null) {
+            message.user = String(object.user);
+        }
+        else {
+            message.user = "";
+        }
+        if (object.role !== undefined && object.role !== null) {
+            message.role = String(object.role);
+        }
+        else {
+            message.role = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.user !== undefined && (obj.user = message.user);
+        message.role !== undefined && (obj.role = message.role);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgUpdateOrganizationMember,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.user !== undefined && object.user !== null) {
+            message.user = object.user;
+        }
+        else {
+            message.user = "";
+        }
+        if (object.role !== undefined && object.role !== null) {
+            message.role = object.role;
+        }
+        else {
+            message.role = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdateOrganizationMemberResponse = {};
+export const MsgUpdateOrganizationMemberResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateOrganizationMemberResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdateOrganizationMemberResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdateOrganizationMemberResponse,
+        };
+        return message;
+    },
+};
 const baseMsgUpdateOrganization = {
     creator: "",
     id: 0,
@@ -4311,6 +4468,11 @@ export class MsgClientImpl {
         const data = MsgCreateOrganization.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateOrganization", data);
         return promise.then((data) => MsgCreateOrganizationResponse.decode(new Reader(data)));
+    }
+    UpdateOrganizationMember(request) {
+        const data = MsgUpdateOrganizationMember.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateOrganizationMember", data);
+        return promise.then((data) => MsgUpdateOrganizationMemberResponse.decode(new Reader(data)));
     }
     UpdateOrganization(request) {
         const data = MsgUpdateOrganization.encode(request).finish();
