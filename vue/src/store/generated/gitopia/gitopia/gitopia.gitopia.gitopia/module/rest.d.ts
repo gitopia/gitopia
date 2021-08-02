@@ -82,6 +82,7 @@ export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
+export declare type GitopiaMsgUpdateOrganizationMemberResponse = object;
 export declare type GitopiaMsgUpdateOrganizationResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;

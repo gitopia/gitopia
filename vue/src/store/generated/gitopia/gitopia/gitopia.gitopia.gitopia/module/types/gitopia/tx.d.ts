@@ -9,6 +9,14 @@ export interface MsgCreateOrganization {
 export interface MsgCreateOrganizationResponse {
     id: number;
 }
+export interface MsgUpdateOrganizationMember {
+    creator: string;
+    id: number;
+    user: string;
+    role: string;
+}
+export interface MsgUpdateOrganizationMemberResponse {
+}
 export interface MsgUpdateOrganization {
     creator: string;
     id: number;
@@ -242,6 +250,20 @@ export declare const MsgCreateOrganizationResponse: {
     fromJSON(object: any): MsgCreateOrganizationResponse;
     toJSON(message: MsgCreateOrganizationResponse): unknown;
     fromPartial(object: DeepPartial<MsgCreateOrganizationResponse>): MsgCreateOrganizationResponse;
+};
+export declare const MsgUpdateOrganizationMember: {
+    encode(message: MsgUpdateOrganizationMember, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationMember;
+    fromJSON(object: any): MsgUpdateOrganizationMember;
+    toJSON(message: MsgUpdateOrganizationMember): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateOrganizationMember>): MsgUpdateOrganizationMember;
+};
+export declare const MsgUpdateOrganizationMemberResponse: {
+    encode(_: MsgUpdateOrganizationMemberResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationMemberResponse;
+    fromJSON(_: any): MsgUpdateOrganizationMemberResponse;
+    toJSON(_: MsgUpdateOrganizationMemberResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateOrganizationMemberResponse>): MsgUpdateOrganizationMemberResponse;
 };
 export declare const MsgUpdateOrganization: {
     encode(message: MsgUpdateOrganization, writer?: Writer): Writer;
@@ -583,6 +605,7 @@ export declare const MsgDeleteWhoisResponse: {
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
+    UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
@@ -612,6 +635,7 @@ export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
+    UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
