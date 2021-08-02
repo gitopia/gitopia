@@ -10,6 +10,7 @@ import (
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
+	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganization{}, "gitopia/UpdateOrganization", nil)
 	cdc.RegisterConcrete(&MsgDeleteOrganization{}, "gitopia/DeleteOrganization", nil)
 
@@ -46,6 +47,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	// this line is used by starport scaffolding # 3
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateOrganization{},
+		&MsgUpdateOrganizationMember{},
 		&MsgUpdateOrganization{},
 		&MsgDeleteOrganization{},
 	)
