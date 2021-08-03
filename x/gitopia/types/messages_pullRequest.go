@@ -44,6 +44,12 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Title) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
 	return nil
 }
 
