@@ -48,29 +48,11 @@ service Msg {
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreatePullRequest {
   string creator = 1;
-  string iid = 2;
+  uint64 repositoryId = 2;
   string title = 3;
-  string state = 4;
-  string description = 5;
-  string locked = 6;
-  string comments = 7;
-  string issues = 8;
-  string repositoryId = 9;
-  string labels = 10;
-  string assignees = 11;
-  string reviewers = 12;
-  string draft = 13;
-  string createdAt = 14;
-  string updatedAt = 15;
-  string closedAt = 16;
-  string closedBy = 17;
-  string mergedAt = 18;
-  string mergedBy = 19;
-  string mergeCommitSha = 20;
-  string maintainerCanModify = 21;
-  string head = 22;
-  string base = 23;
-  string extensions = 24;
+  string description = 4;
+  string head = 5;
+  string base = 6;
 }
 
 message MsgCreatePullRequestResponse {
@@ -80,29 +62,8 @@ message MsgCreatePullRequestResponse {
 message MsgUpdatePullRequest {
   string creator = 1;
   uint64 id = 2;
-  string iid = 3;
   string title = 4;
-  string state = 5;
   string description = 6;
-  string locked = 7;
-  string comments = 8;
-  string issues = 9;
-  string repositoryId = 10;
-  string labels = 11;
-  string assignees = 12;
-  string reviewers = 13;
-  string draft = 14;
-  string createdAt = 15;
-  string updatedAt = 16;
-  string closedAt = 17;
-  string closedBy = 18;
-  string mergedAt = 19;
-  string mergedBy = 20;
-  string mergeCommitSha = 21;
-  string maintainerCanModify = 22;
-  string head = 23;
-  string base = 24;
-  string extensions = 25;
 }
 
 message MsgUpdatePullRequestResponse { }

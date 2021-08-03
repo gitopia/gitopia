@@ -7,32 +7,14 @@ import (
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, iid string, title string, state string, description string, locked string, comments string, issues string, repositoryId string, labels string, assignees string, reviewers string, draft string, createdAt string, updatedAt string, closedAt string, closedBy string, mergedAt string, mergedBy string, mergeCommitSha string, maintainerCanModify string, head string, base string, extensions string) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, repositoryId uint64, title string, description string, head string, base string) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
-		Creator:             creator,
-		Iid:                 iid,
-		Title:               title,
-		State:               state,
-		Description:         description,
-		Locked:              locked,
-		Comments:            comments,
-		Issues:              issues,
-		RepositoryId:        repositoryId,
-		Labels:              labels,
-		Assignees:           assignees,
-		Reviewers:           reviewers,
-		Draft:               draft,
-		CreatedAt:           createdAt,
-		UpdatedAt:           updatedAt,
-		ClosedAt:            closedAt,
-		ClosedBy:            closedBy,
-		MergedAt:            mergedAt,
-		MergedBy:            mergedBy,
-		MergeCommitSha:      mergeCommitSha,
-		MaintainerCanModify: maintainerCanModify,
-		Head:                head,
-		Base:                base,
-		Extensions:          extensions,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Title:        title,
+		Description:  description,
+		Head:         head,
+		Base:         base,
 	}
 }
 
@@ -67,33 +49,12 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdatePullRequest{}
 
-func NewMsgUpdatePullRequest(creator string, id uint64, iid string, title string, state string, description string, locked string, comments string, issues string, repositoryId string, labels string, assignees string, reviewers string, draft string, createdAt string, updatedAt string, closedAt string, closedBy string, mergedAt string, mergedBy string, mergeCommitSha string, maintainerCanModify string, head string, base string, extensions string) *MsgUpdatePullRequest {
+func NewMsgUpdatePullRequest(creator string, id uint64, title string, description string) *MsgUpdatePullRequest {
 	return &MsgUpdatePullRequest{
-		Id:                  id,
-		Creator:             creator,
-		Iid:                 iid,
-		Title:               title,
-		State:               state,
-		Description:         description,
-		Locked:              locked,
-		Comments:            comments,
-		Issues:              issues,
-		RepositoryId:        repositoryId,
-		Labels:              labels,
-		Assignees:           assignees,
-		Reviewers:           reviewers,
-		Draft:               draft,
-		CreatedAt:           createdAt,
-		UpdatedAt:           updatedAt,
-		ClosedAt:            closedAt,
-		ClosedBy:            closedBy,
-		MergedAt:            mergedAt,
-		MergedBy:            mergedBy,
-		MergeCommitSha:      mergeCommitSha,
-		MaintainerCanModify: maintainerCanModify,
-		Head:                head,
-		Base:                base,
-		Extensions:          extensions,
+		Id:          id,
+		Creator:     creator,
+		Title:       title,
+		Description: description,
 	}
 }
 
