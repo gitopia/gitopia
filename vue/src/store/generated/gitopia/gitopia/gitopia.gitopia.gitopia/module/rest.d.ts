@@ -299,6 +299,9 @@ export interface GitopiaRepository {
     archived?: boolean;
     license?: string;
     defaultBranch?: string;
+    /** @format uint64 */
+    parent?: string;
+    fork?: boolean;
     collaborators?: Record<string, string>;
     extensions?: string;
 }

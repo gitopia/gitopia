@@ -3,9 +3,9 @@ import { OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgCreateValidator } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgEditValidator } from "./types/cosmos/staking/v1beta1/tx";
-import { MsgUndelegate } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgBeginRedelegate } from "./types/cosmos/staking/v1beta1/tx";
 import { MsgDelegate } from "./types/cosmos/staking/v1beta1/tx";
+import { MsgUndelegate } from "./types/cosmos/staking/v1beta1/tx";
 export declare const MissingWalletError: Error;
 interface TxClientOptions {
     addr: string;
@@ -18,9 +18,9 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => Promise<import("@cosmjs/stargate").BroadcastTxResponse>;
     msgCreateValidator: (data: MsgCreateValidator) => EncodeObject;
     msgEditValidator: (data: MsgEditValidator) => EncodeObject;
-    msgUndelegate: (data: MsgUndelegate) => EncodeObject;
     msgBeginRedelegate: (data: MsgBeginRedelegate) => EncodeObject;
     msgDelegate: (data: MsgDelegate) => EncodeObject;
+    msgUndelegate: (data: MsgUndelegate) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;

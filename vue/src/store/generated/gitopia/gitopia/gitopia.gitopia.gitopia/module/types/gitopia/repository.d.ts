@@ -24,6 +24,8 @@ export interface Repository {
     archived: boolean;
     license: string;
     defaultBranch: string;
+    parent: number;
+    fork: boolean;
     collaborators: {
         [key: string]: string;
     };
