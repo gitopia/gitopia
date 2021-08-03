@@ -18,13 +18,27 @@ func assignPullRequestIid(repo types.Repository) (uint64, error) {
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasRepository(ctx, msg.HeadRepoId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("headRepositoryId %d doesn't exist", msg.HeadRepoId))
+	}
+
+	headRepo := k.GetRepository(ctx, msg.HeadRepoId)
+
+	if _, exists := headRepo.Branches[msg.HeadBranch]; !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch %v doesn't exist", msg.HeadBranch))
+	}
+
 	if !k.HasRepository(ctx, msg.BaseRepoId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("baseRepositoryId %d doesn't exist", msg.BaseRepoId))
 	}
 
-	repo := k.GetRepository(ctx, msg.BaseRepoId)
+	baseRepo := k.GetRepository(ctx, msg.BaseRepoId)
 
-	iid, err := assignPullRequestIid(repo)
+	if _, exists := baseRepo.Branches[msg.BaseBranch]; !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch %v doesn't exist", msg.BaseBranch))
+	}
+
+	iid, err := assignPullRequestIid(baseRepo)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +70,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	)
 
 	/* Append Pull Request in the respective Repository */
-	repo.Pulls = append(repo.Pulls, id)
-	k.SetRepository(ctx, repo)
+	baseRepo.Pulls = append(baseRepo.Pulls, id)
+	k.SetRepository(ctx, baseRepo)
 
 	return &types.MsgCreatePullRequestResponse{
 		Id: id,
