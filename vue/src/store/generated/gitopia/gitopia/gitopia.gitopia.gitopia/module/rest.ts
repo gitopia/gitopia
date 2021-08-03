@@ -87,6 +87,11 @@ export interface GitopiaMsgCreateOrganizationResponse {
   id?: string;
 }
 
+export interface GitopiaMsgCreatePullRequestResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateRepositoryResponse {
   /** @format uint64 */
   id?: string;
@@ -103,6 +108,8 @@ export type GitopiaMsgDeleteCommentResponse = object;
 export type GitopiaMsgDeleteIssueResponse = object;
 
 export type GitopiaMsgDeleteOrganizationResponse = object;
+
+export type GitopiaMsgDeletePullRequestResponse = object;
 
 export type GitopiaMsgDeleteRepositoryResponse = object;
 
@@ -131,6 +138,8 @@ export type GitopiaMsgUpdateIssueTitleResponse = object;
 export type GitopiaMsgUpdateOrganizationMemberResponse = object;
 
 export type GitopiaMsgUpdateOrganizationResponse = object;
+
+export type GitopiaMsgUpdatePullRequestResponse = object;
 
 export type GitopiaMsgUpdateRepositoryResponse = object;
 
@@ -162,6 +171,36 @@ export interface GitopiaOrganization {
 
   /** @format int64 */
   updatedAt?: string;
+  extensions?: string;
+}
+
+export interface GitopiaPullRequest {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  iid?: string;
+  title?: string;
+  state?: string;
+  description?: string;
+  locked?: string;
+  comments?: string;
+  issues?: string;
+  repositoryId?: string;
+  labels?: string;
+  assignees?: string;
+  reviewers?: string;
+  draft?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  closedAt?: string;
+  closedBy?: string;
+  mergedAt?: string;
+  mergedBy?: string;
+  mergeCommitSha?: string;
+  maintainerCanModify?: string;
+  head?: string;
+  base?: string;
   extensions?: string;
 }
 
@@ -197,6 +236,21 @@ export interface GitopiaQueryAllIssueResponse {
 
 export interface GitopiaQueryAllOrganizationResponse {
   Organization?: GitopiaOrganization[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryAllPullRequestResponse {
+  PullRequest?: GitopiaPullRequest[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -273,6 +327,10 @@ export interface GitopiaQueryGetIssueResponse {
 
 export interface GitopiaQueryGetOrganizationResponse {
   Organization?: GitopiaOrganization;
+}
+
+export interface GitopiaQueryGetPullRequestResponse {
+  PullRequest?: GitopiaPullRequest;
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
@@ -739,6 +797,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryOrganization = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetOrganizationResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/organization/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPullRequestAll
+   * @summary Queries a list of pullRequest items.
+   * @request GET:/gitopia/gitopia/gitopia/pullRequest
+   */
+  queryPullRequestAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllPullRequestResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/pullRequest`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPullRequest
+   * @summary Queries a pullRequest by id.
+   * @request GET:/gitopia/gitopia/gitopia/pullRequest/{id}
+   */
+  queryPullRequest = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetPullRequestResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/pullRequest/${id}`,
       method: "GET",
       format: "json",
       ...params,

@@ -54,3 +54,8 @@ const (
 	OrganizationKey      = "Organization-value-"
 	OrganizationCountKey = "Organization-count-"
 )
+
+const (
+	PullRequestKey      = "PullRequest-value-"
+	PullRequestCountKey = "PullRequest-count-"
+)

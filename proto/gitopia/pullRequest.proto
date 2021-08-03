@@ -1,0 +1,34 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message PullRequest {
+  string creator = 1;
+  uint64 id = 2;
+  string iid = 3; 
+  string title = 4; 
+  string state = 5; 
+  string description = 6; 
+  string locked = 7; 
+  string comments = 8; 
+  string issues = 9; 
+  string repositoryId = 10; 
+  string labels = 11; 
+  string assignees = 12; 
+  string reviewers = 13; 
+  string draft = 14; 
+  string createdAt = 15; 
+  string updatedAt = 16; 
+  string closedAt = 17; 
+  string closedBy = 18; 
+  string mergedAt = 19; 
+  string mergedBy = 20; 
+  string mergeCommitSha = 21; 
+  string maintainerCanModify = 22; 
+  string head = 23; 
+  string base = 24; 
+  string extensions = 25; 
+}

@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
@@ -13,6 +14,10 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
   /** this line is used by starport scaffolding # genesis/proto/state */
+  pullRequestList: PullRequest[];
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
+  pullRequestCount: number;
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
   organizationList: Organization[];
   /** this line is used by starport scaffolding # genesis/proto/stateField */
   organizationCount: number;
@@ -39,6 +44,7 @@ export interface GenesisState {
 }
 
 const baseGenesisState: object = {
+  pullRequestCount: 0,
   organizationCount: 0,
   commentCount: 0,
   issueCount: 0,
@@ -49,6 +55,12 @@ const baseGenesisState: object = {
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.pullRequestList) {
+      PullRequest.encode(v!, writer.uint32(106).fork()).ldelim();
+    }
+    if (message.pullRequestCount !== 0) {
+      writer.uint32(112).uint64(message.pullRequestCount);
+    }
     for (const v of message.organizationList) {
       Organization.encode(v!, writer.uint32(90).fork()).ldelim();
     }
@@ -92,6 +104,7 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
     message.issueList = [];
@@ -101,6 +114,14 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 13:
+          message.pullRequestList.push(
+            PullRequest.decode(reader, reader.uint32())
+          );
+          break;
+        case 14:
+          message.pullRequestCount = longToNumber(reader.uint64() as Long);
+          break;
         case 11:
           message.organizationList.push(
             Organization.decode(reader, reader.uint32())
@@ -151,12 +172,29 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
     message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (
+      object.pullRequestList !== undefined &&
+      object.pullRequestList !== null
+    ) {
+      for (const e of object.pullRequestList) {
+        message.pullRequestList.push(PullRequest.fromJSON(e));
+      }
+    }
+    if (
+      object.pullRequestCount !== undefined &&
+      object.pullRequestCount !== null
+    ) {
+      message.pullRequestCount = Number(object.pullRequestCount);
+    } else {
+      message.pullRequestCount = 0;
+    }
     if (
       object.organizationList !== undefined &&
       object.organizationList !== null
@@ -231,6 +269,15 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.pullRequestList) {
+      obj.pullRequestList = message.pullRequestList.map((e) =>
+        e ? PullRequest.toJSON(e) : undefined
+      );
+    } else {
+      obj.pullRequestList = [];
+    }
+    message.pullRequestCount !== undefined &&
+      (obj.pullRequestCount = message.pullRequestCount);
     if (message.organizationList) {
       obj.organizationList = message.organizationList.map((e) =>
         e ? Organization.toJSON(e) : undefined
@@ -287,12 +334,29 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
     message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (
+      object.pullRequestList !== undefined &&
+      object.pullRequestList !== null
+    ) {
+      for (const e of object.pullRequestList) {
+        message.pullRequestList.push(PullRequest.fromPartial(e));
+      }
+    }
+    if (
+      object.pullRequestCount !== undefined &&
+      object.pullRequestCount !== null
+    ) {
+      message.pullRequestCount = object.pullRequestCount;
+    } else {
+      message.pullRequestCount = 0;
+    }
     if (
       object.organizationList !== undefined &&
       object.organizationList !== null

@@ -10,6 +10,14 @@ import (
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	// this line is used by starport scaffolding # genesis/module/init
+	// Set all the pullRequest
+	for _, elem := range genState.PullRequestList {
+		k.SetPullRequest(ctx, *elem)
+	}
+
+	// Set pullRequest count
+	k.SetPullRequestCount(ctx, genState.PullRequestCount)
+
 	// Set all the organization
 	for _, elem := range genState.OrganizationList {
 		k.SetOrganization(ctx, *elem)
@@ -65,6 +73,16 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
 	// this line is used by starport scaffolding # genesis/module/export
+	// Get all pullRequest
+	pullRequestList := k.GetAllPullRequest(ctx)
+	for _, elem := range pullRequestList {
+		elem := elem
+		genesis.PullRequestList = append(genesis.PullRequestList, &elem)
+	}
+
+	// Set the current count
+	genesis.PullRequestCount = k.GetPullRequestCount(ctx)
+
 	// Get all organization
 	organizationList := k.GetAllOrganization(ctx)
 	for _, elem := range organizationList {
