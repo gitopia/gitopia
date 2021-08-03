@@ -38,6 +38,11 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch %v doesn't exist", msg.BaseBranch))
 	}
 
+	if !((msg.HeadRepoId == msg.BaseRepoId) && (msg.HeadBranch != msg.BaseBranch)) &&
+		!(headRepo.Fork && (headRepo.Parent == msg.BaseRepoId)) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
+	}
+
 	iid, err := assignPullRequestIid(baseRepo)
 	if err != nil {
 		return nil, err
