@@ -3,29 +3,12 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreatePullRequest {
     creator: string;
-    iid: string;
     title: string;
-    state: string;
     description: string;
-    locked: string;
-    comments: string;
-    issues: string;
-    repositoryId: string;
-    labels: string;
-    assignees: string;
-    reviewers: string;
-    draft: string;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string;
-    closedBy: string;
-    mergedAt: string;
-    mergedBy: string;
-    mergeCommitSha: string;
-    maintainerCanModify: string;
-    head: string;
-    base: string;
-    extensions: string;
+    headBranch: string;
+    headRepoId: number;
+    baseBranch: string;
+    baseRepoId: number;
 }
 export interface MsgCreatePullRequestResponse {
     id: number;
@@ -33,29 +16,8 @@ export interface MsgCreatePullRequestResponse {
 export interface MsgUpdatePullRequest {
     creator: string;
     id: number;
-    iid: string;
     title: string;
-    state: string;
     description: string;
-    locked: string;
-    comments: string;
-    issues: string;
-    repositoryId: string;
-    labels: string;
-    assignees: string;
-    reviewers: string;
-    draft: string;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string;
-    closedBy: string;
-    mergedAt: string;
-    mergedBy: string;
-    mergeCommitSha: string;
-    maintainerCanModify: string;
-    head: string;
-    base: string;
-    extensions: string;
 }
 export interface MsgUpdatePullRequestResponse {
 }

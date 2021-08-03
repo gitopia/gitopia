@@ -179,28 +179,43 @@ export interface GitopiaPullRequest {
 
   /** @format uint64 */
   id?: string;
+
+  /** @format uint64 */
   iid?: string;
   title?: string;
   state?: string;
   description?: string;
-  locked?: string;
-  comments?: string;
-  issues?: string;
-  repositoryId?: string;
-  labels?: string;
-  assignees?: string;
-  reviewers?: string;
-  draft?: string;
+  locked?: boolean;
+  comments?: string[];
+  issues?: string[];
+  labels?: string[];
+  assignees?: string[];
+  reviewers?: string[];
+  draft?: boolean;
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
+
+  /** @format int64 */
   closedAt?: string;
   closedBy?: string;
+
+  /** @format int64 */
   mergedAt?: string;
   mergedBy?: string;
   mergeCommitSha?: string;
-  maintainerCanModify?: string;
-  head?: string;
-  base?: string;
+  maintainerCanModify?: boolean;
+  headBranch?: string;
+
+  /** @format uint64 */
+  headRepoId?: string;
+  baseBranch?: string;
+
+  /** @format uint64 */
+  baseRepoId?: string;
   extensions?: string;
 }
 

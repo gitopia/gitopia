@@ -24,31 +24,32 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type PullRequest struct {
-	Creator             string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id                  uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Iid                 string `protobuf:"bytes,3,opt,name=iid,proto3" json:"iid,omitempty"`
-	Title               string `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
-	State               string `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
-	Description         string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	Locked              string `protobuf:"bytes,7,opt,name=locked,proto3" json:"locked,omitempty"`
-	Comments            string `protobuf:"bytes,8,opt,name=comments,proto3" json:"comments,omitempty"`
-	Issues              string `protobuf:"bytes,9,opt,name=issues,proto3" json:"issues,omitempty"`
-	RepositoryId        string `protobuf:"bytes,10,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
-	Labels              string `protobuf:"bytes,11,opt,name=labels,proto3" json:"labels,omitempty"`
-	Assignees           string `protobuf:"bytes,12,opt,name=assignees,proto3" json:"assignees,omitempty"`
-	Reviewers           string `protobuf:"bytes,13,opt,name=reviewers,proto3" json:"reviewers,omitempty"`
-	Draft               string `protobuf:"bytes,14,opt,name=draft,proto3" json:"draft,omitempty"`
-	CreatedAt           string `protobuf:"bytes,15,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt           string `protobuf:"bytes,16,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	ClosedAt            string `protobuf:"bytes,17,opt,name=closedAt,proto3" json:"closedAt,omitempty"`
-	ClosedBy            string `protobuf:"bytes,18,opt,name=closedBy,proto3" json:"closedBy,omitempty"`
-	MergedAt            string `protobuf:"bytes,19,opt,name=mergedAt,proto3" json:"mergedAt,omitempty"`
-	MergedBy            string `protobuf:"bytes,20,opt,name=mergedBy,proto3" json:"mergedBy,omitempty"`
-	MergeCommitSha      string `protobuf:"bytes,21,opt,name=mergeCommitSha,proto3" json:"mergeCommitSha,omitempty"`
-	MaintainerCanModify string `protobuf:"bytes,22,opt,name=maintainerCanModify,proto3" json:"maintainerCanModify,omitempty"`
-	Head                string `protobuf:"bytes,23,opt,name=head,proto3" json:"head,omitempty"`
-	Base                string `protobuf:"bytes,24,opt,name=base,proto3" json:"base,omitempty"`
-	Extensions          string `protobuf:"bytes,25,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Creator             string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id                  uint64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Iid                 uint64   `protobuf:"varint,3,opt,name=iid,proto3" json:"iid,omitempty"`
+	Title               string   `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	State               string   `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	Description         string   `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Locked              bool     `protobuf:"varint,7,opt,name=locked,proto3" json:"locked,omitempty"`
+	Comments            []uint64 `protobuf:"varint,8,rep,packed,name=comments,proto3" json:"comments,omitempty"`
+	Issues              []uint64 `protobuf:"varint,9,rep,packed,name=issues,proto3" json:"issues,omitempty"`
+	Labels              []string `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`
+	Assignees           []string `protobuf:"bytes,11,rep,name=assignees,proto3" json:"assignees,omitempty"`
+	Reviewers           []string `protobuf:"bytes,12,rep,name=reviewers,proto3" json:"reviewers,omitempty"`
+	Draft               bool     `protobuf:"varint,13,opt,name=draft,proto3" json:"draft,omitempty"`
+	CreatedAt           int64    `protobuf:"varint,14,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt           int64    `protobuf:"varint,15,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	ClosedAt            int64    `protobuf:"varint,16,opt,name=closedAt,proto3" json:"closedAt,omitempty"`
+	ClosedBy            string   `protobuf:"bytes,17,opt,name=closedBy,proto3" json:"closedBy,omitempty"`
+	MergedAt            int64    `protobuf:"varint,18,opt,name=mergedAt,proto3" json:"mergedAt,omitempty"`
+	MergedBy            string   `protobuf:"bytes,19,opt,name=mergedBy,proto3" json:"mergedBy,omitempty"`
+	MergeCommitSha      string   `protobuf:"bytes,20,opt,name=mergeCommitSha,proto3" json:"mergeCommitSha,omitempty"`
+	MaintainerCanModify bool     `protobuf:"varint,21,opt,name=maintainerCanModify,proto3" json:"maintainerCanModify,omitempty"`
+	HeadBranch          string   `protobuf:"bytes,22,opt,name=headBranch,proto3" json:"headBranch,omitempty"`
+	HeadRepoId          uint64   `protobuf:"varint,23,opt,name=headRepoId,proto3" json:"headRepoId,omitempty"`
+	BaseBranch          string   `protobuf:"bytes,24,opt,name=baseBranch,proto3" json:"baseBranch,omitempty"`
+	BaseRepoId          uint64   `protobuf:"varint,25,opt,name=baseRepoId,proto3" json:"baseRepoId,omitempty"`
+	Extensions          string   `protobuf:"bytes,26,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *PullRequest) Reset()         { *m = PullRequest{} }
@@ -98,11 +99,11 @@ func (m *PullRequest) GetId() uint64 {
 	return 0
 }
 
-func (m *PullRequest) GetIid() string {
+func (m *PullRequest) GetIid() uint64 {
 	if m != nil {
 		return m.Iid
 	}
-	return ""
+	return 0
 }
 
 func (m *PullRequest) GetTitle() string {
@@ -126,81 +127,74 @@ func (m *PullRequest) GetDescription() string {
 	return ""
 }
 
-func (m *PullRequest) GetLocked() string {
+func (m *PullRequest) GetLocked() bool {
 	if m != nil {
 		return m.Locked
 	}
-	return ""
+	return false
 }
 
-func (m *PullRequest) GetComments() string {
+func (m *PullRequest) GetComments() []uint64 {
 	if m != nil {
 		return m.Comments
 	}
-	return ""
+	return nil
 }
 
-func (m *PullRequest) GetIssues() string {
+func (m *PullRequest) GetIssues() []uint64 {
 	if m != nil {
 		return m.Issues
 	}
-	return ""
+	return nil
 }
 
-func (m *PullRequest) GetRepositoryId() string {
-	if m != nil {
-		return m.RepositoryId
-	}
-	return ""
-}
-
-func (m *PullRequest) GetLabels() string {
+func (m *PullRequest) GetLabels() []string {
 	if m != nil {
 		return m.Labels
 	}
-	return ""
+	return nil
 }
 
-func (m *PullRequest) GetAssignees() string {
+func (m *PullRequest) GetAssignees() []string {
 	if m != nil {
 		return m.Assignees
 	}
-	return ""
+	return nil
 }
 
-func (m *PullRequest) GetReviewers() string {
+func (m *PullRequest) GetReviewers() []string {
 	if m != nil {
 		return m.Reviewers
 	}
-	return ""
+	return nil
 }
 
-func (m *PullRequest) GetDraft() string {
+func (m *PullRequest) GetDraft() bool {
 	if m != nil {
 		return m.Draft
 	}
-	return ""
+	return false
 }
 
-func (m *PullRequest) GetCreatedAt() string {
+func (m *PullRequest) GetCreatedAt() int64 {
 	if m != nil {
 		return m.CreatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *PullRequest) GetUpdatedAt() string {
+func (m *PullRequest) GetUpdatedAt() int64 {
 	if m != nil {
 		return m.UpdatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *PullRequest) GetClosedAt() string {
+func (m *PullRequest) GetClosedAt() int64 {
 	if m != nil {
 		return m.ClosedAt
 	}
-	return ""
+	return 0
 }
 
 func (m *PullRequest) GetClosedBy() string {
@@ -210,11 +204,11 @@ func (m *PullRequest) GetClosedBy() string {
 	return ""
 }
 
-func (m *PullRequest) GetMergedAt() string {
+func (m *PullRequest) GetMergedAt() int64 {
 	if m != nil {
 		return m.MergedAt
 	}
-	return ""
+	return 0
 }
 
 func (m *PullRequest) GetMergedBy() string {
@@ -231,25 +225,39 @@ func (m *PullRequest) GetMergeCommitSha() string {
 	return ""
 }
 
-func (m *PullRequest) GetMaintainerCanModify() string {
+func (m *PullRequest) GetMaintainerCanModify() bool {
 	if m != nil {
 		return m.MaintainerCanModify
 	}
-	return ""
+	return false
 }
 
-func (m *PullRequest) GetHead() string {
+func (m *PullRequest) GetHeadBranch() string {
 	if m != nil {
-		return m.Head
+		return m.HeadBranch
 	}
 	return ""
 }
 
-func (m *PullRequest) GetBase() string {
+func (m *PullRequest) GetHeadRepoId() uint64 {
 	if m != nil {
-		return m.Base
+		return m.HeadRepoId
+	}
+	return 0
+}
+
+func (m *PullRequest) GetBaseBranch() string {
+	if m != nil {
+		return m.BaseBranch
 	}
 	return ""
+}
+
+func (m *PullRequest) GetBaseRepoId() uint64 {
+	if m != nil {
+		return m.BaseRepoId
+	}
+	return 0
 }
 
 func (m *PullRequest) GetExtensions() string {
@@ -266,37 +274,38 @@ func init() {
 func init() { proto.RegisterFile("gitopia/pullRequest.proto", fileDescriptor_ee729f91ddeb1e95) }
 
 var fileDescriptor_ee729f91ddeb1e95 = []byte{
-	// 469 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x93, 0x41, 0x6f, 0xd3, 0x30,
-	0x14, 0xc7, 0x97, 0xae, 0xed, 0x56, 0x77, 0x94, 0xe1, 0x95, 0xed, 0x6d, 0x42, 0x51, 0xb5, 0x03,
-	0x9a, 0x38, 0xb4, 0x48, 0x7c, 0x02, 0x3a, 0x2e, 0x1c, 0x90, 0x50, 0xb9, 0x71, 0x73, 0xe3, 0xb7,
-	0xd4, 0x22, 0x89, 0x83, 0xed, 0xc0, 0xf2, 0x2d, 0xf8, 0x46, 0x5c, 0x39, 0xee, 0xc8, 0x11, 0xb5,
-	0x5f, 0x04, 0xf9, 0x39, 0x4d, 0xcb, 0xc4, 0xc9, 0xef, 0xff, 0xfb, 0xbd, 0x17, 0xeb, 0x45, 0x32,
-	0xbb, 0x4c, 0x95, 0xd3, 0xa5, 0x12, 0xb3, 0xb2, 0xca, 0xb2, 0x05, 0x7e, 0xad, 0xd0, 0xba, 0x69,
-	0x69, 0xb4, 0xd3, 0xfc, 0xa2, 0x51, 0xd3, 0x47, 0xe7, 0xd5, 0x38, 0xd5, 0xa9, 0xa6, 0x9e, 0x99,
-	0xaf, 0x42, 0xfb, 0xf5, 0xcf, 0x1e, 0x1b, 0x7e, 0xdc, 0x7d, 0x84, 0x03, 0x3b, 0x4a, 0x0c, 0x0a,
-	0xa7, 0x0d, 0x44, 0x93, 0xe8, 0x66, 0xb0, 0xd8, 0x46, 0x3e, 0x62, 0x1d, 0x25, 0xa1, 0x33, 0x89,
-	0x6e, 0xba, 0x8b, 0x8e, 0x92, 0xfc, 0x94, 0x1d, 0x2a, 0x25, 0xe1, 0x90, 0xba, 0x7c, 0xc9, 0xc7,
-	0xac, 0xe7, 0x94, 0xcb, 0x10, 0xba, 0xc4, 0x42, 0xf0, 0xd4, 0x3a, 0xe1, 0x10, 0x7a, 0x81, 0x52,
-	0xe0, 0x13, 0x36, 0x94, 0x68, 0x13, 0xa3, 0x4a, 0xa7, 0x74, 0x01, 0x7d, 0x72, 0xfb, 0x88, 0x9f,
-	0xb3, 0x7e, 0xa6, 0x93, 0x2f, 0x28, 0xe1, 0x88, 0x64, 0x93, 0xf8, 0x15, 0x3b, 0x4e, 0x74, 0x9e,
-	0x63, 0xe1, 0x2c, 0x1c, 0x93, 0x69, 0xb3, 0x9f, 0x51, 0xd6, 0x56, 0x68, 0x61, 0x10, 0x66, 0x42,
-	0xe2, 0xd7, 0xec, 0xc4, 0x60, 0xa9, 0xad, 0x72, 0xda, 0xd4, 0xef, 0x25, 0x30, 0xb2, 0xff, 0x30,
-	0xba, 0x4f, 0x2c, 0x31, 0xb3, 0x30, 0x6c, 0xee, 0xa3, 0xc4, 0x5f, 0xb0, 0x81, 0xb0, 0x56, 0xa5,
-	0x05, 0xa2, 0x85, 0x13, 0x52, 0x3b, 0xe0, 0xad, 0xc1, 0x6f, 0x0a, 0xbf, 0xa3, 0xb1, 0xf0, 0x24,
-	0xd8, 0x16, 0xf8, 0xdd, 0xa5, 0x11, 0x77, 0x0e, 0x46, 0x61, 0x77, 0x0a, 0x7e, 0x86, 0x7e, 0x2a,
-	0xca, 0xb7, 0x0e, 0x9e, 0x86, 0x99, 0x16, 0x78, 0x5b, 0x95, 0xb2, 0xb1, 0xa7, 0xc1, 0xb6, 0x80,
-	0xb6, 0xcf, 0xb4, 0x25, 0xf9, 0xac, 0xd9, 0xbe, 0xc9, 0x3b, 0x37, 0xaf, 0x81, 0xef, 0xbb, 0x79,
-	0xed, 0x5d, 0x8e, 0x26, 0xa5, 0xb9, 0xb3, 0xe0, 0xb6, 0x79, 0xe7, 0xe6, 0x35, 0x8c, 0xf7, 0xdd,
-	0xbc, 0xe6, 0x2f, 0xd9, 0x88, 0xea, 0x5b, 0x9d, 0xe7, 0xca, 0x7d, 0x5a, 0x09, 0x78, 0x4e, 0x1d,
-	0x8f, 0x28, 0x7f, 0xcd, 0xce, 0x72, 0xa1, 0x0a, 0x27, 0x54, 0x81, 0xe6, 0x56, 0x14, 0x1f, 0xb4,
-	0x54, 0x77, 0x35, 0x9c, 0x53, 0xf3, 0xff, 0x14, 0xe7, 0xac, 0xbb, 0x42, 0x21, 0xe1, 0x82, 0x5a,
-	0xa8, 0xf6, 0x6c, 0x29, 0x2c, 0x02, 0x04, 0xe6, 0x6b, 0x1e, 0x33, 0x86, 0xf7, 0x0e, 0x0b, 0xab,
-	0x74, 0x61, 0xe1, 0x92, 0xcc, 0x1e, 0x99, 0xbf, 0xfb, 0xb5, 0x8e, 0xa3, 0x87, 0x75, 0x1c, 0xfd,
-	0x59, 0xc7, 0xd1, 0x8f, 0x4d, 0x7c, 0xf0, 0xb0, 0x89, 0x0f, 0x7e, 0x6f, 0xe2, 0x83, 0xcf, 0xaf,
-	0x52, 0xe5, 0x56, 0xd5, 0x72, 0x9a, 0xe8, 0x7c, 0xb6, 0x7d, 0x30, 0xdb, 0xf3, 0xbe, 0xad, 0x5c,
-	0x5d, 0xa2, 0x5d, 0xf6, 0xe9, 0x39, 0xbc, 0xf9, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x8e, 0x5c, 0xac,
-	0x61, 0x5a, 0x03, 0x00, 0x00,
+	// 487 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x93, 0x4d, 0x8e, 0xd3, 0x30,
+	0x18, 0x86, 0x9b, 0xfe, 0x4d, 0xeb, 0x42, 0x19, 0x3c, 0x65, 0xe6, 0x9b, 0x0a, 0x45, 0x11, 0x0b,
+	0x14, 0xb1, 0x68, 0x91, 0x38, 0x01, 0x1d, 0x36, 0x2c, 0x90, 0x50, 0xd8, 0xb1, 0x73, 0xe3, 0x6f,
+	0x52, 0x8b, 0x24, 0x0e, 0xb1, 0x03, 0xd3, 0x5b, 0x70, 0x2c, 0x96, 0xb3, 0x64, 0x89, 0xda, 0x23,
+	0x70, 0x01, 0x64, 0x3b, 0x3f, 0xd5, 0x68, 0x56, 0xf9, 0xde, 0xe7, 0xf1, 0x6b, 0xd5, 0x56, 0x4d,
+	0xae, 0x13, 0xa1, 0x65, 0x21, 0xd8, 0xba, 0xa8, 0xd2, 0x34, 0xc2, 0xef, 0x15, 0x2a, 0xbd, 0x2a,
+	0x4a, 0xa9, 0x25, 0xbd, 0xaa, 0xd5, 0xea, 0xc1, 0x77, 0xb9, 0x48, 0x64, 0x22, 0xed, 0x9a, 0xb5,
+	0x99, 0xdc, 0xf2, 0x57, 0xff, 0x46, 0x64, 0xf6, 0xb9, 0xdb, 0x84, 0x02, 0x39, 0x8b, 0x4b, 0x64,
+	0x5a, 0x96, 0xe0, 0x05, 0x5e, 0x38, 0x8d, 0x9a, 0x48, 0xe7, 0xa4, 0x2f, 0x38, 0xf4, 0x03, 0x2f,
+	0x1c, 0x46, 0x7d, 0xc1, 0xe9, 0x39, 0x19, 0x08, 0xc1, 0x61, 0x60, 0x81, 0x19, 0xe9, 0x82, 0x8c,
+	0xb4, 0xd0, 0x29, 0xc2, 0xd0, 0x36, 0x5d, 0x30, 0x54, 0x69, 0xa6, 0x11, 0x46, 0x8e, 0xda, 0x40,
+	0x03, 0x32, 0xe3, 0xa8, 0xe2, 0x52, 0x14, 0x5a, 0xc8, 0x1c, 0xc6, 0xd6, 0x9d, 0x22, 0x7a, 0x49,
+	0xc6, 0xa9, 0x8c, 0xbf, 0x21, 0x87, 0xb3, 0xc0, 0x0b, 0x27, 0x51, 0x9d, 0xe8, 0x92, 0x4c, 0x62,
+	0x99, 0x65, 0x98, 0x6b, 0x05, 0x93, 0x60, 0x10, 0x0e, 0xa3, 0x36, 0x9b, 0x8e, 0x50, 0xaa, 0x42,
+	0x05, 0x53, 0x6b, 0xea, 0x64, 0xf7, 0x62, 0x5b, 0x4c, 0x15, 0x90, 0x60, 0x10, 0x4e, 0xa3, 0x3a,
+	0xd1, 0x97, 0x64, 0xca, 0x94, 0x12, 0x49, 0x8e, 0xa8, 0x60, 0x66, 0x55, 0x07, 0x8c, 0x2d, 0xf1,
+	0x87, 0xc0, 0x9f, 0x58, 0x2a, 0x78, 0xe2, 0x6c, 0x0b, 0xcc, 0xb9, 0x78, 0xc9, 0x6e, 0x35, 0x3c,
+	0xb5, 0x3f, 0xcf, 0x05, 0xd3, 0xb1, 0x17, 0x86, 0xfc, 0xbd, 0x86, 0x79, 0xe0, 0x85, 0x83, 0xa8,
+	0x03, 0xc6, 0x56, 0x05, 0xaf, 0xed, 0x33, 0x67, 0x5b, 0x60, 0x4f, 0x96, 0x4a, 0x65, 0xe5, 0xb9,
+	0x95, 0x6d, 0xee, 0xdc, 0x66, 0x0f, 0xcf, 0xed, 0x65, 0xb5, 0xd9, 0xb8, 0x0c, 0xcb, 0xc4, 0xf6,
+	0xa8, 0xeb, 0x35, 0xb9, 0x73, 0x9b, 0x3d, 0x5c, 0xb8, 0x5e, 0x93, 0xe9, 0x6b, 0x32, 0xb7, 0xf3,
+	0x8d, 0xcc, 0x32, 0xa1, 0xbf, 0xec, 0x18, 0x2c, 0xec, 0x8a, 0x07, 0x94, 0xbe, 0x25, 0x17, 0x19,
+	0x13, 0xb9, 0x66, 0x22, 0xc7, 0xf2, 0x86, 0xe5, 0x9f, 0x24, 0x17, 0xb7, 0x7b, 0x78, 0x61, 0xcf,
+	0xfd, 0x98, 0xa2, 0x3e, 0x21, 0x3b, 0x64, 0x7c, 0x53, 0xb2, 0x3c, 0xde, 0xc1, 0xa5, 0xdd, 0xf5,
+	0x84, 0x34, 0x3e, 0xc2, 0x42, 0x7e, 0xe4, 0x70, 0x65, 0xff, 0x42, 0x27, 0xc4, 0xf8, 0x2d, 0x53,
+	0x58, 0xf7, 0xc1, 0xf5, 0x3b, 0xd2, 0xf8, 0xba, 0x7f, 0xed, 0xfa, 0x1d, 0x31, 0x1e, 0xef, 0x34,
+	0xe6, 0x4a, 0xc8, 0x5c, 0xc1, 0xd2, 0xf5, 0x3b, 0xb2, 0xf9, 0xf0, 0xfb, 0xe0, 0x7b, 0xf7, 0x07,
+	0xdf, 0xfb, 0x7b, 0xf0, 0xbd, 0x5f, 0x47, 0xbf, 0x77, 0x7f, 0xf4, 0x7b, 0x7f, 0x8e, 0x7e, 0xef,
+	0xeb, 0x9b, 0x44, 0xe8, 0x5d, 0xb5, 0x5d, 0xc5, 0x32, 0x5b, 0x37, 0x8f, 0xac, 0xf9, 0xde, 0xb5,
+	0x93, 0xde, 0x17, 0xa8, 0xb6, 0x63, 0xfb, 0x84, 0xde, 0xfd, 0x0f, 0x00, 0x00, 0xff, 0xff, 0xa3,
+	0x83, 0x61, 0x1e, 0x8e, 0x03, 0x00, 0x00,
 }
 
 func (m *PullRequest) Marshal() (dAtA []byte, err error) {
@@ -326,34 +335,51 @@ func (m *PullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xca
+		dAtA[i] = 0xd2
 	}
-	if len(m.Base) > 0 {
-		i -= len(m.Base)
-		copy(dAtA[i:], m.Base)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Base)))
+	if m.BaseRepoId != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.BaseRepoId))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xc8
+	}
+	if len(m.BaseBranch) > 0 {
+		i -= len(m.BaseBranch)
+		copy(dAtA[i:], m.BaseBranch)
+		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.BaseBranch)))
 		i--
 		dAtA[i] = 0x1
 		i--
 		dAtA[i] = 0xc2
 	}
-	if len(m.Head) > 0 {
-		i -= len(m.Head)
-		copy(dAtA[i:], m.Head)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Head)))
+	if m.HeadRepoId != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.HeadRepoId))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xba
+		dAtA[i] = 0xb8
 	}
-	if len(m.MaintainerCanModify) > 0 {
-		i -= len(m.MaintainerCanModify)
-		copy(dAtA[i:], m.MaintainerCanModify)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.MaintainerCanModify)))
+	if len(m.HeadBranch) > 0 {
+		i -= len(m.HeadBranch)
+		copy(dAtA[i:], m.HeadBranch)
+		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.HeadBranch)))
 		i--
 		dAtA[i] = 0x1
 		i--
 		dAtA[i] = 0xb2
+	}
+	if m.MaintainerCanModify {
+		i--
+		if m.MaintainerCanModify {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xa8
 	}
 	if len(m.MergeCommitSha) > 0 {
 		i -= len(m.MergeCommitSha)
@@ -362,7 +388,7 @@ func (m *PullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xaa
+		dAtA[i] = 0xa2
 	}
 	if len(m.MergedBy) > 0 {
 		i -= len(m.MergedBy)
@@ -371,16 +397,14 @@ func (m *PullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xa2
+		dAtA[i] = 0x9a
 	}
-	if len(m.MergedAt) > 0 {
-		i -= len(m.MergedAt)
-		copy(dAtA[i:], m.MergedAt)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.MergedAt)))
+	if m.MergedAt != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.MergedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x9a
+		dAtA[i] = 0x90
 	}
 	if len(m.ClosedBy) > 0 {
 		i -= len(m.ClosedBy)
@@ -389,88 +413,107 @@ func (m *PullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x92
-	}
-	if len(m.ClosedAt) > 0 {
-		i -= len(m.ClosedAt)
-		copy(dAtA[i:], m.ClosedAt)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.ClosedAt)))
-		i--
-		dAtA[i] = 0x1
-		i--
 		dAtA[i] = 0x8a
 	}
-	if len(m.UpdatedAt) > 0 {
-		i -= len(m.UpdatedAt)
-		copy(dAtA[i:], m.UpdatedAt)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.UpdatedAt)))
+	if m.ClosedAt != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.ClosedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x82
+		dAtA[i] = 0x80
 	}
-	if len(m.CreatedAt) > 0 {
-		i -= len(m.CreatedAt)
-		copy(dAtA[i:], m.CreatedAt)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.CreatedAt)))
+	if m.UpdatedAt != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x7a
+		dAtA[i] = 0x78
 	}
-	if len(m.Draft) > 0 {
-		i -= len(m.Draft)
-		copy(dAtA[i:], m.Draft)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Draft)))
+	if m.CreatedAt != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x72
+		dAtA[i] = 0x70
+	}
+	if m.Draft {
+		i--
+		if m.Draft {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x68
 	}
 	if len(m.Reviewers) > 0 {
-		i -= len(m.Reviewers)
-		copy(dAtA[i:], m.Reviewers)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Reviewers)))
-		i--
-		dAtA[i] = 0x6a
+		for iNdEx := len(m.Reviewers) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Reviewers[iNdEx])
+			copy(dAtA[i:], m.Reviewers[iNdEx])
+			i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Reviewers[iNdEx])))
+			i--
+			dAtA[i] = 0x62
+		}
 	}
 	if len(m.Assignees) > 0 {
-		i -= len(m.Assignees)
-		copy(dAtA[i:], m.Assignees)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Assignees)))
-		i--
-		dAtA[i] = 0x62
+		for iNdEx := len(m.Assignees) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Assignees[iNdEx])
+			copy(dAtA[i:], m.Assignees[iNdEx])
+			i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Assignees[iNdEx])))
+			i--
+			dAtA[i] = 0x5a
+		}
 	}
 	if len(m.Labels) > 0 {
-		i -= len(m.Labels)
-		copy(dAtA[i:], m.Labels)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Labels)))
-		i--
-		dAtA[i] = 0x5a
-	}
-	if len(m.RepositoryId) > 0 {
-		i -= len(m.RepositoryId)
-		copy(dAtA[i:], m.RepositoryId)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.RepositoryId)))
-		i--
-		dAtA[i] = 0x52
+		for iNdEx := len(m.Labels) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Labels[iNdEx])
+			copy(dAtA[i:], m.Labels[iNdEx])
+			i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Labels[iNdEx])))
+			i--
+			dAtA[i] = 0x52
+		}
 	}
 	if len(m.Issues) > 0 {
-		i -= len(m.Issues)
-		copy(dAtA[i:], m.Issues)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Issues)))
+		dAtA2 := make([]byte, len(m.Issues)*10)
+		var j1 int
+		for _, num := range m.Issues {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintPullRequest(dAtA, i, uint64(j1))
 		i--
 		dAtA[i] = 0x4a
 	}
 	if len(m.Comments) > 0 {
-		i -= len(m.Comments)
-		copy(dAtA[i:], m.Comments)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Comments)))
+		dAtA4 := make([]byte, len(m.Comments)*10)
+		var j3 int
+		for _, num := range m.Comments {
+			for num >= 1<<7 {
+				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j3++
+			}
+			dAtA4[j3] = uint8(num)
+			j3++
+		}
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintPullRequest(dAtA, i, uint64(j3))
 		i--
 		dAtA[i] = 0x42
 	}
-	if len(m.Locked) > 0 {
-		i -= len(m.Locked)
-		copy(dAtA[i:], m.Locked)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Locked)))
+	if m.Locked {
 		i--
-		dAtA[i] = 0x3a
+		if m.Locked {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
 	}
 	if len(m.Description) > 0 {
 		i -= len(m.Description)
@@ -493,12 +536,10 @@ func (m *PullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.Iid) > 0 {
-		i -= len(m.Iid)
-		copy(dAtA[i:], m.Iid)
-		i = encodeVarintPullRequest(dAtA, i, uint64(len(m.Iid)))
+	if m.Iid != 0 {
+		i = encodeVarintPullRequest(dAtA, i, uint64(m.Iid))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x18
 	}
 	if m.Id != 0 {
 		i = encodeVarintPullRequest(dAtA, i, uint64(m.Id))
@@ -539,9 +580,8 @@ func (m *PullRequest) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovPullRequest(uint64(m.Id))
 	}
-	l = len(m.Iid)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if m.Iid != 0 {
+		n += 1 + sovPullRequest(uint64(m.Iid))
 	}
 	l = len(m.Title)
 	if l > 0 {
@@ -555,57 +595,59 @@ func (m *PullRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovPullRequest(uint64(l))
 	}
-	l = len(m.Locked)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if m.Locked {
+		n += 2
 	}
-	l = len(m.Comments)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if len(m.Comments) > 0 {
+		l = 0
+		for _, e := range m.Comments {
+			l += sovPullRequest(uint64(e))
+		}
+		n += 1 + sovPullRequest(uint64(l)) + l
 	}
-	l = len(m.Issues)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if len(m.Issues) > 0 {
+		l = 0
+		for _, e := range m.Issues {
+			l += sovPullRequest(uint64(e))
+		}
+		n += 1 + sovPullRequest(uint64(l)) + l
 	}
-	l = len(m.RepositoryId)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			l = len(s)
+			n += 1 + l + sovPullRequest(uint64(l))
+		}
 	}
-	l = len(m.Labels)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if len(m.Assignees) > 0 {
+		for _, s := range m.Assignees {
+			l = len(s)
+			n += 1 + l + sovPullRequest(uint64(l))
+		}
 	}
-	l = len(m.Assignees)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if len(m.Reviewers) > 0 {
+		for _, s := range m.Reviewers {
+			l = len(s)
+			n += 1 + l + sovPullRequest(uint64(l))
+		}
 	}
-	l = len(m.Reviewers)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if m.Draft {
+		n += 2
 	}
-	l = len(m.Draft)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if m.CreatedAt != 0 {
+		n += 1 + sovPullRequest(uint64(m.CreatedAt))
 	}
-	l = len(m.CreatedAt)
-	if l > 0 {
-		n += 1 + l + sovPullRequest(uint64(l))
+	if m.UpdatedAt != 0 {
+		n += 1 + sovPullRequest(uint64(m.UpdatedAt))
 	}
-	l = len(m.UpdatedAt)
-	if l > 0 {
-		n += 2 + l + sovPullRequest(uint64(l))
-	}
-	l = len(m.ClosedAt)
-	if l > 0 {
-		n += 2 + l + sovPullRequest(uint64(l))
+	if m.ClosedAt != 0 {
+		n += 2 + sovPullRequest(uint64(m.ClosedAt))
 	}
 	l = len(m.ClosedBy)
 	if l > 0 {
 		n += 2 + l + sovPullRequest(uint64(l))
 	}
-	l = len(m.MergedAt)
-	if l > 0 {
-		n += 2 + l + sovPullRequest(uint64(l))
+	if m.MergedAt != 0 {
+		n += 2 + sovPullRequest(uint64(m.MergedAt))
 	}
 	l = len(m.MergedBy)
 	if l > 0 {
@@ -615,17 +657,22 @@ func (m *PullRequest) Size() (n int) {
 	if l > 0 {
 		n += 2 + l + sovPullRequest(uint64(l))
 	}
-	l = len(m.MaintainerCanModify)
+	if m.MaintainerCanModify {
+		n += 3
+	}
+	l = len(m.HeadBranch)
 	if l > 0 {
 		n += 2 + l + sovPullRequest(uint64(l))
 	}
-	l = len(m.Head)
+	if m.HeadRepoId != 0 {
+		n += 2 + sovPullRequest(uint64(m.HeadRepoId))
+	}
+	l = len(m.BaseBranch)
 	if l > 0 {
 		n += 2 + l + sovPullRequest(uint64(l))
 	}
-	l = len(m.Base)
-	if l > 0 {
-		n += 2 + l + sovPullRequest(uint64(l))
+	if m.BaseRepoId != 0 {
+		n += 2 + sovPullRequest(uint64(m.BaseRepoId))
 	}
 	l = len(m.Extensions)
 	if l > 0 {
@@ -721,10 +768,10 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Iid", wireType)
 			}
-			var stringLen uint64
+			m.Iid = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -734,24 +781,11 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Iid |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Iid = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
@@ -849,10 +883,10 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 7:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Locked", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -862,121 +896,165 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Locked = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.Locked = bool(v != 0)
 		case 8:
-			if wireType != 2 {
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowPullRequest
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Comments = append(m.Comments, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowPullRequest
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthPullRequest
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthPullRequest
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Comments) == 0 {
+					m.Comments = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowPullRequest
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Comments = append(m.Comments, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Comments", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPullRequest
+		case 9:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowPullRequest
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
 				}
-				if iNdEx >= l {
+				m.Issues = append(m.Issues, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowPullRequest
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthPullRequest
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthPullRequest
+				}
+				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
 				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Comments = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
+				elementCount = count
+				if elementCount != 0 && len(m.Issues) == 0 {
+					m.Issues = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowPullRequest
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Issues = append(m.Issues, v)
+				}
+			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Issues", wireType)
 			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPullRequest
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Issues = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowPullRequest
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RepositoryId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
 			}
@@ -1006,9 +1084,9 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Labels = string(dAtA[iNdEx:postIndex])
+			m.Labels = append(m.Labels, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
-		case 12:
+		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Assignees", wireType)
 			}
@@ -1038,9 +1116,9 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Assignees = string(dAtA[iNdEx:postIndex])
+			m.Assignees = append(m.Assignees, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
-		case 13:
+		case 12:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Reviewers", wireType)
 			}
@@ -1070,13 +1148,13 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Reviewers = string(dAtA[iNdEx:postIndex])
+			m.Reviewers = append(m.Reviewers, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
-		case 14:
-			if wireType != 2 {
+		case 13:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Draft", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1086,29 +1164,17 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Draft = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 15:
-			if wireType != 2 {
+			m.Draft = bool(v != 0)
+		case 14:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
-			var stringLen uint64
+			m.CreatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1118,29 +1184,16 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.CreatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CreatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 16:
-			if wireType != 2 {
+		case 15:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
-			var stringLen uint64
+			m.UpdatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1150,29 +1203,16 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.UpdatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 17:
-			if wireType != 2 {
+		case 16:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ClosedAt", wireType)
 			}
-			var stringLen uint64
+			m.ClosedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1182,25 +1222,12 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.ClosedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ClosedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 18:
+		case 17:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ClosedBy", wireType)
 			}
@@ -1232,11 +1259,11 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.ClosedBy = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 19:
-			if wireType != 2 {
+		case 18:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MergedAt", wireType)
 			}
-			var stringLen uint64
+			m.MergedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1246,25 +1273,12 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.MergedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MergedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 20:
+		case 19:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MergedBy", wireType)
 			}
@@ -1296,7 +1310,7 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.MergedBy = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 21:
+		case 20:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MergeCommitSha", wireType)
 			}
@@ -1328,10 +1342,30 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.MergeCommitSha = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 22:
-			if wireType != 2 {
+		case 21:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MaintainerCanModify", wireType)
 			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPullRequest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.MaintainerCanModify = bool(v != 0)
+		case 22:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HeadBranch", wireType)
+			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
@@ -1358,13 +1392,13 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MaintainerCanModify = string(dAtA[iNdEx:postIndex])
+			m.HeadBranch = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 23:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Head", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HeadRepoId", wireType)
 			}
-			var stringLen uint64
+			m.HeadRepoId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowPullRequest
@@ -1374,27 +1408,14 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.HeadRepoId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthPullRequest
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Head = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 24:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Base", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field BaseBranch", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1422,9 +1443,28 @@ func (m *PullRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Base = string(dAtA[iNdEx:postIndex])
+			m.BaseBranch = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 25:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BaseRepoId", wireType)
+			}
+			m.BaseRepoId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowPullRequest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.BaseRepoId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 26:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Extensions", wireType)
 			}

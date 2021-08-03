@@ -5,28 +5,29 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 const basePullRequest = {
     creator: "",
     id: 0,
-    iid: "",
+    iid: 0,
     title: "",
     state: "",
     description: "",
-    locked: "",
-    comments: "",
-    issues: "",
-    repositoryId: "",
+    locked: false,
+    comments: 0,
+    issues: 0,
     labels: "",
     assignees: "",
     reviewers: "",
-    draft: "",
-    createdAt: "",
-    updatedAt: "",
-    closedAt: "",
+    draft: false,
+    createdAt: 0,
+    updatedAt: 0,
+    closedAt: 0,
     closedBy: "",
-    mergedAt: "",
+    mergedAt: 0,
     mergedBy: "",
     mergeCommitSha: "",
-    maintainerCanModify: "",
-    head: "",
-    base: "",
+    maintainerCanModify: false,
+    headBranch: "",
+    headRepoId: 0,
+    baseBranch: "",
+    baseRepoId: 0,
     extensions: "",
 };
 export const PullRequest = {
@@ -37,8 +38,8 @@ export const PullRequest = {
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
         }
-        if (message.iid !== "") {
-            writer.uint32(26).string(message.iid);
+        if (message.iid !== 0) {
+            writer.uint32(24).uint64(message.iid);
         }
         if (message.title !== "") {
             writer.uint32(34).string(message.title);
@@ -49,62 +50,69 @@ export const PullRequest = {
         if (message.description !== "") {
             writer.uint32(50).string(message.description);
         }
-        if (message.locked !== "") {
-            writer.uint32(58).string(message.locked);
+        if (message.locked === true) {
+            writer.uint32(56).bool(message.locked);
         }
-        if (message.comments !== "") {
-            writer.uint32(66).string(message.comments);
+        writer.uint32(66).fork();
+        for (const v of message.comments) {
+            writer.uint64(v);
         }
-        if (message.issues !== "") {
-            writer.uint32(74).string(message.issues);
+        writer.ldelim();
+        writer.uint32(74).fork();
+        for (const v of message.issues) {
+            writer.uint64(v);
         }
-        if (message.repositoryId !== "") {
-            writer.uint32(82).string(message.repositoryId);
+        writer.ldelim();
+        for (const v of message.labels) {
+            writer.uint32(82).string(v);
         }
-        if (message.labels !== "") {
-            writer.uint32(90).string(message.labels);
+        for (const v of message.assignees) {
+            writer.uint32(90).string(v);
         }
-        if (message.assignees !== "") {
-            writer.uint32(98).string(message.assignees);
+        for (const v of message.reviewers) {
+            writer.uint32(98).string(v);
         }
-        if (message.reviewers !== "") {
-            writer.uint32(106).string(message.reviewers);
+        if (message.draft === true) {
+            writer.uint32(104).bool(message.draft);
         }
-        if (message.draft !== "") {
-            writer.uint32(114).string(message.draft);
+        if (message.createdAt !== 0) {
+            writer.uint32(112).int64(message.createdAt);
         }
-        if (message.createdAt !== "") {
-            writer.uint32(122).string(message.createdAt);
+        if (message.updatedAt !== 0) {
+            writer.uint32(120).int64(message.updatedAt);
         }
-        if (message.updatedAt !== "") {
-            writer.uint32(130).string(message.updatedAt);
-        }
-        if (message.closedAt !== "") {
-            writer.uint32(138).string(message.closedAt);
+        if (message.closedAt !== 0) {
+            writer.uint32(128).int64(message.closedAt);
         }
         if (message.closedBy !== "") {
-            writer.uint32(146).string(message.closedBy);
+            writer.uint32(138).string(message.closedBy);
         }
-        if (message.mergedAt !== "") {
-            writer.uint32(154).string(message.mergedAt);
+        if (message.mergedAt !== 0) {
+            writer.uint32(144).int64(message.mergedAt);
         }
         if (message.mergedBy !== "") {
-            writer.uint32(162).string(message.mergedBy);
+            writer.uint32(154).string(message.mergedBy);
         }
         if (message.mergeCommitSha !== "") {
-            writer.uint32(170).string(message.mergeCommitSha);
+            writer.uint32(162).string(message.mergeCommitSha);
         }
-        if (message.maintainerCanModify !== "") {
-            writer.uint32(178).string(message.maintainerCanModify);
+        if (message.maintainerCanModify === true) {
+            writer.uint32(168).bool(message.maintainerCanModify);
         }
-        if (message.head !== "") {
-            writer.uint32(186).string(message.head);
+        if (message.headBranch !== "") {
+            writer.uint32(178).string(message.headBranch);
         }
-        if (message.base !== "") {
-            writer.uint32(194).string(message.base);
+        if (message.headRepoId !== 0) {
+            writer.uint32(184).uint64(message.headRepoId);
+        }
+        if (message.baseBranch !== "") {
+            writer.uint32(194).string(message.baseBranch);
+        }
+        if (message.baseRepoId !== 0) {
+            writer.uint32(200).uint64(message.baseRepoId);
         }
         if (message.extensions !== "") {
-            writer.uint32(202).string(message.extensions);
+            writer.uint32(210).string(message.extensions);
         }
         return writer;
     },
@@ -112,6 +120,11 @@ export const PullRequest = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...basePullRequest };
+        message.comments = [];
+        message.issues = [];
+        message.labels = [];
+        message.assignees = [];
+        message.reviewers = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -122,7 +135,7 @@ export const PullRequest = {
                     message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.iid = reader.string();
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 case 4:
                     message.title = reader.string();
@@ -134,60 +147,79 @@ export const PullRequest = {
                     message.description = reader.string();
                     break;
                 case 7:
-                    message.locked = reader.string();
+                    message.locked = reader.bool();
                     break;
                 case 8:
-                    message.comments = reader.string();
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.comments.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.comments.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 9:
-                    message.issues = reader.string();
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.issues.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.issues.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 10:
-                    message.repositoryId = reader.string();
+                    message.labels.push(reader.string());
                     break;
                 case 11:
-                    message.labels = reader.string();
+                    message.assignees.push(reader.string());
                     break;
                 case 12:
-                    message.assignees = reader.string();
+                    message.reviewers.push(reader.string());
                     break;
                 case 13:
-                    message.reviewers = reader.string();
+                    message.draft = reader.bool();
                     break;
                 case 14:
-                    message.draft = reader.string();
+                    message.createdAt = longToNumber(reader.int64());
                     break;
                 case 15:
-                    message.createdAt = reader.string();
+                    message.updatedAt = longToNumber(reader.int64());
                     break;
                 case 16:
-                    message.updatedAt = reader.string();
+                    message.closedAt = longToNumber(reader.int64());
                     break;
                 case 17:
-                    message.closedAt = reader.string();
-                    break;
-                case 18:
                     message.closedBy = reader.string();
                     break;
-                case 19:
-                    message.mergedAt = reader.string();
+                case 18:
+                    message.mergedAt = longToNumber(reader.int64());
                     break;
-                case 20:
+                case 19:
                     message.mergedBy = reader.string();
                     break;
-                case 21:
+                case 20:
                     message.mergeCommitSha = reader.string();
                     break;
+                case 21:
+                    message.maintainerCanModify = reader.bool();
+                    break;
                 case 22:
-                    message.maintainerCanModify = reader.string();
+                    message.headBranch = reader.string();
                     break;
                 case 23:
-                    message.head = reader.string();
+                    message.headRepoId = longToNumber(reader.uint64());
                     break;
                 case 24:
-                    message.base = reader.string();
+                    message.baseBranch = reader.string();
                     break;
                 case 25:
+                    message.baseRepoId = longToNumber(reader.uint64());
+                    break;
+                case 26:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -199,6 +231,11 @@ export const PullRequest = {
     },
     fromJSON(object) {
         const message = { ...basePullRequest };
+        message.comments = [];
+        message.issues = [];
+        message.labels = [];
+        message.assignees = [];
+        message.reviewers = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -212,10 +249,10 @@ export const PullRequest = {
             message.id = 0;
         }
         if (object.iid !== undefined && object.iid !== null) {
-            message.iid = String(object.iid);
+            message.iid = Number(object.iid);
         }
         else {
-            message.iid = "";
+            message.iid = 0;
         }
         if (object.title !== undefined && object.title !== null) {
             message.title = String(object.title);
@@ -236,70 +273,59 @@ export const PullRequest = {
             message.description = "";
         }
         if (object.locked !== undefined && object.locked !== null) {
-            message.locked = String(object.locked);
+            message.locked = Boolean(object.locked);
         }
         else {
-            message.locked = "";
+            message.locked = false;
         }
         if (object.comments !== undefined && object.comments !== null) {
-            message.comments = String(object.comments);
-        }
-        else {
-            message.comments = "";
+            for (const e of object.comments) {
+                message.comments.push(Number(e));
+            }
         }
         if (object.issues !== undefined && object.issues !== null) {
-            message.issues = String(object.issues);
-        }
-        else {
-            message.issues = "";
-        }
-        if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = String(object.repositoryId);
-        }
-        else {
-            message.repositoryId = "";
+            for (const e of object.issues) {
+                message.issues.push(Number(e));
+            }
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = String(object.labels);
-        }
-        else {
-            message.labels = "";
+            for (const e of object.labels) {
+                message.labels.push(String(e));
+            }
         }
         if (object.assignees !== undefined && object.assignees !== null) {
-            message.assignees = String(object.assignees);
-        }
-        else {
-            message.assignees = "";
+            for (const e of object.assignees) {
+                message.assignees.push(String(e));
+            }
         }
         if (object.reviewers !== undefined && object.reviewers !== null) {
-            message.reviewers = String(object.reviewers);
-        }
-        else {
-            message.reviewers = "";
+            for (const e of object.reviewers) {
+                message.reviewers.push(String(e));
+            }
         }
         if (object.draft !== undefined && object.draft !== null) {
-            message.draft = String(object.draft);
+            message.draft = Boolean(object.draft);
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = String(object.createdAt);
+            message.createdAt = Number(object.createdAt);
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = String(object.updatedAt);
+            message.updatedAt = Number(object.updatedAt);
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.closedAt !== undefined && object.closedAt !== null) {
-            message.closedAt = String(object.closedAt);
+            message.closedAt = Number(object.closedAt);
         }
         else {
-            message.closedAt = "";
+            message.closedAt = 0;
         }
         if (object.closedBy !== undefined && object.closedBy !== null) {
             message.closedBy = String(object.closedBy);
@@ -308,10 +334,10 @@ export const PullRequest = {
             message.closedBy = "";
         }
         if (object.mergedAt !== undefined && object.mergedAt !== null) {
-            message.mergedAt = String(object.mergedAt);
+            message.mergedAt = Number(object.mergedAt);
         }
         else {
-            message.mergedAt = "";
+            message.mergedAt = 0;
         }
         if (object.mergedBy !== undefined && object.mergedBy !== null) {
             message.mergedBy = String(object.mergedBy);
@@ -327,22 +353,34 @@ export const PullRequest = {
         }
         if (object.maintainerCanModify !== undefined &&
             object.maintainerCanModify !== null) {
-            message.maintainerCanModify = String(object.maintainerCanModify);
+            message.maintainerCanModify = Boolean(object.maintainerCanModify);
         }
         else {
-            message.maintainerCanModify = "";
+            message.maintainerCanModify = false;
         }
-        if (object.head !== undefined && object.head !== null) {
-            message.head = String(object.head);
-        }
-        else {
-            message.head = "";
-        }
-        if (object.base !== undefined && object.base !== null) {
-            message.base = String(object.base);
+        if (object.headBranch !== undefined && object.headBranch !== null) {
+            message.headBranch = String(object.headBranch);
         }
         else {
-            message.base = "";
+            message.headBranch = "";
+        }
+        if (object.headRepoId !== undefined && object.headRepoId !== null) {
+            message.headRepoId = Number(object.headRepoId);
+        }
+        else {
+            message.headRepoId = 0;
+        }
+        if (object.baseBranch !== undefined && object.baseBranch !== null) {
+            message.baseBranch = String(object.baseBranch);
+        }
+        else {
+            message.baseBranch = "";
+        }
+        if (object.baseRepoId !== undefined && object.baseRepoId !== null) {
+            message.baseRepoId = Number(object.baseRepoId);
+        }
+        else {
+            message.baseRepoId = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = String(object.extensions);
@@ -362,13 +400,36 @@ export const PullRequest = {
         message.description !== undefined &&
             (obj.description = message.description);
         message.locked !== undefined && (obj.locked = message.locked);
-        message.comments !== undefined && (obj.comments = message.comments);
-        message.issues !== undefined && (obj.issues = message.issues);
-        message.repositoryId !== undefined &&
-            (obj.repositoryId = message.repositoryId);
-        message.labels !== undefined && (obj.labels = message.labels);
-        message.assignees !== undefined && (obj.assignees = message.assignees);
-        message.reviewers !== undefined && (obj.reviewers = message.reviewers);
+        if (message.comments) {
+            obj.comments = message.comments.map((e) => e);
+        }
+        else {
+            obj.comments = [];
+        }
+        if (message.issues) {
+            obj.issues = message.issues.map((e) => e);
+        }
+        else {
+            obj.issues = [];
+        }
+        if (message.labels) {
+            obj.labels = message.labels.map((e) => e);
+        }
+        else {
+            obj.labels = [];
+        }
+        if (message.assignees) {
+            obj.assignees = message.assignees.map((e) => e);
+        }
+        else {
+            obj.assignees = [];
+        }
+        if (message.reviewers) {
+            obj.reviewers = message.reviewers.map((e) => e);
+        }
+        else {
+            obj.reviewers = [];
+        }
         message.draft !== undefined && (obj.draft = message.draft);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
@@ -380,13 +441,20 @@ export const PullRequest = {
             (obj.mergeCommitSha = message.mergeCommitSha);
         message.maintainerCanModify !== undefined &&
             (obj.maintainerCanModify = message.maintainerCanModify);
-        message.head !== undefined && (obj.head = message.head);
-        message.base !== undefined && (obj.base = message.base);
+        message.headBranch !== undefined && (obj.headBranch = message.headBranch);
+        message.headRepoId !== undefined && (obj.headRepoId = message.headRepoId);
+        message.baseBranch !== undefined && (obj.baseBranch = message.baseBranch);
+        message.baseRepoId !== undefined && (obj.baseRepoId = message.baseRepoId);
         message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
     fromPartial(object) {
         const message = { ...basePullRequest };
+        message.comments = [];
+        message.issues = [];
+        message.labels = [];
+        message.assignees = [];
+        message.reviewers = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -403,7 +471,7 @@ export const PullRequest = {
             message.iid = object.iid;
         }
         else {
-            message.iid = "";
+            message.iid = 0;
         }
         if (object.title !== undefined && object.title !== null) {
             message.title = object.title;
@@ -427,67 +495,56 @@ export const PullRequest = {
             message.locked = object.locked;
         }
         else {
-            message.locked = "";
+            message.locked = false;
         }
         if (object.comments !== undefined && object.comments !== null) {
-            message.comments = object.comments;
-        }
-        else {
-            message.comments = "";
+            for (const e of object.comments) {
+                message.comments.push(e);
+            }
         }
         if (object.issues !== undefined && object.issues !== null) {
-            message.issues = object.issues;
-        }
-        else {
-            message.issues = "";
-        }
-        if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = object.repositoryId;
-        }
-        else {
-            message.repositoryId = "";
+            for (const e of object.issues) {
+                message.issues.push(e);
+            }
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = object.labels;
-        }
-        else {
-            message.labels = "";
+            for (const e of object.labels) {
+                message.labels.push(e);
+            }
         }
         if (object.assignees !== undefined && object.assignees !== null) {
-            message.assignees = object.assignees;
-        }
-        else {
-            message.assignees = "";
+            for (const e of object.assignees) {
+                message.assignees.push(e);
+            }
         }
         if (object.reviewers !== undefined && object.reviewers !== null) {
-            message.reviewers = object.reviewers;
-        }
-        else {
-            message.reviewers = "";
+            for (const e of object.reviewers) {
+                message.reviewers.push(e);
+            }
         }
         if (object.draft !== undefined && object.draft !== null) {
             message.draft = object.draft;
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.createdAt !== undefined && object.createdAt !== null) {
             message.createdAt = object.createdAt;
         }
         else {
-            message.createdAt = "";
+            message.createdAt = 0;
         }
         if (object.updatedAt !== undefined && object.updatedAt !== null) {
             message.updatedAt = object.updatedAt;
         }
         else {
-            message.updatedAt = "";
+            message.updatedAt = 0;
         }
         if (object.closedAt !== undefined && object.closedAt !== null) {
             message.closedAt = object.closedAt;
         }
         else {
-            message.closedAt = "";
+            message.closedAt = 0;
         }
         if (object.closedBy !== undefined && object.closedBy !== null) {
             message.closedBy = object.closedBy;
@@ -499,7 +556,7 @@ export const PullRequest = {
             message.mergedAt = object.mergedAt;
         }
         else {
-            message.mergedAt = "";
+            message.mergedAt = 0;
         }
         if (object.mergedBy !== undefined && object.mergedBy !== null) {
             message.mergedBy = object.mergedBy;
@@ -518,19 +575,31 @@ export const PullRequest = {
             message.maintainerCanModify = object.maintainerCanModify;
         }
         else {
-            message.maintainerCanModify = "";
+            message.maintainerCanModify = false;
         }
-        if (object.head !== undefined && object.head !== null) {
-            message.head = object.head;
-        }
-        else {
-            message.head = "";
-        }
-        if (object.base !== undefined && object.base !== null) {
-            message.base = object.base;
+        if (object.headBranch !== undefined && object.headBranch !== null) {
+            message.headBranch = object.headBranch;
         }
         else {
-            message.base = "";
+            message.headBranch = "";
+        }
+        if (object.headRepoId !== undefined && object.headRepoId !== null) {
+            message.headRepoId = object.headRepoId;
+        }
+        else {
+            message.headRepoId = 0;
+        }
+        if (object.baseBranch !== undefined && object.baseBranch !== null) {
+            message.baseBranch = object.baseBranch;
+        }
+        else {
+            message.baseBranch = "";
+        }
+        if (object.baseRepoId !== undefined && object.baseRepoId !== null) {
+            message.baseRepoId = object.baseRepoId;
+        }
+        else {
+            message.baseRepoId = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = object.extensions;
