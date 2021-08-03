@@ -10,19 +10,21 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignIid(ctx sdk.Context, k msgServer, repo types.Repository, repoId uint64) (uint64, error) {
-	if !k.HasRepository(ctx, repoId) {
-		return 0, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("Repository Id %d doesn't exist", repoId))
-	}
+func assignIssueIid(repo types.Repository) (uint64, error) {
 	var len = uint64(len(repo.Issues) + 1)
 	return len, nil
 }
 
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository Id %d doesn't exist", msg.RepositoryId))
+	}
+
 	repo := k.GetRepository(ctx, msg.RepositoryId)
 
-	iid, err := assignIid(ctx, k, repo, msg.RepositoryId)
+	iid, err := assignIssueIid(repo)
 	if err != nil {
 		return nil, err
 	}

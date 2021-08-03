@@ -10,19 +10,21 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignPullRequestIid(ctx sdk.Context, k msgServer, repo types.Repository, repoId uint64) (uint64, error) {
-	if !k.HasRepository(ctx, repoId) {
-		return 0, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("Repository Id %d doesn't exist", repoId))
-	}
+func assignPullRequestIid(repo types.Repository) (uint64, error) {
 	var len = uint64(len(repo.Pulls) + 1)
 	return len, nil
 }
 
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasRepository(ctx, msg.BaseRepoId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("baseRepositoryId %d doesn't exist", msg.BaseRepoId))
+	}
+
 	repo := k.GetRepository(ctx, msg.BaseRepoId)
 
-	iid, err := assignIid(ctx, k, repo, msg.BaseRepoId)
+	iid, err := assignPullRequestIid(repo)
 	if err != nil {
 		return nil, err
 	}
