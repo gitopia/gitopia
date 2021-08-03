@@ -15,27 +15,31 @@ import (
 
 func CmdCreatePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pullRequest [repositoryId] [title] [description] [head] [base]",
+		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId]",
 		Short: "Create a new pullRequest",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			argsTitle, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
-			argsTitle, err := cast.ToStringE(args[1])
+			argsDescription, err := cast.ToStringE(args[1])
 			if err != nil {
 				return err
 			}
-			argsDescription, err := cast.ToStringE(args[2])
+			argsHeadBranch, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
-			argsHead, err := cast.ToStringE(args[3])
+			argsHeadRepoId, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsBase, err := cast.ToStringE(args[4])
+			argsBaseBranch, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
+			argsBaseRepoId, err := strconv.ParseUint(args[5], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -45,7 +49,7 @@ func CmdCreatePullRequest() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePullRequest(clientCtx.GetFromAddress().String(), argsRepositoryId, argsTitle, argsDescription, argsHead, argsBase)
+			msg := types.NewMsgCreatePullRequest(clientCtx.GetFromAddress().String(), argsTitle, argsDescription, argsHeadBranch, argsHeadRepoId, argsBaseBranch, argsBaseRepoId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

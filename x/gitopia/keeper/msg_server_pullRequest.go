@@ -20,9 +20,9 @@ func assignPullRequestIid(ctx sdk.Context, k msgServer, repo types.Repository, r
 
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	repo := k.GetRepository(ctx, msg.RepositoryId)
+	repo := k.GetRepository(ctx, msg.BaseRepoId)
 
-	iid, err := assignIid(ctx, k, repo, msg.RepositoryId)
+	iid, err := assignIid(ctx, k, repo, msg.BaseRepoId)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,6 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	var pullRequest = types.PullRequest{
 		Creator:             msg.Creator,
-		RepositoryId:        msg.RepositoryId,
 		Iid:                 iid,
 		Title:               msg.Title,
 		State:               "Open",
@@ -43,8 +42,10 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		ClosedAt:            zeroTime,
 		MergedAt:            zeroTime,
 		MaintainerCanModify: false,
-		Head:                msg.Head,
-		Base:                msg.Base,
+		HeadBranch:          msg.HeadBranch,
+		HeadRepoId:          msg.HeadRepoId,
+		BaseBranch:          msg.BaseBranch,
+		BaseRepoId:          msg.BaseRepoId,
 	}
 
 	id := k.AppendPullRequest(

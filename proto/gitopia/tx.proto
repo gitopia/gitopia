@@ -48,11 +48,12 @@ service Msg {
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreatePullRequest {
   string creator = 1;
-  uint64 repositoryId = 2;
-  string title = 3;
-  string description = 4;
-  string head = 5;
-  string base = 6;
+  string title = 2;
+  string description = 3;
+  string headBranch = 4;
+  uint64 headRepoId = 5; 
+  string baseBranch = 6;
+  uint64 baseRepoId = 7; 
 }
 
 message MsgCreatePullRequestResponse {

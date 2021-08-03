@@ -7,14 +7,15 @@ import (
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, repositoryId uint64, title string, description string, head string, base string) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepoId uint64, baseBranch string, baseRepoId uint64) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Title:        title,
-		Description:  description,
-		Head:         head,
-		Base:         base,
+		Creator:     creator,
+		Title:       title,
+		Description: description,
+		HeadBranch:  headBranch,
+		HeadRepoId:  headRepoId,
+		BaseBranch:  baseBranch,
+		BaseRepoId:  baseRepoId,
 	}
 }
 
