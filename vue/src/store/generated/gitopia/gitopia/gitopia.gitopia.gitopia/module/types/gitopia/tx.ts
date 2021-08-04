@@ -175,6 +175,16 @@ export interface MsgCreateRepositoryResponse {
   id: number;
 }
 
+export interface MsgForkRepository {
+  creator: string;
+  repositoryId: number;
+  owner: string;
+}
+
+export interface MsgForkRepositoryResponse {
+  id: number;
+}
+
 export interface MsgRenameRepository {
   creator: string;
   id: number;
@@ -3330,6 +3340,169 @@ export const MsgCreateRepositoryResponse = {
   },
 };
 
+const baseMsgForkRepository: object = {
+  creator: "",
+  repositoryId: 0,
+  owner: "",
+};
+
+export const MsgForkRepository = {
+  encode(message: MsgForkRepository, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.repositoryId !== 0) {
+      writer.uint32(16).uint64(message.repositoryId);
+    }
+    if (message.owner !== "") {
+      writer.uint32(26).string(message.owner);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgForkRepository {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgForkRepository } as MsgForkRepository;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.owner = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgForkRepository {
+    const message = { ...baseMsgForkRepository } as MsgForkRepository;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgForkRepository): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.owner !== undefined && (obj.owner = message.owner);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgForkRepository>): MsgForkRepository {
+    const message = { ...baseMsgForkRepository } as MsgForkRepository;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgForkRepositoryResponse: object = { id: 0 };
+
+export const MsgForkRepositoryResponse = {
+  encode(
+    message: MsgForkRepositoryResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgForkRepositoryResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgForkRepositoryResponse,
+    } as MsgForkRepositoryResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgForkRepositoryResponse {
+    const message = {
+      ...baseMsgForkRepositoryResponse,
+    } as MsgForkRepositoryResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgForkRepositoryResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgForkRepositoryResponse>
+  ): MsgForkRepositoryResponse {
+    const message = {
+      ...baseMsgForkRepositoryResponse,
+    } as MsgForkRepositoryResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
 const baseMsgRenameRepository: object = { creator: "", id: 0, name: "" };
 
 export const MsgRenameRepository = {
@@ -5587,6 +5760,9 @@ export interface Msg {
   CreateRepository(
     request: MsgCreateRepository
   ): Promise<MsgCreateRepositoryResponse>;
+  ForkRepository(
+    request: MsgForkRepository
+  ): Promise<MsgForkRepositoryResponse>;
   RenameRepository(
     request: MsgRenameRepository
   ): Promise<MsgRenameRepositoryResponse>;
@@ -5837,6 +6013,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
+  ForkRepository(
+    request: MsgForkRepository
+  ): Promise<MsgForkRepositoryResponse> {
+    const data = MsgForkRepository.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "ForkRepository",
+      data
+    );
+    return promise.then((data) =>
+      MsgForkRepositoryResponse.decode(new Reader(data))
     );
   }
 
