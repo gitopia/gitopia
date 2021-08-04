@@ -92,6 +92,63 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgForkRepository{}
+
+func NewMsgForkRepository(creator string, repositoryId uint64, owner string) *MsgForkRepository {
+	return &MsgForkRepository{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Owner:        owner,
+	}
+}
+
+func (msg *MsgForkRepository) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgForkRepository) Type() string {
+	return "ForkRepository"
+}
+
+func (msg *MsgForkRepository) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgForkRepository) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgForkRepository) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	var o Owner
+	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+	if o.Type == "User" {
+		_, err = sdk.AccAddressFromBech32(o.ID)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		}
+	} else if o.Type == "Organization" {
+		_, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+	} else {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgCreateBranch{}
 
 func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string) *MsgCreateBranch {

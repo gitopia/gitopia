@@ -77,6 +77,10 @@ export declare type GitopiaMsgDeletePullRequestResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
+export interface GitopiaMsgForkRepositoryResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export declare type GitopiaMsgRenameRepositoryResponse = object;
 export declare type GitopiaMsgSetDefaultBranchResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;

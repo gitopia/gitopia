@@ -117,6 +117,11 @@ export type GitopiaMsgDeleteUserResponse = object;
 
 export type GitopiaMsgDeleteWhoisResponse = object;
 
+export interface GitopiaMsgForkRepositoryResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export type GitopiaMsgRenameRepositoryResponse = object;
 
 export type GitopiaMsgSetDefaultBranchResponse = object;

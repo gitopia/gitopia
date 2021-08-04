@@ -122,6 +122,111 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	}, nil
 }
 
+func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepository) (*types.MsgForkRepositoryResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	}
+
+	var o Owner
+	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+
+	forkRepo := k.GetRepository(ctx, msg.RepositoryId)
+
+	var user types.User
+	var organization types.Organization
+	if o.Type == "User" {
+		if msg.Creator != o.ID {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
+		}
+
+		if !k.HasUser(ctx, o.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", o.ID))
+		}
+
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		user = k.GetUser(ctx, o.ID)
+		if _, exists := user.RepositoryNames[forkRepo.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", forkRepo.Name))
+		}
+	} else if o.Type == "Organization" {
+		orgId, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", o.ID))
+		}
+
+		organization = k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		if _, exists := organization.RepositoryNames[forkRepo.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", forkRepo.Name))
+		}
+	}
+
+	createdAt := time.Now().Unix()
+
+	forkRepo.CreatedAt = createdAt
+	forkRepo.UpdatedAt = createdAt
+	forkRepo.Owner = msg.Owner
+	forkRepo.Fork = true
+	forkRepo.Parent = msg.RepositoryId
+
+	id := k.AppendRepository(
+		ctx,
+		forkRepo,
+	)
+
+	// Update user/organization repositories
+	if o.Type == "User" {
+		user.Repositories = append(user.Repositories, id)
+
+		// Repository name lookup
+
+		// Initialize the map if it's nil
+		if user.RepositoryNames == nil {
+			user.RepositoryNames = make(map[string]uint64)
+		}
+
+		user.RepositoryNames[forkRepo.Name] = id
+
+		k.SetUser(ctx, user)
+	} else if o.Type == "Organization" {
+		organization.Repositories = append(organization.Repositories, id)
+
+		// Initialize the map if it's nil
+		if organization.RepositoryNames == nil {
+			organization.RepositoryNames = make(map[string]uint64)
+		}
+
+		organization.RepositoryNames[forkRepo.Name] = id
+
+		k.SetOrganization(ctx, organization)
+	}
+
+	// Update parent repository forks
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+	repository.Forks = append(repository.Forks, id)
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgForkRepositoryResponse{
+		Id: id,
+	}, nil
+}
+
 func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameRepository) (*types.MsgRenameRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
