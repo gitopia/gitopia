@@ -2,6 +2,497 @@
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseMsgCreatePullRequest = {
+    creator: "",
+    title: "",
+    description: "",
+    headBranch: "",
+    headRepoId: 0,
+    baseBranch: "",
+    baseRepoId: 0,
+};
+export const MsgCreatePullRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.title !== "") {
+            writer.uint32(18).string(message.title);
+        }
+        if (message.description !== "") {
+            writer.uint32(26).string(message.description);
+        }
+        if (message.headBranch !== "") {
+            writer.uint32(34).string(message.headBranch);
+        }
+        if (message.headRepoId !== 0) {
+            writer.uint32(40).uint64(message.headRepoId);
+        }
+        if (message.baseBranch !== "") {
+            writer.uint32(50).string(message.baseBranch);
+        }
+        if (message.baseRepoId !== 0) {
+            writer.uint32(56).uint64(message.baseRepoId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgCreatePullRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.title = reader.string();
+                    break;
+                case 3:
+                    message.description = reader.string();
+                    break;
+                case 4:
+                    message.headBranch = reader.string();
+                    break;
+                case 5:
+                    message.headRepoId = longToNumber(reader.uint64());
+                    break;
+                case 6:
+                    message.baseBranch = reader.string();
+                    break;
+                case 7:
+                    message.baseRepoId = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgCreatePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.title !== undefined && object.title !== null) {
+            message.title = String(object.title);
+        }
+        else {
+            message.title = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        if (object.headBranch !== undefined && object.headBranch !== null) {
+            message.headBranch = String(object.headBranch);
+        }
+        else {
+            message.headBranch = "";
+        }
+        if (object.headRepoId !== undefined && object.headRepoId !== null) {
+            message.headRepoId = Number(object.headRepoId);
+        }
+        else {
+            message.headRepoId = 0;
+        }
+        if (object.baseBranch !== undefined && object.baseBranch !== null) {
+            message.baseBranch = String(object.baseBranch);
+        }
+        else {
+            message.baseBranch = "";
+        }
+        if (object.baseRepoId !== undefined && object.baseRepoId !== null) {
+            message.baseRepoId = Number(object.baseRepoId);
+        }
+        else {
+            message.baseRepoId = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.title !== undefined && (obj.title = message.title);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        message.headBranch !== undefined && (obj.headBranch = message.headBranch);
+        message.headRepoId !== undefined && (obj.headRepoId = message.headRepoId);
+        message.baseBranch !== undefined && (obj.baseBranch = message.baseBranch);
+        message.baseRepoId !== undefined && (obj.baseRepoId = message.baseRepoId);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgCreatePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.title !== undefined && object.title !== null) {
+            message.title = object.title;
+        }
+        else {
+            message.title = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
+        }
+        if (object.headBranch !== undefined && object.headBranch !== null) {
+            message.headBranch = object.headBranch;
+        }
+        else {
+            message.headBranch = "";
+        }
+        if (object.headRepoId !== undefined && object.headRepoId !== null) {
+            message.headRepoId = object.headRepoId;
+        }
+        else {
+            message.headRepoId = 0;
+        }
+        if (object.baseBranch !== undefined && object.baseBranch !== null) {
+            message.baseBranch = object.baseBranch;
+        }
+        else {
+            message.baseBranch = "";
+        }
+        if (object.baseRepoId !== undefined && object.baseRepoId !== null) {
+            message.baseRepoId = object.baseRepoId;
+        }
+        else {
+            message.baseRepoId = 0;
+        }
+        return message;
+    },
+};
+const baseMsgCreatePullRequestResponse = { id: 0 };
+export const MsgCreatePullRequestResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgCreatePullRequestResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgCreatePullRequestResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgCreatePullRequestResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgUpdatePullRequest = {
+    creator: "",
+    id: 0,
+    title: "",
+    description: "",
+};
+export const MsgUpdatePullRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.title !== "") {
+            writer.uint32(34).string(message.title);
+        }
+        if (message.description !== "") {
+            writer.uint32(50).string(message.description);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgUpdatePullRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 4:
+                    message.title = reader.string();
+                    break;
+                case 6:
+                    message.description = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgUpdatePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.title !== undefined && object.title !== null) {
+            message.title = String(object.title);
+        }
+        else {
+            message.title = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.title !== undefined && (obj.title = message.title);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgUpdatePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.title !== undefined && object.title !== null) {
+            message.title = object.title;
+        }
+        else {
+            message.title = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdatePullRequestResponse = {};
+export const MsgUpdatePullRequestResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdatePullRequestResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdatePullRequestResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdatePullRequestResponse,
+        };
+        return message;
+    },
+};
+const baseMsgDeletePullRequest = { creator: "", id: 0 };
+export const MsgDeletePullRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgDeletePullRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgDeletePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgDeletePullRequest };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgDeletePullRequestResponse = {};
+export const MsgDeletePullRequestResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgDeletePullRequestResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgDeletePullRequestResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgDeletePullRequestResponse,
+        };
+        return message;
+    },
+};
 const baseMsgCreateOrganization = {
     creator: "",
     name: "",
@@ -4463,6 +4954,21 @@ export const MsgDeleteWhoisResponse = {
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
+    }
+    CreatePullRequest(request) {
+        const data = MsgCreatePullRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreatePullRequest", data);
+        return promise.then((data) => MsgCreatePullRequestResponse.decode(new Reader(data)));
+    }
+    UpdatePullRequest(request) {
+        const data = MsgUpdatePullRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdatePullRequest", data);
+        return promise.then((data) => MsgUpdatePullRequestResponse.decode(new Reader(data)));
+    }
+    DeletePullRequest(request) {
+        const data = MsgDeletePullRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeletePullRequest", data);
+        return promise.then((data) => MsgDeletePullRequestResponse.decode(new Reader(data)));
     }
     CreateOrganization(request) {
         const data = MsgCreateOrganization.encode(request).finish();

@@ -1,11 +1,12 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Organization } from "../gitopia/organization";
+import { PullRequest } from "../gitopia/pullRequest";
 import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
+import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
@@ -15,6 +16,23 @@ import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetPullRequestRequest {
+  id: number;
+}
+
+export interface QueryGetPullRequestResponse {
+  PullRequest: PullRequest | undefined;
+}
+
+export interface QueryAllPullRequestRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllPullRequestResponse {
+  PullRequest: PullRequest[];
+  pagination: PageResponse | undefined;
+}
+
 export interface QueryGetOrganizationRequest {
   id: number;
 }
@@ -146,6 +164,323 @@ export interface QueryAllWhoisResponse {
   Whois: Whois[];
   pagination: PageResponse | undefined;
 }
+
+const baseQueryGetPullRequestRequest: object = { id: 0 };
+
+export const QueryGetPullRequestRequest = {
+  encode(
+    message: QueryGetPullRequestRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetPullRequestRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetPullRequestRequest,
+    } as QueryGetPullRequestRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetPullRequestRequest {
+    const message = {
+      ...baseQueryGetPullRequestRequest,
+    } as QueryGetPullRequestRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetPullRequestRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPullRequestRequest>
+  ): QueryGetPullRequestRequest {
+    const message = {
+      ...baseQueryGetPullRequestRequest,
+    } as QueryGetPullRequestRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetPullRequestResponse: object = {};
+
+export const QueryGetPullRequestResponse = {
+  encode(
+    message: QueryGetPullRequestResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.PullRequest !== undefined) {
+      PullRequest.encode(
+        message.PullRequest,
+        writer.uint32(10).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetPullRequestResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetPullRequestResponse,
+    } as QueryGetPullRequestResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.PullRequest = PullRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetPullRequestResponse {
+    const message = {
+      ...baseQueryGetPullRequestResponse,
+    } as QueryGetPullRequestResponse;
+    if (object.PullRequest !== undefined && object.PullRequest !== null) {
+      message.PullRequest = PullRequest.fromJSON(object.PullRequest);
+    } else {
+      message.PullRequest = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetPullRequestResponse): unknown {
+    const obj: any = {};
+    message.PullRequest !== undefined &&
+      (obj.PullRequest = message.PullRequest
+        ? PullRequest.toJSON(message.PullRequest)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPullRequestResponse>
+  ): QueryGetPullRequestResponse {
+    const message = {
+      ...baseQueryGetPullRequestResponse,
+    } as QueryGetPullRequestResponse;
+    if (object.PullRequest !== undefined && object.PullRequest !== null) {
+      message.PullRequest = PullRequest.fromPartial(object.PullRequest);
+    } else {
+      message.PullRequest = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllPullRequestRequest: object = {};
+
+export const QueryAllPullRequestRequest = {
+  encode(
+    message: QueryAllPullRequestRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryAllPullRequestRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllPullRequestRequest,
+    } as QueryAllPullRequestRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllPullRequestRequest {
+    const message = {
+      ...baseQueryAllPullRequestRequest,
+    } as QueryAllPullRequestRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllPullRequestRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllPullRequestRequest>
+  ): QueryAllPullRequestRequest {
+    const message = {
+      ...baseQueryAllPullRequestRequest,
+    } as QueryAllPullRequestRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllPullRequestResponse: object = {};
+
+export const QueryAllPullRequestResponse = {
+  encode(
+    message: QueryAllPullRequestResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.PullRequest) {
+      PullRequest.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryAllPullRequestResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllPullRequestResponse,
+    } as QueryAllPullRequestResponse;
+    message.PullRequest = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.PullRequest.push(PullRequest.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllPullRequestResponse {
+    const message = {
+      ...baseQueryAllPullRequestResponse,
+    } as QueryAllPullRequestResponse;
+    message.PullRequest = [];
+    if (object.PullRequest !== undefined && object.PullRequest !== null) {
+      for (const e of object.PullRequest) {
+        message.PullRequest.push(PullRequest.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllPullRequestResponse): unknown {
+    const obj: any = {};
+    if (message.PullRequest) {
+      obj.PullRequest = message.PullRequest.map((e) =>
+        e ? PullRequest.toJSON(e) : undefined
+      );
+    } else {
+      obj.PullRequest = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllPullRequestResponse>
+  ): QueryAllPullRequestResponse {
+    const message = {
+      ...baseQueryAllPullRequestResponse,
+    } as QueryAllPullRequestResponse;
+    message.PullRequest = [];
+    if (object.PullRequest !== undefined && object.PullRequest !== null) {
+      for (const e of object.PullRequest) {
+        message.PullRequest.push(PullRequest.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
 
 const baseQueryGetOrganizationRequest: object = { id: 0 };
 
@@ -2433,6 +2768,14 @@ export const QueryAllWhoisResponse = {
 
 /** Query defines the gRPC querier service. */
 export interface Query {
+  /** Queries a pullRequest by id. */
+  PullRequest(
+    request: QueryGetPullRequestRequest
+  ): Promise<QueryGetPullRequestResponse>;
+  /** Queries a list of pullRequest items. */
+  PullRequestAll(
+    request: QueryAllPullRequestRequest
+  ): Promise<QueryAllPullRequestResponse>;
   /** Queries a organization by id. */
   Organization(
     request: QueryGetOrganizationRequest
@@ -2484,6 +2827,34 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
+  PullRequest(
+    request: QueryGetPullRequestRequest
+  ): Promise<QueryGetPullRequestResponse> {
+    const data = QueryGetPullRequestRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "PullRequest",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetPullRequestResponse.decode(new Reader(data))
+    );
+  }
+
+  PullRequestAll(
+    request: QueryAllPullRequestRequest
+  ): Promise<QueryAllPullRequestResponse> {
+    const data = QueryAllPullRequestRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "PullRequestAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllPullRequestResponse.decode(new Reader(data))
+    );
+  }
+
   Organization(
     request: QueryGetOrganizationRequest
   ): Promise<QueryGetOrganizationResponse> {

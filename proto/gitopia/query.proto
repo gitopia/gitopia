@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "gitopia/pullRequest.proto";
 import "gitopia/organization.proto";
 import "gitopia/comment.proto";
 import "gitopia/issue.proto";
@@ -16,6 +17,17 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+
+	// Queries a pullRequest by id.
+	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest/{id}";
+	}
+
+	// Queries a list of pullRequest items.
+	rpc PullRequestAll(QueryAllPullRequestRequest) returns (QueryAllPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest";
+	}
+
 
 	// Queries a organization by id.
 	rpc Organization(QueryGetOrganizationRequest) returns (QueryGetOrganizationResponse) {
@@ -96,6 +108,22 @@ service Query {
 }
 
 // this line is used by starport scaffolding # 3
+message QueryGetPullRequestRequest {
+	uint64 id = 1;
+}
+
+message QueryGetPullRequestResponse {
+	PullRequest PullRequest = 1;
+}
+
+message QueryAllPullRequestRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPullRequestResponse {
+	repeated PullRequest PullRequest = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
 message QueryGetOrganizationRequest {
 	uint64 id = 1;
 }

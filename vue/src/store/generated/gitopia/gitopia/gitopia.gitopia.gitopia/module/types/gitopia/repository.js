@@ -23,6 +23,8 @@ const baseRepository = {
     archived: false,
     license: "",
     defaultBranch: "",
+    parent: 0,
+    fork: false,
     extensions: "",
 };
 export const Repository = {
@@ -98,11 +100,17 @@ export const Repository = {
         if (message.defaultBranch !== "") {
             writer.uint32(170).string(message.defaultBranch);
         }
+        if (message.parent !== 0) {
+            writer.uint32(176).uint64(message.parent);
+        }
+        if (message.fork === true) {
+            writer.uint32(184).bool(message.fork);
+        }
         Object.entries(message.collaborators).forEach(([key, value]) => {
-            Repository_CollaboratorsEntry.encode({ key: key, value }, writer.uint32(178).fork()).ldelim();
+            Repository_CollaboratorsEntry.encode({ key: key, value }, writer.uint32(194).fork()).ldelim();
         });
         if (message.extensions !== "") {
-            writer.uint32(186).string(message.extensions);
+            writer.uint32(202).string(message.extensions);
         }
         return writer;
     },
@@ -218,12 +226,18 @@ export const Repository = {
                     message.defaultBranch = reader.string();
                     break;
                 case 22:
-                    const entry22 = Repository_CollaboratorsEntry.decode(reader, reader.uint32());
-                    if (entry22.value !== undefined) {
-                        message.collaborators[entry22.key] = entry22.value;
-                    }
+                    message.parent = longToNumber(reader.uint64());
                     break;
                 case 23:
+                    message.fork = reader.bool();
+                    break;
+                case 24:
+                    const entry24 = Repository_CollaboratorsEntry.decode(reader, reader.uint32());
+                    if (entry24.value !== undefined) {
+                        message.collaborators[entry24.key] = entry24.value;
+                    }
+                    break;
+                case 25:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -362,6 +376,18 @@ export const Repository = {
         else {
             message.defaultBranch = "";
         }
+        if (object.parent !== undefined && object.parent !== null) {
+            message.parent = Number(object.parent);
+        }
+        else {
+            message.parent = 0;
+        }
+        if (object.fork !== undefined && object.fork !== null) {
+            message.fork = Boolean(object.fork);
+        }
+        else {
+            message.fork = false;
+        }
         if (object.collaborators !== undefined && object.collaborators !== null) {
             Object.entries(object.collaborators).forEach(([key, value]) => {
                 message.collaborators[key] = String(value);
@@ -426,6 +452,8 @@ export const Repository = {
         message.license !== undefined && (obj.license = message.license);
         message.defaultBranch !== undefined &&
             (obj.defaultBranch = message.defaultBranch);
+        message.parent !== undefined && (obj.parent = message.parent);
+        message.fork !== undefined && (obj.fork = message.fork);
         obj.collaborators = {};
         if (message.collaborators) {
             Object.entries(message.collaborators).forEach(([k, v]) => {
@@ -565,6 +593,18 @@ export const Repository = {
         }
         else {
             message.defaultBranch = "";
+        }
+        if (object.parent !== undefined && object.parent !== null) {
+            message.parent = object.parent;
+        }
+        else {
+            message.parent = 0;
+        }
+        if (object.fork !== undefined && object.fork !== null) {
+            message.fork = object.fork;
+        }
+        else {
+            message.fork = false;
         }
         if (object.collaborators !== undefined && object.collaborators !== null) {
             Object.entries(object.collaborators).forEach(([key, value]) => {

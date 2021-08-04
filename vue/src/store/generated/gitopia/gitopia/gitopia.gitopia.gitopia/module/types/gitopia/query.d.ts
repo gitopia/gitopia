@@ -1,6 +1,7 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Organization } from "../gitopia/organization";
+import { PullRequest } from "../gitopia/pullRequest";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Repository } from "../gitopia/repository";
@@ -8,6 +9,19 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetPullRequestRequest {
+    id: number;
+}
+export interface QueryGetPullRequestResponse {
+    PullRequest: PullRequest | undefined;
+}
+export interface QueryAllPullRequestRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllPullRequestResponse {
+    PullRequest: PullRequest[];
+    pagination: PageResponse | undefined;
+}
 export interface QueryGetOrganizationRequest {
     id: number;
 }
@@ -111,6 +125,34 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetPullRequestRequest: {
+    encode(message: QueryGetPullRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestRequest;
+    fromJSON(object: any): QueryGetPullRequestRequest;
+    toJSON(message: QueryGetPullRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetPullRequestRequest>): QueryGetPullRequestRequest;
+};
+export declare const QueryGetPullRequestResponse: {
+    encode(message: QueryGetPullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestResponse;
+    fromJSON(object: any): QueryGetPullRequestResponse;
+    toJSON(message: QueryGetPullRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetPullRequestResponse>): QueryGetPullRequestResponse;
+};
+export declare const QueryAllPullRequestRequest: {
+    encode(message: QueryAllPullRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllPullRequestRequest;
+    fromJSON(object: any): QueryAllPullRequestRequest;
+    toJSON(message: QueryAllPullRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllPullRequestRequest>): QueryAllPullRequestRequest;
+};
+export declare const QueryAllPullRequestResponse: {
+    encode(message: QueryAllPullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllPullRequestResponse;
+    fromJSON(object: any): QueryAllPullRequestResponse;
+    toJSON(message: QueryAllPullRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllPullRequestResponse>): QueryAllPullRequestResponse;
+};
 export declare const QueryGetOrganizationRequest: {
     encode(message: QueryGetOrganizationRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetOrganizationRequest;
@@ -330,6 +372,10 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
+    /** Queries a pullRequest by id. */
+    PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
+    /** Queries a list of pullRequest items. */
+    PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     /** Queries a organization by id. */
     Organization(request: QueryGetOrganizationRequest): Promise<QueryGetOrganizationResponse>;
     /** Queries a list of organization items. */
@@ -364,6 +410,8 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
+    PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     Organization(request: QueryGetOrganizationRequest): Promise<QueryGetOrganizationResponse>;
     OrganizationAll(request: QueryAllOrganizationRequest): Promise<QueryAllOrganizationResponse>;
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;

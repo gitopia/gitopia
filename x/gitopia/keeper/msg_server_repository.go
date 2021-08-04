@@ -82,6 +82,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		DefaultBranch: defaultBranch,
 		CreatedAt:     createdAt,
 		UpdatedAt:     updatedAt,
+		Fork:          false,
 	}
 
 	id := k.AppendRepository(

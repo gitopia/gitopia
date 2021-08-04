@@ -1,6 +1,32 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
+export interface MsgCreatePullRequest {
+    creator: string;
+    title: string;
+    description: string;
+    headBranch: string;
+    headRepoId: number;
+    baseBranch: string;
+    baseRepoId: number;
+}
+export interface MsgCreatePullRequestResponse {
+    id: number;
+}
+export interface MsgUpdatePullRequest {
+    creator: string;
+    id: number;
+    title: string;
+    description: string;
+}
+export interface MsgUpdatePullRequestResponse {
+}
+export interface MsgDeletePullRequest {
+    creator: string;
+    id: number;
+}
+export interface MsgDeletePullRequestResponse {
+}
 export interface MsgCreateOrganization {
     creator: string;
     name: string;
@@ -237,6 +263,48 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgCreatePullRequest: {
+    encode(message: MsgCreatePullRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreatePullRequest;
+    fromJSON(object: any): MsgCreatePullRequest;
+    toJSON(message: MsgCreatePullRequest): unknown;
+    fromPartial(object: DeepPartial<MsgCreatePullRequest>): MsgCreatePullRequest;
+};
+export declare const MsgCreatePullRequestResponse: {
+    encode(message: MsgCreatePullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreatePullRequestResponse;
+    fromJSON(object: any): MsgCreatePullRequestResponse;
+    toJSON(message: MsgCreatePullRequestResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreatePullRequestResponse>): MsgCreatePullRequestResponse;
+};
+export declare const MsgUpdatePullRequest: {
+    encode(message: MsgUpdatePullRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequest;
+    fromJSON(object: any): MsgUpdatePullRequest;
+    toJSON(message: MsgUpdatePullRequest): unknown;
+    fromPartial(object: DeepPartial<MsgUpdatePullRequest>): MsgUpdatePullRequest;
+};
+export declare const MsgUpdatePullRequestResponse: {
+    encode(_: MsgUpdatePullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestResponse;
+    fromJSON(_: any): MsgUpdatePullRequestResponse;
+    toJSON(_: MsgUpdatePullRequestResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdatePullRequestResponse>): MsgUpdatePullRequestResponse;
+};
+export declare const MsgDeletePullRequest: {
+    encode(message: MsgDeletePullRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeletePullRequest;
+    fromJSON(object: any): MsgDeletePullRequest;
+    toJSON(message: MsgDeletePullRequest): unknown;
+    fromPartial(object: DeepPartial<MsgDeletePullRequest>): MsgDeletePullRequest;
+};
+export declare const MsgDeletePullRequestResponse: {
+    encode(_: MsgDeletePullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeletePullRequestResponse;
+    fromJSON(_: any): MsgDeletePullRequestResponse;
+    toJSON(_: MsgDeletePullRequestResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeletePullRequestResponse>): MsgDeletePullRequestResponse;
+};
 export declare const MsgCreateOrganization: {
     encode(message: MsgCreateOrganization, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateOrganization;
@@ -604,6 +672,9 @@ export declare const MsgDeleteWhoisResponse: {
 /** Msg defines the Msg service. */
 export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
+    CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
+    UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
+    DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
@@ -634,6 +705,9 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
+    UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
+    DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;

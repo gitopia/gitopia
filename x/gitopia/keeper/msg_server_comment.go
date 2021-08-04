@@ -10,19 +10,21 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignCommentIid(ctx sdk.Context, k msgServer, issue types.Issue, parentIssueId uint64) (uint64, error) {
-	if !k.HasIssue(ctx, parentIssueId) {
-		return 0, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("Issue Id %d doesn't exist", parentIssueId))
-	}
+func assignCommentIid(issue types.Issue) (uint64, error) {
 	var len = uint64(len(issue.Comments) + 1)
 	return len, nil
 }
 
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasIssue(ctx, msg.ParentId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id %d doesn't exist", msg.ParentId))
+	}
+
 	issue := k.GetIssue(ctx, msg.ParentId)
 
-	commentIid, err := assignCommentIid(ctx, k, issue, msg.ParentId)
+	commentIid, err := assignCommentIid(issue)
 	if err != nil {
 		return nil, err
 	}
