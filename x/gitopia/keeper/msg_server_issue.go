@@ -28,31 +28,23 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	if err != nil {
 		return nil, err
 	}
-	state := string("open")
-	comments := []uint64{}
-	pullRequests := []uint64{}
 	createdAt := time.Now().Unix()
-	updatedAt := createdAt
 	closedAt := time.Time{}.Unix()
-	extensions := string("")
 
 	var issue = types.Issue{
 		Creator:       msg.Creator,
 		Iid:           iid,
 		Title:         msg.Title,
-		State:         state,
+		State:         "Open",
 		Description:   msg.Description,
-		Comments:      comments,
 		CommentsCount: 0,
-		PullRequests:  pullRequests,
 		RepositoryId:  msg.RepositoryId,
 		Labels:        msg.Labels,
 		Weight:        msg.Weight,
 		Assignees:     msg.Assignees,
 		CreatedAt:     createdAt,
-		UpdatedAt:     updatedAt,
+		UpdatedAt:     createdAt,
 		ClosedAt:      closedAt,
-		Extensions:    extensions,
 	}
 
 	id := k.AppendIssue(
