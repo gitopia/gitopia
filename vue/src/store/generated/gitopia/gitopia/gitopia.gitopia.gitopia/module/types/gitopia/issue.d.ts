@@ -8,6 +8,7 @@ export interface Issue {
     state: string;
     description: string;
     comments: number[];
+    commentsCount: number;
     pullRequests: number[];
     repositoryId: number;
     labels: string[];

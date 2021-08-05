@@ -15,6 +15,8 @@ export interface Repository {
     commits: string;
     issues: number[];
     pulls: number[];
+    issuesCount: number;
+    pullsCount: number;
     labels: string;
     releases: string;
     createdAt: number;

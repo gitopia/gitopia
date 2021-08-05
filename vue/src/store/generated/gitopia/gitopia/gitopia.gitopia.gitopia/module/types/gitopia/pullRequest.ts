@@ -13,6 +13,7 @@ export interface PullRequest {
   description: string;
   locked: boolean;
   comments: number[];
+  commentsCount: number;
   issues: number[];
   labels: string[];
   assignees: string[];
@@ -42,6 +43,7 @@ const basePullRequest: object = {
   description: "",
   locked: false,
   comments: 0,
+  commentsCount: 0,
   issues: 0,
   labels: "",
   assignees: "",
@@ -90,61 +92,64 @@ export const PullRequest = {
       writer.uint64(v);
     }
     writer.ldelim();
-    writer.uint32(74).fork();
+    if (message.commentsCount !== 0) {
+      writer.uint32(72).uint64(message.commentsCount);
+    }
+    writer.uint32(82).fork();
     for (const v of message.issues) {
       writer.uint64(v);
     }
     writer.ldelim();
     for (const v of message.labels) {
-      writer.uint32(82).string(v!);
-    }
-    for (const v of message.assignees) {
       writer.uint32(90).string(v!);
     }
-    for (const v of message.reviewers) {
+    for (const v of message.assignees) {
       writer.uint32(98).string(v!);
     }
+    for (const v of message.reviewers) {
+      writer.uint32(106).string(v!);
+    }
     if (message.draft === true) {
-      writer.uint32(104).bool(message.draft);
+      writer.uint32(112).bool(message.draft);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(112).int64(message.createdAt);
+      writer.uint32(120).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(120).int64(message.updatedAt);
+      writer.uint32(128).int64(message.updatedAt);
     }
     if (message.closedAt !== 0) {
-      writer.uint32(128).int64(message.closedAt);
+      writer.uint32(136).int64(message.closedAt);
     }
     if (message.closedBy !== "") {
-      writer.uint32(138).string(message.closedBy);
+      writer.uint32(146).string(message.closedBy);
     }
     if (message.mergedAt !== 0) {
-      writer.uint32(144).int64(message.mergedAt);
+      writer.uint32(152).int64(message.mergedAt);
     }
     if (message.mergedBy !== "") {
-      writer.uint32(154).string(message.mergedBy);
+      writer.uint32(162).string(message.mergedBy);
     }
     if (message.mergeCommitSha !== "") {
-      writer.uint32(162).string(message.mergeCommitSha);
+      writer.uint32(170).string(message.mergeCommitSha);
     }
     if (message.maintainerCanModify === true) {
-      writer.uint32(168).bool(message.maintainerCanModify);
+      writer.uint32(176).bool(message.maintainerCanModify);
     }
     if (message.headBranch !== "") {
-      writer.uint32(178).string(message.headBranch);
+      writer.uint32(186).string(message.headBranch);
     }
     if (message.headRepoId !== 0) {
-      writer.uint32(184).uint64(message.headRepoId);
+      writer.uint32(192).uint64(message.headRepoId);
     }
     if (message.baseBranch !== "") {
-      writer.uint32(194).string(message.baseBranch);
+      writer.uint32(202).string(message.baseBranch);
     }
     if (message.baseRepoId !== 0) {
-      writer.uint32(200).uint64(message.baseRepoId);
+      writer.uint32(208).uint64(message.baseRepoId);
     }
     if (message.extensions !== "") {
-      writer.uint32(210).string(message.extensions);
+      writer.uint32(218).string(message.extensions);
     }
     return writer;
   },
@@ -193,6 +198,9 @@ export const PullRequest = {
           }
           break;
         case 9:
+          message.commentsCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 10:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -202,55 +210,55 @@ export const PullRequest = {
             message.issues.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 10:
+        case 11:
           message.labels.push(reader.string());
           break;
-        case 11:
+        case 12:
           message.assignees.push(reader.string());
           break;
-        case 12:
+        case 13:
           message.reviewers.push(reader.string());
           break;
-        case 13:
+        case 14:
           message.draft = reader.bool();
           break;
-        case 14:
+        case 15:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 15:
+        case 16:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 17:
           message.closedAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 18:
           message.closedBy = reader.string();
           break;
-        case 18:
+        case 19:
           message.mergedAt = longToNumber(reader.int64() as Long);
           break;
-        case 19:
+        case 20:
           message.mergedBy = reader.string();
           break;
-        case 20:
+        case 21:
           message.mergeCommitSha = reader.string();
           break;
-        case 21:
+        case 22:
           message.maintainerCanModify = reader.bool();
           break;
-        case 22:
+        case 23:
           message.headBranch = reader.string();
           break;
-        case 23:
+        case 24:
           message.headRepoId = longToNumber(reader.uint64() as Long);
           break;
-        case 24:
+        case 25:
           message.baseBranch = reader.string();
           break;
-        case 25:
+        case 26:
           message.baseRepoId = longToNumber(reader.uint64() as Long);
           break;
-        case 26:
+        case 27:
           message.extensions = reader.string();
           break;
         default:
@@ -307,6 +315,11 @@ export const PullRequest = {
       for (const e of object.comments) {
         message.comments.push(Number(e));
       }
+    }
+    if (object.commentsCount !== undefined && object.commentsCount !== null) {
+      message.commentsCount = Number(object.commentsCount);
+    } else {
+      message.commentsCount = 0;
     }
     if (object.issues !== undefined && object.issues !== null) {
       for (const e of object.issues) {
@@ -419,6 +432,8 @@ export const PullRequest = {
     } else {
       obj.comments = [];
     }
+    message.commentsCount !== undefined &&
+      (obj.commentsCount = message.commentsCount);
     if (message.issues) {
       obj.issues = message.issues.map((e) => e);
     } else {
@@ -504,6 +519,11 @@ export const PullRequest = {
       for (const e of object.comments) {
         message.comments.push(e);
       }
+    }
+    if (object.commentsCount !== undefined && object.commentsCount !== null) {
+      message.commentsCount = object.commentsCount;
+    } else {
+      message.commentsCount = 0;
     }
     if (object.issues !== undefined && object.issues !== null) {
       for (const e of object.issues) {
