@@ -136,7 +136,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
 	}
 
-	forkRepo := k.GetRepository(ctx, msg.RepositoryId)
+	repository := k.GetRepository(ctx, msg.RepositoryId)
 
 	var user types.User
 	var organization types.Organization
@@ -155,8 +155,8 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		}
 
 		user = k.GetUser(ctx, o.ID)
-		if _, exists := user.RepositoryNames[forkRepo.Name]; exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", forkRepo.Name))
+		if _, exists := user.RepositoryNames[repository.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", repository.Name))
 		}
 	} else if o.Type == "Organization" {
 		orgId, err := strconv.ParseUint(o.ID, 10, 64)
@@ -174,20 +174,27 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 		}
 
-		if _, exists := organization.RepositoryNames[forkRepo.Name]; exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", forkRepo.Name))
+		if _, exists := organization.RepositoryNames[repository.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", repository.Name))
 		}
 	}
 
 	createdAt := time.Now().Unix()
 
-	forkRepo.CreatedAt = createdAt
-	forkRepo.UpdatedAt = createdAt
-	forkRepo.Owner = msg.Owner
-	forkRepo.Fork = true
-	forkRepo.Parent = msg.RepositoryId
-	forkRepo.IssuesCount = 0
-	forkRepo.PullsCount = 0
+	var forkRepo = types.Repository{
+		Creator:       msg.Creator,
+		Name:          repository.Name,
+		Owner:         msg.Owner,
+		Description:   repository.Description,
+		Branches:      repository.Branches,
+		DefaultBranch: repository.DefaultBranch,
+		CreatedAt:     createdAt,
+		UpdatedAt:     createdAt,
+		Fork:          true,
+		Parent:        msg.RepositoryId,
+		License:       repository.License,
+		Commits:       repository.Commits,
+	}
 
 	id := k.AppendRepository(
 		ctx,
@@ -205,7 +212,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			user.RepositoryNames = make(map[string]uint64)
 		}
 
-		user.RepositoryNames[forkRepo.Name] = id
+		user.RepositoryNames[repository.Name] = id
 
 		k.SetUser(ctx, user)
 	} else if o.Type == "Organization" {
@@ -216,13 +223,12 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			organization.RepositoryNames = make(map[string]uint64)
 		}
 
-		organization.RepositoryNames[forkRepo.Name] = id
+		organization.RepositoryNames[repository.Name] = id
 
 		k.SetOrganization(ctx, organization)
 	}
 
 	// Update parent repository forks
-	repository := k.GetRepository(ctx, msg.RepositoryId)
 	repository.Forks = append(repository.Forks, id)
 	k.SetRepository(ctx, repository)
 
