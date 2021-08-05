@@ -10,11 +10,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignIssueIid(repo types.Repository) (uint64, error) {
-	var len = uint64(len(repo.Issues) + 1)
-	return len, nil
-}
-
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -23,17 +18,14 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	}
 
 	repo := k.GetRepository(ctx, msg.RepositoryId)
+	repo.IssuesCount += 1
 
-	iid, err := assignIssueIid(repo)
-	if err != nil {
-		return nil, err
-	}
 	createdAt := time.Now().Unix()
 	closedAt := time.Time{}.Unix()
 
 	var issue = types.Issue{
 		Creator:       msg.Creator,
-		Iid:           iid,
+		Iid:           repo.IssuesCount,
 		Title:         msg.Title,
 		State:         "Open",
 		Description:   msg.Description,
