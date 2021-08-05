@@ -83,6 +83,8 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		CreatedAt:     createdAt,
 		UpdatedAt:     updatedAt,
 		Fork:          false,
+		IssuesCount:   0,
+		PullsCount:    0,
 	}
 
 	id := k.AppendRepository(
@@ -184,6 +186,8 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	forkRepo.Owner = msg.Owner
 	forkRepo.Fork = true
 	forkRepo.Parent = msg.RepositoryId
+	forkRepo.IssuesCount = 0
+	forkRepo.PullsCount = 0
 
 	id := k.AppendRepository(
 		ctx,
