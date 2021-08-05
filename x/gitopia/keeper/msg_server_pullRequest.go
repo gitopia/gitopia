@@ -56,6 +56,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		Title:               msg.Title,
 		State:               "Open",
 		Description:         msg.Description,
+		CommentsCount:       0,
 		Locked:              false,
 		Draft:               false,
 		CreatedAt:           createdAt,

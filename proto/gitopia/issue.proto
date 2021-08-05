@@ -13,14 +13,15 @@ message Issue {
   string state = 5; 
   string description = 6;
   repeated uint64 comments = 7;
-  repeated uint64 pullRequests = 8;
-  uint64 repositoryId = 9;
-  repeated string labels = 10;
-  uint64 weight = 11;
-  repeated string assignees = 12;
-  int64 createdAt = 13;
-  int64 updatedAt = 14;
-  int64 closedAt = 15;
-  string closedBy = 16;
-  string extensions = 17;
+  uint64 commentsCount = 8;
+  repeated uint64 pullRequests = 9;
+  uint64 repositoryId = 10;
+  repeated string labels = 11;
+  uint64 weight = 12;
+  repeated string assignees = 13;
+  int64 createdAt = 14;
+  int64 updatedAt = 15;
+  int64 closedAt = 16;
+  string closedBy = 17;
+  string extensions = 18;
 }
