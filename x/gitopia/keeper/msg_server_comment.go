@@ -10,11 +10,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignCommentIid(issue types.Issue) (uint64, error) {
-	var len = uint64(len(issue.Comments) + 1)
-	return len, nil
-}
-
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -23,11 +18,8 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	}
 
 	issue := k.GetIssue(ctx, msg.ParentId)
+	issue.CommentsCount += 1
 
-	commentIid, err := assignCommentIid(issue)
-	if err != nil {
-		return nil, err
-	}
 	createdAt := time.Now().Unix()
 	updatedAt := createdAt
 	extensions := string("")
@@ -35,7 +27,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	var comment = types.Comment{
 		Creator:           msg.Creator,
 		ParentId:          msg.ParentId,
-		CommentIid:        commentIid,
+		CommentIid:        issue.CommentsCount,
 		Body:              msg.Body,
 		Attachments:       msg.Attachments,
 		DiffHunk:          msg.DiffHunk,
