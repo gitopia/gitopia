@@ -61,6 +61,23 @@ export interface QueryAllIssueResponse {
     Issue: Issue[];
     pagination: PageResponse | undefined;
 }
+export interface QueryGetRepositoryIssueRequest {
+    userId: string;
+    repositoryName: string;
+    issueIid: number;
+}
+export interface QueryGetRepositoryIssueResponse {
+    Issue: Issue | undefined;
+}
+export interface QueryAllRepositoryIssueRequest {
+    userId: string;
+    repositoryName: string;
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRepositoryIssueResponse {
+    Issue: Issue[];
+    pagination: PageResponse | undefined;
+}
 export interface QueryGetRepositoryRequest {
     id: number;
 }
@@ -237,6 +254,34 @@ export declare const QueryAllIssueResponse: {
     toJSON(message: QueryAllIssueResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllIssueResponse>): QueryAllIssueResponse;
 };
+export declare const QueryGetRepositoryIssueRequest: {
+    encode(message: QueryGetRepositoryIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryIssueRequest;
+    fromJSON(object: any): QueryGetRepositoryIssueRequest;
+    toJSON(message: QueryGetRepositoryIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryIssueRequest>): QueryGetRepositoryIssueRequest;
+};
+export declare const QueryGetRepositoryIssueResponse: {
+    encode(message: QueryGetRepositoryIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryIssueResponse;
+    fromJSON(object: any): QueryGetRepositoryIssueResponse;
+    toJSON(message: QueryGetRepositoryIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryIssueResponse>): QueryGetRepositoryIssueResponse;
+};
+export declare const QueryAllRepositoryIssueRequest: {
+    encode(message: QueryAllRepositoryIssueRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryIssueRequest;
+    fromJSON(object: any): QueryAllRepositoryIssueRequest;
+    toJSON(message: QueryAllRepositoryIssueRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryIssueRequest>): QueryAllRepositoryIssueRequest;
+};
+export declare const QueryAllRepositoryIssueResponse: {
+    encode(message: QueryAllRepositoryIssueResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryIssueResponse;
+    fromJSON(object: any): QueryAllRepositoryIssueResponse;
+    toJSON(message: QueryAllRepositoryIssueResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryIssueResponse>): QueryAllRepositoryIssueResponse;
+};
 export declare const QueryGetRepositoryRequest: {
     encode(message: QueryGetRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryRequest;
@@ -389,6 +434,10 @@ export interface Query {
     /** Queries a list of issue items. */
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     /** Queries a repository by id. */
+    RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
+    /** Queries a list of repository items. */
+    RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
+    /** Queries a repository by id. */
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     /** Queries a list of repository items. */
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
@@ -418,6 +467,8 @@ export declare class QueryClientImpl implements Query {
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
+    RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
+    RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
