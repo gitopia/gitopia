@@ -10,27 +10,32 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignCommentIid(issue types.Issue) (uint64, error) {
-	var len = uint64(len(issue.Comments) + 1)
-	return len, nil
-}
-
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasIssue(ctx, msg.ParentId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id %d doesn't exist", msg.ParentId))
+	var commentIid uint64
+	var issue types.Issue
+	var pullRequest types.PullRequest
+
+	if msg.CommentType == "Issue" {
+		if !k.HasIssue(ctx, msg.ParentId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id %d doesn't exist", msg.ParentId))
+		}
+
+		issue = k.GetIssue(ctx, msg.ParentId)
+		commentIid = issue.CommentsCount + 1
+	} else if msg.CommentType == "PullRequest" {
+		if !k.HasPullRequest(ctx, msg.ParentId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest Id %d doesn't exist", msg.ParentId))
+		}
+
+		pullRequest = k.GetPullRequest(ctx, msg.ParentId)
+		commentIid = pullRequest.CommentsCount + 1
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment type %v", msg.CommentType))
 	}
 
-	issue := k.GetIssue(ctx, msg.ParentId)
-
-	commentIid, err := assignCommentIid(issue)
-	if err != nil {
-		return nil, err
-	}
 	createdAt := time.Now().Unix()
-	updatedAt := createdAt
-	extensions := string("")
 
 	var comment = types.Comment{
 		Creator:           msg.Creator,
@@ -43,9 +48,8 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		System:            msg.System,
 		AuthorAssociation: msg.AuthorAssociation,
 		CreatedAt:         createdAt,
-		UpdatedAt:         updatedAt,
+		UpdatedAt:         createdAt,
 		CommentType:       msg.CommentType,
-		Extensions:        extensions,
 	}
 
 	id := k.AppendComment(
@@ -53,9 +57,16 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		comment,
 	)
 
-	/* Append Comment in the parent issue */
-	issue.Comments = append(issue.Comments, id)
-	k.SetIssue(ctx, issue)
+	/* Append Comment in the parent issue/pullRequest */
+	if msg.CommentType == "Issue" {
+		issue.Comments = append(issue.Comments, id)
+		issue.CommentsCount += 1
+		k.SetIssue(ctx, issue)
+	} else if msg.CommentType == "PullRequest" {
+		pullRequest.Comments = append(pullRequest.Comments, id)
+		pullRequest.CommentsCount += 1
+		k.SetPullRequest(ctx, pullRequest)
+	}
 
 	return &types.MsgCreateCommentResponse{
 		Id: id,

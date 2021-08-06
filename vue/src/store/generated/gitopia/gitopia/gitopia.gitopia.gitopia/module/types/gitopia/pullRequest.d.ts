@@ -9,6 +9,7 @@ export interface PullRequest {
     description: string;
     locked: boolean;
     comments: number[];
+    commentsCount: number;
     issues: number[];
     labels: string[];
     assignees: string[];

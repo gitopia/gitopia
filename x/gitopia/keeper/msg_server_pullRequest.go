@@ -10,11 +10,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func assignPullRequestIid(repo types.Repository) (uint64, error) {
-	var len = uint64(len(repo.Pulls) + 1)
-	return len, nil
-}
-
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -43,19 +38,18 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
 	}
 
-	iid, err := assignPullRequestIid(baseRepo)
-	if err != nil {
-		return nil, err
-	}
+	baseRepo.PullsCount += 1
+
 	createdAt := time.Now().Unix()
 	zeroTime := time.Time{}.Unix()
 
 	var pullRequest = types.PullRequest{
 		Creator:             msg.Creator,
-		Iid:                 iid,
+		Iid:                 baseRepo.PullsCount,
 		Title:               msg.Title,
 		State:               "Open",
 		Description:         msg.Description,
+		CommentsCount:       0,
 		Locked:              false,
 		Draft:               false,
 		CreatedAt:           createdAt,

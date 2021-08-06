@@ -10,6 +10,7 @@ const baseIssue = {
     state: "",
     description: "",
     comments: 0,
+    commentsCount: 0,
     pullRequests: 0,
     repositoryId: 0,
     labels: "",
@@ -46,37 +47,40 @@ export const Issue = {
             writer.uint64(v);
         }
         writer.ldelim();
-        writer.uint32(66).fork();
+        if (message.commentsCount !== 0) {
+            writer.uint32(64).uint64(message.commentsCount);
+        }
+        writer.uint32(74).fork();
         for (const v of message.pullRequests) {
             writer.uint64(v);
         }
         writer.ldelim();
         if (message.repositoryId !== 0) {
-            writer.uint32(72).uint64(message.repositoryId);
+            writer.uint32(80).uint64(message.repositoryId);
         }
         for (const v of message.labels) {
-            writer.uint32(82).string(v);
+            writer.uint32(90).string(v);
         }
         if (message.weight !== 0) {
-            writer.uint32(88).uint64(message.weight);
+            writer.uint32(96).uint64(message.weight);
         }
         for (const v of message.assignees) {
-            writer.uint32(98).string(v);
+            writer.uint32(106).string(v);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(104).int64(message.createdAt);
+            writer.uint32(112).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(112).int64(message.updatedAt);
+            writer.uint32(120).int64(message.updatedAt);
         }
         if (message.closedAt !== 0) {
-            writer.uint32(120).int64(message.closedAt);
+            writer.uint32(128).int64(message.closedAt);
         }
         if (message.closedBy !== "") {
-            writer.uint32(130).string(message.closedBy);
+            writer.uint32(138).string(message.closedBy);
         }
         if (message.extensions !== "") {
-            writer.uint32(138).string(message.extensions);
+            writer.uint32(146).string(message.extensions);
         }
         return writer;
     },
@@ -121,6 +125,9 @@ export const Issue = {
                     }
                     break;
                 case 8:
+                    message.commentsCount = longToNumber(reader.uint64());
+                    break;
+                case 9:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -131,31 +138,31 @@ export const Issue = {
                         message.pullRequests.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 9:
+                case 10:
                     message.repositoryId = longToNumber(reader.uint64());
                     break;
-                case 10:
+                case 11:
                     message.labels.push(reader.string());
                     break;
-                case 11:
+                case 12:
                     message.weight = longToNumber(reader.uint64());
                     break;
-                case 12:
+                case 13:
                     message.assignees.push(reader.string());
                     break;
-                case 13:
+                case 14:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 14:
+                case 15:
                     message.updatedAt = longToNumber(reader.int64());
                     break;
-                case 15:
+                case 16:
                     message.closedAt = longToNumber(reader.int64());
                     break;
-                case 16:
+                case 17:
                     message.closedBy = reader.string();
                     break;
-                case 17:
+                case 18:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -211,6 +218,12 @@ export const Issue = {
             for (const e of object.comments) {
                 message.comments.push(Number(e));
             }
+        }
+        if (object.commentsCount !== undefined && object.commentsCount !== null) {
+            message.commentsCount = Number(object.commentsCount);
+        }
+        else {
+            message.commentsCount = 0;
         }
         if (object.pullRequests !== undefined && object.pullRequests !== null) {
             for (const e of object.pullRequests) {
@@ -286,6 +299,8 @@ export const Issue = {
         else {
             obj.comments = [];
         }
+        message.commentsCount !== undefined &&
+            (obj.commentsCount = message.commentsCount);
         if (message.pullRequests) {
             obj.pullRequests = message.pullRequests.map((e) => e);
         }
@@ -360,6 +375,12 @@ export const Issue = {
             for (const e of object.comments) {
                 message.comments.push(e);
             }
+        }
+        if (object.commentsCount !== undefined && object.commentsCount !== null) {
+            message.commentsCount = object.commentsCount;
+        }
+        else {
+            message.commentsCount = 0;
         }
         if (object.pullRequests !== undefined && object.pullRequests !== null) {
             for (const e of object.pullRequests) {

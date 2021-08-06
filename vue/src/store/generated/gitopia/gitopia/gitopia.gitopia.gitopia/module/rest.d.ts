@@ -29,6 +29,8 @@ export interface GitopiaIssue {
     state?: string;
     description?: string;
     comments?: string[];
+    /** @format uint64 */
+    commentsCount?: string;
     pullRequests?: string[];
     /** @format uint64 */
     repositoryId?: string;
@@ -131,6 +133,8 @@ export interface GitopiaPullRequest {
     description?: string;
     locked?: boolean;
     comments?: string[];
+    /** @format uint64 */
+    commentsCount?: string;
     issues?: string[];
     labels?: string[];
     assignees?: string[];
@@ -291,6 +295,10 @@ export interface GitopiaRepository {
     commits?: string;
     issues?: string[];
     pulls?: string[];
+    /** @format uint64 */
+    issuesCount?: string;
+    /** @format uint64 */
+    pullsCount?: string;
     labels?: string;
     releases?: string;
     /** @format int64 */
