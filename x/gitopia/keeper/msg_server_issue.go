@@ -45,7 +45,11 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	)
 
 	/* Append Issue in the respective Repository */
-	repo.Issues = append(repo.Issues, id)
+	// Initialize the map if it's nil
+	if repo.IssueIids == nil {
+		repo.IssueIids = make(map[uint64]uint64)
+	}
+	repo.IssueIids[repo.IssuesCount] = id
 	k.SetRepository(ctx, repo)
 
 	return &types.MsgCreateIssueResponse{

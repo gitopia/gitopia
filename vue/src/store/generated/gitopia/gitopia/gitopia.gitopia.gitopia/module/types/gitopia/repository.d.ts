@@ -13,7 +13,9 @@ export interface Repository {
     tags: string;
     subscribers: string;
     commits: string;
-    issues: number[];
+    issueIids: {
+        [key: number]: number;
+    };
     pulls: number[];
     issuesCount: number;
     pullsCount: number;
@@ -37,6 +39,10 @@ export interface Repository_BranchesEntry {
     key: string;
     value: string;
 }
+export interface Repository_IssueIidsEntry {
+    key: number;
+    value: number;
+}
 export interface Repository_CollaboratorsEntry {
     key: string;
     value: string;
@@ -54,6 +60,13 @@ export declare const Repository_BranchesEntry: {
     fromJSON(object: any): Repository_BranchesEntry;
     toJSON(message: Repository_BranchesEntry): unknown;
     fromPartial(object: DeepPartial<Repository_BranchesEntry>): Repository_BranchesEntry;
+};
+export declare const Repository_IssueIidsEntry: {
+    encode(message: Repository_IssueIidsEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): Repository_IssueIidsEntry;
+    fromJSON(object: any): Repository_IssueIidsEntry;
+    toJSON(message: Repository_IssueIidsEntry): unknown;
+    fromPartial(object: DeepPartial<Repository_IssueIidsEntry>): Repository_IssueIidsEntry;
 };
 export declare const Repository_CollaboratorsEntry: {
     encode(message: Repository_CollaboratorsEntry, writer?: Writer): Writer;

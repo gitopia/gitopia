@@ -212,6 +212,19 @@ export interface GitopiaQueryAllPullRequestResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllRepositoryIssueResponse {
+    Issue?: GitopiaIssue[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryResponse {
     Repository?: GitopiaRepository[];
     /**
@@ -269,6 +282,9 @@ export interface GitopiaQueryGetOrganizationResponse {
 export interface GitopiaQueryGetPullRequestResponse {
     PullRequest?: GitopiaPullRequest;
 }
+export interface GitopiaQueryGetRepositoryIssueResponse {
+    Issue?: GitopiaIssue;
+}
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
 }
@@ -293,7 +309,7 @@ export interface GitopiaRepository {
     tags?: string;
     subscribers?: string;
     commits?: string;
-    issues?: string[];
+    issueIids?: Record<string, string>;
     pulls?: string[];
     /** @format uint64 */
     issuesCount?: string;
@@ -650,5 +666,28 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/whois/{name}
      */
     queryWhois: (name: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetWhoisResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryIssueAll
+     * @summary Queries a list of repository items.
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue
+     */
+    queryRepositoryIssueAll: (userId: string, repositoryName: string, query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryIssueResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryIssue
+     * @summary Queries a repository by id.
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue/{issueIid}
+     */
+    queryRepositoryIssue: (userId: string, repositoryName: string, issueIid: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryIssueResponse, RpcStatus>>;
 }
 export {};
