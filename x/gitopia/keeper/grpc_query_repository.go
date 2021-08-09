@@ -220,10 +220,7 @@ func PaginateAllRepositoryIssue(
 
 	var nextKey []byte
 
-	for i := 1; uint64(i) <= totalIssueCount; i++ {
-		if uint64(i) <= offset {
-			continue
-		}
+	for i := offset + 1; uint64(i) <= totalIssueCount; i++ {
 		if uint64(i) <= end {
 			var issue types.Issue
 			k.cdc.MustUnmarshalBinaryBare(issueStore.Get(GetRepositoryIDBytes(issueIIds[uint64(i)])), &issue)
