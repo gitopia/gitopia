@@ -12,6 +12,7 @@ COMMIT := $(shell git log -1 --format='%H')
 
 all: install
 
+.PHONY: build
 build:
 		@go build -o build/ ./cmd/gitopiad
 

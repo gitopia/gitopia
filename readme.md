@@ -7,7 +7,7 @@
 Building `gitopiad` requires [Go 1.16+](https://golang.org/dl/).
 
 ```
-make install
+make build
 ```
 
 The `gitopiad` binary will be created in the `build` directory.
