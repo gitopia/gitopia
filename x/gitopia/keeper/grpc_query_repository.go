@@ -136,6 +136,46 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 	return nil, sdkerrors.ErrKeyNotFound
 }
 
+func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllRepositoryPullRequestRequest) (*types.QueryAllRepositoryPullRequestResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var repository types.Repository
+	var pullRequests []*types.PullRequest
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.UserId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	userStore := prefix.NewStore(store, types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.UserId)
+	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+
+		pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
+
+		pageRes, err := PaginateAllRepositoryPullRequest(k, ctx, pullRequestStore, repository, req.Pagination, func(pullRequest types.PullRequest) error {
+			pullRequests = append(pullRequests, &pullRequest)
+			return nil
+		})
+
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+
+		return &types.QueryAllRepositoryPullRequestResponse{PullRequest: pullRequests, Pagination: pageRes}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
 func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepositoryPullRequestRequest) (*types.QueryGetRepositoryPullRequestResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -270,6 +310,94 @@ func PaginateAllRepositoryIssue(
 	res := &query.PageResponse{NextKey: nextKey}
 	if countTotal {
 		res.Total = totalIssueCount
+	}
+
+	return res, nil
+}
+
+/* PaginateAllRepositoryPullRequest does pagination of all the results in the repository.IssueIids
+ * based on the provided PageRequest.
+ */
+func PaginateAllRepositoryPullRequest(
+	k Keeper,
+	ctx sdk.Context,
+	pullRequestStore ks.KVStore,
+	repository types.Repository,
+	pageRequest *query.PageRequest,
+	onResult func(pullRequest types.PullRequest) error,
+) (*query.PageResponse, error) {
+
+	totalPullRequestCount := repository.PullsCount
+	pullRequestIIds := repository.PullIids
+
+	// if the PageRequest is nil, use default PageRequest
+	if pageRequest == nil {
+		pageRequest = &query.PageRequest{}
+	}
+
+	offset := pageRequest.Offset
+	key := pageRequest.Key
+	limit := pageRequest.Limit
+	countTotal := pageRequest.CountTotal
+
+	if offset > 0 && key != nil {
+		return nil, fmt.Errorf("invalid request, either offset or key is expected, got both")
+	}
+
+	if limit == 0 {
+		limit = DefaultLimit
+
+		// show total issue count when the limit is zero/not supplied
+		countTotal = true
+	}
+
+	if len(key) != 0 {
+
+		var count uint64
+		var nextKey []byte
+
+		for i := GetPullRequestIDFromBytes(key); uint64(i) <= totalPullRequestCount; i++ {
+			if count == limit {
+				nextKey = GetPullRequestIDBytes(uint64(i))
+				break
+			}
+
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(pullRequestIIds[uint64(i)])), &pullRequest)
+			err := onResult(pullRequest)
+			if err != nil {
+				return nil, err
+			}
+
+			count++
+		}
+
+		return &query.PageResponse{
+			NextKey: nextKey,
+		}, nil
+	}
+
+	end := offset + limit
+
+	var nextKey []byte
+
+	for i := offset + 1; uint64(i) <= totalPullRequestCount; i++ {
+		if uint64(i) <= end {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(pullRequestIIds[uint64(i)])), &pullRequest)
+			err := onResult(pullRequest)
+			if err != nil {
+				return nil, err
+			}
+		} else if uint64(i) == end+1 {
+			nextKey = GetPullRequestIDBytes(uint64(i))
+			break
+		}
+	}
+
+	res := &query.PageResponse{NextKey: nextKey}
+	if countTotal {
+		res.Total = totalPullRequestCount
 	}
 
 	return res, nil
