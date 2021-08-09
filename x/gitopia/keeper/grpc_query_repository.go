@@ -136,6 +136,39 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 	return nil, sdkerrors.ErrKeyNotFound
 }
 
+func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepositoryPullRequestRequest) (*types.QueryGetRepositoryPullRequestResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var repository types.Repository
+	var pullRequest types.PullRequest
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.UserId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.UserId)
+	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+
+		if pullRequestId, ok := repository.PullIids[req.PullIid]; ok {
+			pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
+			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(pullRequestId)), &pullRequest)
+
+			return &types.QueryGetRepositoryPullRequestResponse{PullRequest: &pullRequest}, nil
+		}
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
 func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest) (*types.QueryGetAllBranchResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

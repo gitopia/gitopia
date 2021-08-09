@@ -70,6 +70,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue";
 	}
 
+	// Queries a repository pullRequest by id.
+	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}";
+	}
+
 	// Queries a repository by id.
 	rpc Repository(QueryGetRepositoryRequest) returns (QueryGetRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}";
@@ -191,6 +196,16 @@ message QueryGetRepositoryIssueRequest {
 
 message QueryGetRepositoryIssueResponse {
 	Issue Issue = 1;
+}
+
+message QueryGetRepositoryPullRequestRequest {
+	string userId = 1;
+	string repositoryName = 2;
+	uint64 pullIid = 3;
+}
+
+message QueryGetRepositoryPullRequestResponse {
+	PullRequest PullRequest = 1;
 }
 
 message QueryAllRepositoryIssueRequest {
