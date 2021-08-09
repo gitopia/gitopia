@@ -17,22 +17,6 @@ import (
 
 const DefaultLimit = 100
 
-func i64tob(val uint64) []byte {
-	r := make([]byte, 8)
-	for i := uint64(0); i < 8; i++ {
-		r[i] = byte((val >> (i * 8)) & 0xff)
-	}
-	return r
-}
-
-func btoi64(val []byte) uint64 {
-	r := uint64(0)
-	for i := uint64(0); i < 8; i++ {
-		r |= uint64(val[i]) << (8 * i)
-	}
-	return r
-}
-
 func (k Keeper) RepositoryAll(c context.Context, req *types.QueryAllRepositoryRequest) (*types.QueryAllRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -211,9 +195,9 @@ func PaginateAllRepositoryIssue(
 		var count uint64
 		var nextKey []byte
 
-		for i := btoi64(key); uint64(i) <= totalIssueCount; i++ {
+		for i := GetIssueIDFromBytes(key); uint64(i) <= totalIssueCount; i++ {
 			if count == limit {
-				nextKey = i64tob(uint64(i))
+				nextKey = GetIssueIDBytes(uint64(i))
 				break
 			}
 
@@ -248,7 +232,7 @@ func PaginateAllRepositoryIssue(
 				return nil, err
 			}
 		} else if uint64(i) == end+1 {
-			nextKey = i64tob(uint64(i))
+			nextKey = GetIssueIDBytes(uint64(i))
 			break
 		}
 	}
