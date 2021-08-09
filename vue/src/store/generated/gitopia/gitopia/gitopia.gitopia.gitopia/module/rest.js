@@ -410,5 +410,33 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryPullRequestAll
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
+         */
+        this.queryRepositoryPullRequestAll = (userId, repositoryName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/pull`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryPullRequest
+         * @summary Queries a repository pullRequest by id.
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}
+         */
+        this.queryRepositoryPullRequest = (userId, repositoryName, pullIid, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/pull/${pullIid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

@@ -16,7 +16,7 @@ export interface Repository {
   subscribers: string;
   commits: string;
   issueIids: { [key: number]: number };
-  pulls: number[];
+  pullIids: { [key: number]: number };
   issuesCount: number;
   pullsCount: number;
   labels: string;
@@ -44,6 +44,11 @@ export interface Repository_IssueIidsEntry {
   value: number;
 }
 
+export interface Repository_PullIidsEntry {
+  key: number;
+  value: number;
+}
+
 export interface Repository_CollaboratorsEntry {
   key: string;
   value: string;
@@ -59,7 +64,6 @@ const baseRepository: object = {
   tags: "",
   subscribers: "",
   commits: "",
-  pulls: 0,
   issuesCount: 0,
   pullsCount: 0,
   labels: "",
@@ -119,11 +123,12 @@ export const Repository = {
         writer.uint32(90).fork()
       ).ldelim();
     });
-    writer.uint32(98).fork();
-    for (const v of message.pulls) {
-      writer.uint64(v);
-    }
-    writer.ldelim();
+    Object.entries(message.pullIids).forEach(([key, value]) => {
+      Repository_PullIidsEntry.encode(
+        { key: key as any, value },
+        writer.uint32(98).fork()
+      ).ldelim();
+    });
     if (message.issuesCount !== 0) {
       writer.uint32(104).uint64(message.issuesCount);
     }
@@ -184,7 +189,7 @@ export const Repository = {
     message.forks = [];
     message.branches = {};
     message.issueIids = {};
-    message.pulls = [];
+    message.pullIids = {};
     message.stargazers = [];
     message.collaborators = {};
     while (reader.pos < end) {
@@ -243,13 +248,12 @@ export const Repository = {
           }
           break;
         case 12:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.pulls.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.pulls.push(longToNumber(reader.uint64() as Long));
+          const entry12 = Repository_PullIidsEntry.decode(
+            reader,
+            reader.uint32()
+          );
+          if (entry12.value !== undefined) {
+            message.pullIids[entry12.key] = entry12.value;
           }
           break;
         case 13:
@@ -323,7 +327,7 @@ export const Repository = {
     message.forks = [];
     message.branches = {};
     message.issueIids = {};
-    message.pulls = [];
+    message.pullIids = {};
     message.stargazers = [];
     message.collaborators = {};
     if (object.creator !== undefined && object.creator !== null) {
@@ -381,10 +385,10 @@ export const Repository = {
         message.issueIids[Number(key)] = Number(value);
       });
     }
-    if (object.pulls !== undefined && object.pulls !== null) {
-      for (const e of object.pulls) {
-        message.pulls.push(Number(e));
-      }
+    if (object.pullIids !== undefined && object.pullIids !== null) {
+      Object.entries(object.pullIids).forEach(([key, value]) => {
+        message.pullIids[Number(key)] = Number(value);
+      });
     }
     if (object.issuesCount !== undefined && object.issuesCount !== null) {
       message.issuesCount = Number(object.issuesCount);
@@ -493,10 +497,11 @@ export const Repository = {
         obj.issueIids[k] = v;
       });
     }
-    if (message.pulls) {
-      obj.pulls = message.pulls.map((e) => e);
-    } else {
-      obj.pulls = [];
+    obj.pullIids = {};
+    if (message.pullIids) {
+      Object.entries(message.pullIids).forEach(([k, v]) => {
+        obj.pullIids[k] = v;
+      });
     }
     message.issuesCount !== undefined &&
       (obj.issuesCount = message.issuesCount);
@@ -532,7 +537,7 @@ export const Repository = {
     message.forks = [];
     message.branches = {};
     message.issueIids = {};
-    message.pulls = [];
+    message.pullIids = {};
     message.stargazers = [];
     message.collaborators = {};
     if (object.creator !== undefined && object.creator !== null) {
@@ -594,10 +599,12 @@ export const Repository = {
         }
       });
     }
-    if (object.pulls !== undefined && object.pulls !== null) {
-      for (const e of object.pulls) {
-        message.pulls.push(e);
-      }
+    if (object.pullIids !== undefined && object.pullIids !== null) {
+      Object.entries(object.pullIids).forEach(([key, value]) => {
+        if (value !== undefined) {
+          message.pullIids[Number(key)] = Number(value);
+        }
+      });
     }
     if (object.issuesCount !== undefined && object.issuesCount !== null) {
       message.issuesCount = object.issuesCount;
@@ -838,6 +845,92 @@ export const Repository_IssueIidsEntry = {
     const message = {
       ...baseRepository_IssueIidsEntry,
     } as Repository_IssueIidsEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = object.key;
+    } else {
+      message.key = 0;
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = 0;
+    }
+    return message;
+  },
+};
+
+const baseRepository_PullIidsEntry: object = { key: 0, value: 0 };
+
+export const Repository_PullIidsEntry = {
+  encode(
+    message: Repository_PullIidsEntry,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.key !== 0) {
+      writer.uint32(8).uint64(message.key);
+    }
+    if (message.value !== 0) {
+      writer.uint32(16).uint64(message.value);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): Repository_PullIidsEntry {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseRepository_PullIidsEntry,
+    } as Repository_PullIidsEntry;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.key = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.value = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Repository_PullIidsEntry {
+    const message = {
+      ...baseRepository_PullIidsEntry,
+    } as Repository_PullIidsEntry;
+    if (object.key !== undefined && object.key !== null) {
+      message.key = Number(object.key);
+    } else {
+      message.key = 0;
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = Number(object.value);
+    } else {
+      message.value = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: Repository_PullIidsEntry): unknown {
+    const obj: any = {};
+    message.key !== undefined && (obj.key = message.key);
+    message.value !== undefined && (obj.value = message.value);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<Repository_PullIidsEntry>
+  ): Repository_PullIidsEntry {
+    const message = {
+      ...baseRepository_PullIidsEntry,
+    } as Repository_PullIidsEntry;
     if (object.key !== undefined && object.key !== null) {
       message.key = object.key;
     } else {

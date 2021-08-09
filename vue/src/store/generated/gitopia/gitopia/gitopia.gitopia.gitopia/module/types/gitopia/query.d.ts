@@ -69,6 +69,14 @@ export interface QueryGetRepositoryIssueRequest {
 export interface QueryGetRepositoryIssueResponse {
     Issue: Issue | undefined;
 }
+export interface QueryGetRepositoryPullRequestRequest {
+    userId: string;
+    repositoryName: string;
+    pullIid: number;
+}
+export interface QueryGetRepositoryPullRequestResponse {
+    PullRequest: PullRequest | undefined;
+}
 export interface QueryAllRepositoryIssueRequest {
     userId: string;
     repositoryName: string;
@@ -76,6 +84,15 @@ export interface QueryAllRepositoryIssueRequest {
 }
 export interface QueryAllRepositoryIssueResponse {
     Issue: Issue[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryAllRepositoryPullRequestRequest {
+    userId: string;
+    repositoryName: string;
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRepositoryPullRequestResponse {
+    PullRequest: PullRequest[];
     pagination: PageResponse | undefined;
 }
 export interface QueryGetRepositoryRequest {
@@ -268,6 +285,20 @@ export declare const QueryGetRepositoryIssueResponse: {
     toJSON(message: QueryGetRepositoryIssueResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetRepositoryIssueResponse>): QueryGetRepositoryIssueResponse;
 };
+export declare const QueryGetRepositoryPullRequestRequest: {
+    encode(message: QueryGetRepositoryPullRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryPullRequestRequest;
+    fromJSON(object: any): QueryGetRepositoryPullRequestRequest;
+    toJSON(message: QueryGetRepositoryPullRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryPullRequestRequest>): QueryGetRepositoryPullRequestRequest;
+};
+export declare const QueryGetRepositoryPullRequestResponse: {
+    encode(message: QueryGetRepositoryPullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryPullRequestResponse;
+    fromJSON(object: any): QueryGetRepositoryPullRequestResponse;
+    toJSON(message: QueryGetRepositoryPullRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryPullRequestResponse>): QueryGetRepositoryPullRequestResponse;
+};
 export declare const QueryAllRepositoryIssueRequest: {
     encode(message: QueryAllRepositoryIssueRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryIssueRequest;
@@ -281,6 +312,20 @@ export declare const QueryAllRepositoryIssueResponse: {
     fromJSON(object: any): QueryAllRepositoryIssueResponse;
     toJSON(message: QueryAllRepositoryIssueResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllRepositoryIssueResponse>): QueryAllRepositoryIssueResponse;
+};
+export declare const QueryAllRepositoryPullRequestRequest: {
+    encode(message: QueryAllRepositoryPullRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryPullRequestRequest;
+    fromJSON(object: any): QueryAllRepositoryPullRequestRequest;
+    toJSON(message: QueryAllRepositoryPullRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryPullRequestRequest>): QueryAllRepositoryPullRequestRequest;
+};
+export declare const QueryAllRepositoryPullRequestResponse: {
+    encode(message: QueryAllRepositoryPullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryPullRequestResponse;
+    fromJSON(object: any): QueryAllRepositoryPullRequestResponse;
+    toJSON(message: QueryAllRepositoryPullRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryPullRequestResponse>): QueryAllRepositoryPullRequestResponse;
 };
 export declare const QueryGetRepositoryRequest: {
     encode(message: QueryGetRepositoryRequest, writer?: Writer): Writer;
@@ -437,6 +482,9 @@ export interface Query {
     RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
     /** Queries a list of repository items. */
     RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
+    /** Queries a repository pullRequest by id. */
+    RepositoryPullRequest(request: QueryGetRepositoryPullRequestRequest): Promise<QueryGetRepositoryPullRequestResponse>;
+    RepositoryPullRequestAll(request: QueryAllRepositoryPullRequestRequest): Promise<QueryAllRepositoryPullRequestResponse>;
     /** Queries a repository by id. */
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     /** Queries a list of repository items. */
@@ -469,6 +517,8 @@ export declare class QueryClientImpl implements Query {
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
     RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
     RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
+    RepositoryPullRequest(request: QueryGetRepositoryPullRequestRequest): Promise<QueryGetRepositoryPullRequestResponse>;
+    RepositoryPullRequestAll(request: QueryAllRepositoryPullRequestRequest): Promise<QueryAllRepositoryPullRequestResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
