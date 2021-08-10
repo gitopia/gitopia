@@ -50,6 +50,9 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 			argsAssignees := strings.Split(args[5], ",")
+			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
+				argsAssignees = nil
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
