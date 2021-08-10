@@ -1,3 +1,8 @@
+genesis:
+  app_state:
+    staking:
+      params:
+        bond_denom: "tlore"
 accounts:
   - name: node0
     coins: ["100000000tlore"]
