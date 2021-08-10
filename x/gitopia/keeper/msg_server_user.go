@@ -17,16 +17,18 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		return &types.MsgCreateUserResponse{}, fmt.Errorf("user already exists: %v", msg.Creator)
 	}
 
-	if len(msg.Username) > 0 {
-		// Check if username is available
-		if k.HasWhois(ctx, msg.Username) {
-			return &types.MsgCreateUserResponse{}, fmt.Errorf("username is already taken: %v", msg.Username)
+	/*
+		if len(msg.Username) > 0 {
+			// Check if username is available
+			if k.HasWhois(ctx, msg.Username) {
+				return &types.MsgCreateUserResponse{}, fmt.Errorf("username is already taken: %v", msg.Username)
+			}
 		}
-	}
+	*/
 
 	var user = types.User{
 		Creator:  msg.Creator,
-		Username: msg.Username,
+		Username: "",
 	}
 
 	id := k.AppendUser(

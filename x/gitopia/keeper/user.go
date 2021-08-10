@@ -54,15 +54,17 @@ func (k Keeper) AppendUser(
 	// Update user count
 	k.SetUserCount(ctx, count+1)
 
-	if len(user.Username) > 0 {
-		// Update whois
-		var whois = types.Whois{
-			Creator: user.Creator,
-			Name:    user.Username,
-			Address: user.Creator,
+	/*
+		if len(user.Username) > 0 {
+			// Update whois
+			var whois = types.Whois{
+				Creator: user.Creator,
+				Name:    user.Username,
+				Address: user.Creator,
+			}
+			k.SetWhois(ctx, user.Username, whois)
 		}
-		k.SetWhois(ctx, user.Username, whois)
-	}
+	*/
 
 	return user.Creator
 }
