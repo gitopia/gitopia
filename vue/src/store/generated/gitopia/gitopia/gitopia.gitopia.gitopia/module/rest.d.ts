@@ -55,6 +55,8 @@ export interface GitopiaMsgCreateCommentResponse {
 export interface GitopiaMsgCreateIssueResponse {
     /** @format uint64 */
     id?: string;
+    /** @format uint64 */
+    iid?: string;
 }
 export interface GitopiaMsgCreateOrganizationResponse {
     /** @format uint64 */
@@ -63,10 +65,13 @@ export interface GitopiaMsgCreateOrganizationResponse {
 export interface GitopiaMsgCreatePullRequestResponse {
     /** @format uint64 */
     id?: string;
+    /** @format uint64 */
+    iid?: string;
 }
 export interface GitopiaMsgCreateRepositoryResponse {
     /** @format uint64 */
     id?: string;
+    name?: string;
 }
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
