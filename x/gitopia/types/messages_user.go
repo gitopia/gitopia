@@ -40,9 +40,6 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	if len(msg.Username) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Name must be at least 3 characters long")
-	}
 	return nil
 }
 
