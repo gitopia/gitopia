@@ -77,7 +77,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	k.SetRepository(ctx, baseRepo)
 
 	return &types.MsgCreatePullRequestResponse{
-		Id: id,
+		Id:  id,
+		Iid: pullRequest.Iid,
 	}, nil
 }
 

@@ -59,6 +59,7 @@ message MsgCreatePullRequest {
 
 message MsgCreatePullRequestResponse {
   uint64 id = 1;
+  uint64 iid = 2;
 }
 
 message MsgUpdatePullRequest {
@@ -160,6 +161,7 @@ message MsgCreateIssue {
 
 message MsgCreateIssueResponse {
   uint64 id = 1;
+  uint64 iid = 2;
 }
 
 message MsgUpdateIssue {
@@ -215,6 +217,7 @@ message MsgCreateRepository {
 
 message MsgCreateRepositoryResponse {
   uint64 id = 1;
+  string name = 2;
 }
 
 message MsgForkRepository {

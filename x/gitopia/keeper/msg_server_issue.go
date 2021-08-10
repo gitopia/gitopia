@@ -53,7 +53,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	k.SetRepository(ctx, repo)
 
 	return &types.MsgCreateIssueResponse{
-		Id: id,
+		Id:  id,
+		Iid: issue.Iid,
 	}, nil
 }
 
