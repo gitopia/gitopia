@@ -3142,6 +3142,128 @@ export const MsgRenameRepositoryResponse = {
         return message;
     },
 };
+const baseMsgChangeOwner = { creator: "", repositoryId: 0, owner: "" };
+export const MsgChangeOwner = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.repositoryId !== 0) {
+            writer.uint32(16).uint64(message.repositoryId);
+        }
+        if (message.owner !== "") {
+            writer.uint32(26).string(message.owner);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgChangeOwner };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.repositoryId = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.owner = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgChangeOwner };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = Number(object.repositoryId);
+        }
+        else {
+            message.repositoryId = 0;
+        }
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = String(object.owner);
+        }
+        else {
+            message.owner = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.repositoryId !== undefined &&
+            (obj.repositoryId = message.repositoryId);
+        message.owner !== undefined && (obj.owner = message.owner);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgChangeOwner };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = object.repositoryId;
+        }
+        else {
+            message.repositoryId = 0;
+        }
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = object.owner;
+        }
+        else {
+            message.owner = "";
+        }
+        return message;
+    },
+};
+const baseMsgChangeOwnerResponse = {};
+export const MsgChangeOwnerResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgChangeOwnerResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseMsgChangeOwnerResponse };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseMsgChangeOwnerResponse };
+        return message;
+    },
+};
 const baseMsgCreateBranch = {
     creator: "",
     id: 0,
@@ -5257,6 +5379,11 @@ export class MsgClientImpl {
         const data = MsgRenameRepository.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "RenameRepository", data);
         return promise.then((data) => MsgRenameRepositoryResponse.decode(new Reader(data)));
+    }
+    ChangeOwner(request) {
+        const data = MsgChangeOwner.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ChangeOwner", data);
+        return promise.then((data) => MsgChangeOwnerResponse.decode(new Reader(data)));
     }
     CreateBranch(request) {
         const data = MsgCreateBranch.encode(request).finish();

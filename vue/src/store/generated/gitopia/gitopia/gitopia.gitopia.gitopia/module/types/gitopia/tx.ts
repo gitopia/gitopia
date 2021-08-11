@@ -196,6 +196,14 @@ export interface MsgRenameRepository {
 
 export interface MsgRenameRepositoryResponse {}
 
+export interface MsgChangeOwner {
+  creator: string;
+  repositoryId: number;
+  owner: string;
+}
+
+export interface MsgChangeOwnerResponse {}
+
 export interface MsgCreateBranch {
   creator: string;
   id: number;
@@ -3701,6 +3709,134 @@ export const MsgRenameRepositoryResponse = {
   },
 };
 
+const baseMsgChangeOwner: object = { creator: "", repositoryId: 0, owner: "" };
+
+export const MsgChangeOwner = {
+  encode(message: MsgChangeOwner, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.repositoryId !== 0) {
+      writer.uint32(16).uint64(message.repositoryId);
+    }
+    if (message.owner !== "") {
+      writer.uint32(26).string(message.owner);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgChangeOwner {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgChangeOwner } as MsgChangeOwner;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.owner = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgChangeOwner {
+    const message = { ...baseMsgChangeOwner } as MsgChangeOwner;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgChangeOwner): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.owner !== undefined && (obj.owner = message.owner);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgChangeOwner>): MsgChangeOwner {
+    const message = { ...baseMsgChangeOwner } as MsgChangeOwner;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgChangeOwnerResponse: object = {};
+
+export const MsgChangeOwnerResponse = {
+  encode(_: MsgChangeOwnerResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgChangeOwnerResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgChangeOwnerResponse } as MsgChangeOwnerResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgChangeOwnerResponse {
+    const message = { ...baseMsgChangeOwnerResponse } as MsgChangeOwnerResponse;
+    return message;
+  },
+
+  toJSON(_: MsgChangeOwnerResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgChangeOwnerResponse>): MsgChangeOwnerResponse {
+    const message = { ...baseMsgChangeOwnerResponse } as MsgChangeOwnerResponse;
+    return message;
+  },
+};
+
 const baseMsgCreateBranch: object = {
   creator: "",
   id: 0,
@@ -5820,6 +5956,7 @@ export interface Msg {
   RenameRepository(
     request: MsgRenameRepository
   ): Promise<MsgRenameRepositoryResponse>;
+  ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
   CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
   SetDefaultBranch(
     request: MsgSetDefaultBranch
@@ -6095,6 +6232,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgRenameRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
+  ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse> {
+    const data = MsgChangeOwner.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "ChangeOwner",
+      data
+    );
+    return promise.then((data) =>
+      MsgChangeOwnerResponse.decode(new Reader(data))
     );
   }
 

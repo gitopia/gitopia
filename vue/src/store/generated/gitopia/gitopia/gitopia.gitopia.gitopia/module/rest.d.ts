@@ -47,6 +47,7 @@ export interface GitopiaIssue {
     closedBy?: string;
     extensions?: string;
 }
+export declare type GitopiaMsgChangeOwnerResponse = object;
 export declare type GitopiaMsgCreateBranchResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
     /** @format uint64 */
