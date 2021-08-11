@@ -55,6 +55,8 @@ export interface GitopiaMsgCreateCommentResponse {
 export interface GitopiaMsgCreateIssueResponse {
     /** @format uint64 */
     id?: string;
+    /** @format uint64 */
+    iid?: string;
 }
 export interface GitopiaMsgCreateOrganizationResponse {
     /** @format uint64 */
@@ -63,10 +65,13 @@ export interface GitopiaMsgCreateOrganizationResponse {
 export interface GitopiaMsgCreatePullRequestResponse {
     /** @format uint64 */
     id?: string;
+    /** @format uint64 */
+    iid?: string;
 }
 export interface GitopiaMsgCreateRepositoryResponse {
     /** @format uint64 */
     id?: string;
+    name?: string;
 }
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
@@ -225,6 +230,19 @@ export interface GitopiaQueryAllRepositoryIssueResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllRepositoryPullRequestResponse {
+    PullRequest?: GitopiaPullRequest[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryResponse {
     Repository?: GitopiaRepository[];
     /**
@@ -285,6 +303,9 @@ export interface GitopiaQueryGetPullRequestResponse {
 export interface GitopiaQueryGetRepositoryIssueResponse {
     Issue?: GitopiaIssue;
 }
+export interface GitopiaQueryGetRepositoryPullRequestResponse {
+    PullRequest?: GitopiaPullRequest;
+}
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
 }
@@ -310,7 +331,7 @@ export interface GitopiaRepository {
     subscribers?: string;
     commits?: string;
     issueIids?: Record<string, string>;
-    pulls?: string[];
+    pullIids?: Record<string, string>;
     /** @format uint64 */
     issuesCount?: string;
     /** @format uint64 */
@@ -689,5 +710,27 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue/{issueIid}
      */
     queryRepositoryIssue: (userId: string, repositoryName: string, issueIid: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryIssueResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryPullRequestAll
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
+     */
+    queryRepositoryPullRequestAll: (userId: string, repositoryName: string, query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryPullRequestResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryPullRequest
+     * @summary Queries a repository pullRequest by id.
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}
+     */
+    queryRepositoryPullRequest: (userId: string, repositoryName: string, pullIid: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryPullRequestResponse, RpcStatus>>;
 }
 export {};

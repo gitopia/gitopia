@@ -120,7 +120,8 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	}
 
 	return &types.MsgCreateRepositoryResponse{
-		Id: id,
+		Id:   id,
+		Name: repository.Name,
 	}, nil
 }
 

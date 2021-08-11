@@ -69,11 +69,16 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	)
 
 	/* Append Pull Request in the respective Repository */
-	baseRepo.Pulls = append(baseRepo.Pulls, id)
+	// Initialize the map if it's nil
+	if baseRepo.PullIids == nil {
+		baseRepo.PullIids = make(map[uint64]uint64)
+	}
+	baseRepo.PullIids[baseRepo.PullsCount] = id
 	k.SetRepository(ctx, baseRepo)
 
 	return &types.MsgCreatePullRequestResponse{
-		Id: id,
+		Id:  id,
+		Iid: pullRequest.Iid,
 	}, nil
 }
 

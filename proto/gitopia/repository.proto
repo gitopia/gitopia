@@ -17,7 +17,7 @@ message Repository {
   string subscribers = 9; 
   string commits = 10; 
   map<uint64, uint64> issueIids = 11;
-  repeated uint64 pulls = 12;
+  map<uint64, uint64> pullIids = 12;
   uint64 issuesCount = 13;
   uint64 pullsCount = 14;
   string labels = 15;

@@ -12,6 +12,7 @@ export interface MsgCreatePullRequest {
 }
 export interface MsgCreatePullRequestResponse {
     id: number;
+    iid: number;
 }
 export interface MsgUpdatePullRequest {
     creator: string;
@@ -100,6 +101,7 @@ export interface MsgCreateIssue {
 }
 export interface MsgCreateIssueResponse {
     id: number;
+    iid: number;
 }
 export interface MsgUpdateIssue {
     creator: string;
@@ -147,6 +149,7 @@ export interface MsgCreateRepository {
 }
 export interface MsgCreateRepositoryResponse {
     id: number;
+    name: string;
 }
 export interface MsgForkRepository {
     creator: string;

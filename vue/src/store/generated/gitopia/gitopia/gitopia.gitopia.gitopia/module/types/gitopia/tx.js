@@ -176,11 +176,14 @@ export const MsgCreatePullRequest = {
         return message;
     },
 };
-const baseMsgCreatePullRequestResponse = { id: 0 };
+const baseMsgCreatePullRequestResponse = { id: 0, iid: 0 };
 export const MsgCreatePullRequestResponse = {
     encode(message, writer = Writer.create()) {
         if (message.id !== 0) {
             writer.uint32(8).uint64(message.id);
+        }
+        if (message.iid !== 0) {
+            writer.uint32(16).uint64(message.iid);
         }
         return writer;
     },
@@ -195,6 +198,9 @@ export const MsgCreatePullRequestResponse = {
             switch (tag >>> 3) {
                 case 1:
                     message.id = longToNumber(reader.uint64());
+                    break;
+                case 2:
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -213,11 +219,18 @@ export const MsgCreatePullRequestResponse = {
         else {
             message.id = 0;
         }
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = Number(object.iid);
+        }
+        else {
+            message.iid = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.id !== undefined && (obj.id = message.id);
+        message.iid !== undefined && (obj.iid = message.iid);
         return obj;
     },
     fromPartial(object) {
@@ -229,6 +242,12 @@ export const MsgCreatePullRequestResponse = {
         }
         else {
             message.id = 0;
+        }
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = object.iid;
+        }
+        else {
+            message.iid = 0;
         }
         return message;
     },
@@ -1873,11 +1892,14 @@ export const MsgCreateIssue = {
         return message;
     },
 };
-const baseMsgCreateIssueResponse = { id: 0 };
+const baseMsgCreateIssueResponse = { id: 0, iid: 0 };
 export const MsgCreateIssueResponse = {
     encode(message, writer = Writer.create()) {
         if (message.id !== 0) {
             writer.uint32(8).uint64(message.id);
+        }
+        if (message.iid !== 0) {
+            writer.uint32(16).uint64(message.iid);
         }
         return writer;
     },
@@ -1890,6 +1912,9 @@ export const MsgCreateIssueResponse = {
             switch (tag >>> 3) {
                 case 1:
                     message.id = longToNumber(reader.uint64());
+                    break;
+                case 2:
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1906,11 +1931,18 @@ export const MsgCreateIssueResponse = {
         else {
             message.id = 0;
         }
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = Number(object.iid);
+        }
+        else {
+            message.iid = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.id !== undefined && (obj.id = message.id);
+        message.iid !== undefined && (obj.iid = message.iid);
         return obj;
     },
     fromPartial(object) {
@@ -1920,6 +1952,12 @@ export const MsgCreateIssueResponse = {
         }
         else {
             message.id = 0;
+        }
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = object.iid;
+        }
+        else {
+            message.iid = 0;
         }
         return message;
     },
@@ -2750,11 +2788,14 @@ export const MsgCreateRepository = {
         return message;
     },
 };
-const baseMsgCreateRepositoryResponse = { id: 0 };
+const baseMsgCreateRepositoryResponse = { id: 0, name: "" };
 export const MsgCreateRepositoryResponse = {
     encode(message, writer = Writer.create()) {
         if (message.id !== 0) {
             writer.uint32(8).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
         }
         return writer;
     },
@@ -2769,6 +2810,9 @@ export const MsgCreateRepositoryResponse = {
             switch (tag >>> 3) {
                 case 1:
                     message.id = longToNumber(reader.uint64());
+                    break;
+                case 2:
+                    message.name = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -2787,11 +2831,18 @@ export const MsgCreateRepositoryResponse = {
         else {
             message.id = 0;
         }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
         return obj;
     },
     fromPartial(object) {
@@ -2803,6 +2854,12 @@ export const MsgCreateRepositoryResponse = {
         }
         else {
             message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
         }
         return message;
     },
