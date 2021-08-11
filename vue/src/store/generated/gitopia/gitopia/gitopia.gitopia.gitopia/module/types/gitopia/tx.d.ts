@@ -166,6 +166,13 @@ export interface MsgRenameRepository {
 }
 export interface MsgRenameRepositoryResponse {
 }
+export interface MsgChangeOwner {
+    creator: string;
+    repositoryId: number;
+    owner: string;
+}
+export interface MsgChangeOwnerResponse {
+}
 export interface MsgCreateBranch {
     creator: string;
     id: number;
@@ -540,6 +547,20 @@ export declare const MsgRenameRepositoryResponse: {
     toJSON(_: MsgRenameRepositoryResponse): unknown;
     fromPartial(_: DeepPartial<MsgRenameRepositoryResponse>): MsgRenameRepositoryResponse;
 };
+export declare const MsgChangeOwner: {
+    encode(message: MsgChangeOwner, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeOwner;
+    fromJSON(object: any): MsgChangeOwner;
+    toJSON(message: MsgChangeOwner): unknown;
+    fromPartial(object: DeepPartial<MsgChangeOwner>): MsgChangeOwner;
+};
+export declare const MsgChangeOwnerResponse: {
+    encode(_: MsgChangeOwnerResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgChangeOwnerResponse;
+    fromJSON(_: any): MsgChangeOwnerResponse;
+    toJSON(_: MsgChangeOwnerResponse): unknown;
+    fromPartial(_: DeepPartial<MsgChangeOwnerResponse>): MsgChangeOwnerResponse;
+};
 export declare const MsgCreateBranch: {
     encode(message: MsgCreateBranch, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateBranch;
@@ -716,6 +737,7 @@ export interface Msg {
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
+    ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
@@ -750,6 +772,7 @@ export declare class MsgClientImpl implements Msg {
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
+    ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;

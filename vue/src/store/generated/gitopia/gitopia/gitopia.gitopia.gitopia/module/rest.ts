@@ -73,6 +73,8 @@ export interface GitopiaIssue {
   extensions?: string;
 }
 
+export type GitopiaMsgChangeOwnerResponse = object;
+
 export type GitopiaMsgCreateBranchResponse = object;
 
 export interface GitopiaMsgCreateCommentResponse {
