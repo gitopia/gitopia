@@ -125,6 +125,121 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 	}, nil
 }
 
+func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner) (*types.MsgChangeOwnerResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	}
+
+	currentOwner, err := k.GetRepositoryOwner(ctx, msg.RepositoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	var newOwner Owner
+	if err := json.Unmarshal([]byte(msg.Owner), &newOwner); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+
+	var currentUser types.User
+	var newUser types.User
+	var currentOrganization types.Organization
+	var newOrganization types.Organization
+
+	if currentOwner.Type == "User" {
+		if msg.Creator != currentOwner.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		currentUser = k.GetUser(ctx, currentOwner.ID)
+
+		delete(currentUser.RepositoryNames, repository.Name)
+		if i, ok := ElementExists(currentUser.Repositories, repository.Id); ok {
+			currentUser.Repositories = append(currentUser.Repositories[:i], currentUser.Repositories[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in currentOwner %v repositories", repository.Id, currentOwner.ID))
+		}
+	} else if currentOwner.Type == "Organization" {
+		currentOwnerId, err := strconv.ParseUint(currentOwner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+
+		currentOrganization = k.GetOrganization(ctx, currentOwnerId)
+
+		if currentOrganization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+
+		delete(currentOrganization.RepositoryNames, repository.Name)
+
+		if i, ok := ElementExists(currentOrganization.Repositories, repository.Id); ok {
+			currentOrganization.Repositories = append(currentOrganization.Repositories[:i], currentOrganization.Repositories[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %d doesn't exist in currentOrganization %v repositories", repository.Id, currentOrganization.Name))
+		}
+	}
+
+	if newOwner.Type == "User" {
+		if !k.HasUser(ctx, newOwner.ID) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", newOwner.ID))
+		}
+
+		newUser = k.GetUser(ctx, newOwner.ID)
+
+		if _, exists := newUser.RepositoryNames[repository.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", repository.Name))
+		}
+
+		if newUser.RepositoryNames == nil {
+			newUser.RepositoryNames = make(map[string]uint64)
+		}
+		newUser.RepositoryNames[repository.Name] = repository.Id
+		newUser.Repositories = append(newUser.Repositories, repository.Id)
+	} else if newOwner.Type == "Organization" {
+		newOwnerId, err := strconv.ParseUint(newOwner.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, newOwnerId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", newOwner.ID))
+		}
+
+		newOrganization = k.GetOrganization(ctx, newOwnerId)
+
+		if _, exists := newOrganization.RepositoryNames[repository.Name]; exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v already exists", repository.Name))
+		}
+
+		if newOrganization.RepositoryNames == nil {
+			newOrganization.RepositoryNames = make(map[string]uint64)
+		}
+		newOrganization.RepositoryNames[repository.Name] = repository.Id
+		newOrganization.Repositories = append(newOrganization.Repositories, repository.Id)
+	}
+
+	repository.Owner = msg.Owner
+
+	k.SetRepository(ctx, repository)
+
+	if currentOwner.Type == "User" {
+		k.SetUser(ctx, currentUser)
+	} else if currentOwner.Type == "Organization" {
+		k.SetOrganization(ctx, currentOrganization)
+	}
+
+	if newOwner.Type == "User" {
+		k.SetUser(ctx, newUser)
+	} else if newOwner.Type == "Organization" {
+		k.SetOrganization(ctx, newOrganization)
+	}
+
+	return &types.MsgChangeOwnerResponse{}, nil
+}
+
 func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepository) (*types.MsgForkRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

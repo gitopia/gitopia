@@ -33,6 +33,7 @@ service Msg {
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
+  rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
@@ -237,6 +238,14 @@ message MsgRenameRepository {
 }
 
 message MsgRenameRepositoryResponse { }
+
+message MsgChangeOwner {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string owner = 3;
+}
+
+message MsgChangeOwnerResponse { }
 
 message MsgCreateBranch {
   string creator = 1;
