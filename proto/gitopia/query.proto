@@ -94,6 +94,10 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/branches";
 	}
 
+	rpc BranchSha(QueryGetBranchShaRequest) returns (QueryGetBranchShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}";
+	}
+
 	// Queries a user by id.
 	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
@@ -248,6 +252,15 @@ message QueryGetAllBranchRequest {
 
 message QueryGetAllBranchResponse {
 	map<string, string> Branches = 1;
+}
+
+message QueryGetBranchShaRequest {
+	uint64 repositoryId = 1;
+	string branchName = 2;
+}
+
+message QueryGetBranchShaResponse {
+	string sha = 1;
 }
 
 message QueryAllRepositoryRequest {
