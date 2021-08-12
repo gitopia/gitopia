@@ -173,8 +173,7 @@ export interface GitopiaOrganization {
   avatarUrl?: string;
   followers?: string[];
   following?: string[];
-  repositories?: string[];
-  repositoryNames?: Record<string, string>;
+  repositories?: Record<string, string>;
   teams?: string[];
   members?: Record<string, string>;
   location?: string;
@@ -269,6 +268,21 @@ export interface GitopiaQueryAllIssueResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllOrganizationRepositoryResponse {
+  Repository?: GitopiaRepository[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface GitopiaQueryAllOrganizationResponse {
   Organization?: GitopiaOrganization[];
 
@@ -344,6 +358,10 @@ export interface GitopiaQueryAllRepositoryResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllUserOrganizationResponse {
+  organization?: GitopiaOrganization[];
+}
+
 export interface GitopiaQueryAllUserRepositoryResponse {
   Repository?: GitopiaRepository[];
 }
@@ -382,12 +400,24 @@ export interface GitopiaQueryGetAllBranchResponse {
   Branches?: Record<string, string>;
 }
 
+export interface GitopiaQueryGetBranchShaResponse {
+  sha?: string;
+}
+
 export interface GitopiaQueryGetCommentResponse {
   Comment?: GitopiaComment;
 }
 
 export interface GitopiaQueryGetIssueResponse {
   Issue?: GitopiaIssue;
+}
+
+export interface GitopiaQueryGetOrganizationByNameResponse {
+  Organization?: GitopiaOrganization;
+}
+
+export interface GitopiaQueryGetOrganizationRepositoryResponse {
+  Repository?: GitopiaRepository;
 }
 
 export interface GitopiaQueryGetOrganizationResponse {
@@ -473,10 +503,8 @@ export interface GitopiaUser {
   avatarUrl?: string;
   followers?: string[];
   following?: string[];
-  repositories?: string[];
-  repositoriesArchived?: string[];
-  repositoryNames?: Record<string, string>;
-  organizations?: string[];
+  repositories?: Record<string, string>;
+  organizations?: Record<string, string>;
   starredRepos?: string[];
   subscriptions?: string;
   email?: string;
@@ -873,6 +901,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryOrganizationByName
+   * @summary Queries a organization by name.
+   * @request GET:/gitopia/gitopia/gitopia/organization/name/{organizationName}
+   */
+  queryOrganizationByName = (organizationName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetOrganizationByNameResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/organization/name/${organizationName}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryOrganization
    * @summary Queries a organization by id.
    * @request GET:/gitopia/gitopia/gitopia/organization/{id}
@@ -880,6 +924,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryOrganization = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetOrganizationResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/organization/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrganizationRepositoryAll
+   * @summary Queries a list of Organization repositories.
+   * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories
+   */
+  queryOrganizationRepositoryAll = (
+    organizationName: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllOrganizationRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryOrganizationRepository
+   * @summary Queries a repository by Organization name and repository name
+   * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}
+   */
+  queryOrganizationRepository = (organizationName: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetOrganizationRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories/${repositoryName}`,
       method: "GET",
       format: "json",
       ...params,
@@ -987,6 +1073,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryBranchSha
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}
+   */
+  queryBranchSha = (repositoryId: string, branchName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetBranchShaResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/branches/${branchName}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryUserRepository
    * @summary Queries a repository by user id and repository name
    * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
@@ -1035,6 +1136,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryUser = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetUserResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/user/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryUserOrganizationAll
+   * @summary Queries a list of user Organizations.
+   * @request GET:/gitopia/gitopia/gitopia/user/{id}/organizations
+   */
+  queryUserOrganizationAll = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryAllUserOrganizationResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/user/${id}/organizations`,
       method: "GET",
       format: "json",
       ...params,

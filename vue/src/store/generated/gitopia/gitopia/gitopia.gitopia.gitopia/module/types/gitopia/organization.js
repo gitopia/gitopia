@@ -9,7 +9,6 @@ const baseOrganization = {
     avatarUrl: "",
     followers: 0,
     following: 0,
-    repositories: 0,
     teams: 0,
     location: "",
     email: "",
@@ -44,45 +43,40 @@ export const Organization = {
             writer.uint64(v);
         }
         writer.ldelim();
-        writer.uint32(58).fork();
-        for (const v of message.repositories) {
-            writer.uint64(v);
-        }
-        writer.ldelim();
-        Object.entries(message.repositoryNames).forEach(([key, value]) => {
-            Organization_RepositoryNamesEntry.encode({ key: key, value }, writer.uint32(66).fork()).ldelim();
+        Object.entries(message.repositories).forEach(([key, value]) => {
+            Organization_RepositoriesEntry.encode({ key: key, value }, writer.uint32(58).fork()).ldelim();
         });
-        writer.uint32(74).fork();
+        writer.uint32(66).fork();
         for (const v of message.teams) {
             writer.uint64(v);
         }
         writer.ldelim();
         Object.entries(message.members).forEach(([key, value]) => {
-            Organization_MembersEntry.encode({ key: key, value }, writer.uint32(82).fork()).ldelim();
+            Organization_MembersEntry.encode({ key: key, value }, writer.uint32(74).fork()).ldelim();
         });
         if (message.location !== "") {
-            writer.uint32(90).string(message.location);
+            writer.uint32(82).string(message.location);
         }
         if (message.email !== "") {
-            writer.uint32(98).string(message.email);
+            writer.uint32(90).string(message.email);
         }
         if (message.website !== "") {
-            writer.uint32(106).string(message.website);
+            writer.uint32(98).string(message.website);
         }
         if (message.verified === true) {
-            writer.uint32(112).bool(message.verified);
+            writer.uint32(104).bool(message.verified);
         }
         if (message.description !== "") {
-            writer.uint32(122).string(message.description);
+            writer.uint32(114).string(message.description);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(128).int64(message.createdAt);
+            writer.uint32(120).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(136).int64(message.updatedAt);
+            writer.uint32(128).int64(message.updatedAt);
         }
         if (message.extensions !== "") {
-            writer.uint32(146).string(message.extensions);
+            writer.uint32(138).string(message.extensions);
         }
         return writer;
     },
@@ -92,8 +86,7 @@ export const Organization = {
         const message = { ...baseOrganization };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.repositoryNames = {};
+        message.repositories = {};
         message.teams = [];
         message.members = {};
         while (reader.pos < end) {
@@ -134,23 +127,12 @@ export const Organization = {
                     }
                     break;
                 case 7:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.repositories.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.repositories.push(longToNumber(reader.uint64()));
+                    const entry7 = Organization_RepositoriesEntry.decode(reader, reader.uint32());
+                    if (entry7.value !== undefined) {
+                        message.repositories[entry7.key] = entry7.value;
                     }
                     break;
                 case 8:
-                    const entry8 = Organization_RepositoryNamesEntry.decode(reader, reader.uint32());
-                    if (entry8.value !== undefined) {
-                        message.repositoryNames[entry8.key] = entry8.value;
-                    }
-                    break;
-                case 9:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -161,34 +143,34 @@ export const Organization = {
                         message.teams.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 10:
-                    const entry10 = Organization_MembersEntry.decode(reader, reader.uint32());
-                    if (entry10.value !== undefined) {
-                        message.members[entry10.key] = entry10.value;
+                case 9:
+                    const entry9 = Organization_MembersEntry.decode(reader, reader.uint32());
+                    if (entry9.value !== undefined) {
+                        message.members[entry9.key] = entry9.value;
                     }
                     break;
-                case 11:
+                case 10:
                     message.location = reader.string();
                     break;
-                case 12:
+                case 11:
                     message.email = reader.string();
                     break;
-                case 13:
+                case 12:
                     message.website = reader.string();
                     break;
-                case 14:
+                case 13:
                     message.verified = reader.bool();
                     break;
-                case 15:
+                case 14:
                     message.description = reader.string();
                     break;
-                case 16:
+                case 15:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 17:
+                case 16:
                     message.updatedAt = longToNumber(reader.int64());
                     break;
-                case 18:
+                case 17:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -202,8 +184,7 @@ export const Organization = {
         const message = { ...baseOrganization };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.repositoryNames = {};
+        message.repositories = {};
         message.teams = [];
         message.members = {};
         if (object.creator !== undefined && object.creator !== null) {
@@ -241,14 +222,8 @@ export const Organization = {
             }
         }
         if (object.repositories !== undefined && object.repositories !== null) {
-            for (const e of object.repositories) {
-                message.repositories.push(Number(e));
-            }
-        }
-        if (object.repositoryNames !== undefined &&
-            object.repositoryNames !== null) {
-            Object.entries(object.repositoryNames).forEach(([key, value]) => {
-                message.repositoryNames[key] = Number(value);
+            Object.entries(object.repositories).forEach(([key, value]) => {
+                message.repositories[key] = Number(value);
             });
         }
         if (object.teams !== undefined && object.teams !== null) {
@@ -329,16 +304,10 @@ export const Organization = {
         else {
             obj.following = [];
         }
+        obj.repositories = {};
         if (message.repositories) {
-            obj.repositories = message.repositories.map((e) => e);
-        }
-        else {
-            obj.repositories = [];
-        }
-        obj.repositoryNames = {};
-        if (message.repositoryNames) {
-            Object.entries(message.repositoryNames).forEach(([k, v]) => {
-                obj.repositoryNames[k] = v;
+            Object.entries(message.repositories).forEach(([k, v]) => {
+                obj.repositories[k] = v;
             });
         }
         if (message.teams) {
@@ -368,8 +337,7 @@ export const Organization = {
         const message = { ...baseOrganization };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.repositoryNames = {};
+        message.repositories = {};
         message.teams = [];
         message.members = {};
         if (object.creator !== undefined && object.creator !== null) {
@@ -407,15 +375,9 @@ export const Organization = {
             }
         }
         if (object.repositories !== undefined && object.repositories !== null) {
-            for (const e of object.repositories) {
-                message.repositories.push(e);
-            }
-        }
-        if (object.repositoryNames !== undefined &&
-            object.repositoryNames !== null) {
-            Object.entries(object.repositoryNames).forEach(([key, value]) => {
+            Object.entries(object.repositories).forEach(([key, value]) => {
                 if (value !== undefined) {
-                    message.repositoryNames[key] = Number(value);
+                    message.repositories[key] = Number(value);
                 }
             });
         }
@@ -482,8 +444,8 @@ export const Organization = {
         return message;
     },
 };
-const baseOrganization_RepositoryNamesEntry = { key: "", value: 0 };
-export const Organization_RepositoryNamesEntry = {
+const baseOrganization_RepositoriesEntry = { key: "", value: 0 };
+export const Organization_RepositoriesEntry = {
     encode(message, writer = Writer.create()) {
         if (message.key !== "") {
             writer.uint32(10).string(message.key);
@@ -497,7 +459,7 @@ export const Organization_RepositoryNamesEntry = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = {
-            ...baseOrganization_RepositoryNamesEntry,
+            ...baseOrganization_RepositoriesEntry,
         };
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -517,7 +479,7 @@ export const Organization_RepositoryNamesEntry = {
     },
     fromJSON(object) {
         const message = {
-            ...baseOrganization_RepositoryNamesEntry,
+            ...baseOrganization_RepositoriesEntry,
         };
         if (object.key !== undefined && object.key !== null) {
             message.key = String(object.key);
@@ -541,7 +503,7 @@ export const Organization_RepositoryNamesEntry = {
     },
     fromPartial(object) {
         const message = {
-            ...baseOrganization_RepositoryNamesEntry,
+            ...baseOrganization_RepositoriesEntry,
         };
         if (object.key !== undefined && object.key !== null) {
             message.key = object.key;

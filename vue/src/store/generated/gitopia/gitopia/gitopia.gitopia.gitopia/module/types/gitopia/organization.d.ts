@@ -7,8 +7,7 @@ export interface Organization {
     avatarUrl: string;
     followers: number[];
     following: number[];
-    repositories: number[];
-    repositoryNames: {
+    repositories: {
         [key: string]: number;
     };
     teams: number[];
@@ -24,7 +23,7 @@ export interface Organization {
     updatedAt: number;
     extensions: string;
 }
-export interface Organization_RepositoryNamesEntry {
+export interface Organization_RepositoriesEntry {
     key: string;
     value: number;
 }
@@ -39,12 +38,12 @@ export declare const Organization: {
     toJSON(message: Organization): unknown;
     fromPartial(object: DeepPartial<Organization>): Organization;
 };
-export declare const Organization_RepositoryNamesEntry: {
-    encode(message: Organization_RepositoryNamesEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): Organization_RepositoryNamesEntry;
-    fromJSON(object: any): Organization_RepositoryNamesEntry;
-    toJSON(message: Organization_RepositoryNamesEntry): unknown;
-    fromPartial(object: DeepPartial<Organization_RepositoryNamesEntry>): Organization_RepositoryNamesEntry;
+export declare const Organization_RepositoriesEntry: {
+    encode(message: Organization_RepositoriesEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): Organization_RepositoriesEntry;
+    fromJSON(object: any): Organization_RepositoriesEntry;
+    toJSON(message: Organization_RepositoriesEntry): unknown;
+    fromPartial(object: DeepPartial<Organization_RepositoriesEntry>): Organization_RepositoriesEntry;
 };
 export declare const Organization_MembersEntry: {
     encode(message: Organization_MembersEntry, writer?: Writer): Writer;
