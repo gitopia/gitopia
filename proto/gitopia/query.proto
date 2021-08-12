@@ -123,6 +123,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{user_id}/{repository_name}";
 	}
 
+	// Queries a list of user Organizations.
+	rpc UserOrganizationAll(QueryAllUserOrganizationRequest) returns (QueryAllUserOrganizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/organizations";
+	}
+
 	// Queries a list of Organization repositories.
 	rpc OrganizationRepositoryAll(QueryAllOrganizationRepositoryRequest) returns (QueryAllOrganizationRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{organizationName}/repositories";
@@ -326,6 +331,14 @@ message QueryGetUserRepositoryRequest {
 
 message QueryGetUserRepositoryResponse {
 	Repository Repository = 1;
+}
+
+message QueryAllUserOrganizationRequest {
+	string id = 1;
+}
+
+message QueryAllUserOrganizationResponse {
+	repeated Organization organization = 1;
 }
 
 message QueryAllOrganizationRepositoryRequest {
