@@ -62,6 +62,38 @@ func (k Keeper) Organization(c context.Context, req *types.QueryGetOrganizationR
 	return &types.QueryGetOrganizationResponse{Organization: &organization}, nil
 }
 
+func (k Keeper) OrganizationByName(c context.Context, req *types.QueryGetOrganizationByNameRequest) (*types.QueryGetOrganizationByNameResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var whois types.Whois
+	var organization types.Organization
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasWhois(ctx, req.OrganizationName) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	whoisStore := prefix.NewStore(store, types.KeyPrefix(types.WhoisKey))
+	whoisKey := []byte(types.WhoisKey + req.OrganizationName)
+	k.cdc.UnmarshalBinaryBare(whoisStore.Get(whoisKey), &whois)
+
+	organizationId, err := strconv.ParseUint(whois.Address, 10, 64)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization")
+	}
+	if !k.HasOrganization(ctx, organizationId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
+	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
+
+	return &types.QueryGetOrganizationByNameResponse{Organization: &organization}, nil
+}
+
 func (k Keeper) OrganizationRepositoryAll(c context.Context, req *types.QueryAllOrganizationRepositoryRequest) (*types.QueryAllOrganizationRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

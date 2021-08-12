@@ -34,6 +34,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{id}";
 	}
 
+	// Queries a organization by name.
+	rpc OrganizationByName(QueryGetOrganizationByNameRequest) returns (QueryGetOrganizationByNameResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/name/{organizationName}";
+	}
+
 	// Queries a list of organization items.
 	rpc OrganizationAll(QueryAllOrganizationRequest) returns (QueryAllOrganizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization";
@@ -162,6 +167,14 @@ message QueryGetOrganizationRequest {
 }
 
 message QueryGetOrganizationResponse {
+	Organization Organization = 1;
+}
+
+message QueryGetOrganizationByNameRequest {
+	string organizationName = 1;
+}
+
+message QueryGetOrganizationByNameResponse {
 	Organization Organization = 1;
 }
 
