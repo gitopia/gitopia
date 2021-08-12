@@ -118,6 +118,16 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{user_id}/{repository_name}";
 	}
 
+	// Queries a list of Organization repositories.
+	rpc OrganizationRepositoryAll(QueryAllOrganizationRepositoryRequest) returns (QueryAllOrganizationRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{organizationName}/repositories";
+	}
+
+	// Queries a repository by Organization name and repository name
+	rpc OrganizationRepository(QueryGetOrganizationRepositoryRequest) returns (QueryGetOrganizationRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}";
+	}
+
 	// Queries a whois by id.
 	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois/{name}";
@@ -302,6 +312,25 @@ message QueryGetUserRepositoryRequest {
 }
 
 message QueryGetUserRepositoryResponse {
+	Repository Repository = 1;
+}
+
+message QueryAllOrganizationRepositoryRequest {
+	string organizationName = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllOrganizationRepositoryResponse {
+	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetOrganizationRepositoryRequest {
+	string organizationName = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetOrganizationRepositoryResponse {
 	Repository Repository = 1;
 }
 
