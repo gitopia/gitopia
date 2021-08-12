@@ -50,7 +50,10 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 
 	// Update user Organizations
 	user := k.GetUser(ctx, msg.Creator)
-	user.Organizations = append(user.Organizations, id)
+	if user.Organizations == nil {
+		user.Organizations = make(map[string]uint64)
+	}
+	user.Organizations[organization.Name] = id
 	k.SetUser(ctx, user)
 
 	// Update whois

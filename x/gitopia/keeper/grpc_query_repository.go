@@ -82,7 +82,7 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -121,7 +121,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -155,7 +155,7 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -194,7 +194,7 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 

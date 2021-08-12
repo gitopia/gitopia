@@ -104,7 +104,7 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
