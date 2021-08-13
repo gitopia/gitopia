@@ -88,6 +88,49 @@ func (msg *MsgUpdateOrganizationMember) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgRemoveOrganizationMember{}
+
+func NewMsgRemoveOrganizationMember(creator string, id uint64, user string) *MsgRemoveOrganizationMember {
+	return &MsgRemoveOrganizationMember{
+		Id:      id,
+		Creator: creator,
+		User:    user,
+	}
+}
+
+func (msg *MsgRemoveOrganizationMember) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRemoveOrganizationMember) Type() string {
+	return "RemoveOrganizationMember"
+}
+
+func (msg *MsgRemoveOrganizationMember) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRemoveOrganizationMember) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRemoveOrganizationMember) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateOrganization{}
 
 func NewMsgUpdateOrganization(creator string, id uint64, name string, avatarUrl string, location string, email string, website string, description string) *MsgUpdateOrganization {

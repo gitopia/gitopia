@@ -37,6 +37,7 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdCreateOrganization())
 	cmd.AddCommand(CmdUpdateOrganizationMember())
+	cmd.AddCommand(CmdRemoveOrganizationMember())
 	cmd.AddCommand(CmdUpdateOrganization())
 	cmd.AddCommand(CmdDeleteOrganization())
 
