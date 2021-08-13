@@ -17,6 +17,7 @@ service Msg {
   rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
+  rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
@@ -83,6 +84,14 @@ message MsgUpdatePullRequestTitle {
 }
 
 message MsgUpdatePullRequestTitleResponse { }
+
+message MsgUpdatePullRequestDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdatePullRequestDescriptionResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;

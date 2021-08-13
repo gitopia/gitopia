@@ -136,6 +136,48 @@ func (msg *MsgUpdatePullRequestTitle) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdatePullRequestDescription{}
+
+func NewMsgUpdatePullRequestDescription(creator string, id uint64, description string) *MsgUpdatePullRequestDescription {
+	return &MsgUpdatePullRequestDescription{
+		Id:          id,
+		Creator:     creator,
+		Description: description,
+	}
+}
+
+func (msg *MsgUpdatePullRequestDescription) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdatePullRequestDescription) Type() string {
+	return "UpdatePullRequestDescription"
+}
+
+func (msg *MsgUpdatePullRequestDescription) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdatePullRequestDescription) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeletePullRequest{}
 
 func NewMsgDeletePullRequest(creator string, id uint64) *MsgDeletePullRequest {
