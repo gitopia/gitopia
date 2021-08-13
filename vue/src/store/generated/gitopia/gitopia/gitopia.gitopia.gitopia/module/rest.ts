@@ -134,6 +134,10 @@ export interface GitopiaMsgForkRepositoryResponse {
   id?: string;
 }
 
+export type GitopiaMsgRemoveOrganizationMemberResponse = object;
+
+export type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
+
 export type GitopiaMsgRenameRepositoryResponse = object;
 
 export type GitopiaMsgSetDefaultBranchResponse = object;
@@ -156,7 +160,13 @@ export type GitopiaMsgUpdateOrganizationMemberResponse = object;
 
 export type GitopiaMsgUpdateOrganizationResponse = object;
 
+export type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
+
 export type GitopiaMsgUpdatePullRequestResponse = object;
+
+export type GitopiaMsgUpdatePullRequestTitleResponse = object;
+
+export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 
 export type GitopiaMsgUpdateRepositoryResponse = object;
 

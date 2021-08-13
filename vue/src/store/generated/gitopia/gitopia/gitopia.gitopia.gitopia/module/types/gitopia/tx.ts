@@ -29,6 +29,22 @@ export interface MsgUpdatePullRequest {
 
 export interface MsgUpdatePullRequestResponse {}
 
+export interface MsgUpdatePullRequestTitle {
+  creator: string;
+  id: number;
+  title: string;
+}
+
+export interface MsgUpdatePullRequestTitleResponse {}
+
+export interface MsgUpdatePullRequestDescription {
+  creator: string;
+  id: number;
+  description: string;
+}
+
+export interface MsgUpdatePullRequestDescriptionResponse {}
+
 export interface MsgDeletePullRequest {
   creator: string;
   id: number;
@@ -54,6 +70,14 @@ export interface MsgUpdateOrganizationMember {
 }
 
 export interface MsgUpdateOrganizationMemberResponse {}
+
+export interface MsgRemoveOrganizationMember {
+  creator: string;
+  id: number;
+  user: string;
+}
+
+export interface MsgRemoveOrganizationMemberResponse {}
 
 export interface MsgUpdateOrganization {
   creator: string;
@@ -203,6 +227,23 @@ export interface MsgChangeOwner {
 }
 
 export interface MsgChangeOwnerResponse {}
+
+export interface MsgUpdateRepositoryCollaborator {
+  creator: string;
+  id: number;
+  user: string;
+  role: string;
+}
+
+export interface MsgUpdateRepositoryCollaboratorResponse {}
+
+export interface MsgRemoveRepositoryCollaborator {
+  creator: string;
+  id: number;
+  user: string;
+}
+
+export interface MsgRemoveRepositoryCollaboratorResponse {}
 
 export interface MsgCreateBranch {
   creator: string;
@@ -746,6 +787,321 @@ export const MsgUpdatePullRequestResponse = {
   },
 };
 
+const baseMsgUpdatePullRequestTitle: object = { creator: "", id: 0, title: "" };
+
+export const MsgUpdatePullRequestTitle = {
+  encode(
+    message: MsgUpdatePullRequestTitle,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.title !== "") {
+      writer.uint32(26).string(message.title);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdatePullRequestTitle {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdatePullRequestTitle,
+    } as MsgUpdatePullRequestTitle;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.title = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdatePullRequestTitle {
+    const message = {
+      ...baseMsgUpdatePullRequestTitle,
+    } as MsgUpdatePullRequestTitle;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = String(object.title);
+    } else {
+      message.title = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdatePullRequestTitle): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.title !== undefined && (obj.title = message.title);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgUpdatePullRequestTitle>
+  ): MsgUpdatePullRequestTitle {
+    const message = {
+      ...baseMsgUpdatePullRequestTitle,
+    } as MsgUpdatePullRequestTitle;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = object.title;
+    } else {
+      message.title = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdatePullRequestTitleResponse: object = {};
+
+export const MsgUpdatePullRequestTitleResponse = {
+  encode(
+    _: MsgUpdatePullRequestTitleResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdatePullRequestTitleResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdatePullRequestTitleResponse,
+    } as MsgUpdatePullRequestTitleResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdatePullRequestTitleResponse {
+    const message = {
+      ...baseMsgUpdatePullRequestTitleResponse,
+    } as MsgUpdatePullRequestTitleResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdatePullRequestTitleResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdatePullRequestTitleResponse>
+  ): MsgUpdatePullRequestTitleResponse {
+    const message = {
+      ...baseMsgUpdatePullRequestTitleResponse,
+    } as MsgUpdatePullRequestTitleResponse;
+    return message;
+  },
+};
+
+const baseMsgUpdatePullRequestDescription: object = {
+  creator: "",
+  id: 0,
+  description: "",
+};
+
+export const MsgUpdatePullRequestDescription = {
+  encode(
+    message: MsgUpdatePullRequestDescription,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.description !== "") {
+      writer.uint32(26).string(message.description);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdatePullRequestDescription {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdatePullRequestDescription,
+    } as MsgUpdatePullRequestDescription;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.description = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdatePullRequestDescription {
+    const message = {
+      ...baseMsgUpdatePullRequestDescription,
+    } as MsgUpdatePullRequestDescription;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.description !== undefined && object.description !== null) {
+      message.description = String(object.description);
+    } else {
+      message.description = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdatePullRequestDescription): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.description !== undefined &&
+      (obj.description = message.description);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgUpdatePullRequestDescription>
+  ): MsgUpdatePullRequestDescription {
+    const message = {
+      ...baseMsgUpdatePullRequestDescription,
+    } as MsgUpdatePullRequestDescription;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.description !== undefined && object.description !== null) {
+      message.description = object.description;
+    } else {
+      message.description = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdatePullRequestDescriptionResponse: object = {};
+
+export const MsgUpdatePullRequestDescriptionResponse = {
+  encode(
+    _: MsgUpdatePullRequestDescriptionResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdatePullRequestDescriptionResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdatePullRequestDescriptionResponse,
+    } as MsgUpdatePullRequestDescriptionResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdatePullRequestDescriptionResponse {
+    const message = {
+      ...baseMsgUpdatePullRequestDescriptionResponse,
+    } as MsgUpdatePullRequestDescriptionResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdatePullRequestDescriptionResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdatePullRequestDescriptionResponse>
+  ): MsgUpdatePullRequestDescriptionResponse {
+    const message = {
+      ...baseMsgUpdatePullRequestDescriptionResponse,
+    } as MsgUpdatePullRequestDescriptionResponse;
+    return message;
+  },
+};
+
 const baseMsgDeletePullRequest: object = { creator: "", id: 0 };
 
 export const MsgDeletePullRequest = {
@@ -1214,6 +1570,165 @@ export const MsgUpdateOrganizationMemberResponse = {
     const message = {
       ...baseMsgUpdateOrganizationMemberResponse,
     } as MsgUpdateOrganizationMemberResponse;
+    return message;
+  },
+};
+
+const baseMsgRemoveOrganizationMember: object = {
+  creator: "",
+  id: 0,
+  user: "",
+};
+
+export const MsgRemoveOrganizationMember = {
+  encode(
+    message: MsgRemoveOrganizationMember,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.user !== "") {
+      writer.uint32(26).string(message.user);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgRemoveOrganizationMember {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgRemoveOrganizationMember,
+    } as MsgRemoveOrganizationMember;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.user = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRemoveOrganizationMember {
+    const message = {
+      ...baseMsgRemoveOrganizationMember,
+    } as MsgRemoveOrganizationMember;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = String(object.user);
+    } else {
+      message.user = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgRemoveOrganizationMember): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.user !== undefined && (obj.user = message.user);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgRemoveOrganizationMember>
+  ): MsgRemoveOrganizationMember {
+    const message = {
+      ...baseMsgRemoveOrganizationMember,
+    } as MsgRemoveOrganizationMember;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = object.user;
+    } else {
+      message.user = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgRemoveOrganizationMemberResponse: object = {};
+
+export const MsgRemoveOrganizationMemberResponse = {
+  encode(
+    _: MsgRemoveOrganizationMemberResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgRemoveOrganizationMemberResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgRemoveOrganizationMemberResponse,
+    } as MsgRemoveOrganizationMemberResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRemoveOrganizationMemberResponse {
+    const message = {
+      ...baseMsgRemoveOrganizationMemberResponse,
+    } as MsgRemoveOrganizationMemberResponse;
+    return message;
+  },
+
+  toJSON(_: MsgRemoveOrganizationMemberResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgRemoveOrganizationMemberResponse>
+  ): MsgRemoveOrganizationMemberResponse {
+    const message = {
+      ...baseMsgRemoveOrganizationMemberResponse,
+    } as MsgRemoveOrganizationMemberResponse;
     return message;
   },
 };
@@ -3837,6 +4352,342 @@ export const MsgChangeOwnerResponse = {
   },
 };
 
+const baseMsgUpdateRepositoryCollaborator: object = {
+  creator: "",
+  id: 0,
+  user: "",
+  role: "",
+};
+
+export const MsgUpdateRepositoryCollaborator = {
+  encode(
+    message: MsgUpdateRepositoryCollaborator,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.user !== "") {
+      writer.uint32(26).string(message.user);
+    }
+    if (message.role !== "") {
+      writer.uint32(34).string(message.role);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateRepositoryCollaborator {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateRepositoryCollaborator,
+    } as MsgUpdateRepositoryCollaborator;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.user = reader.string();
+          break;
+        case 4:
+          message.role = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateRepositoryCollaborator {
+    const message = {
+      ...baseMsgUpdateRepositoryCollaborator,
+    } as MsgUpdateRepositoryCollaborator;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = String(object.user);
+    } else {
+      message.user = "";
+    }
+    if (object.role !== undefined && object.role !== null) {
+      message.role = String(object.role);
+    } else {
+      message.role = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateRepositoryCollaborator): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.user !== undefined && (obj.user = message.user);
+    message.role !== undefined && (obj.role = message.role);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgUpdateRepositoryCollaborator>
+  ): MsgUpdateRepositoryCollaborator {
+    const message = {
+      ...baseMsgUpdateRepositoryCollaborator,
+    } as MsgUpdateRepositoryCollaborator;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = object.user;
+    } else {
+      message.user = "";
+    }
+    if (object.role !== undefined && object.role !== null) {
+      message.role = object.role;
+    } else {
+      message.role = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateRepositoryCollaboratorResponse: object = {};
+
+export const MsgUpdateRepositoryCollaboratorResponse = {
+  encode(
+    _: MsgUpdateRepositoryCollaboratorResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateRepositoryCollaboratorResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateRepositoryCollaboratorResponse,
+    } as MsgUpdateRepositoryCollaboratorResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateRepositoryCollaboratorResponse {
+    const message = {
+      ...baseMsgUpdateRepositoryCollaboratorResponse,
+    } as MsgUpdateRepositoryCollaboratorResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateRepositoryCollaboratorResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdateRepositoryCollaboratorResponse>
+  ): MsgUpdateRepositoryCollaboratorResponse {
+    const message = {
+      ...baseMsgUpdateRepositoryCollaboratorResponse,
+    } as MsgUpdateRepositoryCollaboratorResponse;
+    return message;
+  },
+};
+
+const baseMsgRemoveRepositoryCollaborator: object = {
+  creator: "",
+  id: 0,
+  user: "",
+};
+
+export const MsgRemoveRepositoryCollaborator = {
+  encode(
+    message: MsgRemoveRepositoryCollaborator,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.user !== "") {
+      writer.uint32(26).string(message.user);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgRemoveRepositoryCollaborator {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgRemoveRepositoryCollaborator,
+    } as MsgRemoveRepositoryCollaborator;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.user = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgRemoveRepositoryCollaborator {
+    const message = {
+      ...baseMsgRemoveRepositoryCollaborator,
+    } as MsgRemoveRepositoryCollaborator;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = String(object.user);
+    } else {
+      message.user = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgRemoveRepositoryCollaborator): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.user !== undefined && (obj.user = message.user);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgRemoveRepositoryCollaborator>
+  ): MsgRemoveRepositoryCollaborator {
+    const message = {
+      ...baseMsgRemoveRepositoryCollaborator,
+    } as MsgRemoveRepositoryCollaborator;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.user !== undefined && object.user !== null) {
+      message.user = object.user;
+    } else {
+      message.user = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgRemoveRepositoryCollaboratorResponse: object = {};
+
+export const MsgRemoveRepositoryCollaboratorResponse = {
+  encode(
+    _: MsgRemoveRepositoryCollaboratorResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgRemoveRepositoryCollaboratorResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgRemoveRepositoryCollaboratorResponse,
+    } as MsgRemoveRepositoryCollaboratorResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgRemoveRepositoryCollaboratorResponse {
+    const message = {
+      ...baseMsgRemoveRepositoryCollaboratorResponse,
+    } as MsgRemoveRepositoryCollaboratorResponse;
+    return message;
+  },
+
+  toJSON(_: MsgRemoveRepositoryCollaboratorResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgRemoveRepositoryCollaboratorResponse>
+  ): MsgRemoveRepositoryCollaboratorResponse {
+    const message = {
+      ...baseMsgRemoveRepositoryCollaboratorResponse,
+    } as MsgRemoveRepositoryCollaboratorResponse;
+    return message;
+  },
+};
+
 const baseMsgCreateBranch: object = {
   creator: "",
   id: 0,
@@ -5917,6 +6768,12 @@ export interface Msg {
   UpdatePullRequest(
     request: MsgUpdatePullRequest
   ): Promise<MsgUpdatePullRequestResponse>;
+  UpdatePullRequestTitle(
+    request: MsgUpdatePullRequestTitle
+  ): Promise<MsgUpdatePullRequestTitleResponse>;
+  UpdatePullRequestDescription(
+    request: MsgUpdatePullRequestDescription
+  ): Promise<MsgUpdatePullRequestDescriptionResponse>;
   DeletePullRequest(
     request: MsgDeletePullRequest
   ): Promise<MsgDeletePullRequestResponse>;
@@ -5926,6 +6783,9 @@ export interface Msg {
   UpdateOrganizationMember(
     request: MsgUpdateOrganizationMember
   ): Promise<MsgUpdateOrganizationMemberResponse>;
+  RemoveOrganizationMember(
+    request: MsgRemoveOrganizationMember
+  ): Promise<MsgRemoveOrganizationMemberResponse>;
   UpdateOrganization(
     request: MsgUpdateOrganization
   ): Promise<MsgUpdateOrganizationResponse>;
@@ -5957,6 +6817,12 @@ export interface Msg {
     request: MsgRenameRepository
   ): Promise<MsgRenameRepositoryResponse>;
   ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
+  UpdateRepositoryCollaborator(
+    request: MsgUpdateRepositoryCollaborator
+  ): Promise<MsgUpdateRepositoryCollaboratorResponse>;
+  RemoveRepositoryCollaborator(
+    request: MsgRemoveRepositoryCollaborator
+  ): Promise<MsgRemoveRepositoryCollaboratorResponse>;
   CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
   SetDefaultBranch(
     request: MsgSetDefaultBranch
@@ -6009,6 +6875,34 @@ export class MsgClientImpl implements Msg {
     );
   }
 
+  UpdatePullRequestTitle(
+    request: MsgUpdatePullRequestTitle
+  ): Promise<MsgUpdatePullRequestTitleResponse> {
+    const data = MsgUpdatePullRequestTitle.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdatePullRequestTitle",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdatePullRequestTitleResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdatePullRequestDescription(
+    request: MsgUpdatePullRequestDescription
+  ): Promise<MsgUpdatePullRequestDescriptionResponse> {
+    const data = MsgUpdatePullRequestDescription.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdatePullRequestDescription",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdatePullRequestDescriptionResponse.decode(new Reader(data))
+    );
+  }
+
   DeletePullRequest(
     request: MsgDeletePullRequest
   ): Promise<MsgDeletePullRequestResponse> {
@@ -6048,6 +6942,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdateOrganizationMemberResponse.decode(new Reader(data))
+    );
+  }
+
+  RemoveOrganizationMember(
+    request: MsgRemoveOrganizationMember
+  ): Promise<MsgRemoveOrganizationMemberResponse> {
+    const data = MsgRemoveOrganizationMember.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "RemoveOrganizationMember",
+      data
+    );
+    return promise.then((data) =>
+      MsgRemoveOrganizationMemberResponse.decode(new Reader(data))
     );
   }
 
@@ -6244,6 +7152,34 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgChangeOwnerResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateRepositoryCollaborator(
+    request: MsgUpdateRepositoryCollaborator
+  ): Promise<MsgUpdateRepositoryCollaboratorResponse> {
+    const data = MsgUpdateRepositoryCollaborator.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdateRepositoryCollaborator",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateRepositoryCollaboratorResponse.decode(new Reader(data))
+    );
+  }
+
+  RemoveRepositoryCollaborator(
+    request: MsgRemoveRepositoryCollaborator
+  ): Promise<MsgRemoveRepositoryCollaboratorResponse> {
+    const data = MsgRemoveRepositoryCollaborator.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "RemoveRepositoryCollaborator",
+      data
+    );
+    return promise.then((data) =>
+      MsgRemoveRepositoryCollaboratorResponse.decode(new Reader(data))
     );
   }
 

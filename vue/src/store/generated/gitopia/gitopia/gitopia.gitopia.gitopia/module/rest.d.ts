@@ -89,6 +89,8 @@ export interface GitopiaMsgForkRepositoryResponse {
     /** @format uint64 */
     id?: string;
 }
+export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
+export declare type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgRenameRepositoryResponse = object;
 export declare type GitopiaMsgSetDefaultBranchResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;
@@ -101,7 +103,10 @@ export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
 export declare type GitopiaMsgUpdateOrganizationMemberResponse = object;
 export declare type GitopiaMsgUpdateOrganizationResponse = object;
+export declare type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 export declare type GitopiaMsgUpdatePullRequestResponse = object;
+export declare type GitopiaMsgUpdatePullRequestTitleResponse = object;
+export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
