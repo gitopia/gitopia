@@ -6,6 +6,11 @@ All notable changes will be documented here.
 
 ### Added
 
+- Added transaction to update pullRequest description
+- Added transaction to update pullRequest title
+- Added transaction to Remove organization member
+- Added transaction to Remove repository collaborator
+- Added transaction to Add/Update repository collaborator
 - Added api to get all user organizations (no pagination)
 - Added api to get organization by name
 - Added api to query Organization all repositories (with pagination)
