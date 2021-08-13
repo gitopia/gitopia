@@ -26,6 +26,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdatePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdatePullRequestTitle:
+			res, err := msgServer.UpdatePullRequestTitle(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeletePullRequest:
 			res, err := msgServer.DeletePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

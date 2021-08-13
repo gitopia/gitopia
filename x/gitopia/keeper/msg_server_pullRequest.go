@@ -105,6 +105,29 @@ func (k msgServer) UpdatePullRequest(goCtx context.Context, msg *types.MsgUpdate
 	return &types.MsgUpdatePullRequestResponse{}, nil
 }
 
+func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgUpdatePullRequestTitle) (*types.MsgUpdatePullRequestTitleResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullrequest = k.GetPullRequest(ctx, msg.Id)
+
+	pullrequest.Title = msg.Title
+	pullrequest.UpdatedAt = time.Now().Unix()
+
+	k.SetPullRequest(ctx, pullrequest)
+
+	return &types.MsgUpdatePullRequestTitleResponse{}, nil
+}
+
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

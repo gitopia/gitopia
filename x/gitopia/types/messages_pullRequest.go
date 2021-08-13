@@ -94,6 +94,48 @@ func (msg *MsgUpdatePullRequest) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdatePullRequestTitle{}
+
+func NewMsgUpdatePullRequestTitle(creator string, id uint64, title string) *MsgUpdatePullRequestTitle {
+	return &MsgUpdatePullRequestTitle{
+		Id:      id,
+		Creator: creator,
+		Title:   title,
+	}
+}
+
+func (msg *MsgUpdatePullRequestTitle) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdatePullRequestTitle) Type() string {
+	return "UpdatePullRequestTitle"
+}
+
+func (msg *MsgUpdatePullRequestTitle) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdatePullRequestTitle) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdatePullRequestTitle) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Title) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeletePullRequest{}
 
 func NewMsgDeletePullRequest(creator string, id uint64) *MsgDeletePullRequest {

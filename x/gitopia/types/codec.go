@@ -11,6 +11,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreatePullRequest{}, "gitopia/CreatePullRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequest{}, "gitopia/UpdatePullRequest", nil)
+	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
 	cdc.RegisterConcrete(&MsgDeletePullRequest{}, "gitopia/DeletePullRequest", nil)
 
 	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
@@ -57,6 +58,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreatePullRequest{},
 		&MsgUpdatePullRequest{},
+		&MsgUpdatePullRequestTitle{},
 		&MsgDeletePullRequest{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),

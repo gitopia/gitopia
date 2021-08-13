@@ -16,6 +16,7 @@ service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
+  rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
@@ -74,6 +75,14 @@ message MsgUpdatePullRequest {
 }
 
 message MsgUpdatePullRequestResponse { }
+
+message MsgUpdatePullRequestTitle {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+}
+
+message MsgUpdatePullRequestTitleResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;
