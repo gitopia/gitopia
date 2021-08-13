@@ -403,6 +403,44 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	return &types.MsgRenameRepositoryResponse{}, nil
 }
 
+func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateRepositoryCollaborator) (*types.MsgUpdateRepositoryCollaboratorResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator %v doesn't exist", msg.Creator))
+	}
+
+	if !k.HasUser(ctx, msg.User) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.User))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	repository := k.GetRepository(ctx, msg.Id)
+
+	var o Owner
+	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+
+	// Checks if the the msg sender is the same as the current owner or Admin
+	if msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if repository.Collaborators == nil {
+		repository.Collaborators = make(map[string]string)
+	}
+	repository.Collaborators[msg.User] = msg.Role
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
+}
+
 func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
