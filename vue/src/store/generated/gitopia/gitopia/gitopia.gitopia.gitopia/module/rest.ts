@@ -142,6 +142,10 @@ export type GitopiaMsgRenameRepositoryResponse = object;
 
 export type GitopiaMsgSetDefaultBranchResponse = object;
 
+export interface GitopiaMsgSetPullRequestStateResponse {
+  state?: string;
+}
+
 export type GitopiaMsgSetWhoisResponse = object;
 
 export interface GitopiaMsgToggleIssueStateResponse {

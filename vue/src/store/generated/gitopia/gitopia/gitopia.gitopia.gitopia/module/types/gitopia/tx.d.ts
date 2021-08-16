@@ -36,6 +36,15 @@ export interface MsgUpdatePullRequestDescription {
 }
 export interface MsgUpdatePullRequestDescriptionResponse {
 }
+export interface MsgSetPullRequestState {
+    creator: string;
+    id: number;
+    state: string;
+    mergeCommitSha: string;
+}
+export interface MsgSetPullRequestStateResponse {
+    state: string;
+}
 export interface MsgDeletePullRequest {
     creator: string;
     id: number;
@@ -372,6 +381,20 @@ export declare const MsgUpdatePullRequestDescriptionResponse: {
     fromJSON(_: any): MsgUpdatePullRequestDescriptionResponse;
     toJSON(_: MsgUpdatePullRequestDescriptionResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdatePullRequestDescriptionResponse>): MsgUpdatePullRequestDescriptionResponse;
+};
+export declare const MsgSetPullRequestState: {
+    encode(message: MsgSetPullRequestState, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetPullRequestState;
+    fromJSON(object: any): MsgSetPullRequestState;
+    toJSON(message: MsgSetPullRequestState): unknown;
+    fromPartial(object: DeepPartial<MsgSetPullRequestState>): MsgSetPullRequestState;
+};
+export declare const MsgSetPullRequestStateResponse: {
+    encode(message: MsgSetPullRequestStateResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetPullRequestStateResponse;
+    fromJSON(object: any): MsgSetPullRequestStateResponse;
+    toJSON(message: MsgSetPullRequestStateResponse): unknown;
+    fromPartial(object: DeepPartial<MsgSetPullRequestStateResponse>): MsgSetPullRequestStateResponse;
 };
 export declare const MsgDeletePullRequest: {
     encode(message: MsgDeletePullRequest, writer?: Writer): Writer;
@@ -828,6 +851,7 @@ export interface Msg {
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
@@ -868,6 +892,7 @@ export declare class MsgClientImpl implements Msg {
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;

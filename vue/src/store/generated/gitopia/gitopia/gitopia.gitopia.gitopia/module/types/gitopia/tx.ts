@@ -45,6 +45,17 @@ export interface MsgUpdatePullRequestDescription {
 
 export interface MsgUpdatePullRequestDescriptionResponse {}
 
+export interface MsgSetPullRequestState {
+  creator: string;
+  id: number;
+  state: string;
+  mergeCommitSha: string;
+}
+
+export interface MsgSetPullRequestStateResponse {
+  state: string;
+}
+
 export interface MsgDeletePullRequest {
   creator: string;
   id: number;
@@ -1098,6 +1109,192 @@ export const MsgUpdatePullRequestDescriptionResponse = {
     const message = {
       ...baseMsgUpdatePullRequestDescriptionResponse,
     } as MsgUpdatePullRequestDescriptionResponse;
+    return message;
+  },
+};
+
+const baseMsgSetPullRequestState: object = {
+  creator: "",
+  id: 0,
+  state: "",
+  mergeCommitSha: "",
+};
+
+export const MsgSetPullRequestState = {
+  encode(
+    message: MsgSetPullRequestState,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.state !== "") {
+      writer.uint32(26).string(message.state);
+    }
+    if (message.mergeCommitSha !== "") {
+      writer.uint32(34).string(message.mergeCommitSha);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgSetPullRequestState {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgSetPullRequestState } as MsgSetPullRequestState;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.state = reader.string();
+          break;
+        case 4:
+          message.mergeCommitSha = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSetPullRequestState {
+    const message = { ...baseMsgSetPullRequestState } as MsgSetPullRequestState;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.state !== undefined && object.state !== null) {
+      message.state = String(object.state);
+    } else {
+      message.state = "";
+    }
+    if (object.mergeCommitSha !== undefined && object.mergeCommitSha !== null) {
+      message.mergeCommitSha = String(object.mergeCommitSha);
+    } else {
+      message.mergeCommitSha = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgSetPullRequestState): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.state !== undefined && (obj.state = message.state);
+    message.mergeCommitSha !== undefined &&
+      (obj.mergeCommitSha = message.mergeCommitSha);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgSetPullRequestState>
+  ): MsgSetPullRequestState {
+    const message = { ...baseMsgSetPullRequestState } as MsgSetPullRequestState;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.state !== undefined && object.state !== null) {
+      message.state = object.state;
+    } else {
+      message.state = "";
+    }
+    if (object.mergeCommitSha !== undefined && object.mergeCommitSha !== null) {
+      message.mergeCommitSha = object.mergeCommitSha;
+    } else {
+      message.mergeCommitSha = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgSetPullRequestStateResponse: object = { state: "" };
+
+export const MsgSetPullRequestStateResponse = {
+  encode(
+    message: MsgSetPullRequestStateResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.state !== "") {
+      writer.uint32(10).string(message.state);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgSetPullRequestStateResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgSetPullRequestStateResponse,
+    } as MsgSetPullRequestStateResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.state = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSetPullRequestStateResponse {
+    const message = {
+      ...baseMsgSetPullRequestStateResponse,
+    } as MsgSetPullRequestStateResponse;
+    if (object.state !== undefined && object.state !== null) {
+      message.state = String(object.state);
+    } else {
+      message.state = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgSetPullRequestStateResponse): unknown {
+    const obj: any = {};
+    message.state !== undefined && (obj.state = message.state);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgSetPullRequestStateResponse>
+  ): MsgSetPullRequestStateResponse {
+    const message = {
+      ...baseMsgSetPullRequestStateResponse,
+    } as MsgSetPullRequestStateResponse;
+    if (object.state !== undefined && object.state !== null) {
+      message.state = object.state;
+    } else {
+      message.state = "";
+    }
     return message;
   },
 };
@@ -6774,6 +6971,9 @@ export interface Msg {
   UpdatePullRequestDescription(
     request: MsgUpdatePullRequestDescription
   ): Promise<MsgUpdatePullRequestDescriptionResponse>;
+  SetPullRequestState(
+    request: MsgSetPullRequestState
+  ): Promise<MsgSetPullRequestStateResponse>;
   DeletePullRequest(
     request: MsgDeletePullRequest
   ): Promise<MsgDeletePullRequestResponse>;
@@ -6900,6 +7100,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdatePullRequestDescriptionResponse.decode(new Reader(data))
+    );
+  }
+
+  SetPullRequestState(
+    request: MsgSetPullRequestState
+  ): Promise<MsgSetPullRequestStateResponse> {
+    const data = MsgSetPullRequestState.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "SetPullRequestState",
+      data
+    );
+    return promise.then((data) =>
+      MsgSetPullRequestStateResponse.decode(new Reader(data))
     );
   }
 

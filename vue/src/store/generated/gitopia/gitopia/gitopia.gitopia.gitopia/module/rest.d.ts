@@ -93,6 +93,9 @@ export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
 export declare type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgRenameRepositoryResponse = object;
 export declare type GitopiaMsgSetDefaultBranchResponse = object;
+export interface GitopiaMsgSetPullRequestStateResponse {
+    state?: string;
+}
 export declare type GitopiaMsgSetWhoisResponse = object;
 export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
