@@ -18,6 +18,7 @@ service Msg {
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
+  rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
@@ -92,6 +93,17 @@ message MsgUpdatePullRequestDescription {
 }
 
 message MsgUpdatePullRequestDescriptionResponse { }
+
+message MsgSetPullRequestState {
+  string creator = 1;
+  uint64 id = 2;
+  string state = 3;
+  string mergeCommitSha = 4; 
+}
+
+message MsgSetPullRequestStateResponse {
+  string state = 1;
+}
 
 message MsgDeletePullRequest {
   string creator = 1;

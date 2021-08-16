@@ -178,6 +178,49 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgSetPullRequestState{}
+
+func NewMsgSetPullRequestState(creator string, id uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
+	return &MsgSetPullRequestState{
+		Id:             id,
+		Creator:        creator,
+		State:          state,
+		MergeCommitSha: mergeCommitSha,
+	}
+}
+
+func (msg *MsgSetPullRequestState) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgSetPullRequestState) Type() string {
+	return "SetPullRequestState"
+}
+
+func (msg *MsgSetPullRequestState) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgSetPullRequestState) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgSetPullRequestState) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if msg.State != "Open" && msg.State != "Closed" && msg.State != "Merged" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state (%s)", msg.State)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeletePullRequest{}
 
 func NewMsgDeletePullRequest(creator string, id uint64) *MsgDeletePullRequest {

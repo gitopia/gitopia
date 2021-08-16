@@ -35,6 +35,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdatePullRequest())
 	cmd.AddCommand(CmdUpdatePullRequestTitle())
 	cmd.AddCommand(CmdUpdatePullRequestDescription())
+	cmd.AddCommand(CmdSetPullRequestState())
 	cmd.AddCommand(CmdDeletePullRequest())
 
 	cmd.AddCommand(CmdCreateOrganization())

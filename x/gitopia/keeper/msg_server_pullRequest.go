@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -149,6 +151,88 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	k.SetPullRequest(ctx, pullrequest)
 
 	return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
+}
+
+func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetPullRequestState) (*types.MsgSetPullRequestStateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullRequest = k.GetPullRequest(ctx, msg.Id)
+	currentTime := time.Now().Unix()
+
+	repository := k.GetRepository(ctx, pullRequest.BaseRepoId)
+
+	var o Owner
+	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
+	}
+
+	if o.Type == "User" {
+		if msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+	} else if o.Type == "Organization" {
+		orgId, err := strconv.ParseUint(o.ID, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't fetch baseRepository owner")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", o.ID))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		// Checks if the the msg sender is the same as the current owner
+		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		}
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't fetch baseRepository owner"))
+	}
+	// Checks if the the msg sender is the same as the current owner or Admin
+	if msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	switch msg.State {
+	case "Open":
+		if pullRequest.State == "Open" || pullRequest.State == "Merged" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't open (%v) pullRequest", pullRequest.State))
+		}
+	case "Closed":
+		if pullRequest.State == "Closed" || pullRequest.State == "Merged" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State))
+		}
+		pullRequest.ClosedAt = currentTime
+		pullRequest.ClosedBy = msg.Creator
+	case "Merged":
+		if pullRequest.State == "Merged" || pullRequest.State == "Closed" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State))
+		}
+		pullRequest.MergedAt = currentTime
+		pullRequest.MergedBy = msg.Creator
+		pullRequest.MergeCommitSha = msg.MergeCommitSha
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
+	}
+
+	pullRequest.State = msg.State
+	pullRequest.UpdatedAt = currentTime
+
+	k.SetPullRequest(ctx, pullRequest)
+
+	return &types.MsgSetPullRequestStateResponse{
+		State: pullRequest.State,
+	}, nil
 }
 
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {

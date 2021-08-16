@@ -13,6 +13,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdatePullRequest{}, "gitopia/UpdatePullRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestDescription{}, "gitopia/UpdatePullRequestDescription", nil)
+	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgDeletePullRequest{}, "gitopia/DeletePullRequest", nil)
 
 	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
@@ -61,6 +62,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdatePullRequest{},
 		&MsgUpdatePullRequestTitle{},
 		&MsgUpdatePullRequestDescription{},
+		&MsgSetPullRequestState{},
 		&MsgDeletePullRequest{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
