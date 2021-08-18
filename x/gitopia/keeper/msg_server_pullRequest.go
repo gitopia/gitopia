@@ -15,6 +15,11 @@ import (
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Checks that the element exists
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User %v doesn't exist", msg.Creator))
+	}
+
 	if !k.HasRepository(ctx, msg.HeadRepoId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("headRepositoryId %d doesn't exist", msg.HeadRepoId))
 	}
@@ -111,6 +116,11 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User %v doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
 	if !k.HasPullRequest(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
@@ -132,6 +142,11 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 
 func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *types.MsgUpdatePullRequestDescription) (*types.MsgUpdatePullRequestDescriptionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Checks that the element exists
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User %v doesn't exist", msg.Creator))
+	}
 
 	// Checks that the element exists
 	if !k.HasPullRequest(ctx, msg.Id) {
@@ -157,13 +172,13 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User %v doesn't exist", msg.Creator))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
 	var pullRequest = k.GetPullRequest(ctx, msg.Id)
@@ -177,8 +192,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	if o.Type == "User" {
-		if msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		if !((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) &&
+			msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
 		}
 	} else if o.Type == "Organization" {
 		orgId, err := strconv.ParseUint(o.ID, 10, 64)
@@ -192,15 +208,12 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		organization := k.GetOrganization(ctx, orgId)
 
 		// Checks if the the msg sender is the same as the current owner
-		if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
+		if !((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) &&
+			organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
 		}
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't fetch baseRepository owner"))
-	}
-	// Checks if the the msg sender is the same as the current owner or Admin
-	if msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	switch msg.State {
