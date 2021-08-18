@@ -50,7 +50,10 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 
 	// Update user Organizations
 	user := k.GetUser(ctx, msg.Creator)
-	user.Organizations = append(user.Organizations, id)
+	if user.Organizations == nil {
+		user.Organizations = make(map[string]uint64)
+	}
+	user.Organizations[organization.Name] = id
 	k.SetUser(ctx, user)
 
 	// Update whois
@@ -99,6 +102,35 @@ func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.Ms
 	k.SetOrganization(ctx, organization)
 
 	return &types.MsgUpdateOrganizationMemberResponse{}, nil
+}
+
+func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.MsgRemoveOrganizationMember) (*types.MsgRemoveOrganizationMemberResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator %v doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasOrganization(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	organization := k.GetOrganization(ctx, msg.Id)
+
+	// Checks if the the msg sender is the same as the current owner
+	if organization.Members[msg.Creator] != "Owner" {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	if _, exists := organization.Members[msg.User]; !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("User %v doesn't exists in organization members", msg.User))
+	}
+	delete(organization.Members, msg.User)
+
+	k.SetOrganization(ctx, organization)
+
+	return &types.MsgRemoveOrganizationMemberResponse{}, nil
 }
 
 func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdateOrganization) (*types.MsgUpdateOrganizationResponse, error) {

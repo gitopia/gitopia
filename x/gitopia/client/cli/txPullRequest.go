@@ -99,6 +99,113 @@ func CmdUpdatePullRequest() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdatePullRequestTitle() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-pullrequest-title [id] [title]",
+		Short: "Update a pullRequest title",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsTitle, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdatePullRequestTitle(clientCtx.GetFromAddress().String(), id, string(argsTitle))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdatePullRequestDescription() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-pullrequest-description [id] [description]",
+		Short: "Update pullRequest description",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsDescription, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdatePullRequestDescription(clientCtx.GetFromAddress().String(), id, string(argsDescription))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdSetPullRequestState() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-pullrequest-state [id]",
+		Short: "Set pullrequest state",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsState, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			argsMergeCommitSha, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgSetPullRequestState(clientCtx.GetFromAddress().String(), id, string(argsState), string(argsMergeCommitSha))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeletePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-pullRequest [id]",

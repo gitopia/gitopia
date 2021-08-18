@@ -206,6 +206,93 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateRepositoryCollaborator{}
+
+func NewMsgUpdateRepositoryCollaborator(creator string, id uint64, user string, role string) *MsgUpdateRepositoryCollaborator {
+	return &MsgUpdateRepositoryCollaborator{
+		Id:      id,
+		Creator: creator,
+		User:    user,
+		Role:    role,
+	}
+}
+
+func (msg *MsgUpdateRepositoryCollaborator) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateRepositoryCollaborator) Type() string {
+	return "UpdateRepositoryCollaborator"
+}
+
+func (msg *MsgUpdateRepositoryCollaborator) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateRepositoryCollaborator) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgRemoveRepositoryCollaborator{}
+
+func NewMsgRemoveRepositoryCollaborator(creator string, id uint64, user string) *MsgRemoveRepositoryCollaborator {
+	return &MsgRemoveRepositoryCollaborator{
+		Id:      id,
+		Creator: creator,
+		User:    user,
+	}
+}
+
+func (msg *MsgRemoveRepositoryCollaborator) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRemoveRepositoryCollaborator) Type() string {
+	return "RemoveRepositoryCollaborator"
+}
+
+func (msg *MsgRemoveRepositoryCollaborator) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRemoveRepositoryCollaborator) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRemoveRepositoryCollaborator) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgCreateBranch{}
 
 func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string) *MsgCreateBranch {

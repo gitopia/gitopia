@@ -26,6 +26,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdatePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdatePullRequestTitle:
+			res, err := msgServer.UpdatePullRequestTitle(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdatePullRequestDescription:
+			res, err := msgServer.UpdatePullRequestDescription(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgSetPullRequestState:
+			res, err := msgServer.SetPullRequestState(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeletePullRequest:
 			res, err := msgServer.DeletePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -36,6 +48,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdateOrganizationMember:
 			res, err := msgServer.UpdateOrganizationMember(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveOrganizationMember:
+			res, err := msgServer.RemoveOrganizationMember(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateOrganization:
@@ -96,6 +112,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgChangeOwner:
 			res, err := msgServer.ChangeOwner(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateRepositoryCollaborator:
+			res, err := msgServer.UpdateRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveRepositoryCollaborator:
+			res, err := msgServer.RemoveRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateBranch:

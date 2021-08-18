@@ -22,6 +22,29 @@ export interface MsgUpdatePullRequest {
 }
 export interface MsgUpdatePullRequestResponse {
 }
+export interface MsgUpdatePullRequestTitle {
+    creator: string;
+    id: number;
+    title: string;
+}
+export interface MsgUpdatePullRequestTitleResponse {
+}
+export interface MsgUpdatePullRequestDescription {
+    creator: string;
+    id: number;
+    description: string;
+}
+export interface MsgUpdatePullRequestDescriptionResponse {
+}
+export interface MsgSetPullRequestState {
+    creator: string;
+    id: number;
+    state: string;
+    mergeCommitSha: string;
+}
+export interface MsgSetPullRequestStateResponse {
+    state: string;
+}
 export interface MsgDeletePullRequest {
     creator: string;
     id: number;
@@ -43,6 +66,13 @@ export interface MsgUpdateOrganizationMember {
     role: string;
 }
 export interface MsgUpdateOrganizationMemberResponse {
+}
+export interface MsgRemoveOrganizationMember {
+    creator: string;
+    id: number;
+    user: string;
+}
+export interface MsgRemoveOrganizationMemberResponse {
 }
 export interface MsgUpdateOrganization {
     creator: string;
@@ -172,6 +202,21 @@ export interface MsgChangeOwner {
     owner: string;
 }
 export interface MsgChangeOwnerResponse {
+}
+export interface MsgUpdateRepositoryCollaborator {
+    creator: string;
+    id: number;
+    user: string;
+    role: string;
+}
+export interface MsgUpdateRepositoryCollaboratorResponse {
+}
+export interface MsgRemoveRepositoryCollaborator {
+    creator: string;
+    id: number;
+    user: string;
+}
+export interface MsgRemoveRepositoryCollaboratorResponse {
 }
 export interface MsgCreateBranch {
     creator: string;
@@ -309,6 +354,48 @@ export declare const MsgUpdatePullRequestResponse: {
     toJSON(_: MsgUpdatePullRequestResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdatePullRequestResponse>): MsgUpdatePullRequestResponse;
 };
+export declare const MsgUpdatePullRequestTitle: {
+    encode(message: MsgUpdatePullRequestTitle, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestTitle;
+    fromJSON(object: any): MsgUpdatePullRequestTitle;
+    toJSON(message: MsgUpdatePullRequestTitle): unknown;
+    fromPartial(object: DeepPartial<MsgUpdatePullRequestTitle>): MsgUpdatePullRequestTitle;
+};
+export declare const MsgUpdatePullRequestTitleResponse: {
+    encode(_: MsgUpdatePullRequestTitleResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestTitleResponse;
+    fromJSON(_: any): MsgUpdatePullRequestTitleResponse;
+    toJSON(_: MsgUpdatePullRequestTitleResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdatePullRequestTitleResponse>): MsgUpdatePullRequestTitleResponse;
+};
+export declare const MsgUpdatePullRequestDescription: {
+    encode(message: MsgUpdatePullRequestDescription, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestDescription;
+    fromJSON(object: any): MsgUpdatePullRequestDescription;
+    toJSON(message: MsgUpdatePullRequestDescription): unknown;
+    fromPartial(object: DeepPartial<MsgUpdatePullRequestDescription>): MsgUpdatePullRequestDescription;
+};
+export declare const MsgUpdatePullRequestDescriptionResponse: {
+    encode(_: MsgUpdatePullRequestDescriptionResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestDescriptionResponse;
+    fromJSON(_: any): MsgUpdatePullRequestDescriptionResponse;
+    toJSON(_: MsgUpdatePullRequestDescriptionResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdatePullRequestDescriptionResponse>): MsgUpdatePullRequestDescriptionResponse;
+};
+export declare const MsgSetPullRequestState: {
+    encode(message: MsgSetPullRequestState, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetPullRequestState;
+    fromJSON(object: any): MsgSetPullRequestState;
+    toJSON(message: MsgSetPullRequestState): unknown;
+    fromPartial(object: DeepPartial<MsgSetPullRequestState>): MsgSetPullRequestState;
+};
+export declare const MsgSetPullRequestStateResponse: {
+    encode(message: MsgSetPullRequestStateResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgSetPullRequestStateResponse;
+    fromJSON(object: any): MsgSetPullRequestStateResponse;
+    toJSON(message: MsgSetPullRequestStateResponse): unknown;
+    fromPartial(object: DeepPartial<MsgSetPullRequestStateResponse>): MsgSetPullRequestStateResponse;
+};
 export declare const MsgDeletePullRequest: {
     encode(message: MsgDeletePullRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeletePullRequest;
@@ -350,6 +437,20 @@ export declare const MsgUpdateOrganizationMemberResponse: {
     fromJSON(_: any): MsgUpdateOrganizationMemberResponse;
     toJSON(_: MsgUpdateOrganizationMemberResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateOrganizationMemberResponse>): MsgUpdateOrganizationMemberResponse;
+};
+export declare const MsgRemoveOrganizationMember: {
+    encode(message: MsgRemoveOrganizationMember, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveOrganizationMember;
+    fromJSON(object: any): MsgRemoveOrganizationMember;
+    toJSON(message: MsgRemoveOrganizationMember): unknown;
+    fromPartial(object: DeepPartial<MsgRemoveOrganizationMember>): MsgRemoveOrganizationMember;
+};
+export declare const MsgRemoveOrganizationMemberResponse: {
+    encode(_: MsgRemoveOrganizationMemberResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveOrganizationMemberResponse;
+    fromJSON(_: any): MsgRemoveOrganizationMemberResponse;
+    toJSON(_: MsgRemoveOrganizationMemberResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRemoveOrganizationMemberResponse>): MsgRemoveOrganizationMemberResponse;
 };
 export declare const MsgUpdateOrganization: {
     encode(message: MsgUpdateOrganization, writer?: Writer): Writer;
@@ -561,6 +662,34 @@ export declare const MsgChangeOwnerResponse: {
     toJSON(_: MsgChangeOwnerResponse): unknown;
     fromPartial(_: DeepPartial<MsgChangeOwnerResponse>): MsgChangeOwnerResponse;
 };
+export declare const MsgUpdateRepositoryCollaborator: {
+    encode(message: MsgUpdateRepositoryCollaborator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryCollaborator;
+    fromJSON(object: any): MsgUpdateRepositoryCollaborator;
+    toJSON(message: MsgUpdateRepositoryCollaborator): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateRepositoryCollaborator>): MsgUpdateRepositoryCollaborator;
+};
+export declare const MsgUpdateRepositoryCollaboratorResponse: {
+    encode(_: MsgUpdateRepositoryCollaboratorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryCollaboratorResponse;
+    fromJSON(_: any): MsgUpdateRepositoryCollaboratorResponse;
+    toJSON(_: MsgUpdateRepositoryCollaboratorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateRepositoryCollaboratorResponse>): MsgUpdateRepositoryCollaboratorResponse;
+};
+export declare const MsgRemoveRepositoryCollaborator: {
+    encode(message: MsgRemoveRepositoryCollaborator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveRepositoryCollaborator;
+    fromJSON(object: any): MsgRemoveRepositoryCollaborator;
+    toJSON(message: MsgRemoveRepositoryCollaborator): unknown;
+    fromPartial(object: DeepPartial<MsgRemoveRepositoryCollaborator>): MsgRemoveRepositoryCollaborator;
+};
+export declare const MsgRemoveRepositoryCollaboratorResponse: {
+    encode(_: MsgRemoveRepositoryCollaboratorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveRepositoryCollaboratorResponse;
+    fromJSON(_: any): MsgRemoveRepositoryCollaboratorResponse;
+    toJSON(_: MsgRemoveRepositoryCollaboratorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRemoveRepositoryCollaboratorResponse>): MsgRemoveRepositoryCollaboratorResponse;
+};
 export declare const MsgCreateBranch: {
     encode(message: MsgCreateBranch, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateBranch;
@@ -720,9 +849,13 @@ export interface Msg {
     /** this line is used by starport scaffolding # proto/tx/rpc */
     CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
+    UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
+    UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
+    RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
@@ -738,6 +871,8 @@ export interface Msg {
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
+    UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;
+    RemoveRepositoryCollaborator(request: MsgRemoveRepositoryCollaborator): Promise<MsgRemoveRepositoryCollaboratorResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
@@ -755,9 +890,13 @@ export declare class MsgClientImpl implements Msg {
     constructor(rpc: Rpc);
     CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
+    UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
+    UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     DeletePullRequest(request: MsgDeletePullRequest): Promise<MsgDeletePullRequestResponse>;
     CreateOrganization(request: MsgCreateOrganization): Promise<MsgCreateOrganizationResponse>;
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
+    RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
@@ -773,6 +912,8 @@ export declare class MsgClientImpl implements Msg {
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
+    UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;
+    RemoveRepositoryCollaborator(request: MsgRemoveRepositoryCollaborator): Promise<MsgRemoveRepositoryCollaboratorResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;

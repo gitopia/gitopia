@@ -12,16 +12,15 @@ message Organization {
   string avatarUrl = 4; 
   repeated uint64 followers = 5; 
   repeated uint64 following = 6; 
-  repeated uint64 repositories = 7; 
-  map<string, uint64> repositoryNames = 8; 
-  repeated uint64 teams = 9; 
-  map<string, string> members = 10; 
-  string location = 11; 
-  string email = 12; 
-  string website = 13; 
-  bool verified = 14; 
-  string description = 15; 
-  int64 createdAt = 16; 
-  int64 updatedAt = 17; 
-  string extensions = 18; 
+  map<string, uint64> repositories = 7; 
+  repeated uint64 teams = 8; 
+  map<string, string> members = 9; 
+  string location = 10; 
+  string email = 11; 
+  string website = 12; 
+  bool verified = 13; 
+  string description = 14; 
+  int64 createdAt = 15; 
+  int64 updatedAt = 16; 
+  string extensions = 17; 
 }

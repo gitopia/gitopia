@@ -82,7 +82,7 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -121,7 +121,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -155,7 +155,7 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -194,7 +194,7 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -225,6 +225,28 @@ func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest
 	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
 
 	return &types.QueryGetAllBranchResponse{Branches: repository.GetBranches()}, nil
+}
+
+func (k Keeper) BranchSha(c context.Context, req *types.QueryGetBranchShaRequest) (*types.QueryGetBranchShaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.RepositoryId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+
+	if branchSha, ok := repository.Branches[req.BranchName]; ok {
+		return &types.QueryGetBranchShaResponse{Sha: branchSha}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
 }
 
 /* PaginateAllRepositoryIssue does pagination of all the results in the repository.IssueIids

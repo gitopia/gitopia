@@ -104,7 +104,7 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.RepositoryNames[req.RepositoryName]; ok {
+	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
 
@@ -112,4 +112,32 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 	}
 
 	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOrganizationRequest) (*types.QueryAllUserOrganizationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var organizations []*types.Organization
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.Id) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.Id)
+	k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+
+	for _, organizationId := range user.Organizations {
+		var organization types.Organization
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
+		organizations = append(organizations, &organization)
+	}
+
+	return &types.QueryAllUserOrganizationResponse{Organization: organizations}, nil
 }

@@ -11,10 +11,14 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreatePullRequest{}, "gitopia/CreatePullRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequest{}, "gitopia/UpdatePullRequest", nil)
+	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
+	cdc.RegisterConcrete(&MsgUpdatePullRequestDescription{}, "gitopia/UpdatePullRequestDescription", nil)
+	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgDeletePullRequest{}, "gitopia/DeletePullRequest", nil)
 
 	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
+	cdc.RegisterConcrete(&MsgRemoveOrganizationMember{}, "gitopia/RemoveOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganization{}, "gitopia/UpdateOrganization", nil)
 	cdc.RegisterConcrete(&MsgDeleteOrganization{}, "gitopia/DeleteOrganization", nil)
 
@@ -33,6 +37,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgForkRepository{}, "gitopia/ForkRepository", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
+	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgCreateBranch{}, "gitopia/CreateBranch", nil)
 	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
 	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
@@ -54,11 +60,15 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreatePullRequest{},
 		&MsgUpdatePullRequest{},
+		&MsgUpdatePullRequestTitle{},
+		&MsgUpdatePullRequestDescription{},
+		&MsgSetPullRequestState{},
 		&MsgDeletePullRequest{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateOrganization{},
 		&MsgUpdateOrganizationMember{},
+		&MsgRemoveOrganizationMember{},
 		&MsgUpdateOrganization{},
 		&MsgDeleteOrganization{},
 	)
@@ -80,6 +90,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgForkRepository{},
 		&MsgRenameRepository{},
 		&MsgChangeOwner{},
+		&MsgUpdateRepositoryCollaborator{},
+		&MsgRemoveRepositoryCollaborator{},
 		&MsgCreateBranch{},
 		&MsgSetDefaultBranch{},
 		&MsgDeleteBranch{},

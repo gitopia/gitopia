@@ -16,9 +16,13 @@ service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
+  rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
+  rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
+  rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
+  rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
   rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
@@ -34,6 +38,8 @@ service Msg {
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
+  rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
+  rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
@@ -72,6 +78,33 @@ message MsgUpdatePullRequest {
 
 message MsgUpdatePullRequestResponse { }
 
+message MsgUpdatePullRequestTitle {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+}
+
+message MsgUpdatePullRequestTitleResponse { }
+
+message MsgUpdatePullRequestDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdatePullRequestDescriptionResponse { }
+
+message MsgSetPullRequestState {
+  string creator = 1;
+  uint64 id = 2;
+  string state = 3;
+  string mergeCommitSha = 4; 
+}
+
+message MsgSetPullRequestStateResponse {
+  string state = 1;
+}
+
 message MsgDeletePullRequest {
   string creator = 1;
   uint64 id = 2;
@@ -97,6 +130,14 @@ message MsgUpdateOrganizationMember {
 }
 
 message MsgUpdateOrganizationMemberResponse { }
+
+message MsgRemoveOrganizationMember {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+}
+
+message MsgRemoveOrganizationMemberResponse { }
 
 message MsgUpdateOrganization {
   string creator = 1;
@@ -246,6 +287,23 @@ message MsgChangeOwner {
 }
 
 message MsgChangeOwnerResponse { }
+
+message MsgUpdateRepositoryCollaborator {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+  string role = 4;
+}
+
+message MsgUpdateRepositoryCollaboratorResponse { }
+
+message MsgRemoveRepositoryCollaborator {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+}
+
+message MsgRemoveRepositoryCollaboratorResponse { }
 
 message MsgCreateBranch {
   string creator = 1;

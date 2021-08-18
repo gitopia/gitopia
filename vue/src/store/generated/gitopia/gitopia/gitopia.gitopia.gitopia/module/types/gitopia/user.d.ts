@@ -7,12 +7,12 @@ export interface User {
     avatarUrl: string;
     followers: number[];
     following: number[];
-    repositories: number[];
-    repositoriesArchived: number[];
-    repositoryNames: {
+    repositories: {
         [key: string]: number;
     };
-    organizations: number[];
+    organizations: {
+        [key: string]: number;
+    };
     starredRepos: number[];
     subscriptions: string;
     email: string;
@@ -21,7 +21,11 @@ export interface User {
     updatedAt: number;
     extensions: string;
 }
-export interface User_RepositoryNamesEntry {
+export interface User_RepositoriesEntry {
+    key: string;
+    value: number;
+}
+export interface User_OrganizationsEntry {
     key: string;
     value: number;
 }
@@ -32,12 +36,19 @@ export declare const User: {
     toJSON(message: User): unknown;
     fromPartial(object: DeepPartial<User>): User;
 };
-export declare const User_RepositoryNamesEntry: {
-    encode(message: User_RepositoryNamesEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): User_RepositoryNamesEntry;
-    fromJSON(object: any): User_RepositoryNamesEntry;
-    toJSON(message: User_RepositoryNamesEntry): unknown;
-    fromPartial(object: DeepPartial<User_RepositoryNamesEntry>): User_RepositoryNamesEntry;
+export declare const User_RepositoriesEntry: {
+    encode(message: User_RepositoriesEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): User_RepositoriesEntry;
+    fromJSON(object: any): User_RepositoriesEntry;
+    toJSON(message: User_RepositoriesEntry): unknown;
+    fromPartial(object: DeepPartial<User_RepositoriesEntry>): User_RepositoriesEntry;
+};
+export declare const User_OrganizationsEntry: {
+    encode(message: User_OrganizationsEntry, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): User_OrganizationsEntry;
+    fromJSON(object: any): User_OrganizationsEntry;
+    toJSON(message: User_OrganizationsEntry): unknown;
+    fromPartial(object: DeepPartial<User_OrganizationsEntry>): User_OrganizationsEntry;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

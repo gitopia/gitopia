@@ -150,6 +150,79 @@ func CmdChangeOwner() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateRepositoryCollaborator() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-repository-collaborator [id] [user] [role]",
+		Short: "Add repository collaborator",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsUser, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			argsRole, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateRepositoryCollaborator(clientCtx.GetFromAddress().String(), id, argsUser, argsRole)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdRemoveRepositoryCollaborator() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-repository-collaborator [id] [user]",
+		Short: "Remove repository collaborator",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsUser, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemoveRepositoryCollaborator(clientCtx.GetFromAddress().String(), id, argsUser)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdCreateBranch() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-branch [repo id] [branch name] [commit SHA]",

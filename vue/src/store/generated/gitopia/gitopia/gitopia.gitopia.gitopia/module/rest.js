@@ -213,12 +213,55 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryOrganizationByName
+         * @summary Queries a organization by name.
+         * @request GET:/gitopia/gitopia/gitopia/organization/name/{organizationName}
+         */
+        this.queryOrganizationByName = (organizationName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization/name/${organizationName}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryOrganization
          * @summary Queries a organization by id.
          * @request GET:/gitopia/gitopia/gitopia/organization/{id}
          */
         this.queryOrganization = (id, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/organization/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryOrganizationRepositoryAll
+         * @summary Queries a list of Organization repositories.
+         * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories
+         */
+        this.queryOrganizationRepositoryAll = (organizationName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryOrganizationRepository
+         * @summary Queries a repository by Organization name and repository name
+         * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}
+         */
+        this.queryOrganizationRepository = (organizationName, repositoryName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories/${repositoryName}`,
             method: "GET",
             format: "json",
             ...params,
@@ -299,6 +342,19 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryBranchSha
+         * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}
+         */
+        this.queryBranchSha = (repositoryId, branchName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/branches/${branchName}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryUserRepository
          * @summary Queries a repository by user id and repository name
          * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
@@ -334,6 +390,20 @@ export class Api extends HttpClient {
          */
         this.queryUser = (id, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/user/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryUserOrganizationAll
+         * @summary Queries a list of user Organizations.
+         * @request GET:/gitopia/gitopia/gitopia/user/{id}/organizations
+         */
+        this.queryUserOrganizationAll = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/user/${id}/organizations`,
             method: "GET",
             format: "json",
             ...params,
