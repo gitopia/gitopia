@@ -6,6 +6,7 @@ All notable changes will be documented here.
 
 ### Added
 
+- Added transaction to set pullRequest state
 - Added transaction to update pullRequest description
 - Added transaction to update pullRequest title
 - Added transaction to Remove organization member
