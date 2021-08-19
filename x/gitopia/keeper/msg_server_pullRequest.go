@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
@@ -17,7 +18,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	// Checks that the element exists
 	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User %v doesn't exist", msg.Creator))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User (%v) doesn't exist", msg.Creator))
 	}
 
 	if !k.HasRepository(ctx, msg.HeadRepoId) {
@@ -26,8 +27,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	headRepo := k.GetRepository(ctx, msg.HeadRepoId)
 
-	if _, exists := headRepo.Branches[msg.HeadBranch]; !exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch %v doesn't exist", msg.HeadBranch))
+	if _, exists := utils.RepositoryBranchExists(headRepo.Branches, msg.HeadBranch); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", msg.HeadBranch))
 	}
 
 	if !k.HasRepository(ctx, msg.BaseRepoId) {
@@ -36,8 +37,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	baseRepo := k.GetRepository(ctx, msg.BaseRepoId)
 
-	if _, exists := baseRepo.Branches[msg.BaseBranch]; !exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch %v doesn't exist", msg.BaseBranch))
+	if _, exists := utils.RepositoryBranchExists(baseRepo.Branches, msg.BaseBranch); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", msg.BaseBranch))
 	}
 
 	if !((msg.HeadRepoId == msg.BaseRepoId) && (msg.HeadBranch != msg.BaseBranch)) &&
@@ -75,12 +76,12 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		pullRequest,
 	)
 
-	/* Append Pull Request in the respective Repository */
-	// Initialize the map if it's nil
-	if baseRepo.PullIids == nil {
-		baseRepo.PullIids = make(map[uint64]uint64)
+	var repositoryPullRequest = types.RepositoryPullRequest{
+		Iid: baseRepo.PullsCount,
+		Id:  id,
 	}
-	baseRepo.PullIids[baseRepo.PullsCount] = id
+	baseRepo.PullRequests = append(baseRepo.PullRequests, &repositoryPullRequest)
+
 	k.SetRepository(ctx, baseRepo)
 
 	return &types.MsgCreatePullRequestResponse{
@@ -185,6 +186,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	currentTime := time.Now().Unix()
 
 	repository := k.GetRepository(ctx, pullRequest.BaseRepoId)
+	var havePermission bool = false
 
 	var o Owner
 	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
@@ -192,9 +194,8 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	if o.Type == "User" {
-		if !((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) &&
-			msg.Creator != o.ID && repository.Collaborators[msg.Creator] != "Admin" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		if ((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) || msg.Creator == o.ID {
+			havePermission = true
 		}
 	} else if o.Type == "Organization" {
 		orgId, err := strconv.ParseUint(o.ID, 10, 64)
@@ -202,18 +203,35 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't fetch baseRepository owner")
 		}
 		if !k.HasOrganization(ctx, orgId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", o.ID))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", o.ID))
 		}
 
 		organization := k.GetOrganization(ctx, orgId)
 
-		// Checks if the the msg sender is the same as the current owner
-		if !((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) &&
-			organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
+		if (msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator {
+			havePermission = true
+		}
+		if !havePermission {
+			if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+				if organization.Members[i].Role == "Owner" {
+					havePermission = true
+				}
+			}
 		}
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't fetch baseRepository owner"))
+	}
+
+	if !havePermission {
+		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
+			if repository.Collaborators[i].Permission == "Admin" {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	switch msg.State {

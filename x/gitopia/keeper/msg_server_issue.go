@@ -13,19 +13,23 @@ import (
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
 	if !k.HasRepository(ctx, msg.RepositoryId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository Id %d doesn't exist", msg.RepositoryId))
 	}
 
-	repo := k.GetRepository(ctx, msg.RepositoryId)
-	repo.IssuesCount += 1
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+	repository.IssuesCount += 1
 
 	createdAt := time.Now().Unix()
 	closedAt := time.Time{}.Unix()
 
 	var issue = types.Issue{
 		Creator:       msg.Creator,
-		Iid:           repo.IssuesCount,
+		Iid:           repository.IssuesCount,
 		Title:         msg.Title,
 		State:         "Open",
 		Description:   msg.Description,
@@ -44,13 +48,12 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		issue,
 	)
 
-	/* Append Issue in the respective Repository */
-	// Initialize the map if it's nil
-	if repo.IssueIids == nil {
-		repo.IssueIids = make(map[uint64]uint64)
+	var repositoryIssue = types.RepositoryIssue{
+		Iid: repository.IssuesCount,
+		Id:  id,
 	}
-	repo.IssueIids[repo.IssuesCount] = id
-	k.SetRepository(ctx, repo)
+
+	repository.Issues = append(repository.Issues, &repositoryIssue)
 
 	return &types.MsgCreateIssueResponse{
 		Id:  id,

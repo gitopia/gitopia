@@ -12,12 +12,12 @@ message Repository {
   string owner = 4; 
   string description = 5; 
   repeated uint64 forks = 6; 
-  map<string, string> branches = 7;
+  repeated RepositoryBranch branches = 7;
   string tags = 8; 
   string subscribers = 9; 
-  string commits = 10; 
-  map<uint64, uint64> issueIids = 11;
-  map<uint64, uint64> pullIids = 12;
+  string commits = 10;
+  repeated RepositoryIssue issues = 11;
+  repeated RepositoryPullRequest pullRequests = 12;
   uint64 issuesCount = 13;
   uint64 pullsCount = 14;
   string labels = 15;
@@ -31,6 +31,26 @@ message Repository {
   string defaultBranch = 23;
   uint64 parent = 24;
   bool fork = 25;
-  map<string, string> collaborators = 26;
+  repeated RepositoryCollaborator collaborators = 26;
   string extensions = 27;
+}
+
+message RepositoryBranch {
+  string name = 1;
+  string sha = 2;
+}
+
+message RepositoryIssue {
+  uint64 iid = 1;
+  uint64 id = 2;
+}
+
+message RepositoryPullRequest {
+  uint64 iid = 1;
+  uint64 id = 2;
+} 
+
+message RepositoryCollaborator {
+  string id = 1;
+  string permission = 2;
 }

@@ -12,9 +12,9 @@ message Organization {
   string avatarUrl = 4; 
   repeated uint64 followers = 5; 
   repeated uint64 following = 6; 
-  map<string, uint64> repositories = 7; 
+  repeated OrganizationRepository repositories = 7;
   repeated uint64 teams = 8; 
-  map<string, string> members = 9; 
+  repeated OrganizationMember members = 9; 
   string location = 10; 
   string email = 11; 
   string website = 12; 
@@ -23,4 +23,14 @@ message Organization {
   int64 createdAt = 15; 
   int64 updatedAt = 16; 
   string extensions = 17; 
+}
+
+message OrganizationRepository {
+  string name = 1;
+  uint64 id = 2;
+}
+
+message OrganizationMember {
+  string id = 1;
+  string role = 2;
 }
