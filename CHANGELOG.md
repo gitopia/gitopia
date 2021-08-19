@@ -6,6 +6,7 @@ All notable changes will be documented here.
 
 ### Added
 
+- Using slice instead of maps
 - Added transaction to set pullRequest state
 - Added transaction to update pullRequest description
 - Added transaction to update pullRequest title
