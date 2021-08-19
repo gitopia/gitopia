@@ -7,18 +7,12 @@ export interface Repository {
     owner: string;
     description: string;
     forks: number[];
-    branches: {
-        [key: string]: string;
-    };
+    branches: RepositoryBranch[];
     tags: string;
     subscribers: string;
     commits: string;
-    issueIids: {
-        [key: number]: number;
-    };
-    pullIids: {
-        [key: number]: number;
-    };
+    issues: RepositoryIssue[];
+    pullRequests: RepositoryPullRequest[];
     issuesCount: number;
     pullsCount: number;
     labels: string;
@@ -32,26 +26,24 @@ export interface Repository {
     defaultBranch: string;
     parent: number;
     fork: boolean;
-    collaborators: {
-        [key: string]: string;
-    };
+    collaborators: RepositoryCollaborator[];
     extensions: string;
 }
-export interface Repository_BranchesEntry {
-    key: string;
-    value: string;
+export interface RepositoryBranch {
+    name: string;
+    sha: string;
 }
-export interface Repository_IssueIidsEntry {
-    key: number;
-    value: number;
+export interface RepositoryIssue {
+    iid: number;
+    id: number;
 }
-export interface Repository_PullIidsEntry {
-    key: number;
-    value: number;
+export interface RepositoryPullRequest {
+    iid: number;
+    id: number;
 }
-export interface Repository_CollaboratorsEntry {
-    key: string;
-    value: string;
+export interface RepositoryCollaborator {
+    id: string;
+    permission: string;
 }
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
@@ -60,33 +52,33 @@ export declare const Repository: {
     toJSON(message: Repository): unknown;
     fromPartial(object: DeepPartial<Repository>): Repository;
 };
-export declare const Repository_BranchesEntry: {
-    encode(message: Repository_BranchesEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): Repository_BranchesEntry;
-    fromJSON(object: any): Repository_BranchesEntry;
-    toJSON(message: Repository_BranchesEntry): unknown;
-    fromPartial(object: DeepPartial<Repository_BranchesEntry>): Repository_BranchesEntry;
+export declare const RepositoryBranch: {
+    encode(message: RepositoryBranch, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryBranch;
+    fromJSON(object: any): RepositoryBranch;
+    toJSON(message: RepositoryBranch): unknown;
+    fromPartial(object: DeepPartial<RepositoryBranch>): RepositoryBranch;
 };
-export declare const Repository_IssueIidsEntry: {
-    encode(message: Repository_IssueIidsEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): Repository_IssueIidsEntry;
-    fromJSON(object: any): Repository_IssueIidsEntry;
-    toJSON(message: Repository_IssueIidsEntry): unknown;
-    fromPartial(object: DeepPartial<Repository_IssueIidsEntry>): Repository_IssueIidsEntry;
+export declare const RepositoryIssue: {
+    encode(message: RepositoryIssue, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryIssue;
+    fromJSON(object: any): RepositoryIssue;
+    toJSON(message: RepositoryIssue): unknown;
+    fromPartial(object: DeepPartial<RepositoryIssue>): RepositoryIssue;
 };
-export declare const Repository_PullIidsEntry: {
-    encode(message: Repository_PullIidsEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): Repository_PullIidsEntry;
-    fromJSON(object: any): Repository_PullIidsEntry;
-    toJSON(message: Repository_PullIidsEntry): unknown;
-    fromPartial(object: DeepPartial<Repository_PullIidsEntry>): Repository_PullIidsEntry;
+export declare const RepositoryPullRequest: {
+    encode(message: RepositoryPullRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryPullRequest;
+    fromJSON(object: any): RepositoryPullRequest;
+    toJSON(message: RepositoryPullRequest): unknown;
+    fromPartial(object: DeepPartial<RepositoryPullRequest>): RepositoryPullRequest;
 };
-export declare const Repository_CollaboratorsEntry: {
-    encode(message: Repository_CollaboratorsEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): Repository_CollaboratorsEntry;
-    fromJSON(object: any): Repository_CollaboratorsEntry;
-    toJSON(message: Repository_CollaboratorsEntry): unknown;
-    fromPartial(object: DeepPartial<Repository_CollaboratorsEntry>): Repository_CollaboratorsEntry;
+export declare const RepositoryCollaborator: {
+    encode(message: RepositoryCollaborator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryCollaborator;
+    fromJSON(object: any): RepositoryCollaborator;
+    toJSON(message: RepositoryCollaborator): unknown;
+    fromPartial(object: DeepPartial<RepositoryCollaborator>): RepositoryCollaborator;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

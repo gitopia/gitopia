@@ -41,12 +41,12 @@ export const User = {
             writer.uint64(v);
         }
         writer.ldelim();
-        Object.entries(message.repositories).forEach(([key, value]) => {
-            User_RepositoriesEntry.encode({ key: key, value }, writer.uint32(58).fork()).ldelim();
-        });
-        Object.entries(message.organizations).forEach(([key, value]) => {
-            User_OrganizationsEntry.encode({ key: key, value }, writer.uint32(66).fork()).ldelim();
-        });
+        for (const v of message.repositories) {
+            UserRepository.encode(v, writer.uint32(58).fork()).ldelim();
+        }
+        for (const v of message.organizations) {
+            UserOrganization.encode(v, writer.uint32(66).fork()).ldelim();
+        }
         writer.uint32(74).fork();
         for (const v of message.starredRepos) {
             writer.uint64(v);
@@ -78,8 +78,8 @@ export const User = {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = {};
-        message.organizations = {};
+        message.repositories = [];
+        message.organizations = [];
         message.starredRepos = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -119,16 +119,10 @@ export const User = {
                     }
                     break;
                 case 7:
-                    const entry7 = User_RepositoriesEntry.decode(reader, reader.uint32());
-                    if (entry7.value !== undefined) {
-                        message.repositories[entry7.key] = entry7.value;
-                    }
+                    message.repositories.push(UserRepository.decode(reader, reader.uint32()));
                     break;
                 case 8:
-                    const entry8 = User_OrganizationsEntry.decode(reader, reader.uint32());
-                    if (entry8.value !== undefined) {
-                        message.organizations[entry8.key] = entry8.value;
-                    }
+                    message.organizations.push(UserOrganization.decode(reader, reader.uint32()));
                     break;
                 case 9:
                     if ((tag & 7) === 2) {
@@ -170,8 +164,8 @@ export const User = {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = {};
-        message.organizations = {};
+        message.repositories = [];
+        message.organizations = [];
         message.starredRepos = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
@@ -208,14 +202,14 @@ export const User = {
             }
         }
         if (object.repositories !== undefined && object.repositories !== null) {
-            Object.entries(object.repositories).forEach(([key, value]) => {
-                message.repositories[key] = Number(value);
-            });
+            for (const e of object.repositories) {
+                message.repositories.push(UserRepository.fromJSON(e));
+            }
         }
         if (object.organizations !== undefined && object.organizations !== null) {
-            Object.entries(object.organizations).forEach(([key, value]) => {
-                message.organizations[key] = Number(value);
-            });
+            for (const e of object.organizations) {
+                message.organizations.push(UserOrganization.fromJSON(e));
+            }
         }
         if (object.starredRepos !== undefined && object.starredRepos !== null) {
             for (const e of object.starredRepos) {
@@ -279,17 +273,17 @@ export const User = {
         else {
             obj.following = [];
         }
-        obj.repositories = {};
         if (message.repositories) {
-            Object.entries(message.repositories).forEach(([k, v]) => {
-                obj.repositories[k] = v;
-            });
+            obj.repositories = message.repositories.map((e) => e ? UserRepository.toJSON(e) : undefined);
         }
-        obj.organizations = {};
+        else {
+            obj.repositories = [];
+        }
         if (message.organizations) {
-            Object.entries(message.organizations).forEach(([k, v]) => {
-                obj.organizations[k] = v;
-            });
+            obj.organizations = message.organizations.map((e) => e ? UserOrganization.toJSON(e) : undefined);
+        }
+        else {
+            obj.organizations = [];
         }
         if (message.starredRepos) {
             obj.starredRepos = message.starredRepos.map((e) => e);
@@ -310,8 +304,8 @@ export const User = {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = {};
-        message.organizations = {};
+        message.repositories = [];
+        message.organizations = [];
         message.starredRepos = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
@@ -348,18 +342,14 @@ export const User = {
             }
         }
         if (object.repositories !== undefined && object.repositories !== null) {
-            Object.entries(object.repositories).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.repositories[key] = Number(value);
-                }
-            });
+            for (const e of object.repositories) {
+                message.repositories.push(UserRepository.fromPartial(e));
+            }
         }
         if (object.organizations !== undefined && object.organizations !== null) {
-            Object.entries(object.organizations).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.organizations[key] = Number(value);
-                }
-            });
+            for (const e of object.organizations) {
+                message.organizations.push(UserOrganization.fromPartial(e));
+            }
         }
         if (object.starredRepos !== undefined && object.starredRepos !== null) {
             for (const e of object.starredRepos) {
@@ -405,29 +395,29 @@ export const User = {
         return message;
     },
 };
-const baseUser_RepositoriesEntry = { key: "", value: 0 };
-export const User_RepositoriesEntry = {
+const baseUserRepository = { name: "", id: 0 };
+export const UserRepository = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== "") {
-            writer.uint32(10).string(message.key);
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
         }
-        if (message.value !== 0) {
-            writer.uint32(16).uint64(message.value);
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseUser_RepositoriesEntry };
+        const message = { ...baseUserRepository };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = reader.string();
+                    message.name = reader.string();
                     break;
                 case 2:
-                    message.value = longToNumber(reader.uint64());
+                    message.id = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -437,69 +427,67 @@ export const User_RepositoriesEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseUser_RepositoriesEntry };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = String(object.key);
+        const message = { ...baseUserRepository };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = Number(object.value);
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.name !== undefined && (obj.name = message.name);
+        message.id !== undefined && (obj.id = message.id);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseUser_RepositoriesEntry };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseUserRepository };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
 };
-const baseUser_OrganizationsEntry = { key: "", value: 0 };
-export const User_OrganizationsEntry = {
+const baseUserOrganization = { name: "", id: 0 };
+export const UserOrganization = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== "") {
-            writer.uint32(10).string(message.key);
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
         }
-        if (message.value !== 0) {
-            writer.uint32(16).uint64(message.value);
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseUser_OrganizationsEntry,
-        };
+        const message = { ...baseUserOrganization };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = reader.string();
+                    message.name = reader.string();
                     break;
                 case 2:
-                    message.value = longToNumber(reader.uint64());
+                    message.id = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -509,44 +497,40 @@ export const User_OrganizationsEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseUser_OrganizationsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = String(object.key);
+        const message = { ...baseUserOrganization };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = Number(object.value);
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.name !== undefined && (obj.name = message.name);
+        message.id !== undefined && (obj.id = message.id);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseUser_OrganizationsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseUserOrganization };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },

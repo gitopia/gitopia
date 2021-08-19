@@ -11,9 +11,9 @@ export interface Organization {
   avatarUrl: string;
   followers: number[];
   following: number[];
-  repositories: { [key: string]: number };
+  repositories: OrganizationRepository[];
   teams: number[];
-  members: { [key: string]: string };
+  members: OrganizationMember[];
   location: string;
   email: string;
   website: string;
@@ -24,14 +24,14 @@ export interface Organization {
   extensions: string;
 }
 
-export interface Organization_RepositoriesEntry {
-  key: string;
-  value: number;
+export interface OrganizationRepository {
+  name: string;
+  id: number;
 }
 
-export interface Organization_MembersEntry {
-  key: string;
-  value: string;
+export interface OrganizationMember {
+  id: string;
+  role: string;
 }
 
 const baseOrganization: object = {
@@ -76,23 +76,17 @@ export const Organization = {
       writer.uint64(v);
     }
     writer.ldelim();
-    Object.entries(message.repositories).forEach(([key, value]) => {
-      Organization_RepositoriesEntry.encode(
-        { key: key as any, value },
-        writer.uint32(58).fork()
-      ).ldelim();
-    });
+    for (const v of message.repositories) {
+      OrganizationRepository.encode(v!, writer.uint32(58).fork()).ldelim();
+    }
     writer.uint32(66).fork();
     for (const v of message.teams) {
       writer.uint64(v);
     }
     writer.ldelim();
-    Object.entries(message.members).forEach(([key, value]) => {
-      Organization_MembersEntry.encode(
-        { key: key as any, value },
-        writer.uint32(74).fork()
-      ).ldelim();
-    });
+    for (const v of message.members) {
+      OrganizationMember.encode(v!, writer.uint32(74).fork()).ldelim();
+    }
     if (message.location !== "") {
       writer.uint32(82).string(message.location);
     }
@@ -126,9 +120,9 @@ export const Organization = {
     const message = { ...baseOrganization } as Organization;
     message.followers = [];
     message.following = [];
-    message.repositories = {};
+    message.repositories = [];
     message.teams = [];
-    message.members = {};
+    message.members = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -165,13 +159,9 @@ export const Organization = {
           }
           break;
         case 7:
-          const entry7 = Organization_RepositoriesEntry.decode(
-            reader,
-            reader.uint32()
+          message.repositories.push(
+            OrganizationRepository.decode(reader, reader.uint32())
           );
-          if (entry7.value !== undefined) {
-            message.repositories[entry7.key] = entry7.value;
-          }
           break;
         case 8:
           if ((tag & 7) === 2) {
@@ -184,13 +174,9 @@ export const Organization = {
           }
           break;
         case 9:
-          const entry9 = Organization_MembersEntry.decode(
-            reader,
-            reader.uint32()
+          message.members.push(
+            OrganizationMember.decode(reader, reader.uint32())
           );
-          if (entry9.value !== undefined) {
-            message.members[entry9.key] = entry9.value;
-          }
           break;
         case 10:
           message.location = reader.string();
@@ -228,9 +214,9 @@ export const Organization = {
     const message = { ...baseOrganization } as Organization;
     message.followers = [];
     message.following = [];
-    message.repositories = {};
+    message.repositories = [];
     message.teams = [];
-    message.members = {};
+    message.members = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -262,9 +248,9 @@ export const Organization = {
       }
     }
     if (object.repositories !== undefined && object.repositories !== null) {
-      Object.entries(object.repositories).forEach(([key, value]) => {
-        message.repositories[key] = Number(value);
-      });
+      for (const e of object.repositories) {
+        message.repositories.push(OrganizationRepository.fromJSON(e));
+      }
     }
     if (object.teams !== undefined && object.teams !== null) {
       for (const e of object.teams) {
@@ -272,9 +258,9 @@ export const Organization = {
       }
     }
     if (object.members !== undefined && object.members !== null) {
-      Object.entries(object.members).forEach(([key, value]) => {
-        message.members[key] = String(value);
-      });
+      for (const e of object.members) {
+        message.members.push(OrganizationMember.fromJSON(e));
+      }
     }
     if (object.location !== undefined && object.location !== null) {
       message.location = String(object.location);
@@ -335,22 +321,24 @@ export const Organization = {
     } else {
       obj.following = [];
     }
-    obj.repositories = {};
     if (message.repositories) {
-      Object.entries(message.repositories).forEach(([k, v]) => {
-        obj.repositories[k] = v;
-      });
+      obj.repositories = message.repositories.map((e) =>
+        e ? OrganizationRepository.toJSON(e) : undefined
+      );
+    } else {
+      obj.repositories = [];
     }
     if (message.teams) {
       obj.teams = message.teams.map((e) => e);
     } else {
       obj.teams = [];
     }
-    obj.members = {};
     if (message.members) {
-      Object.entries(message.members).forEach(([k, v]) => {
-        obj.members[k] = v;
-      });
+      obj.members = message.members.map((e) =>
+        e ? OrganizationMember.toJSON(e) : undefined
+      );
+    } else {
+      obj.members = [];
     }
     message.location !== undefined && (obj.location = message.location);
     message.email !== undefined && (obj.email = message.email);
@@ -368,9 +356,9 @@ export const Organization = {
     const message = { ...baseOrganization } as Organization;
     message.followers = [];
     message.following = [];
-    message.repositories = {};
+    message.repositories = [];
     message.teams = [];
-    message.members = {};
+    message.members = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -402,11 +390,9 @@ export const Organization = {
       }
     }
     if (object.repositories !== undefined && object.repositories !== null) {
-      Object.entries(object.repositories).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.repositories[key] = Number(value);
-        }
-      });
+      for (const e of object.repositories) {
+        message.repositories.push(OrganizationRepository.fromPartial(e));
+      }
     }
     if (object.teams !== undefined && object.teams !== null) {
       for (const e of object.teams) {
@@ -414,11 +400,9 @@ export const Organization = {
       }
     }
     if (object.members !== undefined && object.members !== null) {
-      Object.entries(object.members).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.members[key] = String(value);
-        }
-      });
+      for (const e of object.members) {
+        message.members.push(OrganizationMember.fromPartial(e));
+      }
     }
     if (object.location !== undefined && object.location !== null) {
       message.location = object.location;
@@ -464,39 +448,34 @@ export const Organization = {
   },
 };
 
-const baseOrganization_RepositoriesEntry: object = { key: "", value: 0 };
+const baseOrganizationRepository: object = { name: "", id: 0 };
 
-export const Organization_RepositoriesEntry = {
+export const OrganizationRepository = {
   encode(
-    message: Organization_RepositoriesEntry,
+    message: OrganizationRepository,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
     }
-    if (message.value !== 0) {
-      writer.uint32(16).uint64(message.value);
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Organization_RepositoriesEntry {
+  decode(input: Reader | Uint8Array, length?: number): OrganizationRepository {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseOrganization_RepositoriesEntry,
-    } as Organization_RepositoriesEntry;
+    const message = { ...baseOrganizationRepository } as OrganizationRepository;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = reader.string();
+          message.name = reader.string();
           break;
         case 2:
-          message.value = longToNumber(reader.uint64() as Long);
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -506,83 +485,74 @@ export const Organization_RepositoriesEntry = {
     return message;
   },
 
-  fromJSON(object: any): Organization_RepositoriesEntry {
-    const message = {
-      ...baseOrganization_RepositoriesEntry,
-    } as Organization_RepositoriesEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
+  fromJSON(object: any): OrganizationRepository {
+    const message = { ...baseOrganizationRepository } as OrganizationRepository;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.key = "";
+      message.name = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Number(object.value);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 
-  toJSON(message: Organization_RepositoriesEntry): unknown {
+  toJSON(message: OrganizationRepository): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.name !== undefined && (obj.name = message.name);
+    message.id !== undefined && (obj.id = message.id);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<Organization_RepositoriesEntry>
-  ): Organization_RepositoriesEntry {
-    const message = {
-      ...baseOrganization_RepositoriesEntry,
-    } as Organization_RepositoriesEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+    object: DeepPartial<OrganizationRepository>
+  ): OrganizationRepository {
+    const message = { ...baseOrganizationRepository } as OrganizationRepository;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.key = "";
+      message.name = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 };
 
-const baseOrganization_MembersEntry: object = { key: "", value: "" };
+const baseOrganizationMember: object = { id: "", role: "" };
 
-export const Organization_MembersEntry = {
+export const OrganizationMember = {
   encode(
-    message: Organization_MembersEntry,
+    message: OrganizationMember,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
+    if (message.role !== "") {
+      writer.uint32(18).string(message.role);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Organization_MembersEntry {
+  decode(input: Reader | Uint8Array, length?: number): OrganizationMember {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseOrganization_MembersEntry,
-    } as Organization_MembersEntry;
+    const message = { ...baseOrganizationMember } as OrganizationMember;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = reader.string();
+          message.id = reader.string();
           break;
         case 2:
-          message.value = reader.string();
+          message.role = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -592,45 +562,39 @@ export const Organization_MembersEntry = {
     return message;
   },
 
-  fromJSON(object: any): Organization_MembersEntry {
-    const message = {
-      ...baseOrganization_MembersEntry,
-    } as Organization_MembersEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
+  fromJSON(object: any): OrganizationMember {
+    const message = { ...baseOrganizationMember } as OrganizationMember;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.key = "";
+      message.id = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
+    if (object.role !== undefined && object.role !== null) {
+      message.role = String(object.role);
     } else {
-      message.value = "";
+      message.role = "";
     }
     return message;
   },
 
-  toJSON(message: Organization_MembersEntry): unknown {
+  toJSON(message: OrganizationMember): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.id !== undefined && (obj.id = message.id);
+    message.role !== undefined && (obj.role = message.role);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<Organization_MembersEntry>
-  ): Organization_MembersEntry {
-    const message = {
-      ...baseOrganization_MembersEntry,
-    } as Organization_MembersEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+  fromPartial(object: DeepPartial<OrganizationMember>): OrganizationMember {
+    const message = { ...baseOrganizationMember } as OrganizationMember;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.key = "";
+      message.id = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.role !== undefined && object.role !== null) {
+      message.role = object.role;
     } else {
-      message.value = "";
+      message.role = "";
     }
     return message;
   },

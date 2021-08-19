@@ -49,9 +49,9 @@ export const Repository = {
             writer.uint64(v);
         }
         writer.ldelim();
-        Object.entries(message.branches).forEach(([key, value]) => {
-            Repository_BranchesEntry.encode({ key: key, value }, writer.uint32(58).fork()).ldelim();
-        });
+        for (const v of message.branches) {
+            RepositoryBranch.encode(v, writer.uint32(58).fork()).ldelim();
+        }
         if (message.tags !== "") {
             writer.uint32(66).string(message.tags);
         }
@@ -61,12 +61,12 @@ export const Repository = {
         if (message.commits !== "") {
             writer.uint32(82).string(message.commits);
         }
-        Object.entries(message.issueIids).forEach(([key, value]) => {
-            Repository_IssueIidsEntry.encode({ key: key, value }, writer.uint32(90).fork()).ldelim();
-        });
-        Object.entries(message.pullIids).forEach(([key, value]) => {
-            Repository_PullIidsEntry.encode({ key: key, value }, writer.uint32(98).fork()).ldelim();
-        });
+        for (const v of message.issues) {
+            RepositoryIssue.encode(v, writer.uint32(90).fork()).ldelim();
+        }
+        for (const v of message.pullRequests) {
+            RepositoryPullRequest.encode(v, writer.uint32(98).fork()).ldelim();
+        }
         if (message.issuesCount !== 0) {
             writer.uint32(104).uint64(message.issuesCount);
         }
@@ -108,9 +108,9 @@ export const Repository = {
         if (message.fork === true) {
             writer.uint32(200).bool(message.fork);
         }
-        Object.entries(message.collaborators).forEach(([key, value]) => {
-            Repository_CollaboratorsEntry.encode({ key: key, value }, writer.uint32(210).fork()).ldelim();
-        });
+        for (const v of message.collaborators) {
+            RepositoryCollaborator.encode(v, writer.uint32(210).fork()).ldelim();
+        }
         if (message.extensions !== "") {
             writer.uint32(218).string(message.extensions);
         }
@@ -121,11 +121,11 @@ export const Repository = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseRepository };
         message.forks = [];
-        message.branches = {};
-        message.issueIids = {};
-        message.pullIids = {};
+        message.branches = [];
+        message.issues = [];
+        message.pullRequests = [];
         message.stargazers = [];
-        message.collaborators = {};
+        message.collaborators = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -156,10 +156,7 @@ export const Repository = {
                     }
                     break;
                 case 7:
-                    const entry7 = Repository_BranchesEntry.decode(reader, reader.uint32());
-                    if (entry7.value !== undefined) {
-                        message.branches[entry7.key] = entry7.value;
-                    }
+                    message.branches.push(RepositoryBranch.decode(reader, reader.uint32()));
                     break;
                 case 8:
                     message.tags = reader.string();
@@ -171,16 +168,10 @@ export const Repository = {
                     message.commits = reader.string();
                     break;
                 case 11:
-                    const entry11 = Repository_IssueIidsEntry.decode(reader, reader.uint32());
-                    if (entry11.value !== undefined) {
-                        message.issueIids[entry11.key] = entry11.value;
-                    }
+                    message.issues.push(RepositoryIssue.decode(reader, reader.uint32()));
                     break;
                 case 12:
-                    const entry12 = Repository_PullIidsEntry.decode(reader, reader.uint32());
-                    if (entry12.value !== undefined) {
-                        message.pullIids[entry12.key] = entry12.value;
-                    }
+                    message.pullRequests.push(RepositoryPullRequest.decode(reader, reader.uint32()));
                     break;
                 case 13:
                     message.issuesCount = longToNumber(reader.uint64());
@@ -230,10 +221,7 @@ export const Repository = {
                     message.fork = reader.bool();
                     break;
                 case 26:
-                    const entry26 = Repository_CollaboratorsEntry.decode(reader, reader.uint32());
-                    if (entry26.value !== undefined) {
-                        message.collaborators[entry26.key] = entry26.value;
-                    }
+                    message.collaborators.push(RepositoryCollaborator.decode(reader, reader.uint32()));
                     break;
                 case 27:
                     message.extensions = reader.string();
@@ -248,11 +236,11 @@ export const Repository = {
     fromJSON(object) {
         const message = { ...baseRepository };
         message.forks = [];
-        message.branches = {};
-        message.issueIids = {};
-        message.pullIids = {};
+        message.branches = [];
+        message.issues = [];
+        message.pullRequests = [];
         message.stargazers = [];
-        message.collaborators = {};
+        message.collaborators = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -289,9 +277,9 @@ export const Repository = {
             }
         }
         if (object.branches !== undefined && object.branches !== null) {
-            Object.entries(object.branches).forEach(([key, value]) => {
-                message.branches[key] = String(value);
-            });
+            for (const e of object.branches) {
+                message.branches.push(RepositoryBranch.fromJSON(e));
+            }
         }
         if (object.tags !== undefined && object.tags !== null) {
             message.tags = String(object.tags);
@@ -311,15 +299,15 @@ export const Repository = {
         else {
             message.commits = "";
         }
-        if (object.issueIids !== undefined && object.issueIids !== null) {
-            Object.entries(object.issueIids).forEach(([key, value]) => {
-                message.issueIids[Number(key)] = Number(value);
-            });
+        if (object.issues !== undefined && object.issues !== null) {
+            for (const e of object.issues) {
+                message.issues.push(RepositoryIssue.fromJSON(e));
+            }
         }
-        if (object.pullIids !== undefined && object.pullIids !== null) {
-            Object.entries(object.pullIids).forEach(([key, value]) => {
-                message.pullIids[Number(key)] = Number(value);
-            });
+        if (object.pullRequests !== undefined && object.pullRequests !== null) {
+            for (const e of object.pullRequests) {
+                message.pullRequests.push(RepositoryPullRequest.fromJSON(e));
+            }
         }
         if (object.issuesCount !== undefined && object.issuesCount !== null) {
             message.issuesCount = Number(object.issuesCount);
@@ -399,9 +387,9 @@ export const Repository = {
             message.fork = false;
         }
         if (object.collaborators !== undefined && object.collaborators !== null) {
-            Object.entries(object.collaborators).forEach(([key, value]) => {
-                message.collaborators[key] = String(value);
-            });
+            for (const e of object.collaborators) {
+                message.collaborators.push(RepositoryCollaborator.fromJSON(e));
+            }
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = String(object.extensions);
@@ -425,27 +413,27 @@ export const Repository = {
         else {
             obj.forks = [];
         }
-        obj.branches = {};
         if (message.branches) {
-            Object.entries(message.branches).forEach(([k, v]) => {
-                obj.branches[k] = v;
-            });
+            obj.branches = message.branches.map((e) => e ? RepositoryBranch.toJSON(e) : undefined);
+        }
+        else {
+            obj.branches = [];
         }
         message.tags !== undefined && (obj.tags = message.tags);
         message.subscribers !== undefined &&
             (obj.subscribers = message.subscribers);
         message.commits !== undefined && (obj.commits = message.commits);
-        obj.issueIids = {};
-        if (message.issueIids) {
-            Object.entries(message.issueIids).forEach(([k, v]) => {
-                obj.issueIids[k] = v;
-            });
+        if (message.issues) {
+            obj.issues = message.issues.map((e) => e ? RepositoryIssue.toJSON(e) : undefined);
         }
-        obj.pullIids = {};
-        if (message.pullIids) {
-            Object.entries(message.pullIids).forEach(([k, v]) => {
-                obj.pullIids[k] = v;
-            });
+        else {
+            obj.issues = [];
+        }
+        if (message.pullRequests) {
+            obj.pullRequests = message.pullRequests.map((e) => e ? RepositoryPullRequest.toJSON(e) : undefined);
+        }
+        else {
+            obj.pullRequests = [];
         }
         message.issuesCount !== undefined &&
             (obj.issuesCount = message.issuesCount);
@@ -467,11 +455,11 @@ export const Repository = {
             (obj.defaultBranch = message.defaultBranch);
         message.parent !== undefined && (obj.parent = message.parent);
         message.fork !== undefined && (obj.fork = message.fork);
-        obj.collaborators = {};
         if (message.collaborators) {
-            Object.entries(message.collaborators).forEach(([k, v]) => {
-                obj.collaborators[k] = v;
-            });
+            obj.collaborators = message.collaborators.map((e) => e ? RepositoryCollaborator.toJSON(e) : undefined);
+        }
+        else {
+            obj.collaborators = [];
         }
         message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
@@ -479,11 +467,11 @@ export const Repository = {
     fromPartial(object) {
         const message = { ...baseRepository };
         message.forks = [];
-        message.branches = {};
-        message.issueIids = {};
-        message.pullIids = {};
+        message.branches = [];
+        message.issues = [];
+        message.pullRequests = [];
         message.stargazers = [];
-        message.collaborators = {};
+        message.collaborators = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -520,11 +508,9 @@ export const Repository = {
             }
         }
         if (object.branches !== undefined && object.branches !== null) {
-            Object.entries(object.branches).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.branches[key] = String(value);
-                }
-            });
+            for (const e of object.branches) {
+                message.branches.push(RepositoryBranch.fromPartial(e));
+            }
         }
         if (object.tags !== undefined && object.tags !== null) {
             message.tags = object.tags;
@@ -544,19 +530,15 @@ export const Repository = {
         else {
             message.commits = "";
         }
-        if (object.issueIids !== undefined && object.issueIids !== null) {
-            Object.entries(object.issueIids).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.issueIids[Number(key)] = Number(value);
-                }
-            });
+        if (object.issues !== undefined && object.issues !== null) {
+            for (const e of object.issues) {
+                message.issues.push(RepositoryIssue.fromPartial(e));
+            }
         }
-        if (object.pullIids !== undefined && object.pullIids !== null) {
-            Object.entries(object.pullIids).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.pullIids[Number(key)] = Number(value);
-                }
-            });
+        if (object.pullRequests !== undefined && object.pullRequests !== null) {
+            for (const e of object.pullRequests) {
+                message.pullRequests.push(RepositoryPullRequest.fromPartial(e));
+            }
         }
         if (object.issuesCount !== undefined && object.issuesCount !== null) {
             message.issuesCount = object.issuesCount;
@@ -636,11 +618,9 @@ export const Repository = {
             message.fork = false;
         }
         if (object.collaborators !== undefined && object.collaborators !== null) {
-            Object.entries(object.collaborators).forEach(([key, value]) => {
-                if (value !== undefined) {
-                    message.collaborators[key] = String(value);
-                }
-            });
+            for (const e of object.collaborators) {
+                message.collaborators.push(RepositoryCollaborator.fromPartial(e));
+            }
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = object.extensions;
@@ -651,31 +631,29 @@ export const Repository = {
         return message;
     },
 };
-const baseRepository_BranchesEntry = { key: "", value: "" };
-export const Repository_BranchesEntry = {
+const baseRepositoryBranch = { name: "", sha: "" };
+export const RepositoryBranch = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== "") {
-            writer.uint32(10).string(message.key);
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
         }
-        if (message.value !== "") {
-            writer.uint32(18).string(message.value);
+        if (message.sha !== "") {
+            writer.uint32(18).string(message.sha);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseRepository_BranchesEntry,
-        };
+        const message = { ...baseRepositoryBranch };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = reader.string();
+                    message.name = reader.string();
                     break;
                 case 2:
-                    message.value = reader.string();
+                    message.sha = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -685,73 +663,67 @@ export const Repository_BranchesEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseRepository_BranchesEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = String(object.key);
+        const message = { ...baseRepositoryBranch };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = String(object.value);
+        if (object.sha !== undefined && object.sha !== null) {
+            message.sha = String(object.sha);
         }
         else {
-            message.value = "";
+            message.sha = "";
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.name !== undefined && (obj.name = message.name);
+        message.sha !== undefined && (obj.sha = message.sha);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseRepository_BranchesEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseRepositoryBranch };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
         }
         else {
-            message.key = "";
+            message.name = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.sha !== undefined && object.sha !== null) {
+            message.sha = object.sha;
         }
         else {
-            message.value = "";
+            message.sha = "";
         }
         return message;
     },
 };
-const baseRepository_IssueIidsEntry = { key: 0, value: 0 };
-export const Repository_IssueIidsEntry = {
+const baseRepositoryIssue = { iid: 0, id: 0 };
+export const RepositoryIssue = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== 0) {
-            writer.uint32(8).uint64(message.key);
+        if (message.iid !== 0) {
+            writer.uint32(8).uint64(message.iid);
         }
-        if (message.value !== 0) {
-            writer.uint32(16).uint64(message.value);
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseRepository_IssueIidsEntry,
-        };
+        const message = { ...baseRepositoryIssue };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = longToNumber(reader.uint64());
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 case 2:
-                    message.value = longToNumber(reader.uint64());
+                    message.id = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -761,73 +733,67 @@ export const Repository_IssueIidsEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseRepository_IssueIidsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = Number(object.key);
+        const message = { ...baseRepositoryIssue };
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = Number(object.iid);
         }
         else {
-            message.key = 0;
+            message.iid = 0;
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = Number(object.value);
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.iid !== undefined && (obj.iid = message.iid);
+        message.id !== undefined && (obj.id = message.id);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseRepository_IssueIidsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseRepositoryIssue };
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = object.iid;
         }
         else {
-            message.key = 0;
+            message.iid = 0;
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
 };
-const baseRepository_PullIidsEntry = { key: 0, value: 0 };
-export const Repository_PullIidsEntry = {
+const baseRepositoryPullRequest = { iid: 0, id: 0 };
+export const RepositoryPullRequest = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== 0) {
-            writer.uint32(8).uint64(message.key);
+        if (message.iid !== 0) {
+            writer.uint32(8).uint64(message.iid);
         }
-        if (message.value !== 0) {
-            writer.uint32(16).uint64(message.value);
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseRepository_PullIidsEntry,
-        };
+        const message = { ...baseRepositoryPullRequest };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = longToNumber(reader.uint64());
+                    message.iid = longToNumber(reader.uint64());
                     break;
                 case 2:
-                    message.value = longToNumber(reader.uint64());
+                    message.id = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -837,73 +803,67 @@ export const Repository_PullIidsEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseRepository_PullIidsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = Number(object.key);
+        const message = { ...baseRepositoryPullRequest };
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = Number(object.iid);
         }
         else {
-            message.key = 0;
+            message.iid = 0;
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = Number(object.value);
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.iid !== undefined && (obj.iid = message.iid);
+        message.id !== undefined && (obj.id = message.id);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseRepository_PullIidsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseRepositoryPullRequest };
+        if (object.iid !== undefined && object.iid !== null) {
+            message.iid = object.iid;
         }
         else {
-            message.key = 0;
+            message.iid = 0;
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
         }
         else {
-            message.value = 0;
+            message.id = 0;
         }
         return message;
     },
 };
-const baseRepository_CollaboratorsEntry = { key: "", value: "" };
-export const Repository_CollaboratorsEntry = {
+const baseRepositoryCollaborator = { id: "", permission: "" };
+export const RepositoryCollaborator = {
     encode(message, writer = Writer.create()) {
-        if (message.key !== "") {
-            writer.uint32(10).string(message.key);
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
         }
-        if (message.value !== "") {
-            writer.uint32(18).string(message.value);
+        if (message.permission !== "") {
+            writer.uint32(18).string(message.permission);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseRepository_CollaboratorsEntry,
-        };
+        const message = { ...baseRepositoryCollaborator };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.key = reader.string();
+                    message.id = reader.string();
                     break;
                 case 2:
-                    message.value = reader.string();
+                    message.permission = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -913,44 +873,40 @@ export const Repository_CollaboratorsEntry = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseRepository_CollaboratorsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = String(object.key);
+        const message = { ...baseRepositoryCollaborator };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = String(object.id);
         }
         else {
-            message.key = "";
+            message.id = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = String(object.value);
+        if (object.permission !== undefined && object.permission !== null) {
+            message.permission = String(object.permission);
         }
         else {
-            message.value = "";
+            message.permission = "";
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.key !== undefined && (obj.key = message.key);
-        message.value !== undefined && (obj.value = message.value);
+        message.id !== undefined && (obj.id = message.id);
+        message.permission !== undefined && (obj.permission = message.permission);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseRepository_CollaboratorsEntry,
-        };
-        if (object.key !== undefined && object.key !== null) {
-            message.key = object.key;
+        const message = { ...baseRepositoryCollaborator };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
         }
         else {
-            message.key = "";
+            message.id = "";
         }
-        if (object.value !== undefined && object.value !== null) {
-            message.value = object.value;
+        if (object.permission !== undefined && object.permission !== null) {
+            message.permission = object.permission;
         }
         else {
-            message.value = "";
+            message.permission = "";
         }
         return message;
     },

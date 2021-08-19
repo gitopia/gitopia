@@ -4,7 +4,7 @@ import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/paginati
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository } from "../gitopia/repository";
+import { Repository, RepositoryBranch } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
@@ -111,13 +111,7 @@ export interface QueryGetAllBranchRequest {
     id: number;
 }
 export interface QueryGetAllBranchResponse {
-    Branches: {
-        [key: string]: string;
-    };
-}
-export interface QueryGetAllBranchResponse_BranchesEntry {
-    key: string;
-    value: string;
+    Branches: RepositoryBranch[];
 }
 export interface QueryGetBranchShaRequest {
     repositoryId: number;
@@ -402,13 +396,6 @@ export declare const QueryGetAllBranchResponse: {
     fromJSON(object: any): QueryGetAllBranchResponse;
     toJSON(message: QueryGetAllBranchResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetAllBranchResponse>): QueryGetAllBranchResponse;
-};
-export declare const QueryGetAllBranchResponse_BranchesEntry: {
-    encode(message: QueryGetAllBranchResponse_BranchesEntry, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetAllBranchResponse_BranchesEntry;
-    fromJSON(object: any): QueryGetAllBranchResponse_BranchesEntry;
-    toJSON(message: QueryGetAllBranchResponse_BranchesEntry): unknown;
-    fromPartial(object: DeepPartial<QueryGetAllBranchResponse_BranchesEntry>): QueryGetAllBranchResponse_BranchesEntry;
 };
 export declare const QueryGetBranchShaRequest: {
     encode(message: QueryGetBranchShaRequest, writer?: Writer): Writer;

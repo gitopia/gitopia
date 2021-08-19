@@ -11,12 +11,12 @@ export interface Repository {
   owner: string;
   description: string;
   forks: number[];
-  branches: { [key: string]: string };
+  branches: RepositoryBranch[];
   tags: string;
   subscribers: string;
   commits: string;
-  issueIids: { [key: number]: number };
-  pullIids: { [key: number]: number };
+  issues: RepositoryIssue[];
+  pullRequests: RepositoryPullRequest[];
   issuesCount: number;
   pullsCount: number;
   labels: string;
@@ -30,28 +30,28 @@ export interface Repository {
   defaultBranch: string;
   parent: number;
   fork: boolean;
-  collaborators: { [key: string]: string };
+  collaborators: RepositoryCollaborator[];
   extensions: string;
 }
 
-export interface Repository_BranchesEntry {
-  key: string;
-  value: string;
+export interface RepositoryBranch {
+  name: string;
+  sha: string;
 }
 
-export interface Repository_IssueIidsEntry {
-  key: number;
-  value: number;
+export interface RepositoryIssue {
+  iid: number;
+  id: number;
 }
 
-export interface Repository_PullIidsEntry {
-  key: number;
-  value: number;
+export interface RepositoryPullRequest {
+  iid: number;
+  id: number;
 }
 
-export interface Repository_CollaboratorsEntry {
-  key: string;
-  value: string;
+export interface RepositoryCollaborator {
+  id: string;
+  permission: string;
 }
 
 const baseRepository: object = {
@@ -102,12 +102,9 @@ export const Repository = {
       writer.uint64(v);
     }
     writer.ldelim();
-    Object.entries(message.branches).forEach(([key, value]) => {
-      Repository_BranchesEntry.encode(
-        { key: key as any, value },
-        writer.uint32(58).fork()
-      ).ldelim();
-    });
+    for (const v of message.branches) {
+      RepositoryBranch.encode(v!, writer.uint32(58).fork()).ldelim();
+    }
     if (message.tags !== "") {
       writer.uint32(66).string(message.tags);
     }
@@ -117,18 +114,12 @@ export const Repository = {
     if (message.commits !== "") {
       writer.uint32(82).string(message.commits);
     }
-    Object.entries(message.issueIids).forEach(([key, value]) => {
-      Repository_IssueIidsEntry.encode(
-        { key: key as any, value },
-        writer.uint32(90).fork()
-      ).ldelim();
-    });
-    Object.entries(message.pullIids).forEach(([key, value]) => {
-      Repository_PullIidsEntry.encode(
-        { key: key as any, value },
-        writer.uint32(98).fork()
-      ).ldelim();
-    });
+    for (const v of message.issues) {
+      RepositoryIssue.encode(v!, writer.uint32(90).fork()).ldelim();
+    }
+    for (const v of message.pullRequests) {
+      RepositoryPullRequest.encode(v!, writer.uint32(98).fork()).ldelim();
+    }
     if (message.issuesCount !== 0) {
       writer.uint32(104).uint64(message.issuesCount);
     }
@@ -170,12 +161,9 @@ export const Repository = {
     if (message.fork === true) {
       writer.uint32(200).bool(message.fork);
     }
-    Object.entries(message.collaborators).forEach(([key, value]) => {
-      Repository_CollaboratorsEntry.encode(
-        { key: key as any, value },
-        writer.uint32(210).fork()
-      ).ldelim();
-    });
+    for (const v of message.collaborators) {
+      RepositoryCollaborator.encode(v!, writer.uint32(210).fork()).ldelim();
+    }
     if (message.extensions !== "") {
       writer.uint32(218).string(message.extensions);
     }
@@ -187,11 +175,11 @@ export const Repository = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseRepository } as Repository;
     message.forks = [];
-    message.branches = {};
-    message.issueIids = {};
-    message.pullIids = {};
+    message.branches = [];
+    message.issues = [];
+    message.pullRequests = [];
     message.stargazers = [];
-    message.collaborators = {};
+    message.collaborators = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -221,13 +209,9 @@ export const Repository = {
           }
           break;
         case 7:
-          const entry7 = Repository_BranchesEntry.decode(
-            reader,
-            reader.uint32()
+          message.branches.push(
+            RepositoryBranch.decode(reader, reader.uint32())
           );
-          if (entry7.value !== undefined) {
-            message.branches[entry7.key] = entry7.value;
-          }
           break;
         case 8:
           message.tags = reader.string();
@@ -239,22 +223,12 @@ export const Repository = {
           message.commits = reader.string();
           break;
         case 11:
-          const entry11 = Repository_IssueIidsEntry.decode(
-            reader,
-            reader.uint32()
-          );
-          if (entry11.value !== undefined) {
-            message.issueIids[entry11.key] = entry11.value;
-          }
+          message.issues.push(RepositoryIssue.decode(reader, reader.uint32()));
           break;
         case 12:
-          const entry12 = Repository_PullIidsEntry.decode(
-            reader,
-            reader.uint32()
+          message.pullRequests.push(
+            RepositoryPullRequest.decode(reader, reader.uint32())
           );
-          if (entry12.value !== undefined) {
-            message.pullIids[entry12.key] = entry12.value;
-          }
           break;
         case 13:
           message.issuesCount = longToNumber(reader.uint64() as Long);
@@ -303,13 +277,9 @@ export const Repository = {
           message.fork = reader.bool();
           break;
         case 26:
-          const entry26 = Repository_CollaboratorsEntry.decode(
-            reader,
-            reader.uint32()
+          message.collaborators.push(
+            RepositoryCollaborator.decode(reader, reader.uint32())
           );
-          if (entry26.value !== undefined) {
-            message.collaborators[entry26.key] = entry26.value;
-          }
           break;
         case 27:
           message.extensions = reader.string();
@@ -325,11 +295,11 @@ export const Repository = {
   fromJSON(object: any): Repository {
     const message = { ...baseRepository } as Repository;
     message.forks = [];
-    message.branches = {};
-    message.issueIids = {};
-    message.pullIids = {};
+    message.branches = [];
+    message.issues = [];
+    message.pullRequests = [];
     message.stargazers = [];
-    message.collaborators = {};
+    message.collaborators = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -361,9 +331,9 @@ export const Repository = {
       }
     }
     if (object.branches !== undefined && object.branches !== null) {
-      Object.entries(object.branches).forEach(([key, value]) => {
-        message.branches[key] = String(value);
-      });
+      for (const e of object.branches) {
+        message.branches.push(RepositoryBranch.fromJSON(e));
+      }
     }
     if (object.tags !== undefined && object.tags !== null) {
       message.tags = String(object.tags);
@@ -380,15 +350,15 @@ export const Repository = {
     } else {
       message.commits = "";
     }
-    if (object.issueIids !== undefined && object.issueIids !== null) {
-      Object.entries(object.issueIids).forEach(([key, value]) => {
-        message.issueIids[Number(key)] = Number(value);
-      });
+    if (object.issues !== undefined && object.issues !== null) {
+      for (const e of object.issues) {
+        message.issues.push(RepositoryIssue.fromJSON(e));
+      }
     }
-    if (object.pullIids !== undefined && object.pullIids !== null) {
-      Object.entries(object.pullIids).forEach(([key, value]) => {
-        message.pullIids[Number(key)] = Number(value);
-      });
+    if (object.pullRequests !== undefined && object.pullRequests !== null) {
+      for (const e of object.pullRequests) {
+        message.pullRequests.push(RepositoryPullRequest.fromJSON(e));
+      }
     }
     if (object.issuesCount !== undefined && object.issuesCount !== null) {
       message.issuesCount = Number(object.issuesCount);
@@ -456,9 +426,9 @@ export const Repository = {
       message.fork = false;
     }
     if (object.collaborators !== undefined && object.collaborators !== null) {
-      Object.entries(object.collaborators).forEach(([key, value]) => {
-        message.collaborators[key] = String(value);
-      });
+      for (const e of object.collaborators) {
+        message.collaborators.push(RepositoryCollaborator.fromJSON(e));
+      }
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = String(object.extensions);
@@ -481,27 +451,30 @@ export const Repository = {
     } else {
       obj.forks = [];
     }
-    obj.branches = {};
     if (message.branches) {
-      Object.entries(message.branches).forEach(([k, v]) => {
-        obj.branches[k] = v;
-      });
+      obj.branches = message.branches.map((e) =>
+        e ? RepositoryBranch.toJSON(e) : undefined
+      );
+    } else {
+      obj.branches = [];
     }
     message.tags !== undefined && (obj.tags = message.tags);
     message.subscribers !== undefined &&
       (obj.subscribers = message.subscribers);
     message.commits !== undefined && (obj.commits = message.commits);
-    obj.issueIids = {};
-    if (message.issueIids) {
-      Object.entries(message.issueIids).forEach(([k, v]) => {
-        obj.issueIids[k] = v;
-      });
+    if (message.issues) {
+      obj.issues = message.issues.map((e) =>
+        e ? RepositoryIssue.toJSON(e) : undefined
+      );
+    } else {
+      obj.issues = [];
     }
-    obj.pullIids = {};
-    if (message.pullIids) {
-      Object.entries(message.pullIids).forEach(([k, v]) => {
-        obj.pullIids[k] = v;
-      });
+    if (message.pullRequests) {
+      obj.pullRequests = message.pullRequests.map((e) =>
+        e ? RepositoryPullRequest.toJSON(e) : undefined
+      );
+    } else {
+      obj.pullRequests = [];
     }
     message.issuesCount !== undefined &&
       (obj.issuesCount = message.issuesCount);
@@ -522,11 +495,12 @@ export const Repository = {
       (obj.defaultBranch = message.defaultBranch);
     message.parent !== undefined && (obj.parent = message.parent);
     message.fork !== undefined && (obj.fork = message.fork);
-    obj.collaborators = {};
     if (message.collaborators) {
-      Object.entries(message.collaborators).forEach(([k, v]) => {
-        obj.collaborators[k] = v;
-      });
+      obj.collaborators = message.collaborators.map((e) =>
+        e ? RepositoryCollaborator.toJSON(e) : undefined
+      );
+    } else {
+      obj.collaborators = [];
     }
     message.extensions !== undefined && (obj.extensions = message.extensions);
     return obj;
@@ -535,11 +509,11 @@ export const Repository = {
   fromPartial(object: DeepPartial<Repository>): Repository {
     const message = { ...baseRepository } as Repository;
     message.forks = [];
-    message.branches = {};
-    message.issueIids = {};
-    message.pullIids = {};
+    message.branches = [];
+    message.issues = [];
+    message.pullRequests = [];
     message.stargazers = [];
-    message.collaborators = {};
+    message.collaborators = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -571,11 +545,9 @@ export const Repository = {
       }
     }
     if (object.branches !== undefined && object.branches !== null) {
-      Object.entries(object.branches).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.branches[key] = String(value);
-        }
-      });
+      for (const e of object.branches) {
+        message.branches.push(RepositoryBranch.fromPartial(e));
+      }
     }
     if (object.tags !== undefined && object.tags !== null) {
       message.tags = object.tags;
@@ -592,19 +564,15 @@ export const Repository = {
     } else {
       message.commits = "";
     }
-    if (object.issueIids !== undefined && object.issueIids !== null) {
-      Object.entries(object.issueIids).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.issueIids[Number(key)] = Number(value);
-        }
-      });
+    if (object.issues !== undefined && object.issues !== null) {
+      for (const e of object.issues) {
+        message.issues.push(RepositoryIssue.fromPartial(e));
+      }
     }
-    if (object.pullIids !== undefined && object.pullIids !== null) {
-      Object.entries(object.pullIids).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.pullIids[Number(key)] = Number(value);
-        }
-      });
+    if (object.pullRequests !== undefined && object.pullRequests !== null) {
+      for (const e of object.pullRequests) {
+        message.pullRequests.push(RepositoryPullRequest.fromPartial(e));
+      }
     }
     if (object.issuesCount !== undefined && object.issuesCount !== null) {
       message.issuesCount = object.issuesCount;
@@ -672,11 +640,9 @@ export const Repository = {
       message.fork = false;
     }
     if (object.collaborators !== undefined && object.collaborators !== null) {
-      Object.entries(object.collaborators).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.collaborators[key] = String(value);
-        }
-      });
+      for (const e of object.collaborators) {
+        message.collaborators.push(RepositoryCollaborator.fromPartial(e));
+      }
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = object.extensions;
@@ -687,39 +653,31 @@ export const Repository = {
   },
 };
 
-const baseRepository_BranchesEntry: object = { key: "", value: "" };
+const baseRepositoryBranch: object = { name: "", sha: "" };
 
-export const Repository_BranchesEntry = {
-  encode(
-    message: Repository_BranchesEntry,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
+export const RepositoryBranch = {
+  encode(message: RepositoryBranch, writer: Writer = Writer.create()): Writer {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
     }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
+    if (message.sha !== "") {
+      writer.uint32(18).string(message.sha);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Repository_BranchesEntry {
+  decode(input: Reader | Uint8Array, length?: number): RepositoryBranch {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseRepository_BranchesEntry,
-    } as Repository_BranchesEntry;
+    const message = { ...baseRepositoryBranch } as RepositoryBranch;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = reader.string();
+          message.name = reader.string();
           break;
         case 2:
-          message.value = reader.string();
+          message.sha = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -729,83 +687,69 @@ export const Repository_BranchesEntry = {
     return message;
   },
 
-  fromJSON(object: any): Repository_BranchesEntry {
-    const message = {
-      ...baseRepository_BranchesEntry,
-    } as Repository_BranchesEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
+  fromJSON(object: any): RepositoryBranch {
+    const message = { ...baseRepositoryBranch } as RepositoryBranch;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
     } else {
-      message.key = "";
+      message.name = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = String(object.sha);
     } else {
-      message.value = "";
+      message.sha = "";
     }
     return message;
   },
 
-  toJSON(message: Repository_BranchesEntry): unknown {
+  toJSON(message: RepositoryBranch): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.name !== undefined && (obj.name = message.name);
+    message.sha !== undefined && (obj.sha = message.sha);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<Repository_BranchesEntry>
-  ): Repository_BranchesEntry {
-    const message = {
-      ...baseRepository_BranchesEntry,
-    } as Repository_BranchesEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+  fromPartial(object: DeepPartial<RepositoryBranch>): RepositoryBranch {
+    const message = { ...baseRepositoryBranch } as RepositoryBranch;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
     } else {
-      message.key = "";
+      message.name = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = object.sha;
     } else {
-      message.value = "";
+      message.sha = "";
     }
     return message;
   },
 };
 
-const baseRepository_IssueIidsEntry: object = { key: 0, value: 0 };
+const baseRepositoryIssue: object = { iid: 0, id: 0 };
 
-export const Repository_IssueIidsEntry = {
-  encode(
-    message: Repository_IssueIidsEntry,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.key !== 0) {
-      writer.uint32(8).uint64(message.key);
+export const RepositoryIssue = {
+  encode(message: RepositoryIssue, writer: Writer = Writer.create()): Writer {
+    if (message.iid !== 0) {
+      writer.uint32(8).uint64(message.iid);
     }
-    if (message.value !== 0) {
-      writer.uint32(16).uint64(message.value);
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Repository_IssueIidsEntry {
+  decode(input: Reader | Uint8Array, length?: number): RepositoryIssue {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseRepository_IssueIidsEntry,
-    } as Repository_IssueIidsEntry;
+    const message = { ...baseRepositoryIssue } as RepositoryIssue;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = longToNumber(reader.uint64() as Long);
+          message.iid = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.value = longToNumber(reader.uint64() as Long);
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -815,83 +759,72 @@ export const Repository_IssueIidsEntry = {
     return message;
   },
 
-  fromJSON(object: any): Repository_IssueIidsEntry {
-    const message = {
-      ...baseRepository_IssueIidsEntry,
-    } as Repository_IssueIidsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = Number(object.key);
+  fromJSON(object: any): RepositoryIssue {
+    const message = { ...baseRepositoryIssue } as RepositoryIssue;
+    if (object.iid !== undefined && object.iid !== null) {
+      message.iid = Number(object.iid);
     } else {
-      message.key = 0;
+      message.iid = 0;
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Number(object.value);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 
-  toJSON(message: Repository_IssueIidsEntry): unknown {
+  toJSON(message: RepositoryIssue): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.iid !== undefined && (obj.iid = message.iid);
+    message.id !== undefined && (obj.id = message.id);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<Repository_IssueIidsEntry>
-  ): Repository_IssueIidsEntry {
-    const message = {
-      ...baseRepository_IssueIidsEntry,
-    } as Repository_IssueIidsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+  fromPartial(object: DeepPartial<RepositoryIssue>): RepositoryIssue {
+    const message = { ...baseRepositoryIssue } as RepositoryIssue;
+    if (object.iid !== undefined && object.iid !== null) {
+      message.iid = object.iid;
     } else {
-      message.key = 0;
+      message.iid = 0;
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 };
 
-const baseRepository_PullIidsEntry: object = { key: 0, value: 0 };
+const baseRepositoryPullRequest: object = { iid: 0, id: 0 };
 
-export const Repository_PullIidsEntry = {
+export const RepositoryPullRequest = {
   encode(
-    message: Repository_PullIidsEntry,
+    message: RepositoryPullRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.key !== 0) {
-      writer.uint32(8).uint64(message.key);
+    if (message.iid !== 0) {
+      writer.uint32(8).uint64(message.iid);
     }
-    if (message.value !== 0) {
-      writer.uint32(16).uint64(message.value);
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Repository_PullIidsEntry {
+  decode(input: Reader | Uint8Array, length?: number): RepositoryPullRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseRepository_PullIidsEntry,
-    } as Repository_PullIidsEntry;
+    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = longToNumber(reader.uint64() as Long);
+          message.iid = longToNumber(reader.uint64() as Long);
           break;
         case 2:
-          message.value = longToNumber(reader.uint64() as Long);
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -901,83 +834,74 @@ export const Repository_PullIidsEntry = {
     return message;
   },
 
-  fromJSON(object: any): Repository_PullIidsEntry {
-    const message = {
-      ...baseRepository_PullIidsEntry,
-    } as Repository_PullIidsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = Number(object.key);
+  fromJSON(object: any): RepositoryPullRequest {
+    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
+    if (object.iid !== undefined && object.iid !== null) {
+      message.iid = Number(object.iid);
     } else {
-      message.key = 0;
+      message.iid = 0;
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Number(object.value);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 
-  toJSON(message: Repository_PullIidsEntry): unknown {
+  toJSON(message: RepositoryPullRequest): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.iid !== undefined && (obj.iid = message.iid);
+    message.id !== undefined && (obj.id = message.id);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<Repository_PullIidsEntry>
-  ): Repository_PullIidsEntry {
-    const message = {
-      ...baseRepository_PullIidsEntry,
-    } as Repository_PullIidsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+    object: DeepPartial<RepositoryPullRequest>
+  ): RepositoryPullRequest {
+    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
+    if (object.iid !== undefined && object.iid !== null) {
+      message.iid = object.iid;
     } else {
-      message.key = 0;
+      message.iid = 0;
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.value = 0;
+      message.id = 0;
     }
     return message;
   },
 };
 
-const baseRepository_CollaboratorsEntry: object = { key: "", value: "" };
+const baseRepositoryCollaborator: object = { id: "", permission: "" };
 
-export const Repository_CollaboratorsEntry = {
+export const RepositoryCollaborator = {
   encode(
-    message: Repository_CollaboratorsEntry,
+    message: RepositoryCollaborator,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
+    if (message.permission !== "") {
+      writer.uint32(18).string(message.permission);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): Repository_CollaboratorsEntry {
+  decode(input: Reader | Uint8Array, length?: number): RepositoryCollaborator {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseRepository_CollaboratorsEntry,
-    } as Repository_CollaboratorsEntry;
+    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.key = reader.string();
+          message.id = reader.string();
           break;
         case 2:
-          message.value = reader.string();
+          message.permission = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -987,45 +911,41 @@ export const Repository_CollaboratorsEntry = {
     return message;
   },
 
-  fromJSON(object: any): Repository_CollaboratorsEntry {
-    const message = {
-      ...baseRepository_CollaboratorsEntry,
-    } as Repository_CollaboratorsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
+  fromJSON(object: any): RepositoryCollaborator {
+    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.key = "";
+      message.id = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
+    if (object.permission !== undefined && object.permission !== null) {
+      message.permission = String(object.permission);
     } else {
-      message.value = "";
+      message.permission = "";
     }
     return message;
   },
 
-  toJSON(message: Repository_CollaboratorsEntry): unknown {
+  toJSON(message: RepositoryCollaborator): unknown {
     const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
+    message.id !== undefined && (obj.id = message.id);
+    message.permission !== undefined && (obj.permission = message.permission);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<Repository_CollaboratorsEntry>
-  ): Repository_CollaboratorsEntry {
-    const message = {
-      ...baseRepository_CollaboratorsEntry,
-    } as Repository_CollaboratorsEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
+    object: DeepPartial<RepositoryCollaborator>
+  ): RepositoryCollaborator {
+    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.key = "";
+      message.id = "";
     }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
+    if (object.permission !== undefined && object.permission !== null) {
+      message.permission = object.permission;
     } else {
-      message.value = "";
+      message.permission = "";
     }
     return message;
   },
