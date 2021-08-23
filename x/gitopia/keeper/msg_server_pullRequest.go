@@ -48,7 +48,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	baseRepo.PullsCount += 1
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 	zeroTime := time.Time{}.Unix()
 
 	var pullRequest = types.PullRequest{
@@ -134,7 +134,7 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 	var pullrequest = k.GetPullRequest(ctx, msg.Id)
 
 	pullrequest.Title = msg.Title
-	pullrequest.UpdatedAt = time.Now().Unix()
+	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetPullRequest(ctx, pullrequest)
 
@@ -162,7 +162,7 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	var pullrequest = k.GetPullRequest(ctx, msg.Id)
 
 	pullrequest.Description = msg.Description
-	pullrequest.UpdatedAt = time.Now().Unix()
+	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetPullRequest(ctx, pullrequest)
 
@@ -183,7 +183,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	var pullRequest = k.GetPullRequest(ctx, msg.Id)
-	currentTime := time.Now().Unix()
+	currentTime := ctx.BlockTime().Unix()
 
 	repository := k.GetRepository(ctx, pullRequest.BaseRepoId)
 	var havePermission bool = false

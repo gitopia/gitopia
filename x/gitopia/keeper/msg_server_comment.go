@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -35,7 +34,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment type %v", msg.CommentType))
 	}
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:           msg.Creator,
@@ -80,7 +79,7 @@ func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComm
 
 	comment.Body = msg.Body
 	comment.Attachments = msg.Attachments
-	comment.UpdatedAt = time.Now().Unix()
+	comment.UpdatedAt = ctx.BlockTime().Unix()
 
 	// Checks that the element exists
 	if !k.HasComment(ctx, msg.Id) {

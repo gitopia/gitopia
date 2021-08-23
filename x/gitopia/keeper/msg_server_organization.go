@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -29,7 +28,7 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name %v already taken", msg.Name))
 	}
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 	updatedAt := createdAt
 	verified := false
 	var members []*types.OrganizationMember
@@ -180,7 +179,7 @@ func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdat
 	organization.Email = msg.Email
 	organization.Website = msg.Website
 	organization.Description = msg.Description
-	organization.UpdatedAt = time.Now().Unix()
+	organization.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetOrganization(ctx, organization)
 

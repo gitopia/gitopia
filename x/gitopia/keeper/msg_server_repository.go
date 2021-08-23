@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -75,7 +74,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		}
 	}
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 	updatedAt := createdAt
 	defaultBranch := string("master")
 
@@ -316,7 +315,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		}
 	}
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 
 	var forkRepo = types.Repository{
 		Creator:       msg.Creator,
@@ -806,7 +805,7 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 	repository.Name = msg.Name
 	repository.Description = msg.Description
 	repository.Labels = msg.Labels
-	repository.UpdatedAt = time.Now().Unix()
+	repository.UpdatedAt = ctx.BlockTime().Unix()
 	repository.License = msg.License
 	repository.DefaultBranch = msg.DefaultBranch
 
