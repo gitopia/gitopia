@@ -12,8 +12,8 @@ message User {
   string avatarUrl = 4; 
   repeated uint64 followers = 5; 
   repeated uint64 following = 6; 
-  map<string, uint64> repositories = 7;
-  map<string, uint64> organizations = 8; 
+  repeated UserRepository repositories = 7;
+  repeated UserOrganization organizations = 8; 
   repeated uint64 starred_repos = 9; 
   string subscriptions = 10; 
   string email = 11; 
@@ -21,4 +21,14 @@ message User {
   int64 createdAt = 13; 
   int64 updatedAt = 14; 
   string extensions = 15; 
+}
+
+message UserRepository {
+  string name = 1;
+  uint64 id = 2;
+}
+
+message UserOrganization {
+  string name = 1;
+  uint64 id = 2;
 }

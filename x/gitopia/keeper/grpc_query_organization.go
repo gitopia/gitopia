@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"sort"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -12,6 +11,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -168,9 +168,9 @@ func (k Keeper) OrganizationRepository(c context.Context, req *types.QueryGetOrg
 	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
 	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
 
-	if repositoryId, ok := organization.Repositories[req.RepositoryName]; ok {
+	if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 
 		return &types.QueryGetOrganizationRepositoryResponse{Repository: &repository}, nil
 	}
@@ -192,12 +192,6 @@ func PaginateAllOrganizationRepository(
 
 	totalRepositoryCount := len(organization.Repositories)
 	repositories := organization.Repositories
-
-	var repositoryIds []uint64
-	for _, v := range repositories {
-		repositoryIds = append(repositoryIds, v)
-	}
-	sort.Slice(repositoryIds, func(i, j int) bool { return repositoryIds[i] > repositoryIds[j] })
 
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
@@ -232,7 +226,7 @@ func PaginateAllOrganizationRepository(
 			}
 
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryIds[i])), &repository)
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err
@@ -253,7 +247,7 @@ func PaginateAllOrganizationRepository(
 	for i := offset; uint64(i) < uint64(totalRepositoryCount); i++ {
 		if uint64(i) < end {
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryIds[i])), &repository)
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err

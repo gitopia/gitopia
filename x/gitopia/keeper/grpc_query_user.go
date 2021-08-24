@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -78,9 +79,9 @@ func (k Keeper) UserRepositoryAll(c context.Context, req *types.QueryAllUserRepo
 
 	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
-	for _, repositoryId := range user.Repositories {
+	for _, userRepository := range user.Repositories {
 		var repository types.Repository
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(userRepository.Id)), &repository)
 		repositories = append(repositories, &repository)
 	}
 
@@ -104,9 +105,9 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 	userKey := []byte(types.UserKey + req.UserId)
 	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
 
-	if repositoryId, ok := user.Repositories[req.RepositoryName]; ok {
+	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositoryId)), &repository)
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 
 		return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
 	}
@@ -133,9 +134,9 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 
 	organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 
-	for _, organizationId := range user.Organizations {
+	for _, userOrganization := range user.Organizations {
 		var organization types.Organization
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(userOrganization.Id)), &organization)
 		organizations = append(organizations, &organization)
 	}
 

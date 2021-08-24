@@ -24,33 +24,33 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Repository struct {
-	Creator       string            `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id            uint64            `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Owner         string            `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	Description   string            `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Forks         []uint64          `protobuf:"varint,6,rep,packed,name=forks,proto3" json:"forks,omitempty"`
-	Branches      map[string]string `protobuf:"bytes,7,rep,name=branches,proto3" json:"branches,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Tags          string            `protobuf:"bytes,8,opt,name=tags,proto3" json:"tags,omitempty"`
-	Subscribers   string            `protobuf:"bytes,9,opt,name=subscribers,proto3" json:"subscribers,omitempty"`
-	Commits       string            `protobuf:"bytes,10,opt,name=commits,proto3" json:"commits,omitempty"`
-	IssueIids     map[uint64]uint64 `protobuf:"bytes,11,rep,name=issueIids,proto3" json:"issueIids,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	PullIids      map[uint64]uint64 `protobuf:"bytes,12,rep,name=pullIids,proto3" json:"pullIids,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	IssuesCount   uint64            `protobuf:"varint,13,opt,name=issuesCount,proto3" json:"issuesCount,omitempty"`
-	PullsCount    uint64            `protobuf:"varint,14,opt,name=pullsCount,proto3" json:"pullsCount,omitempty"`
-	Labels        string            `protobuf:"bytes,15,opt,name=labels,proto3" json:"labels,omitempty"`
-	Releases      string            `protobuf:"bytes,16,opt,name=releases,proto3" json:"releases,omitempty"`
-	CreatedAt     int64             `protobuf:"varint,17,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt     int64             `protobuf:"varint,18,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	PushedAt      int64             `protobuf:"varint,19,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
-	Stargazers    []uint64          `protobuf:"varint,20,rep,packed,name=stargazers,proto3" json:"stargazers,omitempty"`
-	Archived      bool              `protobuf:"varint,21,opt,name=archived,proto3" json:"archived,omitempty"`
-	License       string            `protobuf:"bytes,22,opt,name=license,proto3" json:"license,omitempty"`
-	DefaultBranch string            `protobuf:"bytes,23,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
-	Parent        uint64            `protobuf:"varint,24,opt,name=parent,proto3" json:"parent,omitempty"`
-	Fork          bool              `protobuf:"varint,25,opt,name=fork,proto3" json:"fork,omitempty"`
-	Collaborators map[string]string `protobuf:"bytes,26,rep,name=collaborators,proto3" json:"collaborators,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Extensions    string            `protobuf:"bytes,27,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Creator       string                    `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id            uint64                    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Owner         string                    `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Description   string                    `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Forks         []uint64                  `protobuf:"varint,6,rep,packed,name=forks,proto3" json:"forks,omitempty"`
+	Branches      []*RepositoryBranch       `protobuf:"bytes,7,rep,name=branches,proto3" json:"branches,omitempty"`
+	Tags          string                    `protobuf:"bytes,8,opt,name=tags,proto3" json:"tags,omitempty"`
+	Subscribers   string                    `protobuf:"bytes,9,opt,name=subscribers,proto3" json:"subscribers,omitempty"`
+	Commits       string                    `protobuf:"bytes,10,opt,name=commits,proto3" json:"commits,omitempty"`
+	Issues        []*RepositoryIssue        `protobuf:"bytes,11,rep,name=issues,proto3" json:"issues,omitempty"`
+	PullRequests  []*RepositoryPullRequest  `protobuf:"bytes,12,rep,name=pullRequests,proto3" json:"pullRequests,omitempty"`
+	IssuesCount   uint64                    `protobuf:"varint,13,opt,name=issuesCount,proto3" json:"issuesCount,omitempty"`
+	PullsCount    uint64                    `protobuf:"varint,14,opt,name=pullsCount,proto3" json:"pullsCount,omitempty"`
+	Labels        string                    `protobuf:"bytes,15,opt,name=labels,proto3" json:"labels,omitempty"`
+	Releases      string                    `protobuf:"bytes,16,opt,name=releases,proto3" json:"releases,omitempty"`
+	CreatedAt     int64                     `protobuf:"varint,17,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt     int64                     `protobuf:"varint,18,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	PushedAt      int64                     `protobuf:"varint,19,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
+	Stargazers    []uint64                  `protobuf:"varint,20,rep,packed,name=stargazers,proto3" json:"stargazers,omitempty"`
+	Archived      bool                      `protobuf:"varint,21,opt,name=archived,proto3" json:"archived,omitempty"`
+	License       string                    `protobuf:"bytes,22,opt,name=license,proto3" json:"license,omitempty"`
+	DefaultBranch string                    `protobuf:"bytes,23,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
+	Parent        uint64                    `protobuf:"varint,24,opt,name=parent,proto3" json:"parent,omitempty"`
+	Fork          bool                      `protobuf:"varint,25,opt,name=fork,proto3" json:"fork,omitempty"`
+	Collaborators []*RepositoryCollaborator `protobuf:"bytes,26,rep,name=collaborators,proto3" json:"collaborators,omitempty"`
+	Extensions    string                    `protobuf:"bytes,27,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *Repository) Reset()         { *m = Repository{} }
@@ -128,7 +128,7 @@ func (m *Repository) GetForks() []uint64 {
 	return nil
 }
 
-func (m *Repository) GetBranches() map[string]string {
+func (m *Repository) GetBranches() []*RepositoryBranch {
 	if m != nil {
 		return m.Branches
 	}
@@ -156,16 +156,16 @@ func (m *Repository) GetCommits() string {
 	return ""
 }
 
-func (m *Repository) GetIssueIids() map[uint64]uint64 {
+func (m *Repository) GetIssues() []*RepositoryIssue {
 	if m != nil {
-		return m.IssueIids
+		return m.Issues
 	}
 	return nil
 }
 
-func (m *Repository) GetPullIids() map[uint64]uint64 {
+func (m *Repository) GetPullRequests() []*RepositoryPullRequest {
 	if m != nil {
-		return m.PullIids
+		return m.PullRequests
 	}
 	return nil
 }
@@ -261,7 +261,7 @@ func (m *Repository) GetFork() bool {
 	return false
 }
 
-func (m *Repository) GetCollaborators() map[string]string {
+func (m *Repository) GetCollaborators() []*RepositoryCollaborator {
 	if m != nil {
 		return m.Collaborators
 	}
@@ -275,57 +275,266 @@ func (m *Repository) GetExtensions() string {
 	return ""
 }
 
+type RepositoryBranch struct {
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Sha  string `protobuf:"bytes,2,opt,name=sha,proto3" json:"sha,omitempty"`
+}
+
+func (m *RepositoryBranch) Reset()         { *m = RepositoryBranch{} }
+func (m *RepositoryBranch) String() string { return proto.CompactTextString(m) }
+func (*RepositoryBranch) ProtoMessage()    {}
+func (*RepositoryBranch) Descriptor() ([]byte, []int) {
+	return fileDescriptor_771033d6361900fa, []int{1}
+}
+func (m *RepositoryBranch) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RepositoryBranch) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RepositoryBranch.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RepositoryBranch) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepositoryBranch.Merge(m, src)
+}
+func (m *RepositoryBranch) XXX_Size() int {
+	return m.Size()
+}
+func (m *RepositoryBranch) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepositoryBranch.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RepositoryBranch proto.InternalMessageInfo
+
+func (m *RepositoryBranch) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *RepositoryBranch) GetSha() string {
+	if m != nil {
+		return m.Sha
+	}
+	return ""
+}
+
+type RepositoryIssue struct {
+	Iid uint64 `protobuf:"varint,1,opt,name=iid,proto3" json:"iid,omitempty"`
+	Id  uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *RepositoryIssue) Reset()         { *m = RepositoryIssue{} }
+func (m *RepositoryIssue) String() string { return proto.CompactTextString(m) }
+func (*RepositoryIssue) ProtoMessage()    {}
+func (*RepositoryIssue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_771033d6361900fa, []int{2}
+}
+func (m *RepositoryIssue) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RepositoryIssue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RepositoryIssue.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RepositoryIssue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepositoryIssue.Merge(m, src)
+}
+func (m *RepositoryIssue) XXX_Size() int {
+	return m.Size()
+}
+func (m *RepositoryIssue) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepositoryIssue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RepositoryIssue proto.InternalMessageInfo
+
+func (m *RepositoryIssue) GetIid() uint64 {
+	if m != nil {
+		return m.Iid
+	}
+	return 0
+}
+
+func (m *RepositoryIssue) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+type RepositoryPullRequest struct {
+	Iid uint64 `protobuf:"varint,1,opt,name=iid,proto3" json:"iid,omitempty"`
+	Id  uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *RepositoryPullRequest) Reset()         { *m = RepositoryPullRequest{} }
+func (m *RepositoryPullRequest) String() string { return proto.CompactTextString(m) }
+func (*RepositoryPullRequest) ProtoMessage()    {}
+func (*RepositoryPullRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_771033d6361900fa, []int{3}
+}
+func (m *RepositoryPullRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RepositoryPullRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RepositoryPullRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RepositoryPullRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepositoryPullRequest.Merge(m, src)
+}
+func (m *RepositoryPullRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *RepositoryPullRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepositoryPullRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RepositoryPullRequest proto.InternalMessageInfo
+
+func (m *RepositoryPullRequest) GetIid() uint64 {
+	if m != nil {
+		return m.Iid
+	}
+	return 0
+}
+
+func (m *RepositoryPullRequest) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+type RepositoryCollaborator struct {
+	Id         string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Permission string `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+}
+
+func (m *RepositoryCollaborator) Reset()         { *m = RepositoryCollaborator{} }
+func (m *RepositoryCollaborator) String() string { return proto.CompactTextString(m) }
+func (*RepositoryCollaborator) ProtoMessage()    {}
+func (*RepositoryCollaborator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_771033d6361900fa, []int{4}
+}
+func (m *RepositoryCollaborator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RepositoryCollaborator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RepositoryCollaborator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RepositoryCollaborator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepositoryCollaborator.Merge(m, src)
+}
+func (m *RepositoryCollaborator) XXX_Size() int {
+	return m.Size()
+}
+func (m *RepositoryCollaborator) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepositoryCollaborator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RepositoryCollaborator proto.InternalMessageInfo
+
+func (m *RepositoryCollaborator) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *RepositoryCollaborator) GetPermission() string {
+	if m != nil {
+		return m.Permission
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Repository)(nil), "gitopia.gitopia.gitopia.Repository")
-	proto.RegisterMapType((map[string]string)(nil), "gitopia.gitopia.gitopia.Repository.BranchesEntry")
-	proto.RegisterMapType((map[string]string)(nil), "gitopia.gitopia.gitopia.Repository.CollaboratorsEntry")
-	proto.RegisterMapType((map[uint64]uint64)(nil), "gitopia.gitopia.gitopia.Repository.IssueIidsEntry")
-	proto.RegisterMapType((map[uint64]uint64)(nil), "gitopia.gitopia.gitopia.Repository.PullIidsEntry")
+	proto.RegisterType((*RepositoryBranch)(nil), "gitopia.gitopia.gitopia.RepositoryBranch")
+	proto.RegisterType((*RepositoryIssue)(nil), "gitopia.gitopia.gitopia.RepositoryIssue")
+	proto.RegisterType((*RepositoryPullRequest)(nil), "gitopia.gitopia.gitopia.RepositoryPullRequest")
+	proto.RegisterType((*RepositoryCollaborator)(nil), "gitopia.gitopia.gitopia.RepositoryCollaborator")
 }
 
 func init() { proto.RegisterFile("gitopia/repository.proto", fileDescriptor_771033d6361900fa) }
 
 var fileDescriptor_771033d6361900fa = []byte{
-	// 622 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xae, 0x93, 0xb4, 0x4d, 0xb6, 0xa4, 0x94, 0xa5, 0xb4, 0x43, 0x40, 0x96, 0x85, 0x38, 0x44,
-	0x1c, 0x5c, 0x51, 0x24, 0x84, 0x28, 0x07, 0x68, 0xe1, 0xd0, 0x03, 0x52, 0xe5, 0x23, 0xe2, 0xb2,
-	0xb6, 0xb7, 0xce, 0xaa, 0x8e, 0xd7, 0xda, 0x5d, 0x97, 0x86, 0xa7, 0xe0, 0xa9, 0x10, 0xc7, 0x1e,
-	0x39, 0xa2, 0xf6, 0x45, 0xd0, 0xce, 0x3a, 0xae, 0xc3, 0x8f, 0x94, 0x9e, 0x32, 0xdf, 0xcc, 0x7c,
-	0x93, 0x6f, 0x7e, 0xd6, 0x04, 0x32, 0x61, 0x64, 0x29, 0xd8, 0x9e, 0xe2, 0xa5, 0xd4, 0xc2, 0x48,
-	0x35, 0x0b, 0x4b, 0x25, 0x8d, 0xa4, 0xbb, 0x75, 0x24, 0xfc, 0xe3, 0x77, 0xb4, 0x9d, 0xc9, 0x4c,
-	0x62, 0xce, 0x9e, 0xb5, 0x5c, 0xfa, 0x93, 0xef, 0x03, 0x42, 0xa2, 0xa6, 0x06, 0x05, 0xb2, 0x9e,
-	0x28, 0xce, 0x8c, 0x54, 0xe0, 0x05, 0xde, 0x78, 0x10, 0xcd, 0x21, 0xdd, 0x24, 0x1d, 0x91, 0x42,
-	0x27, 0xf0, 0xc6, 0xbd, 0xa8, 0x23, 0x52, 0x4a, 0x49, 0xaf, 0x60, 0x53, 0x0e, 0x5d, 0x4c, 0x43,
-	0x9b, 0x6e, 0x93, 0x55, 0xf9, 0xa5, 0xe0, 0x0a, 0x7a, 0xe8, 0x74, 0x80, 0x06, 0x64, 0x23, 0xe5,
-	0x3a, 0x51, 0xa2, 0x34, 0x42, 0x16, 0xb0, 0x8a, 0xb1, 0xb6, 0xcb, 0xf2, 0x4e, 0xa5, 0x3a, 0xd3,
-	0xb0, 0x16, 0x74, 0xc7, 0xbd, 0xc8, 0x01, 0xfa, 0x91, 0xf4, 0x63, 0xc5, 0x8a, 0x64, 0xc2, 0x35,
-	0xac, 0x07, 0xdd, 0xf1, 0xc6, 0xfe, 0xf3, 0xf0, 0x3f, 0xcd, 0x85, 0x37, 0x2d, 0x84, 0x87, 0x35,
-	0xe7, 0x43, 0x61, 0xd4, 0x2c, 0x6a, 0x4a, 0x58, 0xc1, 0x86, 0x65, 0x1a, 0xfa, 0x4e, 0xb0, 0xb5,
-	0xad, 0x34, 0x5d, 0xc5, 0x56, 0x48, 0xcc, 0x95, 0x86, 0x81, 0x93, 0xd6, 0x72, 0xe1, 0x40, 0xe4,
-	0x74, 0x2a, 0x8c, 0x06, 0x52, 0x0f, 0xc4, 0x41, 0x7a, 0x42, 0x06, 0x42, 0xeb, 0x8a, 0x1f, 0x8b,
-	0x54, 0xc3, 0x06, 0xea, 0xdb, 0x5f, 0x46, 0xdf, 0xf1, 0x9c, 0xe4, 0x04, 0xde, 0x14, 0xb1, 0x0d,
-	0x97, 0x55, 0x9e, 0x63, 0xc1, 0x3b, 0xcb, 0x37, 0x7c, 0x52, 0x73, 0xea, 0x86, 0xe7, 0x25, 0x6c,
-	0x73, 0x58, 0x5b, 0x1f, 0xc9, 0xaa, 0x30, 0x30, 0xc4, 0xd5, 0xb5, 0x5d, 0xd4, 0x27, 0xc4, 0x66,
-	0xd7, 0x09, 0x9b, 0x98, 0xd0, 0xf2, 0xd0, 0x1d, 0xb2, 0x96, 0xb3, 0x98, 0xe7, 0x1a, 0xee, 0x62,
-	0xef, 0x35, 0xa2, 0x23, 0xd2, 0x57, 0x3c, 0xe7, 0x4c, 0x73, 0x0d, 0x5b, 0x18, 0x69, 0x30, 0x7d,
-	0x4c, 0x06, 0x78, 0x32, 0x3c, 0x7d, 0x67, 0xe0, 0x5e, 0xe0, 0x8d, 0xbb, 0xd1, 0x8d, 0xc3, 0x46,
-	0xab, 0x32, 0xad, 0xa3, 0xd4, 0x45, 0x1b, 0x87, 0xad, 0x5b, 0x56, 0x7a, 0x82, 0xc1, 0xfb, 0x18,
-	0x6c, 0xb0, 0xd5, 0xaa, 0x0d, 0x53, 0x19, 0xfb, 0x6a, 0x37, 0xb5, 0x8d, 0x87, 0xd2, 0xf2, 0x58,
-	0x2e, 0x53, 0xc9, 0x44, 0x9c, 0xf3, 0x14, 0x1e, 0x04, 0xde, 0xb8, 0x1f, 0x35, 0xd8, 0x2e, 0x31,
-	0x17, 0x09, 0x2f, 0x34, 0x87, 0x1d, 0xb7, 0xc4, 0x1a, 0xd2, 0xa7, 0x64, 0x98, 0xf2, 0x53, 0x56,
-	0xe5, 0xc6, 0x9d, 0x0d, 0xec, 0x62, 0x7c, 0xd1, 0x69, 0xe7, 0x50, 0x32, 0xc5, 0x0b, 0x03, 0x80,
-	0x33, 0xaa, 0x91, 0x3d, 0x29, 0x7b, 0xaa, 0xf0, 0x10, 0xff, 0x0f, 0x6d, 0xfa, 0x99, 0x0c, 0x13,
-	0x99, 0xe7, 0x2c, 0x96, 0xca, 0xbe, 0x1b, 0x0d, 0x23, 0xdc, 0xe4, 0xcb, 0x65, 0x36, 0x79, 0xd4,
-	0x26, 0xba, 0x75, 0x2e, 0x16, 0xb3, 0x53, 0xe0, 0x17, 0x86, 0x17, 0x5a, 0xc8, 0x42, 0xc3, 0x23,
-	0x14, 0xdb, 0xf2, 0x8c, 0x0e, 0xc8, 0x70, 0xe1, 0xfe, 0xe9, 0x16, 0xe9, 0x9e, 0xf1, 0x59, 0xfd,
-	0x98, 0xad, 0x69, 0x1f, 0xdb, 0x39, 0xcb, 0x2b, 0x8e, 0x6f, 0x79, 0x10, 0x39, 0xf0, 0xba, 0xf3,
-	0xca, 0x1b, 0xbd, 0x21, 0x9b, 0x8b, 0xc7, 0xd9, 0x66, 0xf7, 0xfe, 0xc1, 0xee, 0xb5, 0xd9, 0x07,
-	0x64, 0xb8, 0x70, 0x89, 0xb7, 0x22, 0xbf, 0x25, 0xf4, 0xef, 0xe6, 0x6f, 0x23, 0xfe, 0xf0, 0xfd,
-	0x8f, 0x2b, 0xdf, 0xbb, 0xbc, 0xf2, 0xbd, 0x5f, 0x57, 0xbe, 0xf7, 0xed, 0xda, 0x5f, 0xb9, 0xbc,
-	0xf6, 0x57, 0x7e, 0x5e, 0xfb, 0x2b, 0x9f, 0x9e, 0x65, 0xc2, 0x4c, 0xaa, 0x38, 0x4c, 0xe4, 0x74,
-	0x6f, 0xfe, 0xd9, 0x9c, 0xff, 0x5e, 0x34, 0x96, 0x99, 0x95, 0x5c, 0xc7, 0x6b, 0xf8, 0x55, 0x7c,
-	0xf1, 0x3b, 0x00, 0x00, 0xff, 0xff, 0xbb, 0xf6, 0x21, 0x03, 0x60, 0x05, 0x00, 0x00,
+	// 625 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0xae, 0x9b, 0x34, 0x4d, 0xb6, 0xbf, 0x2c, 0xfd, 0x19, 0x0a, 0x8a, 0xac, 0x88, 0x83, 0xe1,
+	0x90, 0x48, 0xf4, 0x02, 0x37, 0x68, 0x41, 0x82, 0x1b, 0x5a, 0x89, 0x0b, 0xb7, 0xb5, 0xbd, 0x4d,
+	0x56, 0x38, 0x5e, 0xb3, 0xbb, 0x86, 0x96, 0xa7, 0xe0, 0x59, 0x78, 0x0a, 0x8e, 0x3d, 0x72, 0x44,
+	0xed, 0x8b, 0xa0, 0x19, 0xbb, 0xae, 0x1b, 0x15, 0x29, 0x27, 0xcf, 0x7c, 0x33, 0xdf, 0xf8, 0x9b,
+	0x9d, 0xd9, 0x65, 0x30, 0xd5, 0xde, 0x14, 0x5a, 0x4e, 0xac, 0x2a, 0x8c, 0xd3, 0xde, 0xd8, 0x8b,
+	0x71, 0x61, 0x8d, 0x37, 0xfc, 0xb0, 0x8e, 0x8c, 0x17, 0xbe, 0x47, 0x7b, 0x53, 0x33, 0x35, 0x94,
+	0x33, 0x41, 0xab, 0x4a, 0x1f, 0xfd, 0x5a, 0x67, 0x4c, 0x34, 0x35, 0x38, 0xb0, 0xf5, 0xc4, 0x2a,
+	0xe9, 0x8d, 0x85, 0x20, 0x0c, 0xa2, 0x81, 0xb8, 0x71, 0xf9, 0x36, 0x5b, 0xd5, 0x29, 0xac, 0x86,
+	0x41, 0xd4, 0x15, 0xab, 0x3a, 0xe5, 0x9c, 0x75, 0x73, 0x39, 0x57, 0xd0, 0xa1, 0x34, 0xb2, 0xf9,
+	0x1e, 0x5b, 0x33, 0xdf, 0x73, 0x65, 0xa1, 0x4b, 0x60, 0xe5, 0xf0, 0x90, 0x6d, 0xa4, 0xca, 0x25,
+	0x56, 0x17, 0x5e, 0x9b, 0x1c, 0xd6, 0x28, 0xd6, 0x86, 0x90, 0x77, 0x66, 0xec, 0x17, 0x07, 0xbd,
+	0xb0, 0x13, 0x75, 0x45, 0xe5, 0xf0, 0x77, 0xac, 0x1f, 0x5b, 0x99, 0x27, 0x33, 0xe5, 0x60, 0x3d,
+	0xec, 0x44, 0x1b, 0x2f, 0x9e, 0x8d, 0xff, 0xd3, 0xdc, 0xf8, 0xb6, 0x85, 0x13, 0xa2, 0x88, 0x86,
+	0x8a, 0x42, 0xbd, 0x9c, 0x3a, 0xe8, 0x57, 0x42, 0xd1, 0x46, 0x49, 0xae, 0x8c, 0x51, 0x40, 0xac,
+	0xac, 0x83, 0x41, 0x25, 0xa9, 0x05, 0xd1, 0x41, 0x98, 0xf9, 0x5c, 0x7b, 0x07, 0xac, 0x3e, 0x88,
+	0xca, 0xe5, 0xaf, 0x59, 0x4f, 0x3b, 0x57, 0x2a, 0x07, 0x1b, 0x24, 0x2a, 0x5a, 0x42, 0xd4, 0x07,
+	0x24, 0x88, 0x9a, 0xc7, 0x05, 0xdb, 0x2c, 0xca, 0x2c, 0x13, 0xea, 0x6b, 0xa9, 0x9c, 0x77, 0xb0,
+	0x49, 0x75, 0xc6, 0x4b, 0xd4, 0xf9, 0x78, 0x4b, 0x13, 0x77, 0x6a, 0x60, 0x47, 0x55, 0xf5, 0x53,
+	0x53, 0xe6, 0x1e, 0xb6, 0x68, 0x4e, 0x6d, 0x88, 0x0f, 0x19, 0x43, 0x46, 0x9d, 0xb0, 0x4d, 0x09,
+	0x2d, 0x84, 0x1f, 0xb0, 0x5e, 0x26, 0x63, 0x95, 0x39, 0xd8, 0xa1, 0x86, 0x6b, 0x8f, 0x1f, 0xb1,
+	0xbe, 0x55, 0x99, 0x92, 0x4e, 0x39, 0xd8, 0xa5, 0x48, 0xe3, 0xf3, 0x27, 0x6c, 0x40, 0xfb, 0xa1,
+	0xd2, 0x37, 0x1e, 0x1e, 0x84, 0x41, 0xd4, 0x11, 0xb7, 0x00, 0x46, 0xcb, 0x22, 0xad, 0xa3, 0xbc,
+	0x8a, 0x36, 0x00, 0xd6, 0x2d, 0x4a, 0x37, 0xa3, 0xe0, 0x43, 0x0a, 0x36, 0x3e, 0x6a, 0x75, 0x5e,
+	0xda, 0xa9, 0xfc, 0x81, 0xe3, 0xd9, 0xa3, 0xad, 0x68, 0x21, 0xc8, 0x95, 0x36, 0x99, 0xe9, 0x6f,
+	0x2a, 0x85, 0xfd, 0x30, 0x88, 0xfa, 0xa2, 0xf1, 0x71, 0x72, 0x99, 0x4e, 0x54, 0xee, 0x14, 0x1c,
+	0x54, 0x93, 0xab, 0x5d, 0xfe, 0x94, 0x6d, 0xa5, 0xea, 0x4c, 0x96, 0x99, 0xaf, 0x96, 0x04, 0x0e,
+	0x29, 0x7e, 0x17, 0xc4, 0x73, 0x28, 0xa4, 0x55, 0xb9, 0x07, 0xa0, 0x33, 0xaa, 0x3d, 0xdc, 0x23,
+	0xdc, 0x4b, 0x78, 0x44, 0xff, 0x23, 0x9b, 0x7f, 0x62, 0x5b, 0x89, 0xc9, 0x32, 0x19, 0x1b, 0x8b,
+	0x97, 0xc4, 0xc1, 0x11, 0x8d, 0x72, 0xb2, 0xc4, 0x28, 0x4f, 0x5b, 0x3c, 0x71, 0xb7, 0x0a, 0xb6,
+	0xaf, 0xce, 0xbd, 0xca, 0x9d, 0x36, 0xb9, 0x83, 0xc7, 0xa4, 0xb2, 0x85, 0x8c, 0x5e, 0xb2, 0xdd,
+	0xc5, 0x85, 0x6f, 0xee, 0x63, 0xd0, 0xba, 0x8f, 0xbb, 0xac, 0xe3, 0x66, 0x92, 0x2e, 0xed, 0x40,
+	0xa0, 0x39, 0x3a, 0x66, 0x3b, 0x0b, 0x5b, 0x89, 0x49, 0x5a, 0xa7, 0xc4, 0xeb, 0x0a, 0x34, 0x17,
+	0xaf, 0xfa, 0xe8, 0x15, 0xdb, 0xbf, 0x77, 0x05, 0x97, 0xa0, 0xbe, 0x67, 0x07, 0xf7, 0xb7, 0x5c,
+	0x67, 0x56, 0x6a, 0xf1, 0x3d, 0xc1, 0xf5, 0x54, 0x76, 0xae, 0x1d, 0xb6, 0x58, 0x4b, 0x6e, 0x21,
+	0x27, 0x6f, 0x7f, 0x5f, 0x0d, 0x83, 0xcb, 0xab, 0x61, 0xf0, 0xf7, 0x6a, 0x18, 0xfc, 0xbc, 0x1e,
+	0xae, 0x5c, 0x5e, 0x0f, 0x57, 0xfe, 0x5c, 0x0f, 0x57, 0x3e, 0x3f, 0x9f, 0x6a, 0x3f, 0x2b, 0xe3,
+	0x71, 0x62, 0xe6, 0x93, 0x9b, 0x67, 0xf1, 0xe6, 0x7b, 0xde, 0x58, 0xfe, 0xa2, 0x50, 0x2e, 0xee,
+	0xd1, 0xab, 0x77, 0xfc, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x65, 0x21, 0x8e, 0x53, 0x40, 0x05, 0x00,
+	0x00,
 }
 
 func (m *Repository) Marshal() (dAtA []byte, err error) {
@@ -358,20 +567,15 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0xda
 	}
 	if len(m.Collaborators) > 0 {
-		for k := range m.Collaborators {
-			v := m.Collaborators[k]
-			baseI := i
-			i -= len(v)
-			copy(dAtA[i:], v)
-			i = encodeVarintRepository(dAtA, i, uint64(len(v)))
-			i--
-			dAtA[i] = 0x12
-			i -= len(k)
-			copy(dAtA[i:], k)
-			i = encodeVarintRepository(dAtA, i, uint64(len(k)))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintRepository(dAtA, i, uint64(baseI-i))
+		for iNdEx := len(m.Collaborators) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Collaborators[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRepository(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x1
 			i--
@@ -494,32 +698,30 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x68
 	}
-	if len(m.PullIids) > 0 {
-		for k := range m.PullIids {
-			v := m.PullIids[k]
-			baseI := i
-			i = encodeVarintRepository(dAtA, i, uint64(v))
-			i--
-			dAtA[i] = 0x10
-			i = encodeVarintRepository(dAtA, i, uint64(k))
-			i--
-			dAtA[i] = 0x8
-			i = encodeVarintRepository(dAtA, i, uint64(baseI-i))
+	if len(m.PullRequests) > 0 {
+		for iNdEx := len(m.PullRequests) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PullRequests[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRepository(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x62
 		}
 	}
-	if len(m.IssueIids) > 0 {
-		for k := range m.IssueIids {
-			v := m.IssueIids[k]
-			baseI := i
-			i = encodeVarintRepository(dAtA, i, uint64(v))
-			i--
-			dAtA[i] = 0x10
-			i = encodeVarintRepository(dAtA, i, uint64(k))
-			i--
-			dAtA[i] = 0x8
-			i = encodeVarintRepository(dAtA, i, uint64(baseI-i))
+	if len(m.Issues) > 0 {
+		for iNdEx := len(m.Issues) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Issues[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRepository(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x5a
 		}
@@ -546,20 +748,15 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x42
 	}
 	if len(m.Branches) > 0 {
-		for k := range m.Branches {
-			v := m.Branches[k]
-			baseI := i
-			i -= len(v)
-			copy(dAtA[i:], v)
-			i = encodeVarintRepository(dAtA, i, uint64(len(v)))
-			i--
-			dAtA[i] = 0x12
-			i -= len(k)
-			copy(dAtA[i:], k)
-			i = encodeVarintRepository(dAtA, i, uint64(len(k)))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintRepository(dAtA, i, uint64(baseI-i))
+		for iNdEx := len(m.Branches) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Branches[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRepository(dAtA, i, uint64(size))
+			}
 			i--
 			dAtA[i] = 0x3a
 		}
@@ -618,6 +815,146 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *RepositoryBranch) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RepositoryBranch) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RepositoryBranch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Sha) > 0 {
+		i -= len(m.Sha)
+		copy(dAtA[i:], m.Sha)
+		i = encodeVarintRepository(dAtA, i, uint64(len(m.Sha)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintRepository(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RepositoryIssue) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RepositoryIssue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RepositoryIssue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Iid != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.Iid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RepositoryPullRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RepositoryPullRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RepositoryPullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Iid != 0 {
+		i = encodeVarintRepository(dAtA, i, uint64(m.Iid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RepositoryCollaborator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RepositoryCollaborator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RepositoryCollaborator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Permission) > 0 {
+		i -= len(m.Permission)
+		copy(dAtA[i:], m.Permission)
+		i = encodeVarintRepository(dAtA, i, uint64(len(m.Permission)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintRepository(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintRepository(dAtA []byte, offset int, v uint64) int {
 	offset -= sovRepository(v)
 	base := offset
@@ -662,11 +999,9 @@ func (m *Repository) Size() (n int) {
 		n += 1 + sovRepository(uint64(l)) + l
 	}
 	if len(m.Branches) > 0 {
-		for k, v := range m.Branches {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovRepository(uint64(len(k))) + 1 + len(v) + sovRepository(uint64(len(v)))
-			n += mapEntrySize + 1 + sovRepository(uint64(mapEntrySize))
+		for _, e := range m.Branches {
+			l = e.Size()
+			n += 1 + l + sovRepository(uint64(l))
 		}
 	}
 	l = len(m.Tags)
@@ -681,20 +1016,16 @@ func (m *Repository) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
-	if len(m.IssueIids) > 0 {
-		for k, v := range m.IssueIids {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + sovRepository(uint64(k)) + 1 + sovRepository(uint64(v))
-			n += mapEntrySize + 1 + sovRepository(uint64(mapEntrySize))
+	if len(m.Issues) > 0 {
+		for _, e := range m.Issues {
+			l = e.Size()
+			n += 1 + l + sovRepository(uint64(l))
 		}
 	}
-	if len(m.PullIids) > 0 {
-		for k, v := range m.PullIids {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + sovRepository(uint64(k)) + 1 + sovRepository(uint64(v))
-			n += mapEntrySize + 1 + sovRepository(uint64(mapEntrySize))
+	if len(m.PullRequests) > 0 {
+		for _, e := range m.PullRequests {
+			l = e.Size()
+			n += 1 + l + sovRepository(uint64(l))
 		}
 	}
 	if m.IssuesCount != 0 {
@@ -745,16 +1076,78 @@ func (m *Repository) Size() (n int) {
 		n += 3
 	}
 	if len(m.Collaborators) > 0 {
-		for k, v := range m.Collaborators {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovRepository(uint64(len(k))) + 1 + len(v) + sovRepository(uint64(len(v)))
-			n += mapEntrySize + 2 + sovRepository(uint64(mapEntrySize))
+		for _, e := range m.Collaborators {
+			l = e.Size()
+			n += 2 + l + sovRepository(uint64(l))
 		}
 	}
 	l = len(m.Extensions)
 	if l > 0 {
 		n += 2 + l + sovRepository(uint64(l))
+	}
+	return n
+}
+
+func (m *RepositoryBranch) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovRepository(uint64(l))
+	}
+	l = len(m.Sha)
+	if l > 0 {
+		n += 1 + l + sovRepository(uint64(l))
+	}
+	return n
+}
+
+func (m *RepositoryIssue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Iid != 0 {
+		n += 1 + sovRepository(uint64(m.Iid))
+	}
+	if m.Id != 0 {
+		n += 1 + sovRepository(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *RepositoryPullRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Iid != 0 {
+		n += 1 + sovRepository(uint64(m.Iid))
+	}
+	if m.Id != 0 {
+		n += 1 + sovRepository(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *RepositoryCollaborator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovRepository(uint64(l))
+	}
+	l = len(m.Permission)
+	if l > 0 {
+		n += 1 + l + sovRepository(uint64(l))
 	}
 	return n
 }
@@ -1046,103 +1439,10 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Branches == nil {
-				m.Branches = make(map[string]string)
+			m.Branches = append(m.Branches, &RepositoryBranch{})
+			if err := m.Branches[len(m.Branches)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowRepository
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthRepository
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthRepository
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipRepository(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Branches[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
@@ -1242,7 +1542,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 11:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IssueIids", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Issues", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1269,79 +1569,14 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.IssueIids == nil {
-				m.IssueIids = make(map[uint64]uint64)
+			m.Issues = append(m.Issues, &RepositoryIssue{})
+			if err := m.Issues[len(m.Issues)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			var mapkey uint64
-			var mapvalue uint64
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowRepository
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else if fieldNum == 2 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipRepository(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.IssueIids[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 12:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PullIids", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PullRequests", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1368,75 +1603,10 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.PullIids == nil {
-				m.PullIids = make(map[uint64]uint64)
+			m.PullRequests = append(m.PullRequests, &RepositoryPullRequest{})
+			if err := m.PullRequests[len(m.PullRequests)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			var mapkey uint64
-			var mapvalue uint64
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowRepository
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else if fieldNum == 2 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipRepository(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.PullIids[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 13:
 			if wireType != 0 {
@@ -1825,103 +1995,10 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Collaborators == nil {
-				m.Collaborators = make(map[string]string)
+			m.Collaborators = append(m.Collaborators, &RepositoryCollaborator{})
+			if err := m.Collaborators[len(m.Collaborators)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
-			var mapkey string
-			var mapvalue string
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowRepository
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthRepository
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var stringLenmapvalue uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowRepository
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapvalue |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapvalue := int(stringLenmapvalue)
-					if intStringLenmapvalue < 0 {
-						return ErrInvalidLengthRepository
-					}
-					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
-					if postStringIndexmapvalue < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if postStringIndexmapvalue > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
-					iNdEx = postStringIndexmapvalue
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipRepository(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthRepository
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Collaborators[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 27:
 			if wireType != 2 {
@@ -1954,6 +2031,410 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Extensions = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRepository(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RepositoryBranch) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRepository
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RepositoryBranch: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RepositoryBranch: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRepository
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sha", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRepository
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sha = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRepository(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RepositoryIssue) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRepository
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RepositoryIssue: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RepositoryIssue: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Iid", wireType)
+			}
+			m.Iid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Iid |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRepository(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RepositoryPullRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRepository
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RepositoryPullRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RepositoryPullRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Iid", wireType)
+			}
+			m.Iid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Iid |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRepository(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RepositoryCollaborator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRepository
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RepositoryCollaborator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RepositoryCollaborator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRepository
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permission", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRepository
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRepository
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRepository
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Permission = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

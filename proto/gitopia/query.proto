@@ -279,7 +279,7 @@ message QueryGetAllBranchRequest {
 }
 
 message QueryGetAllBranchResponse {
-	map<string, string> Branches = 1;
+	repeated RepositoryBranch Branches = 1;
 }
 
 message QueryGetBranchShaRequest {

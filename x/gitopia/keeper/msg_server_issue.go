@@ -13,19 +13,23 @@ import (
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
 	if !k.HasRepository(ctx, msg.RepositoryId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository Id %d doesn't exist", msg.RepositoryId))
 	}
 
-	repo := k.GetRepository(ctx, msg.RepositoryId)
-	repo.IssuesCount += 1
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+	repository.IssuesCount += 1
 
-	createdAt := time.Now().Unix()
+	createdAt := ctx.BlockTime().Unix()
 	closedAt := time.Time{}.Unix()
 
 	var issue = types.Issue{
 		Creator:       msg.Creator,
-		Iid:           repo.IssuesCount,
+		Iid:           repository.IssuesCount,
 		Title:         msg.Title,
 		State:         "Open",
 		Description:   msg.Description,
@@ -44,13 +48,12 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		issue,
 	)
 
-	/* Append Issue in the respective Repository */
-	// Initialize the map if it's nil
-	if repo.IssueIids == nil {
-		repo.IssueIids = make(map[uint64]uint64)
+	var repositoryIssue = types.RepositoryIssue{
+		Iid: repository.IssuesCount,
+		Id:  id,
 	}
-	repo.IssueIids[repo.IssuesCount] = id
-	k.SetRepository(ctx, repo)
+
+	repository.Issues = append(repository.Issues, &repositoryIssue)
 
 	return &types.MsgCreateIssueResponse{
 		Id:  id,
@@ -67,7 +70,7 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 	issue.Description = msg.Description
 	issue.Labels = msg.Labels
 	issue.Weight = msg.Weight
-	issue.UpdatedAt = time.Now().Unix()
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 	issue.Assignees = msg.Assignees
 
 	// Checks that the element exists
@@ -101,7 +104,7 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 	var issue = k.GetIssue(ctx, msg.Id)
 
 	issue.Title = msg.Title
-	issue.UpdatedAt = time.Now().Unix()
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetIssue(ctx, issue)
 
@@ -124,7 +127,7 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 	var issue = k.GetIssue(ctx, msg.Id)
 
 	issue.Description = msg.Description
-	issue.UpdatedAt = time.Now().Unix()
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetIssue(ctx, issue)
 
@@ -139,7 +142,7 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	if issue.State == "open" {
 		issue.State = "closed"
 		issue.ClosedBy = msg.Creator
-		issue.ClosedAt = time.Now().Unix()
+		issue.ClosedAt = ctx.BlockTime().Unix()
 	} else if issue.State == "closed" {
 		issue.State = "open"
 		issue.ClosedBy = string("")

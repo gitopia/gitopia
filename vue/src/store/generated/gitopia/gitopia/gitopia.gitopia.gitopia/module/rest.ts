@@ -187,9 +187,9 @@ export interface GitopiaOrganization {
   avatarUrl?: string;
   followers?: string[];
   following?: string[];
-  repositories?: Record<string, string>;
+  repositories?: GitopiaOrganizationRepository[];
   teams?: string[];
-  members?: Record<string, string>;
+  members?: GitopiaOrganizationMember[];
   location?: string;
   email?: string;
   website?: string;
@@ -202,6 +202,18 @@ export interface GitopiaOrganization {
   /** @format int64 */
   updatedAt?: string;
   extensions?: string;
+}
+
+export interface GitopiaOrganizationMember {
+  id?: string;
+  role?: string;
+}
+
+export interface GitopiaOrganizationRepository {
+  name?: string;
+
+  /** @format uint64 */
+  id?: string;
 }
 
 export interface GitopiaPullRequest {
@@ -411,7 +423,7 @@ export interface GitopiaQueryAllWhoisResponse {
 }
 
 export interface GitopiaQueryGetAllBranchResponse {
-  Branches?: Record<string, string>;
+  Branches?: GitopiaRepositoryBranch[];
 }
 
 export interface GitopiaQueryGetBranchShaResponse {
@@ -475,12 +487,12 @@ export interface GitopiaRepository {
   owner?: string;
   description?: string;
   forks?: string[];
-  branches?: Record<string, string>;
+  branches?: GitopiaRepositoryBranch[];
   tags?: string;
   subscribers?: string;
   commits?: string;
-  issueIids?: Record<string, string>;
-  pullIids?: Record<string, string>;
+  issues?: GitopiaRepositoryIssue[];
+  pullRequests?: GitopiaRepositoryPullRequest[];
 
   /** @format uint64 */
   issuesCount?: string;
@@ -506,8 +518,34 @@ export interface GitopiaRepository {
   /** @format uint64 */
   parent?: string;
   fork?: boolean;
-  collaborators?: Record<string, string>;
+  collaborators?: GitopiaRepositoryCollaborator[];
   extensions?: string;
+}
+
+export interface GitopiaRepositoryBranch {
+  name?: string;
+  sha?: string;
+}
+
+export interface GitopiaRepositoryCollaborator {
+  id?: string;
+  permission?: string;
+}
+
+export interface GitopiaRepositoryIssue {
+  /** @format uint64 */
+  iid?: string;
+
+  /** @format uint64 */
+  id?: string;
+}
+
+export interface GitopiaRepositoryPullRequest {
+  /** @format uint64 */
+  iid?: string;
+
+  /** @format uint64 */
+  id?: string;
 }
 
 export interface GitopiaUser {
@@ -517,8 +555,8 @@ export interface GitopiaUser {
   avatarUrl?: string;
   followers?: string[];
   following?: string[];
-  repositories?: Record<string, string>;
-  organizations?: Record<string, string>;
+  repositories?: GitopiaUserRepository[];
+  organizations?: GitopiaUserOrganization[];
   starredRepos?: string[];
   subscriptions?: string;
   email?: string;
@@ -530,6 +568,20 @@ export interface GitopiaUser {
   /** @format int64 */
   updatedAt?: string;
   extensions?: string;
+}
+
+export interface GitopiaUserOrganization {
+  name?: string;
+
+  /** @format uint64 */
+  id?: string;
+}
+
+export interface GitopiaUserRepository {
+  name?: string;
+
+  /** @format uint64 */
+  id?: string;
 }
 
 export interface GitopiaWhois {
