@@ -55,6 +55,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	repository.Issues = append(repository.Issues, &repositoryIssue)
 
+	k.SetRepository(ctx, repository)
+
 	return &types.MsgCreateIssueResponse{
 		Id:  id,
 		Iid: issue.Iid,
