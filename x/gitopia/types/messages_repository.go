@@ -247,6 +247,10 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
 	}
+	_, exists := RepositoryCollaborator_Permission_value[msg.Role]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid role (%s)", msg.Role)
+	}
 	return nil
 }
 
