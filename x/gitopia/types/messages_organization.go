@@ -85,6 +85,10 @@ func (msg *MsgUpdateOrganizationMember) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
 	}
+	_, exists := OrganizationMember_Role_value[msg.Role]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid role (%s)", msg.Role)
+	}
 	return nil
 }
 
