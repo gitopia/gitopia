@@ -4,7 +4,7 @@ export interface Repository {
     creator: string;
     id: number;
     name: string;
-    owner: string;
+    owner: RepositoryOwner | undefined;
     description: string;
     forks: number[];
     branches: RepositoryBranch[];
@@ -29,6 +29,17 @@ export interface Repository {
     collaborators: RepositoryCollaborator[];
     extensions: string;
 }
+export interface RepositoryOwner {
+    id: string;
+    type: RepositoryOwner_Type;
+}
+export declare enum RepositoryOwner_Type {
+    USER = 0,
+    ORGANIZATION = 1,
+    UNRECOGNIZED = -1
+}
+export declare function repositoryOwner_TypeFromJSON(object: any): RepositoryOwner_Type;
+export declare function repositoryOwner_TypeToJSON(object: RepositoryOwner_Type): string;
 export interface RepositoryBranch {
     name: string;
     sha: string;
@@ -43,14 +54,31 @@ export interface RepositoryPullRequest {
 }
 export interface RepositoryCollaborator {
     id: string;
-    permission: string;
+    permission: RepositoryCollaborator_Permission;
 }
+export declare enum RepositoryCollaborator_Permission {
+    READ = 0,
+    TRIAGE = 1,
+    WRITE = 2,
+    MAINTAIN = 3,
+    ADMIN = 4,
+    UNRECOGNIZED = -1
+}
+export declare function repositoryCollaborator_PermissionFromJSON(object: any): RepositoryCollaborator_Permission;
+export declare function repositoryCollaborator_PermissionToJSON(object: RepositoryCollaborator_Permission): string;
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;
     fromJSON(object: any): Repository;
     toJSON(message: Repository): unknown;
     fromPartial(object: DeepPartial<Repository>): Repository;
+};
+export declare const RepositoryOwner: {
+    encode(message: RepositoryOwner, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryOwner;
+    fromJSON(object: any): RepositoryOwner;
+    toJSON(message: RepositoryOwner): unknown;
+    fromPartial(object: DeepPartial<RepositoryOwner>): RepositoryOwner;
 };
 export declare const RepositoryBranch: {
     encode(message: RepositoryBranch, writer?: Writer): Writer;

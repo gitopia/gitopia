@@ -2,12 +2,42 @@
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+export var Issue_State;
+(function (Issue_State) {
+    Issue_State[Issue_State["OPEN"] = 0] = "OPEN";
+    Issue_State[Issue_State["CLOSED"] = 1] = "CLOSED";
+    Issue_State[Issue_State["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(Issue_State || (Issue_State = {}));
+export function issue_StateFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "OPEN":
+            return Issue_State.OPEN;
+        case 1:
+        case "CLOSED":
+            return Issue_State.CLOSED;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return Issue_State.UNRECOGNIZED;
+    }
+}
+export function issue_StateToJSON(object) {
+    switch (object) {
+        case Issue_State.OPEN:
+            return "OPEN";
+        case Issue_State.CLOSED:
+            return "CLOSED";
+        default:
+            return "UNKNOWN";
+    }
+}
 const baseIssue = {
     creator: "",
     id: 0,
     iid: 0,
     title: "",
-    state: "",
+    state: 0,
     description: "",
     comments: 0,
     commentsCount: 0,
@@ -36,8 +66,8 @@ export const Issue = {
         if (message.title !== "") {
             writer.uint32(34).string(message.title);
         }
-        if (message.state !== "") {
-            writer.uint32(42).string(message.state);
+        if (message.state !== 0) {
+            writer.uint32(40).int32(message.state);
         }
         if (message.description !== "") {
             writer.uint32(50).string(message.description);
@@ -108,7 +138,7 @@ export const Issue = {
                     message.title = reader.string();
                     break;
                 case 5:
-                    message.state = reader.string();
+                    message.state = reader.int32();
                     break;
                 case 6:
                     message.description = reader.string();
@@ -203,10 +233,10 @@ export const Issue = {
             message.title = "";
         }
         if (object.state !== undefined && object.state !== null) {
-            message.state = String(object.state);
+            message.state = issue_StateFromJSON(object.state);
         }
         else {
-            message.state = "";
+            message.state = 0;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = String(object.description);
@@ -290,7 +320,8 @@ export const Issue = {
         message.id !== undefined && (obj.id = message.id);
         message.iid !== undefined && (obj.iid = message.iid);
         message.title !== undefined && (obj.title = message.title);
-        message.state !== undefined && (obj.state = message.state);
+        message.state !== undefined &&
+            (obj.state = issue_StateToJSON(message.state));
         message.description !== undefined &&
             (obj.description = message.description);
         if (message.comments) {
@@ -363,7 +394,7 @@ export const Issue = {
             message.state = object.state;
         }
         else {
-            message.state = "";
+            message.state = 0;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = object.description;

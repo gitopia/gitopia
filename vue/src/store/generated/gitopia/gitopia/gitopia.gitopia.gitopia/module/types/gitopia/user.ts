@@ -9,8 +9,8 @@ export interface User {
   username: string;
   usernameGithub: string;
   avatarUrl: string;
-  followers: number[];
-  following: number[];
+  followers: string[];
+  following: string[];
   repositories: UserRepository[];
   organizations: UserOrganization[];
   starredRepos: number[];
@@ -37,8 +37,8 @@ const baseUser: object = {
   username: "",
   usernameGithub: "",
   avatarUrl: "",
-  followers: 0,
-  following: 0,
+  followers: "",
+  following: "",
   starredRepos: 0,
   subscriptions: "",
   email: "",
@@ -62,16 +62,12 @@ export const User = {
     if (message.avatarUrl !== "") {
       writer.uint32(34).string(message.avatarUrl);
     }
-    writer.uint32(42).fork();
     for (const v of message.followers) {
-      writer.uint64(v);
+      writer.uint32(42).string(v!);
     }
-    writer.ldelim();
-    writer.uint32(50).fork();
     for (const v of message.following) {
-      writer.uint64(v);
+      writer.uint32(50).string(v!);
     }
-    writer.ldelim();
     for (const v of message.repositories) {
       UserRepository.encode(v!, writer.uint32(58).fork()).ldelim();
     }
@@ -129,24 +125,10 @@ export const User = {
           message.avatarUrl = reader.string();
           break;
         case 5:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.followers.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.followers.push(longToNumber(reader.uint64() as Long));
-          }
+          message.followers.push(reader.string());
           break;
         case 6:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.following.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.following.push(longToNumber(reader.uint64() as Long));
-          }
+          message.following.push(reader.string());
           break;
         case 7:
           message.repositories.push(
@@ -223,12 +205,12 @@ export const User = {
     }
     if (object.followers !== undefined && object.followers !== null) {
       for (const e of object.followers) {
-        message.followers.push(Number(e));
+        message.followers.push(String(e));
       }
     }
     if (object.following !== undefined && object.following !== null) {
       for (const e of object.following) {
-        message.following.push(Number(e));
+        message.following.push(String(e));
       }
     }
     if (object.repositories !== undefined && object.repositories !== null) {

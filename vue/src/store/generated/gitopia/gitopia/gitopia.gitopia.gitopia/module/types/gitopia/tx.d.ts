@@ -174,7 +174,8 @@ export interface MsgDeleteIssueResponse {
 export interface MsgCreateRepository {
     creator: string;
     name: string;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
     description: string;
 }
 export interface MsgCreateRepositoryResponse {
@@ -184,7 +185,8 @@ export interface MsgCreateRepositoryResponse {
 export interface MsgForkRepository {
     creator: string;
     repositoryId: number;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
 }
 export interface MsgForkRepositoryResponse {
     id: number;
@@ -199,7 +201,8 @@ export interface MsgRenameRepositoryResponse {
 export interface MsgChangeOwner {
     creator: string;
     repositoryId: number;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
 }
 export interface MsgChangeOwnerResponse {
 }

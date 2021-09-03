@@ -9,7 +9,7 @@ export interface PullRequest {
   id: number;
   iid: number;
   title: string;
-  state: string;
+  state: PullRequest_State;
   description: string;
   locked: boolean;
   comments: number[];
@@ -34,12 +34,50 @@ export interface PullRequest {
   extensions: string;
 }
 
+export enum PullRequest_State {
+  OPEN = 0,
+  CLOSED = 1,
+  MERGED = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function pullRequest_StateFromJSON(object: any): PullRequest_State {
+  switch (object) {
+    case 0:
+    case "OPEN":
+      return PullRequest_State.OPEN;
+    case 1:
+    case "CLOSED":
+      return PullRequest_State.CLOSED;
+    case 2:
+    case "MERGED":
+      return PullRequest_State.MERGED;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return PullRequest_State.UNRECOGNIZED;
+  }
+}
+
+export function pullRequest_StateToJSON(object: PullRequest_State): string {
+  switch (object) {
+    case PullRequest_State.OPEN:
+      return "OPEN";
+    case PullRequest_State.CLOSED:
+      return "CLOSED";
+    case PullRequest_State.MERGED:
+      return "MERGED";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 const basePullRequest: object = {
   creator: "",
   id: 0,
   iid: 0,
   title: "",
-  state: "",
+  state: 0,
   description: "",
   locked: false,
   comments: 0,
@@ -78,8 +116,8 @@ export const PullRequest = {
     if (message.title !== "") {
       writer.uint32(34).string(message.title);
     }
-    if (message.state !== "") {
-      writer.uint32(42).string(message.state);
+    if (message.state !== 0) {
+      writer.uint32(40).int32(message.state);
     }
     if (message.description !== "") {
       writer.uint32(50).string(message.description);
@@ -179,7 +217,7 @@ export const PullRequest = {
           message.title = reader.string();
           break;
         case 5:
-          message.state = reader.string();
+          message.state = reader.int32() as any;
           break;
         case 6:
           message.description = reader.string();
@@ -297,9 +335,9 @@ export const PullRequest = {
       message.title = "";
     }
     if (object.state !== undefined && object.state !== null) {
-      message.state = String(object.state);
+      message.state = pullRequest_StateFromJSON(object.state);
     } else {
-      message.state = "";
+      message.state = 0;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
@@ -423,7 +461,8 @@ export const PullRequest = {
     message.id !== undefined && (obj.id = message.id);
     message.iid !== undefined && (obj.iid = message.iid);
     message.title !== undefined && (obj.title = message.title);
-    message.state !== undefined && (obj.state = message.state);
+    message.state !== undefined &&
+      (obj.state = pullRequest_StateToJSON(message.state));
     message.description !== undefined &&
       (obj.description = message.description);
     message.locked !== undefined && (obj.locked = message.locked);
@@ -503,7 +542,7 @@ export const PullRequest = {
     if (object.state !== undefined && object.state !== null) {
       message.state = object.state;
     } else {
-      message.state = "";
+      message.state = 0;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;

@@ -5,8 +5,8 @@ export interface User {
     username: string;
     usernameGithub: string;
     avatarUrl: string;
-    followers: number[];
-    following: number[];
+    followers: string[];
+    following: string[];
     repositories: UserRepository[];
     organizations: UserOrganization[];
     starredRepos: number[];

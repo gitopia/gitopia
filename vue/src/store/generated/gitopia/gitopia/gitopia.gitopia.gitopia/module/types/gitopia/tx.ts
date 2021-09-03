@@ -204,7 +204,8 @@ export interface MsgDeleteIssueResponse {}
 export interface MsgCreateRepository {
   creator: string;
   name: string;
-  owner: string;
+  ownerId: string;
+  ownerType: string;
   description: string;
 }
 
@@ -216,7 +217,8 @@ export interface MsgCreateRepositoryResponse {
 export interface MsgForkRepository {
   creator: string;
   repositoryId: number;
-  owner: string;
+  ownerId: string;
+  ownerType: string;
 }
 
 export interface MsgForkRepositoryResponse {
@@ -234,7 +236,8 @@ export interface MsgRenameRepositoryResponse {}
 export interface MsgChangeOwner {
   creator: string;
   repositoryId: number;
-  owner: string;
+  ownerId: string;
+  ownerType: string;
 }
 
 export interface MsgChangeOwnerResponse {}
@@ -3916,7 +3919,8 @@ export const MsgDeleteIssueResponse = {
 const baseMsgCreateRepository: object = {
   creator: "",
   name: "",
-  owner: "",
+  ownerId: "",
+  ownerType: "",
   description: "",
 };
 
@@ -3931,11 +3935,14 @@ export const MsgCreateRepository = {
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
     }
-    if (message.owner !== "") {
-      writer.uint32(26).string(message.owner);
+    if (message.ownerId !== "") {
+      writer.uint32(26).string(message.ownerId);
+    }
+    if (message.ownerType !== "") {
+      writer.uint32(34).string(message.ownerType);
     }
     if (message.description !== "") {
-      writer.uint32(34).string(message.description);
+      writer.uint32(42).string(message.description);
     }
     return writer;
   },
@@ -3954,9 +3961,12 @@ export const MsgCreateRepository = {
           message.name = reader.string();
           break;
         case 3:
-          message.owner = reader.string();
+          message.ownerId = reader.string();
           break;
         case 4:
+          message.ownerType = reader.string();
+          break;
+        case 5:
           message.description = reader.string();
           break;
         default:
@@ -3979,10 +3989,15 @@ export const MsgCreateRepository = {
     } else {
       message.name = "";
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = String(object.ownerId);
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = String(object.ownerType);
+    } else {
+      message.ownerType = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
@@ -3996,7 +4011,8 @@ export const MsgCreateRepository = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.name !== undefined && (obj.name = message.name);
-    message.owner !== undefined && (obj.owner = message.owner);
+    message.ownerId !== undefined && (obj.ownerId = message.ownerId);
+    message.ownerType !== undefined && (obj.ownerType = message.ownerType);
     message.description !== undefined &&
       (obj.description = message.description);
     return obj;
@@ -4014,10 +4030,15 @@ export const MsgCreateRepository = {
     } else {
       message.name = "";
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = object.ownerId;
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = object.ownerType;
+    } else {
+      message.ownerType = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
@@ -4117,7 +4138,8 @@ export const MsgCreateRepositoryResponse = {
 const baseMsgForkRepository: object = {
   creator: "",
   repositoryId: 0,
-  owner: "",
+  ownerId: "",
+  ownerType: "",
 };
 
 export const MsgForkRepository = {
@@ -4128,8 +4150,11 @@ export const MsgForkRepository = {
     if (message.repositoryId !== 0) {
       writer.uint32(16).uint64(message.repositoryId);
     }
-    if (message.owner !== "") {
-      writer.uint32(26).string(message.owner);
+    if (message.ownerId !== "") {
+      writer.uint32(26).string(message.ownerId);
+    }
+    if (message.ownerType !== "") {
+      writer.uint32(34).string(message.ownerType);
     }
     return writer;
   },
@@ -4148,7 +4173,10 @@ export const MsgForkRepository = {
           message.repositoryId = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.owner = reader.string();
+          message.ownerId = reader.string();
+          break;
+        case 4:
+          message.ownerType = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -4170,10 +4198,15 @@ export const MsgForkRepository = {
     } else {
       message.repositoryId = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = String(object.ownerId);
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = String(object.ownerType);
+    } else {
+      message.ownerType = "";
     }
     return message;
   },
@@ -4183,7 +4216,8 @@ export const MsgForkRepository = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
-    message.owner !== undefined && (obj.owner = message.owner);
+    message.ownerId !== undefined && (obj.ownerId = message.ownerId);
+    message.ownerType !== undefined && (obj.ownerType = message.ownerType);
     return obj;
   },
 
@@ -4199,10 +4233,15 @@ export const MsgForkRepository = {
     } else {
       message.repositoryId = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = object.ownerId;
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = object.ownerType;
+    } else {
+      message.ownerType = "";
     }
     return message;
   },
@@ -4421,7 +4460,12 @@ export const MsgRenameRepositoryResponse = {
   },
 };
 
-const baseMsgChangeOwner: object = { creator: "", repositoryId: 0, owner: "" };
+const baseMsgChangeOwner: object = {
+  creator: "",
+  repositoryId: 0,
+  ownerId: "",
+  ownerType: "",
+};
 
 export const MsgChangeOwner = {
   encode(message: MsgChangeOwner, writer: Writer = Writer.create()): Writer {
@@ -4431,8 +4475,11 @@ export const MsgChangeOwner = {
     if (message.repositoryId !== 0) {
       writer.uint32(16).uint64(message.repositoryId);
     }
-    if (message.owner !== "") {
-      writer.uint32(26).string(message.owner);
+    if (message.ownerId !== "") {
+      writer.uint32(26).string(message.ownerId);
+    }
+    if (message.ownerType !== "") {
+      writer.uint32(34).string(message.ownerType);
     }
     return writer;
   },
@@ -4451,7 +4498,10 @@ export const MsgChangeOwner = {
           message.repositoryId = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.owner = reader.string();
+          message.ownerId = reader.string();
+          break;
+        case 4:
+          message.ownerType = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -4473,10 +4523,15 @@ export const MsgChangeOwner = {
     } else {
       message.repositoryId = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = String(object.ownerId);
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = String(object.ownerType);
+    } else {
+      message.ownerType = "";
     }
     return message;
   },
@@ -4486,7 +4541,8 @@ export const MsgChangeOwner = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
-    message.owner !== undefined && (obj.owner = message.owner);
+    message.ownerId !== undefined && (obj.ownerId = message.ownerId);
+    message.ownerType !== undefined && (obj.ownerType = message.ownerType);
     return obj;
   },
 
@@ -4502,10 +4558,15 @@ export const MsgChangeOwner = {
     } else {
       message.repositoryId = 0;
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = object.ownerId;
     } else {
-      message.owner = "";
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = object.ownerType;
+    } else {
+      message.ownerType = "";
     }
     return message;
   },

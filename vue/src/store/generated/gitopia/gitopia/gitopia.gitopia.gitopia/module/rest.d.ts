@@ -1,3 +1,14 @@
+export declare enum OrganizationMemberRole {
+    MEMBER = "MEMBER",
+    OWNER = "OWNER"
+}
+export declare enum RepositoryCollaboratorPermission {
+    READ = "READ",
+    TRIAGE = "TRIAGE",
+    WRITE = "WRITE",
+    MAINTAIN = "MAINTAIN",
+    ADMIN = "ADMIN"
+}
 export interface GitopiaComment {
     creator?: string;
     /** @format uint64 */
@@ -26,7 +37,7 @@ export interface GitopiaIssue {
     /** @format uint64 */
     iid?: string;
     title?: string;
-    state?: string;
+    state?: GitopiaIssueState;
     description?: string;
     comments?: string[];
     /** @format uint64 */
@@ -46,6 +57,10 @@ export interface GitopiaIssue {
     closedAt?: string;
     closedBy?: string;
     extensions?: string;
+}
+export declare enum GitopiaIssueState {
+    OPEN = "OPEN",
+    CLOSED = "CLOSED"
 }
 export declare type GitopiaMsgChangeOwnerResponse = object;
 export declare type GitopiaMsgCreateBranchResponse = object;
@@ -137,7 +152,7 @@ export interface GitopiaOrganization {
 }
 export interface GitopiaOrganizationMember {
     id?: string;
-    role?: string;
+    role?: OrganizationMemberRole;
 }
 export interface GitopiaOrganizationRepository {
     name?: string;
@@ -151,7 +166,7 @@ export interface GitopiaPullRequest {
     /** @format uint64 */
     iid?: string;
     title?: string;
-    state?: string;
+    state?: GitopiaPullRequestState;
     description?: string;
     locked?: boolean;
     comments?: string[];
@@ -181,6 +196,11 @@ export interface GitopiaPullRequest {
     /** @format uint64 */
     baseRepoId?: string;
     extensions?: string;
+}
+export declare enum GitopiaPullRequestState {
+    OPEN = "OPEN",
+    CLOSED = "CLOSED",
+    MERGED = "MERGED"
 }
 export interface GitopiaQueryAllCommentResponse {
     Comment?: GitopiaComment[];
@@ -365,7 +385,7 @@ export interface GitopiaRepository {
     /** @format uint64 */
     id?: string;
     name?: string;
-    owner?: string;
+    owner?: GitopiaRepositoryOwner;
     description?: string;
     forks?: string[];
     branches?: GitopiaRepositoryBranch[];
@@ -402,13 +422,21 @@ export interface GitopiaRepositoryBranch {
 }
 export interface GitopiaRepositoryCollaborator {
     id?: string;
-    permission?: string;
+    permission?: RepositoryCollaboratorPermission;
 }
 export interface GitopiaRepositoryIssue {
     /** @format uint64 */
     iid?: string;
     /** @format uint64 */
     id?: string;
+}
+export interface GitopiaRepositoryOwner {
+    id?: string;
+    type?: GitopiaRepositoryOwnerType;
+}
+export declare enum GitopiaRepositoryOwnerType {
+    USER = "USER",
+    ORGANIZATION = "ORGANIZATION"
 }
 export interface GitopiaRepositoryPullRequest {
     /** @format uint64 */

@@ -5,7 +5,7 @@ export interface PullRequest {
     id: number;
     iid: number;
     title: string;
-    state: string;
+    state: PullRequest_State;
     description: string;
     locked: boolean;
     comments: number[];
@@ -29,6 +29,14 @@ export interface PullRequest {
     baseRepoId: number;
     extensions: string;
 }
+export declare enum PullRequest_State {
+    OPEN = 0,
+    CLOSED = 1,
+    MERGED = 2,
+    UNRECOGNIZED = -1
+}
+export declare function pullRequest_StateFromJSON(object: any): PullRequest_State;
+export declare function pullRequest_StateToJSON(object: PullRequest_State): string;
 export declare const PullRequest: {
     encode(message: PullRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): PullRequest;

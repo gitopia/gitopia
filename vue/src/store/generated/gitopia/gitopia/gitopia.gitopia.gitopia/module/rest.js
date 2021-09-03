@@ -8,6 +8,35 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+export var OrganizationMemberRole;
+(function (OrganizationMemberRole) {
+    OrganizationMemberRole["MEMBER"] = "MEMBER";
+    OrganizationMemberRole["OWNER"] = "OWNER";
+})(OrganizationMemberRole || (OrganizationMemberRole = {}));
+export var RepositoryCollaboratorPermission;
+(function (RepositoryCollaboratorPermission) {
+    RepositoryCollaboratorPermission["READ"] = "READ";
+    RepositoryCollaboratorPermission["TRIAGE"] = "TRIAGE";
+    RepositoryCollaboratorPermission["WRITE"] = "WRITE";
+    RepositoryCollaboratorPermission["MAINTAIN"] = "MAINTAIN";
+    RepositoryCollaboratorPermission["ADMIN"] = "ADMIN";
+})(RepositoryCollaboratorPermission || (RepositoryCollaboratorPermission = {}));
+export var GitopiaIssueState;
+(function (GitopiaIssueState) {
+    GitopiaIssueState["OPEN"] = "OPEN";
+    GitopiaIssueState["CLOSED"] = "CLOSED";
+})(GitopiaIssueState || (GitopiaIssueState = {}));
+export var GitopiaPullRequestState;
+(function (GitopiaPullRequestState) {
+    GitopiaPullRequestState["OPEN"] = "OPEN";
+    GitopiaPullRequestState["CLOSED"] = "CLOSED";
+    GitopiaPullRequestState["MERGED"] = "MERGED";
+})(GitopiaPullRequestState || (GitopiaPullRequestState = {}));
+export var GitopiaRepositoryOwnerType;
+(function (GitopiaRepositoryOwnerType) {
+    GitopiaRepositoryOwnerType["USER"] = "USER";
+    GitopiaRepositoryOwnerType["ORGANIZATION"] = "ORGANIZATION";
+})(GitopiaRepositoryOwnerType || (GitopiaRepositoryOwnerType = {}));
 export var ContentType;
 (function (ContentType) {
     ContentType["Json"] = "application/json";

@@ -8,7 +8,7 @@ export interface Repository {
   creator: string;
   id: number;
   name: string;
-  owner: string;
+  owner: RepositoryOwner | undefined;
   description: string;
   forks: number[];
   branches: RepositoryBranch[];
@@ -34,6 +34,47 @@ export interface Repository {
   extensions: string;
 }
 
+export interface RepositoryOwner {
+  id: string;
+  type: RepositoryOwner_Type;
+}
+
+export enum RepositoryOwner_Type {
+  USER = 0,
+  ORGANIZATION = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function repositoryOwner_TypeFromJSON(
+  object: any
+): RepositoryOwner_Type {
+  switch (object) {
+    case 0:
+    case "USER":
+      return RepositoryOwner_Type.USER;
+    case 1:
+    case "ORGANIZATION":
+      return RepositoryOwner_Type.ORGANIZATION;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return RepositoryOwner_Type.UNRECOGNIZED;
+  }
+}
+
+export function repositoryOwner_TypeToJSON(
+  object: RepositoryOwner_Type
+): string {
+  switch (object) {
+    case RepositoryOwner_Type.USER:
+      return "USER";
+    case RepositoryOwner_Type.ORGANIZATION:
+      return "ORGANIZATION";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 export interface RepositoryBranch {
   name: string;
   sha: string;
@@ -51,14 +92,67 @@ export interface RepositoryPullRequest {
 
 export interface RepositoryCollaborator {
   id: string;
-  permission: string;
+  permission: RepositoryCollaborator_Permission;
+}
+
+export enum RepositoryCollaborator_Permission {
+  READ = 0,
+  TRIAGE = 1,
+  WRITE = 2,
+  MAINTAIN = 3,
+  ADMIN = 4,
+  UNRECOGNIZED = -1,
+}
+
+export function repositoryCollaborator_PermissionFromJSON(
+  object: any
+): RepositoryCollaborator_Permission {
+  switch (object) {
+    case 0:
+    case "READ":
+      return RepositoryCollaborator_Permission.READ;
+    case 1:
+    case "TRIAGE":
+      return RepositoryCollaborator_Permission.TRIAGE;
+    case 2:
+    case "WRITE":
+      return RepositoryCollaborator_Permission.WRITE;
+    case 3:
+    case "MAINTAIN":
+      return RepositoryCollaborator_Permission.MAINTAIN;
+    case 4:
+    case "ADMIN":
+      return RepositoryCollaborator_Permission.ADMIN;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return RepositoryCollaborator_Permission.UNRECOGNIZED;
+  }
+}
+
+export function repositoryCollaborator_PermissionToJSON(
+  object: RepositoryCollaborator_Permission
+): string {
+  switch (object) {
+    case RepositoryCollaborator_Permission.READ:
+      return "READ";
+    case RepositoryCollaborator_Permission.TRIAGE:
+      return "TRIAGE";
+    case RepositoryCollaborator_Permission.WRITE:
+      return "WRITE";
+    case RepositoryCollaborator_Permission.MAINTAIN:
+      return "MAINTAIN";
+    case RepositoryCollaborator_Permission.ADMIN:
+      return "ADMIN";
+    default:
+      return "UNKNOWN";
+  }
 }
 
 const baseRepository: object = {
   creator: "",
   id: 0,
   name: "",
-  owner: "",
   description: "",
   forks: 0,
   tags: "",
@@ -91,8 +185,8 @@ export const Repository = {
     if (message.name !== "") {
       writer.uint32(26).string(message.name);
     }
-    if (message.owner !== "") {
-      writer.uint32(34).string(message.owner);
+    if (message.owner !== undefined) {
+      RepositoryOwner.encode(message.owner, writer.uint32(34).fork()).ldelim();
     }
     if (message.description !== "") {
       writer.uint32(42).string(message.description);
@@ -193,7 +287,7 @@ export const Repository = {
           message.name = reader.string();
           break;
         case 4:
-          message.owner = reader.string();
+          message.owner = RepositoryOwner.decode(reader, reader.uint32());
           break;
         case 5:
           message.description = reader.string();
@@ -316,9 +410,9 @@ export const Repository = {
       message.name = "";
     }
     if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner);
+      message.owner = RepositoryOwner.fromJSON(object.owner);
     } else {
-      message.owner = "";
+      message.owner = undefined;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
@@ -443,7 +537,10 @@ export const Repository = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
     message.name !== undefined && (obj.name = message.name);
-    message.owner !== undefined && (obj.owner = message.owner);
+    message.owner !== undefined &&
+      (obj.owner = message.owner
+        ? RepositoryOwner.toJSON(message.owner)
+        : undefined);
     message.description !== undefined &&
       (obj.description = message.description);
     if (message.forks) {
@@ -530,9 +627,9 @@ export const Repository = {
       message.name = "";
     }
     if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner;
+      message.owner = RepositoryOwner.fromPartial(object.owner);
     } else {
-      message.owner = "";
+      message.owner = undefined;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
@@ -648,6 +745,79 @@ export const Repository = {
       message.extensions = object.extensions;
     } else {
       message.extensions = "";
+    }
+    return message;
+  },
+};
+
+const baseRepositoryOwner: object = { id: "", type: 0 };
+
+export const RepositoryOwner = {
+  encode(message: RepositoryOwner, writer: Writer = Writer.create()): Writer {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.type !== 0) {
+      writer.uint32(16).int32(message.type);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): RepositoryOwner {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRepositoryOwner } as RepositoryOwner;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = reader.string();
+          break;
+        case 2:
+          message.type = reader.int32() as any;
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RepositoryOwner {
+    const message = { ...baseRepositoryOwner } as RepositoryOwner;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
+    } else {
+      message.id = "";
+    }
+    if (object.type !== undefined && object.type !== null) {
+      message.type = repositoryOwner_TypeFromJSON(object.type);
+    } else {
+      message.type = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: RepositoryOwner): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.type !== undefined &&
+      (obj.type = repositoryOwner_TypeToJSON(message.type));
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<RepositoryOwner>): RepositoryOwner {
+    const message = { ...baseRepositoryOwner } as RepositoryOwner;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = "";
+    }
+    if (object.type !== undefined && object.type !== null) {
+      message.type = object.type;
+    } else {
+      message.type = 0;
     }
     return message;
   },
@@ -874,7 +1044,7 @@ export const RepositoryPullRequest = {
   },
 };
 
-const baseRepositoryCollaborator: object = { id: "", permission: "" };
+const baseRepositoryCollaborator: object = { id: "", permission: 0 };
 
 export const RepositoryCollaborator = {
   encode(
@@ -884,8 +1054,8 @@ export const RepositoryCollaborator = {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
-    if (message.permission !== "") {
-      writer.uint32(18).string(message.permission);
+    if (message.permission !== 0) {
+      writer.uint32(16).int32(message.permission);
     }
     return writer;
   },
@@ -901,7 +1071,7 @@ export const RepositoryCollaborator = {
           message.id = reader.string();
           break;
         case 2:
-          message.permission = reader.string();
+          message.permission = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -919,9 +1089,11 @@ export const RepositoryCollaborator = {
       message.id = "";
     }
     if (object.permission !== undefined && object.permission !== null) {
-      message.permission = String(object.permission);
+      message.permission = repositoryCollaborator_PermissionFromJSON(
+        object.permission
+      );
     } else {
-      message.permission = "";
+      message.permission = 0;
     }
     return message;
   },
@@ -929,7 +1101,10 @@ export const RepositoryCollaborator = {
   toJSON(message: RepositoryCollaborator): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.permission !== undefined && (obj.permission = message.permission);
+    message.permission !== undefined &&
+      (obj.permission = repositoryCollaborator_PermissionToJSON(
+        message.permission
+      ));
     return obj;
   },
 
@@ -945,7 +1120,7 @@ export const RepositoryCollaborator = {
     if (object.permission !== undefined && object.permission !== null) {
       message.permission = object.permission;
     } else {
-      message.permission = "";
+      message.permission = 0;
     }
     return message;
   },
