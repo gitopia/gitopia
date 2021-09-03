@@ -215,7 +215,8 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	if msg.State != "Open" && msg.State != "Closed" && msg.State != "Merged" {
+	_, exists := PullRequest_State_value[msg.State]
+	if !exists {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state (%s)", msg.State)
 	}
 	return nil

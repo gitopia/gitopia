@@ -55,7 +55,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		Creator:             msg.Creator,
 		Iid:                 baseRepo.PullsCount,
 		Title:               msg.Title,
-		State:               "Open",
+		State:               types.PullRequest_OPEN,
 		Description:         msg.Description,
 		CommentsCount:       0,
 		Locked:              false,
@@ -235,19 +235,21 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	switch msg.State {
-	case "Open":
-		if pullRequest.State == "Open" || pullRequest.State == "Merged" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't open (%v) pullRequest", pullRequest.State))
+	case "OPEN":
+		if pullRequest.State == types.PullRequest_OPEN || pullRequest.State == types.PullRequest_MERGED {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't open (%v) pullRequest", pullRequest.State.String()))
 		}
-	case "Closed":
-		if pullRequest.State == "Closed" || pullRequest.State == "Merged" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State))
+		pullRequest.ClosedAt = time.Time{}.Unix()
+		pullRequest.ClosedBy = ""
+	case "CLOSED":
+		if pullRequest.State == types.PullRequest_CLOSED || pullRequest.State == types.PullRequest_MERGED {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State.String()))
 		}
 		pullRequest.ClosedAt = currentTime
 		pullRequest.ClosedBy = msg.Creator
-	case "Merged":
-		if pullRequest.State == "Merged" || pullRequest.State == "Closed" {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State))
+	case "MERGED":
+		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State.String()))
 		}
 		pullRequest.MergedAt = currentTime
 		pullRequest.MergedBy = msg.Creator
@@ -256,13 +258,18 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
 
-	pullRequest.State = msg.State
+	state, exists := types.PullRequest_State_value[msg.State]
+	if !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
+	}
+
+	pullRequest.State = types.PullRequest_State(state)
 	pullRequest.UpdatedAt = currentTime
 
 	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgSetPullRequestStateResponse{
-		State: pullRequest.State,
+		State: pullRequest.State.String(),
 	}, nil
 }
 
