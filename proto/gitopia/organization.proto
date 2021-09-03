@@ -10,8 +10,8 @@ message Organization {
   uint64 id = 2;
   string name = 3; 
   string avatarUrl = 4; 
-  repeated uint64 followers = 5; 
-  repeated uint64 following = 6; 
+  repeated string followers = 5; 
+  repeated string following = 6; 
   repeated OrganizationRepository repositories = 7;
   repeated uint64 teams = 8; 
   repeated OrganizationMember members = 9; 

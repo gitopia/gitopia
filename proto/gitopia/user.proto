@@ -10,8 +10,8 @@ message User {
   string username = 2; 
   string usernameGithub = 3; 
   string avatarUrl = 4; 
-  repeated uint64 followers = 5; 
-  repeated uint64 following = 6; 
+  repeated string followers = 5; 
+  repeated string following = 6; 
   repeated UserRepository repositories = 7;
   repeated UserOrganization organizations = 8; 
   repeated uint64 starred_repos = 9; 
