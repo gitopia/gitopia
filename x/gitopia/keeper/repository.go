@@ -2,12 +2,10 @@ package keeper
 
 import (
 	"encoding/binary"
-	"encoding/json"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -90,15 +88,6 @@ func (k Keeper) HasRepository(ctx sdk.Context, id uint64) bool {
 // GetRepositoryCreator returns the creator of the repository
 func (k Keeper) GetRepositoryCreator(ctx sdk.Context, id uint64) string {
 	return k.GetRepository(ctx, id).Creator
-}
-
-// GetRepositoryOwner returns the owner of the repository
-func (k Keeper) GetRepositoryOwner(ctx sdk.Context, id uint64) (Owner, error) {
-	var o Owner
-	if err := json.Unmarshal([]byte(k.GetRepository(ctx, id).Owner), &o); err != nil {
-		return Owner{}, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	return o, nil
 }
 
 // RemoveRepository removes a repository from the store

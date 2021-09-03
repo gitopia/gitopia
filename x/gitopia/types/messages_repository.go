@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"strconv"
 	"unicode"
 
@@ -29,11 +28,12 @@ func IsRepositoryNameSanitized(msg string) bool {
 
 var _ sdk.Msg = &MsgCreateRepository{}
 
-func NewMsgCreateRepository(creator string, name string, owner string, description string) *MsgCreateRepository {
+func NewMsgCreateRepository(creator string, name string, ownerId string, ownerType string, description string) *MsgCreateRepository {
 	return &MsgCreateRepository{
 		Creator:     creator,
 		Name:        name,
-		Owner:       owner,
+		OwnerId:     ownerId,
+		OwnerType:   ownerType,
 		Description: description,
 	}
 }
@@ -72,33 +72,30 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
+	if msg.OwnerType == RepositoryOwner_USER.String() {
+		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
+	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
+		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
 		if err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
 		}
 	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId uint64, owner string) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Owner:        owner,
+		OwnerId:      ownerId,
+		OwnerType:    ownerType,
 	}
 }
 
@@ -129,33 +126,30 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
+	if msg.OwnerType == RepositoryOwner_USER.String() {
+		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
+	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
+		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
 		if err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
 		}
 	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgChangeOwner{}
 
-func NewMsgChangeOwner(creator string, repositoryId uint64, owner string) *MsgChangeOwner {
+func NewMsgChangeOwner(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgChangeOwner {
 	return &MsgChangeOwner{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Owner:        owner,
+		OwnerId:      ownerId,
+		OwnerType:    ownerType,
 	}
 }
 
@@ -186,22 +180,18 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
+	if msg.OwnerType == RepositoryOwner_USER.String() {
+		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
+	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
+		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
 		if err != nil {
 			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
 		}
 	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
 	return nil
 }

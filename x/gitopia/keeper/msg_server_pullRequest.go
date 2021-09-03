@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -188,27 +187,24 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	repository := k.GetRepository(ctx, pullRequest.BaseRepoId)
 	var havePermission bool = false
 
-	var o Owner
-	if err := json.Unmarshal([]byte(repository.Owner), &o); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
+	ownerType := repository.Owner.Type
 
-	if o.Type == "User" {
-		if ((msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator) || msg.Creator == o.ID {
+	if ownerType == types.RepositoryOwner_USER {
+		if ((msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator) || msg.Creator == repository.Owner.Id {
 			havePermission = true
 		}
-	} else if o.Type == "Organization" {
-		orgId, err := strconv.ParseUint(o.ID, 10, 64)
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		orgId, err := strconv.ParseUint(repository.Owner.Id, 10, 64)
 		if err != nil {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't fetch baseRepository owner")
 		}
 		if !k.HasOrganization(ctx, orgId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", o.ID))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
 
 		organization := k.GetOrganization(ctx, orgId)
 
-		if (msg.State == "Open" || msg.State == "Closed") && msg.Creator == pullRequest.Creator {
+		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
 			havePermission = true
 		}
 		if !havePermission {
@@ -235,19 +231,19 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	switch msg.State {
-	case "OPEN":
+	case types.PullRequest_OPEN.String():
 		if pullRequest.State == types.PullRequest_OPEN || pullRequest.State == types.PullRequest_MERGED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't open (%v) pullRequest", pullRequest.State.String()))
 		}
 		pullRequest.ClosedAt = time.Time{}.Unix()
 		pullRequest.ClosedBy = ""
-	case "CLOSED":
+	case types.PullRequest_CLOSED.String():
 		if pullRequest.State == types.PullRequest_CLOSED || pullRequest.State == types.PullRequest_MERGED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State.String()))
 		}
 		pullRequest.ClosedAt = currentTime
 		pullRequest.ClosedBy = msg.Creator
-	case "MERGED":
+	case types.PullRequest_MERGED.String():
 		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State.String()))
 		}

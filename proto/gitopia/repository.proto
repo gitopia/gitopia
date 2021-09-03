@@ -9,7 +9,7 @@ message Repository {
   string creator = 1;
   uint64 id = 2;
   string name = 3; 
-  string owner = 4; 
+  RepositoryOwner owner = 4; 
   string description = 5; 
   repeated uint64 forks = 6; 
   repeated RepositoryBranch branches = 7;
@@ -33,6 +33,15 @@ message Repository {
   bool fork = 25;
   repeated RepositoryCollaborator collaborators = 26;
   string extensions = 27;
+}
+
+message RepositoryOwner {
+  string id = 1;
+  enum Type {
+    USER = 0;
+	  ORGANIZATION = 1;
+  }
+  Type type = 2;
 }
 
 message RepositoryBranch {

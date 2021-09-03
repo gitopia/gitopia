@@ -253,8 +253,9 @@ message MsgDeleteIssueResponse { }
 message MsgCreateRepository {
   string creator = 1;
   string name = 2;
-  string owner = 3;
-  string description = 4;
+  string ownerId = 3;
+  string ownerType = 4;
+  string description = 5;
 }
 
 message MsgCreateRepositoryResponse {
@@ -265,7 +266,8 @@ message MsgCreateRepositoryResponse {
 message MsgForkRepository {
   string creator = 1;
   uint64 repositoryId = 2;
-  string owner = 3;
+  string ownerId = 3;
+  string ownerType = 4;
 }
 
 message MsgForkRepositoryResponse {
@@ -283,7 +285,8 @@ message MsgRenameRepositoryResponse { }
 message MsgChangeOwner {
   string creator = 1;
   uint64 repositoryId = 2;
-  string owner = 3;
+  string ownerId = 3;
+  string ownerType = 4;
 }
 
 message MsgChangeOwnerResponse { }
