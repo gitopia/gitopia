@@ -153,7 +153,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		}
 
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" || havePermission {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN || havePermission {
 				havePermission = true
 			}
 		}
@@ -184,7 +184,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		}
 
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" || havePermission {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN || havePermission {
 				havePermission = true
 			}
 		}
@@ -391,7 +391,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 			havePermission = true
 		}
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" || havePermission {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN || havePermission {
 				havePermission = true
 			}
 		}
@@ -432,7 +432,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		}
 
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" || havePermission {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN || havePermission {
 				havePermission = true
 			}
 		}
@@ -512,7 +512,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}
@@ -522,13 +522,21 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if _, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.User); exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("collaborators with id (%v) already exists", msg.User))
+	permission, exists := types.RepositoryCollaborator_Permission_value[msg.Role]
+	if !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission arg (%v)", msg.Role))
+	}
+
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.User); exists {
+		repository.Collaborators[i].Permission = types.RepositoryCollaborator_Permission(permission)
+		k.SetRepository(ctx, repository)
+
+		return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
 	}
 
 	var repositoryCollaborator = types.RepositoryCollaborator{
 		Id:         msg.User,
-		Permission: msg.Role,
+		Permission: types.RepositoryCollaborator_Permission(permission),
 	}
 
 	repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
@@ -583,7 +591,7 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}
@@ -645,7 +653,7 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}
@@ -711,7 +719,7 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}
@@ -772,7 +780,7 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}

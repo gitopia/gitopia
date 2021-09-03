@@ -224,7 +224,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	if !havePermission {
 		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == "Admin" {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}

@@ -52,5 +52,12 @@ message RepositoryPullRequest {
 
 message RepositoryCollaborator {
   string id = 1;
-  string permission = 2;
+  enum Permission {
+    READ = 0;
+	  TRIAGE = 1;
+	  WRITE = 2;
+	  MAINTAIN = 3;
+	  ADMIN = 4;
+  }
+  Permission permission = 2;
 }
