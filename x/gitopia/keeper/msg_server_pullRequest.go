@@ -213,7 +213,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		}
 		if !havePermission {
 			if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-				if organization.Members[i].Role == "Owner" {
+				if organization.Members[i].Role == types.OrganizationMember_OWNER {
 					havePermission = true
 				}
 			}

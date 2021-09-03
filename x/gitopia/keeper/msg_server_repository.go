@@ -62,7 +62,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		organization = k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role != "Owner" {
+			if organization.Members[i].Role != types.OrganizationMember_OWNER {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 			}
 		} else {
@@ -178,7 +178,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		currentOrganization = k.GetOrganization(ctx, currentOwnerId)
 
 		if i, exists := utils.OrganizationMemberExists(currentOrganization.Members, msg.Creator); exists {
-			if currentOrganization.Members[i].Role == "Owner" {
+			if currentOrganization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -303,7 +303,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		organization = k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role != "Owner" {
+			if organization.Members[i].Role != types.OrganizationMember_OWNER {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 			}
 		} else {
@@ -426,7 +426,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -504,7 +504,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -583,7 +583,7 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -645,7 +645,7 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -711,7 +711,7 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}
@@ -772,7 +772,7 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 		organization := k.GetOrganization(ctx, orgId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == "Owner" {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
 				havePermission = true
 			}
 		}

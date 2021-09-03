@@ -32,5 +32,9 @@ message OrganizationRepository {
 
 message OrganizationMember {
   string id = 1;
-  string role = 2;
+  enum Role {
+    MEMBER = 0;
+	  OWNER = 1;
+  }
+  Role role = 2;
 }

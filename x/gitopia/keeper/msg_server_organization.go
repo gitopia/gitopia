@@ -35,7 +35,7 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 
 	var organizationMember = types.OrganizationMember{
 		Id:   msg.Creator,
-		Role: "Owner",
+		Role: types.OrganizationMember_OWNER,
 	}
 
 	members = append(members, &organizationMember)
@@ -97,22 +97,34 @@ func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.Ms
 
 	// Checks that the element exists
 	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %d doesn't exist", msg.Id))
 	}
 
 	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-		if organization.Members[i].Role != "Owner" {
+		if organization.Members[i].Role != types.OrganizationMember_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a part of organization", msg.Creator))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of organization", msg.Creator))
+	}
+
+	role, exists := types.OrganizationMember_Role_value[msg.Role]
+	if !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid role arg (%v)", msg.Role))
+	}
+
+	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.User); exists {
+		organization.Members[i].Role = types.OrganizationMember_Role(role)
+		k.SetOrganization(ctx, organization)
+
+		return &types.MsgUpdateOrganizationMemberResponse{}, nil
 	}
 
 	var organizationMember = types.OrganizationMember{
 		Id:   msg.User,
-		Role: msg.Role,
+		Role: types.OrganizationMember_Role(role),
 	}
 
 	organization.Members = append(organization.Members, &organizationMember)
@@ -137,7 +149,7 @@ func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.Ms
 	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-		if organization.Members[i].Role != "Owner" {
+		if organization.Members[i].Role != types.OrganizationMember_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	} else {
@@ -166,7 +178,7 @@ func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdat
 	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-		if organization.Members[i].Role != "Owner" {
+		if organization.Members[i].Role != types.OrganizationMember_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	} else {
