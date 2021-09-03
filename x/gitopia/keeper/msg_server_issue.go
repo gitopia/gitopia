@@ -31,7 +31,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		Creator:       msg.Creator,
 		Iid:           repository.IssuesCount,
 		Title:         msg.Title,
-		State:         "Open",
+		State:         types.Issue_OPEN,
 		Description:   msg.Description,
 		CommentsCount: 0,
 		RepositoryId:  msg.RepositoryId,
@@ -151,12 +151,12 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 	var issue = k.GetIssue(ctx, msg.Id)
 
-	if issue.State == "Open" {
-		issue.State = "Closed"
+	if issue.State == types.Issue_OPEN {
+		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = ctx.BlockTime().Unix()
-	} else if issue.State == "Closed" {
-		issue.State = "Open"
+	} else if issue.State == types.Issue_CLOSED {
+		issue.State = types.Issue_OPEN
 		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
 	} else {
@@ -167,7 +167,7 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgToggleIssueStateResponse{
-		State: issue.State,
+		State: issue.State.String(),
 	}, nil
 }
 
