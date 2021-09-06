@@ -219,12 +219,12 @@ func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest
 	var branches []*types.RepositoryBranch
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.Id) {
+	if !k.HasRepository(ctx, req.RepositoryId) {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryBranch := range repository.Branches {
 		branches = append(branches, repositoryBranch)
