@@ -932,15 +932,15 @@ func request_Query_BranchAll_0(ctx context.Context, marshaler runtime.Marshaler,
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["repositoryId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repositoryId")
 	}
 
-	protoReq.Id, err = runtime.Uint64(val)
+	protoReq.RepositoryId, err = runtime.Uint64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repositoryId", err)
 	}
 
 	msg, err := client.BranchAll(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -959,15 +959,15 @@ func local_request_Query_BranchAll_0(ctx context.Context, marshaler runtime.Mars
 		_   = err
 	)
 
-	val, ok = pathParams["id"]
+	val, ok = pathParams["repositoryId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repositoryId")
 	}
 
-	protoReq.Id, err = runtime.Uint64(val)
+	protoReq.RepositoryId, err = runtime.Uint64(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repositoryId", err)
 	}
 
 	msg, err := server.BranchAll(ctx, &protoReq)
@@ -1336,26 +1336,26 @@ func request_Query_UserRepository_0(ctx context.Context, marshaler runtime.Marsh
 		_   = err
 	)
 
-	val, ok = pathParams["user_id"]
+	val, ok = pathParams["userId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "userId")
 	}
 
 	protoReq.UserId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "userId", err)
 	}
 
-	val, ok = pathParams["repository_name"]
+	val, ok = pathParams["repositoryName"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repository_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repositoryName")
 	}
 
 	protoReq.RepositoryName, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repository_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repositoryName", err)
 	}
 
 	msg, err := client.UserRepository(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -1374,26 +1374,26 @@ func local_request_Query_UserRepository_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["user_id"]
+	val, ok = pathParams["userId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "userId")
 	}
 
 	protoReq.UserId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "userId", err)
 	}
 
-	val, ok = pathParams["repository_name"]
+	val, ok = pathParams["repositoryName"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repository_name")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "repositoryName")
 	}
 
 	protoReq.RepositoryName, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repository_name", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "repositoryName", err)
 	}
 
 	msg, err := server.UserRepository(ctx, &protoReq)
@@ -2978,7 +2978,7 @@ var (
 
 	pattern_Query_RepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "repository"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_BranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "repository", "id", "branches"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_BranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "repository", "repositoryId", "branches"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_BranchSha_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "repository", "repositoryId", "branches", "branchName"}, "", runtime.AssumeColonVerbOpt(true)))
 
@@ -2992,7 +2992,7 @@ var (
 
 	pattern_Query_UserRepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "id", "repositories"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_UserRepository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"gitopia", "repository", "user_id", "repository_name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserRepository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"gitopia", "repository", "userId", "repositoryName"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_UserOrganizationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "id", "organizations"}, "", runtime.AssumeColonVerbOpt(true)))
 

@@ -1181,11 +1181,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryBranchAll
    * @summary Queries a repository by id.
-   * @request GET:/gitopia/gitopia/gitopia/repository/{id}/branches
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches
    */
-  queryBranchAll = (id: string, params: RequestParams = {}) =>
+  queryBranchAll = (repositoryId: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetAllBranchResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/repository/${id}/branches`,
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/branches`,
       method: "GET",
       format: "json",
       ...params,

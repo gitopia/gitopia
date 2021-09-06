@@ -108,7 +108,7 @@ export interface QueryGetRepositoryResponse {
     Repository: Repository | undefined;
 }
 export interface QueryGetAllBranchRequest {
-    id: number;
+    repositoryId: number;
 }
 export interface QueryGetAllBranchResponse {
     Branches: RepositoryBranch[];

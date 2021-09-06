@@ -766,9 +766,9 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryBranchAll
      * @summary Queries a repository by id.
-     * @request GET:/gitopia/gitopia/gitopia/repository/{id}/branches
+     * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches
      */
-    queryBranchAll: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetAllBranchResponse, RpcStatus>>;
+    queryBranchAll: (repositoryId: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetAllBranchResponse, RpcStatus>>;
     /**
      * No description
      *

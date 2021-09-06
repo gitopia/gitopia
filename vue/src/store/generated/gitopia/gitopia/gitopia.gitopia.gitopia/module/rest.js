@@ -364,10 +364,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryBranchAll
          * @summary Queries a repository by id.
-         * @request GET:/gitopia/gitopia/gitopia/repository/{id}/branches
+         * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches
          */
-        this.queryBranchAll = (id, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/repository/${id}/branches`,
+        this.queryBranchAll = (repositoryId, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/branches`,
             method: "GET",
             format: "json",
             ...params,

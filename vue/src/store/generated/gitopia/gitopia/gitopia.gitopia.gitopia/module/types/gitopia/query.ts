@@ -147,7 +147,7 @@ export interface QueryGetRepositoryResponse {
 }
 
 export interface QueryGetAllBranchRequest {
-  id: number;
+  repositoryId: number;
 }
 
 export interface QueryGetAllBranchResponse {
@@ -2536,15 +2536,15 @@ export const QueryGetRepositoryResponse = {
   },
 };
 
-const baseQueryGetAllBranchRequest: object = { id: 0 };
+const baseQueryGetAllBranchRequest: object = { repositoryId: 0 };
 
 export const QueryGetAllBranchRequest = {
   encode(
     message: QueryGetAllBranchRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
     }
     return writer;
   },
@@ -2562,7 +2562,7 @@ export const QueryGetAllBranchRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.repositoryId = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -2576,17 +2576,18 @@ export const QueryGetAllBranchRequest = {
     const message = {
       ...baseQueryGetAllBranchRequest,
     } as QueryGetAllBranchRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
     } else {
-      message.id = 0;
+      message.repositoryId = 0;
     }
     return message;
   },
 
   toJSON(message: QueryGetAllBranchRequest): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
     return obj;
   },
 
@@ -2596,10 +2597,10 @@ export const QueryGetAllBranchRequest = {
     const message = {
       ...baseQueryGetAllBranchRequest,
     } as QueryGetAllBranchRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
     } else {
-      message.id = 0;
+      message.repositoryId = 0;
     }
     return message;
   },
