@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
@@ -102,10 +103,47 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !k.HasComment(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment (%d) doesn't exist", msg.Id))
 	}
+
 	if msg.Creator != k.GetCommentOwner(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var comment = k.GetComment(ctx, msg.Id)
+	var issue types.Issue
+	var pullRequest types.PullRequest
+
+	if comment.CommentType == types.Comment_ISSUE {
+		if !k.HasIssue(ctx, comment.ParentId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id (%d) doesn't exist", comment.ParentId))
+		}
+
+		issue = k.GetIssue(ctx, comment.ParentId)
+
+		if i, exists := utils.IssueCommentExists(issue.Comments, msg.Id); exists {
+			issue.Comments = append(issue.Comments[:i], issue.Comments[i+1:]...)
+			issue.CommentsCount -= 1
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under issue (%d)", msg.Id, comment.ParentId))
+		}
+
+		k.SetIssue(ctx, issue)
+	} else if comment.CommentType == types.Comment_PULLREQUEST {
+		if !k.HasPullRequest(ctx, comment.ParentId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest Id (%d) doesn't exist", comment.ParentId))
+		}
+
+		pullRequest = k.GetPullRequest(ctx, comment.ParentId)
+
+		if i, exists := utils.PullRequestCommentExists(pullRequest.Comments, msg.Id); exists {
+			pullRequest.Comments = append(pullRequest.Comments[:i], pullRequest.Comments[i+1:]...)
+			pullRequest.CommentsCount -= 1
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under pullRequest (%d)", msg.Id, comment.ParentId))
+		}
+
+		k.SetPullRequest(ctx, pullRequest)
 	}
 
 	k.RemoveComment(ctx, msg.Id)
