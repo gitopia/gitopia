@@ -16,14 +16,14 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	var issue types.Issue
 	var pullRequest types.PullRequest
 
-	if msg.CommentType == "Issue" {
+	if msg.CommentType == types.Comment_ISSUE.String() {
 		if !k.HasIssue(ctx, msg.ParentId) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id %d doesn't exist", msg.ParentId))
 		}
 
 		issue = k.GetIssue(ctx, msg.ParentId)
 		commentIid = issue.CommentsCount + 1
-	} else if msg.CommentType == "PullRequest" {
+	} else if msg.CommentType == types.Comment_PULLREQUEST.String() {
 		if !k.HasPullRequest(ctx, msg.ParentId) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest Id %d doesn't exist", msg.ParentId))
 		}
@@ -35,6 +35,8 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	}
 
 	createdAt := ctx.BlockTime().Unix()
+
+	commentType := types.Comment_Type_value[msg.CommentType]
 
 	var comment = types.Comment{
 		Creator:           msg.Creator,
@@ -48,7 +50,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		AuthorAssociation: msg.AuthorAssociation,
 		CreatedAt:         createdAt,
 		UpdatedAt:         createdAt,
-		CommentType:       msg.CommentType,
+		CommentType:       types.Comment_Type(commentType),
 	}
 
 	id := k.AppendComment(
@@ -57,11 +59,11 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	)
 
 	/* Append Comment in the parent issue/pullRequest */
-	if msg.CommentType == "Issue" {
+	if msg.CommentType == types.Comment_ISSUE.String() {
 		issue.Comments = append(issue.Comments, id)
 		issue.CommentsCount += 1
 		k.SetIssue(ctx, issue)
-	} else if msg.CommentType == "PullRequest" {
+	} else if msg.CommentType == types.Comment_PULLREQUEST.String() {
 		pullRequest.Comments = append(pullRequest.Comments, id)
 		pullRequest.CommentsCount += 1
 		k.SetPullRequest(ctx, pullRequest)
