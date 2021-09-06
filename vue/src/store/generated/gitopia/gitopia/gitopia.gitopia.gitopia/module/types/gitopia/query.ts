@@ -9,7 +9,11 @@ import {
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch } from "../gitopia/repository";
+import {
+  Repository,
+  RepositoryBranch,
+  RepositoryTag,
+} from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 
@@ -156,6 +160,23 @@ export interface QueryGetBranchShaRequest {
 }
 
 export interface QueryGetBranchShaResponse {
+  sha: string;
+}
+
+export interface QueryGetAllTagRequest {
+  repositoryId: number;
+}
+
+export interface QueryGetAllTagResponse {
+  Tags: RepositoryTag[];
+}
+
+export interface QueryGetTagShaRequest {
+  repositoryId: number;
+  tagName: string;
+}
+
+export interface QueryGetTagShaResponse {
   sha: string;
 }
 
@@ -2823,6 +2844,274 @@ export const QueryGetBranchShaResponse = {
   },
 };
 
+const baseQueryGetAllTagRequest: object = { repositoryId: 0 };
+
+export const QueryGetAllTagRequest = {
+  encode(
+    message: QueryGetAllTagRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllTagRequest {
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllTagRequest): unknown {
+    const obj: any = {};
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllTagRequest>
+  ): QueryGetAllTagRequest {
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetAllTagResponse: object = {};
+
+export const QueryGetAllTagResponse = {
+  encode(
+    message: QueryGetAllTagResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.Tags) {
+      RepositoryTag.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Tags.push(RepositoryTag.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllTagResponse {
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    if (object.Tags !== undefined && object.Tags !== null) {
+      for (const e of object.Tags) {
+        message.Tags.push(RepositoryTag.fromJSON(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllTagResponse): unknown {
+    const obj: any = {};
+    if (message.Tags) {
+      obj.Tags = message.Tags.map((e) =>
+        e ? RepositoryTag.toJSON(e) : undefined
+      );
+    } else {
+      obj.Tags = [];
+    }
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllTagResponse>
+  ): QueryGetAllTagResponse {
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    if (object.Tags !== undefined && object.Tags !== null) {
+      for (const e of object.Tags) {
+        message.Tags.push(RepositoryTag.fromPartial(e));
+      }
+    }
+    return message;
+  },
+};
+
+const baseQueryGetTagShaRequest: object = { repositoryId: 0, tagName: "" };
+
+export const QueryGetTagShaRequest = {
+  encode(
+    message: QueryGetTagShaRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
+    }
+    if (message.tagName !== "") {
+      writer.uint32(18).string(message.tagName);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.tagName = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTagShaRequest {
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = String(object.tagName);
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTagShaRequest): unknown {
+    const obj: any = {};
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.tagName !== undefined && (obj.tagName = message.tagName);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetTagShaRequest>
+  ): QueryGetTagShaRequest {
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = object.tagName;
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetTagShaResponse: object = { sha: "" };
+
+export const QueryGetTagShaResponse = {
+  encode(
+    message: QueryGetTagShaResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.sha !== "") {
+      writer.uint32(10).string(message.sha);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.sha = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTagShaResponse {
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = String(object.sha);
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTagShaResponse): unknown {
+    const obj: any = {};
+    message.sha !== undefined && (obj.sha = message.sha);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetTagShaResponse>
+  ): QueryGetTagShaResponse {
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = object.sha;
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+};
+
 const baseQueryAllRepositoryRequest: object = {};
 
 export const QueryAllRepositoryRequest = {
@@ -4418,6 +4707,8 @@ export interface Query {
   BranchSha(
     request: QueryGetBranchShaRequest
   ): Promise<QueryGetBranchShaResponse>;
+  TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+  TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
   /** Queries a user by id. */
   User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
   /** Queries a list of user items. */
@@ -4682,6 +4973,30 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryGetBranchShaResponse.decode(new Reader(data))
+    );
+  }
+
+  TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse> {
+    const data = QueryGetAllTagRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "TagAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetAllTagResponse.decode(new Reader(data))
+    );
+  }
+
+  TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse> {
+    const data = QueryGetTagShaRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "TagSha",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetTagShaResponse.decode(new Reader(data))
     );
   }
 

@@ -347,6 +347,9 @@ export interface GitopiaQueryAllWhoisResponse {
 export interface GitopiaQueryGetAllBranchResponse {
     Branches?: GitopiaRepositoryBranch[];
 }
+export interface GitopiaQueryGetAllTagResponse {
+    Tags?: GitopiaRepositoryTag[];
+}
 export interface GitopiaQueryGetBranchShaResponse {
     sha?: string;
 }
@@ -376,6 +379,9 @@ export interface GitopiaQueryGetRepositoryPullRequestResponse {
 }
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
+}
+export interface GitopiaQueryGetTagShaResponse {
+    sha?: string;
 }
 export interface GitopiaQueryGetUserRepositoryResponse {
     Repository?: GitopiaRepository;
@@ -771,6 +777,22 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}
      */
     queryBranchSha: (repositoryId: string, branchName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetBranchShaResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryTagAll
+     * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/tags
+     */
+    queryTagAll: (repositoryId: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetAllTagResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryTagSha
+     * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/tags/{tagName}
+     */
+    queryTagSha: (repositoryId: string, tagName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetTagShaResponse, RpcStatus>>;
     /**
      * No description
      *

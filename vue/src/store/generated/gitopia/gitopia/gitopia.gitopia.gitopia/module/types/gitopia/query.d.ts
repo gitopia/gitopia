@@ -4,7 +4,7 @@ import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/paginati
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch } from "../gitopia/repository";
+import { Repository, RepositoryBranch, RepositoryTag } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
@@ -118,6 +118,19 @@ export interface QueryGetBranchShaRequest {
     branchName: string;
 }
 export interface QueryGetBranchShaResponse {
+    sha: string;
+}
+export interface QueryGetAllTagRequest {
+    repositoryId: number;
+}
+export interface QueryGetAllTagResponse {
+    Tags: RepositoryTag[];
+}
+export interface QueryGetTagShaRequest {
+    repositoryId: number;
+    tagName: string;
+}
+export interface QueryGetTagShaResponse {
     sha: string;
 }
 export interface QueryAllRepositoryRequest {
@@ -411,6 +424,34 @@ export declare const QueryGetBranchShaResponse: {
     toJSON(message: QueryGetBranchShaResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetBranchShaResponse>): QueryGetBranchShaResponse;
 };
+export declare const QueryGetAllTagRequest: {
+    encode(message: QueryGetAllTagRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagRequest;
+    fromJSON(object: any): QueryGetAllTagRequest;
+    toJSON(message: QueryGetAllTagRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllTagRequest>): QueryGetAllTagRequest;
+};
+export declare const QueryGetAllTagResponse: {
+    encode(message: QueryGetAllTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagResponse;
+    fromJSON(object: any): QueryGetAllTagResponse;
+    toJSON(message: QueryGetAllTagResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllTagResponse>): QueryGetAllTagResponse;
+};
+export declare const QueryGetTagShaRequest: {
+    encode(message: QueryGetTagShaRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaRequest;
+    fromJSON(object: any): QueryGetTagShaRequest;
+    toJSON(message: QueryGetTagShaRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetTagShaRequest>): QueryGetTagShaRequest;
+};
+export declare const QueryGetTagShaResponse: {
+    encode(message: QueryGetTagShaResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaResponse;
+    fromJSON(object: any): QueryGetTagShaResponse;
+    toJSON(message: QueryGetTagShaResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetTagShaResponse>): QueryGetTagShaResponse;
+};
 export declare const QueryAllRepositoryRequest: {
     encode(message: QueryAllRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryRequest;
@@ -585,6 +626,8 @@ export interface Query {
     /** Queries a repository by id. */
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
+    TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+    TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
     /** Queries a user by id. */
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     /** Queries a list of user items. */
@@ -624,6 +667,8 @@ export declare class QueryClientImpl implements Query {
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
+    TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+    TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
     UserRepositoryAll(request: QueryAllUserRepositoryRequest): Promise<QueryAllUserRepositoryResponse>;
