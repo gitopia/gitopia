@@ -243,6 +243,21 @@ export interface MsgDeleteBranch {
 }
 export interface MsgDeleteBranchResponse {
 }
+export interface MsgCreateTag {
+    creator: string;
+    id: number;
+    name: string;
+    sha: string;
+}
+export interface MsgCreateTagResponse {
+}
+export interface MsgDeleteTag {
+    creator: string;
+    id: number;
+    name: string;
+}
+export interface MsgDeleteTagResponse {
+}
 export interface MsgUpdateRepository {
     creator: string;
     id: number;
@@ -735,6 +750,34 @@ export declare const MsgDeleteBranchResponse: {
     toJSON(_: MsgDeleteBranchResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteBranchResponse>): MsgDeleteBranchResponse;
 };
+export declare const MsgCreateTag: {
+    encode(message: MsgCreateTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTag;
+    fromJSON(object: any): MsgCreateTag;
+    toJSON(message: MsgCreateTag): unknown;
+    fromPartial(object: DeepPartial<MsgCreateTag>): MsgCreateTag;
+};
+export declare const MsgCreateTagResponse: {
+    encode(_: MsgCreateTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTagResponse;
+    fromJSON(_: any): MsgCreateTagResponse;
+    toJSON(_: MsgCreateTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgCreateTagResponse>): MsgCreateTagResponse;
+};
+export declare const MsgDeleteTag: {
+    encode(message: MsgDeleteTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTag;
+    fromJSON(object: any): MsgDeleteTag;
+    toJSON(message: MsgDeleteTag): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteTag>): MsgDeleteTag;
+};
+export declare const MsgDeleteTagResponse: {
+    encode(_: MsgDeleteTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTagResponse;
+    fromJSON(_: any): MsgDeleteTagResponse;
+    toJSON(_: MsgDeleteTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteTagResponse>): MsgDeleteTagResponse;
+};
 export declare const MsgUpdateRepository: {
     encode(message: MsgUpdateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
@@ -879,6 +922,8 @@ export interface Msg {
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse>;
+    DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
@@ -920,6 +965,8 @@ export declare class MsgClientImpl implements Msg {
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse>;
+    DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;

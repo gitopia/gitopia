@@ -27,8 +27,12 @@ export interface GitopiaComment {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    commentType?: string;
+    commentType?: GitopiaCommentType;
     extensions?: string;
+}
+export declare enum GitopiaCommentType {
+    ISSUE = "ISSUE",
+    PULLREQUEST = "PULLREQUEST"
 }
 export interface GitopiaIssue {
     creator?: string;
@@ -89,6 +93,7 @@ export interface GitopiaMsgCreateRepositoryResponse {
     id?: string;
     name?: string;
 }
+export declare type GitopiaMsgCreateTagResponse = object;
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
 }
@@ -98,6 +103,7 @@ export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteOrganizationResponse = object;
 export declare type GitopiaMsgDeletePullRequestResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
+export declare type GitopiaMsgDeleteTagResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
 export interface GitopiaMsgForkRepositoryResponse {
@@ -389,7 +395,7 @@ export interface GitopiaRepository {
     description?: string;
     forks?: string[];
     branches?: GitopiaRepositoryBranch[];
-    tags?: string;
+    tags?: GitopiaRepositoryTag[];
     subscribers?: string;
     commits?: string;
     issues?: GitopiaRepositoryIssue[];
@@ -443,6 +449,10 @@ export interface GitopiaRepositoryPullRequest {
     iid?: string;
     /** @format uint64 */
     id?: string;
+}
+export interface GitopiaRepositoryTag {
+    name?: string;
+    sha?: string;
 }
 export interface GitopiaUser {
     creator?: string;

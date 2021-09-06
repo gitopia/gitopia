@@ -284,6 +284,23 @@ export interface MsgDeleteBranch {
 
 export interface MsgDeleteBranchResponse {}
 
+export interface MsgCreateTag {
+  creator: string;
+  id: number;
+  name: string;
+  sha: string;
+}
+
+export interface MsgCreateTagResponse {}
+
+export interface MsgDeleteTag {
+  creator: string;
+  id: number;
+  name: string;
+}
+
+export interface MsgDeleteTagResponse {}
+
 export interface MsgUpdateRepository {
   creator: string;
   id: number;
@@ -5382,6 +5399,277 @@ export const MsgDeleteBranchResponse = {
   },
 };
 
+const baseMsgCreateTag: object = { creator: "", id: 0, name: "", sha: "" };
+
+export const MsgCreateTag = {
+  encode(message: MsgCreateTag, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
+    if (message.sha !== "") {
+      writer.uint32(34).string(message.sha);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateTag {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateTag } as MsgCreateTag;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.name = reader.string();
+          break;
+        case 4:
+          message.sha = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateTag {
+    const message = { ...baseMsgCreateTag } as MsgCreateTag;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
+    }
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = String(object.sha);
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateTag): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
+    message.sha !== undefined && (obj.sha = message.sha);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateTag>): MsgCreateTag {
+    const message = { ...baseMsgCreateTag } as MsgCreateTag;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
+    }
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = object.sha;
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateTagResponse: object = {};
+
+export const MsgCreateTagResponse = {
+  encode(_: MsgCreateTagResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateTagResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateTagResponse } as MsgCreateTagResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateTagResponse {
+    const message = { ...baseMsgCreateTagResponse } as MsgCreateTagResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCreateTagResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgCreateTagResponse>): MsgCreateTagResponse {
+    const message = { ...baseMsgCreateTagResponse } as MsgCreateTagResponse;
+    return message;
+  },
+};
+
+const baseMsgDeleteTag: object = { creator: "", id: 0, name: "" };
+
+export const MsgDeleteTag = {
+  encode(message: MsgDeleteTag, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteTag {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteTag } as MsgDeleteTag;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.name = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteTag {
+    const message = { ...baseMsgDeleteTag } as MsgDeleteTag;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteTag): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteTag>): MsgDeleteTag {
+    const message = { ...baseMsgDeleteTag } as MsgDeleteTag;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgDeleteTagResponse: object = {};
+
+export const MsgDeleteTagResponse = {
+  encode(_: MsgDeleteTagResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteTagResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteTagResponse } as MsgDeleteTagResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgDeleteTagResponse {
+    const message = { ...baseMsgDeleteTagResponse } as MsgDeleteTagResponse;
+    return message;
+  },
+
+  toJSON(_: MsgDeleteTagResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgDeleteTagResponse>): MsgDeleteTagResponse {
+    const message = { ...baseMsgDeleteTagResponse } as MsgDeleteTagResponse;
+    return message;
+  },
+};
+
 const baseMsgUpdateRepository: object = {
   creator: "",
   id: 0,
@@ -7089,6 +7377,8 @@ export interface Msg {
     request: MsgSetDefaultBranch
   ): Promise<MsgSetDefaultBranchResponse>;
   DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+  CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse>;
+  DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
   UpdateRepository(
     request: MsgUpdateRepository
   ): Promise<MsgUpdateRepositoryResponse>;
@@ -7493,6 +7783,30 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgDeleteBranchResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse> {
+    const data = MsgCreateTag.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "CreateTag",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateTagResponse.decode(new Reader(data))
+    );
+  }
+
+  DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse> {
+    const data = MsgDeleteTag.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "DeleteTag",
+      data
+    );
+    return promise.then((data) =>
+      MsgDeleteTagResponse.decode(new Reader(data))
     );
   }
 

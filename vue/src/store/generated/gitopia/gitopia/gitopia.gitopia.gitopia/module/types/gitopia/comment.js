@@ -2,6 +2,36 @@
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+export var Comment_Type;
+(function (Comment_Type) {
+    Comment_Type[Comment_Type["ISSUE"] = 0] = "ISSUE";
+    Comment_Type[Comment_Type["PULLREQUEST"] = 1] = "PULLREQUEST";
+    Comment_Type[Comment_Type["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(Comment_Type || (Comment_Type = {}));
+export function comment_TypeFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "ISSUE":
+            return Comment_Type.ISSUE;
+        case 1:
+        case "PULLREQUEST":
+            return Comment_Type.PULLREQUEST;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return Comment_Type.UNRECOGNIZED;
+    }
+}
+export function comment_TypeToJSON(object) {
+    switch (object) {
+        case Comment_Type.ISSUE:
+            return "ISSUE";
+        case Comment_Type.PULLREQUEST:
+            return "PULLREQUEST";
+        default:
+            return "UNKNOWN";
+    }
+}
 const baseComment = {
     creator: "",
     id: 0,
@@ -15,7 +45,7 @@ const baseComment = {
     authorAssociation: "",
     createdAt: 0,
     updatedAt: 0,
-    commentType: "",
+    commentType: 0,
     extensions: "",
 };
 export const Comment = {
@@ -56,8 +86,8 @@ export const Comment = {
         if (message.updatedAt !== 0) {
             writer.uint32(96).int64(message.updatedAt);
         }
-        if (message.commentType !== "") {
-            writer.uint32(106).string(message.commentType);
+        if (message.commentType !== 0) {
+            writer.uint32(104).int32(message.commentType);
         }
         if (message.extensions !== "") {
             writer.uint32(114).string(message.extensions);
@@ -109,7 +139,7 @@ export const Comment = {
                     message.updatedAt = longToNumber(reader.int64());
                     break;
                 case 13:
-                    message.commentType = reader.string();
+                    message.commentType = reader.int32();
                     break;
                 case 14:
                     message.extensions = reader.string();
@@ -197,10 +227,10 @@ export const Comment = {
             message.updatedAt = 0;
         }
         if (object.commentType !== undefined && object.commentType !== null) {
-            message.commentType = String(object.commentType);
+            message.commentType = comment_TypeFromJSON(object.commentType);
         }
         else {
-            message.commentType = "";
+            message.commentType = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = String(object.extensions);
@@ -231,7 +261,7 @@ export const Comment = {
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
         message.commentType !== undefined &&
-            (obj.commentType = message.commentType);
+            (obj.commentType = comment_TypeToJSON(message.commentType));
         message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
@@ -314,7 +344,7 @@ export const Comment = {
             message.commentType = object.commentType;
         }
         else {
-            message.commentType = "";
+            message.commentType = 0;
         }
         if (object.extensions !== undefined && object.extensions !== null) {
             message.extensions = object.extensions;

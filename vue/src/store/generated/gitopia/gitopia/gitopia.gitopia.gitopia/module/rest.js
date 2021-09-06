@@ -21,6 +21,11 @@ export var RepositoryCollaboratorPermission;
     RepositoryCollaboratorPermission["MAINTAIN"] = "MAINTAIN";
     RepositoryCollaboratorPermission["ADMIN"] = "ADMIN";
 })(RepositoryCollaboratorPermission || (RepositoryCollaboratorPermission = {}));
+export var GitopiaCommentType;
+(function (GitopiaCommentType) {
+    GitopiaCommentType["ISSUE"] = "ISSUE";
+    GitopiaCommentType["PULLREQUEST"] = "PULLREQUEST";
+})(GitopiaCommentType || (GitopiaCommentType = {}));
 export var GitopiaIssueState;
 (function (GitopiaIssueState) {
     GitopiaIssueState["OPEN"] = "OPEN";

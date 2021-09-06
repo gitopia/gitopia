@@ -86,7 +86,6 @@ const baseRepository = {
     name: "",
     description: "",
     forks: 0,
-    tags: "",
     subscribers: "",
     commits: "",
     issuesCount: 0,
@@ -129,8 +128,8 @@ export const Repository = {
         for (const v of message.branches) {
             RepositoryBranch.encode(v, writer.uint32(58).fork()).ldelim();
         }
-        if (message.tags !== "") {
-            writer.uint32(66).string(message.tags);
+        for (const v of message.tags) {
+            RepositoryTag.encode(v, writer.uint32(66).fork()).ldelim();
         }
         if (message.subscribers !== "") {
             writer.uint32(74).string(message.subscribers);
@@ -199,6 +198,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = [];
+        message.tags = [];
         message.issues = [];
         message.pullRequests = [];
         message.stargazers = [];
@@ -236,7 +236,7 @@ export const Repository = {
                     message.branches.push(RepositoryBranch.decode(reader, reader.uint32()));
                     break;
                 case 8:
-                    message.tags = reader.string();
+                    message.tags.push(RepositoryTag.decode(reader, reader.uint32()));
                     break;
                 case 9:
                     message.subscribers = reader.string();
@@ -314,6 +314,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = [];
+        message.tags = [];
         message.issues = [];
         message.pullRequests = [];
         message.stargazers = [];
@@ -359,10 +360,9 @@ export const Repository = {
             }
         }
         if (object.tags !== undefined && object.tags !== null) {
-            message.tags = String(object.tags);
-        }
-        else {
-            message.tags = "";
+            for (const e of object.tags) {
+                message.tags.push(RepositoryTag.fromJSON(e));
+            }
         }
         if (object.subscribers !== undefined && object.subscribers !== null) {
             message.subscribers = String(object.subscribers);
@@ -499,7 +499,12 @@ export const Repository = {
         else {
             obj.branches = [];
         }
-        message.tags !== undefined && (obj.tags = message.tags);
+        if (message.tags) {
+            obj.tags = message.tags.map((e) => e ? RepositoryTag.toJSON(e) : undefined);
+        }
+        else {
+            obj.tags = [];
+        }
         message.subscribers !== undefined &&
             (obj.subscribers = message.subscribers);
         message.commits !== undefined && (obj.commits = message.commits);
@@ -548,6 +553,7 @@ export const Repository = {
         const message = { ...baseRepository };
         message.forks = [];
         message.branches = [];
+        message.tags = [];
         message.issues = [];
         message.pullRequests = [];
         message.stargazers = [];
@@ -593,10 +599,9 @@ export const Repository = {
             }
         }
         if (object.tags !== undefined && object.tags !== null) {
-            message.tags = object.tags;
-        }
-        else {
-            message.tags = "";
+            for (const e of object.tags) {
+                message.tags.push(RepositoryTag.fromPartial(e));
+            }
         }
         if (object.subscribers !== undefined && object.subscribers !== null) {
             message.subscribers = object.subscribers;
@@ -837,6 +842,76 @@ export const RepositoryBranch = {
     },
     fromPartial(object) {
         const message = { ...baseRepositoryBranch };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.sha !== undefined && object.sha !== null) {
+            message.sha = object.sha;
+        }
+        else {
+            message.sha = "";
+        }
+        return message;
+    },
+};
+const baseRepositoryTag = { name: "", sha: "" };
+export const RepositoryTag = {
+    encode(message, writer = Writer.create()) {
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
+        }
+        if (message.sha !== "") {
+            writer.uint32(18).string(message.sha);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseRepositoryTag };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.name = reader.string();
+                    break;
+                case 2:
+                    message.sha = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseRepositoryTag };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.sha !== undefined && object.sha !== null) {
+            message.sha = String(object.sha);
+        }
+        else {
+            message.sha = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.name !== undefined && (obj.name = message.name);
+        message.sha !== undefined && (obj.sha = message.sha);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseRepositoryTag };
         if (object.name !== undefined && object.name !== null) {
             message.name = object.name;
         }

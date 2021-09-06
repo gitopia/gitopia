@@ -45,8 +45,13 @@ export interface GitopiaComment {
 
   /** @format int64 */
   updatedAt?: string;
-  commentType?: string;
+  commentType?: GitopiaCommentType;
   extensions?: string;
+}
+
+export enum GitopiaCommentType {
+  ISSUE = "ISSUE",
+  PULLREQUEST = "PULLREQUEST",
 }
 
 export interface GitopiaIssue {
@@ -127,6 +132,8 @@ export interface GitopiaMsgCreateRepositoryResponse {
   name?: string;
 }
 
+export type GitopiaMsgCreateTagResponse = object;
+
 export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
@@ -142,6 +149,8 @@ export type GitopiaMsgDeleteOrganizationResponse = object;
 export type GitopiaMsgDeletePullRequestResponse = object;
 
 export type GitopiaMsgDeleteRepositoryResponse = object;
+
+export type GitopiaMsgDeleteTagResponse = object;
 
 export type GitopiaMsgDeleteUserResponse = object;
 
@@ -512,7 +521,7 @@ export interface GitopiaRepository {
   description?: string;
   forks?: string[];
   branches?: GitopiaRepositoryBranch[];
-  tags?: string;
+  tags?: GitopiaRepositoryTag[];
   subscribers?: string;
   commits?: string;
   issues?: GitopiaRepositoryIssue[];
@@ -580,6 +589,11 @@ export interface GitopiaRepositoryPullRequest {
 
   /** @format uint64 */
   id?: string;
+}
+
+export interface GitopiaRepositoryTag {
+  name?: string;
+  sha?: string;
 }
 
 export interface GitopiaUser {

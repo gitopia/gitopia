@@ -8,7 +8,7 @@ export interface Repository {
     description: string;
     forks: number[];
     branches: RepositoryBranch[];
-    tags: string;
+    tags: RepositoryTag[];
     subscribers: string;
     commits: string;
     issues: RepositoryIssue[];
@@ -41,6 +41,10 @@ export declare enum RepositoryOwner_Type {
 export declare function repositoryOwner_TypeFromJSON(object: any): RepositoryOwner_Type;
 export declare function repositoryOwner_TypeToJSON(object: RepositoryOwner_Type): string;
 export interface RepositoryBranch {
+    name: string;
+    sha: string;
+}
+export interface RepositoryTag {
     name: string;
     sha: string;
 }
@@ -86,6 +90,13 @@ export declare const RepositoryBranch: {
     fromJSON(object: any): RepositoryBranch;
     toJSON(message: RepositoryBranch): unknown;
     fromPartial(object: DeepPartial<RepositoryBranch>): RepositoryBranch;
+};
+export declare const RepositoryTag: {
+    encode(message: RepositoryTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryTag;
+    fromJSON(object: any): RepositoryTag;
+    toJSON(message: RepositoryTag): unknown;
+    fromPartial(object: DeepPartial<RepositoryTag>): RepositoryTag;
 };
 export declare const RepositoryIssue: {
     encode(message: RepositoryIssue, writer?: Writer): Writer;

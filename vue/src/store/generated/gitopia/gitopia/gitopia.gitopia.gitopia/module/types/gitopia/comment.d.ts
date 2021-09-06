@@ -13,9 +13,16 @@ export interface Comment {
     authorAssociation: string;
     createdAt: number;
     updatedAt: number;
-    commentType: string;
+    commentType: Comment_Type;
     extensions: string;
 }
+export declare enum Comment_Type {
+    ISSUE = 0,
+    PULLREQUEST = 1,
+    UNRECOGNIZED = -1
+}
+export declare function comment_TypeFromJSON(object: any): Comment_Type;
+export declare function comment_TypeToJSON(object: Comment_Type): string;
 export declare const Comment: {
     encode(message: Comment, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Comment;

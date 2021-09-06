@@ -17,8 +17,40 @@ export interface Comment {
   authorAssociation: string;
   createdAt: number;
   updatedAt: number;
-  commentType: string;
+  commentType: Comment_Type;
   extensions: string;
+}
+
+export enum Comment_Type {
+  ISSUE = 0,
+  PULLREQUEST = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function comment_TypeFromJSON(object: any): Comment_Type {
+  switch (object) {
+    case 0:
+    case "ISSUE":
+      return Comment_Type.ISSUE;
+    case 1:
+    case "PULLREQUEST":
+      return Comment_Type.PULLREQUEST;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Comment_Type.UNRECOGNIZED;
+  }
+}
+
+export function comment_TypeToJSON(object: Comment_Type): string {
+  switch (object) {
+    case Comment_Type.ISSUE:
+      return "ISSUE";
+    case Comment_Type.PULLREQUEST:
+      return "PULLREQUEST";
+    default:
+      return "UNKNOWN";
+  }
 }
 
 const baseComment: object = {
@@ -34,7 +66,7 @@ const baseComment: object = {
   authorAssociation: "",
   createdAt: 0,
   updatedAt: 0,
-  commentType: "",
+  commentType: 0,
   extensions: "",
 };
 
@@ -76,8 +108,8 @@ export const Comment = {
     if (message.updatedAt !== 0) {
       writer.uint32(96).int64(message.updatedAt);
     }
-    if (message.commentType !== "") {
-      writer.uint32(106).string(message.commentType);
+    if (message.commentType !== 0) {
+      writer.uint32(104).int32(message.commentType);
     }
     if (message.extensions !== "") {
       writer.uint32(114).string(message.extensions);
@@ -130,7 +162,7 @@ export const Comment = {
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
         case 13:
-          message.commentType = reader.string();
+          message.commentType = reader.int32() as any;
           break;
         case 14:
           message.extensions = reader.string();
@@ -210,9 +242,9 @@ export const Comment = {
       message.updatedAt = 0;
     }
     if (object.commentType !== undefined && object.commentType !== null) {
-      message.commentType = String(object.commentType);
+      message.commentType = comment_TypeFromJSON(object.commentType);
     } else {
-      message.commentType = "";
+      message.commentType = 0;
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = String(object.extensions);
@@ -242,7 +274,7 @@ export const Comment = {
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
     message.commentType !== undefined &&
-      (obj.commentType = message.commentType);
+      (obj.commentType = comment_TypeToJSON(message.commentType));
     message.extensions !== undefined && (obj.extensions = message.extensions);
     return obj;
   },
@@ -316,7 +348,7 @@ export const Comment = {
     if (object.commentType !== undefined && object.commentType !== null) {
       message.commentType = object.commentType;
     } else {
-      message.commentType = "";
+      message.commentType = 0;
     }
     if (object.extensions !== undefined && object.extensions !== null) {
       message.extensions = object.extensions;
