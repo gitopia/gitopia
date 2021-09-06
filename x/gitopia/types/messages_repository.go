@@ -451,6 +451,46 @@ func (msg *MsgDeleteBranch) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgCreateTag{}
+
+func NewMsgCreateTag(creator string, id uint64, name string, sha string) *MsgCreateTag {
+	return &MsgCreateTag{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+		Sha:     sha,
+	}
+}
+
+func (msg *MsgCreateTag) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCreateTag) Type() string {
+	return "CreateTag"
+}
+
+func (msg *MsgCreateTag) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCreateTag) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCreateTag) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateRepository{}
 
 func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, labels string, license string, defaultBranch string) *MsgUpdateRepository {

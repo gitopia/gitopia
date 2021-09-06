@@ -797,6 +797,70 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	return &types.MsgDeleteBranchResponse{}, nil
 }
 
+func (k msgServer) CreateTag(goCtx context.Context, msg *types.MsgCreateTag) (*types.MsgCreateTagResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repositoryId (%d) doesn't exist", msg.Id))
+	}
+
+	var repository = k.GetRepository(ctx, msg.Id)
+
+	ownerId := repository.Owner.Id
+	ownerType := repository.Owner.Type
+
+	var havePermission bool = false
+
+	if ownerType == types.RepositoryOwner_USER {
+		if msg.Creator == ownerId {
+			havePermission = true
+		}
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		orgId, err := strconv.ParseUint(ownerId, 10, 64)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
+		}
+		if !k.HasOrganization(ctx, orgId) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", ownerId))
+		}
+
+		organization := k.GetOrganization(ctx, orgId)
+
+		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if i, exists := utils.RepositoryTagExists(repository.Tags, msg.Name); exists {
+		repository.Tags[i].Sha = msg.Sha
+	} else {
+		var repositoryTag = types.RepositoryTag{
+			Name: msg.Name,
+			Sha:  msg.Sha,
+		}
+		repository.Tags = append(repository.Tags, &repositoryTag)
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgCreateTagResponse{}, nil
+}
+
 func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateRepository) (*types.MsgUpdateRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
