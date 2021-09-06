@@ -254,6 +254,50 @@ func (k Keeper) BranchSha(c context.Context, req *types.QueryGetBranchShaRequest
 	return nil, sdkerrors.ErrKeyNotFound
 }
 
+func (k Keeper) TagAll(c context.Context, req *types.QueryGetAllTagRequest) (*types.QueryGetAllTagResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	var tags []*types.RepositoryTag
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.RepositoryId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+
+	for _, repositoryTag := range repository.Tags {
+		tags = append(tags, repositoryTag)
+	}
+	return &types.QueryGetAllTagResponse{Tags: tags}, nil
+}
+
+func (k Keeper) TagSha(c context.Context, req *types.QueryGetTagShaRequest) (*types.QueryGetTagShaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.RepositoryId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+
+	if i, exists := utils.RepositoryTagExists(repository.Tags, req.TagName); exists {
+		return &types.QueryGetTagShaResponse{Sha: repository.Tags[i].Sha}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
 /* PaginateAllRepositoryIssue does pagination of all the results in the repository.IssueIids
  * based on the provided PageRequest.
  */

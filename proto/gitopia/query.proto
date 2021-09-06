@@ -103,6 +103,14 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}";
 	}
 
+	rpc TagAll(QueryGetAllTagRequest) returns (QueryGetAllTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags";
+	}
+
+	rpc TagSha(QueryGetTagShaRequest) returns (QueryGetTagShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags/{tagName}";
+	}
+
 	// Queries a user by id.
 	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
@@ -288,6 +296,23 @@ message QueryGetBranchShaRequest {
 }
 
 message QueryGetBranchShaResponse {
+	string sha = 1;
+}
+
+message QueryGetAllTagRequest {
+	uint64 repositoryId = 1;
+}
+
+message QueryGetAllTagResponse {
+	repeated RepositoryTag Tags = 1;
+}
+
+message QueryGetTagShaRequest {
+	uint64 repositoryId = 1;
+	string tagName = 2;
+}
+
+message QueryGetTagShaResponse {
 	string sha = 1;
 }
 
