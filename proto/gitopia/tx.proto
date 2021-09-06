@@ -44,6 +44,7 @@ service Msg {
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
   rpc CreateTag(MsgCreateTag) returns (MsgCreateTagResponse);
+  rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
@@ -332,6 +333,8 @@ message MsgDeleteBranch {
   string name = 3;
 }
 
+message MsgDeleteBranchResponse { }
+
 message MsgCreateTag {
   string creator = 1;
   uint64 id = 2;
@@ -341,7 +344,13 @@ message MsgCreateTag {
 
 message MsgCreateTagResponse { }
 
-message MsgDeleteBranchResponse { }
+message MsgDeleteTag {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteTagResponse { }
 
 message MsgUpdateRepository {
   string creator = 1;

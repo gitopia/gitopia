@@ -379,6 +379,40 @@ func CmdCreateTag() *cobra.Command {
 	return cmd
 }
 
+func CmdDeleteTag() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-tag [repo id] [tag name]",
+		Short: "Delete a tag",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteTag(clientCtx.GetFromAddress().String(), id, string(argsName))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-repository [id] [name] [owner] [description] [labels] [license] [defaultBranch]",
