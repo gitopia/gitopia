@@ -13,7 +13,7 @@ message Repository {
   string description = 5; 
   repeated uint64 forks = 6; 
   repeated RepositoryBranch branches = 7;
-  string tags = 8; 
+  repeated RepositoryTag tags = 8; 
   string subscribers = 9; 
   string commits = 10;
   repeated RepositoryIssue issues = 11;
@@ -45,6 +45,11 @@ message RepositoryOwner {
 }
 
 message RepositoryBranch {
+  string name = 1;
+  string sha = 2;
+}
+
+message RepositoryTag {
   string name = 1;
   string sha = 2;
 }
