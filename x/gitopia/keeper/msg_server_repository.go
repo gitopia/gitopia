@@ -784,7 +784,7 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, msg.Name); exists {
 		if repository.DefaultBranch != repository.Branches[i].Name {
-
+			repository.Branches = append(repository.Branches[:i], repository.Branches[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) is default branch", msg.Name))
 		}

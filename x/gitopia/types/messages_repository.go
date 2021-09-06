@@ -427,7 +427,7 @@ func (msg *MsgDeleteBranch) Route() string {
 }
 
 func (msg *MsgDeleteBranch) Type() string {
-	return "SetDefaultBranch"
+	return "DeleteBranch"
 }
 
 func (msg *MsgDeleteBranch) GetSigners() []sdk.AccAddress {
