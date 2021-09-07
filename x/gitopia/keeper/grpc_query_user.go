@@ -107,7 +107,7 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		}
-	} else if k.HasUser(ctx, req.UserId) {
+	} else if k.HasOrganization(ctx, req.UserId) {
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.UserId)
 		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
