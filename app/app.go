@@ -327,6 +327,7 @@ func New(
 		appCodec,
 		keys[gitopiatypes.StoreKey],
 		keys[gitopiatypes.MemStoreKey],
+		app.AccountKeeper,
 	)
 	gitopiaModule := gitopia.NewAppModule(appCodec, app.GitopiaKeeper)
 
