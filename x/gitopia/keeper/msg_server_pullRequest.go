@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -194,15 +193,11 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			havePermission = true
 		}
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		orgId, err := strconv.ParseUint(repository.Owner.Id, 10, 64)
-		if err != nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't fetch baseRepository owner")
-		}
-		if !k.HasOrganization(ctx, orgId) {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
 
-		organization := k.GetOrganization(ctx, orgId)
+		organization := k.GetOrganization(ctx, repository.Owner.Id)
 
 		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
 			havePermission = true

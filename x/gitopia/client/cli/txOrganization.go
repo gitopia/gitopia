@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"strconv"
-
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/cast"
@@ -52,7 +50,7 @@ func CmdUpdateOrganizationMember() *cobra.Command {
 		Short: "Add organization member",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
@@ -91,7 +89,7 @@ func CmdRemoveOrganizationMember() *cobra.Command {
 		Short: "Remove organization member",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
@@ -125,7 +123,7 @@ func CmdUpdateOrganization() *cobra.Command {
 		Short: "Update a organization",
 		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
@@ -184,7 +182,7 @@ func CmdDeleteOrganization() *cobra.Command {
 		Short: "Delete a organization by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}

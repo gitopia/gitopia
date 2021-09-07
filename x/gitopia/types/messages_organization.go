@@ -46,7 +46,7 @@ func (msg *MsgCreateOrganization) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateOrganizationMember{}
 
-func NewMsgUpdateOrganizationMember(creator string, id uint64, user string, role string) *MsgUpdateOrganizationMember {
+func NewMsgUpdateOrganizationMember(creator string, id string, user string, role string) *MsgUpdateOrganizationMember {
 	return &MsgUpdateOrganizationMember{
 		Id:      id,
 		Creator: creator,
@@ -77,7 +77,11 @@ func (msg *MsgUpdateOrganizationMember) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateOrganizationMember) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
@@ -94,7 +98,7 @@ func (msg *MsgUpdateOrganizationMember) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemoveOrganizationMember{}
 
-func NewMsgRemoveOrganizationMember(creator string, id uint64, user string) *MsgRemoveOrganizationMember {
+func NewMsgRemoveOrganizationMember(creator string, id string, user string) *MsgRemoveOrganizationMember {
 	return &MsgRemoveOrganizationMember{
 		Id:      id,
 		Creator: creator,
@@ -124,7 +128,11 @@ func (msg *MsgRemoveOrganizationMember) GetSignBytes() []byte {
 }
 
 func (msg *MsgRemoveOrganizationMember) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
@@ -137,7 +145,7 @@ func (msg *MsgRemoveOrganizationMember) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateOrganization{}
 
-func NewMsgUpdateOrganization(creator string, id uint64, name string, avatarUrl string, location string, email string, website string, description string) *MsgUpdateOrganization {
+func NewMsgUpdateOrganization(creator string, id string, name string, avatarUrl string, location string, email string, website string, description string) *MsgUpdateOrganization {
 	return &MsgUpdateOrganization{
 		Id:          id,
 		Creator:     creator,
@@ -172,7 +180,11 @@ func (msg *MsgUpdateOrganization) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateOrganization) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
@@ -181,7 +193,7 @@ func (msg *MsgUpdateOrganization) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteOrganization{}
 
-func NewMsgDeleteOrganization(creator string, id uint64) *MsgDeleteOrganization {
+func NewMsgDeleteOrganization(creator string, id string) *MsgDeleteOrganization {
 	return &MsgDeleteOrganization{
 		Id:      id,
 		Creator: creator,
@@ -209,7 +221,11 @@ func (msg *MsgDeleteOrganization) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteOrganization) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}

@@ -26,17 +26,17 @@ func TestOrganizationQuerySingle(t *testing.T) {
 	}{
 		{
 			desc:     "First",
-			request:  &types.QueryGetOrganizationRequest{Id: msgs[0].Id},
+			request:  &types.QueryGetOrganizationRequest{Id: msgs[0].Address},
 			response: &types.QueryGetOrganizationResponse{Organization: &msgs[0]},
 		},
 		{
 			desc:     "Second",
-			request:  &types.QueryGetOrganizationRequest{Id: msgs[1].Id},
+			request:  &types.QueryGetOrganizationRequest{Id: msgs[1].Address},
 			response: &types.QueryGetOrganizationResponse{Organization: &msgs[1]},
 		},
 		{
 			desc:    "KeyNotFound",
-			request: &types.QueryGetOrganizationRequest{Id: uint64(len(msgs))},
+			request: &types.QueryGetOrganizationRequest{Id: ""},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{

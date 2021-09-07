@@ -94,25 +94,33 @@ func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserReposit
 	}
 
 	var user types.User
+	var organization types.Organization
 	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.UserId) {
+	if k.HasUser(ctx, req.UserId) {
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		}
+	} else if k.HasUser(ctx, req.UserId) {
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.UserId)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
-
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
-		return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
-	}
-
-	return nil, sdkerrors.ErrKeyNotFound
+	return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
 }
 
 func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOrganizationRequest) (*types.QueryAllUserOrganizationResponse, error) {
@@ -136,7 +144,8 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 
 	for _, userOrganization := range user.Organizations {
 		var organization types.Organization
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(userOrganization.Id)), &organization)
+		key := []byte(types.OrganizationKey + userOrganization.Id)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(key), &organization)
 		organizations = append(organizations, &organization)
 	}
 

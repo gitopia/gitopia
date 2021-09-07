@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -24,9 +23,9 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	}
 
 	// Check if username is available
-	if k.HasWhois(ctx, msg.Name) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name %v already taken", msg.Name))
-	}
+	// if k.HasWhois(ctx, msg.Name) {
+	// 	return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name %v already taken", msg.Name))
+	// }
 
 	createdAt := ctx.BlockTime().Unix()
 	updatedAt := createdAt
@@ -67,17 +66,17 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	k.SetUser(ctx, user)
 
 	// Update whois
-	var whois = types.Whois{
-		Creator: msg.Creator,
-		Name:    msg.Name,
-		Address: strconv.FormatUint(id, 10),
-	}
+	// var whois = types.Whois{
+	// 	Creator: msg.Creator,
+	// 	Name:    msg.Name,
+	// 	Address: strconv.FormatUint(id, 10),
+	// }
 
-	k.Keeper.SetWhois(
-		ctx,
-		msg.Name,
-		whois,
-	)
+	// k.Keeper.SetWhois(
+	// 	ctx,
+	// 	msg.Name,
+	// 	whois,
+	// )
 
 	return &types.MsgCreateOrganizationResponse{
 		Id: id,
