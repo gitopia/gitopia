@@ -7,20 +7,21 @@ import "gogoproto/gogo.proto";
 
 message User {
   string creator = 1;
-  string username = 2; 
-  string usernameGithub = 3; 
-  string avatarUrl = 4; 
-  repeated string followers = 5; 
-  repeated string following = 6; 
-  repeated UserRepository repositories = 7;
-  repeated UserOrganization organizations = 8; 
-  repeated uint64 starred_repos = 9; 
-  string subscriptions = 10; 
-  string email = 11; 
-  string bio = 12; 
-  int64 createdAt = 13; 
-  int64 updatedAt = 14; 
-  string extensions = 15; 
+  uint64 id = 2;
+  string username = 3; 
+  string usernameGithub = 4; 
+  string avatarUrl = 5; 
+  repeated string followers = 6; 
+  repeated string following = 7; 
+  repeated UserRepository repositories = 8;
+  repeated UserOrganization organizations = 9; 
+  repeated uint64 starred_repos = 10; 
+  string subscriptions = 11; 
+  string email = 12; 
+  string bio = 13; 
+  int64 createdAt = 14; 
+  int64 updatedAt = 15; 
+  string extensions = 16; 
 }
 
 message UserRepository {
@@ -30,5 +31,5 @@ message UserRepository {
 
 message UserOrganization {
   string name = 1;
-  uint64 id = 2;
+  string id = 2;
 }

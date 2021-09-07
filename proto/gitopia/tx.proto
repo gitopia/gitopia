@@ -121,12 +121,12 @@ message MsgCreateOrganization {
 }
 
 message MsgCreateOrganizationResponse {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message MsgUpdateOrganizationMember {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string user = 3;
   string role = 4;
 }
@@ -135,7 +135,7 @@ message MsgUpdateOrganizationMemberResponse { }
 
 message MsgRemoveOrganizationMember {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string user = 3;
 }
 
@@ -143,7 +143,7 @@ message MsgRemoveOrganizationMemberResponse { }
 
 message MsgUpdateOrganization {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string name = 3;
   string avatarUrl = 4;
   string location = 5;
@@ -156,7 +156,7 @@ message MsgUpdateOrganizationResponse { }
 
 message MsgDeleteOrganization {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
 }
 
 message MsgDeleteOrganizationResponse { }
