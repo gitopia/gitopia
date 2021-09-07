@@ -247,20 +247,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryOrganizationByName
-         * @summary Queries a organization by name.
-         * @request GET:/gitopia/gitopia/gitopia/organization/name/{organizationName}
-         */
-        this.queryOrganizationByName = (organizationName, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/organization/name/${organizationName}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryOrganization
          * @summary Queries a organization by id.
          * @request GET:/gitopia/gitopia/gitopia/organization/{id}
@@ -277,26 +263,12 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryOrganizationRepositoryAll
          * @summary Queries a list of Organization repositories.
-         * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories
+         * @request GET:/gitopia/gitopia/gitopia/organization/{id}/repositories
          */
-        this.queryOrganizationRepositoryAll = (organizationName, query, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories`,
+        this.queryOrganizationRepositoryAll = (id, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/organization/${id}/repositories`,
             method: "GET",
             query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryOrganizationRepository
-         * @summary Queries a repository by Organization name and repository name
-         * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}
-         */
-        this.queryOrganizationRepository = (organizationName, repositoryName, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/organization/${organizationName}/repositories/${repositoryName}`,
-            method: "GET",
             format: "json",
             ...params,
         });

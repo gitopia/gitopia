@@ -2,6 +2,7 @@ import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface User {
     creator: string;
+    id: number;
     username: string;
     usernameGithub: string;
     avatarUrl: string;
@@ -23,7 +24,7 @@ export interface UserRepository {
 }
 export interface UserOrganization {
     name: string;
-    id: number;
+    id: string;
 }
 export declare const User: {
     encode(message: User, writer?: Writer): Writer;

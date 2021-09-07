@@ -7,6 +7,7 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Organization {
   creator: string;
   id: number;
+  address: string;
   name: string;
   avatarUrl: string;
   followers: string[];
@@ -73,6 +74,7 @@ export function organizationMember_RoleToJSON(
 const baseOrganization: object = {
   creator: "",
   id: 0,
+  address: "",
   name: "",
   avatarUrl: "",
   followers: "",
@@ -96,52 +98,55 @@ export const Organization = {
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
     }
+    if (message.address !== "") {
+      writer.uint32(26).string(message.address);
+    }
     if (message.name !== "") {
-      writer.uint32(26).string(message.name);
+      writer.uint32(34).string(message.name);
     }
     if (message.avatarUrl !== "") {
-      writer.uint32(34).string(message.avatarUrl);
+      writer.uint32(42).string(message.avatarUrl);
     }
     for (const v of message.followers) {
-      writer.uint32(42).string(v!);
-    }
-    for (const v of message.following) {
       writer.uint32(50).string(v!);
     }
-    for (const v of message.repositories) {
-      OrganizationRepository.encode(v!, writer.uint32(58).fork()).ldelim();
+    for (const v of message.following) {
+      writer.uint32(58).string(v!);
     }
-    writer.uint32(66).fork();
+    for (const v of message.repositories) {
+      OrganizationRepository.encode(v!, writer.uint32(66).fork()).ldelim();
+    }
+    writer.uint32(74).fork();
     for (const v of message.teams) {
       writer.uint64(v);
     }
     writer.ldelim();
     for (const v of message.members) {
-      OrganizationMember.encode(v!, writer.uint32(74).fork()).ldelim();
+      OrganizationMember.encode(v!, writer.uint32(82).fork()).ldelim();
     }
     if (message.location !== "") {
-      writer.uint32(82).string(message.location);
+      writer.uint32(90).string(message.location);
     }
     if (message.email !== "") {
-      writer.uint32(90).string(message.email);
+      writer.uint32(98).string(message.email);
     }
     if (message.website !== "") {
-      writer.uint32(98).string(message.website);
+      writer.uint32(106).string(message.website);
     }
     if (message.verified === true) {
-      writer.uint32(104).bool(message.verified);
+      writer.uint32(112).bool(message.verified);
     }
     if (message.description !== "") {
-      writer.uint32(114).string(message.description);
+      writer.uint32(122).string(message.description);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(120).int64(message.createdAt);
+      writer.uint32(128).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(128).int64(message.updatedAt);
+      writer.uint32(136).int64(message.updatedAt);
     }
     if (message.extensions !== "") {
-      writer.uint32(138).string(message.extensions);
+      writer.uint32(146).string(message.extensions);
     }
     return writer;
   },
@@ -165,23 +170,26 @@ export const Organization = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.name = reader.string();
+          message.address = reader.string();
           break;
         case 4:
-          message.avatarUrl = reader.string();
+          message.name = reader.string();
           break;
         case 5:
-          message.followers.push(reader.string());
+          message.avatarUrl = reader.string();
           break;
         case 6:
-          message.following.push(reader.string());
+          message.followers.push(reader.string());
           break;
         case 7:
+          message.following.push(reader.string());
+          break;
+        case 8:
           message.repositories.push(
             OrganizationRepository.decode(reader, reader.uint32())
           );
           break;
-        case 8:
+        case 9:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -191,33 +199,33 @@ export const Organization = {
             message.teams.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 9:
+        case 10:
           message.members.push(
             OrganizationMember.decode(reader, reader.uint32())
           );
           break;
-        case 10:
+        case 11:
           message.location = reader.string();
           break;
-        case 11:
+        case 12:
           message.email = reader.string();
           break;
-        case 12:
+        case 13:
           message.website = reader.string();
           break;
-        case 13:
+        case 14:
           message.verified = reader.bool();
           break;
-        case 14:
+        case 15:
           message.description = reader.string();
           break;
-        case 15:
+        case 16:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 17:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 18:
           message.extensions = reader.string();
           break;
         default:
@@ -244,6 +252,11 @@ export const Organization = {
       message.id = Number(object.id);
     } else {
       message.id = 0;
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
     }
     if (object.name !== undefined && object.name !== null) {
       message.name = String(object.name);
@@ -327,6 +340,7 @@ export const Organization = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
+    message.address !== undefined && (obj.address = message.address);
     message.name !== undefined && (obj.name = message.name);
     message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
     if (message.followers) {
@@ -386,6 +400,11 @@ export const Organization = {
       message.id = object.id;
     } else {
       message.id = 0;
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
     }
     if (object.name !== undefined && object.name !== null) {
       message.name = object.name;

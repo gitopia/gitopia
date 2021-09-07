@@ -79,7 +79,6 @@ export interface GitopiaMsgCreateIssueResponse {
     iid?: string;
 }
 export interface GitopiaMsgCreateOrganizationResponse {
-    /** @format uint64 */
     id?: string;
 }
 export interface GitopiaMsgCreatePullRequestResponse {
@@ -138,6 +137,7 @@ export interface GitopiaOrganization {
     creator?: string;
     /** @format uint64 */
     id?: string;
+    address?: string;
     name?: string;
     avatarUrl?: string;
     followers?: string[];
@@ -359,12 +359,6 @@ export interface GitopiaQueryGetCommentResponse {
 export interface GitopiaQueryGetIssueResponse {
     Issue?: GitopiaIssue;
 }
-export interface GitopiaQueryGetOrganizationByNameResponse {
-    Organization?: GitopiaOrganization;
-}
-export interface GitopiaQueryGetOrganizationRepositoryResponse {
-    Repository?: GitopiaRepository;
-}
 export interface GitopiaQueryGetOrganizationResponse {
     Organization?: GitopiaOrganization;
 }
@@ -462,6 +456,8 @@ export interface GitopiaRepositoryTag {
 }
 export interface GitopiaUser {
     creator?: string;
+    /** @format uint64 */
+    id?: string;
     username?: string;
     usernameGithub?: string;
     avatarUrl?: string;
@@ -481,7 +477,6 @@ export interface GitopiaUser {
 }
 export interface GitopiaUserOrganization {
     name?: string;
-    /** @format uint64 */
     id?: string;
 }
 export interface GitopiaUserRepository {
@@ -677,15 +672,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryOrganizationByName
-     * @summary Queries a organization by name.
-     * @request GET:/gitopia/gitopia/gitopia/organization/name/{organizationName}
-     */
-    queryOrganizationByName: (organizationName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetOrganizationByNameResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryOrganization
      * @summary Queries a organization by id.
      * @request GET:/gitopia/gitopia/gitopia/organization/{id}
@@ -697,23 +683,14 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryOrganizationRepositoryAll
      * @summary Queries a list of Organization repositories.
-     * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories
+     * @request GET:/gitopia/gitopia/gitopia/organization/{id}/repositories
      */
-    queryOrganizationRepositoryAll: (organizationName: string, query?: {
+    queryOrganizationRepositoryAll: (id: string, query?: {
         "pagination.key"?: string;
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllOrganizationRepositoryResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryOrganizationRepository
-     * @summary Queries a repository by Organization name and repository name
-     * @request GET:/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}
-     */
-    queryOrganizationRepository: (organizationName: string, repositoryName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetOrganizationRepositoryResponse, RpcStatus>>;
     /**
      * No description
      *

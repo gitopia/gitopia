@@ -57,11 +57,11 @@ export interface MsgCreateOrganization {
     description: string;
 }
 export interface MsgCreateOrganizationResponse {
-    id: number;
+    id: string;
 }
 export interface MsgUpdateOrganizationMember {
     creator: string;
-    id: number;
+    id: string;
     user: string;
     role: string;
 }
@@ -69,14 +69,14 @@ export interface MsgUpdateOrganizationMemberResponse {
 }
 export interface MsgRemoveOrganizationMember {
     creator: string;
-    id: number;
+    id: string;
     user: string;
 }
 export interface MsgRemoveOrganizationMemberResponse {
 }
 export interface MsgUpdateOrganization {
     creator: string;
-    id: number;
+    id: string;
     name: string;
     avatarUrl: string;
     location: string;
@@ -88,7 +88,7 @@ export interface MsgUpdateOrganizationResponse {
 }
 export interface MsgDeleteOrganization {
     creator: string;
-    id: number;
+    id: string;
 }
 export interface MsgDeleteOrganizationResponse {
 }

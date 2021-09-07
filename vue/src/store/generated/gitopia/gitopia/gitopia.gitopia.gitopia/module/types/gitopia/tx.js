@@ -1048,11 +1048,11 @@ export const MsgCreateOrganization = {
         return message;
     },
 };
-const baseMsgCreateOrganizationResponse = { id: 0 };
+const baseMsgCreateOrganizationResponse = { id: "" };
 export const MsgCreateOrganizationResponse = {
     encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
         }
         return writer;
     },
@@ -1066,7 +1066,7 @@ export const MsgCreateOrganizationResponse = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1080,10 +1080,10 @@ export const MsgCreateOrganizationResponse = {
             ...baseMsgCreateOrganizationResponse,
         };
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
@@ -1100,14 +1100,14 @@ export const MsgCreateOrganizationResponse = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
 };
 const baseMsgUpdateOrganizationMember = {
     creator: "",
-    id: 0,
+    id: "",
     user: "",
     role: "",
 };
@@ -1116,8 +1116,8 @@ export const MsgUpdateOrganizationMember = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         if (message.user !== "") {
             writer.uint32(26).string(message.user);
@@ -1140,7 +1140,7 @@ export const MsgUpdateOrganizationMember = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 case 3:
                     message.user = reader.string();
@@ -1166,10 +1166,10 @@ export const MsgUpdateOrganizationMember = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.user !== undefined && object.user !== null) {
             message.user = String(object.user);
@@ -1207,7 +1207,7 @@ export const MsgUpdateOrganizationMember = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.user !== undefined && object.user !== null) {
             message.user = object.user;
@@ -1264,7 +1264,7 @@ export const MsgUpdateOrganizationMemberResponse = {
 };
 const baseMsgRemoveOrganizationMember = {
     creator: "",
-    id: 0,
+    id: "",
     user: "",
 };
 export const MsgRemoveOrganizationMember = {
@@ -1272,8 +1272,8 @@ export const MsgRemoveOrganizationMember = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         if (message.user !== "") {
             writer.uint32(26).string(message.user);
@@ -1293,7 +1293,7 @@ export const MsgRemoveOrganizationMember = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 case 3:
                     message.user = reader.string();
@@ -1316,10 +1316,10 @@ export const MsgRemoveOrganizationMember = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.user !== undefined && object.user !== null) {
             message.user = String(object.user);
@@ -1350,7 +1350,7 @@ export const MsgRemoveOrganizationMember = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.user !== undefined && object.user !== null) {
             message.user = object.user;
@@ -1401,7 +1401,7 @@ export const MsgRemoveOrganizationMemberResponse = {
 };
 const baseMsgUpdateOrganization = {
     creator: "",
-    id: 0,
+    id: "",
     name: "",
     avatarUrl: "",
     location: "",
@@ -1414,8 +1414,8 @@ export const MsgUpdateOrganization = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         if (message.name !== "") {
             writer.uint32(26).string(message.name);
@@ -1448,7 +1448,7 @@ export const MsgUpdateOrganization = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 case 3:
                     message.name = reader.string();
@@ -1484,10 +1484,10 @@ export const MsgUpdateOrganization = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.name !== undefined && object.name !== null) {
             message.name = String(object.name);
@@ -1552,7 +1552,7 @@ export const MsgUpdateOrganization = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         if (object.name !== undefined && object.name !== null) {
             message.name = object.name;
@@ -1631,14 +1631,14 @@ export const MsgUpdateOrganizationResponse = {
         return message;
     },
 };
-const baseMsgDeleteOrganization = { creator: "", id: 0 };
+const baseMsgDeleteOrganization = { creator: "", id: "" };
 export const MsgDeleteOrganization = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.id !== "") {
+            writer.uint32(18).string(message.id);
         }
         return writer;
     },
@@ -1653,7 +1653,7 @@ export const MsgDeleteOrganization = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.id = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -1671,10 +1671,10 @@ export const MsgDeleteOrganization = {
             message.creator = "";
         }
         if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+            message.id = String(object.id);
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
@@ -1696,7 +1696,7 @@ export const MsgDeleteOrganization = {
             message.id = object.id;
         }
         else {
-            message.id = 0;
+            message.id = "";
         }
         return message;
     },
