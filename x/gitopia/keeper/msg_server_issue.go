@@ -192,7 +192,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	var issue = k.GetIssue(ctx, msg.Id)
 
 	if len(issue.Assignees)+len(msg.Assignees) > 10 {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "issue can't have more than 10 assignees")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 10 assignees")
 	}
 
 	for _, a := range msg.Assignees {
@@ -208,6 +208,42 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgAddIssueAssigneesResponse{}, nil
+}
+
+func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRemoveIssueAssignees) (*types.MsgRemoveIssueAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	if len(issue.Assignees) < len(msg.Assignees) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than user assigned")
+	}
+
+	for _, a := range msg.Assignees {
+		if i, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+			issue.Assignees = append(issue.Assignees[:i], issue.Assignees[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
+		}
+	}
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgRemoveIssueAssigneesResponse{}, nil
 }
 
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {

@@ -34,6 +34,7 @@ service Msg {
   rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
   rpc AddIssueAssignees(MsgAddIssueAssignees) returns (MsgAddIssueAssigneesResponse);
+  rpc RemoveIssueAssignees(MsgRemoveIssueAssignees) returns (MsgRemoveIssueAssigneesResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
@@ -253,6 +254,14 @@ message MsgAddIssueAssignees {
 }
 
 message MsgAddIssueAssigneesResponse { }
+
+message MsgRemoveIssueAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgRemoveIssueAssigneesResponse { }
 
 message MsgDeleteIssue {
   string creator = 1;
