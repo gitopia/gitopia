@@ -94,6 +94,10 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateIssueTitle) (*types.MsgUpdateIssueTitleResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
@@ -106,8 +110,29 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 
 	var issue = k.GetIssue(ctx, msg.Id)
 
+	oldTitle := issue.Title
+
 	issue.Title = msg.Title
 	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueUpdateTitleCommentBody(msg.Creator, oldTitle, issue.Title),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
 
@@ -116,6 +141,10 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 
 func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgUpdateIssueDescription) (*types.MsgUpdateIssueDescriptionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
 
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {
@@ -131,6 +160,25 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 
 	issue.Description = msg.Description
 	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueUpdateDescriptionCommentBody(msg.Creator),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
 
