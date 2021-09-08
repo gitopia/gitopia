@@ -40,7 +40,7 @@ func IssueAssigneeExists(a []string, val string) (int, bool) {
 }
 
 func IssueUpdateTitleCommentBody(creator string, oldTitle string, newTitle string) string {
-	return fmt.Sprintf("@%v changed title from **{-%v-}** to **{+%v+}**", creator, oldTitle, newTitle)
+	return fmt.Sprintf("@%v changed title from **~~%v~~** to **%v**", creator, oldTitle, newTitle)
 }
 
 func IssueUpdateDescriptionCommentBody(creator string) string {
