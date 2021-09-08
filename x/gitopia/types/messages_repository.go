@@ -1,7 +1,6 @@
 package types
 
 import (
-	"strconv"
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -71,20 +70,14 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
-
-	if msg.OwnerType == RepositoryOwner_USER.String() {
-		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
-		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
+
 	return nil
 }
 
@@ -125,20 +118,14 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-
-	if msg.OwnerType == RepositoryOwner_USER.String() {
-		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
-		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
+
 	return nil
 }
 
@@ -179,20 +166,14 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-
-	if msg.OwnerType == RepositoryOwner_USER.String() {
-		_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if msg.OwnerType == RepositoryOwner_ORGANIZATION.String() {
-		_, err := strconv.ParseUint(msg.OwnerId, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
+
 	return nil
 }
 
