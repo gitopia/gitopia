@@ -103,6 +103,13 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if len(msg.Title) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	} else if len(msg.Title) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
+	}
+
 	unique := make(map[string]bool, len(msg.Assignees))
 	for _, assignee := range msg.Assignees {
 		_, err := sdk.AccAddressFromBech32(assignee)
@@ -156,6 +163,8 @@ func (msg *MsgUpdateIssueTitle) ValidateBasic() error {
 	}
 	if len(msg.Title) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	} else if len(msg.Title) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
 	}
 	return nil
 }
