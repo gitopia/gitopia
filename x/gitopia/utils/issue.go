@@ -2,6 +2,21 @@ package utils
 
 import "fmt"
 
+func JoinAssignees(assignees []string) string {
+	res := ""
+	len := len(assignees)
+	for i, a := range assignees {
+		res += " "
+		res += "@"
+		res += a
+		if i == len-2 && len > 1 {
+			res += " "
+			res += "and"
+		}
+	}
+	return res
+}
+
 func IssueCommentExists(c []uint64, val uint64) (int, bool) {
 	for i, v := range c {
 		if v == val {
@@ -26,4 +41,12 @@ func IssueUpdateTitleCommentBody(creator string, oldTitle string, newTitle strin
 
 func IssueUpdateDescriptionCommentBody(creator string) string {
 	return fmt.Sprintf("@%v changed the description", creator)
+}
+
+func IssueAddAssigneesCommentBody(creator string, assignees []string) string {
+	return fmt.Sprintf("@%v assigned to"+JoinAssignees(assignees), creator)
+}
+
+func IssueRemoveAssigneesCommentBody(creator string, assignees []string) string {
+	return fmt.Sprintf("@%v unassigned"+JoinAssignees(assignees), creator)
 }

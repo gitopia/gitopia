@@ -253,6 +253,26 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		issue.Assignees = append(issue.Assignees, a)
 	}
 
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueAddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgAddIssueAssigneesResponse{}, nil
@@ -288,6 +308,26 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
 		}
 	}
+
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueRemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
 
