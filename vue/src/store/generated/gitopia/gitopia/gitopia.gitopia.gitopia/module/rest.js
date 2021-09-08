@@ -261,21 +261,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryOrganizationRepositoryAll
-         * @summary Queries a list of Organization repositories.
-         * @request GET:/gitopia/gitopia/gitopia/organization/{id}/repositories
-         */
-        this.queryOrganizationRepositoryAll = (id, query, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/organization/${id}/repositories`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryPullRequestAll
          * @summary Queries a list of pullRequest items.
          * @request GET:/gitopia/gitopia/gitopia/pullRequest
@@ -326,6 +311,20 @@ export class Api extends HttpClient {
          */
         this.queryRepository = (id, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/repository/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryAddressRepository
+         * @summary Queries a repository by user id and repository name
+         * @request GET:/gitopia/gitopia/gitopia/repository/{id}/{repositoryName}
+         */
+        this.queryAddressRepository = (id, repositoryName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/repository/${id}/${repositoryName}`,
             method: "GET",
             format: "json",
             ...params,
@@ -387,20 +386,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryUserRepository
-         * @summary Queries a repository by user id and repository name
-         * @request GET:/gitopia/gitopia/gitopia/repository/{userId}/{repositoryName}
-         */
-        this.queryUserRepository = (userId, repositoryName, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/repository/${userId}/${repositoryName}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryUserAll
          * @summary Queries a list of user items.
          * @request GET:/gitopia/gitopia/gitopia/user
@@ -444,13 +429,14 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryUserRepositoryAll
+         * @name QueryAddressRepositoryAll
          * @summary Queries a list of user repositories.
          * @request GET:/gitopia/gitopia/gitopia/user/{id}/repositories
          */
-        this.queryUserRepositoryAll = (id, params = {}) => this.request({
+        this.queryAddressRepositoryAll = (id, query, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/user/${id}/repositories`,
             method: "GET",
+            query: query,
             format: "json",
             ...params,
         });
@@ -489,10 +475,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRepositoryIssueAll
          * @summary Queries a list of repository items.
-         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue
+         * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
          */
-        this.queryRepositoryIssueAll = (userId, repositoryName, query, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/issue`,
+        this.queryRepositoryIssueAll = (id, repositoryName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/issue`,
             method: "GET",
             query: query,
             format: "json",
@@ -504,10 +490,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRepositoryIssue
          * @summary Queries a repository by id.
-         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue/{issueIid}
+         * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}
          */
-        this.queryRepositoryIssue = (userId, repositoryName, issueIid, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/issue/${issueIid}`,
+        this.queryRepositoryIssue = (id, repositoryName, issueIid, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/issue/${issueIid}`,
             method: "GET",
             format: "json",
             ...params,
