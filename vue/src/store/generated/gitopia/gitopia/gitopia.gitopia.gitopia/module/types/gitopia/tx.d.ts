@@ -165,6 +165,20 @@ export interface MsgToggleIssueState {
 export interface MsgToggleIssueStateResponse {
     state: string;
 }
+export interface MsgAddIssueAssignees {
+    creator: string;
+    id: number;
+    assignees: string[];
+}
+export interface MsgAddIssueAssigneesResponse {
+}
+export interface MsgRemoveIssueAssignees {
+    creator: string;
+    id: number;
+    assignees: string[];
+}
+export interface MsgRemoveIssueAssigneesResponse {
+}
 export interface MsgDeleteIssue {
     creator: string;
     id: number;
@@ -610,6 +624,34 @@ export declare const MsgToggleIssueStateResponse: {
     toJSON(message: MsgToggleIssueStateResponse): unknown;
     fromPartial(object: DeepPartial<MsgToggleIssueStateResponse>): MsgToggleIssueStateResponse;
 };
+export declare const MsgAddIssueAssignees: {
+    encode(message: MsgAddIssueAssignees, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueAssignees;
+    fromJSON(object: any): MsgAddIssueAssignees;
+    toJSON(message: MsgAddIssueAssignees): unknown;
+    fromPartial(object: DeepPartial<MsgAddIssueAssignees>): MsgAddIssueAssignees;
+};
+export declare const MsgAddIssueAssigneesResponse: {
+    encode(_: MsgAddIssueAssigneesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueAssigneesResponse;
+    fromJSON(_: any): MsgAddIssueAssigneesResponse;
+    toJSON(_: MsgAddIssueAssigneesResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAddIssueAssigneesResponse>): MsgAddIssueAssigneesResponse;
+};
+export declare const MsgRemoveIssueAssignees: {
+    encode(message: MsgRemoveIssueAssignees, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueAssignees;
+    fromJSON(object: any): MsgRemoveIssueAssignees;
+    toJSON(message: MsgRemoveIssueAssignees): unknown;
+    fromPartial(object: DeepPartial<MsgRemoveIssueAssignees>): MsgRemoveIssueAssignees;
+};
+export declare const MsgRemoveIssueAssigneesResponse: {
+    encode(_: MsgRemoveIssueAssigneesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueAssigneesResponse;
+    fromJSON(_: any): MsgRemoveIssueAssigneesResponse;
+    toJSON(_: MsgRemoveIssueAssigneesResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRemoveIssueAssigneesResponse>): MsgRemoveIssueAssigneesResponse;
+};
 export declare const MsgDeleteIssue: {
     encode(message: MsgDeleteIssue, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
@@ -912,6 +954,8 @@ export interface Msg {
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
+    AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
+    RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
@@ -955,6 +999,8 @@ export declare class MsgClientImpl implements Msg {
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
+    AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
+    RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;

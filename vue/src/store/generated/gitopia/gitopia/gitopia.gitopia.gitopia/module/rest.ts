@@ -96,6 +96,8 @@ export enum GitopiaIssueState {
   CLOSED = "CLOSED",
 }
 
+export type GitopiaMsgAddIssueAssigneesResponse = object;
+
 export type GitopiaMsgChangeOwnerResponse = object;
 
 export type GitopiaMsgCreateBranchResponse = object;
@@ -159,6 +161,8 @@ export interface GitopiaMsgForkRepositoryResponse {
   /** @format uint64 */
   id?: string;
 }
+
+export type GitopiaMsgRemoveIssueAssigneesResponse = object;
 
 export type GitopiaMsgRemoveOrganizationMemberResponse = object;
 

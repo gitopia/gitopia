@@ -66,6 +66,7 @@ export declare enum GitopiaIssueState {
     OPEN = "OPEN",
     CLOSED = "CLOSED"
 }
+export declare type GitopiaMsgAddIssueAssigneesResponse = object;
 export declare type GitopiaMsgChangeOwnerResponse = object;
 export declare type GitopiaMsgCreateBranchResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
@@ -109,6 +110,7 @@ export interface GitopiaMsgForkRepositoryResponse {
     /** @format uint64 */
     id?: string;
 }
+export declare type GitopiaMsgRemoveIssueAssigneesResponse = object;
 export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
 export declare type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgRenameRepositoryResponse = object;
