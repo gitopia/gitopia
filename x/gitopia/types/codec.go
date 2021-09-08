@@ -31,6 +31,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateIssueTitle{}, "gitopia/UpdateIssueTitle", nil)
 	cdc.RegisterConcrete(&MsgUpdateIssueDescription{}, "gitopia/UpdateIssueDescription", nil)
 	cdc.RegisterConcrete(&MsgToggleIssueState{}, "gitopia/ToggleIssueState", nil)
+	cdc.RegisterConcrete(&MsgAddIssueAssignees{}, "gitopia/AddIssueAssignees", nil)
+	cdc.RegisterConcrete(&MsgRemoveIssueAssignees{}, "gitopia/RemoveIssueAssignees", nil)
 	cdc.RegisterConcrete(&MsgDeleteIssue{}, "gitopia/DeleteIssue", nil)
 
 	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
@@ -42,6 +44,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateBranch{}, "gitopia/CreateBranch", nil)
 	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
 	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
+	cdc.RegisterConcrete(&MsgCreateTag{}, "gitopia/CreateTag", nil)
+	cdc.RegisterConcrete(&MsgDeleteTag{}, "gitopia/DeleteTag", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepository{}, "gitopia/UpdateRepository", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepository{}, "gitopia/DeleteRepository", nil)
 
@@ -83,6 +87,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateIssueTitle{},
 		&MsgUpdateIssueDescription{},
 		&MsgToggleIssueState{},
+		&MsgAddIssueAssignees{},
+		&MsgRemoveIssueAssignees{},
 		&MsgDeleteIssue{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -95,6 +101,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateBranch{},
 		&MsgSetDefaultBranch{},
 		&MsgDeleteBranch{},
+		&MsgCreateTag{},
+		&MsgDeleteTag{},
 		&MsgUpdateRepository{},
 		&MsgDeleteRepository{},
 	)

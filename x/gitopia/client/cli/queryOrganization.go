@@ -2,11 +2,11 @@ package cli
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +53,7 @@ func CmdShowOrganization() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			id, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}

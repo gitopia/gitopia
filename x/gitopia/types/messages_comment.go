@@ -47,6 +47,10 @@ func (msg *MsgCreateComment) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	_, exists := Comment_Type_value[msg.CommentType]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid commentType (%s)", msg.CommentType)
+	}
 	return nil
 }
 

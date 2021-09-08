@@ -18,6 +18,10 @@ message Comment {
   string authorAssociation = 10;
   int64 createdAt = 11;
   int64 updatedAt = 12;
-  string commentType = 13;
+  enum Type {
+    ISSUE = 0;
+	  PULLREQUEST = 1;
+  }
+  Type commentType = 13;
   string extensions = 14;
 }

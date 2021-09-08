@@ -3,8 +3,8 @@ import { OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgConnectionOpenConfirm } from "./types/ibc/core/connection/v1/tx";
 import { MsgConnectionOpenTry } from "./types/ibc/core/connection/v1/tx";
-import { MsgConnectionOpenInit } from "./types/ibc/core/connection/v1/tx";
 import { MsgConnectionOpenAck } from "./types/ibc/core/connection/v1/tx";
+import { MsgConnectionOpenInit } from "./types/ibc/core/connection/v1/tx";
 export declare const MissingWalletError: Error;
 interface TxClientOptions {
     addr: string;
@@ -17,8 +17,8 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => Promise<import("@cosmjs/stargate").BroadcastTxResponse>;
     msgConnectionOpenConfirm: (data: MsgConnectionOpenConfirm) => EncodeObject;
     msgConnectionOpenTry: (data: MsgConnectionOpenTry) => EncodeObject;
-    msgConnectionOpenInit: (data: MsgConnectionOpenInit) => EncodeObject;
     msgConnectionOpenAck: (data: MsgConnectionOpenAck) => EncodeObject;
+    msgConnectionOpenInit: (data: MsgConnectionOpenInit) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;

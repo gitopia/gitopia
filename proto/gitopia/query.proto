@@ -34,11 +34,6 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{id}";
 	}
 
-	// Queries a organization by name.
-	rpc OrganizationByName(QueryGetOrganizationByNameRequest) returns (QueryGetOrganizationByNameResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/name/{organizationName}";
-	}
-
 	// Queries a list of organization items.
 	rpc OrganizationAll(QueryAllOrganizationRequest) returns (QueryAllOrganizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization";
@@ -67,12 +62,12 @@ service Query {
 
 	// Queries a repository by id.
 	rpc RepositoryIssue(QueryGetRepositoryIssueRequest) returns (QueryGetRepositoryIssueResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue/{issueIid}";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}";
 	}
 
 	// Queries a list of repository items.
 	rpc RepositoryIssueAll(QueryAllRepositoryIssueRequest) returns (QueryAllRepositoryIssueResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/issue";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue";
 	}
 
 	// Queries a repository pullRequest by id.
@@ -96,11 +91,19 @@ service Query {
 
 	// Queries a repository by id.
 	rpc BranchAll(QueryGetAllBranchRequest) returns (QueryGetAllBranchResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/branches";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches";
 	}
 
 	rpc BranchSha(QueryGetBranchShaRequest) returns (QueryGetBranchShaResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}";
+	}
+
+	rpc TagAll(QueryGetAllTagRequest) returns (QueryGetAllTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags";
+	}
+
+	rpc TagSha(QueryGetTagShaRequest) returns (QueryGetTagShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags/{tagName}";
 	}
 
 	// Queries a user by id.
@@ -114,28 +117,18 @@ service Query {
 	}
 
 	// Queries a list of user repositories.
-	rpc UserRepositoryAll(QueryAllUserRepositoryRequest) returns (QueryAllUserRepositoryResponse) {
+	rpc AddressRepositoryAll(QueryAllAddressRepositoryRequest) returns (QueryAllAddressRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repositories";
 	}
 
 	// Queries a repository by user id and repository name
-	rpc UserRepository(QueryGetUserRepositoryRequest) returns (QueryGetUserRepositoryResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{user_id}/{repository_name}";
+	rpc AddressRepository(QueryGetAddressRepositoryRequest) returns (QueryGetAddressRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/{repositoryName}";
 	}
 
 	// Queries a list of user Organizations.
 	rpc UserOrganizationAll(QueryAllUserOrganizationRequest) returns (QueryAllUserOrganizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/organizations";
-	}
-
-	// Queries a list of Organization repositories.
-	rpc OrganizationRepositoryAll(QueryAllOrganizationRepositoryRequest) returns (QueryAllOrganizationRepositoryResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{organizationName}/repositories";
-	}
-
-	// Queries a repository by Organization name and repository name
-	rpc OrganizationRepository(QueryGetOrganizationRepositoryRequest) returns (QueryGetOrganizationRepositoryResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{organizationName}/repositories/{repositoryName}";
 	}
 
 	// Queries a whois by id.
@@ -168,18 +161,10 @@ message QueryAllPullRequestResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 message QueryGetOrganizationRequest {
-	uint64 id = 1;
+	string id = 1;
 }
 
 message QueryGetOrganizationResponse {
-	Organization Organization = 1;
-}
-
-message QueryGetOrganizationByNameRequest {
-	string organizationName = 1;
-}
-
-message QueryGetOrganizationByNameResponse {
 	Organization Organization = 1;
 }
 
@@ -225,7 +210,7 @@ message QueryAllIssueResponse {
 }
 
 message QueryGetRepositoryIssueRequest {
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	uint64 issueIid = 3;
 }
@@ -245,7 +230,7 @@ message QueryGetRepositoryPullRequestResponse {
 }
 
 message QueryAllRepositoryIssueRequest {
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
@@ -275,7 +260,7 @@ message QueryGetRepositoryResponse {
 }
 
 message QueryGetAllBranchRequest {
-	uint64 id = 1;
+	uint64 repositoryId = 1;
 }
 
 message QueryGetAllBranchResponse {
@@ -288,6 +273,23 @@ message QueryGetBranchShaRequest {
 }
 
 message QueryGetBranchShaResponse {
+	string sha = 1;
+}
+
+message QueryGetAllTagRequest {
+	uint64 repositoryId = 1;
+}
+
+message QueryGetAllTagResponse {
+	repeated RepositoryTag Tags = 1;
+}
+
+message QueryGetTagShaRequest {
+	uint64 repositoryId = 1;
+	string tagName = 2;
+}
+
+message QueryGetTagShaResponse {
 	string sha = 1;
 }
 
@@ -316,20 +318,22 @@ message QueryAllUserResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryAllUserRepositoryRequest {
+message QueryAllAddressRepositoryRequest {
 	string id = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-message QueryAllUserRepositoryResponse {
+message QueryAllAddressRepositoryResponse {
 	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetUserRepositoryRequest {
-	string user_id = 1;
-	string repository_name = 2;
+message QueryGetAddressRepositoryRequest {
+	string id = 1;
+	string repositoryName = 2;
 }
 
-message QueryGetUserRepositoryResponse {
+message QueryGetAddressRepositoryResponse {
 	Repository Repository = 1;
 }
 
@@ -339,25 +343,6 @@ message QueryAllUserOrganizationRequest {
 
 message QueryAllUserOrganizationResponse {
 	repeated Organization organization = 1;
-}
-
-message QueryAllOrganizationRepositoryRequest {
-	string organizationName = 1;
-	cosmos.base.query.v1beta1.PageRequest pagination = 3;
-}
-
-message QueryAllOrganizationRepositoryResponse {
-	repeated Repository Repository = 1;
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetOrganizationRepositoryRequest {
-	string organizationName = 1;
-	string repositoryName = 2;
-}
-
-message QueryGetOrganizationRepositoryResponse {
-	Repository Repository = 1;
 }
 
 message QueryGetWhoisRequest {

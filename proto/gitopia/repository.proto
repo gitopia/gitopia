@@ -9,11 +9,11 @@ message Repository {
   string creator = 1;
   uint64 id = 2;
   string name = 3; 
-  string owner = 4; 
+  RepositoryOwner owner = 4; 
   string description = 5; 
   repeated uint64 forks = 6; 
   repeated RepositoryBranch branches = 7;
-  string tags = 8; 
+  repeated RepositoryTag tags = 8; 
   string subscribers = 9; 
   string commits = 10;
   repeated RepositoryIssue issues = 11;
@@ -35,7 +35,21 @@ message Repository {
   string extensions = 27;
 }
 
+message RepositoryOwner {
+  string id = 1;
+  enum Type {
+    USER = 0;
+	  ORGANIZATION = 1;
+  }
+  Type type = 2;
+}
+
 message RepositoryBranch {
+  string name = 1;
+  string sha = 2;
+}
+
+message RepositoryTag {
   string name = 1;
   string sha = 2;
 }
@@ -52,5 +66,12 @@ message RepositoryPullRequest {
 
 message RepositoryCollaborator {
   string id = 1;
-  string permission = 2;
+  enum Permission {
+    READ = 0;
+	  TRIAGE = 1;
+	  WRITE = 2;
+	  MAINTAIN = 3;
+	  ADMIN = 4;
+  }
+  Permission permission = 2;
 }

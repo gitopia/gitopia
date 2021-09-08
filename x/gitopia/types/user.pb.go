@@ -25,20 +25,21 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type User struct {
 	Creator        string              `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Username       string              `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	UsernameGithub string              `protobuf:"bytes,3,opt,name=usernameGithub,proto3" json:"usernameGithub,omitempty"`
-	AvatarUrl      string              `protobuf:"bytes,4,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
-	Followers      []uint64            `protobuf:"varint,5,rep,packed,name=followers,proto3" json:"followers,omitempty"`
-	Following      []uint64            `protobuf:"varint,6,rep,packed,name=following,proto3" json:"following,omitempty"`
-	Repositories   []*UserRepository   `protobuf:"bytes,7,rep,name=repositories,proto3" json:"repositories,omitempty"`
-	Organizations  []*UserOrganization `protobuf:"bytes,8,rep,name=organizations,proto3" json:"organizations,omitempty"`
-	StarredRepos   []uint64            `protobuf:"varint,9,rep,packed,name=starred_repos,json=starredRepos,proto3" json:"starred_repos,omitempty"`
-	Subscriptions  string              `protobuf:"bytes,10,opt,name=subscriptions,proto3" json:"subscriptions,omitempty"`
-	Email          string              `protobuf:"bytes,11,opt,name=email,proto3" json:"email,omitempty"`
-	Bio            string              `protobuf:"bytes,12,opt,name=bio,proto3" json:"bio,omitempty"`
-	CreatedAt      int64               `protobuf:"varint,13,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt      int64               `protobuf:"varint,14,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Extensions     string              `protobuf:"bytes,15,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Id             uint64              `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Username       string              `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+	UsernameGithub string              `protobuf:"bytes,4,opt,name=usernameGithub,proto3" json:"usernameGithub,omitempty"`
+	AvatarUrl      string              `protobuf:"bytes,5,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
+	Followers      []string            `protobuf:"bytes,6,rep,name=followers,proto3" json:"followers,omitempty"`
+	Following      []string            `protobuf:"bytes,7,rep,name=following,proto3" json:"following,omitempty"`
+	Repositories   []*UserRepository   `protobuf:"bytes,8,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	Organizations  []*UserOrganization `protobuf:"bytes,9,rep,name=organizations,proto3" json:"organizations,omitempty"`
+	StarredRepos   []uint64            `protobuf:"varint,10,rep,packed,name=starred_repos,json=starredRepos,proto3" json:"starred_repos,omitempty"`
+	Subscriptions  string              `protobuf:"bytes,11,opt,name=subscriptions,proto3" json:"subscriptions,omitempty"`
+	Email          string              `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
+	Bio            string              `protobuf:"bytes,13,opt,name=bio,proto3" json:"bio,omitempty"`
+	CreatedAt      int64               `protobuf:"varint,14,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt      int64               `protobuf:"varint,15,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Extensions     string              `protobuf:"bytes,16,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *User) Reset()         { *m = User{} }
@@ -81,6 +82,13 @@ func (m *User) GetCreator() string {
 	return ""
 }
 
+func (m *User) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
 func (m *User) GetUsername() string {
 	if m != nil {
 		return m.Username
@@ -102,14 +110,14 @@ func (m *User) GetAvatarUrl() string {
 	return ""
 }
 
-func (m *User) GetFollowers() []uint64 {
+func (m *User) GetFollowers() []string {
 	if m != nil {
 		return m.Followers
 	}
 	return nil
 }
 
-func (m *User) GetFollowing() []uint64 {
+func (m *User) GetFollowing() []string {
 	if m != nil {
 		return m.Following
 	}
@@ -233,7 +241,7 @@ func (m *UserRepository) GetId() uint64 {
 
 type UserOrganization struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Id   uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id   string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *UserOrganization) Reset()         { *m = UserOrganization{} }
@@ -276,11 +284,11 @@ func (m *UserOrganization) GetName() string {
 	return ""
 }
 
-func (m *UserOrganization) GetId() uint64 {
+func (m *UserOrganization) GetId() string {
 	if m != nil {
 		return m.Id
 	}
-	return 0
+	return ""
 }
 
 func init() {
@@ -292,35 +300,35 @@ func init() {
 func init() { proto.RegisterFile("gitopia/user.proto", fileDescriptor_bf7f4b301dc3d162) }
 
 var fileDescriptor_bf7f4b301dc3d162 = []byte{
-	// 433 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0xcd, 0x8a, 0xd4, 0x40,
-	0x10, 0xc7, 0x27, 0x93, 0xec, 0xc7, 0xd4, 0xce, 0xc4, 0xa5, 0x58, 0xb0, 0x59, 0x24, 0x84, 0x51,
-	0x34, 0x7a, 0xc8, 0x80, 0x8a, 0x77, 0x45, 0xf0, 0xe0, 0x61, 0x21, 0xb0, 0x17, 0x2f, 0xd2, 0x99,
-	0xb4, 0xb1, 0x21, 0x93, 0x0e, 0xdd, 0x1d, 0xdd, 0xf5, 0x29, 0x7c, 0x0f, 0x5f, 0xc4, 0xe3, 0x1e,
-	0x3d, 0xca, 0xcc, 0x8b, 0x48, 0x2a, 0x93, 0xc9, 0x64, 0x40, 0xf1, 0xd4, 0x55, 0xbf, 0x7f, 0x55,
-	0x75, 0xa5, 0x52, 0x0d, 0x98, 0x4b, 0xab, 0x2a, 0xc9, 0x17, 0xb5, 0x11, 0x3a, 0xae, 0xb4, 0xb2,
-	0x0a, 0xef, 0x6f, 0x59, 0x7c, 0x70, 0x5e, 0x5e, 0xe4, 0x2a, 0x57, 0x14, 0xb3, 0x68, 0xac, 0x36,
-	0x7c, 0xfe, 0xc3, 0x03, 0xef, 0xda, 0x08, 0x8d, 0x0c, 0x4e, 0x96, 0x5a, 0x70, 0xab, 0x34, 0x73,
-	0x42, 0x27, 0x9a, 0x24, 0x9d, 0x8b, 0x97, 0x70, 0xda, 0xd4, 0x2f, 0xf9, 0x4a, 0xb0, 0x31, 0x49,
-	0x3b, 0x1f, 0x1f, 0x83, 0xdf, 0xd9, 0xef, 0xa4, 0xfd, 0x5c, 0xa7, 0xcc, 0xa5, 0x88, 0x03, 0x8a,
-	0x0f, 0x60, 0xc2, 0xbf, 0x70, 0xcb, 0xf5, 0xb5, 0x2e, 0x98, 0x47, 0x21, 0x3d, 0x68, 0xd4, 0x4f,
-	0xaa, 0x28, 0xd4, 0x57, 0xa1, 0x0d, 0x3b, 0x0a, 0xdd, 0xc8, 0x4b, 0x7a, 0xd0, 0xab, 0xb2, 0xcc,
-	0xd9, 0xf1, 0xbe, 0x2a, 0xcb, 0x1c, 0xdf, 0xc3, 0x54, 0x8b, 0x4a, 0x19, 0x69, 0x95, 0x96, 0xc2,
-	0xb0, 0x93, 0xd0, 0x8d, 0xce, 0x9e, 0x3f, 0x89, 0xff, 0x32, 0x86, 0xb8, 0xf9, 0xd8, 0xa4, 0x4b,
-	0xb8, 0x4d, 0x06, 0xc9, 0x78, 0x05, 0x33, 0xa5, 0x73, 0x5e, 0xca, 0x6f, 0xdc, 0x4a, 0x55, 0x1a,
-	0x76, 0x4a, 0xd5, 0x9e, 0xfe, 0xb3, 0xda, 0xd5, 0x5e, 0x46, 0x32, 0xcc, 0xc7, 0x87, 0x30, 0x33,
-	0x96, 0x6b, 0x2d, 0xb2, 0x8f, 0x74, 0x11, 0x9b, 0x50, 0xff, 0xd3, 0x2d, 0xa4, 0x46, 0xf0, 0x11,
-	0xcc, 0x4c, 0x9d, 0x9a, 0xa5, 0x96, 0x55, 0x7b, 0x2b, 0xd0, 0x80, 0x86, 0x10, 0x2f, 0xe0, 0x48,
-	0xac, 0xb8, 0x2c, 0xd8, 0x19, 0xa9, 0xad, 0x83, 0xe7, 0xe0, 0xa6, 0x52, 0xb1, 0x29, 0xb1, 0xc6,
-	0x6c, 0xc6, 0x45, 0x7f, 0x4e, 0x64, 0xaf, 0x2d, 0x9b, 0x85, 0x4e, 0xe4, 0x26, 0x3d, 0x68, 0xd4,
-	0xba, 0xca, 0xb6, 0xaa, 0xdf, 0xaa, 0x3b, 0x80, 0x01, 0x80, 0xb8, 0xb1, 0xa2, 0x34, 0xd4, 0xc6,
-	0x3d, 0x2a, 0xba, 0x47, 0xe6, 0x2f, 0xc1, 0x1f, 0xce, 0x0f, 0x11, 0x3c, 0x5a, 0x8c, 0x76, 0x67,
-	0xc8, 0x46, 0x1f, 0xc6, 0x32, 0xa3, 0x55, 0xf1, 0x92, 0xb1, 0xcc, 0xe6, 0xaf, 0xe0, 0xfc, 0x70,
-	0x4e, 0xff, 0x93, 0xf7, 0xe6, 0xed, 0xcf, 0x75, 0xe0, 0xdc, 0xad, 0x03, 0xe7, 0xf7, 0x3a, 0x70,
-	0xbe, 0x6f, 0x82, 0xd1, 0xdd, 0x26, 0x18, 0xfd, 0xda, 0x04, 0xa3, 0x0f, 0xcf, 0x72, 0x5a, 0xab,
-	0x78, 0xa9, 0x56, 0x8b, 0xee, 0x0d, 0x74, 0xe7, 0xcd, 0xce, 0xb2, 0xb7, 0x95, 0x30, 0xe9, 0x31,
-	0x2d, 0xfa, 0x8b, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x6c, 0x49, 0x64, 0xe6, 0x2d, 0x03, 0x00,
-	0x00,
+	// 440 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0xcd, 0x8e, 0xd3, 0x30,
+	0x10, 0x6e, 0x9a, 0xec, 0x4f, 0x67, 0xdb, 0x52, 0x8d, 0x56, 0xc2, 0x5a, 0xa1, 0x28, 0x2a, 0x08,
+	0x02, 0x87, 0x54, 0x02, 0xc4, 0x1d, 0x84, 0xc4, 0x81, 0xc3, 0x4a, 0x91, 0xf6, 0xc2, 0x05, 0xb9,
+	0x8d, 0x09, 0x96, 0xda, 0x38, 0xb2, 0x5d, 0xd8, 0xe5, 0x29, 0x78, 0x1f, 0x5e, 0x80, 0x63, 0x8f,
+	0x1c, 0x51, 0xfb, 0x22, 0xc8, 0x93, 0x26, 0x6d, 0x22, 0x01, 0x27, 0xcf, 0x7c, 0xdf, 0x7c, 0x33,
+	0xce, 0xe4, 0x33, 0x60, 0x2e, 0xad, 0x2a, 0x25, 0x9f, 0xad, 0x8d, 0xd0, 0x49, 0xa9, 0x95, 0x55,
+	0x78, 0x7f, 0x8f, 0x25, 0x9d, 0xf3, 0xea, 0x32, 0x57, 0xb9, 0xa2, 0x9a, 0x99, 0x8b, 0xaa, 0xf2,
+	0xe9, 0x8f, 0x00, 0x82, 0x1b, 0x23, 0x34, 0x32, 0x38, 0x5b, 0x68, 0xc1, 0xad, 0xd2, 0xcc, 0x8b,
+	0xbc, 0x78, 0x90, 0xd6, 0x29, 0x8e, 0xa1, 0x2f, 0x33, 0xd6, 0x8f, 0xbc, 0x38, 0x48, 0xfb, 0x32,
+	0xc3, 0x2b, 0x38, 0x77, 0xf3, 0x0a, 0xbe, 0x12, 0xcc, 0xa7, 0xd2, 0x26, 0xc7, 0xc7, 0x30, 0xae,
+	0xe3, 0x77, 0xd2, 0x7e, 0x5e, 0xcf, 0x59, 0x40, 0x15, 0x1d, 0x14, 0x1f, 0xc0, 0x80, 0x7f, 0xe1,
+	0x96, 0xeb, 0x1b, 0xbd, 0x64, 0x27, 0x54, 0x72, 0x00, 0x1c, 0xfb, 0x49, 0x2d, 0x97, 0xea, 0xab,
+	0xd0, 0x86, 0x9d, 0x46, 0xbe, 0x63, 0x1b, 0xe0, 0xc0, 0xca, 0x22, 0x67, 0x67, 0xc7, 0xac, 0x2c,
+	0x72, 0x7c, 0x0f, 0x43, 0x2d, 0x4a, 0x65, 0xa4, 0x55, 0x5a, 0x0a, 0xc3, 0xce, 0x23, 0x3f, 0xbe,
+	0x78, 0xfe, 0x24, 0xf9, 0xcb, 0x5a, 0x12, 0xf7, 0xf1, 0x69, 0x2d, 0xb8, 0x4b, 0x5b, 0x62, 0xbc,
+	0x86, 0x91, 0xd2, 0x39, 0x2f, 0xe4, 0x37, 0x6e, 0xa5, 0x2a, 0x0c, 0x1b, 0x50, 0xb7, 0xa7, 0xff,
+	0xec, 0x76, 0x7d, 0xa4, 0x48, 0xdb, 0x7a, 0x7c, 0x08, 0x23, 0x63, 0xb9, 0xd6, 0x22, 0xfb, 0x48,
+	0x83, 0x18, 0x44, 0x7e, 0x1c, 0xa4, 0xc3, 0x3d, 0x48, 0x17, 0xc1, 0x47, 0x30, 0x32, 0xeb, 0xb9,
+	0x59, 0x68, 0x59, 0x56, 0x53, 0x2f, 0x68, 0x41, 0x6d, 0x10, 0x2f, 0xe1, 0x44, 0xac, 0xb8, 0x5c,
+	0xb2, 0x21, 0xb1, 0x55, 0x82, 0x13, 0xf0, 0xe7, 0x52, 0xb1, 0x11, 0x61, 0x2e, 0x74, 0xeb, 0xa2,
+	0x3f, 0x29, 0xb2, 0xd7, 0x96, 0x8d, 0x23, 0x2f, 0xf6, 0xd3, 0x03, 0xe0, 0xd8, 0x75, 0x99, 0xed,
+	0xd9, 0x7b, 0x15, 0xdb, 0x00, 0x18, 0x02, 0x88, 0x5b, 0x2b, 0x0a, 0x43, 0xd7, 0x98, 0x50, 0xd3,
+	0x23, 0x64, 0xfa, 0x12, 0xc6, 0xed, 0xfd, 0x21, 0x42, 0x40, 0xc6, 0xa8, 0x3c, 0x44, 0x71, 0xd7,
+	0x40, 0xd3, 0x57, 0x30, 0xe9, 0xee, 0xe9, 0x3f, 0xba, 0x81, 0xd3, 0xbd, 0x79, 0xfb, 0x73, 0x1b,
+	0x7a, 0x9b, 0x6d, 0xe8, 0xfd, 0xde, 0x86, 0xde, 0xf7, 0x5d, 0xd8, 0xdb, 0xec, 0xc2, 0xde, 0xaf,
+	0x5d, 0xd8, 0xfb, 0xf0, 0x2c, 0x27, 0x5b, 0x25, 0x0b, 0xb5, 0x9a, 0xd5, 0x6f, 0xa2, 0x3e, 0x6f,
+	0x9b, 0xc8, 0xde, 0x95, 0xc2, 0xcc, 0x4f, 0xc9, 0xf8, 0x2f, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff,
+	0xaf, 0x7a, 0x61, 0xaa, 0x3d, 0x03, 0x00, 0x00,
 }
 
 func (m *User) Marshal() (dAtA []byte, err error) {
@@ -348,38 +356,40 @@ func (m *User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Extensions)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.Extensions)))
 		i--
-		dAtA[i] = 0x7a
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
 	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintUser(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x70
+		dAtA[i] = 0x78
 	}
 	if m.CreatedAt != 0 {
 		i = encodeVarintUser(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x68
+		dAtA[i] = 0x70
 	}
 	if len(m.Bio) > 0 {
 		i -= len(m.Bio)
 		copy(dAtA[i:], m.Bio)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.Bio)))
 		i--
-		dAtA[i] = 0x62
+		dAtA[i] = 0x6a
 	}
 	if len(m.Email) > 0 {
 		i -= len(m.Email)
 		copy(dAtA[i:], m.Email)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.Email)))
 		i--
-		dAtA[i] = 0x5a
+		dAtA[i] = 0x62
 	}
 	if len(m.Subscriptions) > 0 {
 		i -= len(m.Subscriptions)
 		copy(dAtA[i:], m.Subscriptions)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.Subscriptions)))
 		i--
-		dAtA[i] = 0x52
+		dAtA[i] = 0x5a
 	}
 	if len(m.StarredRepos) > 0 {
 		dAtA2 := make([]byte, len(m.StarredRepos)*10)
@@ -397,7 +407,7 @@ func (m *User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintUser(dAtA, i, uint64(j1))
 		i--
-		dAtA[i] = 0x4a
+		dAtA[i] = 0x52
 	}
 	if len(m.Organizations) > 0 {
 		for iNdEx := len(m.Organizations) - 1; iNdEx >= 0; iNdEx-- {
@@ -410,7 +420,7 @@ func (m *User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintUser(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x42
+			dAtA[i] = 0x4a
 		}
 	}
 	if len(m.Repositories) > 0 {
@@ -424,65 +434,52 @@ func (m *User) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintUser(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x3a
+			dAtA[i] = 0x42
 		}
 	}
 	if len(m.Following) > 0 {
-		dAtA4 := make([]byte, len(m.Following)*10)
-		var j3 int
-		for _, num := range m.Following {
-			for num >= 1<<7 {
-				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j3++
-			}
-			dAtA4[j3] = uint8(num)
-			j3++
+		for iNdEx := len(m.Following) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Following[iNdEx])
+			copy(dAtA[i:], m.Following[iNdEx])
+			i = encodeVarintUser(dAtA, i, uint64(len(m.Following[iNdEx])))
+			i--
+			dAtA[i] = 0x3a
 		}
-		i -= j3
-		copy(dAtA[i:], dAtA4[:j3])
-		i = encodeVarintUser(dAtA, i, uint64(j3))
-		i--
-		dAtA[i] = 0x32
 	}
 	if len(m.Followers) > 0 {
-		dAtA6 := make([]byte, len(m.Followers)*10)
-		var j5 int
-		for _, num := range m.Followers {
-			for num >= 1<<7 {
-				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j5++
-			}
-			dAtA6[j5] = uint8(num)
-			j5++
+		for iNdEx := len(m.Followers) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Followers[iNdEx])
+			copy(dAtA[i:], m.Followers[iNdEx])
+			i = encodeVarintUser(dAtA, i, uint64(len(m.Followers[iNdEx])))
+			i--
+			dAtA[i] = 0x32
 		}
-		i -= j5
-		copy(dAtA[i:], dAtA6[:j5])
-		i = encodeVarintUser(dAtA, i, uint64(j5))
-		i--
-		dAtA[i] = 0x2a
 	}
 	if len(m.AvatarUrl) > 0 {
 		i -= len(m.AvatarUrl)
 		copy(dAtA[i:], m.AvatarUrl)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.AvatarUrl)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	if len(m.UsernameGithub) > 0 {
 		i -= len(m.UsernameGithub)
 		copy(dAtA[i:], m.UsernameGithub)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.UsernameGithub)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 	}
 	if len(m.Username) > 0 {
 		i -= len(m.Username)
 		copy(dAtA[i:], m.Username)
 		i = encodeVarintUser(dAtA, i, uint64(len(m.Username)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.Id != 0 {
+		i = encodeVarintUser(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x10
 	}
 	if len(m.Creator) > 0 {
 		i -= len(m.Creator)
@@ -549,10 +546,12 @@ func (m *UserOrganization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Id != 0 {
-		i = encodeVarintUser(dAtA, i, uint64(m.Id))
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintUser(dAtA, i, uint64(len(m.Id)))
 		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if len(m.Name) > 0 {
 		i -= len(m.Name)
@@ -585,6 +584,9 @@ func (m *User) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovUser(uint64(l))
 	}
+	if m.Id != 0 {
+		n += 1 + sovUser(uint64(m.Id))
+	}
 	l = len(m.Username)
 	if l > 0 {
 		n += 1 + l + sovUser(uint64(l))
@@ -598,18 +600,16 @@ func (m *User) Size() (n int) {
 		n += 1 + l + sovUser(uint64(l))
 	}
 	if len(m.Followers) > 0 {
-		l = 0
-		for _, e := range m.Followers {
-			l += sovUser(uint64(e))
+		for _, s := range m.Followers {
+			l = len(s)
+			n += 1 + l + sovUser(uint64(l))
 		}
-		n += 1 + sovUser(uint64(l)) + l
 	}
 	if len(m.Following) > 0 {
-		l = 0
-		for _, e := range m.Following {
-			l += sovUser(uint64(e))
+		for _, s := range m.Following {
+			l = len(s)
+			n += 1 + l + sovUser(uint64(l))
 		}
-		n += 1 + sovUser(uint64(l)) + l
 	}
 	if len(m.Repositories) > 0 {
 		for _, e := range m.Repositories {
@@ -650,7 +650,7 @@ func (m *User) Size() (n int) {
 	}
 	l = len(m.Extensions)
 	if l > 0 {
-		n += 1 + l + sovUser(uint64(l))
+		n += 2 + l + sovUser(uint64(l))
 	}
 	return n
 }
@@ -681,8 +681,9 @@ func (m *UserOrganization) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovUser(uint64(l))
 	}
-	if m.Id != 0 {
-		n += 1 + sovUser(uint64(m.Id))
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovUser(uint64(l))
 	}
 	return n
 }
@@ -755,6 +756,25 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			m.Creator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowUser
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
 			}
@@ -786,7 +806,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.Username = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UsernameGithub", wireType)
 			}
@@ -818,7 +838,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.UsernameGithub = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AvatarUrl", wireType)
 			}
@@ -850,159 +870,71 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.AvatarUrl = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
-			if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowUser
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Followers = append(m.Followers, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowUser
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthUser
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthUser
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.Followers) == 0 {
-					m.Followers = make([]uint64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowUser
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Followers = append(m.Followers, v)
-				}
-			} else {
+		case 6:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Followers", wireType)
 			}
-		case 6:
-			if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowUser
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowUser
 				}
-				m.Following = append(m.Following, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowUser
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthUser
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthUser
-				}
-				if postIndex > l {
+				if iNdEx >= l {
 					return io.ErrUnexpectedEOF
 				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
 				}
-				elementCount = count
-				if elementCount != 0 && len(m.Following) == 0 {
-					m.Following = make([]uint64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowUser
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Following = append(m.Following, v)
-				}
-			} else {
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthUser
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthUser
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Followers = append(m.Followers, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Following", wireType)
 			}
-		case 7:
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowUser
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthUser
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthUser
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Following = append(m.Following, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Repositories", wireType)
 			}
@@ -1036,7 +968,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 8:
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Organizations", wireType)
 			}
@@ -1070,7 +1002,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 9:
+		case 10:
 			if wireType == 0 {
 				var v uint64
 				for shift := uint(0); ; shift += 7 {
@@ -1146,7 +1078,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field StarredRepos", wireType)
 			}
-		case 10:
+		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Subscriptions", wireType)
 			}
@@ -1178,7 +1110,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.Subscriptions = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 11:
+		case 12:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Email", wireType)
 			}
@@ -1210,7 +1142,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.Email = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 12:
+		case 13:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Bio", wireType)
 			}
@@ -1242,7 +1174,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 			}
 			m.Bio = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 13:
+		case 14:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
@@ -1261,7 +1193,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 14:
+		case 15:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
@@ -1280,7 +1212,7 @@ func (m *User) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 15:
+		case 16:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Extensions", wireType)
 			}
@@ -1496,10 +1428,10 @@ func (m *UserOrganization) Unmarshal(dAtA []byte) error {
 			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 0 {
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			m.Id = 0
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowUser
@@ -1509,11 +1441,24 @@ func (m *UserOrganization) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthUser
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthUser
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipUser(dAtA[iNdEx:])

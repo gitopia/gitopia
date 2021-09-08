@@ -4,7 +4,7 @@ import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/paginati
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch } from "../gitopia/repository";
+import { Repository, RepositoryBranch, RepositoryTag } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
@@ -23,15 +23,9 @@ export interface QueryAllPullRequestResponse {
     pagination: PageResponse | undefined;
 }
 export interface QueryGetOrganizationRequest {
-    id: number;
+    id: string;
 }
 export interface QueryGetOrganizationResponse {
-    Organization: Organization | undefined;
-}
-export interface QueryGetOrganizationByNameRequest {
-    organizationName: string;
-}
-export interface QueryGetOrganizationByNameResponse {
     Organization: Organization | undefined;
 }
 export interface QueryAllOrganizationRequest {
@@ -68,7 +62,7 @@ export interface QueryAllIssueResponse {
     pagination: PageResponse | undefined;
 }
 export interface QueryGetRepositoryIssueRequest {
-    userId: string;
+    id: string;
     repositoryName: string;
     issueIid: number;
 }
@@ -84,7 +78,7 @@ export interface QueryGetRepositoryPullRequestResponse {
     PullRequest: PullRequest | undefined;
 }
 export interface QueryAllRepositoryIssueRequest {
-    userId: string;
+    id: string;
     repositoryName: string;
     pagination: PageRequest | undefined;
 }
@@ -108,7 +102,7 @@ export interface QueryGetRepositoryResponse {
     Repository: Repository | undefined;
 }
 export interface QueryGetAllBranchRequest {
-    id: number;
+    repositoryId: number;
 }
 export interface QueryGetAllBranchResponse {
     Branches: RepositoryBranch[];
@@ -118,6 +112,19 @@ export interface QueryGetBranchShaRequest {
     branchName: string;
 }
 export interface QueryGetBranchShaResponse {
+    sha: string;
+}
+export interface QueryGetAllTagRequest {
+    repositoryId: number;
+}
+export interface QueryGetAllTagResponse {
+    Tags: RepositoryTag[];
+}
+export interface QueryGetTagShaRequest {
+    repositoryId: number;
+    tagName: string;
+}
+export interface QueryGetTagShaResponse {
     sha: string;
 }
 export interface QueryAllRepositoryRequest {
@@ -140,17 +147,19 @@ export interface QueryAllUserResponse {
     User: User[];
     pagination: PageResponse | undefined;
 }
-export interface QueryAllUserRepositoryRequest {
+export interface QueryAllAddressRepositoryRequest {
     id: string;
+    pagination: PageRequest | undefined;
 }
-export interface QueryAllUserRepositoryResponse {
+export interface QueryAllAddressRepositoryResponse {
     Repository: Repository[];
+    pagination: PageResponse | undefined;
 }
-export interface QueryGetUserRepositoryRequest {
-    userId: string;
+export interface QueryGetAddressRepositoryRequest {
+    id: string;
     repositoryName: string;
 }
-export interface QueryGetUserRepositoryResponse {
+export interface QueryGetAddressRepositoryResponse {
     Repository: Repository | undefined;
 }
 export interface QueryAllUserOrganizationRequest {
@@ -158,21 +167,6 @@ export interface QueryAllUserOrganizationRequest {
 }
 export interface QueryAllUserOrganizationResponse {
     organization: Organization[];
-}
-export interface QueryAllOrganizationRepositoryRequest {
-    organizationName: string;
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllOrganizationRepositoryResponse {
-    Repository: Repository[];
-    pagination: PageResponse | undefined;
-}
-export interface QueryGetOrganizationRepositoryRequest {
-    organizationName: string;
-    repositoryName: string;
-}
-export interface QueryGetOrganizationRepositoryResponse {
-    Repository: Repository | undefined;
 }
 export interface QueryGetWhoisRequest {
     name: string;
@@ -228,20 +222,6 @@ export declare const QueryGetOrganizationResponse: {
     fromJSON(object: any): QueryGetOrganizationResponse;
     toJSON(message: QueryGetOrganizationResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetOrganizationResponse>): QueryGetOrganizationResponse;
-};
-export declare const QueryGetOrganizationByNameRequest: {
-    encode(message: QueryGetOrganizationByNameRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetOrganizationByNameRequest;
-    fromJSON(object: any): QueryGetOrganizationByNameRequest;
-    toJSON(message: QueryGetOrganizationByNameRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetOrganizationByNameRequest>): QueryGetOrganizationByNameRequest;
-};
-export declare const QueryGetOrganizationByNameResponse: {
-    encode(message: QueryGetOrganizationByNameResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetOrganizationByNameResponse;
-    fromJSON(object: any): QueryGetOrganizationByNameResponse;
-    toJSON(message: QueryGetOrganizationByNameResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetOrganizationByNameResponse>): QueryGetOrganizationByNameResponse;
 };
 export declare const QueryAllOrganizationRequest: {
     encode(message: QueryAllOrganizationRequest, writer?: Writer): Writer;
@@ -411,6 +391,34 @@ export declare const QueryGetBranchShaResponse: {
     toJSON(message: QueryGetBranchShaResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetBranchShaResponse>): QueryGetBranchShaResponse;
 };
+export declare const QueryGetAllTagRequest: {
+    encode(message: QueryGetAllTagRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagRequest;
+    fromJSON(object: any): QueryGetAllTagRequest;
+    toJSON(message: QueryGetAllTagRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllTagRequest>): QueryGetAllTagRequest;
+};
+export declare const QueryGetAllTagResponse: {
+    encode(message: QueryGetAllTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagResponse;
+    fromJSON(object: any): QueryGetAllTagResponse;
+    toJSON(message: QueryGetAllTagResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllTagResponse>): QueryGetAllTagResponse;
+};
+export declare const QueryGetTagShaRequest: {
+    encode(message: QueryGetTagShaRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaRequest;
+    fromJSON(object: any): QueryGetTagShaRequest;
+    toJSON(message: QueryGetTagShaRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetTagShaRequest>): QueryGetTagShaRequest;
+};
+export declare const QueryGetTagShaResponse: {
+    encode(message: QueryGetTagShaResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaResponse;
+    fromJSON(object: any): QueryGetTagShaResponse;
+    toJSON(message: QueryGetTagShaResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetTagShaResponse>): QueryGetTagShaResponse;
+};
 export declare const QueryAllRepositoryRequest: {
     encode(message: QueryAllRepositoryRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryRequest;
@@ -453,33 +461,33 @@ export declare const QueryAllUserResponse: {
     toJSON(message: QueryAllUserResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllUserResponse>): QueryAllUserResponse;
 };
-export declare const QueryAllUserRepositoryRequest: {
-    encode(message: QueryAllUserRepositoryRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllUserRepositoryRequest;
-    fromJSON(object: any): QueryAllUserRepositoryRequest;
-    toJSON(message: QueryAllUserRepositoryRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllUserRepositoryRequest>): QueryAllUserRepositoryRequest;
+export declare const QueryAllAddressRepositoryRequest: {
+    encode(message: QueryAllAddressRepositoryRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllAddressRepositoryRequest;
+    fromJSON(object: any): QueryAllAddressRepositoryRequest;
+    toJSON(message: QueryAllAddressRepositoryRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllAddressRepositoryRequest>): QueryAllAddressRepositoryRequest;
 };
-export declare const QueryAllUserRepositoryResponse: {
-    encode(message: QueryAllUserRepositoryResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllUserRepositoryResponse;
-    fromJSON(object: any): QueryAllUserRepositoryResponse;
-    toJSON(message: QueryAllUserRepositoryResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllUserRepositoryResponse>): QueryAllUserRepositoryResponse;
+export declare const QueryAllAddressRepositoryResponse: {
+    encode(message: QueryAllAddressRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllAddressRepositoryResponse;
+    fromJSON(object: any): QueryAllAddressRepositoryResponse;
+    toJSON(message: QueryAllAddressRepositoryResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllAddressRepositoryResponse>): QueryAllAddressRepositoryResponse;
 };
-export declare const QueryGetUserRepositoryRequest: {
-    encode(message: QueryGetUserRepositoryRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetUserRepositoryRequest;
-    fromJSON(object: any): QueryGetUserRepositoryRequest;
-    toJSON(message: QueryGetUserRepositoryRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetUserRepositoryRequest>): QueryGetUserRepositoryRequest;
+export declare const QueryGetAddressRepositoryRequest: {
+    encode(message: QueryGetAddressRepositoryRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAddressRepositoryRequest;
+    fromJSON(object: any): QueryGetAddressRepositoryRequest;
+    toJSON(message: QueryGetAddressRepositoryRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetAddressRepositoryRequest>): QueryGetAddressRepositoryRequest;
 };
-export declare const QueryGetUserRepositoryResponse: {
-    encode(message: QueryGetUserRepositoryResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetUserRepositoryResponse;
-    fromJSON(object: any): QueryGetUserRepositoryResponse;
-    toJSON(message: QueryGetUserRepositoryResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetUserRepositoryResponse>): QueryGetUserRepositoryResponse;
+export declare const QueryGetAddressRepositoryResponse: {
+    encode(message: QueryGetAddressRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAddressRepositoryResponse;
+    fromJSON(object: any): QueryGetAddressRepositoryResponse;
+    toJSON(message: QueryGetAddressRepositoryResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetAddressRepositoryResponse>): QueryGetAddressRepositoryResponse;
 };
 export declare const QueryAllUserOrganizationRequest: {
     encode(message: QueryAllUserOrganizationRequest, writer?: Writer): Writer;
@@ -494,34 +502,6 @@ export declare const QueryAllUserOrganizationResponse: {
     fromJSON(object: any): QueryAllUserOrganizationResponse;
     toJSON(message: QueryAllUserOrganizationResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllUserOrganizationResponse>): QueryAllUserOrganizationResponse;
-};
-export declare const QueryAllOrganizationRepositoryRequest: {
-    encode(message: QueryAllOrganizationRepositoryRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllOrganizationRepositoryRequest;
-    fromJSON(object: any): QueryAllOrganizationRepositoryRequest;
-    toJSON(message: QueryAllOrganizationRepositoryRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllOrganizationRepositoryRequest>): QueryAllOrganizationRepositoryRequest;
-};
-export declare const QueryAllOrganizationRepositoryResponse: {
-    encode(message: QueryAllOrganizationRepositoryResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllOrganizationRepositoryResponse;
-    fromJSON(object: any): QueryAllOrganizationRepositoryResponse;
-    toJSON(message: QueryAllOrganizationRepositoryResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllOrganizationRepositoryResponse>): QueryAllOrganizationRepositoryResponse;
-};
-export declare const QueryGetOrganizationRepositoryRequest: {
-    encode(message: QueryGetOrganizationRepositoryRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetOrganizationRepositoryRequest;
-    fromJSON(object: any): QueryGetOrganizationRepositoryRequest;
-    toJSON(message: QueryGetOrganizationRepositoryRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetOrganizationRepositoryRequest>): QueryGetOrganizationRepositoryRequest;
-};
-export declare const QueryGetOrganizationRepositoryResponse: {
-    encode(message: QueryGetOrganizationRepositoryResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetOrganizationRepositoryResponse;
-    fromJSON(object: any): QueryGetOrganizationRepositoryResponse;
-    toJSON(message: QueryGetOrganizationRepositoryResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetOrganizationRepositoryResponse>): QueryGetOrganizationRepositoryResponse;
 };
 export declare const QueryGetWhoisRequest: {
     encode(message: QueryGetWhoisRequest, writer?: Writer): Writer;
@@ -559,8 +539,6 @@ export interface Query {
     PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     /** Queries a organization by id. */
     Organization(request: QueryGetOrganizationRequest): Promise<QueryGetOrganizationResponse>;
-    /** Queries a organization by name. */
-    OrganizationByName(request: QueryGetOrganizationByNameRequest): Promise<QueryGetOrganizationByNameResponse>;
     /** Queries a list of organization items. */
     OrganizationAll(request: QueryAllOrganizationRequest): Promise<QueryAllOrganizationResponse>;
     /** Queries a comment by id. */
@@ -585,20 +563,18 @@ export interface Query {
     /** Queries a repository by id. */
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
+    TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+    TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
     /** Queries a user by id. */
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     /** Queries a list of user items. */
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
     /** Queries a list of user repositories. */
-    UserRepositoryAll(request: QueryAllUserRepositoryRequest): Promise<QueryAllUserRepositoryResponse>;
+    AddressRepositoryAll(request: QueryAllAddressRepositoryRequest): Promise<QueryAllAddressRepositoryResponse>;
     /** Queries a repository by user id and repository name */
-    UserRepository(request: QueryGetUserRepositoryRequest): Promise<QueryGetUserRepositoryResponse>;
+    AddressRepository(request: QueryGetAddressRepositoryRequest): Promise<QueryGetAddressRepositoryResponse>;
     /** Queries a list of user Organizations. */
     UserOrganizationAll(request: QueryAllUserOrganizationRequest): Promise<QueryAllUserOrganizationResponse>;
-    /** Queries a list of Organization repositories. */
-    OrganizationRepositoryAll(request: QueryAllOrganizationRepositoryRequest): Promise<QueryAllOrganizationRepositoryResponse>;
-    /** Queries a repository by Organization name and repository name */
-    OrganizationRepository(request: QueryGetOrganizationRepositoryRequest): Promise<QueryGetOrganizationRepositoryResponse>;
     /** Queries a whois by id. */
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     /** Queries a list of whois items. */
@@ -610,7 +586,6 @@ export declare class QueryClientImpl implements Query {
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
     PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     Organization(request: QueryGetOrganizationRequest): Promise<QueryGetOrganizationResponse>;
-    OrganizationByName(request: QueryGetOrganizationByNameRequest): Promise<QueryGetOrganizationByNameResponse>;
     OrganizationAll(request: QueryAllOrganizationRequest): Promise<QueryAllOrganizationResponse>;
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
@@ -624,13 +599,13 @@ export declare class QueryClientImpl implements Query {
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
+    TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+    TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
     User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
-    UserRepositoryAll(request: QueryAllUserRepositoryRequest): Promise<QueryAllUserRepositoryResponse>;
-    UserRepository(request: QueryGetUserRepositoryRequest): Promise<QueryGetUserRepositoryResponse>;
+    AddressRepositoryAll(request: QueryAllAddressRepositoryRequest): Promise<QueryAllAddressRepositoryResponse>;
+    AddressRepository(request: QueryGetAddressRepositoryRequest): Promise<QueryGetAddressRepositoryResponse>;
     UserOrganizationAll(request: QueryAllUserOrganizationRequest): Promise<QueryAllUserOrganizationResponse>;
-    OrganizationRepositoryAll(request: QueryAllOrganizationRepositoryRequest): Promise<QueryAllOrganizationRepositoryResponse>;
-    OrganizationRepository(request: QueryGetOrganizationRepositoryRequest): Promise<QueryGetOrganizationRepositoryResponse>;
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
 }

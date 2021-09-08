@@ -33,6 +33,8 @@ service Msg {
   rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
   rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
+  rpc AddIssueAssignees(MsgAddIssueAssignees) returns (MsgAddIssueAssigneesResponse);
+  rpc RemoveIssueAssignees(MsgRemoveIssueAssignees) returns (MsgRemoveIssueAssigneesResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
@@ -43,6 +45,8 @@ service Msg {
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
+  rpc CreateTag(MsgCreateTag) returns (MsgCreateTagResponse);
+  rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
@@ -119,12 +123,12 @@ message MsgCreateOrganization {
 }
 
 message MsgCreateOrganizationResponse {
-  uint64 id = 1;
+  string id = 1;
 }
 
 message MsgUpdateOrganizationMember {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string user = 3;
   string role = 4;
 }
@@ -133,7 +137,7 @@ message MsgUpdateOrganizationMemberResponse { }
 
 message MsgRemoveOrganizationMember {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string user = 3;
 }
 
@@ -141,7 +145,7 @@ message MsgRemoveOrganizationMemberResponse { }
 
 message MsgUpdateOrganization {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
   string name = 3;
   string avatarUrl = 4;
   string location = 5;
@@ -154,7 +158,7 @@ message MsgUpdateOrganizationResponse { }
 
 message MsgDeleteOrganization {
   string creator = 1;
-  uint64 id = 2;
+  string id = 2;
 }
 
 message MsgDeleteOrganizationResponse { }
@@ -243,6 +247,22 @@ message MsgToggleIssueStateResponse {
   string state = 1;
 }
 
+message MsgAddIssueAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgAddIssueAssigneesResponse { }
+
+message MsgRemoveIssueAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgRemoveIssueAssigneesResponse { }
+
 message MsgDeleteIssue {
   string creator = 1;
   uint64 id = 2;
@@ -253,8 +273,9 @@ message MsgDeleteIssueResponse { }
 message MsgCreateRepository {
   string creator = 1;
   string name = 2;
-  string owner = 3;
-  string description = 4;
+  string ownerId = 3;
+  string ownerType = 4;
+  string description = 5;
 }
 
 message MsgCreateRepositoryResponse {
@@ -265,7 +286,8 @@ message MsgCreateRepositoryResponse {
 message MsgForkRepository {
   string creator = 1;
   uint64 repositoryId = 2;
-  string owner = 3;
+  string ownerId = 3;
+  string ownerType = 4;
 }
 
 message MsgForkRepositoryResponse {
@@ -283,7 +305,8 @@ message MsgRenameRepositoryResponse { }
 message MsgChangeOwner {
   string creator = 1;
   uint64 repositoryId = 2;
-  string owner = 3;
+  string ownerId = 3;
+  string ownerType = 4;
 }
 
 message MsgChangeOwnerResponse { }
@@ -329,6 +352,23 @@ message MsgDeleteBranch {
 }
 
 message MsgDeleteBranchResponse { }
+
+message MsgCreateTag {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string sha = 4;
+}
+
+message MsgCreateTagResponse { }
+
+message MsgDeleteTag {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteTagResponse { }
 
 message MsgUpdateRepository {
   string creator = 1;

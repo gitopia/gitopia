@@ -2,13 +2,44 @@
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+export var OrganizationMember_Role;
+(function (OrganizationMember_Role) {
+    OrganizationMember_Role[OrganizationMember_Role["MEMBER"] = 0] = "MEMBER";
+    OrganizationMember_Role[OrganizationMember_Role["OWNER"] = 1] = "OWNER";
+    OrganizationMember_Role[OrganizationMember_Role["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(OrganizationMember_Role || (OrganizationMember_Role = {}));
+export function organizationMember_RoleFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "MEMBER":
+            return OrganizationMember_Role.MEMBER;
+        case 1:
+        case "OWNER":
+            return OrganizationMember_Role.OWNER;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return OrganizationMember_Role.UNRECOGNIZED;
+    }
+}
+export function organizationMember_RoleToJSON(object) {
+    switch (object) {
+        case OrganizationMember_Role.MEMBER:
+            return "MEMBER";
+        case OrganizationMember_Role.OWNER:
+            return "OWNER";
+        default:
+            return "UNKNOWN";
+    }
+}
 const baseOrganization = {
     creator: "",
     id: 0,
+    address: "",
     name: "",
     avatarUrl: "",
-    followers: 0,
-    following: 0,
+    followers: "",
+    following: "",
     teams: 0,
     location: "",
     email: "",
@@ -27,56 +58,55 @@ export const Organization = {
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
         }
+        if (message.address !== "") {
+            writer.uint32(26).string(message.address);
+        }
         if (message.name !== "") {
-            writer.uint32(26).string(message.name);
+            writer.uint32(34).string(message.name);
         }
         if (message.avatarUrl !== "") {
-            writer.uint32(34).string(message.avatarUrl);
+            writer.uint32(42).string(message.avatarUrl);
         }
-        writer.uint32(42).fork();
         for (const v of message.followers) {
-            writer.uint64(v);
+            writer.uint32(50).string(v);
         }
-        writer.ldelim();
-        writer.uint32(50).fork();
         for (const v of message.following) {
-            writer.uint64(v);
+            writer.uint32(58).string(v);
         }
-        writer.ldelim();
         for (const v of message.repositories) {
-            OrganizationRepository.encode(v, writer.uint32(58).fork()).ldelim();
+            OrganizationRepository.encode(v, writer.uint32(66).fork()).ldelim();
         }
-        writer.uint32(66).fork();
+        writer.uint32(74).fork();
         for (const v of message.teams) {
             writer.uint64(v);
         }
         writer.ldelim();
         for (const v of message.members) {
-            OrganizationMember.encode(v, writer.uint32(74).fork()).ldelim();
+            OrganizationMember.encode(v, writer.uint32(82).fork()).ldelim();
         }
         if (message.location !== "") {
-            writer.uint32(82).string(message.location);
+            writer.uint32(90).string(message.location);
         }
         if (message.email !== "") {
-            writer.uint32(90).string(message.email);
+            writer.uint32(98).string(message.email);
         }
         if (message.website !== "") {
-            writer.uint32(98).string(message.website);
+            writer.uint32(106).string(message.website);
         }
         if (message.verified === true) {
-            writer.uint32(104).bool(message.verified);
+            writer.uint32(112).bool(message.verified);
         }
         if (message.description !== "") {
-            writer.uint32(114).string(message.description);
+            writer.uint32(122).string(message.description);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(120).int64(message.createdAt);
+            writer.uint32(128).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(128).int64(message.updatedAt);
+            writer.uint32(136).int64(message.updatedAt);
         }
         if (message.extensions !== "") {
-            writer.uint32(138).string(message.extensions);
+            writer.uint32(146).string(message.extensions);
         }
         return writer;
     },
@@ -99,37 +129,24 @@ export const Organization = {
                     message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.name = reader.string();
+                    message.address = reader.string();
                     break;
                 case 4:
-                    message.avatarUrl = reader.string();
+                    message.name = reader.string();
                     break;
                 case 5:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.followers.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.followers.push(longToNumber(reader.uint64()));
-                    }
+                    message.avatarUrl = reader.string();
                     break;
                 case 6:
-                    if ((tag & 7) === 2) {
-                        const end2 = reader.uint32() + reader.pos;
-                        while (reader.pos < end2) {
-                            message.following.push(longToNumber(reader.uint64()));
-                        }
-                    }
-                    else {
-                        message.following.push(longToNumber(reader.uint64()));
-                    }
+                    message.followers.push(reader.string());
                     break;
                 case 7:
-                    message.repositories.push(OrganizationRepository.decode(reader, reader.uint32()));
+                    message.following.push(reader.string());
                     break;
                 case 8:
+                    message.repositories.push(OrganizationRepository.decode(reader, reader.uint32()));
+                    break;
+                case 9:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -140,31 +157,31 @@ export const Organization = {
                         message.teams.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 9:
+                case 10:
                     message.members.push(OrganizationMember.decode(reader, reader.uint32()));
                     break;
-                case 10:
+                case 11:
                     message.location = reader.string();
                     break;
-                case 11:
+                case 12:
                     message.email = reader.string();
                     break;
-                case 12:
+                case 13:
                     message.website = reader.string();
                     break;
-                case 13:
+                case 14:
                     message.verified = reader.bool();
                     break;
-                case 14:
+                case 15:
                     message.description = reader.string();
                     break;
-                case 15:
+                case 16:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 16:
+                case 17:
                     message.updatedAt = longToNumber(reader.int64());
                     break;
-                case 17:
+                case 18:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -193,6 +210,12 @@ export const Organization = {
         else {
             message.id = 0;
         }
+        if (object.address !== undefined && object.address !== null) {
+            message.address = String(object.address);
+        }
+        else {
+            message.address = "";
+        }
         if (object.name !== undefined && object.name !== null) {
             message.name = String(object.name);
         }
@@ -207,12 +230,12 @@ export const Organization = {
         }
         if (object.followers !== undefined && object.followers !== null) {
             for (const e of object.followers) {
-                message.followers.push(Number(e));
+                message.followers.push(String(e));
             }
         }
         if (object.following !== undefined && object.following !== null) {
             for (const e of object.following) {
-                message.following.push(Number(e));
+                message.following.push(String(e));
             }
         }
         if (object.repositories !== undefined && object.repositories !== null) {
@@ -284,6 +307,7 @@ export const Organization = {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.id !== undefined && (obj.id = message.id);
+        message.address !== undefined && (obj.address = message.address);
         message.name !== undefined && (obj.name = message.name);
         message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
         if (message.followers) {
@@ -345,6 +369,12 @@ export const Organization = {
         }
         else {
             message.id = 0;
+        }
+        if (object.address !== undefined && object.address !== null) {
+            message.address = object.address;
+        }
+        else {
+            message.address = "";
         }
         if (object.name !== undefined && object.name !== null) {
             message.name = object.name;
@@ -504,14 +534,14 @@ export const OrganizationRepository = {
         return message;
     },
 };
-const baseOrganizationMember = { id: "", role: "" };
+const baseOrganizationMember = { id: "", role: 0 };
 export const OrganizationMember = {
     encode(message, writer = Writer.create()) {
         if (message.id !== "") {
             writer.uint32(10).string(message.id);
         }
-        if (message.role !== "") {
-            writer.uint32(18).string(message.role);
+        if (message.role !== 0) {
+            writer.uint32(16).int32(message.role);
         }
         return writer;
     },
@@ -526,7 +556,7 @@ export const OrganizationMember = {
                     message.id = reader.string();
                     break;
                 case 2:
-                    message.role = reader.string();
+                    message.role = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -544,17 +574,18 @@ export const OrganizationMember = {
             message.id = "";
         }
         if (object.role !== undefined && object.role !== null) {
-            message.role = String(object.role);
+            message.role = organizationMember_RoleFromJSON(object.role);
         }
         else {
-            message.role = "";
+            message.role = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.id !== undefined && (obj.id = message.id);
-        message.role !== undefined && (obj.role = message.role);
+        message.role !== undefined &&
+            (obj.role = organizationMember_RoleToJSON(message.role));
         return obj;
     },
     fromPartial(object) {
@@ -569,7 +600,7 @@ export const OrganizationMember = {
             message.role = object.role;
         }
         else {
-            message.role = "";
+            message.role = 0;
         }
         return message;
     },

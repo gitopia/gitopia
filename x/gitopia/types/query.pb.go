@@ -215,7 +215,7 @@ func (m *QueryAllPullRequestResponse) GetPagination() *query.PageResponse {
 }
 
 type QueryGetOrganizationRequest struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *QueryGetOrganizationRequest) Reset()         { *m = QueryGetOrganizationRequest{} }
@@ -251,11 +251,11 @@ func (m *QueryGetOrganizationRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetOrganizationRequest proto.InternalMessageInfo
 
-func (m *QueryGetOrganizationRequest) GetId() uint64 {
+func (m *QueryGetOrganizationRequest) GetId() string {
 	if m != nil {
 		return m.Id
 	}
-	return 0
+	return ""
 }
 
 type QueryGetOrganizationResponse struct {
@@ -302,94 +302,6 @@ func (m *QueryGetOrganizationResponse) GetOrganization() *Organization {
 	return nil
 }
 
-type QueryGetOrganizationByNameRequest struct {
-	OrganizationName string `protobuf:"bytes,1,opt,name=organizationName,proto3" json:"organizationName,omitempty"`
-}
-
-func (m *QueryGetOrganizationByNameRequest) Reset()         { *m = QueryGetOrganizationByNameRequest{} }
-func (m *QueryGetOrganizationByNameRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetOrganizationByNameRequest) ProtoMessage()    {}
-func (*QueryGetOrganizationByNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{6}
-}
-func (m *QueryGetOrganizationByNameRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetOrganizationByNameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetOrganizationByNameRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetOrganizationByNameRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetOrganizationByNameRequest.Merge(m, src)
-}
-func (m *QueryGetOrganizationByNameRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetOrganizationByNameRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetOrganizationByNameRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetOrganizationByNameRequest proto.InternalMessageInfo
-
-func (m *QueryGetOrganizationByNameRequest) GetOrganizationName() string {
-	if m != nil {
-		return m.OrganizationName
-	}
-	return ""
-}
-
-type QueryGetOrganizationByNameResponse struct {
-	Organization *Organization `protobuf:"bytes,1,opt,name=Organization,proto3" json:"Organization,omitempty"`
-}
-
-func (m *QueryGetOrganizationByNameResponse) Reset()         { *m = QueryGetOrganizationByNameResponse{} }
-func (m *QueryGetOrganizationByNameResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetOrganizationByNameResponse) ProtoMessage()    {}
-func (*QueryGetOrganizationByNameResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{7}
-}
-func (m *QueryGetOrganizationByNameResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetOrganizationByNameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetOrganizationByNameResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetOrganizationByNameResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetOrganizationByNameResponse.Merge(m, src)
-}
-func (m *QueryGetOrganizationByNameResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetOrganizationByNameResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetOrganizationByNameResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetOrganizationByNameResponse proto.InternalMessageInfo
-
-func (m *QueryGetOrganizationByNameResponse) GetOrganization() *Organization {
-	if m != nil {
-		return m.Organization
-	}
-	return nil
-}
-
 type QueryAllOrganizationRequest struct {
 	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -398,7 +310,7 @@ func (m *QueryAllOrganizationRequest) Reset()         { *m = QueryAllOrganizatio
 func (m *QueryAllOrganizationRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllOrganizationRequest) ProtoMessage()    {}
 func (*QueryAllOrganizationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{8}
+	return fileDescriptor_422ed845ee440bd1, []int{6}
 }
 func (m *QueryAllOrganizationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -443,7 +355,7 @@ func (m *QueryAllOrganizationResponse) Reset()         { *m = QueryAllOrganizati
 func (m *QueryAllOrganizationResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllOrganizationResponse) ProtoMessage()    {}
 func (*QueryAllOrganizationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{9}
+	return fileDescriptor_422ed845ee440bd1, []int{7}
 }
 func (m *QueryAllOrganizationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -494,7 +406,7 @@ func (m *QueryGetCommentRequest) Reset()         { *m = QueryGetCommentRequest{}
 func (m *QueryGetCommentRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetCommentRequest) ProtoMessage()    {}
 func (*QueryGetCommentRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{10}
+	return fileDescriptor_422ed845ee440bd1, []int{8}
 }
 func (m *QueryGetCommentRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -538,7 +450,7 @@ func (m *QueryGetCommentResponse) Reset()         { *m = QueryGetCommentResponse
 func (m *QueryGetCommentResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetCommentResponse) ProtoMessage()    {}
 func (*QueryGetCommentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{11}
+	return fileDescriptor_422ed845ee440bd1, []int{9}
 }
 func (m *QueryGetCommentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -582,7 +494,7 @@ func (m *QueryAllCommentRequest) Reset()         { *m = QueryAllCommentRequest{}
 func (m *QueryAllCommentRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllCommentRequest) ProtoMessage()    {}
 func (*QueryAllCommentRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{12}
+	return fileDescriptor_422ed845ee440bd1, []int{10}
 }
 func (m *QueryAllCommentRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -627,7 +539,7 @@ func (m *QueryAllCommentResponse) Reset()         { *m = QueryAllCommentResponse
 func (m *QueryAllCommentResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllCommentResponse) ProtoMessage()    {}
 func (*QueryAllCommentResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{13}
+	return fileDescriptor_422ed845ee440bd1, []int{11}
 }
 func (m *QueryAllCommentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -678,7 +590,7 @@ func (m *QueryGetIssueRequest) Reset()         { *m = QueryGetIssueRequest{} }
 func (m *QueryGetIssueRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetIssueRequest) ProtoMessage()    {}
 func (*QueryGetIssueRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{14}
+	return fileDescriptor_422ed845ee440bd1, []int{12}
 }
 func (m *QueryGetIssueRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -722,7 +634,7 @@ func (m *QueryGetIssueResponse) Reset()         { *m = QueryGetIssueResponse{} }
 func (m *QueryGetIssueResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetIssueResponse) ProtoMessage()    {}
 func (*QueryGetIssueResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{15}
+	return fileDescriptor_422ed845ee440bd1, []int{13}
 }
 func (m *QueryGetIssueResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -766,7 +678,7 @@ func (m *QueryAllIssueRequest) Reset()         { *m = QueryAllIssueRequest{} }
 func (m *QueryAllIssueRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllIssueRequest) ProtoMessage()    {}
 func (*QueryAllIssueRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{16}
+	return fileDescriptor_422ed845ee440bd1, []int{14}
 }
 func (m *QueryAllIssueRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -811,7 +723,7 @@ func (m *QueryAllIssueResponse) Reset()         { *m = QueryAllIssueResponse{} }
 func (m *QueryAllIssueResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllIssueResponse) ProtoMessage()    {}
 func (*QueryAllIssueResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{17}
+	return fileDescriptor_422ed845ee440bd1, []int{15}
 }
 func (m *QueryAllIssueResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -855,7 +767,7 @@ func (m *QueryAllIssueResponse) GetPagination() *query.PageResponse {
 }
 
 type QueryGetRepositoryIssueRequest struct {
-	UserId         string `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Id             string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	RepositoryName string `protobuf:"bytes,2,opt,name=repositoryName,proto3" json:"repositoryName,omitempty"`
 	IssueIid       uint64 `protobuf:"varint,3,opt,name=issueIid,proto3" json:"issueIid,omitempty"`
 }
@@ -864,7 +776,7 @@ func (m *QueryGetRepositoryIssueRequest) Reset()         { *m = QueryGetReposito
 func (m *QueryGetRepositoryIssueRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryIssueRequest) ProtoMessage()    {}
 func (*QueryGetRepositoryIssueRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{18}
+	return fileDescriptor_422ed845ee440bd1, []int{16}
 }
 func (m *QueryGetRepositoryIssueRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -893,9 +805,9 @@ func (m *QueryGetRepositoryIssueRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetRepositoryIssueRequest proto.InternalMessageInfo
 
-func (m *QueryGetRepositoryIssueRequest) GetUserId() string {
+func (m *QueryGetRepositoryIssueRequest) GetId() string {
 	if m != nil {
-		return m.UserId
+		return m.Id
 	}
 	return ""
 }
@@ -922,7 +834,7 @@ func (m *QueryGetRepositoryIssueResponse) Reset()         { *m = QueryGetReposit
 func (m *QueryGetRepositoryIssueResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryIssueResponse) ProtoMessage()    {}
 func (*QueryGetRepositoryIssueResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{19}
+	return fileDescriptor_422ed845ee440bd1, []int{17}
 }
 func (m *QueryGetRepositoryIssueResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -968,7 +880,7 @@ func (m *QueryGetRepositoryPullRequestRequest) Reset()         { *m = QueryGetRe
 func (m *QueryGetRepositoryPullRequestRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryPullRequestRequest) ProtoMessage()    {}
 func (*QueryGetRepositoryPullRequestRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{20}
+	return fileDescriptor_422ed845ee440bd1, []int{18}
 }
 func (m *QueryGetRepositoryPullRequestRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1026,7 +938,7 @@ func (m *QueryGetRepositoryPullRequestResponse) Reset()         { *m = QueryGetR
 func (m *QueryGetRepositoryPullRequestResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryPullRequestResponse) ProtoMessage()    {}
 func (*QueryGetRepositoryPullRequestResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{21}
+	return fileDescriptor_422ed845ee440bd1, []int{19}
 }
 func (m *QueryGetRepositoryPullRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1063,7 +975,7 @@ func (m *QueryGetRepositoryPullRequestResponse) GetPullRequest() *PullRequest {
 }
 
 type QueryAllRepositoryIssueRequest struct {
-	UserId         string             `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	Id             string             `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	RepositoryName string             `protobuf:"bytes,2,opt,name=repositoryName,proto3" json:"repositoryName,omitempty"`
 	Pagination     *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -1072,7 +984,7 @@ func (m *QueryAllRepositoryIssueRequest) Reset()         { *m = QueryAllReposito
 func (m *QueryAllRepositoryIssueRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryIssueRequest) ProtoMessage()    {}
 func (*QueryAllRepositoryIssueRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{22}
+	return fileDescriptor_422ed845ee440bd1, []int{20}
 }
 func (m *QueryAllRepositoryIssueRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1101,9 +1013,9 @@ func (m *QueryAllRepositoryIssueRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryAllRepositoryIssueRequest proto.InternalMessageInfo
 
-func (m *QueryAllRepositoryIssueRequest) GetUserId() string {
+func (m *QueryAllRepositoryIssueRequest) GetId() string {
 	if m != nil {
-		return m.UserId
+		return m.Id
 	}
 	return ""
 }
@@ -1131,7 +1043,7 @@ func (m *QueryAllRepositoryIssueResponse) Reset()         { *m = QueryAllReposit
 func (m *QueryAllRepositoryIssueResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryIssueResponse) ProtoMessage()    {}
 func (*QueryAllRepositoryIssueResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{23}
+	return fileDescriptor_422ed845ee440bd1, []int{21}
 }
 func (m *QueryAllRepositoryIssueResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1184,7 +1096,7 @@ func (m *QueryAllRepositoryPullRequestRequest) Reset()         { *m = QueryAllRe
 func (m *QueryAllRepositoryPullRequestRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryPullRequestRequest) ProtoMessage()    {}
 func (*QueryAllRepositoryPullRequestRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{24}
+	return fileDescriptor_422ed845ee440bd1, []int{22}
 }
 func (m *QueryAllRepositoryPullRequestRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1243,7 +1155,7 @@ func (m *QueryAllRepositoryPullRequestResponse) Reset()         { *m = QueryAllR
 func (m *QueryAllRepositoryPullRequestResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryPullRequestResponse) ProtoMessage()    {}
 func (*QueryAllRepositoryPullRequestResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{25}
+	return fileDescriptor_422ed845ee440bd1, []int{23}
 }
 func (m *QueryAllRepositoryPullRequestResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1294,7 +1206,7 @@ func (m *QueryGetRepositoryRequest) Reset()         { *m = QueryGetRepositoryReq
 func (m *QueryGetRepositoryRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryRequest) ProtoMessage()    {}
 func (*QueryGetRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{26}
+	return fileDescriptor_422ed845ee440bd1, []int{24}
 }
 func (m *QueryGetRepositoryRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1338,7 +1250,7 @@ func (m *QueryGetRepositoryResponse) Reset()         { *m = QueryGetRepositoryRe
 func (m *QueryGetRepositoryResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRepositoryResponse) ProtoMessage()    {}
 func (*QueryGetRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{27}
+	return fileDescriptor_422ed845ee440bd1, []int{25}
 }
 func (m *QueryGetRepositoryResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1375,14 +1287,14 @@ func (m *QueryGetRepositoryResponse) GetRepository() *Repository {
 }
 
 type QueryGetAllBranchRequest struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
 }
 
 func (m *QueryGetAllBranchRequest) Reset()         { *m = QueryGetAllBranchRequest{} }
 func (m *QueryGetAllBranchRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetAllBranchRequest) ProtoMessage()    {}
 func (*QueryGetAllBranchRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{28}
+	return fileDescriptor_422ed845ee440bd1, []int{26}
 }
 func (m *QueryGetAllBranchRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1411,9 +1323,9 @@ func (m *QueryGetAllBranchRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetAllBranchRequest proto.InternalMessageInfo
 
-func (m *QueryGetAllBranchRequest) GetId() uint64 {
+func (m *QueryGetAllBranchRequest) GetRepositoryId() uint64 {
 	if m != nil {
-		return m.Id
+		return m.RepositoryId
 	}
 	return 0
 }
@@ -1426,7 +1338,7 @@ func (m *QueryGetAllBranchResponse) Reset()         { *m = QueryGetAllBranchResp
 func (m *QueryGetAllBranchResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetAllBranchResponse) ProtoMessage()    {}
 func (*QueryGetAllBranchResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{29}
+	return fileDescriptor_422ed845ee440bd1, []int{27}
 }
 func (m *QueryGetAllBranchResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1471,7 +1383,7 @@ func (m *QueryGetBranchShaRequest) Reset()         { *m = QueryGetBranchShaReque
 func (m *QueryGetBranchShaRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetBranchShaRequest) ProtoMessage()    {}
 func (*QueryGetBranchShaRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{30}
+	return fileDescriptor_422ed845ee440bd1, []int{28}
 }
 func (m *QueryGetBranchShaRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1522,7 +1434,7 @@ func (m *QueryGetBranchShaResponse) Reset()         { *m = QueryGetBranchShaResp
 func (m *QueryGetBranchShaResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetBranchShaResponse) ProtoMessage()    {}
 func (*QueryGetBranchShaResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{31}
+	return fileDescriptor_422ed845ee440bd1, []int{29}
 }
 func (m *QueryGetBranchShaResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1558,6 +1470,190 @@ func (m *QueryGetBranchShaResponse) GetSha() string {
 	return ""
 }
 
+type QueryGetAllTagRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
+}
+
+func (m *QueryGetAllTagRequest) Reset()         { *m = QueryGetAllTagRequest{} }
+func (m *QueryGetAllTagRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAllTagRequest) ProtoMessage()    {}
+func (*QueryGetAllTagRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{30}
+}
+func (m *QueryGetAllTagRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAllTagRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAllTagRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAllTagRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAllTagRequest.Merge(m, src)
+}
+func (m *QueryGetAllTagRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAllTagRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAllTagRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAllTagRequest proto.InternalMessageInfo
+
+func (m *QueryGetAllTagRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+type QueryGetAllTagResponse struct {
+	Tags []*RepositoryTag `protobuf:"bytes,1,rep,name=Tags,proto3" json:"Tags,omitempty"`
+}
+
+func (m *QueryGetAllTagResponse) Reset()         { *m = QueryGetAllTagResponse{} }
+func (m *QueryGetAllTagResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAllTagResponse) ProtoMessage()    {}
+func (*QueryGetAllTagResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{31}
+}
+func (m *QueryGetAllTagResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAllTagResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAllTagResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAllTagResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAllTagResponse.Merge(m, src)
+}
+func (m *QueryGetAllTagResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAllTagResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAllTagResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAllTagResponse proto.InternalMessageInfo
+
+func (m *QueryGetAllTagResponse) GetTags() []*RepositoryTag {
+	if m != nil {
+		return m.Tags
+	}
+	return nil
+}
+
+type QueryGetTagShaRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
+	TagName      string `protobuf:"bytes,2,opt,name=tagName,proto3" json:"tagName,omitempty"`
+}
+
+func (m *QueryGetTagShaRequest) Reset()         { *m = QueryGetTagShaRequest{} }
+func (m *QueryGetTagShaRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetTagShaRequest) ProtoMessage()    {}
+func (*QueryGetTagShaRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{32}
+}
+func (m *QueryGetTagShaRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetTagShaRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetTagShaRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetTagShaRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetTagShaRequest.Merge(m, src)
+}
+func (m *QueryGetTagShaRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetTagShaRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetTagShaRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetTagShaRequest proto.InternalMessageInfo
+
+func (m *QueryGetTagShaRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryGetTagShaRequest) GetTagName() string {
+	if m != nil {
+		return m.TagName
+	}
+	return ""
+}
+
+type QueryGetTagShaResponse struct {
+	Sha string `protobuf:"bytes,1,opt,name=sha,proto3" json:"sha,omitempty"`
+}
+
+func (m *QueryGetTagShaResponse) Reset()         { *m = QueryGetTagShaResponse{} }
+func (m *QueryGetTagShaResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetTagShaResponse) ProtoMessage()    {}
+func (*QueryGetTagShaResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{33}
+}
+func (m *QueryGetTagShaResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetTagShaResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetTagShaResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetTagShaResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetTagShaResponse.Merge(m, src)
+}
+func (m *QueryGetTagShaResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetTagShaResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetTagShaResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetTagShaResponse proto.InternalMessageInfo
+
+func (m *QueryGetTagShaResponse) GetSha() string {
+	if m != nil {
+		return m.Sha
+	}
+	return ""
+}
+
 type QueryAllRepositoryRequest struct {
 	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
@@ -1566,7 +1662,7 @@ func (m *QueryAllRepositoryRequest) Reset()         { *m = QueryAllRepositoryReq
 func (m *QueryAllRepositoryRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryRequest) ProtoMessage()    {}
 func (*QueryAllRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{32}
+	return fileDescriptor_422ed845ee440bd1, []int{34}
 }
 func (m *QueryAllRepositoryRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1611,7 +1707,7 @@ func (m *QueryAllRepositoryResponse) Reset()         { *m = QueryAllRepositoryRe
 func (m *QueryAllRepositoryResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRepositoryResponse) ProtoMessage()    {}
 func (*QueryAllRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{33}
+	return fileDescriptor_422ed845ee440bd1, []int{35}
 }
 func (m *QueryAllRepositoryResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1662,7 +1758,7 @@ func (m *QueryGetUserRequest) Reset()         { *m = QueryGetUserRequest{} }
 func (m *QueryGetUserRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetUserRequest) ProtoMessage()    {}
 func (*QueryGetUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{34}
+	return fileDescriptor_422ed845ee440bd1, []int{36}
 }
 func (m *QueryGetUserRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1706,7 +1802,7 @@ func (m *QueryGetUserResponse) Reset()         { *m = QueryGetUserResponse{} }
 func (m *QueryGetUserResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetUserResponse) ProtoMessage()    {}
 func (*QueryGetUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{35}
+	return fileDescriptor_422ed845ee440bd1, []int{37}
 }
 func (m *QueryGetUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1750,7 +1846,7 @@ func (m *QueryAllUserRequest) Reset()         { *m = QueryAllUserRequest{} }
 func (m *QueryAllUserRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllUserRequest) ProtoMessage()    {}
 func (*QueryAllUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{36}
+	return fileDescriptor_422ed845ee440bd1, []int{38}
 }
 func (m *QueryAllUserRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1795,7 +1891,7 @@ func (m *QueryAllUserResponse) Reset()         { *m = QueryAllUserResponse{} }
 func (m *QueryAllUserResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllUserResponse) ProtoMessage()    {}
 func (*QueryAllUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{37}
+	return fileDescriptor_422ed845ee440bd1, []int{39}
 }
 func (m *QueryAllUserResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1838,22 +1934,23 @@ func (m *QueryAllUserResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-type QueryAllUserRepositoryRequest struct {
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+type QueryAllAddressRepositoryRequest struct {
+	Id         string             `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryAllUserRepositoryRequest) Reset()         { *m = QueryAllUserRepositoryRequest{} }
-func (m *QueryAllUserRepositoryRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllUserRepositoryRequest) ProtoMessage()    {}
-func (*QueryAllUserRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{38}
+func (m *QueryAllAddressRepositoryRequest) Reset()         { *m = QueryAllAddressRepositoryRequest{} }
+func (m *QueryAllAddressRepositoryRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllAddressRepositoryRequest) ProtoMessage()    {}
+func (*QueryAllAddressRepositoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{40}
 }
-func (m *QueryAllUserRepositoryRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryAllAddressRepositoryRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllUserRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllAddressRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllUserRepositoryRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllAddressRepositoryRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1863,41 +1960,49 @@ func (m *QueryAllUserRepositoryRequest) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryAllUserRepositoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllUserRepositoryRequest.Merge(m, src)
+func (m *QueryAllAddressRepositoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllAddressRepositoryRequest.Merge(m, src)
 }
-func (m *QueryAllUserRepositoryRequest) XXX_Size() int {
+func (m *QueryAllAddressRepositoryRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllUserRepositoryRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllUserRepositoryRequest.DiscardUnknown(m)
+func (m *QueryAllAddressRepositoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllAddressRepositoryRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllUserRepositoryRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllAddressRepositoryRequest proto.InternalMessageInfo
 
-func (m *QueryAllUserRepositoryRequest) GetId() string {
+func (m *QueryAllAddressRepositoryRequest) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-type QueryAllUserRepositoryResponse struct {
-	Repository []*Repository `protobuf:"bytes,1,rep,name=Repository,proto3" json:"Repository,omitempty"`
+func (m *QueryAllAddressRepositoryRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
 }
 
-func (m *QueryAllUserRepositoryResponse) Reset()         { *m = QueryAllUserRepositoryResponse{} }
-func (m *QueryAllUserRepositoryResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllUserRepositoryResponse) ProtoMessage()    {}
-func (*QueryAllUserRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{39}
+type QueryAllAddressRepositoryResponse struct {
+	Repository []*Repository       `protobuf:"bytes,1,rep,name=Repository,proto3" json:"Repository,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
-func (m *QueryAllUserRepositoryResponse) XXX_Unmarshal(b []byte) error {
+
+func (m *QueryAllAddressRepositoryResponse) Reset()         { *m = QueryAllAddressRepositoryResponse{} }
+func (m *QueryAllAddressRepositoryResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllAddressRepositoryResponse) ProtoMessage()    {}
+func (*QueryAllAddressRepositoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{41}
+}
+func (m *QueryAllAddressRepositoryResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllUserRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryAllAddressRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllUserRepositoryResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryAllAddressRepositoryResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1907,42 +2012,49 @@ func (m *QueryAllUserRepositoryResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *QueryAllUserRepositoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllUserRepositoryResponse.Merge(m, src)
+func (m *QueryAllAddressRepositoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllAddressRepositoryResponse.Merge(m, src)
 }
-func (m *QueryAllUserRepositoryResponse) XXX_Size() int {
+func (m *QueryAllAddressRepositoryResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllUserRepositoryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllUserRepositoryResponse.DiscardUnknown(m)
+func (m *QueryAllAddressRepositoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllAddressRepositoryResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllUserRepositoryResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryAllAddressRepositoryResponse proto.InternalMessageInfo
 
-func (m *QueryAllUserRepositoryResponse) GetRepository() []*Repository {
+func (m *QueryAllAddressRepositoryResponse) GetRepository() []*Repository {
 	if m != nil {
 		return m.Repository
 	}
 	return nil
 }
 
-type QueryGetUserRepositoryRequest struct {
-	UserId         string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RepositoryName string `protobuf:"bytes,2,opt,name=repository_name,json=repositoryName,proto3" json:"repository_name,omitempty"`
+func (m *QueryAllAddressRepositoryResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
 }
 
-func (m *QueryGetUserRepositoryRequest) Reset()         { *m = QueryGetUserRepositoryRequest{} }
-func (m *QueryGetUserRepositoryRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetUserRepositoryRequest) ProtoMessage()    {}
-func (*QueryGetUserRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{40}
+type QueryGetAddressRepositoryRequest struct {
+	Id             string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	RepositoryName string `protobuf:"bytes,2,opt,name=repositoryName,proto3" json:"repositoryName,omitempty"`
 }
-func (m *QueryGetUserRepositoryRequest) XXX_Unmarshal(b []byte) error {
+
+func (m *QueryGetAddressRepositoryRequest) Reset()         { *m = QueryGetAddressRepositoryRequest{} }
+func (m *QueryGetAddressRepositoryRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAddressRepositoryRequest) ProtoMessage()    {}
+func (*QueryGetAddressRepositoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{42}
+}
+func (m *QueryGetAddressRepositoryRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetUserRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetAddressRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetUserRepositoryRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetAddressRepositoryRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1952,48 +2064,48 @@ func (m *QueryGetUserRepositoryRequest) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryGetUserRepositoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetUserRepositoryRequest.Merge(m, src)
+func (m *QueryGetAddressRepositoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAddressRepositoryRequest.Merge(m, src)
 }
-func (m *QueryGetUserRepositoryRequest) XXX_Size() int {
+func (m *QueryGetAddressRepositoryRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetUserRepositoryRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetUserRepositoryRequest.DiscardUnknown(m)
+func (m *QueryGetAddressRepositoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAddressRepositoryRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetUserRepositoryRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetAddressRepositoryRequest proto.InternalMessageInfo
 
-func (m *QueryGetUserRepositoryRequest) GetUserId() string {
+func (m *QueryGetAddressRepositoryRequest) GetId() string {
 	if m != nil {
-		return m.UserId
+		return m.Id
 	}
 	return ""
 }
 
-func (m *QueryGetUserRepositoryRequest) GetRepositoryName() string {
+func (m *QueryGetAddressRepositoryRequest) GetRepositoryName() string {
 	if m != nil {
 		return m.RepositoryName
 	}
 	return ""
 }
 
-type QueryGetUserRepositoryResponse struct {
+type QueryGetAddressRepositoryResponse struct {
 	Repository *Repository `protobuf:"bytes,1,opt,name=Repository,proto3" json:"Repository,omitempty"`
 }
 
-func (m *QueryGetUserRepositoryResponse) Reset()         { *m = QueryGetUserRepositoryResponse{} }
-func (m *QueryGetUserRepositoryResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetUserRepositoryResponse) ProtoMessage()    {}
-func (*QueryGetUserRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{41}
+func (m *QueryGetAddressRepositoryResponse) Reset()         { *m = QueryGetAddressRepositoryResponse{} }
+func (m *QueryGetAddressRepositoryResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAddressRepositoryResponse) ProtoMessage()    {}
+func (*QueryGetAddressRepositoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_422ed845ee440bd1, []int{43}
 }
-func (m *QueryGetUserRepositoryResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryGetAddressRepositoryResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryGetUserRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryGetAddressRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryGetUserRepositoryResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryGetAddressRepositoryResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -2003,19 +2115,19 @@ func (m *QueryGetUserRepositoryResponse) XXX_Marshal(b []byte, deterministic boo
 		return b[:n], nil
 	}
 }
-func (m *QueryGetUserRepositoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetUserRepositoryResponse.Merge(m, src)
+func (m *QueryGetAddressRepositoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAddressRepositoryResponse.Merge(m, src)
 }
-func (m *QueryGetUserRepositoryResponse) XXX_Size() int {
+func (m *QueryGetAddressRepositoryResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryGetUserRepositoryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetUserRepositoryResponse.DiscardUnknown(m)
+func (m *QueryGetAddressRepositoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAddressRepositoryResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryGetUserRepositoryResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryGetAddressRepositoryResponse proto.InternalMessageInfo
 
-func (m *QueryGetUserRepositoryResponse) GetRepository() *Repository {
+func (m *QueryGetAddressRepositoryResponse) GetRepository() *Repository {
 	if m != nil {
 		return m.Repository
 	}
@@ -2030,7 +2142,7 @@ func (m *QueryAllUserOrganizationRequest) Reset()         { *m = QueryAllUserOrg
 func (m *QueryAllUserOrganizationRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllUserOrganizationRequest) ProtoMessage()    {}
 func (*QueryAllUserOrganizationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{42}
+	return fileDescriptor_422ed845ee440bd1, []int{44}
 }
 func (m *QueryAllUserOrganizationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2074,7 +2186,7 @@ func (m *QueryAllUserOrganizationResponse) Reset()         { *m = QueryAllUserOr
 func (m *QueryAllUserOrganizationResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllUserOrganizationResponse) ProtoMessage()    {}
 func (*QueryAllUserOrganizationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{43}
+	return fileDescriptor_422ed845ee440bd1, []int{45}
 }
 func (m *QueryAllUserOrganizationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2110,210 +2222,6 @@ func (m *QueryAllUserOrganizationResponse) GetOrganization() []*Organization {
 	return nil
 }
 
-type QueryAllOrganizationRepositoryRequest struct {
-	OrganizationName string             `protobuf:"bytes,1,opt,name=organizationName,proto3" json:"organizationName,omitempty"`
-	Pagination       *query.PageRequest `protobuf:"bytes,3,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) Reset()         { *m = QueryAllOrganizationRepositoryRequest{} }
-func (m *QueryAllOrganizationRepositoryRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllOrganizationRepositoryRequest) ProtoMessage()    {}
-func (*QueryAllOrganizationRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{44}
-}
-func (m *QueryAllOrganizationRepositoryRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllOrganizationRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllOrganizationRepositoryRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllOrganizationRepositoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllOrganizationRepositoryRequest.Merge(m, src)
-}
-func (m *QueryAllOrganizationRepositoryRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllOrganizationRepositoryRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllOrganizationRepositoryRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllOrganizationRepositoryRequest proto.InternalMessageInfo
-
-func (m *QueryAllOrganizationRepositoryRequest) GetOrganizationName() string {
-	if m != nil {
-		return m.OrganizationName
-	}
-	return ""
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) GetPagination() *query.PageRequest {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
-type QueryAllOrganizationRepositoryResponse struct {
-	Repository []*Repository       `protobuf:"bytes,1,rep,name=Repository,proto3" json:"Repository,omitempty"`
-	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) Reset() {
-	*m = QueryAllOrganizationRepositoryResponse{}
-}
-func (m *QueryAllOrganizationRepositoryResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllOrganizationRepositoryResponse) ProtoMessage()    {}
-func (*QueryAllOrganizationRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{45}
-}
-func (m *QueryAllOrganizationRepositoryResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllOrganizationRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllOrganizationRepositoryResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllOrganizationRepositoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllOrganizationRepositoryResponse.Merge(m, src)
-}
-func (m *QueryAllOrganizationRepositoryResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllOrganizationRepositoryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllOrganizationRepositoryResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllOrganizationRepositoryResponse proto.InternalMessageInfo
-
-func (m *QueryAllOrganizationRepositoryResponse) GetRepository() []*Repository {
-	if m != nil {
-		return m.Repository
-	}
-	return nil
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) GetPagination() *query.PageResponse {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
-type QueryGetOrganizationRepositoryRequest struct {
-	OrganizationName string `protobuf:"bytes,1,opt,name=organizationName,proto3" json:"organizationName,omitempty"`
-	RepositoryName   string `protobuf:"bytes,2,opt,name=repositoryName,proto3" json:"repositoryName,omitempty"`
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) Reset()         { *m = QueryGetOrganizationRepositoryRequest{} }
-func (m *QueryGetOrganizationRepositoryRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetOrganizationRepositoryRequest) ProtoMessage()    {}
-func (*QueryGetOrganizationRepositoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{46}
-}
-func (m *QueryGetOrganizationRepositoryRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetOrganizationRepositoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetOrganizationRepositoryRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetOrganizationRepositoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetOrganizationRepositoryRequest.Merge(m, src)
-}
-func (m *QueryGetOrganizationRepositoryRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetOrganizationRepositoryRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetOrganizationRepositoryRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetOrganizationRepositoryRequest proto.InternalMessageInfo
-
-func (m *QueryGetOrganizationRepositoryRequest) GetOrganizationName() string {
-	if m != nil {
-		return m.OrganizationName
-	}
-	return ""
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) GetRepositoryName() string {
-	if m != nil {
-		return m.RepositoryName
-	}
-	return ""
-}
-
-type QueryGetOrganizationRepositoryResponse struct {
-	Repository *Repository `protobuf:"bytes,1,opt,name=Repository,proto3" json:"Repository,omitempty"`
-}
-
-func (m *QueryGetOrganizationRepositoryResponse) Reset() {
-	*m = QueryGetOrganizationRepositoryResponse{}
-}
-func (m *QueryGetOrganizationRepositoryResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetOrganizationRepositoryResponse) ProtoMessage()    {}
-func (*QueryGetOrganizationRepositoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{47}
-}
-func (m *QueryGetOrganizationRepositoryResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetOrganizationRepositoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetOrganizationRepositoryResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetOrganizationRepositoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetOrganizationRepositoryResponse.Merge(m, src)
-}
-func (m *QueryGetOrganizationRepositoryResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetOrganizationRepositoryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetOrganizationRepositoryResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetOrganizationRepositoryResponse proto.InternalMessageInfo
-
-func (m *QueryGetOrganizationRepositoryResponse) GetRepository() *Repository {
-	if m != nil {
-		return m.Repository
-	}
-	return nil
-}
-
 type QueryGetWhoisRequest struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 }
@@ -2322,7 +2230,7 @@ func (m *QueryGetWhoisRequest) Reset()         { *m = QueryGetWhoisRequest{} }
 func (m *QueryGetWhoisRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetWhoisRequest) ProtoMessage()    {}
 func (*QueryGetWhoisRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{48}
+	return fileDescriptor_422ed845ee440bd1, []int{46}
 }
 func (m *QueryGetWhoisRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2366,7 +2274,7 @@ func (m *QueryGetWhoisResponse) Reset()         { *m = QueryGetWhoisResponse{} }
 func (m *QueryGetWhoisResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetWhoisResponse) ProtoMessage()    {}
 func (*QueryGetWhoisResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{49}
+	return fileDescriptor_422ed845ee440bd1, []int{47}
 }
 func (m *QueryGetWhoisResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2410,7 +2318,7 @@ func (m *QueryAllWhoisRequest) Reset()         { *m = QueryAllWhoisRequest{} }
 func (m *QueryAllWhoisRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllWhoisRequest) ProtoMessage()    {}
 func (*QueryAllWhoisRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{50}
+	return fileDescriptor_422ed845ee440bd1, []int{48}
 }
 func (m *QueryAllWhoisRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2455,7 +2363,7 @@ func (m *QueryAllWhoisResponse) Reset()         { *m = QueryAllWhoisResponse{} }
 func (m *QueryAllWhoisResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllWhoisResponse) ProtoMessage()    {}
 func (*QueryAllWhoisResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_422ed845ee440bd1, []int{51}
+	return fileDescriptor_422ed845ee440bd1, []int{49}
 }
 func (m *QueryAllWhoisResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -2505,8 +2413,6 @@ func init() {
 	proto.RegisterType((*QueryAllPullRequestResponse)(nil), "gitopia.gitopia.gitopia.QueryAllPullRequestResponse")
 	proto.RegisterType((*QueryGetOrganizationRequest)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationRequest")
 	proto.RegisterType((*QueryGetOrganizationResponse)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationResponse")
-	proto.RegisterType((*QueryGetOrganizationByNameRequest)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationByNameRequest")
-	proto.RegisterType((*QueryGetOrganizationByNameResponse)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationByNameResponse")
 	proto.RegisterType((*QueryAllOrganizationRequest)(nil), "gitopia.gitopia.gitopia.QueryAllOrganizationRequest")
 	proto.RegisterType((*QueryAllOrganizationResponse)(nil), "gitopia.gitopia.gitopia.QueryAllOrganizationResponse")
 	proto.RegisterType((*QueryGetCommentRequest)(nil), "gitopia.gitopia.gitopia.QueryGetCommentRequest")
@@ -2531,22 +2437,22 @@ func init() {
 	proto.RegisterType((*QueryGetAllBranchResponse)(nil), "gitopia.gitopia.gitopia.QueryGetAllBranchResponse")
 	proto.RegisterType((*QueryGetBranchShaRequest)(nil), "gitopia.gitopia.gitopia.QueryGetBranchShaRequest")
 	proto.RegisterType((*QueryGetBranchShaResponse)(nil), "gitopia.gitopia.gitopia.QueryGetBranchShaResponse")
+	proto.RegisterType((*QueryGetAllTagRequest)(nil), "gitopia.gitopia.gitopia.QueryGetAllTagRequest")
+	proto.RegisterType((*QueryGetAllTagResponse)(nil), "gitopia.gitopia.gitopia.QueryGetAllTagResponse")
+	proto.RegisterType((*QueryGetTagShaRequest)(nil), "gitopia.gitopia.gitopia.QueryGetTagShaRequest")
+	proto.RegisterType((*QueryGetTagShaResponse)(nil), "gitopia.gitopia.gitopia.QueryGetTagShaResponse")
 	proto.RegisterType((*QueryAllRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryAllRepositoryRequest")
 	proto.RegisterType((*QueryAllRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryAllRepositoryResponse")
 	proto.RegisterType((*QueryGetUserRequest)(nil), "gitopia.gitopia.gitopia.QueryGetUserRequest")
 	proto.RegisterType((*QueryGetUserResponse)(nil), "gitopia.gitopia.gitopia.QueryGetUserResponse")
 	proto.RegisterType((*QueryAllUserRequest)(nil), "gitopia.gitopia.gitopia.QueryAllUserRequest")
 	proto.RegisterType((*QueryAllUserResponse)(nil), "gitopia.gitopia.gitopia.QueryAllUserResponse")
-	proto.RegisterType((*QueryAllUserRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryAllUserRepositoryRequest")
-	proto.RegisterType((*QueryAllUserRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryAllUserRepositoryResponse")
-	proto.RegisterType((*QueryGetUserRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryGetUserRepositoryRequest")
-	proto.RegisterType((*QueryGetUserRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryGetUserRepositoryResponse")
+	proto.RegisterType((*QueryAllAddressRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryAllAddressRepositoryRequest")
+	proto.RegisterType((*QueryAllAddressRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryAllAddressRepositoryResponse")
+	proto.RegisterType((*QueryGetAddressRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryGetAddressRepositoryRequest")
+	proto.RegisterType((*QueryGetAddressRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryGetAddressRepositoryResponse")
 	proto.RegisterType((*QueryAllUserOrganizationRequest)(nil), "gitopia.gitopia.gitopia.QueryAllUserOrganizationRequest")
 	proto.RegisterType((*QueryAllUserOrganizationResponse)(nil), "gitopia.gitopia.gitopia.QueryAllUserOrganizationResponse")
-	proto.RegisterType((*QueryAllOrganizationRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryAllOrganizationRepositoryRequest")
-	proto.RegisterType((*QueryAllOrganizationRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryAllOrganizationRepositoryResponse")
-	proto.RegisterType((*QueryGetOrganizationRepositoryRequest)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationRepositoryRequest")
-	proto.RegisterType((*QueryGetOrganizationRepositoryResponse)(nil), "gitopia.gitopia.gitopia.QueryGetOrganizationRepositoryResponse")
 	proto.RegisterType((*QueryGetWhoisRequest)(nil), "gitopia.gitopia.gitopia.QueryGetWhoisRequest")
 	proto.RegisterType((*QueryGetWhoisResponse)(nil), "gitopia.gitopia.gitopia.QueryGetWhoisResponse")
 	proto.RegisterType((*QueryAllWhoisRequest)(nil), "gitopia.gitopia.gitopia.QueryAllWhoisRequest")
@@ -2556,124 +2462,120 @@ func init() {
 func init() { proto.RegisterFile("gitopia/query.proto", fileDescriptor_422ed845ee440bd1) }
 
 var fileDescriptor_422ed845ee440bd1 = []byte{
-	// 1861 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x9a, 0xcf, 0x6f, 0x14, 0x47,
-	0x16, 0xc7, 0x29, 0x0f, 0x60, 0xfc, 0x60, 0x0d, 0xfb, 0x58, 0xc0, 0xcc, 0xc2, 0xe0, 0x2d, 0x6c,
-	0x63, 0x8c, 0x3d, 0xcd, 0xd8, 0xec, 0xda, 0xb0, 0x02, 0xef, 0xe0, 0x35, 0x5e, 0xef, 0x8a, 0x85,
-	0x35, 0x62, 0x59, 0xad, 0x14, 0x48, 0xdb, 0x6e, 0xd9, 0x2d, 0x8d, 0xa7, 0x07, 0xf7, 0x38, 0x09,
-	0x99, 0x8c, 0x14, 0xe5, 0x1e, 0xe5, 0x07, 0x4a, 0xa4, 0x08, 0x29, 0xca, 0x25, 0xca, 0x2f, 0x85,
-	0x48, 0x51, 0x14, 0xe5, 0x92, 0x5b, 0x0e, 0x49, 0x4e, 0x44, 0xc9, 0x21, 0xca, 0x29, 0x81, 0xdc,
-	0xf2, 0x17, 0xe4, 0x16, 0x75, 0xf5, 0xeb, 0xe9, 0xea, 0x9e, 0x2e, 0x77, 0xf7, 0xd0, 0x48, 0x9c,
-	0x66, 0xa6, 0xba, 0x5e, 0xbd, 0xcf, 0xf7, 0xd5, 0xeb, 0xfa, 0xf1, 0x6c, 0xd8, 0xbb, 0x62, 0xd6,
-	0xad, 0x9a, 0xa9, 0x6b, 0x37, 0x37, 0x8c, 0xf5, 0x5b, 0xc5, 0xda, 0xba, 0x55, 0xb7, 0xf0, 0x00,
-	0x35, 0x16, 0x43, 0x9f, 0xf9, 0x43, 0x2b, 0x96, 0xb5, 0x52, 0x31, 0x34, 0xbd, 0x66, 0x6a, 0x7a,
-	0xb5, 0x6a, 0xd5, 0xf5, 0xba, 0x69, 0x55, 0x6d, 0xd7, 0x2c, 0x3f, 0xb2, 0x64, 0xd9, 0x6b, 0x96,
-	0xad, 0x2d, 0xea, 0xb6, 0xe1, 0x8e, 0xa7, 0x3d, 0x55, 0x5a, 0x34, 0xea, 0x7a, 0x49, 0xab, 0xe9,
-	0x2b, 0x66, 0x55, 0x74, 0xa6, 0xbe, 0x07, 0x3d, 0xbf, 0xb5, 0x8d, 0x4a, 0x65, 0xc1, 0xb8, 0xb9,
-	0x61, 0xd8, 0x75, 0x7a, 0x94, 0xf7, 0x1e, 0x59, 0xeb, 0x2b, 0x7a, 0xd5, 0x7c, 0x56, 0x36, 0xdb,
-	0xe7, 0x3d, 0x5b, 0xb2, 0xd6, 0xd6, 0x8c, 0xaa, 0x67, 0xd2, 0x52, 0x61, 0xda, 0xf6, 0x86, 0x41,
-	0x8d, 0x7d, 0x5e, 0xe3, 0xba, 0x51, 0xb3, 0x6c, 0xb3, 0x6e, 0x79, 0xfa, 0xf2, 0xe8, 0x3d, 0xd9,
-	0xb0, 0x8d, 0xf5, 0xf0, 0x10, 0x4f, 0xaf, 0x5a, 0x26, 0x29, 0xe2, 0xa3, 0x90, 0xff, 0x8f, 0xa3,
-	0x63, 0xce, 0xa8, 0x5f, 0xf6, 0x39, 0xe9, 0x03, 0x7b, 0xa1, 0xcb, 0x5c, 0xee, 0x63, 0xfd, 0x6c,
-	0x78, 0xeb, 0x42, 0x97, 0xb9, 0xcc, 0x0d, 0xf8, 0x63, 0x64, 0x6f, 0xbb, 0x66, 0x55, 0x6d, 0x03,
-	0x2f, 0xc0, 0x4e, 0xa9, 0x59, 0xd8, 0xed, 0x1c, 0x1f, 0x28, 0x2a, 0x62, 0x5d, 0x94, 0x87, 0x90,
-	0x0d, 0xf9, 0x32, 0x41, 0x95, 0x2b, 0x95, 0x08, 0xa8, 0x0b, 0x00, 0x7e, 0xb0, 0xc9, 0xc9, 0x50,
-	0xd1, 0x9d, 0x99, 0xa2, 0x33, 0x33, 0x45, 0x77, 0xa6, 0x69, 0x66, 0x8a, 0x97, 0xf5, 0x15, 0xc3,
-	0x1b, 0x42, 0xb2, 0xe4, 0x77, 0x19, 0xa9, 0x09, 0xbb, 0x51, 0xa9, 0xc9, 0x75, 0xa4, 0x06, 0xe7,
-	0x02, 0xbc, 0x5d, 0x82, 0xf7, 0x58, 0x2c, 0xaf, 0x0b, 0x11, 0x00, 0x1e, 0xf3, 0xa3, 0x7f, 0x49,
-	0x4a, 0x1c, 0xd5, 0x64, 0x99, 0x70, 0x28, 0xba, 0x3b, 0xe9, 0x9b, 0x87, 0x5d, 0x72, 0x3b, 0x45,
-	0x72, 0x50, 0x29, 0x30, 0x30, 0x48, 0xc0, 0x94, 0x5f, 0x82, 0x3f, 0x45, 0xb9, 0x3a, 0x7f, 0xeb,
-	0xdf, 0xfa, 0x9a, 0x17, 0x7b, 0x1c, 0x81, 0x3d, 0x72, 0xbe, 0x3b, 0x8f, 0x84, 0xcf, 0x9e, 0x85,
-	0xb6, 0x76, 0x6e, 0x01, 0xdf, 0x6c, 0xc0, 0xec, 0x15, 0x18, 0x7e, 0x2e, 0x44, 0xc5, 0x36, 0xab,
-	0x9c, 0xfb, 0x98, 0xd1, 0xa4, 0xb4, 0xf9, 0x51, 0x4a, 0xca, 0x75, 0x28, 0x29, 0xbb, 0xbc, 0x1b,
-	0x86, 0xfd, 0xde, 0x64, 0xcc, 0xb8, 0x8b, 0x92, 0x2a, 0xe5, 0xae, 0xc2, 0x81, 0xb6, 0x9e, 0x24,
-	0xec, 0x0c, 0x74, 0x53, 0x13, 0x85, 0xaf, 0x5f, 0xa9, 0xc9, 0x33, 0xf5, 0x0c, 0xf8, 0x93, 0x04,
-	0x50, 0xae, 0x54, 0x42, 0x00, 0x59, 0xcd, 0xcb, 0x9b, 0x8c, 0xc8, 0x65, 0x17, 0x51, 0xe4, 0xb9,
-	0x54, 0xe4, 0xd9, 0xcd, 0xc1, 0x10, 0xfc, 0xc1, 0x8b, 0xec, 0xbc, 0xb3, 0x03, 0xa8, 0x66, 0xe0,
-	0x22, 0xec, 0x0b, 0xf5, 0x23, 0x15, 0xa7, 0x60, 0x9b, 0x68, 0xa0, 0x20, 0x15, 0x94, 0x1a, 0x5c,
-	0x33, 0xb7, 0x33, 0xbf, 0x4e, 0x6e, 0xcb, 0x95, 0x4a, 0xc0, 0x6d, 0x56, 0x71, 0x7f, 0x9d, 0x11,
-	0xaf, 0xef, 0xa0, 0x9d, 0x37, 0x97, 0x98, 0x37, 0xbb, 0x78, 0x3f, 0x07, 0x05, 0x2f, 0x8e, 0x0b,
-	0xad, 0xcd, 0x35, 0x10, 0x82, 0xfd, 0xb0, 0xdd, 0xd9, 0x5c, 0xe7, 0x97, 0x69, 0x11, 0xa3, 0x5f,
-	0x38, 0x04, 0xbd, 0xfe, 0x76, 0x2c, 0x16, 0xb9, 0x2e, 0xf1, 0x3c, 0xd4, 0x8a, 0x79, 0xd8, 0x21,
-	0xf6, 0xf2, 0x79, 0x73, 0xb9, 0x2f, 0x27, 0xe6, 0xaf, 0xf5, 0x9b, 0x5f, 0x83, 0x23, 0x4a, 0xef,
-	0x0f, 0x35, 0x9f, 0xcf, 0x33, 0x18, 0x68, 0x1f, 0x39, 0x62, 0x93, 0x7d, 0x58, 0x75, 0x7d, 0xd0,
-	0xed, 0x9c, 0x7b, 0x7c, 0x71, 0xde, 0x4f, 0x6e, 0xc1, 0x60, 0x0c, 0x41, 0xc6, 0xa7, 0x89, 0x77,
-	0x19, 0xcd, 0x65, 0xd9, 0x69, 0x7b, 0x24, 0x73, 0x19, 0x7c, 0x1d, 0x72, 0x1d, 0xbf, 0x0e, 0x6f,
-	0x31, 0x9a, 0xf8, 0x28, 0xd4, 0xc7, 0xe3, 0xc5, 0xb8, 0xeb, 0x65, 0x50, 0x00, 0xf1, 0x11, 0x64,
-	0x50, 0x56, 0x31, 0xfd, 0x8c, 0x51, 0xc2, 0xa9, 0x81, 0x1f, 0xd7, 0x03, 0xdf, 0x09, 0x38, 0xd8,
-	0xfe, 0xaa, 0xa8, 0x56, 0x7e, 0xdd, 0x3f, 0xc9, 0xcb, 0x9d, 0x49, 0xdb, 0x0c, 0x80, 0xdf, 0x4a,
-	0xef, 0xd2, 0x51, 0xa5, 0x34, 0x69, 0x00, 0xc9, 0x8c, 0x8f, 0x40, 0x9f, 0xe7, 0xa2, 0x5c, 0xa9,
-	0x9c, 0x5f, 0xd7, 0xab, 0x4b, 0xab, 0x2a, 0x9c, 0x45, 0x9f, 0x5d, 0xea, 0x4b, 0x34, 0xb3, 0xb0,
-	0xc3, 0x6d, 0x31, 0x6c, 0x0a, 0xf3, 0xf1, 0x04, 0x2c, 0x34, 0x48, 0xcb, 0x94, 0x5f, 0xf7, 0x79,
-	0xdc, 0xb6, 0x2b, 0xab, 0xba, 0xc7, 0xc3, 0x61, 0x97, 0x9f, 0x50, 0xf3, 0x1e, 0x59, 0xa0, 0x0d,
-	0x0b, 0x00, 0x8b, 0xc2, 0x4e, 0x4a, 0x43, 0xa9, 0x85, 0x8f, 0xf9, 0x1a, 0xa4, 0xf1, 0x49, 0xc3,
-	0x1e, 0xc8, 0xd9, 0xab, 0x3a, 0x25, 0xb7, 0xf3, 0x95, 0x2f, 0x51, 0xf7, 0x40, 0xa2, 0x65, 0xbd,
-	0x63, 0xbe, 0xcf, 0xfc, 0xcb, 0x51, 0x82, 0x79, 0xce, 0x75, 0x30, 0xcf, 0xd9, 0x25, 0xf0, 0x20,
-	0xec, 0xf5, 0x02, 0x78, 0xd5, 0x36, 0xd6, 0xdb, 0x73, 0xa5, 0x47, 0xe4, 0xca, 0xbc, 0x7f, 0xb8,
-	0x71, 0xbb, 0x91, 0x98, 0x12, 0x6c, 0x75, 0x7e, 0x53, 0xb4, 0x0e, 0x2b, 0x65, 0x08, 0x23, 0xd1,
-	0x95, 0x3f, 0x41, 0x1e, 0xcb, 0x95, 0x8a, 0xec, 0x31, 0xab, 0xe8, 0xbf, 0xca, 0xfc, 0x03, 0x91,
-	0x02, 0x35, 0x97, 0x10, 0x35, 0xbb, 0x28, 0x6b, 0x70, 0x38, 0xc8, 0xa4, 0x5e, 0x2a, 0x7a, 0xe8,
-	0x1a, 0x5f, 0x50, 0x19, 0x64, 0x98, 0x46, 0x5c, 0x27, 0xae, 0xd6, 0xb4, 0x86, 0xb9, 0x0e, 0x40,
-	0xb7, 0xb3, 0x29, 0xdc, 0x30, 0xc3, 0x7b, 0xc4, 0x31, 0xd8, 0xed, 0xbf, 0xa8, 0x37, 0xaa, 0xca,
-	0x4d, 0xa2, 0xa5, 0x24, 0xc2, 0x45, 0x96, 0x0b, 0x5f, 0xc9, 0xdf, 0x96, 0x1d, 0x37, 0x9b, 0xdf,
-	0xbe, 0xdd, 0x18, 0xaf, 0x41, 0xbf, 0xda, 0xc4, 0xbf, 0xec, 0x59, 0x9d, 0x5f, 0xf6, 0x64, 0x53,
-	0x7e, 0x47, 0xda, 0xe5, 0x82, 0xbe, 0xc2, 0x41, 0x4f, 0x71, 0x0d, 0xcf, 0x6c, 0x0f, 0xfe, 0x94,
-	0xc1, 0x50, 0x1c, 0xdd, 0x63, 0xb9, 0x80, 0x35, 0xfc, 0xc3, 0x6a, 0x76, 0x51, 0x4d, 0x78, 0x02,
-	0xe2, 0x6b, 0x14, 0xb4, 0x4d, 0x9c, 0x67, 0xbb, 0xbb, 0xb7, 0x56, 0xe1, 0x6b, 0xab, 0x96, 0x69,
-	0x7b, 0xd2, 0x10, 0xb6, 0x56, 0x7d, 0x39, 0xe2, 0xbb, 0x7c, 0xcd, 0xa4, 0xbe, 0xfe, 0xe9, 0x54,
-	0x34, 0xc4, 0x5e, 0x4b, 0x5c, 0x33, 0xb7, 0xb3, 0x7c, 0xcd, 0x0c, 0xb8, 0x7e, 0x14, 0xd7, 0x4c,
-	0x25, 0x6f, 0x2e, 0x31, 0x6f, 0x66, 0xf9, 0x35, 0xfe, 0xc9, 0x20, 0x6c, 0x13, 0x60, 0xf8, 0x01,
-	0x0b, 0x9c, 0x3e, 0x71, 0x42, 0x49, 0xa2, 0xae, 0xd7, 0xe6, 0x4f, 0xa5, 0x33, 0x72, 0x81, 0x78,
-	0xe9, 0x85, 0x6f, 0x7f, 0xbe, 0xdd, 0x75, 0x02, 0x8f, 0x6b, 0x5e, 0x85, 0x38, 0xfc, 0x29, 0x95,
-	0xb0, 0xb5, 0x86, 0xb9, 0xdc, 0xc4, 0xf7, 0x18, 0xf4, 0x4a, 0x43, 0x95, 0x2b, 0x95, 0x38, 0xe0,
-	0xc8, 0x5a, 0x6e, 0x1c, 0x70, 0x74, 0x65, 0x96, 0x8f, 0x0a, 0xe0, 0x21, 0x1c, 0x48, 0x02, 0x8c,
-	0x1f, 0xb1, 0x60, 0x4d, 0x0d, 0xe3, 0xa3, 0x14, 0xb1, 0xc0, 0xe7, 0xff, 0x9c, 0xd2, 0x8a, 0x58,
-	0xc7, 0x05, 0xeb, 0x28, 0x8e, 0x28, 0x59, 0xe5, 0xf5, 0xc1, 0x8d, 0xee, 0x77, 0x0c, 0xb0, 0xbd,
-	0xec, 0x89, 0x67, 0x52, 0x11, 0x04, 0x8a, 0xaf, 0xf9, 0xbf, 0x76, 0x64, 0x4b, 0x1a, 0x66, 0x85,
-	0x86, 0x69, 0x3c, 0x9b, 0x4c, 0x83, 0xb3, 0x42, 0x68, 0x8d, 0xf0, 0xb2, 0xd7, 0xc4, 0x0f, 0x19,
-	0xec, 0x96, 0xbd, 0x38, 0x59, 0x13, 0x9f, 0x00, 0x1d, 0xcc, 0x85, 0xa2, 0xb8, 0xca, 0xc7, 0x84,
-	0x8e, 0x63, 0x38, 0x98, 0x48, 0x07, 0xde, 0x61, 0xad, 0xca, 0x1f, 0x6a, 0xb1, 0xf1, 0x0b, 0x56,
-	0x26, 0xf3, 0x27, 0x93, 0x1b, 0x24, 0xa6, 0xa3, 0x3f, 0x09, 0xb9, 0x49, 0xf2, 0x06, 0x03, 0xa0,
-	0x21, 0x9c, 0x40, 0x6a, 0xb1, 0x21, 0x49, 0x07, 0xd8, 0x5e, 0x08, 0xe5, 0xc3, 0x02, 0x90, 0x63,
-	0x7f, 0x1c, 0x20, 0xde, 0x66, 0x54, 0xa4, 0xc0, 0xb1, 0xd8, 0x30, 0xc8, 0x85, 0x98, 0x7c, 0x31,
-	0x69, 0x77, 0x42, 0x3a, 0x21, 0x90, 0x06, 0xf1, 0xa8, 0x12, 0x49, 0xd4, 0xd4, 0xdc, 0x88, 0xbd,
-	0xc2, 0x60, 0x87, 0x30, 0x77, 0xe2, 0x35, 0x16, 0x2b, 0x3f, 0x0d, 0x58, 0xb8, 0x7c, 0xc9, 0x87,
-	0x04, 0x58, 0x3f, 0x16, 0x36, 0x07, 0xc3, 0x6f, 0x18, 0xec, 0x0e, 0x55, 0x7a, 0x70, 0x32, 0x36,
-	0x08, 0xd1, 0x65, 0xac, 0xfc, 0x54, 0x7a, 0x43, 0xc2, 0xfd, 0x97, 0xc0, 0x9d, 0xc5, 0x19, 0x25,
-	0x6e, 0xc3, 0x3d, 0x9a, 0x37, 0xb5, 0x46, 0xf0, 0x94, 0xd2, 0x6c, 0x45, 0x98, 0x8a, 0x97, 0x4d,
-	0xfc, 0x8a, 0x01, 0x86, 0x1c, 0x39, 0x11, 0x9f, 0x8c, 0x0d, 0x61, 0x67, 0xb2, 0xd4, 0xb5, 0x32,
-	0xfe, 0x37, 0x21, 0xeb, 0x0c, 0x4e, 0x75, 0x2a, 0x0b, 0x7f, 0x62, 0xb0, 0x2f, 0xb2, 0x6a, 0x84,
-	0x67, 0x53, 0x04, 0x3b, 0x62, 0xe7, 0x3b, 0xd7, 0xa9, 0x39, 0x49, 0x9b, 0x17, 0xd2, 0x66, 0xb0,
-	0xdc, 0x81, 0x34, 0x67, 0x77, 0xd4, 0x1a, 0x54, 0x90, 0x6d, 0xe2, 0x0f, 0x0c, 0xfa, 0x22, 0x9d,
-	0x39, 0xb3, 0x76, 0x36, 0x45, 0xf0, 0xd3, 0xcb, 0x8c, 0xab, 0xc9, 0xf1, 0x69, 0x21, 0xf3, 0x34,
-	0x4e, 0x76, 0x28, 0x13, 0xdf, 0x61, 0xf2, 0xd9, 0x18, 0xc7, 0x53, 0x84, 0xdd, 0xd3, 0x30, 0x91,
-	0xca, 0x86, 0xc0, 0x4f, 0x0a, 0xf0, 0x11, 0x1c, 0x56, 0x82, 0xfb, 0xb8, 0xee, 0xf2, 0xf4, 0x36,
-	0x83, 0xdf, 0xf9, 0x03, 0x39, 0xb1, 0x1f, 0x4f, 0x11, 0xbc, 0x84, 0xb0, 0x91, 0x55, 0xa3, 0x04,
-	0xcb, 0xa8, 0x0f, 0xeb, 0x6c, 0xe3, 0x3d, 0x6e, 0x39, 0xcc, 0x61, 0x2c, 0xc5, 0x06, 0x27, 0x5c,
-	0x2a, 0xcc, 0x8f, 0xa7, 0x31, 0x21, 0xc2, 0xd3, 0x82, 0x70, 0x02, 0x4b, 0x49, 0xc3, 0xa9, 0x2d,
-	0x52, 0x95, 0x10, 0xbf, 0x68, 0xf1, 0x5e, 0x59, 0xd5, 0x13, 0xf0, 0x86, 0x4b, 0x89, 0x09, 0x78,
-	0xdb, 0xaa, 0x83, 0xfc, 0xb2, 0xe0, 0xfd, 0x27, 0xfe, 0x23, 0x11, 0xaf, 0x5c, 0x95, 0xf4, 0xc9,
-	0xb5, 0x86, 0x5f, 0x8b, 0x6c, 0xe2, 0x4b, 0xcc, 0x2d, 0x31, 0xe1, 0x68, 0x2c, 0x8e, 0x54, 0xf9,
-	0xca, 0x8f, 0x25, 0xec, 0x4d, 0xdc, 0x23, 0x82, 0x7b, 0x00, 0xb9, 0x92, 0xdb, 0x79, 0xdd, 0xdc,
-	0x84, 0x7d, 0x91, 0x41, 0xb7, 0x63, 0xec, 0xa4, 0xc1, 0x68, 0x6c, 0xda, 0xa5, 0x80, 0x0a, 0x15,
-	0xd7, 0xf8, 0xa0, 0x80, 0x3a, 0x82, 0x87, 0x37, 0x85, 0xc2, 0xcf, 0x19, 0xfc, 0x3e, 0x58, 0x05,
-	0x72, 0xc8, 0xfe, 0x92, 0xd0, 0x57, 0xf8, 0x45, 0x9a, 0x4c, 0x6d, 0x47, 0xb4, 0x93, 0x82, 0xb6,
-	0x84, 0x5a, 0x7c, 0x08, 0xfd, 0x24, 0x30, 0x0d, 0x1b, 0xbf, 0x66, 0xd0, 0x1b, 0x1c, 0x33, 0x0e,
-	0x5e, 0x55, 0x59, 0xcb, 0x4f, 0xa6, 0xb6, 0x23, 0xf8, 0x39, 0x01, 0x5f, 0xc6, 0xe9, 0x44, 0x79,
-	0x4b, 0xd5, 0xbb, 0xc0, 0xda, 0x2b, 0xca, 0x75, 0x4d, 0xe7, 0xad, 0xdb, 0x1b, 0x2e, 0x7c, 0x39,
-	0xd3, 0x31, 0x95, 0x28, 0xac, 0x51, 0x87, 0xfe, 0xd3, 0x1d, 0x58, 0x92, 0xaa, 0x29, 0xa1, 0x6a,
-	0x1c, 0x4f, 0x26, 0x98, 0x12, 0xf9, 0x0a, 0x60, 0xe3, 0x2f, 0x0c, 0x0e, 0x46, 0x17, 0x5f, 0x1c,
-	0x31, 0xe7, 0x52, 0xde, 0x43, 0xc2, 0xd3, 0x34, 0xdd, 0xb1, 0x3d, 0x09, 0xbb, 0x28, 0x84, 0xcd,
-	0xe1, 0x6c, 0xc2, 0xdb, 0x65, 0xdb, 0xa5, 0x2c, 0x98, 0x81, 0xbf, 0x32, 0xd8, 0x1f, 0xed, 0x11,
-	0xcf, 0xa5, 0xbc, 0xfe, 0xa6, 0x94, 0x1a, 0x5b, 0xe3, 0xe2, 0xd7, 0x85, 0xd4, 0xff, 0xe1, 0x7f,
-	0x33, 0x91, 0xda, 0x76, 0x5a, 0xc0, 0xd7, 0x18, 0x95, 0x82, 0x12, 0xdc, 0x59, 0xe4, 0x22, 0x55,
-	0x82, 0x3b, 0x4b, 0xa0, 0xe4, 0x94, 0xe0, 0x9e, 0x27, 0xfe, 0x41, 0x4f, 0x6b, 0xb8, 0x2f, 0x92,
-	0x73, 0x6b, 0x11, 0x03, 0x24, 0xbb, 0xb5, 0xa4, 0x41, 0x0b, 0x57, 0xc3, 0x12, 0xdc, 0x5a, 0x04,
-	0xda, 0xf9, 0xbf, 0x7f, 0x79, 0xbf, 0xc0, 0xee, 0xdd, 0x2f, 0xb0, 0x1f, 0xef, 0x17, 0xd8, 0xcb,
-	0x0f, 0x0a, 0x5b, 0xee, 0x3d, 0x28, 0x6c, 0xf9, 0xfe, 0x41, 0x61, 0xcb, 0xff, 0x47, 0x56, 0xcc,
-	0xfa, 0xea, 0xc6, 0x62, 0x71, 0xc9, 0x5a, 0x6b, 0xb3, 0x7d, 0xa6, 0xf5, 0xad, 0x7e, 0xab, 0x66,
-	0xd8, 0x8b, 0xdb, 0xc5, 0xbf, 0x20, 0x4e, 0xfc, 0x16, 0x00, 0x00, 0xff, 0xff, 0xbd, 0xae, 0x61,
-	0x49, 0xa2, 0x29, 0x00, 0x00,
+	// 1793 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x9a, 0xef, 0x6f, 0x14, 0xc5,
+	0x1f, 0xc7, 0x99, 0x5e, 0xa1, 0x30, 0xf0, 0x85, 0xef, 0x77, 0xf8, 0x55, 0xf6, 0x0b, 0x47, 0xbf,
+	0x43, 0x5b, 0x4a, 0x69, 0x6f, 0x69, 0xe1, 0x6b, 0x29, 0x08, 0xe4, 0xa8, 0x82, 0x35, 0x51, 0xb1,
+	0x94, 0x90, 0x90, 0x48, 0xdc, 0xb6, 0x9b, 0xbb, 0x4d, 0xb6, 0xb7, 0xc7, 0xed, 0x55, 0x85, 0xe6,
+	0x12, 0xe3, 0x73, 0xe3, 0x0f, 0xa2, 0x89, 0x31, 0x31, 0x3c, 0x31, 0x46, 0x8c, 0x18, 0x8d, 0x89,
+	0xfe, 0x01, 0x6a, 0x7c, 0x62, 0x42, 0xe2, 0x13, 0xe3, 0x23, 0x05, 0xfd, 0x3f, 0xcc, 0xcc, 0x7e,
+	0xf6, 0x66, 0x76, 0x6f, 0xe7, 0x76, 0xf6, 0x58, 0x12, 0x1e, 0xf5, 0x6e, 0x6e, 0x3e, 0x33, 0xaf,
+	0xcf, 0x7b, 0x7e, 0xbf, 0x53, 0xbc, 0xb3, 0xe2, 0x34, 0xbd, 0xba, 0x63, 0x99, 0x37, 0xd6, 0xec,
+	0xc6, 0xcd, 0x52, 0xbd, 0xe1, 0x35, 0x3d, 0xb2, 0x17, 0x0a, 0x4b, 0xb1, 0xbf, 0xc6, 0xfe, 0x8a,
+	0xe7, 0x55, 0x5c, 0xdb, 0xb4, 0xea, 0x8e, 0x69, 0xd5, 0x6a, 0x5e, 0xd3, 0x6a, 0x3a, 0x5e, 0xcd,
+	0x0f, 0xc2, 0x8c, 0xf1, 0x65, 0xcf, 0x5f, 0xf5, 0x7c, 0x73, 0xc9, 0xf2, 0xed, 0xa0, 0x3d, 0xf3,
+	0xb5, 0xa9, 0x25, 0xbb, 0x69, 0x4d, 0x99, 0x75, 0xab, 0xe2, 0xd4, 0x78, 0x65, 0xa8, 0xbb, 0x2f,
+	0xec, 0xb7, 0xbe, 0xe6, 0xba, 0x0b, 0xf6, 0x8d, 0x35, 0xdb, 0x6f, 0xc2, 0x4f, 0x46, 0xf8, 0x93,
+	0xd7, 0xa8, 0x58, 0x35, 0xe7, 0x96, 0x1c, 0xb6, 0x3b, 0xfc, 0x6d, 0xd9, 0x5b, 0x5d, 0xb5, 0x6b,
+	0x61, 0x48, 0x3b, 0x0b, 0xc7, 0xf7, 0xd7, 0x6c, 0x28, 0x1c, 0x0c, 0x0b, 0x1b, 0x76, 0xdd, 0xf3,
+	0x9d, 0xa6, 0x17, 0xe6, 0x67, 0x90, 0xf0, 0x97, 0x35, 0xdf, 0x6e, 0xc4, 0x9b, 0x78, 0xbd, 0xea,
+	0x39, 0x90, 0x11, 0x9d, 0xc0, 0xc6, 0xcb, 0x2c, 0x8f, 0x8b, 0x76, 0xf3, 0x92, 0xe0, 0x84, 0x3f,
+	0x64, 0x3b, 0xee, 0x73, 0x56, 0x06, 0xd1, 0x10, 0x1a, 0xeb, 0x5f, 0xe8, 0x73, 0x56, 0xa8, 0x8d,
+	0xff, 0x9b, 0x58, 0xdb, 0xaf, 0x7b, 0x35, 0xdf, 0x26, 0x17, 0xf0, 0x56, 0xa9, 0x98, 0xc7, 0x6d,
+	0x9d, 0x1e, 0x2e, 0x29, 0xb4, 0x2e, 0xc9, 0x4d, 0xc8, 0x81, 0x74, 0x05, 0xa0, 0xca, 0xae, 0x9b,
+	0x00, 0x75, 0x01, 0x63, 0x21, 0x36, 0x74, 0x32, 0x5a, 0x0a, 0x46, 0xa6, 0xc4, 0x46, 0xa6, 0x14,
+	0x8c, 0x34, 0x8c, 0x4c, 0xe9, 0x92, 0x55, 0xb1, 0xc3, 0x26, 0xa4, 0x48, 0x7a, 0x0f, 0x41, 0x36,
+	0xf1, 0x6e, 0x54, 0xd9, 0x14, 0x7a, 0xca, 0x86, 0x5c, 0x8c, 0xf0, 0xf6, 0x71, 0xde, 0xc3, 0xa9,
+	0xbc, 0x01, 0x44, 0x04, 0x78, 0x52, 0xa8, 0xff, 0x92, 0x34, 0x71, 0x3a, 0x07, 0x6b, 0x0b, 0x1f,
+	0x2c, 0x07, 0xef, 0x4f, 0xae, 0x0e, 0xf9, 0xcd, 0xe3, 0x6d, 0x72, 0x39, 0x28, 0x39, 0xa2, 0x4c,
+	0x30, 0xd2, 0x48, 0x24, 0xb4, 0x3d, 0x2f, 0xca, 0xae, 0x9b, 0x44, 0x96, 0xd7, 0x88, 0x7d, 0x83,
+	0x20, 0xa5, 0x8e, 0x7e, 0x94, 0x29, 0x15, 0x7a, 0x4c, 0x29, 0xbf, 0x51, 0x1b, 0xc3, 0x7b, 0xc2,
+	0x61, 0x98, 0x0b, 0x96, 0xb4, 0x6a, 0x75, 0x5d, 0xc1, 0x7b, 0x3b, 0x6a, 0x42, 0x62, 0xa7, 0xf0,
+	0x00, 0x14, 0x81, 0x7c, 0x43, 0xca, 0x9c, 0xc2, 0xd0, 0x30, 0x80, 0xbe, 0x0a, 0x00, 0x65, 0xd7,
+	0x8d, 0x01, 0xe4, 0x35, 0x2e, 0x9f, 0x20, 0x20, 0x97, 0xbb, 0x48, 0x22, 0x2f, 0x64, 0x22, 0xcf,
+	0x6f, 0x0c, 0x46, 0xf1, 0xae, 0x50, 0xd9, 0x79, 0xb6, 0x7f, 0xaa, 0x46, 0xe0, 0x05, 0xbc, 0x3b,
+	0x56, 0x0f, 0xb2, 0x38, 0x81, 0x37, 0xf2, 0x02, 0x10, 0xa9, 0xa8, 0xcc, 0x21, 0x08, 0x0b, 0x2a,
+	0xd3, 0xeb, 0xd0, 0x6d, 0xd9, 0x75, 0x23, 0xdd, 0xe6, 0xa5, 0xfb, 0x87, 0x08, 0x78, 0x45, 0x07,
+	0x9d, 0xbc, 0x05, 0x6d, 0xde, 0xfc, 0xf4, 0x6e, 0xe2, 0x62, 0xa8, 0xe3, 0x42, 0xfb, 0x68, 0x52,
+	0x28, 0xcf, 0x37, 0x2b, 0x32, 0x8a, 0xb7, 0x8b, 0x43, 0xec, 0x45, 0x6b, 0xd5, 0xe6, 0xdd, 0x6f,
+	0x59, 0x88, 0x95, 0x12, 0x03, 0x6f, 0xe6, 0x27, 0xe0, 0xbc, 0xb3, 0x32, 0x58, 0xe0, 0xe3, 0xd6,
+	0xfe, 0x4e, 0xaf, 0xe2, 0x83, 0xca, 0x5e, 0x1f, 0x69, 0x1c, 0xdf, 0x44, 0x78, 0xb8, 0xb3, 0xe5,
+	0x84, 0xa3, 0x69, 0x0f, 0xde, 0xc4, 0x0e, 0xdc, 0xf9, 0x30, 0x33, 0xf8, 0xa6, 0x9d, 0xdd, 0x20,
+	0x1e, 0x60, 0xb7, 0x05, 0x91, 0x5c, 0xf8, 0x95, 0x7a, 0x78, 0x24, 0x85, 0x20, 0xe7, 0x33, 0xf8,
+	0x0e, 0x82, 0x31, 0x2c, 0xb3, 0xb2, 0x5c, 0xc7, 0x30, 0x3a, 0xfd, 0x0b, 0x3d, 0x4f, 0xff, 0x3b,
+	0x08, 0x06, 0x3c, 0x09, 0xf1, 0xc9, 0x58, 0x08, 0xf7, 0xc2, 0x99, 0x13, 0x41, 0x7c, 0x0c, 0x33,
+	0x27, 0x2f, 0x4d, 0xbf, 0x47, 0x30, 0xd1, 0xd4, 0xc0, 0x4f, 0xea, 0xf5, 0xe8, 0x28, 0xde, 0xd7,
+	0xb9, 0x44, 0x54, 0x3b, 0xbd, 0x25, 0xee, 0xbd, 0x72, 0x65, 0xc8, 0x6d, 0x0e, 0x63, 0x51, 0x0a,
+	0x6b, 0xe8, 0x90, 0x32, 0x35, 0xa9, 0x01, 0x29, 0x8c, 0x9e, 0xc5, 0x83, 0x61, 0x17, 0x65, 0xd7,
+	0x3d, 0xdf, 0xb0, 0x6a, 0xcb, 0xd5, 0x10, 0x87, 0xe2, 0x6d, 0x62, 0x00, 0xe7, 0x43, 0xb0, 0x48,
+	0x19, 0x5d, 0x12, 0xf9, 0x48, 0xf1, 0x40, 0xf8, 0x2c, 0xde, 0x1c, 0x94, 0xd8, 0x3e, 0x48, 0x7f,
+	0x44, 0x83, 0x0f, 0x1a, 0x69, 0x87, 0xd2, 0xeb, 0x82, 0x31, 0x28, 0xbb, 0x5c, 0xb5, 0x32, 0x30,
+	0x92, 0x22, 0xc6, 0x4b, 0x3c, 0x4e, 0x9a, 0x9a, 0x52, 0x09, 0x9d, 0x14, 0x39, 0x48, 0xed, 0x43,
+	0x0e, 0xff, 0xc6, 0x05, 0xbf, 0x6a, 0xc1, 0x84, 0x67, 0x1f, 0xe9, 0x69, 0x71, 0xfe, 0x96, 0x5d,
+	0x77, 0xd1, 0xaa, 0x64, 0xd1, 0x6b, 0x51, 0x5c, 0xb4, 0xc2, 0xe0, 0xf6, 0x1d, 0xa4, 0x7f, 0xd1,
+	0xaa, 0x84, 0x42, 0x8d, 0x6a, 0x08, 0xc5, 0xa2, 0x79, 0x0c, 0xbd, 0x22, 0x90, 0x16, 0xad, 0x4a,
+	0x46, 0x79, 0x06, 0xf1, 0x40, 0xd3, 0xaa, 0x48, 0xda, 0x84, 0x5f, 0xe9, 0xb8, 0x80, 0x0d, 0x9b,
+	0x55, 0xaa, 0xb2, 0x0c, 0x22, 0x46, 0x96, 0x64, 0xde, 0x77, 0x89, 0xbb, 0x48, 0x3c, 0xba, 0x34,
+	0x56, 0x44, 0xa1, 0x87, 0x15, 0x91, 0xdf, 0x52, 0x1f, 0xc1, 0x3b, 0x43, 0xf5, 0xae, 0xf8, 0x76,
+	0x43, 0xf5, 0x02, 0x9a, 0x17, 0xd7, 0xbe, 0xa0, 0x1a, 0x24, 0x33, 0x85, 0xfb, 0xd9, 0x77, 0x50,
+	0xeb, 0x80, 0x32, 0x0d, 0x1e, 0xc4, 0xab, 0xd2, 0x57, 0xa0, 0xc7, 0xb2, 0xeb, 0xca, 0x3d, 0xe6,
+	0xa5, 0xfe, 0xfb, 0x48, 0x5c, 0x15, 0x15, 0xa8, 0x05, 0x4d, 0xd4, 0xfc, 0x54, 0xbe, 0x85, 0x87,
+	0x42, 0xa6, 0xf2, 0xca, 0x4a, 0xc3, 0xf6, 0xfd, 0x6e, 0xfb, 0x6a, 0x70, 0x07, 0xb8, 0x90, 0xd0,
+	0x79, 0x2f, 0x82, 0x7c, 0x8d, 0xf0, 0xff, 0xba, 0x74, 0xfe, 0x44, 0xce, 0xca, 0x6b, 0xa0, 0x17,
+	0xdb, 0x80, 0x74, 0xf5, 0xd2, 0x3c, 0xdf, 0x69, 0x15, 0xe4, 0x48, 0x6e, 0x3b, 0xcf, 0x63, 0x6b,
+	0x4a, 0x5c, 0xaa, 0xd8, 0x74, 0xd2, 0x71, 0x1a, 0x56, 0xc5, 0x44, 0xe9, 0x0c, 0x11, 0x4f, 0x73,
+	0xaf, 0xf7, 0xa7, 0xb9, 0x1c, 0x4a, 0xc7, 0xc5, 0xb2, 0xbe, 0x5a, 0xf5, 0x1c, 0x3f, 0xc4, 0x22,
+	0xb8, 0xbf, 0xc6, 0x14, 0x0c, 0xc0, 0xf8, 0x67, 0xf9, 0x45, 0x07, 0x75, 0xc5, 0xc5, 0x90, 0x17,
+	0xa4, 0xbe, 0x04, 0x82, 0xb0, 0xa0, 0xb2, 0xfc, 0xa2, 0x8b, 0x74, 0xfd, 0x38, 0x5e, 0x74, 0x4a,
+	0xde, 0x82, 0x36, 0x6f, 0x6e, 0x73, 0x7b, 0xfa, 0x6f, 0x8a, 0x37, 0x72, 0x30, 0xf2, 0x05, 0x8a,
+	0x5c, 0xfc, 0xc8, 0x71, 0x25, 0x89, 0xda, 0x58, 0x34, 0x4e, 0x64, 0x0b, 0x0a, 0x80, 0xe8, 0xd4,
+	0x5b, 0xbf, 0xfe, 0x75, 0xbb, 0xef, 0x28, 0x39, 0x62, 0x86, 0x56, 0x66, 0xfc, 0xaf, 0xe4, 0xb5,
+	0x9a, 0xeb, 0xce, 0x4a, 0x8b, 0x7c, 0x8e, 0xf0, 0x76, 0xa9, 0xa9, 0xb2, 0xeb, 0xa6, 0x01, 0x27,
+	0x9a, 0x8e, 0x69, 0xc0, 0xc9, 0x16, 0x22, 0x9d, 0xe0, 0xc0, 0xa3, 0x64, 0x58, 0x07, 0x98, 0x7c,
+	0x85, 0xa2, 0xf6, 0x15, 0x49, 0x57, 0x29, 0x61, 0x75, 0x1a, 0xff, 0xcf, 0x18, 0x05, 0xac, 0xd3,
+	0x9c, 0x75, 0x82, 0x8c, 0x2b, 0x59, 0xe5, 0x45, 0x18, 0xa8, 0xfb, 0x25, 0xc2, 0x3b, 0xe4, 0xc6,
+	0x98, 0xbc, 0xe9, 0x4a, 0xf5, 0x00, 0xad, 0x30, 0xfc, 0xe8, 0x24, 0x87, 0x3e, 0x4c, 0x46, 0xb4,
+	0xa0, 0xc9, 0xc7, 0xa8, 0xed, 0x46, 0x11, 0x33, 0x55, 0xa6, 0xa8, 0x5b, 0x66, 0x1c, 0xd3, 0x0f,
+	0xd0, 0xa6, 0x03, 0x93, 0x3f, 0x50, 0xf3, 0x23, 0x84, 0x31, 0x34, 0xc1, 0x84, 0x34, 0x53, 0x25,
+	0xc9, 0x06, 0xd8, 0x69, 0xce, 0xd1, 0x31, 0x0e, 0x48, 0xc9, 0x50, 0x1a, 0x20, 0xb9, 0x8d, 0xe0,
+	0x21, 0x4d, 0x26, 0x53, 0x65, 0x90, 0x4d, 0x02, 0xa3, 0xa4, 0x5b, 0x1d, 0x90, 0x8e, 0x72, 0xa4,
+	0x11, 0x72, 0x48, 0x89, 0xc4, 0xfd, 0x9e, 0x40, 0xb1, 0xf7, 0x10, 0xde, 0xcc, 0xc3, 0x99, 0x5e,
+	0x93, 0xa9, 0xe9, 0x67, 0x01, 0x8b, 0x5b, 0x6a, 0x74, 0x94, 0x83, 0x0d, 0x91, 0x62, 0x77, 0x30,
+	0xf2, 0x0b, 0xc2, 0x3b, 0x62, 0x6e, 0x04, 0x99, 0x49, 0x15, 0x21, 0xd9, 0x62, 0x31, 0x4e, 0x66,
+	0x0f, 0x04, 0xdc, 0x8b, 0x1c, 0xb7, 0x4c, 0xce, 0x29, 0x71, 0x99, 0x82, 0xe6, 0x7a, 0xf4, 0x9e,
+	0xd1, 0x6a, 0xab, 0x0b, 0xa6, 0x5a, 0x8b, 0xfc, 0x88, 0x30, 0x89, 0x75, 0xc2, 0xd4, 0x9e, 0x49,
+	0x95, 0xaf, 0xb7, 0x94, 0xd4, 0x5e, 0x0e, 0x7d, 0x9a, 0xa7, 0xf4, 0x14, 0x39, 0xd1, 0x4b, 0x4a,
+	0xe4, 0x4f, 0x84, 0x77, 0x27, 0x3a, 0x1a, 0xe4, 0x4c, 0x06, 0x91, 0x13, 0x8e, 0x86, 0xb3, 0xbd,
+	0x86, 0x43, 0x5a, 0xf3, 0x3c, 0xad, 0x39, 0x52, 0x56, 0xa7, 0x15, 0x98, 0x41, 0x09, 0xa9, 0xb1,
+	0xe3, 0xc3, 0x5c, 0x07, 0x93, 0xb0, 0x45, 0x7e, 0x47, 0x78, 0x30, 0xb1, 0x33, 0x36, 0x62, 0x67,
+	0x32, 0x08, 0x9f, 0x3d, 0xcd, 0x34, 0xbf, 0x88, 0x9e, 0xe3, 0x69, 0xce, 0x92, 0x99, 0x1e, 0xd3,
+	0x24, 0x9f, 0x21, 0xf9, 0x7a, 0x4b, 0xa6, 0x33, 0xc8, 0x1e, 0xe6, 0x70, 0x3c, 0x53, 0x0c, 0x80,
+	0x1f, 0xe3, 0xe0, 0xe3, 0x64, 0x4c, 0x09, 0x2e, 0x70, 0x83, 0x6d, 0xe9, 0x53, 0x84, 0xff, 0x25,
+	0x1a, 0x62, 0xda, 0x4f, 0x67, 0x10, 0x4f, 0x13, 0x36, 0xf1, 0x9d, 0xae, 0xb1, 0x7d, 0x0a, 0x58,
+	0xf2, 0x1d, 0xc2, 0x5b, 0x02, 0x5b, 0x86, 0x31, 0x4e, 0xa5, 0x8a, 0x13, 0xb7, 0xb1, 0x8c, 0xe9,
+	0x2c, 0x21, 0x40, 0x38, 0xc7, 0x09, 0xcf, 0x90, 0xd3, 0x5a, 0x72, 0xca, 0x76, 0x4a, 0xcb, 0x5c,
+	0x02, 0xdf, 0x8a, 0xfc, 0xd0, 0x26, 0xbf, 0x5c, 0xb5, 0x34, 0xc8, 0xe3, 0xe6, 0x96, 0x06, 0x79,
+	0x87, 0x5f, 0x45, 0x2f, 0x71, 0xf2, 0xe7, 0xc9, 0x73, 0x8f, 0x40, 0x6e, 0xae, 0x0b, 0x77, 0xac,
+	0x45, 0xee, 0x22, 0xbc, 0x69, 0xd1, 0xaa, 0x30, 0xf5, 0x4b, 0x3a, 0x52, 0x0a, 0x47, 0xcc, 0x30,
+	0xb5, 0xeb, 0x6b, 0xaf, 0x3f, 0x35, 0x7d, 0xd3, 0xaa, 0xf8, 0xe4, 0xdb, 0x00, 0x96, 0x09, 0x9e,
+	0x0e, 0x1b, 0xf1, 0xca, 0x34, 0x60, 0xa3, 0x26, 0x98, 0xc6, 0x9e, 0xd8, 0x1d, 0xd6, 0x5c, 0x07,
+	0xa3, 0xad, 0x45, 0xde, 0x41, 0x81, 0x85, 0x42, 0x26, 0x52, 0x21, 0x24, 0x67, 0xc7, 0x98, 0xd4,
+	0xac, 0x0d, 0xc0, 0xe3, 0x1c, 0x78, 0x98, 0x50, 0x25, 0x30, 0xdb, 0xdc, 0x82, 0xed, 0xe1, 0x6d,
+	0x84, 0x07, 0x58, 0x30, 0x1b, 0xf6, 0x89, 0xd4, 0x45, 0x9e, 0x01, 0x2a, 0x66, 0x1e, 0xd1, 0x11,
+	0x0e, 0x75, 0x90, 0x1c, 0xe8, 0x0a, 0x45, 0x7e, 0x42, 0x78, 0x57, 0x87, 0xa9, 0xc0, 0xe0, 0x66,
+	0x53, 0xbb, 0x53, 0xf9, 0x1c, 0xc6, 0xa9, 0x5e, 0x42, 0x01, 0x7b, 0x86, 0x63, 0x4f, 0x11, 0x33,
+	0x5d, 0x4b, 0x31, 0x0d, 0x1c, 0xdb, 0x67, 0x57, 0xaf, 0xff, 0x74, 0x34, 0x9b, 0x96, 0x45, 0x17,
+	0xb7, 0x26, 0x2d, 0x8b, 0x6e, 0x66, 0x0c, 0x2d, 0xf3, 0x2c, 0x4e, 0x93, 0x59, 0xdd, 0x63, 0xa3,
+	0xe3, 0xd8, 0x63, 0xbb, 0xdc, 0xce, 0xb8, 0xa1, 0xc2, 0xc6, 0xe5, 0xa4, 0xd6, 0x34, 0x48, 0x7a,
+	0x66, 0xcd, 0xf6, 0x10, 0x09, 0xf9, 0x9c, 0xe4, 0xf9, 0x4c, 0x93, 0x63, 0x1a, 0xa3, 0x22, 0x3f,
+	0xba, 0x7c, 0xf2, 0x01, 0x02, 0xef, 0x42, 0xe3, 0xed, 0x20, 0xbb, 0x2a, 0x1a, 0x6f, 0x87, 0x88,
+	0x47, 0xa2, 0xf1, 0xde, 0xe2, 0xff, 0xfa, 0x64, 0xae, 0xd7, 0xb8, 0xbc, 0xec, 0xf5, 0xc0, 0x1b,
+	0xd0, 0x7b, 0x3d, 0x64, 0x41, 0x8b, 0xdb, 0x37, 0x1a, 0xaf, 0x07, 0x8e, 0x76, 0xfe, 0x99, 0x9f,
+	0x1f, 0x14, 0xd1, 0xfd, 0x07, 0x45, 0xf4, 0xc7, 0x83, 0x22, 0x7a, 0xf7, 0x61, 0x71, 0xc3, 0xfd,
+	0x87, 0xc5, 0x0d, 0xbf, 0x3d, 0x2c, 0x6e, 0xb8, 0x36, 0x5e, 0x71, 0x9a, 0xd5, 0xb5, 0xa5, 0xd2,
+	0xb2, 0xb7, 0xda, 0x11, 0xfb, 0x46, 0xfb, 0x53, 0xf3, 0x66, 0xdd, 0xf6, 0x97, 0x36, 0xf1, 0x7f,
+	0xee, 0x3a, 0xfe, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x3d, 0x7c, 0x25, 0xc3, 0xfc, 0x26, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2694,8 +2596,6 @@ type QueryClient interface {
 	PullRequestAll(ctx context.Context, in *QueryAllPullRequestRequest, opts ...grpc.CallOption) (*QueryAllPullRequestResponse, error)
 	// Queries a organization by id.
 	Organization(ctx context.Context, in *QueryGetOrganizationRequest, opts ...grpc.CallOption) (*QueryGetOrganizationResponse, error)
-	// Queries a organization by name.
-	OrganizationByName(ctx context.Context, in *QueryGetOrganizationByNameRequest, opts ...grpc.CallOption) (*QueryGetOrganizationByNameResponse, error)
 	// Queries a list of organization items.
 	OrganizationAll(ctx context.Context, in *QueryAllOrganizationRequest, opts ...grpc.CallOption) (*QueryAllOrganizationResponse, error)
 	// Queries a comment by id.
@@ -2720,20 +2620,18 @@ type QueryClient interface {
 	// Queries a repository by id.
 	BranchAll(ctx context.Context, in *QueryGetAllBranchRequest, opts ...grpc.CallOption) (*QueryGetAllBranchResponse, error)
 	BranchSha(ctx context.Context, in *QueryGetBranchShaRequest, opts ...grpc.CallOption) (*QueryGetBranchShaResponse, error)
+	TagAll(ctx context.Context, in *QueryGetAllTagRequest, opts ...grpc.CallOption) (*QueryGetAllTagResponse, error)
+	TagSha(ctx context.Context, in *QueryGetTagShaRequest, opts ...grpc.CallOption) (*QueryGetTagShaResponse, error)
 	// Queries a user by id.
 	User(ctx context.Context, in *QueryGetUserRequest, opts ...grpc.CallOption) (*QueryGetUserResponse, error)
 	// Queries a list of user items.
 	UserAll(ctx context.Context, in *QueryAllUserRequest, opts ...grpc.CallOption) (*QueryAllUserResponse, error)
 	// Queries a list of user repositories.
-	UserRepositoryAll(ctx context.Context, in *QueryAllUserRepositoryRequest, opts ...grpc.CallOption) (*QueryAllUserRepositoryResponse, error)
+	AddressRepositoryAll(ctx context.Context, in *QueryAllAddressRepositoryRequest, opts ...grpc.CallOption) (*QueryAllAddressRepositoryResponse, error)
 	// Queries a repository by user id and repository name
-	UserRepository(ctx context.Context, in *QueryGetUserRepositoryRequest, opts ...grpc.CallOption) (*QueryGetUserRepositoryResponse, error)
+	AddressRepository(ctx context.Context, in *QueryGetAddressRepositoryRequest, opts ...grpc.CallOption) (*QueryGetAddressRepositoryResponse, error)
 	// Queries a list of user Organizations.
 	UserOrganizationAll(ctx context.Context, in *QueryAllUserOrganizationRequest, opts ...grpc.CallOption) (*QueryAllUserOrganizationResponse, error)
-	// Queries a list of Organization repositories.
-	OrganizationRepositoryAll(ctx context.Context, in *QueryAllOrganizationRepositoryRequest, opts ...grpc.CallOption) (*QueryAllOrganizationRepositoryResponse, error)
-	// Queries a repository by Organization name and repository name
-	OrganizationRepository(ctx context.Context, in *QueryGetOrganizationRepositoryRequest, opts ...grpc.CallOption) (*QueryGetOrganizationRepositoryResponse, error)
 	// Queries a whois by id.
 	Whois(ctx context.Context, in *QueryGetWhoisRequest, opts ...grpc.CallOption) (*QueryGetWhoisResponse, error)
 	// Queries a list of whois items.
@@ -2769,15 +2667,6 @@ func (c *queryClient) PullRequestAll(ctx context.Context, in *QueryAllPullReques
 func (c *queryClient) Organization(ctx context.Context, in *QueryGetOrganizationRequest, opts ...grpc.CallOption) (*QueryGetOrganizationResponse, error) {
 	out := new(QueryGetOrganizationResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/Organization", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) OrganizationByName(ctx context.Context, in *QueryGetOrganizationByNameRequest, opts ...grpc.CallOption) (*QueryGetOrganizationByNameResponse, error) {
-	out := new(QueryGetOrganizationByNameResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/OrganizationByName", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2901,6 +2790,24 @@ func (c *queryClient) BranchSha(ctx context.Context, in *QueryGetBranchShaReques
 	return out, nil
 }
 
+func (c *queryClient) TagAll(ctx context.Context, in *QueryGetAllTagRequest, opts ...grpc.CallOption) (*QueryGetAllTagResponse, error) {
+	out := new(QueryGetAllTagResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/TagAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) TagSha(ctx context.Context, in *QueryGetTagShaRequest, opts ...grpc.CallOption) (*QueryGetTagShaResponse, error) {
+	out := new(QueryGetTagShaResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/TagSha", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) User(ctx context.Context, in *QueryGetUserRequest, opts ...grpc.CallOption) (*QueryGetUserResponse, error) {
 	out := new(QueryGetUserResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/User", in, out, opts...)
@@ -2919,18 +2826,18 @@ func (c *queryClient) UserAll(ctx context.Context, in *QueryAllUserRequest, opts
 	return out, nil
 }
 
-func (c *queryClient) UserRepositoryAll(ctx context.Context, in *QueryAllUserRepositoryRequest, opts ...grpc.CallOption) (*QueryAllUserRepositoryResponse, error) {
-	out := new(QueryAllUserRepositoryResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/UserRepositoryAll", in, out, opts...)
+func (c *queryClient) AddressRepositoryAll(ctx context.Context, in *QueryAllAddressRepositoryRequest, opts ...grpc.CallOption) (*QueryAllAddressRepositoryResponse, error) {
+	out := new(QueryAllAddressRepositoryResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/AddressRepositoryAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) UserRepository(ctx context.Context, in *QueryGetUserRepositoryRequest, opts ...grpc.CallOption) (*QueryGetUserRepositoryResponse, error) {
-	out := new(QueryGetUserRepositoryResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/UserRepository", in, out, opts...)
+func (c *queryClient) AddressRepository(ctx context.Context, in *QueryGetAddressRepositoryRequest, opts ...grpc.CallOption) (*QueryGetAddressRepositoryResponse, error) {
+	out := new(QueryGetAddressRepositoryResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/AddressRepository", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2940,24 +2847,6 @@ func (c *queryClient) UserRepository(ctx context.Context, in *QueryGetUserReposi
 func (c *queryClient) UserOrganizationAll(ctx context.Context, in *QueryAllUserOrganizationRequest, opts ...grpc.CallOption) (*QueryAllUserOrganizationResponse, error) {
 	out := new(QueryAllUserOrganizationResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/UserOrganizationAll", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) OrganizationRepositoryAll(ctx context.Context, in *QueryAllOrganizationRepositoryRequest, opts ...grpc.CallOption) (*QueryAllOrganizationRepositoryResponse, error) {
-	out := new(QueryAllOrganizationRepositoryResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/OrganizationRepositoryAll", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) OrganizationRepository(ctx context.Context, in *QueryGetOrganizationRepositoryRequest, opts ...grpc.CallOption) (*QueryGetOrganizationRepositoryResponse, error) {
-	out := new(QueryGetOrganizationRepositoryResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Query/OrganizationRepository", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2990,8 +2879,6 @@ type QueryServer interface {
 	PullRequestAll(context.Context, *QueryAllPullRequestRequest) (*QueryAllPullRequestResponse, error)
 	// Queries a organization by id.
 	Organization(context.Context, *QueryGetOrganizationRequest) (*QueryGetOrganizationResponse, error)
-	// Queries a organization by name.
-	OrganizationByName(context.Context, *QueryGetOrganizationByNameRequest) (*QueryGetOrganizationByNameResponse, error)
 	// Queries a list of organization items.
 	OrganizationAll(context.Context, *QueryAllOrganizationRequest) (*QueryAllOrganizationResponse, error)
 	// Queries a comment by id.
@@ -3016,20 +2903,18 @@ type QueryServer interface {
 	// Queries a repository by id.
 	BranchAll(context.Context, *QueryGetAllBranchRequest) (*QueryGetAllBranchResponse, error)
 	BranchSha(context.Context, *QueryGetBranchShaRequest) (*QueryGetBranchShaResponse, error)
+	TagAll(context.Context, *QueryGetAllTagRequest) (*QueryGetAllTagResponse, error)
+	TagSha(context.Context, *QueryGetTagShaRequest) (*QueryGetTagShaResponse, error)
 	// Queries a user by id.
 	User(context.Context, *QueryGetUserRequest) (*QueryGetUserResponse, error)
 	// Queries a list of user items.
 	UserAll(context.Context, *QueryAllUserRequest) (*QueryAllUserResponse, error)
 	// Queries a list of user repositories.
-	UserRepositoryAll(context.Context, *QueryAllUserRepositoryRequest) (*QueryAllUserRepositoryResponse, error)
+	AddressRepositoryAll(context.Context, *QueryAllAddressRepositoryRequest) (*QueryAllAddressRepositoryResponse, error)
 	// Queries a repository by user id and repository name
-	UserRepository(context.Context, *QueryGetUserRepositoryRequest) (*QueryGetUserRepositoryResponse, error)
+	AddressRepository(context.Context, *QueryGetAddressRepositoryRequest) (*QueryGetAddressRepositoryResponse, error)
 	// Queries a list of user Organizations.
 	UserOrganizationAll(context.Context, *QueryAllUserOrganizationRequest) (*QueryAllUserOrganizationResponse, error)
-	// Queries a list of Organization repositories.
-	OrganizationRepositoryAll(context.Context, *QueryAllOrganizationRepositoryRequest) (*QueryAllOrganizationRepositoryResponse, error)
-	// Queries a repository by Organization name and repository name
-	OrganizationRepository(context.Context, *QueryGetOrganizationRepositoryRequest) (*QueryGetOrganizationRepositoryResponse, error)
 	// Queries a whois by id.
 	Whois(context.Context, *QueryGetWhoisRequest) (*QueryGetWhoisResponse, error)
 	// Queries a list of whois items.
@@ -3048,9 +2933,6 @@ func (*UnimplementedQueryServer) PullRequestAll(ctx context.Context, req *QueryA
 }
 func (*UnimplementedQueryServer) Organization(ctx context.Context, req *QueryGetOrganizationRequest) (*QueryGetOrganizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Organization not implemented")
-}
-func (*UnimplementedQueryServer) OrganizationByName(ctx context.Context, req *QueryGetOrganizationByNameRequest) (*QueryGetOrganizationByNameResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationByName not implemented")
 }
 func (*UnimplementedQueryServer) OrganizationAll(ctx context.Context, req *QueryAllOrganizationRequest) (*QueryAllOrganizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrganizationAll not implemented")
@@ -3091,26 +2973,26 @@ func (*UnimplementedQueryServer) BranchAll(ctx context.Context, req *QueryGetAll
 func (*UnimplementedQueryServer) BranchSha(ctx context.Context, req *QueryGetBranchShaRequest) (*QueryGetBranchShaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BranchSha not implemented")
 }
+func (*UnimplementedQueryServer) TagAll(ctx context.Context, req *QueryGetAllTagRequest) (*QueryGetAllTagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TagAll not implemented")
+}
+func (*UnimplementedQueryServer) TagSha(ctx context.Context, req *QueryGetTagShaRequest) (*QueryGetTagShaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TagSha not implemented")
+}
 func (*UnimplementedQueryServer) User(ctx context.Context, req *QueryGetUserRequest) (*QueryGetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method User not implemented")
 }
 func (*UnimplementedQueryServer) UserAll(ctx context.Context, req *QueryAllUserRequest) (*QueryAllUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserAll not implemented")
 }
-func (*UnimplementedQueryServer) UserRepositoryAll(ctx context.Context, req *QueryAllUserRepositoryRequest) (*QueryAllUserRepositoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserRepositoryAll not implemented")
+func (*UnimplementedQueryServer) AddressRepositoryAll(ctx context.Context, req *QueryAllAddressRepositoryRequest) (*QueryAllAddressRepositoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddressRepositoryAll not implemented")
 }
-func (*UnimplementedQueryServer) UserRepository(ctx context.Context, req *QueryGetUserRepositoryRequest) (*QueryGetUserRepositoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserRepository not implemented")
+func (*UnimplementedQueryServer) AddressRepository(ctx context.Context, req *QueryGetAddressRepositoryRequest) (*QueryGetAddressRepositoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddressRepository not implemented")
 }
 func (*UnimplementedQueryServer) UserOrganizationAll(ctx context.Context, req *QueryAllUserOrganizationRequest) (*QueryAllUserOrganizationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserOrganizationAll not implemented")
-}
-func (*UnimplementedQueryServer) OrganizationRepositoryAll(ctx context.Context, req *QueryAllOrganizationRepositoryRequest) (*QueryAllOrganizationRepositoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationRepositoryAll not implemented")
-}
-func (*UnimplementedQueryServer) OrganizationRepository(ctx context.Context, req *QueryGetOrganizationRepositoryRequest) (*QueryGetOrganizationRepositoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationRepository not implemented")
 }
 func (*UnimplementedQueryServer) Whois(ctx context.Context, req *QueryGetWhoisRequest) (*QueryGetWhoisResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Whois not implemented")
@@ -3173,24 +3055,6 @@ func _Query_Organization_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Organization(ctx, req.(*QueryGetOrganizationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_OrganizationByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetOrganizationByNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).OrganizationByName(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Query/OrganizationByName",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).OrganizationByName(ctx, req.(*QueryGetOrganizationByNameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3429,6 +3293,42 @@ func _Query_BranchSha_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_TagAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAllTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).TagAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.gitopia.Query/TagAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).TagAll(ctx, req.(*QueryGetAllTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_TagSha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetTagShaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).TagSha(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.gitopia.Query/TagSha",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).TagSha(ctx, req.(*QueryGetTagShaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_User_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryGetUserRequest)
 	if err := dec(in); err != nil {
@@ -3465,38 +3365,38 @@ func _Query_UserAll_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_UserRepositoryAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllUserRepositoryRequest)
+func _Query_AddressRepositoryAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllAddressRepositoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).UserRepositoryAll(ctx, in)
+		return srv.(QueryServer).AddressRepositoryAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Query/UserRepositoryAll",
+		FullMethod: "/gitopia.gitopia.gitopia.Query/AddressRepositoryAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).UserRepositoryAll(ctx, req.(*QueryAllUserRepositoryRequest))
+		return srv.(QueryServer).AddressRepositoryAll(ctx, req.(*QueryAllAddressRepositoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_UserRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetUserRepositoryRequest)
+func _Query_AddressRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAddressRepositoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).UserRepository(ctx, in)
+		return srv.(QueryServer).AddressRepository(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Query/UserRepository",
+		FullMethod: "/gitopia.gitopia.gitopia.Query/AddressRepository",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).UserRepository(ctx, req.(*QueryGetUserRepositoryRequest))
+		return srv.(QueryServer).AddressRepository(ctx, req.(*QueryGetAddressRepositoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3515,42 +3415,6 @@ func _Query_UserOrganizationAll_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).UserOrganizationAll(ctx, req.(*QueryAllUserOrganizationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_OrganizationRepositoryAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllOrganizationRepositoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).OrganizationRepositoryAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Query/OrganizationRepositoryAll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).OrganizationRepositoryAll(ctx, req.(*QueryAllOrganizationRepositoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_OrganizationRepository_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetOrganizationRepositoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).OrganizationRepository(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Query/OrganizationRepository",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).OrganizationRepository(ctx, req.(*QueryGetOrganizationRepositoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3608,10 +3472,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Organization_Handler,
 		},
 		{
-			MethodName: "OrganizationByName",
-			Handler:    _Query_OrganizationByName_Handler,
-		},
-		{
 			MethodName: "OrganizationAll",
 			Handler:    _Query_OrganizationAll_Handler,
 		},
@@ -3664,6 +3524,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_BranchSha_Handler,
 		},
 		{
+			MethodName: "TagAll",
+			Handler:    _Query_TagAll_Handler,
+		},
+		{
+			MethodName: "TagSha",
+			Handler:    _Query_TagSha_Handler,
+		},
+		{
 			MethodName: "User",
 			Handler:    _Query_User_Handler,
 		},
@@ -3672,24 +3540,16 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_UserAll_Handler,
 		},
 		{
-			MethodName: "UserRepositoryAll",
-			Handler:    _Query_UserRepositoryAll_Handler,
+			MethodName: "AddressRepositoryAll",
+			Handler:    _Query_AddressRepositoryAll_Handler,
 		},
 		{
-			MethodName: "UserRepository",
-			Handler:    _Query_UserRepository_Handler,
+			MethodName: "AddressRepository",
+			Handler:    _Query_AddressRepository_Handler,
 		},
 		{
 			MethodName: "UserOrganizationAll",
 			Handler:    _Query_UserOrganizationAll_Handler,
-		},
-		{
-			MethodName: "OrganizationRepositoryAll",
-			Handler:    _Query_OrganizationRepositoryAll_Handler,
-		},
-		{
-			MethodName: "OrganizationRepository",
-			Handler:    _Query_OrganizationRepository_Handler,
 		},
 		{
 			MethodName: "Whois",
@@ -3871,10 +3731,12 @@ func (m *QueryGetOrganizationRequest) MarshalToSizedBuffer(dAtA []byte) (int, er
 	_ = i
 	var l int
 	_ = l
-	if m.Id != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Id)))
 		i--
-		dAtA[i] = 0x8
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -3895,71 +3757,6 @@ func (m *QueryGetOrganizationResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *QueryGetOrganizationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Organization != nil {
-		{
-			size, err := m.Organization.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryGetOrganizationByNameRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetOrganizationByNameRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetOrganizationByNameRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.OrganizationName) > 0 {
-		i -= len(m.OrganizationName)
-		copy(dAtA[i:], m.OrganizationName)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.OrganizationName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryGetOrganizationByNameResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetOrganizationByNameResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetOrganizationByNameResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4389,10 +4186,10 @@ func (m *QueryGetRepositoryIssueRequest) MarshalToSizedBuffer(dAtA []byte) (int,
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.UserId) > 0 {
-		i -= len(m.UserId)
-		copy(dAtA[i:], m.UserId)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.UserId)))
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Id)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -4550,10 +4347,10 @@ func (m *QueryAllRepositoryIssueRequest) MarshalToSizedBuffer(dAtA []byte) (int,
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.UserId) > 0 {
-		i -= len(m.UserId)
-		copy(dAtA[i:], m.UserId)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.UserId)))
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Id)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -4790,8 +4587,8 @@ func (m *QueryGetAllBranchRequest) MarshalToSizedBuffer(dAtA []byte) (int, error
 	_ = i
 	var l int
 	_ = l
-	if m.Id != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -4886,6 +4683,136 @@ func (m *QueryGetBranchShaResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *QueryGetBranchShaResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Sha) > 0 {
+		i -= len(m.Sha)
+		copy(dAtA[i:], m.Sha)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Sha)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAllTagRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAllTagRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAllTagRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAllTagResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAllTagResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAllTagResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Tags) > 0 {
+		for iNdEx := len(m.Tags) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tags[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetTagShaRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetTagShaRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetTagShaRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.TagName) > 0 {
+		i -= len(m.TagName)
+		copy(dAtA[i:], m.TagName)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.TagName)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetTagShaResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetTagShaResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetTagShaResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5133,7 +5060,7 @@ func (m *QueryAllUserResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllUserRepositoryRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllAddressRepositoryRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5143,16 +5070,28 @@ func (m *QueryAllUserRepositoryRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllUserRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllAddressRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllUserRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllAddressRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	if len(m.Id) > 0 {
 		i -= len(m.Id)
 		copy(dAtA[i:], m.Id)
@@ -5163,7 +5102,7 @@ func (m *QueryAllUserRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllUserRepositoryResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryAllAddressRepositoryResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5173,16 +5112,28 @@ func (m *QueryAllUserRepositoryResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllUserRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryAllAddressRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllUserRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryAllAddressRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	if len(m.Repository) > 0 {
 		for iNdEx := len(m.Repository) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -5200,7 +5151,7 @@ func (m *QueryAllUserRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetUserRepositoryRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetAddressRepositoryRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5210,12 +5161,12 @@ func (m *QueryGetUserRepositoryRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetUserRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetAddressRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetUserRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetAddressRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5227,17 +5178,17 @@ func (m *QueryGetUserRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, 
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.UserId) > 0 {
-		i -= len(m.UserId)
-		copy(dAtA[i:], m.UserId)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.UserId)))
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Id)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetUserRepositoryResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryGetAddressRepositoryResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -5247,12 +5198,12 @@ func (m *QueryGetUserRepositoryResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryGetUserRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryGetAddressRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryGetUserRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryGetAddressRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5335,169 +5286,6 @@ func (m *QueryAllUserOrganizationResponse) MarshalToSizedBuffer(dAtA []byte) (in
 			i--
 			dAtA[i] = 0xa
 		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.OrganizationName) > 0 {
-		i -= len(m.OrganizationName)
-		copy(dAtA[i:], m.OrganizationName)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.OrganizationName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Repository) > 0 {
-		for iNdEx := len(m.Repository) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Repository[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.RepositoryName) > 0 {
-		i -= len(m.RepositoryName)
-		copy(dAtA[i:], m.RepositoryName)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.RepositoryName)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.OrganizationName) > 0 {
-		i -= len(m.OrganizationName)
-		copy(dAtA[i:], m.OrganizationName)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.OrganizationName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryGetOrganizationRepositoryResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetOrganizationRepositoryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetOrganizationRepositoryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Repository != nil {
-		{
-			size, err := m.Repository.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -5725,39 +5513,14 @@ func (m *QueryGetOrganizationRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Id != 0 {
-		n += 1 + sovQuery(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *QueryGetOrganizationResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Organization != nil {
-		l = m.Organization.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryGetOrganizationByNameRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.OrganizationName)
+	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryGetOrganizationByNameResponse) Size() (n int) {
+func (m *QueryGetOrganizationResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5922,7 +5685,7 @@ func (m *QueryGetRepositoryIssueRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.UserId)
+	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -5988,7 +5751,7 @@ func (m *QueryAllRepositoryIssueRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.UserId)
+	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -6093,8 +5856,8 @@ func (m *QueryGetAllBranchRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Id != 0 {
-		n += 1 + sovQuery(uint64(m.Id))
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
 	}
 	return n
 }
@@ -6131,6 +5894,62 @@ func (m *QueryGetBranchShaRequest) Size() (n int) {
 }
 
 func (m *QueryGetBranchShaResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sha)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetAllTagRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	return n
+}
+
+func (m *QueryGetAllTagResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Tags) > 0 {
+		for _, e := range m.Tags {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *QueryGetTagShaRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.TagName)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetTagShaResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6233,7 +6052,7 @@ func (m *QueryAllUserResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryAllUserRepositoryRequest) Size() (n int) {
+func (m *QueryAllAddressRepositoryRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6243,10 +6062,14 @@ func (m *QueryAllUserRepositoryRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
-func (m *QueryAllUserRepositoryResponse) Size() (n int) {
+func (m *QueryAllAddressRepositoryResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6258,16 +6081,20 @@ func (m *QueryAllUserRepositoryResponse) Size() (n int) {
 			n += 1 + l + sovQuery(uint64(l))
 		}
 	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
-func (m *QueryGetUserRepositoryRequest) Size() (n int) {
+func (m *QueryGetAddressRepositoryRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.UserId)
+	l = len(m.Id)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -6278,7 +6105,7 @@ func (m *QueryGetUserRepositoryRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetUserRepositoryResponse) Size() (n int) {
+func (m *QueryGetAddressRepositoryResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6315,72 +6142,6 @@ func (m *QueryAllUserOrganizationResponse) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
-	}
-	return n
-}
-
-func (m *QueryAllOrganizationRepositoryRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.OrganizationName)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryAllOrganizationRepositoryResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Repository) > 0 {
-		for _, e := range m.Repository {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryGetOrganizationRepositoryRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.OrganizationName)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	l = len(m.RepositoryName)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryGetOrganizationRepositoryResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Repository != nil {
-		l = m.Repository.Size()
-		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
@@ -6840,10 +6601,10 @@ func (m *QueryGetOrganizationRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			m.Id = 0
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQuery
@@ -6853,11 +6614,24 @@ func (m *QueryGetOrganizationRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -6906,174 +6680,6 @@ func (m *QueryGetOrganizationResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: QueryGetOrganizationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Organization", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Organization == nil {
-				m.Organization = &Organization{}
-			}
-			if err := m.Organization.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryGetOrganizationByNameRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetOrganizationByNameRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetOrganizationByNameRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrganizationName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OrganizationName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryGetOrganizationByNameResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetOrganizationByNameResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetOrganizationByNameResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -8092,7 +7698,7 @@ func (m *QueryGetRepositoryIssueRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -8120,7 +7726,7 @@ func (m *QueryGetRepositoryIssueRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserId = string(dAtA[iNdEx:postIndex])
+			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -8530,7 +8136,7 @@ func (m *QueryAllRepositoryIssueRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -8558,7 +8164,7 @@ func (m *QueryAllRepositoryIssueRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserId = string(dAtA[iNdEx:postIndex])
+			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -9225,9 +8831,9 @@ func (m *QueryGetAllBranchRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
 			}
-			m.Id = 0
+			m.RepositoryId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQuery
@@ -9237,7 +8843,7 @@ func (m *QueryGetAllBranchRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
+				m.RepositoryId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -9475,6 +9081,342 @@ func (m *QueryGetBranchShaResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: QueryGetBranchShaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sha", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sha = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAllTagRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAllTagRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAllTagRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAllTagResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAllTagResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAllTagResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Tags", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Tags = append(m.Tags, &RepositoryTag{})
+			if err := m.Tags[len(m.Tags)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetTagShaRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetTagShaRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetTagShaRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TagName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TagName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetTagShaResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetTagShaResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetTagShaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10110,7 +10052,7 @@ func (m *QueryAllUserResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllUserRepositoryRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryAllAddressRepositoryRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -10133,10 +10075,10 @@ func (m *QueryAllUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllUserRepositoryRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllAddressRepositoryRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllUserRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllAddressRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10171,6 +10113,42 @@ func (m *QueryAllUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -10192,7 +10170,7 @@ func (m *QueryAllUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllUserRepositoryResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryAllAddressRepositoryResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -10215,10 +10193,10 @@ func (m *QueryAllUserRepositoryResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllUserRepositoryResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryAllAddressRepositoryResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllUserRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryAllAddressRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10255,6 +10233,42 @@ func (m *QueryAllUserRepositoryResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -10276,7 +10290,7 @@ func (m *QueryAllUserRepositoryResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetUserRepositoryRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryGetAddressRepositoryRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -10299,15 +10313,15 @@ func (m *QueryGetUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetUserRepositoryRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetAddressRepositoryRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetUserRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetAddressRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -10335,7 +10349,7 @@ func (m *QueryGetUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.UserId = string(dAtA[iNdEx:postIndex])
+			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -10390,7 +10404,7 @@ func (m *QueryGetUserRepositoryRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetUserRepositoryResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryGetAddressRepositoryResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -10413,10 +10427,10 @@ func (m *QueryGetUserRepositoryResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetUserRepositoryResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryGetAddressRepositoryResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetUserRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryGetAddressRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -10618,444 +10632,6 @@ func (m *QueryAllUserOrganizationResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.Organization = append(m.Organization, &Organization{})
 			if err := m.Organization[len(m.Organization)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllOrganizationRepositoryRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllOrganizationRepositoryRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllOrganizationRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrganizationName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OrganizationName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllOrganizationRepositoryResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllOrganizationRepositoryResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllOrganizationRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Repository", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Repository = append(m.Repository, &Repository{})
-			if err := m.Repository[len(m.Repository)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryGetOrganizationRepositoryRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetOrganizationRepositoryRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetOrganizationRepositoryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrganizationName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OrganizationName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RepositoryName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryGetOrganizationRepositoryResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetOrganizationRepositoryResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetOrganizationRepositoryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Repository", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Repository == nil {
-				m.Repository = &Repository{}
-			}
-			if err := m.Repository.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

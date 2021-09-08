@@ -9,7 +9,11 @@ import {
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch } from "../gitopia/repository";
+import {
+  Repository,
+  RepositoryBranch,
+  RepositoryTag,
+} from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 
@@ -34,18 +38,10 @@ export interface QueryAllPullRequestResponse {
 }
 
 export interface QueryGetOrganizationRequest {
-  id: number;
+  id: string;
 }
 
 export interface QueryGetOrganizationResponse {
-  Organization: Organization | undefined;
-}
-
-export interface QueryGetOrganizationByNameRequest {
-  organizationName: string;
-}
-
-export interface QueryGetOrganizationByNameResponse {
   Organization: Organization | undefined;
 }
 
@@ -93,7 +89,7 @@ export interface QueryAllIssueResponse {
 }
 
 export interface QueryGetRepositoryIssueRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   issueIid: number;
 }
@@ -113,7 +109,7 @@ export interface QueryGetRepositoryPullRequestResponse {
 }
 
 export interface QueryAllRepositoryIssueRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   pagination: PageRequest | undefined;
 }
@@ -143,7 +139,7 @@ export interface QueryGetRepositoryResponse {
 }
 
 export interface QueryGetAllBranchRequest {
-  id: number;
+  repositoryId: number;
 }
 
 export interface QueryGetAllBranchResponse {
@@ -156,6 +152,23 @@ export interface QueryGetBranchShaRequest {
 }
 
 export interface QueryGetBranchShaResponse {
+  sha: string;
+}
+
+export interface QueryGetAllTagRequest {
+  repositoryId: number;
+}
+
+export interface QueryGetAllTagResponse {
+  Tags: RepositoryTag[];
+}
+
+export interface QueryGetTagShaRequest {
+  repositoryId: number;
+  tagName: string;
+}
+
+export interface QueryGetTagShaResponse {
   sha: string;
 }
 
@@ -185,20 +198,22 @@ export interface QueryAllUserResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryAllUserRepositoryRequest {
+export interface QueryAllAddressRepositoryRequest {
   id: string;
+  pagination: PageRequest | undefined;
 }
 
-export interface QueryAllUserRepositoryResponse {
+export interface QueryAllAddressRepositoryResponse {
   Repository: Repository[];
+  pagination: PageResponse | undefined;
 }
 
-export interface QueryGetUserRepositoryRequest {
-  userId: string;
+export interface QueryGetAddressRepositoryRequest {
+  id: string;
   repositoryName: string;
 }
 
-export interface QueryGetUserRepositoryResponse {
+export interface QueryGetAddressRepositoryResponse {
   Repository: Repository | undefined;
 }
 
@@ -208,25 +223,6 @@ export interface QueryAllUserOrganizationRequest {
 
 export interface QueryAllUserOrganizationResponse {
   organization: Organization[];
-}
-
-export interface QueryAllOrganizationRepositoryRequest {
-  organizationName: string;
-  pagination: PageRequest | undefined;
-}
-
-export interface QueryAllOrganizationRepositoryResponse {
-  Repository: Repository[];
-  pagination: PageResponse | undefined;
-}
-
-export interface QueryGetOrganizationRepositoryRequest {
-  organizationName: string;
-  repositoryName: string;
-}
-
-export interface QueryGetOrganizationRepositoryResponse {
-  Repository: Repository | undefined;
 }
 
 export interface QueryGetWhoisRequest {
@@ -563,15 +559,15 @@ export const QueryAllPullRequestResponse = {
   },
 };
 
-const baseQueryGetOrganizationRequest: object = { id: 0 };
+const baseQueryGetOrganizationRequest: object = { id: "" };
 
 export const QueryGetOrganizationRequest = {
   encode(
     message: QueryGetOrganizationRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     return writer;
   },
@@ -589,7 +585,7 @@ export const QueryGetOrganizationRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.id = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -604,9 +600,9 @@ export const QueryGetOrganizationRequest = {
       ...baseQueryGetOrganizationRequest,
     } as QueryGetOrganizationRequest;
     if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+      message.id = String(object.id);
     } else {
-      message.id = 0;
+      message.id = "";
     }
     return message;
   },
@@ -626,7 +622,7 @@ export const QueryGetOrganizationRequest = {
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = 0;
+      message.id = "";
     }
     return message;
   },
@@ -698,157 +694,6 @@ export const QueryGetOrganizationResponse = {
     const message = {
       ...baseQueryGetOrganizationResponse,
     } as QueryGetOrganizationResponse;
-    if (object.Organization !== undefined && object.Organization !== null) {
-      message.Organization = Organization.fromPartial(object.Organization);
-    } else {
-      message.Organization = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryGetOrganizationByNameRequest: object = { organizationName: "" };
-
-export const QueryGetOrganizationByNameRequest = {
-  encode(
-    message: QueryGetOrganizationByNameRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.organizationName !== "") {
-      writer.uint32(10).string(message.organizationName);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetOrganizationByNameRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetOrganizationByNameRequest,
-    } as QueryGetOrganizationByNameRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.organizationName = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetOrganizationByNameRequest {
-    const message = {
-      ...baseQueryGetOrganizationByNameRequest,
-    } as QueryGetOrganizationByNameRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = String(object.organizationName);
-    } else {
-      message.organizationName = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetOrganizationByNameRequest): unknown {
-    const obj: any = {};
-    message.organizationName !== undefined &&
-      (obj.organizationName = message.organizationName);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetOrganizationByNameRequest>
-  ): QueryGetOrganizationByNameRequest {
-    const message = {
-      ...baseQueryGetOrganizationByNameRequest,
-    } as QueryGetOrganizationByNameRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = object.organizationName;
-    } else {
-      message.organizationName = "";
-    }
-    return message;
-  },
-};
-
-const baseQueryGetOrganizationByNameResponse: object = {};
-
-export const QueryGetOrganizationByNameResponse = {
-  encode(
-    message: QueryGetOrganizationByNameResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.Organization !== undefined) {
-      Organization.encode(
-        message.Organization,
-        writer.uint32(10).fork()
-      ).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetOrganizationByNameResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetOrganizationByNameResponse,
-    } as QueryGetOrganizationByNameResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.Organization = Organization.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetOrganizationByNameResponse {
-    const message = {
-      ...baseQueryGetOrganizationByNameResponse,
-    } as QueryGetOrganizationByNameResponse;
-    if (object.Organization !== undefined && object.Organization !== null) {
-      message.Organization = Organization.fromJSON(object.Organization);
-    } else {
-      message.Organization = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetOrganizationByNameResponse): unknown {
-    const obj: any = {};
-    message.Organization !== undefined &&
-      (obj.Organization = message.Organization
-        ? Organization.toJSON(message.Organization)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetOrganizationByNameResponse>
-  ): QueryGetOrganizationByNameResponse {
-    const message = {
-      ...baseQueryGetOrganizationByNameResponse,
-    } as QueryGetOrganizationByNameResponse;
     if (object.Organization !== undefined && object.Organization !== null) {
       message.Organization = Organization.fromPartial(object.Organization);
     } else {
@@ -1594,7 +1439,7 @@ export const QueryAllIssueResponse = {
 };
 
 const baseQueryGetRepositoryIssueRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
   issueIid: 0,
 };
@@ -1604,8 +1449,8 @@ export const QueryGetRepositoryIssueRequest = {
     message: QueryGetRepositoryIssueRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -1629,7 +1474,7 @@ export const QueryGetRepositoryIssueRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -1649,10 +1494,10 @@ export const QueryGetRepositoryIssueRequest = {
     const message = {
       ...baseQueryGetRepositoryIssueRequest,
     } as QueryGetRepositoryIssueRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -1669,7 +1514,7 @@ export const QueryGetRepositoryIssueRequest = {
 
   toJSON(message: QueryGetRepositoryIssueRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.issueIid !== undefined && (obj.issueIid = message.issueIid);
@@ -1682,10 +1527,10 @@ export const QueryGetRepositoryIssueRequest = {
     const message = {
       ...baseQueryGetRepositoryIssueRequest,
     } as QueryGetRepositoryIssueRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -1955,7 +1800,7 @@ export const QueryGetRepositoryPullRequestResponse = {
 };
 
 const baseQueryAllRepositoryIssueRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
 };
 
@@ -1964,8 +1809,8 @@ export const QueryAllRepositoryIssueRequest = {
     message: QueryAllRepositoryIssueRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -1989,7 +1834,7 @@ export const QueryAllRepositoryIssueRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -2009,10 +1854,10 @@ export const QueryAllRepositoryIssueRequest = {
     const message = {
       ...baseQueryAllRepositoryIssueRequest,
     } as QueryAllRepositoryIssueRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -2029,7 +1874,7 @@ export const QueryAllRepositoryIssueRequest = {
 
   toJSON(message: QueryAllRepositoryIssueRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.pagination !== undefined &&
@@ -2045,10 +1890,10 @@ export const QueryAllRepositoryIssueRequest = {
     const message = {
       ...baseQueryAllRepositoryIssueRequest,
     } as QueryAllRepositoryIssueRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -2515,15 +2360,15 @@ export const QueryGetRepositoryResponse = {
   },
 };
 
-const baseQueryGetAllBranchRequest: object = { id: 0 };
+const baseQueryGetAllBranchRequest: object = { repositoryId: 0 };
 
 export const QueryGetAllBranchRequest = {
   encode(
     message: QueryGetAllBranchRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
     }
     return writer;
   },
@@ -2541,7 +2386,7 @@ export const QueryGetAllBranchRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.repositoryId = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -2555,17 +2400,18 @@ export const QueryGetAllBranchRequest = {
     const message = {
       ...baseQueryGetAllBranchRequest,
     } as QueryGetAllBranchRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
     } else {
-      message.id = 0;
+      message.repositoryId = 0;
     }
     return message;
   },
 
   toJSON(message: QueryGetAllBranchRequest): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
     return obj;
   },
 
@@ -2575,10 +2421,10 @@ export const QueryGetAllBranchRequest = {
     const message = {
       ...baseQueryGetAllBranchRequest,
     } as QueryGetAllBranchRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
     } else {
-      message.id = 0;
+      message.repositoryId = 0;
     }
     return message;
   },
@@ -2814,6 +2660,274 @@ export const QueryGetBranchShaResponse = {
     const message = {
       ...baseQueryGetBranchShaResponse,
     } as QueryGetBranchShaResponse;
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = object.sha;
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetAllTagRequest: object = { repositoryId: 0 };
+
+export const QueryGetAllTagRequest = {
+  encode(
+    message: QueryGetAllTagRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllTagRequest {
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllTagRequest): unknown {
+    const obj: any = {};
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllTagRequest>
+  ): QueryGetAllTagRequest {
+    const message = { ...baseQueryGetAllTagRequest } as QueryGetAllTagRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetAllTagResponse: object = {};
+
+export const QueryGetAllTagResponse = {
+  encode(
+    message: QueryGetAllTagResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.Tags) {
+      RepositoryTag.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetAllTagResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Tags.push(RepositoryTag.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetAllTagResponse {
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    if (object.Tags !== undefined && object.Tags !== null) {
+      for (const e of object.Tags) {
+        message.Tags.push(RepositoryTag.fromJSON(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetAllTagResponse): unknown {
+    const obj: any = {};
+    if (message.Tags) {
+      obj.Tags = message.Tags.map((e) =>
+        e ? RepositoryTag.toJSON(e) : undefined
+      );
+    } else {
+      obj.Tags = [];
+    }
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetAllTagResponse>
+  ): QueryGetAllTagResponse {
+    const message = { ...baseQueryGetAllTagResponse } as QueryGetAllTagResponse;
+    message.Tags = [];
+    if (object.Tags !== undefined && object.Tags !== null) {
+      for (const e of object.Tags) {
+        message.Tags.push(RepositoryTag.fromPartial(e));
+      }
+    }
+    return message;
+  },
+};
+
+const baseQueryGetTagShaRequest: object = { repositoryId: 0, tagName: "" };
+
+export const QueryGetTagShaRequest = {
+  encode(
+    message: QueryGetTagShaRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.repositoryId !== 0) {
+      writer.uint32(8).uint64(message.repositoryId);
+    }
+    if (message.tagName !== "") {
+      writer.uint32(18).string(message.tagName);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.tagName = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTagShaRequest {
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = String(object.tagName);
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTagShaRequest): unknown {
+    const obj: any = {};
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.tagName !== undefined && (obj.tagName = message.tagName);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetTagShaRequest>
+  ): QueryGetTagShaRequest {
+    const message = { ...baseQueryGetTagShaRequest } as QueryGetTagShaRequest;
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = object.tagName;
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetTagShaResponse: object = { sha: "" };
+
+export const QueryGetTagShaResponse = {
+  encode(
+    message: QueryGetTagShaResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.sha !== "") {
+      writer.uint32(10).string(message.sha);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTagShaResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.sha = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTagShaResponse {
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = String(object.sha);
+    } else {
+      message.sha = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTagShaResponse): unknown {
+    const obj: any = {};
+    message.sha !== undefined && (obj.sha = message.sha);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetTagShaResponse>
+  ): QueryGetTagShaResponse {
+    const message = { ...baseQueryGetTagShaResponse } as QueryGetTagShaResponse;
     if (object.sha !== undefined && object.sha !== null) {
       message.sha = object.sha;
     } else {
@@ -3262,15 +3376,18 @@ export const QueryAllUserResponse = {
   },
 };
 
-const baseQueryAllUserRepositoryRequest: object = { id: "" };
+const baseQueryAllAddressRepositoryRequest: object = { id: "" };
 
-export const QueryAllUserRepositoryRequest = {
+export const QueryAllAddressRepositoryRequest = {
   encode(
-    message: QueryAllUserRepositoryRequest,
+    message: QueryAllAddressRepositoryRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -3278,17 +3395,20 @@ export const QueryAllUserRepositoryRequest = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryAllUserRepositoryRequest {
+  ): QueryAllAddressRepositoryRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryAllUserRepositoryRequest,
-    } as QueryAllUserRepositoryRequest;
+      ...baseQueryAllAddressRepositoryRequest,
+    } as QueryAllAddressRepositoryRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
           message.id = reader.string();
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -3298,48 +3418,68 @@ export const QueryAllUserRepositoryRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllUserRepositoryRequest {
+  fromJSON(object: any): QueryAllAddressRepositoryRequest {
     const message = {
-      ...baseQueryAllUserRepositoryRequest,
-    } as QueryAllUserRepositoryRequest;
+      ...baseQueryAllAddressRepositoryRequest,
+    } as QueryAllAddressRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = String(object.id);
     } else {
       message.id = "";
     }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 
-  toJSON(message: QueryAllUserRepositoryRequest): unknown {
+  toJSON(message: QueryAllAddressRepositoryRequest): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<QueryAllUserRepositoryRequest>
-  ): QueryAllUserRepositoryRequest {
+    object: DeepPartial<QueryAllAddressRepositoryRequest>
+  ): QueryAllAddressRepositoryRequest {
     const message = {
-      ...baseQueryAllUserRepositoryRequest,
-    } as QueryAllUserRepositoryRequest;
+      ...baseQueryAllAddressRepositoryRequest,
+    } as QueryAllAddressRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
       message.id = "";
     }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 };
 
-const baseQueryAllUserRepositoryResponse: object = {};
+const baseQueryAllAddressRepositoryResponse: object = {};
 
-export const QueryAllUserRepositoryResponse = {
+export const QueryAllAddressRepositoryResponse = {
   encode(
-    message: QueryAllUserRepositoryResponse,
+    message: QueryAllAddressRepositoryResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.Repository) {
       Repository.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
     }
     return writer;
   },
@@ -3347,12 +3487,12 @@ export const QueryAllUserRepositoryResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryAllUserRepositoryResponse {
+  ): QueryAllAddressRepositoryResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryAllUserRepositoryResponse,
-    } as QueryAllUserRepositoryResponse;
+      ...baseQueryAllAddressRepositoryResponse,
+    } as QueryAllAddressRepositoryResponse;
     message.Repository = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -3360,6 +3500,9 @@ export const QueryAllUserRepositoryResponse = {
         case 1:
           message.Repository.push(Repository.decode(reader, reader.uint32()));
           break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -3368,20 +3511,25 @@ export const QueryAllUserRepositoryResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllUserRepositoryResponse {
+  fromJSON(object: any): QueryAllAddressRepositoryResponse {
     const message = {
-      ...baseQueryAllUserRepositoryResponse,
-    } as QueryAllUserRepositoryResponse;
+      ...baseQueryAllAddressRepositoryResponse,
+    } as QueryAllAddressRepositoryResponse;
     message.Repository = [];
     if (object.Repository !== undefined && object.Repository !== null) {
       for (const e of object.Repository) {
         message.Repository.push(Repository.fromJSON(e));
       }
     }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 
-  toJSON(message: QueryAllUserRepositoryResponse): unknown {
+  toJSON(message: QueryAllAddressRepositoryResponse): unknown {
     const obj: any = {};
     if (message.Repository) {
       obj.Repository = message.Repository.map((e) =>
@@ -3390,37 +3538,46 @@ export const QueryAllUserRepositoryResponse = {
     } else {
       obj.Repository = [];
     }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<QueryAllUserRepositoryResponse>
-  ): QueryAllUserRepositoryResponse {
+    object: DeepPartial<QueryAllAddressRepositoryResponse>
+  ): QueryAllAddressRepositoryResponse {
     const message = {
-      ...baseQueryAllUserRepositoryResponse,
-    } as QueryAllUserRepositoryResponse;
+      ...baseQueryAllAddressRepositoryResponse,
+    } as QueryAllAddressRepositoryResponse;
     message.Repository = [];
     if (object.Repository !== undefined && object.Repository !== null) {
       for (const e of object.Repository) {
         message.Repository.push(Repository.fromPartial(e));
       }
     }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 };
 
-const baseQueryGetUserRepositoryRequest: object = {
-  userId: "",
+const baseQueryGetAddressRepositoryRequest: object = {
+  id: "",
   repositoryName: "",
 };
 
-export const QueryGetUserRepositoryRequest = {
+export const QueryGetAddressRepositoryRequest = {
   encode(
-    message: QueryGetUserRepositoryRequest,
+    message: QueryGetAddressRepositoryRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -3431,17 +3588,17 @@ export const QueryGetUserRepositoryRequest = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryGetUserRepositoryRequest {
+  ): QueryGetAddressRepositoryRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetUserRepositoryRequest,
-    } as QueryGetUserRepositoryRequest;
+      ...baseQueryGetAddressRepositoryRequest,
+    } as QueryGetAddressRepositoryRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -3454,14 +3611,14 @@ export const QueryGetUserRepositoryRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetUserRepositoryRequest {
+  fromJSON(object: any): QueryGetAddressRepositoryRequest {
     const message = {
-      ...baseQueryGetUserRepositoryRequest,
-    } as QueryGetUserRepositoryRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+      ...baseQueryGetAddressRepositoryRequest,
+    } as QueryGetAddressRepositoryRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -3471,24 +3628,24 @@ export const QueryGetUserRepositoryRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetUserRepositoryRequest): unknown {
+  toJSON(message: QueryGetAddressRepositoryRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<QueryGetUserRepositoryRequest>
-  ): QueryGetUserRepositoryRequest {
+    object: DeepPartial<QueryGetAddressRepositoryRequest>
+  ): QueryGetAddressRepositoryRequest {
     const message = {
-      ...baseQueryGetUserRepositoryRequest,
-    } as QueryGetUserRepositoryRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+      ...baseQueryGetAddressRepositoryRequest,
+    } as QueryGetAddressRepositoryRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -3499,11 +3656,11 @@ export const QueryGetUserRepositoryRequest = {
   },
 };
 
-const baseQueryGetUserRepositoryResponse: object = {};
+const baseQueryGetAddressRepositoryResponse: object = {};
 
-export const QueryGetUserRepositoryResponse = {
+export const QueryGetAddressRepositoryResponse = {
   encode(
-    message: QueryGetUserRepositoryResponse,
+    message: QueryGetAddressRepositoryResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.Repository !== undefined) {
@@ -3515,12 +3672,12 @@ export const QueryGetUserRepositoryResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryGetUserRepositoryResponse {
+  ): QueryGetAddressRepositoryResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetUserRepositoryResponse,
-    } as QueryGetUserRepositoryResponse;
+      ...baseQueryGetAddressRepositoryResponse,
+    } as QueryGetAddressRepositoryResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -3535,10 +3692,10 @@ export const QueryGetUserRepositoryResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetUserRepositoryResponse {
+  fromJSON(object: any): QueryGetAddressRepositoryResponse {
     const message = {
-      ...baseQueryGetUserRepositoryResponse,
-    } as QueryGetUserRepositoryResponse;
+      ...baseQueryGetAddressRepositoryResponse,
+    } as QueryGetAddressRepositoryResponse;
     if (object.Repository !== undefined && object.Repository !== null) {
       message.Repository = Repository.fromJSON(object.Repository);
     } else {
@@ -3547,7 +3704,7 @@ export const QueryGetUserRepositoryResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetUserRepositoryResponse): unknown {
+  toJSON(message: QueryGetAddressRepositoryResponse): unknown {
     const obj: any = {};
     message.Repository !== undefined &&
       (obj.Repository = message.Repository
@@ -3557,11 +3714,11 @@ export const QueryGetUserRepositoryResponse = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryGetUserRepositoryResponse>
-  ): QueryGetUserRepositoryResponse {
+    object: DeepPartial<QueryGetAddressRepositoryResponse>
+  ): QueryGetAddressRepositoryResponse {
     const message = {
-      ...baseQueryGetUserRepositoryResponse,
-    } as QueryGetUserRepositoryResponse;
+      ...baseQueryGetAddressRepositoryResponse,
+    } as QueryGetAddressRepositoryResponse;
     if (object.Repository !== undefined && object.Repository !== null) {
       message.Repository = Repository.fromPartial(object.Repository);
     } else {
@@ -3715,374 +3872,6 @@ export const QueryAllUserOrganizationResponse = {
       for (const e of object.organization) {
         message.organization.push(Organization.fromPartial(e));
       }
-    }
-    return message;
-  },
-};
-
-const baseQueryAllOrganizationRepositoryRequest: object = {
-  organizationName: "",
-};
-
-export const QueryAllOrganizationRepositoryRequest = {
-  encode(
-    message: QueryAllOrganizationRepositoryRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.organizationName !== "") {
-      writer.uint32(10).string(message.organizationName);
-    }
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryAllOrganizationRepositoryRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryAllOrganizationRepositoryRequest,
-    } as QueryAllOrganizationRepositoryRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.organizationName = reader.string();
-          break;
-        case 3:
-          message.pagination = PageRequest.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllOrganizationRepositoryRequest {
-    const message = {
-      ...baseQueryAllOrganizationRepositoryRequest,
-    } as QueryAllOrganizationRepositoryRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = String(object.organizationName);
-    } else {
-      message.organizationName = "";
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllOrganizationRepositoryRequest): unknown {
-    const obj: any = {};
-    message.organizationName !== undefined &&
-      (obj.organizationName = message.organizationName);
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageRequest.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryAllOrganizationRepositoryRequest>
-  ): QueryAllOrganizationRepositoryRequest {
-    const message = {
-      ...baseQueryAllOrganizationRepositoryRequest,
-    } as QueryAllOrganizationRepositoryRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = object.organizationName;
-    } else {
-      message.organizationName = "";
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryAllOrganizationRepositoryResponse: object = {};
-
-export const QueryAllOrganizationRepositoryResponse = {
-  encode(
-    message: QueryAllOrganizationRepositoryResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    for (const v of message.Repository) {
-      Repository.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryAllOrganizationRepositoryResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryAllOrganizationRepositoryResponse,
-    } as QueryAllOrganizationRepositoryResponse;
-    message.Repository = [];
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.Repository.push(Repository.decode(reader, reader.uint32()));
-          break;
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllOrganizationRepositoryResponse {
-    const message = {
-      ...baseQueryAllOrganizationRepositoryResponse,
-    } as QueryAllOrganizationRepositoryResponse;
-    message.Repository = [];
-    if (object.Repository !== undefined && object.Repository !== null) {
-      for (const e of object.Repository) {
-        message.Repository.push(Repository.fromJSON(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllOrganizationRepositoryResponse): unknown {
-    const obj: any = {};
-    if (message.Repository) {
-      obj.Repository = message.Repository.map((e) =>
-        e ? Repository.toJSON(e) : undefined
-      );
-    } else {
-      obj.Repository = [];
-    }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryAllOrganizationRepositoryResponse>
-  ): QueryAllOrganizationRepositoryResponse {
-    const message = {
-      ...baseQueryAllOrganizationRepositoryResponse,
-    } as QueryAllOrganizationRepositoryResponse;
-    message.Repository = [];
-    if (object.Repository !== undefined && object.Repository !== null) {
-      for (const e of object.Repository) {
-        message.Repository.push(Repository.fromPartial(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryGetOrganizationRepositoryRequest: object = {
-  organizationName: "",
-  repositoryName: "",
-};
-
-export const QueryGetOrganizationRepositoryRequest = {
-  encode(
-    message: QueryGetOrganizationRepositoryRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.organizationName !== "") {
-      writer.uint32(10).string(message.organizationName);
-    }
-    if (message.repositoryName !== "") {
-      writer.uint32(18).string(message.repositoryName);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetOrganizationRepositoryRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetOrganizationRepositoryRequest,
-    } as QueryGetOrganizationRepositoryRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.organizationName = reader.string();
-          break;
-        case 2:
-          message.repositoryName = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetOrganizationRepositoryRequest {
-    const message = {
-      ...baseQueryGetOrganizationRepositoryRequest,
-    } as QueryGetOrganizationRepositoryRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = String(object.organizationName);
-    } else {
-      message.organizationName = "";
-    }
-    if (object.repositoryName !== undefined && object.repositoryName !== null) {
-      message.repositoryName = String(object.repositoryName);
-    } else {
-      message.repositoryName = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetOrganizationRepositoryRequest): unknown {
-    const obj: any = {};
-    message.organizationName !== undefined &&
-      (obj.organizationName = message.organizationName);
-    message.repositoryName !== undefined &&
-      (obj.repositoryName = message.repositoryName);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetOrganizationRepositoryRequest>
-  ): QueryGetOrganizationRepositoryRequest {
-    const message = {
-      ...baseQueryGetOrganizationRepositoryRequest,
-    } as QueryGetOrganizationRepositoryRequest;
-    if (
-      object.organizationName !== undefined &&
-      object.organizationName !== null
-    ) {
-      message.organizationName = object.organizationName;
-    } else {
-      message.organizationName = "";
-    }
-    if (object.repositoryName !== undefined && object.repositoryName !== null) {
-      message.repositoryName = object.repositoryName;
-    } else {
-      message.repositoryName = "";
-    }
-    return message;
-  },
-};
-
-const baseQueryGetOrganizationRepositoryResponse: object = {};
-
-export const QueryGetOrganizationRepositoryResponse = {
-  encode(
-    message: QueryGetOrganizationRepositoryResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.Repository !== undefined) {
-      Repository.encode(message.Repository, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetOrganizationRepositoryResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetOrganizationRepositoryResponse,
-    } as QueryGetOrganizationRepositoryResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.Repository = Repository.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetOrganizationRepositoryResponse {
-    const message = {
-      ...baseQueryGetOrganizationRepositoryResponse,
-    } as QueryGetOrganizationRepositoryResponse;
-    if (object.Repository !== undefined && object.Repository !== null) {
-      message.Repository = Repository.fromJSON(object.Repository);
-    } else {
-      message.Repository = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetOrganizationRepositoryResponse): unknown {
-    const obj: any = {};
-    message.Repository !== undefined &&
-      (obj.Repository = message.Repository
-        ? Repository.toJSON(message.Repository)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetOrganizationRepositoryResponse>
-  ): QueryGetOrganizationRepositoryResponse {
-    const message = {
-      ...baseQueryGetOrganizationRepositoryResponse,
-    } as QueryGetOrganizationRepositoryResponse;
-    if (object.Repository !== undefined && object.Repository !== null) {
-      message.Repository = Repository.fromPartial(object.Repository);
-    } else {
-      message.Repository = undefined;
     }
     return message;
   },
@@ -4372,10 +4161,6 @@ export interface Query {
   Organization(
     request: QueryGetOrganizationRequest
   ): Promise<QueryGetOrganizationResponse>;
-  /** Queries a organization by name. */
-  OrganizationByName(
-    request: QueryGetOrganizationByNameRequest
-  ): Promise<QueryGetOrganizationByNameResponse>;
   /** Queries a list of organization items. */
   OrganizationAll(
     request: QueryAllOrganizationRequest
@@ -4418,30 +4203,24 @@ export interface Query {
   BranchSha(
     request: QueryGetBranchShaRequest
   ): Promise<QueryGetBranchShaResponse>;
+  TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;
+  TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse>;
   /** Queries a user by id. */
   User(request: QueryGetUserRequest): Promise<QueryGetUserResponse>;
   /** Queries a list of user items. */
   UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
   /** Queries a list of user repositories. */
-  UserRepositoryAll(
-    request: QueryAllUserRepositoryRequest
-  ): Promise<QueryAllUserRepositoryResponse>;
+  AddressRepositoryAll(
+    request: QueryAllAddressRepositoryRequest
+  ): Promise<QueryAllAddressRepositoryResponse>;
   /** Queries a repository by user id and repository name */
-  UserRepository(
-    request: QueryGetUserRepositoryRequest
-  ): Promise<QueryGetUserRepositoryResponse>;
+  AddressRepository(
+    request: QueryGetAddressRepositoryRequest
+  ): Promise<QueryGetAddressRepositoryResponse>;
   /** Queries a list of user Organizations. */
   UserOrganizationAll(
     request: QueryAllUserOrganizationRequest
   ): Promise<QueryAllUserOrganizationResponse>;
-  /** Queries a list of Organization repositories. */
-  OrganizationRepositoryAll(
-    request: QueryAllOrganizationRepositoryRequest
-  ): Promise<QueryAllOrganizationRepositoryResponse>;
-  /** Queries a repository by Organization name and repository name */
-  OrganizationRepository(
-    request: QueryGetOrganizationRepositoryRequest
-  ): Promise<QueryGetOrganizationRepositoryResponse>;
   /** Queries a whois by id. */
   Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
   /** Queries a list of whois items. */
@@ -4492,20 +4271,6 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryGetOrganizationResponse.decode(new Reader(data))
-    );
-  }
-
-  OrganizationByName(
-    request: QueryGetOrganizationByNameRequest
-  ): Promise<QueryGetOrganizationByNameResponse> {
-    const data = QueryGetOrganizationByNameRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "OrganizationByName",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetOrganizationByNameResponse.decode(new Reader(data))
     );
   }
 
@@ -4685,6 +4450,30 @@ export class QueryClientImpl implements Query {
     );
   }
 
+  TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse> {
+    const data = QueryGetAllTagRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "TagAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetAllTagResponse.decode(new Reader(data))
+    );
+  }
+
+  TagSha(request: QueryGetTagShaRequest): Promise<QueryGetTagShaResponse> {
+    const data = QueryGetTagShaRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "TagSha",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetTagShaResponse.decode(new Reader(data))
+    );
+  }
+
   User(request: QueryGetUserRequest): Promise<QueryGetUserResponse> {
     const data = QueryGetUserRequest.encode(request).finish();
     const promise = this.rpc.request(
@@ -4709,31 +4498,31 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  UserRepositoryAll(
-    request: QueryAllUserRepositoryRequest
-  ): Promise<QueryAllUserRepositoryResponse> {
-    const data = QueryAllUserRepositoryRequest.encode(request).finish();
+  AddressRepositoryAll(
+    request: QueryAllAddressRepositoryRequest
+  ): Promise<QueryAllAddressRepositoryResponse> {
+    const data = QueryAllAddressRepositoryRequest.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Query",
-      "UserRepositoryAll",
+      "AddressRepositoryAll",
       data
     );
     return promise.then((data) =>
-      QueryAllUserRepositoryResponse.decode(new Reader(data))
+      QueryAllAddressRepositoryResponse.decode(new Reader(data))
     );
   }
 
-  UserRepository(
-    request: QueryGetUserRepositoryRequest
-  ): Promise<QueryGetUserRepositoryResponse> {
-    const data = QueryGetUserRepositoryRequest.encode(request).finish();
+  AddressRepository(
+    request: QueryGetAddressRepositoryRequest
+  ): Promise<QueryGetAddressRepositoryResponse> {
+    const data = QueryGetAddressRepositoryRequest.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Query",
-      "UserRepository",
+      "AddressRepository",
       data
     );
     return promise.then((data) =>
-      QueryGetUserRepositoryResponse.decode(new Reader(data))
+      QueryGetAddressRepositoryResponse.decode(new Reader(data))
     );
   }
 
@@ -4748,34 +4537,6 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllUserOrganizationResponse.decode(new Reader(data))
-    );
-  }
-
-  OrganizationRepositoryAll(
-    request: QueryAllOrganizationRepositoryRequest
-  ): Promise<QueryAllOrganizationRepositoryResponse> {
-    const data = QueryAllOrganizationRepositoryRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "OrganizationRepositoryAll",
-      data
-    );
-    return promise.then((data) =>
-      QueryAllOrganizationRepositoryResponse.decode(new Reader(data))
-    );
-  }
-
-  OrganizationRepository(
-    request: QueryGetOrganizationRepositoryRequest
-  ): Promise<QueryGetOrganizationRepositoryResponse> {
-    const data = QueryGetOrganizationRepositoryRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "OrganizationRepository",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetOrganizationRepositoryResponse.decode(new Reader(data))
     );
   }
 

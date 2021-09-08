@@ -2,8 +2,10 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	ks "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -60,59 +62,90 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 	return &types.QueryGetUserResponse{User: &user}, nil
 }
 
-func (k Keeper) UserRepositoryAll(c context.Context, req *types.QueryAllUserRepositoryRequest) (*types.QueryAllUserRepositoryResponse, error) {
+func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddressRepositoryRequest) (*types.QueryAllAddressRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	var repositories []*types.Repository
+	var pageRes *query.PageResponse
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.Id) {
+	if k.HasUser(ctx, req.Id) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.Id)
+		k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+
+		var err error
+		pageRes, err = PaginateAllUserRepository(k, ctx, repositoryStore, user, req.Pagination, func(repository types.Repository) error {
+			repositories = append(repositories, &repository)
+			return nil
+		})
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	} else if k.HasOrganization(ctx, req.Id) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.Id)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+
+		var err error
+		pageRes, err = PaginateAllOrganizationRepository(k, ctx, repositoryStore, organization, req.Pagination, func(repository types.Repository) error {
+			repositories = append(repositories, &repository)
+			return nil
+		})
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
+
 	}
 
-	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.Id)
-	k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
-
-	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-
-	for _, userRepository := range user.Repositories {
-		var repository types.Repository
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(userRepository.Id)), &repository)
-		repositories = append(repositories, &repository)
-	}
-
-	return &types.QueryAllUserRepositoryResponse{Repository: repositories}, nil
+	return &types.QueryAllAddressRepositoryResponse{Repository: repositories, Pagination: pageRes}, nil
 }
 
-func (k Keeper) UserRepository(c context.Context, req *types.QueryGetUserRepositoryRequest) (*types.QueryGetUserRepositoryResponse, error) {
+func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressRepositoryRequest) (*types.QueryGetAddressRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
 	var user types.User
+	var organization types.Organization
 	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.UserId) {
+	if k.HasUser(ctx, req.Id) {
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.Id)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		}
+	} else if k.HasOrganization(ctx, req.Id) {
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.Id)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
-
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
-		return &types.QueryGetUserRepositoryResponse{Repository: &repository}, nil
-	}
-
-	return nil, sdkerrors.ErrKeyNotFound
+	return &types.QueryGetAddressRepositoryResponse{Repository: &repository}, nil
 }
 
 func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOrganizationRequest) (*types.QueryAllUserOrganizationResponse, error) {
@@ -136,9 +169,95 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 
 	for _, userOrganization := range user.Organizations {
 		var organization types.Organization
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(userOrganization.Id)), &organization)
+		key := []byte(types.OrganizationKey + userOrganization.Id)
+		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(key), &organization)
 		organizations = append(organizations, &organization)
 	}
 
 	return &types.QueryAllUserOrganizationResponse{Organization: organizations}, nil
+}
+
+func PaginateAllUserRepository(
+	k Keeper,
+	ctx sdk.Context,
+	repositoryStore ks.KVStore,
+	user types.User,
+	pageRequest *query.PageRequest,
+	onResult func(repository types.Repository) error,
+) (*query.PageResponse, error) {
+
+	totalRepositoryCount := len(user.Repositories)
+	repositories := user.Repositories
+
+	// if the PageRequest is nil, use default PageRequest
+	if pageRequest == nil {
+		pageRequest = &query.PageRequest{}
+	}
+
+	offset := pageRequest.Offset
+	key := pageRequest.Key
+	limit := pageRequest.Limit
+	countTotal := pageRequest.CountTotal
+
+	if offset > 0 && key != nil {
+		return nil, fmt.Errorf("invalid request, either offset or key is expected, got both")
+	}
+
+	if limit == 0 {
+		limit = DefaultLimit
+
+		// show total issue count when the limit is zero/not supplied
+		countTotal = true
+	}
+
+	if len(key) != 0 {
+
+		var count uint64
+		var nextKey []byte
+
+		for i := GetIssueIDFromBytes(key); uint64(i) <= uint64(totalRepositoryCount); i++ {
+			if count == limit {
+				nextKey = GetIssueIDBytes(uint64(i))
+				break
+			}
+
+			var repository types.Repository
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			err := onResult(repository)
+			if err != nil {
+				return nil, err
+			}
+
+			count++
+		}
+
+		return &query.PageResponse{
+			NextKey: nextKey,
+		}, nil
+	}
+
+	end := offset + limit
+
+	var nextKey []byte
+
+	for i := offset; uint64(i) < uint64(totalRepositoryCount); i++ {
+		if uint64(i) < end {
+			var repository types.Repository
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			err := onResult(repository)
+			if err != nil {
+				return nil, err
+			}
+		} else if uint64(i) == end {
+			nextKey = GetIssueIDBytes(uint64(i))
+			break
+		}
+	}
+
+	res := &query.PageResponse{NextKey: nextKey}
+	if countTotal {
+		res.Total = uint64(totalRepositoryCount)
+	}
+
+	return res, nil
 }

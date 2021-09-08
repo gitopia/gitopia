@@ -94,6 +94,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.ToggleIssueState(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgAddIssueAssignees:
+			res, err := msgServer.AddIssueAssignees(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveIssueAssignees:
+			res, err := msgServer.RemoveIssueAssignees(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteIssue:
 			res, err := msgServer.DeleteIssue(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -132,6 +140,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgDeleteBranch:
 			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgCreateTag:
+			res, err := msgServer.CreateTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteTag:
+			res, err := msgServer.DeleteTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateRepository:

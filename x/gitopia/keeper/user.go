@@ -46,6 +46,9 @@ func (k Keeper) AppendUser(
 	// Create the user
 	count := k.GetUserCount(ctx)
 
+	// Set the ID of the appended value
+	user.Id = count
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	appendedValue := k.cdc.MustMarshalBinaryBare(&user)
 	key := []byte(types.UserKey + user.Creator)

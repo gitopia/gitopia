@@ -57,11 +57,11 @@ export interface MsgCreateOrganization {
     description: string;
 }
 export interface MsgCreateOrganizationResponse {
-    id: number;
+    id: string;
 }
 export interface MsgUpdateOrganizationMember {
     creator: string;
-    id: number;
+    id: string;
     user: string;
     role: string;
 }
@@ -69,14 +69,14 @@ export interface MsgUpdateOrganizationMemberResponse {
 }
 export interface MsgRemoveOrganizationMember {
     creator: string;
-    id: number;
+    id: string;
     user: string;
 }
 export interface MsgRemoveOrganizationMemberResponse {
 }
 export interface MsgUpdateOrganization {
     creator: string;
-    id: number;
+    id: string;
     name: string;
     avatarUrl: string;
     location: string;
@@ -88,7 +88,7 @@ export interface MsgUpdateOrganizationResponse {
 }
 export interface MsgDeleteOrganization {
     creator: string;
-    id: number;
+    id: string;
 }
 export interface MsgDeleteOrganizationResponse {
 }
@@ -165,6 +165,20 @@ export interface MsgToggleIssueState {
 export interface MsgToggleIssueStateResponse {
     state: string;
 }
+export interface MsgAddIssueAssignees {
+    creator: string;
+    id: number;
+    assignees: string[];
+}
+export interface MsgAddIssueAssigneesResponse {
+}
+export interface MsgRemoveIssueAssignees {
+    creator: string;
+    id: number;
+    assignees: string[];
+}
+export interface MsgRemoveIssueAssigneesResponse {
+}
 export interface MsgDeleteIssue {
     creator: string;
     id: number;
@@ -174,7 +188,8 @@ export interface MsgDeleteIssueResponse {
 export interface MsgCreateRepository {
     creator: string;
     name: string;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
     description: string;
 }
 export interface MsgCreateRepositoryResponse {
@@ -184,7 +199,8 @@ export interface MsgCreateRepositoryResponse {
 export interface MsgForkRepository {
     creator: string;
     repositoryId: number;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
 }
 export interface MsgForkRepositoryResponse {
     id: number;
@@ -199,7 +215,8 @@ export interface MsgRenameRepositoryResponse {
 export interface MsgChangeOwner {
     creator: string;
     repositoryId: number;
-    owner: string;
+    ownerId: string;
+    ownerType: string;
 }
 export interface MsgChangeOwnerResponse {
 }
@@ -239,6 +256,21 @@ export interface MsgDeleteBranch {
     name: string;
 }
 export interface MsgDeleteBranchResponse {
+}
+export interface MsgCreateTag {
+    creator: string;
+    id: number;
+    name: string;
+    sha: string;
+}
+export interface MsgCreateTagResponse {
+}
+export interface MsgDeleteTag {
+    creator: string;
+    id: number;
+    name: string;
+}
+export interface MsgDeleteTagResponse {
 }
 export interface MsgUpdateRepository {
     creator: string;
@@ -592,6 +624,34 @@ export declare const MsgToggleIssueStateResponse: {
     toJSON(message: MsgToggleIssueStateResponse): unknown;
     fromPartial(object: DeepPartial<MsgToggleIssueStateResponse>): MsgToggleIssueStateResponse;
 };
+export declare const MsgAddIssueAssignees: {
+    encode(message: MsgAddIssueAssignees, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueAssignees;
+    fromJSON(object: any): MsgAddIssueAssignees;
+    toJSON(message: MsgAddIssueAssignees): unknown;
+    fromPartial(object: DeepPartial<MsgAddIssueAssignees>): MsgAddIssueAssignees;
+};
+export declare const MsgAddIssueAssigneesResponse: {
+    encode(_: MsgAddIssueAssigneesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueAssigneesResponse;
+    fromJSON(_: any): MsgAddIssueAssigneesResponse;
+    toJSON(_: MsgAddIssueAssigneesResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAddIssueAssigneesResponse>): MsgAddIssueAssigneesResponse;
+};
+export declare const MsgRemoveIssueAssignees: {
+    encode(message: MsgRemoveIssueAssignees, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueAssignees;
+    fromJSON(object: any): MsgRemoveIssueAssignees;
+    toJSON(message: MsgRemoveIssueAssignees): unknown;
+    fromPartial(object: DeepPartial<MsgRemoveIssueAssignees>): MsgRemoveIssueAssignees;
+};
+export declare const MsgRemoveIssueAssigneesResponse: {
+    encode(_: MsgRemoveIssueAssigneesResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueAssigneesResponse;
+    fromJSON(_: any): MsgRemoveIssueAssigneesResponse;
+    toJSON(_: MsgRemoveIssueAssigneesResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRemoveIssueAssigneesResponse>): MsgRemoveIssueAssigneesResponse;
+};
 export declare const MsgDeleteIssue: {
     encode(message: MsgDeleteIssue, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
@@ -732,6 +792,34 @@ export declare const MsgDeleteBranchResponse: {
     toJSON(_: MsgDeleteBranchResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteBranchResponse>): MsgDeleteBranchResponse;
 };
+export declare const MsgCreateTag: {
+    encode(message: MsgCreateTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTag;
+    fromJSON(object: any): MsgCreateTag;
+    toJSON(message: MsgCreateTag): unknown;
+    fromPartial(object: DeepPartial<MsgCreateTag>): MsgCreateTag;
+};
+export declare const MsgCreateTagResponse: {
+    encode(_: MsgCreateTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTagResponse;
+    fromJSON(_: any): MsgCreateTagResponse;
+    toJSON(_: MsgCreateTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgCreateTagResponse>): MsgCreateTagResponse;
+};
+export declare const MsgDeleteTag: {
+    encode(message: MsgDeleteTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTag;
+    fromJSON(object: any): MsgDeleteTag;
+    toJSON(message: MsgDeleteTag): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteTag>): MsgDeleteTag;
+};
+export declare const MsgDeleteTagResponse: {
+    encode(_: MsgDeleteTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTagResponse;
+    fromJSON(_: any): MsgDeleteTagResponse;
+    toJSON(_: MsgDeleteTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteTagResponse>): MsgDeleteTagResponse;
+};
 export declare const MsgUpdateRepository: {
     encode(message: MsgUpdateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
@@ -866,6 +954,8 @@ export interface Msg {
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
+    AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
+    RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
@@ -876,6 +966,8 @@ export interface Msg {
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse>;
+    DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
@@ -907,6 +999,8 @@ export declare class MsgClientImpl implements Msg {
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
+    AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
+    RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
@@ -917,6 +1011,8 @@ export declare class MsgClientImpl implements Msg {
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    CreateTag(request: MsgCreateTag): Promise<MsgCreateTagResponse>;
+    DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;

@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
@@ -31,7 +32,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		Creator:       msg.Creator,
 		Iid:           repository.IssuesCount,
 		Title:         msg.Title,
-		State:         "Open",
+		State:         types.Issue_OPEN,
 		Description:   msg.Description,
 		CommentsCount: 0,
 		RepositoryId:  msg.RepositoryId,
@@ -93,6 +94,10 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateIssueTitle) (*types.MsgUpdateIssueTitleResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
@@ -105,8 +110,29 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 
 	var issue = k.GetIssue(ctx, msg.Id)
 
+	oldTitle := issue.Title
+
 	issue.Title = msg.Title
 	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueUpdateTitleCommentBody(msg.Creator, oldTitle, issue.Title),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
 
@@ -115,6 +141,10 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 
 func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgUpdateIssueDescription) (*types.MsgUpdateIssueDescriptionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
 
 	// Checks that the element exists
 	if !k.HasIssue(ctx, msg.Id) {
@@ -130,6 +160,25 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 
 	issue.Description = msg.Description
 	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueUpdateDescriptionCommentBody(msg.Creator),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
 
@@ -151,12 +200,12 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 	var issue = k.GetIssue(ctx, msg.Id)
 
-	if issue.State == "Open" {
-		issue.State = "Closed"
+	if issue.State == types.Issue_OPEN {
+		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = ctx.BlockTime().Unix()
-	} else if issue.State == "Closed" {
-		issue.State = "Open"
+	} else if issue.State == types.Issue_CLOSED {
+		issue.State = types.Issue_OPEN
 		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
 	} else {
@@ -164,11 +213,146 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		return nil, sdkerrors.Error{}
 	}
 
+	issue.CommentsCount += 1
+	currentTime := ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
+		System:      true,
+		CreatedAt:   currentTime,
+		UpdatedAt:   currentTime,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgToggleIssueStateResponse{
-		State: issue.State,
+		State: issue.State.String(),
 	}, nil
+}
+
+func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIssueAssignees) (*types.MsgAddIssueAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	if len(issue.Assignees)+len(msg.Assignees) > 10 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 10 assignees")
+	}
+
+	for _, a := range msg.Assignees {
+		if _, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
+		}
+		if !k.HasUser(ctx, a) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		}
+		issue.Assignees = append(issue.Assignees, a)
+	}
+
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueAddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgAddIssueAssigneesResponse{}, nil
+}
+
+func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRemoveIssueAssignees) (*types.MsgRemoveIssueAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	if len(issue.Assignees) < len(msg.Assignees) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than user assigned")
+	}
+
+	for _, a := range msg.Assignees {
+		if i, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+			issue.Assignees = append(issue.Assignees[:i], issue.Assignees[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
+		}
+	}
+
+	issue.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueRemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgRemoveIssueAssigneesResponse{}, nil
 }
 
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {

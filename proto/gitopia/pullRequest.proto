@@ -10,7 +10,12 @@ message PullRequest {
   uint64 id = 2;
   uint64 iid = 3; 
   string title = 4; 
-  string state = 5; 
+  enum State {
+    OPEN = 0;
+	  CLOSED = 1;
+    MERGED = 2;
+  }
+  State state = 5; 
   string description = 6; 
   bool locked = 7; 
   repeated uint64 comments = 8; 

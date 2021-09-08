@@ -15,19 +15,23 @@ import (
 
 func CmdCreateRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-repository [name] [owner] [description]",
+		Use:   "create-repository [name] [ownerId] [ownerType] [description]",
 		Short: "Create a new repository",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
-			argsOwner, err := cast.ToStringE(args[1])
+			argsOwnerId, err := cast.ToStringE(args[1])
 			if err != nil {
 				return err
 			}
-			argsDescription, err := cast.ToStringE(args[2])
+			argsOwnerType, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
@@ -37,7 +41,7 @@ func CmdCreateRepository() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateRepository(clientCtx.GetFromAddress().String(), string(argsName), string(argsOwner), string(argsDescription))
+			msg := types.NewMsgCreateRepository(clientCtx.GetFromAddress().String(), string(argsName), string(argsOwnerId), string(argsOwnerType), string(argsDescription))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -52,15 +56,19 @@ func CmdCreateRepository() *cobra.Command {
 
 func CmdForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fork-repository [repositoryId] [owner]",
+		Use:   "fork-repository [repositoryId] [ownerId] [ownerType]",
 		Short: "Fork existing repository",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsOwner, err := cast.ToStringE(args[1])
+			argsOwnerId, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsOwnerType, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
@@ -70,7 +78,7 @@ func CmdForkRepository() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwner))
+			msg := types.NewMsgForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -119,15 +127,19 @@ func CmdRenameRepository() *cobra.Command {
 
 func CmdChangeOwner() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "change-owner [repositoryId] [owner]",
+		Use:   "change-owner [repositoryId] [ownerId] [ownerType]",
 		Short: "Change Owner of existing repository",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsOwner, err := cast.ToStringE(args[1])
+			argsOwnerId, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsOwnerType, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
@@ -137,7 +149,7 @@ func CmdChangeOwner() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgChangeOwner(clientCtx.GetFromAddress().String(), id, string(argsOwner))
+			msg := types.NewMsgChangeOwner(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -317,6 +329,78 @@ func CmdDeleteBranch() *cobra.Command {
 			}
 
 			msg := types.NewMsgDeleteBranch(clientCtx.GetFromAddress().String(), id, string(argsName))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdCreateTag() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-tag [repo id] [tag name] [sha]",
+		Short: "Create a tag",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsSha, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateTag(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsSha))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdDeleteTag() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-tag [repo id] [tag name]",
+		Short: "Delete a tag",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteTag(clientCtx.GetFromAddress().String(), id, string(argsName))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -3,10 +3,11 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Organization {
     creator: string;
     id: number;
+    address: string;
     name: string;
     avatarUrl: string;
-    followers: number[];
-    following: number[];
+    followers: string[];
+    following: string[];
     repositories: OrganizationRepository[];
     teams: number[];
     members: OrganizationMember[];
@@ -25,8 +26,15 @@ export interface OrganizationRepository {
 }
 export interface OrganizationMember {
     id: string;
-    role: string;
+    role: OrganizationMember_Role;
 }
+export declare enum OrganizationMember_Role {
+    MEMBER = 0,
+    OWNER = 1,
+    UNRECOGNIZED = -1
+}
+export declare function organizationMember_RoleFromJSON(object: any): OrganizationMember_Role;
+export declare function organizationMember_RoleToJSON(object: OrganizationMember_Role): string;
 export declare const Organization: {
     encode(message: Organization, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Organization;

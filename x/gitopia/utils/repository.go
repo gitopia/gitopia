@@ -22,6 +22,15 @@ func RepositoryBranchExists(r []*types.RepositoryBranch, val string) (int, bool)
 	return 0, false
 }
 
+func RepositoryTagExists(r []*types.RepositoryTag, val string) (int, bool) {
+	for i, v := range r {
+		if v.Name == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func RepositoryIssueExists(r []*types.RepositoryIssue, val uint64) (int, bool) {
 	for i, v := range r {
 		if v.Iid == val {
@@ -38,4 +47,64 @@ func RepositoryPullRequestExists(r []*types.RepositoryPullRequest, val uint64) (
 		}
 	}
 	return 0, false
+}
+
+func HaveBranchPermission(repository types.Repository, creator string, o interface{}) bool {
+	ownerId := repository.Owner.Id
+	ownerType := repository.Owner.Type
+
+	var havePermission bool = false
+
+	if ownerType == types.RepositoryOwner_USER {
+		if creator == ownerId {
+			havePermission = true
+		}
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		organization := o.(types.Organization)
+		if i, exists := OrganizationMemberExists(organization.Members, creator); exists {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		if i, exists := RepositoryCollaboratorExists(repository.Collaborators, creator); exists {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
+				havePermission = true
+			}
+		}
+	}
+
+	return havePermission
+}
+
+func HaveTagPermission(repository types.Repository, creator string, o interface{}) bool {
+	ownerId := repository.Owner.Id
+	ownerType := repository.Owner.Type
+
+	var havePermission bool = false
+
+	if ownerType == types.RepositoryOwner_USER {
+		if creator == ownerId {
+			havePermission = true
+		}
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		organization := o.(types.Organization)
+		if i, exists := OrganizationMemberExists(organization.Members, creator); exists {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		if i, exists := RepositoryCollaboratorExists(repository.Collaborators, creator); exists {
+			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
+				havePermission = true
+			}
+		}
+	}
+
+	return havePermission
 }

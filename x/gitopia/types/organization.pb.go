@@ -23,24 +23,50 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type OrganizationMember_Role int32
+
+const (
+	OrganizationMember_MEMBER OrganizationMember_Role = 0
+	OrganizationMember_OWNER  OrganizationMember_Role = 1
+)
+
+var OrganizationMember_Role_name = map[int32]string{
+	0: "MEMBER",
+	1: "OWNER",
+}
+
+var OrganizationMember_Role_value = map[string]int32{
+	"MEMBER": 0,
+	"OWNER":  1,
+}
+
+func (x OrganizationMember_Role) String() string {
+	return proto.EnumName(OrganizationMember_Role_name, int32(x))
+}
+
+func (OrganizationMember_Role) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_2866e48a11710e51, []int{2, 0}
+}
+
 type Organization struct {
 	Creator      string                    `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	Id           uint64                    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Name         string                    `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	AvatarUrl    string                    `protobuf:"bytes,4,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
-	Followers    []uint64                  `protobuf:"varint,5,rep,packed,name=followers,proto3" json:"followers,omitempty"`
-	Following    []uint64                  `protobuf:"varint,6,rep,packed,name=following,proto3" json:"following,omitempty"`
-	Repositories []*OrganizationRepository `protobuf:"bytes,7,rep,name=repositories,proto3" json:"repositories,omitempty"`
-	Teams        []uint64                  `protobuf:"varint,8,rep,packed,name=teams,proto3" json:"teams,omitempty"`
-	Members      []*OrganizationMember     `protobuf:"bytes,9,rep,name=members,proto3" json:"members,omitempty"`
-	Location     string                    `protobuf:"bytes,10,opt,name=location,proto3" json:"location,omitempty"`
-	Email        string                    `protobuf:"bytes,11,opt,name=email,proto3" json:"email,omitempty"`
-	Website      string                    `protobuf:"bytes,12,opt,name=website,proto3" json:"website,omitempty"`
-	Verified     bool                      `protobuf:"varint,13,opt,name=verified,proto3" json:"verified,omitempty"`
-	Description  string                    `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedAt    int64                     `protobuf:"varint,15,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt    int64                     `protobuf:"varint,16,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Extensions   string                    `protobuf:"bytes,17,opt,name=extensions,proto3" json:"extensions,omitempty"`
+	Address      string                    `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	Name         string                    `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarUrl    string                    `protobuf:"bytes,5,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
+	Followers    []string                  `protobuf:"bytes,6,rep,name=followers,proto3" json:"followers,omitempty"`
+	Following    []string                  `protobuf:"bytes,7,rep,name=following,proto3" json:"following,omitempty"`
+	Repositories []*OrganizationRepository `protobuf:"bytes,8,rep,name=repositories,proto3" json:"repositories,omitempty"`
+	Teams        []uint64                  `protobuf:"varint,9,rep,packed,name=teams,proto3" json:"teams,omitempty"`
+	Members      []*OrganizationMember     `protobuf:"bytes,10,rep,name=members,proto3" json:"members,omitempty"`
+	Location     string                    `protobuf:"bytes,11,opt,name=location,proto3" json:"location,omitempty"`
+	Email        string                    `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
+	Website      string                    `protobuf:"bytes,13,opt,name=website,proto3" json:"website,omitempty"`
+	Verified     bool                      `protobuf:"varint,14,opt,name=verified,proto3" json:"verified,omitempty"`
+	Description  string                    `protobuf:"bytes,15,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt    int64                     `protobuf:"varint,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt    int64                     `protobuf:"varint,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Extensions   string                    `protobuf:"bytes,18,opt,name=extensions,proto3" json:"extensions,omitempty"`
 }
 
 func (m *Organization) Reset()         { *m = Organization{} }
@@ -90,6 +116,13 @@ func (m *Organization) GetId() uint64 {
 	return 0
 }
 
+func (m *Organization) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
 func (m *Organization) GetName() string {
 	if m != nil {
 		return m.Name
@@ -104,14 +137,14 @@ func (m *Organization) GetAvatarUrl() string {
 	return ""
 }
 
-func (m *Organization) GetFollowers() []uint64 {
+func (m *Organization) GetFollowers() []string {
 	if m != nil {
 		return m.Followers
 	}
 	return nil
 }
 
-func (m *Organization) GetFollowing() []uint64 {
+func (m *Organization) GetFollowing() []string {
 	if m != nil {
 		return m.Following
 	}
@@ -248,8 +281,8 @@ func (m *OrganizationRepository) GetId() uint64 {
 }
 
 type OrganizationMember struct {
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Role string `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	Id   string                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Role OrganizationMember_Role `protobuf:"varint,2,opt,name=role,proto3,enum=gitopia.gitopia.gitopia.OrganizationMember_Role" json:"role,omitempty"`
 }
 
 func (m *OrganizationMember) Reset()         { *m = OrganizationMember{} }
@@ -292,14 +325,15 @@ func (m *OrganizationMember) GetId() string {
 	return ""
 }
 
-func (m *OrganizationMember) GetRole() string {
+func (m *OrganizationMember) GetRole() OrganizationMember_Role {
 	if m != nil {
 		return m.Role
 	}
-	return ""
+	return OrganizationMember_MEMBER
 }
 
 func init() {
+	proto.RegisterEnum("gitopia.gitopia.gitopia.OrganizationMember_Role", OrganizationMember_Role_name, OrganizationMember_Role_value)
 	proto.RegisterType((*Organization)(nil), "gitopia.gitopia.gitopia.Organization")
 	proto.RegisterType((*OrganizationRepository)(nil), "gitopia.gitopia.gitopia.OrganizationRepository")
 	proto.RegisterType((*OrganizationMember)(nil), "gitopia.gitopia.gitopia.OrganizationMember")
@@ -308,36 +342,38 @@ func init() {
 func init() { proto.RegisterFile("gitopia/organization.proto", fileDescriptor_2866e48a11710e51) }
 
 var fileDescriptor_2866e48a11710e51 = []byte{
-	// 449 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0x4d, 0x8f, 0xd3, 0x30,
-	0x10, 0xad, 0xdb, 0xee, 0xb6, 0x75, 0xcb, 0x02, 0xd6, 0x0a, 0xac, 0x0a, 0x45, 0x51, 0x4f, 0x11,
-	0x48, 0xa9, 0x04, 0x17, 0x0e, 0x5c, 0x40, 0x70, 0x44, 0x48, 0x46, 0x5c, 0xb8, 0xb9, 0xcd, 0x6c,
-	0x18, 0x29, 0x89, 0x23, 0xdb, 0xfb, 0xc5, 0xaf, 0xe0, 0x17, 0x71, 0xe6, 0xb8, 0x47, 0x8e, 0xa8,
-	0xfd, 0x23, 0x28, 0x93, 0x8f, 0x86, 0x05, 0xa4, 0x3d, 0x79, 0xe6, 0xbd, 0x79, 0x33, 0xf1, 0xcb,
-	0x98, 0x2f, 0x53, 0xf4, 0xa6, 0x44, 0xbd, 0x36, 0x36, 0xd5, 0x05, 0x7e, 0xd5, 0x1e, 0x4d, 0x11,
-	0x97, 0xd6, 0x78, 0x23, 0x1e, 0x37, 0x5c, 0x7c, 0xeb, 0x5c, 0x9e, 0xa6, 0x26, 0x35, 0x54, 0xb3,
-	0xae, 0xa2, 0xba, 0x7c, 0xf5, 0x7d, 0xcc, 0x17, 0x1f, 0x7a, 0x5d, 0x84, 0xe4, 0x93, 0xad, 0x05,
-	0xed, 0x8d, 0x95, 0x2c, 0x64, 0xd1, 0x4c, 0xb5, 0xa9, 0x38, 0xe1, 0x43, 0x4c, 0xe4, 0x30, 0x64,
-	0xd1, 0x58, 0x0d, 0x31, 0x11, 0x82, 0x8f, 0x0b, 0x9d, 0x83, 0x1c, 0x51, 0x19, 0xc5, 0xe2, 0x09,
-	0x9f, 0xe9, 0x0b, 0xed, 0xb5, 0xfd, 0x64, 0x33, 0x39, 0x26, 0xe2, 0x00, 0x54, 0xec, 0x99, 0xc9,
-	0x32, 0x73, 0x09, 0xd6, 0xc9, 0xa3, 0x70, 0x14, 0x8d, 0xd5, 0x01, 0x38, 0xb0, 0x58, 0xa4, 0xf2,
-	0xb8, 0xcf, 0x62, 0x91, 0x8a, 0x8f, 0x7c, 0x61, 0xa1, 0x34, 0x0e, 0xbd, 0xb1, 0x08, 0x4e, 0x4e,
-	0xc2, 0x51, 0x34, 0x7f, 0xbe, 0x8e, 0xff, 0x73, 0xdd, 0xb8, 0x7f, 0x29, 0xd5, 0x0a, 0xaf, 0xd5,
-	0x1f, 0x4d, 0xc4, 0x29, 0x3f, 0xf2, 0xa0, 0x73, 0x27, 0xa7, 0x34, 0xae, 0x4e, 0xc4, 0x3b, 0x3e,
-	0xc9, 0x21, 0xdf, 0x54, 0x1f, 0x39, 0xa3, 0x29, 0xcf, 0xee, 0x34, 0xe5, 0x3d, 0x69, 0x54, 0xab,
-	0x15, 0x4b, 0x3e, 0xcd, 0xcc, 0x96, 0x28, 0xc9, 0xc9, 0x8a, 0x2e, 0xaf, 0x06, 0x43, 0xae, 0x31,
-	0x93, 0x73, 0x22, 0xea, 0xa4, 0xf2, 0xfe, 0x12, 0x36, 0x0e, 0x3d, 0xc8, 0x45, 0xed, 0x7d, 0x93,
-	0x56, 0xbd, 0x2e, 0xc0, 0xe2, 0x19, 0x42, 0x22, 0xef, 0x85, 0x2c, 0x9a, 0xaa, 0x2e, 0x17, 0x21,
-	0x9f, 0x27, 0xe0, 0xb6, 0x16, 0x4b, 0x1a, 0x75, 0x42, 0xca, 0x3e, 0x54, 0x39, 0x4b, 0x3f, 0x11,
-	0x92, 0xd7, 0x5e, 0xde, 0x0f, 0x59, 0x34, 0x52, 0x07, 0xa0, 0x62, 0xcf, 0xcb, 0xa4, 0x61, 0x1f,
-	0xd4, 0x6c, 0x07, 0x88, 0x80, 0x73, 0xb8, 0xf2, 0x50, 0x38, 0x34, 0x85, 0x93, 0x0f, 0xa9, 0x79,
-	0x0f, 0x59, 0xbd, 0xe2, 0x8f, 0xfe, 0x6d, 0x75, 0xb7, 0x1f, 0xac, 0xb7, 0x1f, 0xb7, 0x76, 0x68,
-	0xf5, 0x92, 0x8b, 0xbf, 0x2d, 0x6c, 0xaa, 0x6a, 0x5d, 0xb3, 0x69, 0xd6, 0x64, 0x40, 0xba, 0x99,
-	0xa2, 0xf8, 0xcd, 0xdb, 0x1f, 0xbb, 0x80, 0xdd, 0xec, 0x02, 0xf6, 0x6b, 0x17, 0xb0, 0x6f, 0xfb,
-	0x60, 0x70, 0xb3, 0x0f, 0x06, 0x3f, 0xf7, 0xc1, 0xe0, 0xf3, 0xd3, 0x14, 0xfd, 0x97, 0xf3, 0x4d,
-	0xbc, 0x35, 0xf9, 0xba, 0x7d, 0x28, 0xed, 0x79, 0xd5, 0x45, 0xfe, 0xba, 0x04, 0xb7, 0x39, 0xa6,
-	0x57, 0xf0, 0xe2, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbb, 0x67, 0xd5, 0x39, 0x52, 0x03, 0x00,
-	0x00,
+	// 496 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x4d, 0x8f, 0xd3, 0x30,
+	0x10, 0xad, 0xdb, 0xf4, 0x6b, 0x5a, 0x4a, 0xb1, 0x56, 0x60, 0x55, 0x10, 0x45, 0x3d, 0x45, 0x20,
+	0xa5, 0x68, 0xb9, 0x72, 0x61, 0xb5, 0x3d, 0x96, 0x95, 0x8c, 0x10, 0x12, 0x37, 0xb7, 0xf1, 0x06,
+	0x4b, 0x49, 0x1c, 0xd9, 0xde, 0x2f, 0xfe, 0x01, 0x37, 0x7e, 0x16, 0xc7, 0x3d, 0xee, 0x11, 0xb5,
+	0x7f, 0x04, 0xd9, 0x69, 0xd2, 0xb0, 0x80, 0xc4, 0x9e, 0xe2, 0xf7, 0xde, 0xbc, 0x99, 0xf6, 0x79,
+	0x0c, 0xb3, 0x44, 0x18, 0x59, 0x08, 0xb6, 0x90, 0x2a, 0x61, 0xb9, 0xf8, 0xca, 0x8c, 0x90, 0x79,
+	0x54, 0x28, 0x69, 0x24, 0x7e, 0xb6, 0xd7, 0xa2, 0x7b, 0xdf, 0xd9, 0x51, 0x22, 0x13, 0xe9, 0x6a,
+	0x16, 0xf6, 0x54, 0x96, 0xcf, 0xef, 0x3c, 0x18, 0x9f, 0x35, 0xba, 0x60, 0x02, 0xfd, 0x8d, 0xe2,
+	0xcc, 0x48, 0x45, 0x50, 0x80, 0xc2, 0x21, 0xad, 0x20, 0x9e, 0x40, 0x5b, 0xc4, 0xa4, 0x1d, 0xa0,
+	0xd0, 0xa3, 0x6d, 0x11, 0xdb, 0x4a, 0x16, 0xc7, 0x8a, 0x6b, 0x4d, 0x3a, 0x65, 0xe5, 0x1e, 0x62,
+	0x0c, 0x5e, 0xce, 0x32, 0x4e, 0x3c, 0x47, 0xbb, 0x33, 0x7e, 0x0e, 0x43, 0x76, 0xc9, 0x0c, 0x53,
+	0x1f, 0x55, 0x4a, 0xba, 0x4e, 0x38, 0x10, 0x56, 0x3d, 0x97, 0x69, 0x2a, 0xaf, 0xb8, 0xd2, 0xa4,
+	0x17, 0x74, 0xac, 0x5a, 0x13, 0x07, 0x55, 0xe4, 0x09, 0xe9, 0x37, 0x55, 0x91, 0x27, 0xf8, 0x03,
+	0x8c, 0x15, 0x2f, 0xa4, 0x16, 0x46, 0x2a, 0xc1, 0x35, 0x19, 0x04, 0x9d, 0x70, 0x74, 0xbc, 0x88,
+	0xfe, 0x11, 0x44, 0xd4, 0xfc, 0xbb, 0xb4, 0x32, 0xde, 0xd0, 0xdf, 0x9a, 0xe0, 0x23, 0xe8, 0x1a,
+	0xce, 0x32, 0x4d, 0x86, 0x41, 0x27, 0xf4, 0x68, 0x09, 0xf0, 0x12, 0xfa, 0x19, 0xcf, 0xd6, 0xf6,
+	0x47, 0x82, 0x9b, 0xf2, 0xea, 0xbf, 0xa6, 0xac, 0x9c, 0x87, 0x56, 0x5e, 0x3c, 0x83, 0x41, 0x2a,
+	0x37, 0x4e, 0x22, 0x23, 0x17, 0x45, 0x8d, 0xed, 0x60, 0x9e, 0x31, 0x91, 0x92, 0xb1, 0x13, 0x4a,
+	0x60, 0xb3, 0xbe, 0xe2, 0x6b, 0x2d, 0x0c, 0x27, 0x8f, 0xca, 0xac, 0xf7, 0xd0, 0xf6, 0xba, 0xe4,
+	0x4a, 0x9c, 0x0b, 0x1e, 0x93, 0x49, 0x80, 0xc2, 0x01, 0xad, 0x31, 0x0e, 0x60, 0x14, 0x73, 0xbd,
+	0x51, 0xa2, 0x70, 0xa3, 0x1e, 0x3b, 0x67, 0x93, 0xb2, 0xc9, 0xba, 0xeb, 0xe5, 0xf1, 0x3b, 0x43,
+	0xa6, 0x01, 0x0a, 0x3b, 0xf4, 0x40, 0x58, 0xf5, 0xa2, 0x88, 0xf7, 0xea, 0x93, 0x52, 0xad, 0x09,
+	0xec, 0x03, 0xf0, 0x6b, 0xc3, 0x73, 0x2d, 0x64, 0xae, 0x09, 0x76, 0xcd, 0x1b, 0xcc, 0xfc, 0x2d,
+	0x3c, 0xfd, 0x7b, 0xd4, 0xf5, 0x7e, 0xa0, 0xc6, 0x7e, 0xdc, 0xdb, 0xae, 0xf9, 0x37, 0x04, 0xf8,
+	0xcf, 0x0c, 0xf7, 0x65, 0xa5, 0xd1, 0x2e, 0xe1, 0x29, 0x78, 0x4a, 0xa6, 0xdc, 0x19, 0x27, 0xc7,
+	0xaf, 0x1f, 0x70, 0x1d, 0x11, 0x95, 0x29, 0xa7, 0xce, 0x3d, 0x7f, 0x01, 0x9e, 0x45, 0x18, 0xa0,
+	0xb7, 0x5a, 0xae, 0x4e, 0x96, 0x74, 0xda, 0xc2, 0x43, 0xe8, 0x9e, 0x7d, 0x7a, 0xbf, 0xa4, 0x53,
+	0x74, 0x72, 0xfa, 0x63, 0xeb, 0xa3, 0xdb, 0xad, 0x8f, 0x7e, 0x6e, 0x7d, 0xf4, 0x7d, 0xe7, 0xb7,
+	0x6e, 0x77, 0x7e, 0xeb, 0x6e, 0xe7, 0xb7, 0x3e, 0xbf, 0x4c, 0x84, 0xf9, 0x72, 0xb1, 0x8e, 0x36,
+	0x32, 0x5b, 0x54, 0x8f, 0xb2, 0xfa, 0x5e, 0xd7, 0x27, 0x73, 0x53, 0x70, 0xbd, 0xee, 0xb9, 0x17,
+	0xf7, 0xe6, 0x57, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb5, 0x9b, 0x08, 0xf2, 0xbe, 0x03, 0x00, 0x00,
 }
 
 func (m *Organization) Marshal() (dAtA []byte, err error) {
@@ -367,26 +403,28 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x8a
+		dAtA[i] = 0x92
 	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintOrganization(dAtA, i, uint64(m.UpdatedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x80
+		dAtA[i] = 0x88
 	}
 	if m.CreatedAt != 0 {
 		i = encodeVarintOrganization(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x78
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x80
 	}
 	if len(m.Description) > 0 {
 		i -= len(m.Description)
 		copy(dAtA[i:], m.Description)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Description)))
 		i--
-		dAtA[i] = 0x72
+		dAtA[i] = 0x7a
 	}
 	if m.Verified {
 		i--
@@ -396,28 +434,28 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x68
+		dAtA[i] = 0x70
 	}
 	if len(m.Website) > 0 {
 		i -= len(m.Website)
 		copy(dAtA[i:], m.Website)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Website)))
 		i--
-		dAtA[i] = 0x62
+		dAtA[i] = 0x6a
 	}
 	if len(m.Email) > 0 {
 		i -= len(m.Email)
 		copy(dAtA[i:], m.Email)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Email)))
 		i--
-		dAtA[i] = 0x5a
+		dAtA[i] = 0x62
 	}
 	if len(m.Location) > 0 {
 		i -= len(m.Location)
 		copy(dAtA[i:], m.Location)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Location)))
 		i--
-		dAtA[i] = 0x52
+		dAtA[i] = 0x5a
 	}
 	if len(m.Members) > 0 {
 		for iNdEx := len(m.Members) - 1; iNdEx >= 0; iNdEx-- {
@@ -430,7 +468,7 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintOrganization(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x4a
+			dAtA[i] = 0x52
 		}
 	}
 	if len(m.Teams) > 0 {
@@ -449,7 +487,7 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintOrganization(dAtA, i, uint64(j1))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x4a
 	}
 	if len(m.Repositories) > 0 {
 		for iNdEx := len(m.Repositories) - 1; iNdEx >= 0; iNdEx-- {
@@ -462,56 +500,45 @@ func (m *Organization) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintOrganization(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x3a
+			dAtA[i] = 0x42
 		}
 	}
 	if len(m.Following) > 0 {
-		dAtA4 := make([]byte, len(m.Following)*10)
-		var j3 int
-		for _, num := range m.Following {
-			for num >= 1<<7 {
-				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j3++
-			}
-			dAtA4[j3] = uint8(num)
-			j3++
+		for iNdEx := len(m.Following) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Following[iNdEx])
+			copy(dAtA[i:], m.Following[iNdEx])
+			i = encodeVarintOrganization(dAtA, i, uint64(len(m.Following[iNdEx])))
+			i--
+			dAtA[i] = 0x3a
 		}
-		i -= j3
-		copy(dAtA[i:], dAtA4[:j3])
-		i = encodeVarintOrganization(dAtA, i, uint64(j3))
-		i--
-		dAtA[i] = 0x32
 	}
 	if len(m.Followers) > 0 {
-		dAtA6 := make([]byte, len(m.Followers)*10)
-		var j5 int
-		for _, num := range m.Followers {
-			for num >= 1<<7 {
-				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j5++
-			}
-			dAtA6[j5] = uint8(num)
-			j5++
+		for iNdEx := len(m.Followers) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Followers[iNdEx])
+			copy(dAtA[i:], m.Followers[iNdEx])
+			i = encodeVarintOrganization(dAtA, i, uint64(len(m.Followers[iNdEx])))
+			i--
+			dAtA[i] = 0x32
 		}
-		i -= j5
-		copy(dAtA[i:], dAtA6[:j5])
-		i = encodeVarintOrganization(dAtA, i, uint64(j5))
-		i--
-		dAtA[i] = 0x2a
 	}
 	if len(m.AvatarUrl) > 0 {
 		i -= len(m.AvatarUrl)
 		copy(dAtA[i:], m.AvatarUrl)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.AvatarUrl)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 	}
 	if len(m.Name) > 0 {
 		i -= len(m.Name)
 		copy(dAtA[i:], m.Name)
 		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Address)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -585,12 +612,10 @@ func (m *OrganizationMember) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Role) > 0 {
-		i -= len(m.Role)
-		copy(dAtA[i:], m.Role)
-		i = encodeVarintOrganization(dAtA, i, uint64(len(m.Role)))
+	if m.Role != 0 {
+		i = encodeVarintOrganization(dAtA, i, uint64(m.Role))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if len(m.Id) > 0 {
 		i -= len(m.Id)
@@ -626,6 +651,10 @@ func (m *Organization) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovOrganization(uint64(m.Id))
 	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovOrganization(uint64(l))
+	}
 	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovOrganization(uint64(l))
@@ -635,18 +664,16 @@ func (m *Organization) Size() (n int) {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
 	if len(m.Followers) > 0 {
-		l = 0
-		for _, e := range m.Followers {
-			l += sovOrganization(uint64(e))
+		for _, s := range m.Followers {
+			l = len(s)
+			n += 1 + l + sovOrganization(uint64(l))
 		}
-		n += 1 + sovOrganization(uint64(l)) + l
 	}
 	if len(m.Following) > 0 {
-		l = 0
-		for _, e := range m.Following {
-			l += sovOrganization(uint64(e))
+		for _, s := range m.Following {
+			l = len(s)
+			n += 1 + l + sovOrganization(uint64(l))
 		}
-		n += 1 + sovOrganization(uint64(l)) + l
 	}
 	if len(m.Repositories) > 0 {
 		for _, e := range m.Repositories {
@@ -687,7 +714,7 @@ func (m *Organization) Size() (n int) {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
 	if m.CreatedAt != 0 {
-		n += 1 + sovOrganization(uint64(m.CreatedAt))
+		n += 2 + sovOrganization(uint64(m.CreatedAt))
 	}
 	if m.UpdatedAt != 0 {
 		n += 2 + sovOrganization(uint64(m.UpdatedAt))
@@ -725,9 +752,8 @@ func (m *OrganizationMember) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovOrganization(uint64(l))
 	}
-	l = len(m.Role)
-	if l > 0 {
-		n += 1 + l + sovOrganization(uint64(l))
+	if m.Role != 0 {
+		n += 1 + sovOrganization(uint64(m.Role))
 	}
 	return n
 }
@@ -820,6 +846,38 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 		case 3:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrganization
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
 			}
 			var stringLen uint64
@@ -850,7 +908,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.Name = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AvatarUrl", wireType)
 			}
@@ -882,159 +940,71 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.AvatarUrl = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
-			if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOrganization
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Followers = append(m.Followers, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOrganization
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthOrganization
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthOrganization
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.Followers) == 0 {
-					m.Followers = make([]uint64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOrganization
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Followers = append(m.Followers, v)
-				}
-			} else {
+		case 6:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Followers", wireType)
 			}
-		case 6:
-			if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOrganization
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrganization
 				}
-				m.Following = append(m.Following, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOrganization
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthOrganization
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthOrganization
-				}
-				if postIndex > l {
+				if iNdEx >= l {
 					return io.ErrUnexpectedEOF
 				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
 				}
-				elementCount = count
-				if elementCount != 0 && len(m.Following) == 0 {
-					m.Following = make([]uint64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOrganization
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Following = append(m.Following, v)
-				}
-			} else {
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Followers = append(m.Followers, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Following", wireType)
 			}
-		case 7:
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOrganization
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOrganization
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Following = append(m.Following, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Repositories", wireType)
 			}
@@ -1068,7 +1038,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 8:
+		case 9:
 			if wireType == 0 {
 				var v uint64
 				for shift := uint(0); ; shift += 7 {
@@ -1144,7 +1114,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Teams", wireType)
 			}
-		case 9:
+		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Members", wireType)
 			}
@@ -1178,7 +1148,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 10:
+		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
 			}
@@ -1210,7 +1180,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.Location = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 11:
+		case 12:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Email", wireType)
 			}
@@ -1242,7 +1212,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.Email = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 12:
+		case 13:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Website", wireType)
 			}
@@ -1274,7 +1244,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.Website = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 13:
+		case 14:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Verified", wireType)
 			}
@@ -1294,7 +1264,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Verified = bool(v != 0)
-		case 14:
+		case 15:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
 			}
@@ -1326,7 +1296,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 			}
 			m.Description = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 15:
+		case 16:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
@@ -1345,7 +1315,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 16:
+		case 17:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
@@ -1364,7 +1334,7 @@ func (m *Organization) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 17:
+		case 18:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Extensions", wireType)
 			}
@@ -1580,10 +1550,10 @@ func (m *OrganizationMember) Unmarshal(dAtA []byte) error {
 			m.Id = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Role", wireType)
 			}
-			var stringLen uint64
+			m.Role = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOrganization
@@ -1593,24 +1563,11 @@ func (m *OrganizationMember) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Role |= OrganizationMember_Role(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOrganization
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Role = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipOrganization(dAtA[iNdEx:])

@@ -69,39 +69,55 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	var repository types.Repository
 	var issues []*types.Issue
+	var pageRes *query.PageResponse
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.UserId) {
+	if k.HasUser(ctx, req.Id) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.Id)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.Id) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.Id)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	store := ctx.KVStore(k.storeKey)
-	userStore := prefix.NewStore(store, types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
-
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
+	if repository.Creator != "" {
 		issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 
-		pageRes, err := PaginateAllRepositoryIssue(k, ctx, issueStore, repository, req.Pagination, func(issue types.Issue) error {
+		var err error
+		pageRes, err = PaginateAllRepositoryIssue(k, ctx, issueStore, repository, req.Pagination, func(issue types.Issue) error {
 			issues = append(issues, &issue)
 			return nil
 		})
-
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-
-		return &types.QueryAllRepositoryIssueResponse{Issue: issues, Pagination: pageRes}, nil
 	}
 
-	return nil, sdkerrors.ErrKeyNotFound
+	return &types.QueryAllRepositoryIssueResponse{Issue: issues, Pagination: pageRes}, nil
 }
 
 func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepositoryIssueRequest) (*types.QueryGetRepositoryIssueResponse, error) {
@@ -109,23 +125,41 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	var repository types.Repository
 	var issue types.Issue
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.UserId) {
+	if k.HasUser(ctx, req.Id) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.Id)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.Id) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.Id)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
-
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
+	if repository.Creator != "" {
 		if i, exists := utils.RepositoryIssueExists(repository.Issues, req.IssueIid); exists {
 			issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 			k.cdc.MustUnmarshalBinaryBare(issueStore.Get(GetIssueIDBytes(repository.Issues[i].Id)), &issue)
@@ -219,12 +253,12 @@ func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest
 	var branches []*types.RepositoryBranch
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.Id) {
+	if !k.HasRepository(ctx, req.RepositoryId) {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryBranch := range repository.Branches {
 		branches = append(branches, repositoryBranch)
@@ -249,6 +283,50 @@ func (k Keeper) BranchSha(c context.Context, req *types.QueryGetBranchShaRequest
 
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, req.BranchName); exists {
 		return &types.QueryGetBranchShaResponse{Sha: repository.Branches[i].Sha}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func (k Keeper) TagAll(c context.Context, req *types.QueryGetAllTagRequest) (*types.QueryGetAllTagResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	var tags []*types.RepositoryTag
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.RepositoryId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+
+	for _, repositoryTag := range repository.Tags {
+		tags = append(tags, repositoryTag)
+	}
+	return &types.QueryGetAllTagResponse{Tags: tags}, nil
+}
+
+func (k Keeper) TagSha(c context.Context, req *types.QueryGetTagShaRequest) (*types.QueryGetTagShaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasRepository(ctx, req.RepositoryId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+
+	if i, exists := utils.RepositoryTagExists(repository.Tags, req.TagName); exists {
+		return &types.QueryGetTagShaResponse{Sha: repository.Tags[i].Sha}, nil
 	}
 
 	return nil, sdkerrors.ErrKeyNotFound

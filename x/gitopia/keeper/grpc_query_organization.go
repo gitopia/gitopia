@@ -3,7 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	ks "github.com/cosmos/cosmos-sdk/store/types"
@@ -11,7 +10,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/gitopia/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -57,125 +55,10 @@ func (k Keeper) Organization(c context.Context, req *types.QueryGetOrganizationR
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetOrganizationIDBytes(req.Id)), &organization)
+	key := []byte(types.OrganizationKey + req.Id)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &organization)
 
 	return &types.QueryGetOrganizationResponse{Organization: &organization}, nil
-}
-
-func (k Keeper) OrganizationByName(c context.Context, req *types.QueryGetOrganizationByNameRequest) (*types.QueryGetOrganizationByNameResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	var whois types.Whois
-	var organization types.Organization
-	ctx := sdk.UnwrapSDKContext(c)
-
-	if !k.HasWhois(ctx, req.OrganizationName) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	whoisStore := prefix.NewStore(store, types.KeyPrefix(types.WhoisKey))
-	whoisKey := []byte(types.WhoisKey + req.OrganizationName)
-	k.cdc.UnmarshalBinaryBare(whoisStore.Get(whoisKey), &whois)
-
-	organizationId, err := strconv.ParseUint(whois.Address, 10, 64)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization")
-	}
-	if !k.HasOrganization(ctx, organizationId) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
-	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
-
-	return &types.QueryGetOrganizationByNameResponse{Organization: &organization}, nil
-}
-
-func (k Keeper) OrganizationRepositoryAll(c context.Context, req *types.QueryAllOrganizationRepositoryRequest) (*types.QueryAllOrganizationRepositoryResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(c)
-	var whois types.Whois
-	var organization types.Organization
-	var repositories []*types.Repository
-
-	if !k.HasWhois(ctx, req.OrganizationName) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	whoisStore := prefix.NewStore(store, types.KeyPrefix(types.WhoisKey))
-	whoisKey := []byte(types.WhoisKey + req.OrganizationName)
-	k.cdc.UnmarshalBinaryBare(whoisStore.Get(whoisKey), &whois)
-
-	organizationId, err := strconv.ParseUint(whois.Address, 10, 64)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization")
-	}
-	if !k.HasOrganization(ctx, organizationId) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
-	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
-
-	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-
-	pageRes, err := PaginateAllOrganizationRepository(k, ctx, repositoryStore, organization, req.Pagination, func(repository types.Repository) error {
-		repositories = append(repositories, &repository)
-		return nil
-	})
-
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &types.QueryAllOrganizationRepositoryResponse{Repository: repositories, Pagination: pageRes}, nil
-}
-
-func (k Keeper) OrganizationRepository(c context.Context, req *types.QueryGetOrganizationRepositoryRequest) (*types.QueryGetOrganizationRepositoryResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(c)
-	var whois types.Whois
-	var organization types.Organization
-	var repository types.Repository
-
-	if !k.HasWhois(ctx, req.OrganizationName) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	whoisStore := prefix.NewStore(store, types.KeyPrefix(types.WhoisKey))
-	whoisKey := []byte(types.WhoisKey + req.OrganizationName)
-	k.cdc.UnmarshalBinaryBare(whoisStore.Get(whoisKey), &whois)
-
-	organizationId, err := strconv.ParseUint(whois.Address, 10, 64)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization")
-	}
-	if !k.HasOrganization(ctx, organizationId) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
-	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(GetOrganizationIDBytes(organizationId)), &organization)
-
-	if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
-
-		return &types.QueryGetOrganizationRepositoryResponse{Repository: &repository}, nil
-	}
-
-	return nil, sdkerrors.ErrKeyNotFound
 }
 
 /* PaginateAllOrganizationRepository does pagination of all the results in the organization.Repositories

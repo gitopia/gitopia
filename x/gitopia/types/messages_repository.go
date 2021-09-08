@@ -1,8 +1,6 @@
 package types
 
 import (
-	"encoding/json"
-	"strconv"
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,11 +27,12 @@ func IsRepositoryNameSanitized(msg string) bool {
 
 var _ sdk.Msg = &MsgCreateRepository{}
 
-func NewMsgCreateRepository(creator string, name string, owner string, description string) *MsgCreateRepository {
+func NewMsgCreateRepository(creator string, name string, ownerId string, ownerType string, description string) *MsgCreateRepository {
 	return &MsgCreateRepository{
 		Creator:     creator,
 		Name:        name,
-		Owner:       owner,
+		OwnerId:     ownerId,
+		OwnerType:   ownerType,
 		Description: description,
 	}
 }
@@ -71,34 +70,25 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
 	}
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
-	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId uint64, owner string) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Owner:        owner,
+		OwnerId:      ownerId,
+		OwnerType:    ownerType,
 	}
 }
 
@@ -128,34 +118,25 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
-	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgChangeOwner{}
 
-func NewMsgChangeOwner(creator string, repositoryId uint64, owner string) *MsgChangeOwner {
+func NewMsgChangeOwner(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgChangeOwner {
 	return &MsgChangeOwner{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Owner:        owner,
+		OwnerId:      ownerId,
+		OwnerType:    ownerType,
 	}
 }
 
@@ -185,24 +166,14 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+	}
 
-	var o Owner
-	if err := json.Unmarshal([]byte(msg.Owner), &o); err != nil {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal owner")
-	}
-	if o.Type == "User" {
-		_, err = sdk.AccAddressFromBech32(o.ID)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-		}
-	} else if o.Type == "Organization" {
-		_, err := strconv.ParseUint(o.ID, 10, 64)
-		if err != nil {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-		}
-	} else {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", o.Type)
-	}
 	return nil
 }
 
@@ -246,6 +217,10 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+	_, exists := RepositoryCollaborator_Permission_value[msg.Role]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid role (%s)", msg.Role)
 	}
 	return nil
 }
@@ -433,7 +408,7 @@ func (msg *MsgDeleteBranch) Route() string {
 }
 
 func (msg *MsgDeleteBranch) Type() string {
-	return "SetDefaultBranch"
+	return "DeleteBranch"
 }
 
 func (msg *MsgDeleteBranch) GetSigners() []sdk.AccAddress {
@@ -450,6 +425,85 @@ func (msg *MsgDeleteBranch) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgCreateTag{}
+
+func NewMsgCreateTag(creator string, id uint64, name string, sha string) *MsgCreateTag {
+	return &MsgCreateTag{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+		Sha:     sha,
+	}
+}
+
+func (msg *MsgCreateTag) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCreateTag) Type() string {
+	return "CreateTag"
+}
+
+func (msg *MsgCreateTag) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCreateTag) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCreateTag) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgDeleteTag{}
+
+func NewMsgDeleteTag(creator string, id uint64, name string) *MsgDeleteTag {
+	return &MsgDeleteTag{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgDeleteTag) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgDeleteTag) Type() string {
+	return "DeleteTag"
+}
+
+func (msg *MsgDeleteTag) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgDeleteTag) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDeleteTag) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)

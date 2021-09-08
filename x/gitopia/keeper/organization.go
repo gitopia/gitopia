@@ -2,10 +2,12 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
+	"github.com/tendermint/tendermint/crypto"
 )
 
 // GetOrganizationCount get the total number of organization
@@ -41,53 +43,59 @@ func (k Keeper) SetOrganizationCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendOrganization(
 	ctx sdk.Context,
 	organization types.Organization,
-) uint64 {
+) string {
 	// Create the organization
 	count := k.GetOrganizationCount(ctx)
 
 	// Set the ID of the appended value
 	organization.Id = count
+	organization.Address = k.GetOrganizationAddress(ctx, organization.Creator)
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 	appendedValue := k.cdc.MustMarshalBinaryBare(&organization)
-	store.Set(GetOrganizationIDBytes(organization.Id), appendedValue)
+	key := []byte(types.OrganizationKey + organization.Address)
+	store.Set(key, appendedValue)
 
 	// Update organization count
 	k.SetOrganizationCount(ctx, count+1)
 
-	return count
+	return organization.Address
 }
 
 // SetOrganization set a specific organization in the store
 func (k Keeper) SetOrganization(ctx sdk.Context, organization types.Organization) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 	b := k.cdc.MustMarshalBinaryBare(&organization)
-	store.Set(GetOrganizationIDBytes(organization.Id), b)
+	key := []byte(types.OrganizationKey + organization.Address)
+	store.Set(key, b)
 }
 
 // GetOrganization returns a organization from its id
-func (k Keeper) GetOrganization(ctx sdk.Context, id uint64) types.Organization {
+func (k Keeper) GetOrganization(ctx sdk.Context, id string) types.Organization {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 	var organization types.Organization
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetOrganizationIDBytes(id)), &organization)
+	key := []byte(types.OrganizationKey + id)
+	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &organization)
 	return organization
 }
 
 // HasOrganization checks if the organization exists in the store
-func (k Keeper) HasOrganization(ctx sdk.Context, id uint64) bool {
+func (k Keeper) HasOrganization(ctx sdk.Context, id string) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	return store.Has(GetOrganizationIDBytes(id))
+	key := []byte(types.OrganizationKey + id)
+	return store.Has(key)
 }
 
 // GetOrganizationOwner returns the creator of the organization
-func (k Keeper) GetOrganizationOwner(ctx sdk.Context, id uint64) string {
+func (k Keeper) GetOrganizationOwner(ctx sdk.Context, id string) string {
 	return k.GetOrganization(ctx, id).Creator
 }
 
 // RemoveOrganization removes a organization from the store
-func (k Keeper) RemoveOrganization(ctx sdk.Context, id uint64) {
+func (k Keeper) RemoveOrganization(ctx sdk.Context, id string) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	store.Delete(GetOrganizationIDBytes(id))
+	key := []byte(types.OrganizationKey + id)
+	store.Delete(key)
 }
 
 // GetAllOrganization returns all organization
@@ -104,6 +112,18 @@ func (k Keeper) GetAllOrganization(ctx sdk.Context) (list []types.Organization) 
 	}
 
 	return
+}
+
+// GetOrganizationAddress returns the address for a new organization
+func (k Keeper) GetOrganizationAddress(ctx sdk.Context, creator string) string {
+	addr, _ := sdk.AccAddressFromBech32(creator)
+	account := k.accountKeeper.GetAccount(ctx, addr)
+	nonce := account.GetSequence()
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, nonce)
+	bz = append(addr, bz...)
+	orgAddress := crypto.AddressHash(bz[8:])
+	return sdk.AccAddress(orgAddress).String()
 }
 
 // GetOrganizationIDBytes returns the byte representation of the ID

@@ -5,7 +5,7 @@ export interface Issue {
     id: number;
     iid: number;
     title: string;
-    state: string;
+    state: Issue_State;
     description: string;
     comments: number[];
     commentsCount: number;
@@ -20,6 +20,13 @@ export interface Issue {
     closedBy: string;
     extensions: string;
 }
+export declare enum Issue_State {
+    OPEN = 0,
+    CLOSED = 1,
+    UNRECOGNIZED = -1
+}
+export declare function issue_StateFromJSON(object: any): Issue_State;
+export declare function issue_StateToJSON(object: Issue_State): string;
 export declare const Issue: {
     encode(message: Issue, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Issue;

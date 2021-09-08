@@ -6,15 +6,15 @@ import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "
 import { Api } from "./rest";
 import { MsgConnectionOpenConfirm } from "./types/ibc/core/connection/v1/tx";
 import { MsgConnectionOpenTry } from "./types/ibc/core/connection/v1/tx";
-import { MsgConnectionOpenInit } from "./types/ibc/core/connection/v1/tx";
 import { MsgConnectionOpenAck } from "./types/ibc/core/connection/v1/tx";
+import { MsgConnectionOpenInit } from "./types/ibc/core/connection/v1/tx";
 
 
 const types = [
   ["/ibc.core.connection.v1.MsgConnectionOpenConfirm", MsgConnectionOpenConfirm],
   ["/ibc.core.connection.v1.MsgConnectionOpenTry", MsgConnectionOpenTry],
-  ["/ibc.core.connection.v1.MsgConnectionOpenInit", MsgConnectionOpenInit],
   ["/ibc.core.connection.v1.MsgConnectionOpenAck", MsgConnectionOpenAck],
+  ["/ibc.core.connection.v1.MsgConnectionOpenInit", MsgConnectionOpenInit],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -45,8 +45,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgConnectionOpenConfirm: (data: MsgConnectionOpenConfirm): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenConfirm", value: data }),
     msgConnectionOpenTry: (data: MsgConnectionOpenTry): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenTry", value: data }),
-    msgConnectionOpenInit: (data: MsgConnectionOpenInit): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenInit", value: data }),
     msgConnectionOpenAck: (data: MsgConnectionOpenAck): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenAck", value: data }),
+    msgConnectionOpenInit: (data: MsgConnectionOpenInit): EncodeObject => ({ typeUrl: "/ibc.core.connection.v1.MsgConnectionOpenInit", value: data }),
     
   };
 };
