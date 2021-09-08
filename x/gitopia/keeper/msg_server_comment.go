@@ -123,7 +123,6 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 		if i, exists := utils.IssueCommentExists(issue.Comments, msg.Id); exists {
 			issue.Comments = append(issue.Comments[:i], issue.Comments[i+1:]...)
-			issue.CommentsCount -= 1
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under issue (%d)", msg.Id, comment.ParentId))
 		}
@@ -138,7 +137,6 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 		if i, exists := utils.PullRequestCommentExists(pullRequest.Comments, msg.Id); exists {
 			pullRequest.Comments = append(pullRequest.Comments[:i], pullRequest.Comments[i+1:]...)
-			pullRequest.CommentsCount -= 1
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under pullRequest (%d)", msg.Id, comment.ParentId))
 		}
