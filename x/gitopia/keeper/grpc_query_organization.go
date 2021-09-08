@@ -61,39 +61,6 @@ func (k Keeper) Organization(c context.Context, req *types.QueryGetOrganizationR
 	return &types.QueryGetOrganizationResponse{Organization: &organization}, nil
 }
 
-func (k Keeper) OrganizationRepositoryAll(c context.Context, req *types.QueryAllOrganizationRepositoryRequest) (*types.QueryAllOrganizationRepositoryResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(c)
-
-	var organization types.Organization
-	var repositories []*types.Repository
-
-	if !k.HasOrganization(ctx, req.Id) {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	organizationStore := prefix.NewStore(store, types.KeyPrefix(types.OrganizationKey))
-	organizationKey := []byte(types.OrganizationKey + req.Id)
-	k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
-
-	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-
-	pageRes, err := PaginateAllOrganizationRepository(k, ctx, repositoryStore, organization, req.Pagination, func(repository types.Repository) error {
-		repositories = append(repositories, &repository)
-		return nil
-	})
-
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return &types.QueryAllOrganizationRepositoryResponse{Repository: repositories, Pagination: pageRes}, nil
-}
-
 /* PaginateAllOrganizationRepository does pagination of all the results in the organization.Repositories
  * based on the provided PageRequest.
  */

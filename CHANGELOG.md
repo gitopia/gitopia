@@ -10,11 +10,13 @@ All notable changes will be documented here.
 - Added id field to User
 - Organization address is deterministically generated using creater address and sequence number
 - Added transaction to create and delete tag
+- Added AddressRepository() and AddressRepositoryAll() api
 
 ### Changed
 
 - Organization key changed from id to address
-- UserRepository api works for organization repository too
+- Removed UserRepository() and UserRepositoryAll() api
+- Removed OrganizationRepositoryAll() api
 
 ### Fixed
 
