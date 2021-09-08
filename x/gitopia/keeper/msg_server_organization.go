@@ -22,10 +22,16 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
+	user := k.GetUser(ctx, msg.Creator)
+
 	// Check if username is available
 	// if k.HasWhois(ctx, msg.Name) {
 	// 	return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name %v already taken", msg.Name))
 	// }
+
+	if _, exists := utils.UserOrganizationExists(user.Organizations, msg.Name); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("organization name (%v) already in use", msg.Name))
+	}
 
 	createdAt := ctx.BlockTime().Unix()
 	updatedAt := createdAt
@@ -55,8 +61,6 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	)
 
 	// Update user Organizations
-	user := k.GetUser(ctx, msg.Creator)
-
 	var userOrganization = types.UserOrganization{
 		Name: organization.Name,
 		Id:   id,
