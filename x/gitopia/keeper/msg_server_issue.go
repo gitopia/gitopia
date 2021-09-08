@@ -213,6 +213,27 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		return nil, sdkerrors.Error{}
 	}
 
+	issue.CommentsCount += 1
+	currentTime := ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
+		System:      true,
+		CreatedAt:   currentTime,
+		UpdatedAt:   currentTime,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgToggleIssueStateResponse{

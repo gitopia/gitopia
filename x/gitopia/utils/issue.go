@@ -1,6 +1,10 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gitopia/gitopia/x/gitopia/types"
+)
 
 func JoinAssignees(assignees []string) string {
 	res := ""
@@ -49,4 +53,12 @@ func IssueAddAssigneesCommentBody(creator string, assignees []string) string {
 
 func IssueRemoveAssigneesCommentBody(creator string, assignees []string) string {
 	return fmt.Sprintf("@%v unassigned"+JoinAssignees(assignees), creator)
+}
+
+func IssueToggleStateCommentBody(creator string, state types.Issue_State) string {
+	if state == types.Issue_OPEN {
+		return fmt.Sprintf("@%v reopened", creator)
+	} else {
+		return fmt.Sprintf("@%v closed", creator)
+	}
 }
