@@ -249,6 +249,64 @@ func (msg *MsgToggleIssueState) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgAddIssueAssignees{}
+
+func NewMsgAddIssueAssignees(creator string, id uint64, assignees []string) *MsgAddIssueAssignees {
+	return &MsgAddIssueAssignees{
+		Id:        id,
+		Creator:   creator,
+		Assignees: assignees,
+	}
+}
+
+func (msg *MsgAddIssueAssignees) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgAddIssueAssignees) Type() string {
+	return "AddIssueAssignees"
+}
+
+func (msg *MsgAddIssueAssignees) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgAddIssueAssignees) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgAddIssueAssignees) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.Assignees) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty assignees list")
+	} else if len(msg.Assignees) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
+	}
+
+	unique := make(map[string]bool, len(msg.Assignees))
+	for _, assignee := range msg.Assignees {
+		_, err := sdk.AccAddressFromBech32(assignee)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee address(%s)", err)
+		}
+		if !unique[assignee] {
+			unique[assignee] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteIssue{}
 
 func NewMsgDeleteIssue(creator string, id uint64) *MsgDeleteIssue {

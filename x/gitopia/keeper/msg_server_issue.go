@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
@@ -169,6 +170,44 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	return &types.MsgToggleIssueStateResponse{
 		State: issue.State.String(),
 	}, nil
+}
+
+func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIssueAssignees) (*types.MsgAddIssueAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	if len(issue.Assignees)+len(msg.Assignees) > 10 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "issue can't have more than 10 assignees")
+	}
+
+	for _, a := range msg.Assignees {
+		if _, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
+		}
+		if !k.HasUser(ctx, a) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		}
+		issue.Assignees = append(issue.Assignees, a)
+	}
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgAddIssueAssigneesResponse{}, nil
 }
 
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {

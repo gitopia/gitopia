@@ -213,6 +213,40 @@ func CmdToggleIssueState() *cobra.Command {
 	return cmd
 }
 
+func CmdAddIssueAssignees() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-issue-assignees [id] [assignees]",
+		Short: "Add issue assignees",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsAssignees := strings.Split(args[1], ",")
+			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
+				argsAssignees = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddIssueAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteIssue() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-issue [id]",

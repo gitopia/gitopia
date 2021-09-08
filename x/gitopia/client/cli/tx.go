@@ -53,6 +53,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdateIssueTitle())
 	cmd.AddCommand(CmdUpdateIssueDescription())
 	cmd.AddCommand(CmdToggleIssueState())
+	cmd.AddCommand(CmdAddIssueAssignees())
 	cmd.AddCommand(CmdDeleteIssue())
 
 	cmd.AddCommand(CmdCreateRepository())
