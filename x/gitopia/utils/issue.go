@@ -77,6 +77,10 @@ func IssueAddLabelsCommentBody(creator string, labels []string) string {
 	return fmt.Sprintf("@%v added"+JoinLabels(labels)+" label", creator)
 }
 
+func IssueRemoveLabelsCommentBody(creator string, labels []string) string {
+	return fmt.Sprintf("@%v removed"+JoinLabels(labels)+" label", creator)
+}
+
 func IssueToggleStateCommentBody(creator string, state types.Issue_State) string {
 	if state == types.Issue_OPEN {
 		return fmt.Sprintf("@%v reopened", creator)

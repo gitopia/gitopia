@@ -317,6 +317,40 @@ func CmdAddIssueLabels() *cobra.Command {
 	return cmd
 }
 
+func CmdRemoveIssueLabels() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-issue-labels [id] [labels]",
+		Short: "Remove issue labels",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsLabels := strings.Split(args[1], ",")
+			if len(argsLabels) == 1 && argsLabels[0] == "" {
+				argsLabels = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), id, argsLabels)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteIssue() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-issue [id]",

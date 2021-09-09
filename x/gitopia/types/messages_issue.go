@@ -445,6 +445,60 @@ func (msg *MsgAddIssueLabels) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgRemoveIssueLabels{}
+
+func NewMsgRemoveIssueLabels(creator string, id uint64, labels []string) *MsgRemoveIssueLabels {
+	return &MsgRemoveIssueLabels{
+		Id:      id,
+		Creator: creator,
+		Labels:  labels,
+	}
+}
+
+func (msg *MsgRemoveIssueLabels) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRemoveIssueLabels) Type() string {
+	return "AddIssueLabels"
+}
+
+func (msg *MsgRemoveIssueLabels) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRemoveIssueLabels) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRemoveIssueLabels) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.Labels) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
+	} else if len(msg.Labels) > 50 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 50 labels at a time")
+	}
+
+	unique := make(map[string]bool, len(msg.Labels))
+	for _, label := range msg.Labels {
+		if !unique[label] {
+			unique[label] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteIssue{}
 
 func NewMsgDeleteIssue(creator string, id uint64) *MsgDeleteIssue {
