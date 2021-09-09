@@ -772,7 +772,6 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 
 	repository.Name = msg.Name
 	repository.Description = msg.Description
-	repository.Labels = msg.Labels
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	repository.License = msg.License
 	repository.DefaultBranch = msg.DefaultBranch

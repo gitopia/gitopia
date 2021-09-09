@@ -20,7 +20,7 @@ message Issue {
   uint64 commentsCount = 8;
   repeated uint64 pullRequests = 9;
   uint64 repositoryId = 10;
-  repeated string labels = 11;
+  repeated uint64 labels = 11;
   uint64 weight = 12;
   repeated string assignees = 13;
   int64 createdAt = 14;

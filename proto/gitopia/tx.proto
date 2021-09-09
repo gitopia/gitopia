@@ -200,7 +200,7 @@ message MsgCreateIssue {
   string title = 2;
   string description = 3;
   uint64 repositoryId = 4;
-  repeated string labels = 5;
+  repeated uint64 labels = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
 }
@@ -215,9 +215,8 @@ message MsgUpdateIssue {
   uint64 id = 2;
   string title = 3;
   string description = 4;
-  repeated string labels = 5;
-  uint64 weight = 6;
-  repeated string assignees = 7;
+  uint64 weight = 5;
+  repeated string assignees = 6;
 }
 
 message MsgUpdateIssueResponse { }

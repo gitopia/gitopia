@@ -45,6 +45,10 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 			argsLabels := strings.Split(args[3], ",")
+			labels, err := sliceAtoi(argsLabels)
+			if err != nil {
+				return err
+			}
 			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {
 				return err
@@ -59,7 +63,7 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssignees)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, labels, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -74,9 +78,9 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue [id] [title] [description] [labels] [weight] [assignees]",
+		Use:   "update-issue [id] [title] [description] [weight] [assignees]",
 		Short: "Update a issue",
-		Args:  cobra.ExactArgs(6),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -91,19 +95,18 @@ func CmdUpdateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsLabels := strings.Split(args[3], ",")
-			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
+			argsWeight, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsAssignees := strings.Split(args[5], ",")
+			argsAssignees := strings.Split(args[4], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssignees)
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

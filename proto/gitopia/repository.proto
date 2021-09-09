@@ -20,19 +20,20 @@ message Repository {
   repeated RepositoryPullRequest pullRequests = 12;
   uint64 issuesCount = 13;
   uint64 pullsCount = 14;
-  string labels = 15;
-  string releases = 16;
-  int64 createdAt = 17;
-  int64 updatedAt = 18;
-  int64 pushedAt = 19;
-  repeated uint64 stargazers = 20;
-  bool archived = 21;
-  string license = 22;
-  string defaultBranch = 23;
-  uint64 parent = 24;
-  bool fork = 25;
-  repeated RepositoryCollaborator collaborators = 26;
-  string extensions = 27;
+  repeated RepositoryLabel labels = 15;
+  uint64 labelsCount = 16;
+  string releases = 17;
+  int64 createdAt = 18;
+  int64 updatedAt = 19;
+  int64 pushedAt = 20;
+  repeated uint64 stargazers = 21;
+  bool archived = 22;
+  string license = 23;
+  string defaultBranch = 24;
+  uint64 parent = 25;
+  bool fork = 26;
+  repeated RepositoryCollaborator collaborators = 27;
+  string extensions = 28;
 }
 
 message RepositoryOwner {
@@ -75,3 +76,10 @@ message RepositoryCollaborator {
   }
   Permission permission = 2;
 }
+
+message RepositoryLabel {
+  uint64 id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+} 

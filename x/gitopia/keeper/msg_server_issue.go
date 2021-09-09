@@ -71,7 +71,6 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 
 	issue.Title = msg.Title
 	issue.Description = msg.Description
-	issue.Labels = msg.Labels
 	issue.Weight = msg.Weight
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 	issue.Assignees = msg.Assignees
