@@ -142,6 +142,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateRepositoryLabel:
+			res, err := msgServer.UpdateRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteRepositoryLabel:
 			res, err := msgServer.DeleteRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

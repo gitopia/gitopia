@@ -277,6 +277,52 @@ func CmdCreateRepositoryLabel() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateRepositoryLabel() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-repository-label [repositoryId] [labelId] [name] [color] [description]",
+		Short: "Update Repository Label",
+		Args:  cobra.ExactArgs(5),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			labelId, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsColor, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateRepositoryLabel(clientCtx.GetFromAddress().String(), repositoryId, labelId, argsName, argsColor, argsDescription)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteRepositoryLabel() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-repository-label [id] [name]",

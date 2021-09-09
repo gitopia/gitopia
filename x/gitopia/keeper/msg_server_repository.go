@@ -626,6 +626,50 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 	return &types.MsgCreateRepositoryLabelResponse{Id: repositoryLabel.Id}, nil
 }
 
+func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUpdateRepositoryLabel) (*types.MsgUpdateRepositoryLabelResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	}
+
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
+		if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label name (%v) already exists", msg.Name))
+		}
+		repository.Labels[i].Name = msg.Name
+		repository.Labels[i].Color = msg.Color
+		repository.Labels[i].Description = msg.Description
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%d) doesn't exists", msg.LabelId))
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgUpdateRepositoryLabelResponse{}, nil
+}
+
 func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDeleteRepositoryLabel) (*types.MsgDeleteRepositoryLabelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
