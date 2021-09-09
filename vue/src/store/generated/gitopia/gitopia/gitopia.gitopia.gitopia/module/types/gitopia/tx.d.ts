@@ -138,7 +138,6 @@ export interface MsgUpdateIssue {
     id: number;
     title: string;
     description: string;
-    labels: string[];
     weight: number;
     assignees: string[];
 }
@@ -178,6 +177,20 @@ export interface MsgRemoveIssueAssignees {
     assignees: string[];
 }
 export interface MsgRemoveIssueAssigneesResponse {
+}
+export interface MsgAddIssueLabels {
+    creator: string;
+    id: number;
+    labels: string[];
+}
+export interface MsgAddIssueLabelsResponse {
+}
+export interface MsgRemoveIssueLabels {
+    creator: string;
+    id: number;
+    labels: string[];
+}
+export interface MsgRemoveIssueLabelsResponse {
 }
 export interface MsgDeleteIssue {
     creator: string;
@@ -234,6 +247,33 @@ export interface MsgRemoveRepositoryCollaborator {
     user: string;
 }
 export interface MsgRemoveRepositoryCollaboratorResponse {
+}
+export interface MsgCreateRepositoryLabel {
+    creator: string;
+    id: number;
+    name: string;
+    color: string;
+    description: string;
+}
+export interface MsgCreateRepositoryLabelResponse {
+    id: number;
+}
+export interface MsgUpdateRepositoryLabel {
+    creator: string;
+    repositoryId: number;
+    labelId: number;
+    name: string;
+    color: string;
+    description: string;
+}
+export interface MsgUpdateRepositoryLabelResponse {
+}
+export interface MsgDeleteRepositoryLabel {
+    creator: string;
+    id: number;
+    name: string;
+}
+export interface MsgDeleteRepositoryLabelResponse {
 }
 export interface MsgCreateBranch {
     creator: string;
@@ -652,6 +692,34 @@ export declare const MsgRemoveIssueAssigneesResponse: {
     toJSON(_: MsgRemoveIssueAssigneesResponse): unknown;
     fromPartial(_: DeepPartial<MsgRemoveIssueAssigneesResponse>): MsgRemoveIssueAssigneesResponse;
 };
+export declare const MsgAddIssueLabels: {
+    encode(message: MsgAddIssueLabels, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueLabels;
+    fromJSON(object: any): MsgAddIssueLabels;
+    toJSON(message: MsgAddIssueLabels): unknown;
+    fromPartial(object: DeepPartial<MsgAddIssueLabels>): MsgAddIssueLabels;
+};
+export declare const MsgAddIssueLabelsResponse: {
+    encode(_: MsgAddIssueLabelsResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddIssueLabelsResponse;
+    fromJSON(_: any): MsgAddIssueLabelsResponse;
+    toJSON(_: MsgAddIssueLabelsResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAddIssueLabelsResponse>): MsgAddIssueLabelsResponse;
+};
+export declare const MsgRemoveIssueLabels: {
+    encode(message: MsgRemoveIssueLabels, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueLabels;
+    fromJSON(object: any): MsgRemoveIssueLabels;
+    toJSON(message: MsgRemoveIssueLabels): unknown;
+    fromPartial(object: DeepPartial<MsgRemoveIssueLabels>): MsgRemoveIssueLabels;
+};
+export declare const MsgRemoveIssueLabelsResponse: {
+    encode(_: MsgRemoveIssueLabelsResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgRemoveIssueLabelsResponse;
+    fromJSON(_: any): MsgRemoveIssueLabelsResponse;
+    toJSON(_: MsgRemoveIssueLabelsResponse): unknown;
+    fromPartial(_: DeepPartial<MsgRemoveIssueLabelsResponse>): MsgRemoveIssueLabelsResponse;
+};
 export declare const MsgDeleteIssue: {
     encode(message: MsgDeleteIssue, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteIssue;
@@ -749,6 +817,48 @@ export declare const MsgRemoveRepositoryCollaboratorResponse: {
     fromJSON(_: any): MsgRemoveRepositoryCollaboratorResponse;
     toJSON(_: MsgRemoveRepositoryCollaboratorResponse): unknown;
     fromPartial(_: DeepPartial<MsgRemoveRepositoryCollaboratorResponse>): MsgRemoveRepositoryCollaboratorResponse;
+};
+export declare const MsgCreateRepositoryLabel: {
+    encode(message: MsgCreateRepositoryLabel, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateRepositoryLabel;
+    fromJSON(object: any): MsgCreateRepositoryLabel;
+    toJSON(message: MsgCreateRepositoryLabel): unknown;
+    fromPartial(object: DeepPartial<MsgCreateRepositoryLabel>): MsgCreateRepositoryLabel;
+};
+export declare const MsgCreateRepositoryLabelResponse: {
+    encode(message: MsgCreateRepositoryLabelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateRepositoryLabelResponse;
+    fromJSON(object: any): MsgCreateRepositoryLabelResponse;
+    toJSON(message: MsgCreateRepositoryLabelResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateRepositoryLabelResponse>): MsgCreateRepositoryLabelResponse;
+};
+export declare const MsgUpdateRepositoryLabel: {
+    encode(message: MsgUpdateRepositoryLabel, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryLabel;
+    fromJSON(object: any): MsgUpdateRepositoryLabel;
+    toJSON(message: MsgUpdateRepositoryLabel): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateRepositoryLabel>): MsgUpdateRepositoryLabel;
+};
+export declare const MsgUpdateRepositoryLabelResponse: {
+    encode(_: MsgUpdateRepositoryLabelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryLabelResponse;
+    fromJSON(_: any): MsgUpdateRepositoryLabelResponse;
+    toJSON(_: MsgUpdateRepositoryLabelResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateRepositoryLabelResponse>): MsgUpdateRepositoryLabelResponse;
+};
+export declare const MsgDeleteRepositoryLabel: {
+    encode(message: MsgDeleteRepositoryLabel, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteRepositoryLabel;
+    fromJSON(object: any): MsgDeleteRepositoryLabel;
+    toJSON(message: MsgDeleteRepositoryLabel): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteRepositoryLabel>): MsgDeleteRepositoryLabel;
+};
+export declare const MsgDeleteRepositoryLabelResponse: {
+    encode(_: MsgDeleteRepositoryLabelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteRepositoryLabelResponse;
+    fromJSON(_: any): MsgDeleteRepositoryLabelResponse;
+    toJSON(_: MsgDeleteRepositoryLabelResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteRepositoryLabelResponse>): MsgDeleteRepositoryLabelResponse;
 };
 export declare const MsgCreateBranch: {
     encode(message: MsgCreateBranch, writer?: Writer): Writer;
@@ -956,6 +1066,8 @@ export interface Msg {
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
     RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
+    AddIssueLabels(request: MsgAddIssueLabels): Promise<MsgAddIssueLabelsResponse>;
+    RemoveIssueLabels(request: MsgRemoveIssueLabels): Promise<MsgRemoveIssueLabelsResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
@@ -963,6 +1075,9 @@ export interface Msg {
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;
     RemoveRepositoryCollaborator(request: MsgRemoveRepositoryCollaborator): Promise<MsgRemoveRepositoryCollaboratorResponse>;
+    CreateRepositoryLabel(request: MsgCreateRepositoryLabel): Promise<MsgCreateRepositoryLabelResponse>;
+    UpdateRepositoryLabel(request: MsgUpdateRepositoryLabel): Promise<MsgUpdateRepositoryLabelResponse>;
+    DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
@@ -1001,6 +1116,8 @@ export declare class MsgClientImpl implements Msg {
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
     AddIssueAssignees(request: MsgAddIssueAssignees): Promise<MsgAddIssueAssigneesResponse>;
     RemoveIssueAssignees(request: MsgRemoveIssueAssignees): Promise<MsgRemoveIssueAssigneesResponse>;
+    AddIssueLabels(request: MsgAddIssueLabels): Promise<MsgAddIssueLabelsResponse>;
+    RemoveIssueLabels(request: MsgRemoveIssueLabels): Promise<MsgRemoveIssueLabelsResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
@@ -1008,6 +1125,9 @@ export declare class MsgClientImpl implements Msg {
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;
     RemoveRepositoryCollaborator(request: MsgRemoveRepositoryCollaborator): Promise<MsgRemoveRepositoryCollaboratorResponse>;
+    CreateRepositoryLabel(request: MsgCreateRepositoryLabel): Promise<MsgCreateRepositoryLabelResponse>;
+    UpdateRepositoryLabel(request: MsgUpdateRepositoryLabel): Promise<MsgUpdateRepositoryLabelResponse>;
+    DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     CreateBranch(request: MsgCreateBranch): Promise<MsgCreateBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;

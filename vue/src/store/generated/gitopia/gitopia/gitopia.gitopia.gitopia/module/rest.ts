@@ -98,6 +98,8 @@ export enum GitopiaIssueState {
 
 export type GitopiaMsgAddIssueAssigneesResponse = object;
 
+export type GitopiaMsgAddIssueLabelsResponse = object;
+
 export type GitopiaMsgChangeOwnerResponse = object;
 
 export type GitopiaMsgCreateBranchResponse = object;
@@ -127,6 +129,11 @@ export interface GitopiaMsgCreatePullRequestResponse {
   iid?: string;
 }
 
+export interface GitopiaMsgCreateRepositoryLabelResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateRepositoryResponse {
   /** @format uint64 */
   id?: string;
@@ -149,6 +156,8 @@ export type GitopiaMsgDeleteOrganizationResponse = object;
 
 export type GitopiaMsgDeletePullRequestResponse = object;
 
+export type GitopiaMsgDeleteRepositoryLabelResponse = object;
+
 export type GitopiaMsgDeleteRepositoryResponse = object;
 
 export type GitopiaMsgDeleteTagResponse = object;
@@ -163,6 +172,8 @@ export interface GitopiaMsgForkRepositoryResponse {
 }
 
 export type GitopiaMsgRemoveIssueAssigneesResponse = object;
+
+export type GitopiaMsgRemoveIssueLabelsResponse = object;
 
 export type GitopiaMsgRemoveOrganizationMemberResponse = object;
 
@@ -201,6 +212,8 @@ export type GitopiaMsgUpdatePullRequestResponse = object;
 export type GitopiaMsgUpdatePullRequestTitleResponse = object;
 
 export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
+
+export type GitopiaMsgUpdateRepositoryLabelResponse = object;
 
 export type GitopiaMsgUpdateRepositoryResponse = object;
 
@@ -532,7 +545,10 @@ export interface GitopiaRepository {
 
   /** @format uint64 */
   pullsCount?: string;
-  labels?: string;
+  labels?: GitopiaRepositoryLabel[];
+
+  /** @format uint64 */
+  labelsCount?: string;
   releases?: string;
 
   /** @format int64 */
@@ -571,6 +587,14 @@ export interface GitopiaRepositoryIssue {
 
   /** @format uint64 */
   id?: string;
+}
+
+export interface GitopiaRepositoryLabel {
+  /** @format uint64 */
+  id?: string;
+  name?: string;
+  color?: string;
+  description?: string;
 }
 
 export interface GitopiaRepositoryOwner {

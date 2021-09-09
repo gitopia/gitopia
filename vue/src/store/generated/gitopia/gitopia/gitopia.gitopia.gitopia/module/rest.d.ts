@@ -67,6 +67,7 @@ export declare enum GitopiaIssueState {
     CLOSED = "CLOSED"
 }
 export declare type GitopiaMsgAddIssueAssigneesResponse = object;
+export declare type GitopiaMsgAddIssueLabelsResponse = object;
 export declare type GitopiaMsgChangeOwnerResponse = object;
 export declare type GitopiaMsgCreateBranchResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
@@ -88,6 +89,10 @@ export interface GitopiaMsgCreatePullRequestResponse {
     /** @format uint64 */
     iid?: string;
 }
+export interface GitopiaMsgCreateRepositoryLabelResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export interface GitopiaMsgCreateRepositoryResponse {
     /** @format uint64 */
     id?: string;
@@ -102,6 +107,7 @@ export declare type GitopiaMsgDeleteCommentResponse = object;
 export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteOrganizationResponse = object;
 export declare type GitopiaMsgDeletePullRequestResponse = object;
+export declare type GitopiaMsgDeleteRepositoryLabelResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteTagResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
@@ -111,6 +117,7 @@ export interface GitopiaMsgForkRepositoryResponse {
     id?: string;
 }
 export declare type GitopiaMsgRemoveIssueAssigneesResponse = object;
+export declare type GitopiaMsgRemoveIssueLabelsResponse = object;
 export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
 export declare type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgRenameRepositoryResponse = object;
@@ -132,6 +139,7 @@ export declare type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 export declare type GitopiaMsgUpdatePullRequestResponse = object;
 export declare type GitopiaMsgUpdatePullRequestTitleResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
+export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
@@ -403,7 +411,9 @@ export interface GitopiaRepository {
     issuesCount?: string;
     /** @format uint64 */
     pullsCount?: string;
-    labels?: string;
+    labels?: GitopiaRepositoryLabel[];
+    /** @format uint64 */
+    labelsCount?: string;
     releases?: string;
     /** @format int64 */
     createdAt?: string;
@@ -434,6 +444,13 @@ export interface GitopiaRepositoryIssue {
     iid?: string;
     /** @format uint64 */
     id?: string;
+}
+export interface GitopiaRepositoryLabel {
+    /** @format uint64 */
+    id?: string;
+    name?: string;
+    color?: string;
+    description?: string;
 }
 export interface GitopiaRepositoryOwner {
     id?: string;
