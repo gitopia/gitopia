@@ -579,6 +579,53 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 	return &types.MsgRemoveRepositoryCollaboratorResponse{}, nil
 }
 
+func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCreateRepositoryLabel) (*types.MsgCreateRepositoryLabelResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.Id))
+	}
+
+	repository := k.GetRepository(ctx, msg.Id)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) already exists", msg.Name))
+	}
+
+	repository.LabelsCount += 1
+	var repositoryLabel = types.RepositoryLabel{
+		Id:          repository.LabelsCount,
+		Name:        msg.Name,
+		Color:       msg.Color,
+		Description: msg.Description,
+	}
+
+	repository.Labels = append(repository.Labels, &repositoryLabel)
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgCreateRepositoryLabelResponse{Id: repositoryLabel.Id}, nil
+}
+
 func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

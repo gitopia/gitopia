@@ -235,6 +235,48 @@ func CmdRemoveRepositoryCollaborator() *cobra.Command {
 	return cmd
 }
 
+func CmdCreateRepositoryLabel() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-repository-label [id] [name] [color] [description]",
+		Short: "Create Repository Label",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsColor, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateRepositoryLabel(clientCtx.GetFromAddress().String(), id, argsName, argsColor, argsDescription)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdCreateBranch() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-branch [repo id] [branch name] [commit SHA]",
