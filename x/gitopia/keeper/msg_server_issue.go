@@ -28,6 +28,18 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	createdAt := ctx.BlockTime().Unix()
 	closedAt := time.Time{}.Unix()
 
+	for _, a := range msg.Assignees {
+		if !k.HasUser(ctx, a) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		}
+	}
+
+	for _, l := range msg.Labels {
+		if _, exists := utils.RepositoryLabelIdExists(repository.Labels, l); !exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%d) doesn't exist", l))
+		}
+	}
+
 	var issue = types.Issue{
 		Creator:       msg.Creator,
 		Iid:           repository.IssuesCount,

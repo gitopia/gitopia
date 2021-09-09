@@ -58,6 +58,15 @@ func RepositoryLabelExists(l []*types.RepositoryLabel, val string) (int, bool) {
 	return 0, false
 }
 
+func RepositoryLabelIdExists(l []*types.RepositoryLabel, val uint64) (int, bool) {
+	for i, v := range l {
+		if v.Id == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func HaveRepositoryPermission(repository types.Repository, creator string, o interface{}) bool {
 	ownerId := repository.Owner.Id
 	ownerType := repository.Owner.Type

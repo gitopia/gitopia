@@ -46,6 +46,21 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
+	if len(msg.Title) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	} else if len(msg.Title) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+	if len(msg.Assignees) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
+	}
+	if len(msg.Labels) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
+	}
+
 	if len(msg.Assignees) > 0 {
 		unique := make(map[string]bool, len(msg.Assignees))
 		for _, assignee := range msg.Assignees {
