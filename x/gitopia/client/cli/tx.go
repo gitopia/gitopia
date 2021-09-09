@@ -55,6 +55,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdToggleIssueState())
 	cmd.AddCommand(CmdAddIssueAssignees())
 	cmd.AddCommand(CmdRemoveIssueAssignees())
+	cmd.AddCommand(CmdAddIssueLabels())
 	cmd.AddCommand(CmdDeleteIssue())
 
 	cmd.AddCommand(CmdCreateRepository())

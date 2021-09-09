@@ -34,12 +34,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		}
 	}
 
-	for _, l := range msg.Labels {
-		if _, exists := utils.RepositoryLabelIdExists(repository.Labels, l); !exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%d) doesn't exist", l))
-		}
-	}
-
 	var issue = types.Issue{
 		Creator:       msg.Creator,
 		Iid:           repository.IssuesCount,
@@ -48,12 +42,19 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		Description:   msg.Description,
 		CommentsCount: 0,
 		RepositoryId:  msg.RepositoryId,
-		Labels:        msg.Labels,
 		Weight:        msg.Weight,
 		Assignees:     msg.Assignees,
 		CreatedAt:     createdAt,
 		UpdatedAt:     createdAt,
 		ClosedAt:      closedAt,
+	}
+
+	for _, l := range msg.Labels {
+		if i, exists := utils.RepositoryLabelExists(repository.Labels, l); exists {
+			issue.Labels = append(issue.Labels, repository.Labels[i].Id)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in repository", l))
+		}
 	}
 
 	id := k.AppendIssue(
@@ -225,7 +226,7 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	}
 
 	issue.CommentsCount += 1
-	currentTime := ctx.BlockTime().Unix()
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
@@ -233,8 +234,8 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		CommentIid:  issue.CommentsCount,
 		Body:        utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
 		System:      true,
-		CreatedAt:   currentTime,
-		UpdatedAt:   currentTime,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
 		CommentType: types.Comment_ISSUE,
 	}
 
@@ -286,6 +287,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	}
 
 	issue.CommentsCount += 1
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
@@ -342,6 +344,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	}
 
 	issue.CommentsCount += 1
+	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
@@ -364,6 +367,68 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	k.SetIssue(ctx, issue)
 
 	return &types.MsgRemoveIssueAssigneesResponse{}, nil
+}
+
+func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueLabels) (*types.MsgAddIssueLabelsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasIssue(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue = k.GetIssue(ctx, msg.Id)
+
+	repository := k.GetRepository(ctx, issue.RepositoryId)
+
+	if len(issue.Labels)+len(msg.Labels) > 50 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 50 labels")
+	}
+
+	for _, l := range msg.Labels {
+		if i, exists := utils.RepositoryLabelExists(repository.Labels, l); exists {
+			if _, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) already exists in issue", l))
+			}
+			issue.Labels = append(issue.Labels, repository.Labels[i].Id)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in repository", l))
+		}
+	}
+
+	issue.CommentsCount += 1
+	issue.UpdatedAt = ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  issue.CommentsCount,
+		Body:        utils.IssueAddLabelsCommentBody(msg.Creator, msg.Labels),
+		System:      true,
+		CreatedAt:   issue.UpdatedAt,
+		UpdatedAt:   issue.UpdatedAt,
+		CommentType: types.Comment_ISSUE,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	issue.Comments = append(issue.Comments, id)
+
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgAddIssueLabelsResponse{}, nil
 }
 
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {

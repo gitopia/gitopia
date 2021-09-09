@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []uint64, weight uint64, assignees []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assignees []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
@@ -75,6 +75,18 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 			}
 		}
 	}
+
+	if len(msg.Labels) > 0 {
+		unique := make(map[string]bool, len(msg.Labels))
+		for _, label := range msg.Labels {
+			if !unique[label] {
+				unique[label] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -374,6 +386,60 @@ func (msg *MsgRemoveIssueAssignees) ValidateBasic() error {
 			unique[assignee] = true
 		} else {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+		}
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgAddIssueLabels{}
+
+func NewMsgAddIssueLabels(creator string, id uint64, labels []string) *MsgAddIssueLabels {
+	return &MsgAddIssueLabels{
+		Id:      id,
+		Creator: creator,
+		Labels:  labels,
+	}
+}
+
+func (msg *MsgAddIssueLabels) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgAddIssueLabels) Type() string {
+	return "AddIssueLabels"
+}
+
+func (msg *MsgAddIssueLabels) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgAddIssueLabels) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgAddIssueLabels) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.Labels) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
+	} else if len(msg.Labels) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
+	}
+
+	unique := make(map[string]bool, len(msg.Labels))
+	for _, label := range msg.Labels {
+		if !unique[label] {
+			unique[label] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
 		}
 	}
 	return nil
