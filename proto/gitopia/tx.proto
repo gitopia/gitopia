@@ -43,6 +43,7 @@ service Msg {
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
   rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
+  rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
@@ -339,6 +340,14 @@ message MsgCreateRepositoryLabel {
 message MsgCreateRepositoryLabelResponse { 
   uint64 id = 1;
 }
+
+message MsgDeleteRepositoryLabel {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteRepositoryLabelResponse { }
 
 message MsgCreateBranch {
   string creator = 1;
