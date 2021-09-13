@@ -452,8 +452,8 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 
 	repository := k.GetRepository(ctx, issue.RepositoryId)
 
-	if len(issue.Labels)+len(msg.Labels) > 50 {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 50 labels")
+	if len(issue.Labels) < len(msg.Labels) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than existing labels")
 	}
 
 	for _, l := range msg.Labels {
