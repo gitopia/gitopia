@@ -268,6 +268,165 @@ func (msg *MsgRemoveRepositoryCollaborator) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgCreateRepositoryLabel{}
+
+func NewMsgCreateRepositoryLabel(creator string, id uint64, name string, color string, description string) *MsgCreateRepositoryLabel {
+	return &MsgCreateRepositoryLabel{
+		Id:          id,
+		Creator:     creator,
+		Name:        name,
+		Color:       color,
+		Description: description,
+	}
+}
+
+func (msg *MsgCreateRepositoryLabel) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCreateRepositoryLabel) Type() string {
+	return "CreateRepositoryLabel"
+}
+
+func (msg *MsgCreateRepositoryLabel) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCreateRepositoryLabel) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label length exceeds limit: 63")
+	} else if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label too short")
+	}
+	if len(msg.Color) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
+	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateRepositoryLabel{}
+
+func NewMsgUpdateRepositoryLabel(creator string, repositoryId uint64, labelId uint64, name string, color string, description string) *MsgUpdateRepositoryLabel {
+	return &MsgUpdateRepositoryLabel{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		LabelId:      labelId,
+		Name:         name,
+		Color:        color,
+		Description:  description,
+	}
+}
+
+func (msg *MsgUpdateRepositoryLabel) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateRepositoryLabel) Type() string {
+	return "UpdateRepositoryLabel"
+}
+
+func (msg *MsgUpdateRepositoryLabel) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateRepositoryLabel) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if msg.RepositoryId < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "repositoryId can't be negative")
+	}
+	if msg.LabelId < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "labelId can't be negative")
+	}
+	if len(msg.Name) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label length exceeds limit: 63")
+	} else if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label too short")
+	}
+	if len(msg.Color) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
+	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgDeleteRepositoryLabel{}
+
+func NewMsgDeleteRepositoryLabel(creator string, id uint64, name string) *MsgDeleteRepositoryLabel {
+	return &MsgDeleteRepositoryLabel{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgDeleteRepositoryLabel) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgDeleteRepositoryLabel) Type() string {
+	return "DeleteRepositoryLabel"
+}
+
+func (msg *MsgDeleteRepositoryLabel) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgDeleteRepositoryLabel) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDeleteRepositoryLabel) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label length exceeds limit: 63")
+	} else if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label too short")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgCreateBranch{}
 
 func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string) *MsgCreateBranch {

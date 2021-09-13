@@ -15,7 +15,8 @@ export interface Repository {
     pullRequests: RepositoryPullRequest[];
     issuesCount: number;
     pullsCount: number;
-    labels: string;
+    labels: RepositoryLabel[];
+    labelsCount: number;
     releases: string;
     createdAt: number;
     updatedAt: number;
@@ -70,6 +71,12 @@ export declare enum RepositoryCollaborator_Permission {
 }
 export declare function repositoryCollaborator_PermissionFromJSON(object: any): RepositoryCollaborator_Permission;
 export declare function repositoryCollaborator_PermissionToJSON(object: RepositoryCollaborator_Permission): string;
+export interface RepositoryLabel {
+    id: number;
+    name: string;
+    color: string;
+    description: string;
+}
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;
@@ -118,6 +125,13 @@ export declare const RepositoryCollaborator: {
     fromJSON(object: any): RepositoryCollaborator;
     toJSON(message: RepositoryCollaborator): unknown;
     fromPartial(object: DeepPartial<RepositoryCollaborator>): RepositoryCollaborator;
+};
+export declare const RepositoryLabel: {
+    encode(message: RepositoryLabel, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryLabel;
+    fromJSON(object: any): RepositoryLabel;
+    toJSON(message: RepositoryLabel): unknown;
+    fromPartial(object: DeepPartial<RepositoryLabel>): RepositoryLabel;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

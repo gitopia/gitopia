@@ -43,7 +43,7 @@ const baseIssue = {
     commentsCount: 0,
     pullRequests: 0,
     repositoryId: 0,
-    labels: "",
+    labels: 0,
     weight: 0,
     assignees: "",
     createdAt: 0,
@@ -88,9 +88,11 @@ export const Issue = {
         if (message.repositoryId !== 0) {
             writer.uint32(80).uint64(message.repositoryId);
         }
+        writer.uint32(90).fork();
         for (const v of message.labels) {
-            writer.uint32(90).string(v);
+            writer.uint64(v);
         }
+        writer.ldelim();
         if (message.weight !== 0) {
             writer.uint32(96).uint64(message.weight);
         }
@@ -172,7 +174,15 @@ export const Issue = {
                     message.repositoryId = longToNumber(reader.uint64());
                     break;
                 case 11:
-                    message.labels.push(reader.string());
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labels.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labels.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 12:
                     message.weight = longToNumber(reader.uint64());
@@ -268,7 +278,7 @@ export const Issue = {
         }
         if (object.labels !== undefined && object.labels !== null) {
             for (const e of object.labels) {
-                message.labels.push(String(e));
+                message.labels.push(Number(e));
             }
         }
         if (object.weight !== undefined && object.weight !== null) {

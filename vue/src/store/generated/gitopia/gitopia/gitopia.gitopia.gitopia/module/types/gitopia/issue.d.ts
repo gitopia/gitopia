@@ -11,7 +11,7 @@ export interface Issue {
     commentsCount: number;
     pullRequests: number[];
     repositoryId: number;
-    labels: string[];
+    labels: number[];
     weight: number;
     assignees: string[];
     createdAt: number;

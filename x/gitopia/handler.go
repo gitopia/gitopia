@@ -102,6 +102,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RemoveIssueAssignees(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgAddIssueLabels:
+			res, err := msgServer.AddIssueLabels(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveIssueLabels:
+			res, err := msgServer.RemoveIssueLabels(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteIssue:
 			res, err := msgServer.DeleteIssue(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -128,6 +136,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgRemoveRepositoryCollaborator:
 			res, err := msgServer.RemoveRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgCreateRepositoryLabel:
+			res, err := msgServer.CreateRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateRepositoryLabel:
+			res, err := msgServer.UpdateRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteRepositoryLabel:
+			res, err := msgServer.DeleteRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateBranch:

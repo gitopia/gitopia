@@ -35,6 +35,8 @@ service Msg {
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
   rpc AddIssueAssignees(MsgAddIssueAssignees) returns (MsgAddIssueAssigneesResponse);
   rpc RemoveIssueAssignees(MsgRemoveIssueAssignees) returns (MsgRemoveIssueAssigneesResponse);
+  rpc AddIssueLabels(MsgAddIssueLabels) returns (MsgAddIssueLabelsResponse);
+  rpc RemoveIssueLabels(MsgRemoveIssueLabels) returns (MsgRemoveIssueLabelsResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
@@ -42,6 +44,9 @@ service Msg {
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
+  rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
+  rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
+  rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
   rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
@@ -215,9 +220,8 @@ message MsgUpdateIssue {
   uint64 id = 2;
   string title = 3;
   string description = 4;
-  repeated string labels = 5;
-  uint64 weight = 6;
-  repeated string assignees = 7;
+  uint64 weight = 5;
+  repeated string assignees = 6;
 }
 
 message MsgUpdateIssueResponse { }
@@ -262,6 +266,22 @@ message MsgRemoveIssueAssignees {
 }
 
 message MsgRemoveIssueAssigneesResponse { }
+
+message MsgAddIssueLabels {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string labels = 3;
+}
+
+message MsgAddIssueLabelsResponse { }
+
+message MsgRemoveIssueLabels {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string labels = 3;
+}
+
+message MsgRemoveIssueLabelsResponse { }
 
 message MsgDeleteIssue {
   string creator = 1;
@@ -327,6 +347,37 @@ message MsgRemoveRepositoryCollaborator {
 }
 
 message MsgRemoveRepositoryCollaboratorResponse { }
+
+message MsgCreateRepositoryLabel {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string color = 4;
+  string description = 5;
+}
+
+message MsgCreateRepositoryLabelResponse { 
+  uint64 id = 1;
+}
+
+message MsgUpdateRepositoryLabel {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 labelId = 3;
+  string name = 4;
+  string color = 5;
+  string description = 6;
+}
+
+message MsgUpdateRepositoryLabelResponse { }
+
+message MsgDeleteRepositoryLabel {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteRepositoryLabelResponse { }
 
 message MsgCreateBranch {
   string creator = 1;

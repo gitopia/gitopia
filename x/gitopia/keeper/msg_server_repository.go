@@ -579,6 +579,136 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 	return &types.MsgRemoveRepositoryCollaboratorResponse{}, nil
 }
 
+func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCreateRepositoryLabel) (*types.MsgCreateRepositoryLabelResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.Id))
+	}
+
+	repository := k.GetRepository(ctx, msg.Id)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) already exists", msg.Name))
+	}
+
+	repository.LabelsCount += 1
+	var repositoryLabel = types.RepositoryLabel{
+		Id:          repository.LabelsCount,
+		Name:        msg.Name,
+		Color:       msg.Color,
+		Description: msg.Description,
+	}
+
+	repository.Labels = append(repository.Labels, &repositoryLabel)
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgCreateRepositoryLabelResponse{Id: repositoryLabel.Id}, nil
+}
+
+func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUpdateRepositoryLabel) (*types.MsgUpdateRepositoryLabelResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	}
+
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
+		if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label name (%v) already exists", msg.Name))
+		}
+		repository.Labels[i].Name = msg.Name
+		repository.Labels[i].Color = msg.Color
+		repository.Labels[i].Description = msg.Description
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%d) doesn't exists", msg.LabelId))
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgUpdateRepositoryLabelResponse{}, nil
+}
+
+func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDeleteRepositoryLabel) (*types.MsgDeleteRepositoryLabelResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.Id))
+	}
+
+	repository := k.GetRepository(ctx, msg.Id)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if i, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+		repository.Labels = append(repository.Labels[:i], repository.Labels[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists", msg.Name))
+	}
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgDeleteRepositoryLabelResponse{}, nil
+}
+
 func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -772,7 +902,6 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 
 	repository.Name = msg.Name
 	repository.Description = msg.Description
-	repository.Labels = msg.Labels
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	repository.License = msg.License
 	repository.DefaultBranch = msg.DefaultBranch

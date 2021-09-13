@@ -33,6 +33,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgToggleIssueState{}, "gitopia/ToggleIssueState", nil)
 	cdc.RegisterConcrete(&MsgAddIssueAssignees{}, "gitopia/AddIssueAssignees", nil)
 	cdc.RegisterConcrete(&MsgRemoveIssueAssignees{}, "gitopia/RemoveIssueAssignees", nil)
+	cdc.RegisterConcrete(&MsgAddIssueLabels{}, "gitopia/AddIssueLabels", nil)
+	cdc.RegisterConcrete(&MsgRemoveIssueLabels{}, "gitopia/RemoveIssueLabels", nil)
 	cdc.RegisterConcrete(&MsgDeleteIssue{}, "gitopia/DeleteIssue", nil)
 
 	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
@@ -41,6 +43,9 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
+	cdc.RegisterConcrete(&MsgCreateRepositoryLabel{}, "gitopia/CreateRepositoryLabel", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepositoryLabel{}, "gitopia/UpdateRepositoryLabel", nil)
+	cdc.RegisterConcrete(&MsgDeleteRepositoryLabel{}, "gitopia/DeleteRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgCreateBranch{}, "gitopia/CreateBranch", nil)
 	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
 	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
@@ -89,6 +94,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgToggleIssueState{},
 		&MsgAddIssueAssignees{},
 		&MsgRemoveIssueAssignees{},
+		&MsgAddIssueLabels{},
+		&MsgRemoveIssueLabels{},
 		&MsgDeleteIssue{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -98,6 +105,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgChangeOwner{},
 		&MsgUpdateRepositoryCollaborator{},
 		&MsgRemoveRepositoryCollaborator{},
+		&MsgCreateRepositoryLabel{},
+		&MsgUpdateRepositoryLabel{},
+		&MsgDeleteRepositoryLabel{},
 		&MsgCreateBranch{},
 		&MsgSetDefaultBranch{},
 		&MsgDeleteBranch{},

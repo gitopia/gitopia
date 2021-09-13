@@ -90,7 +90,7 @@ const baseRepository = {
     commits: "",
     issuesCount: 0,
     pullsCount: 0,
-    labels: "",
+    labelsCount: 0,
     releases: "",
     createdAt: 0,
     updatedAt: 0,
@@ -149,46 +149,49 @@ export const Repository = {
         if (message.pullsCount !== 0) {
             writer.uint32(112).uint64(message.pullsCount);
         }
-        if (message.labels !== "") {
-            writer.uint32(122).string(message.labels);
+        for (const v of message.labels) {
+            RepositoryLabel.encode(v, writer.uint32(122).fork()).ldelim();
+        }
+        if (message.labelsCount !== 0) {
+            writer.uint32(128).uint64(message.labelsCount);
         }
         if (message.releases !== "") {
-            writer.uint32(130).string(message.releases);
+            writer.uint32(138).string(message.releases);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(136).int64(message.createdAt);
+            writer.uint32(144).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(144).int64(message.updatedAt);
+            writer.uint32(152).int64(message.updatedAt);
         }
         if (message.pushedAt !== 0) {
-            writer.uint32(152).int64(message.pushedAt);
+            writer.uint32(160).int64(message.pushedAt);
         }
-        writer.uint32(162).fork();
+        writer.uint32(170).fork();
         for (const v of message.stargazers) {
             writer.uint64(v);
         }
         writer.ldelim();
         if (message.archived === true) {
-            writer.uint32(168).bool(message.archived);
+            writer.uint32(176).bool(message.archived);
         }
         if (message.license !== "") {
-            writer.uint32(178).string(message.license);
+            writer.uint32(186).string(message.license);
         }
         if (message.defaultBranch !== "") {
-            writer.uint32(186).string(message.defaultBranch);
+            writer.uint32(194).string(message.defaultBranch);
         }
         if (message.parent !== 0) {
-            writer.uint32(192).uint64(message.parent);
+            writer.uint32(200).uint64(message.parent);
         }
         if (message.fork === true) {
-            writer.uint32(200).bool(message.fork);
+            writer.uint32(208).bool(message.fork);
         }
         for (const v of message.collaborators) {
-            RepositoryCollaborator.encode(v, writer.uint32(210).fork()).ldelim();
+            RepositoryCollaborator.encode(v, writer.uint32(218).fork()).ldelim();
         }
         if (message.extensions !== "") {
-            writer.uint32(218).string(message.extensions);
+            writer.uint32(226).string(message.extensions);
         }
         return writer;
     },
@@ -201,6 +204,7 @@ export const Repository = {
         message.tags = [];
         message.issues = [];
         message.pullRequests = [];
+        message.labels = [];
         message.stargazers = [];
         message.collaborators = [];
         while (reader.pos < end) {
@@ -257,21 +261,24 @@ export const Repository = {
                     message.pullsCount = longToNumber(reader.uint64());
                     break;
                 case 15:
-                    message.labels = reader.string();
+                    message.labels.push(RepositoryLabel.decode(reader, reader.uint32()));
                     break;
                 case 16:
-                    message.releases = reader.string();
+                    message.labelsCount = longToNumber(reader.uint64());
                     break;
                 case 17:
-                    message.createdAt = longToNumber(reader.int64());
+                    message.releases = reader.string();
                     break;
                 case 18:
-                    message.updatedAt = longToNumber(reader.int64());
+                    message.createdAt = longToNumber(reader.int64());
                     break;
                 case 19:
-                    message.pushedAt = longToNumber(reader.int64());
+                    message.updatedAt = longToNumber(reader.int64());
                     break;
                 case 20:
+                    message.pushedAt = longToNumber(reader.int64());
+                    break;
+                case 21:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -282,25 +289,25 @@ export const Repository = {
                         message.stargazers.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 21:
+                case 22:
                     message.archived = reader.bool();
                     break;
-                case 22:
+                case 23:
                     message.license = reader.string();
                     break;
-                case 23:
+                case 24:
                     message.defaultBranch = reader.string();
                     break;
-                case 24:
+                case 25:
                     message.parent = longToNumber(reader.uint64());
                     break;
-                case 25:
+                case 26:
                     message.fork = reader.bool();
                     break;
-                case 26:
+                case 27:
                     message.collaborators.push(RepositoryCollaborator.decode(reader, reader.uint32()));
                     break;
-                case 27:
+                case 28:
                     message.extensions = reader.string();
                     break;
                 default:
@@ -317,6 +324,7 @@ export const Repository = {
         message.tags = [];
         message.issues = [];
         message.pullRequests = [];
+        message.labels = [];
         message.stargazers = [];
         message.collaborators = [];
         if (object.creator !== undefined && object.creator !== null) {
@@ -399,10 +407,15 @@ export const Repository = {
             message.pullsCount = 0;
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = String(object.labels);
+            for (const e of object.labels) {
+                message.labels.push(RepositoryLabel.fromJSON(e));
+            }
+        }
+        if (object.labelsCount !== undefined && object.labelsCount !== null) {
+            message.labelsCount = Number(object.labelsCount);
         }
         else {
-            message.labels = "";
+            message.labelsCount = 0;
         }
         if (object.releases !== undefined && object.releases !== null) {
             message.releases = String(object.releases);
@@ -523,7 +536,14 @@ export const Repository = {
         message.issuesCount !== undefined &&
             (obj.issuesCount = message.issuesCount);
         message.pullsCount !== undefined && (obj.pullsCount = message.pullsCount);
-        message.labels !== undefined && (obj.labels = message.labels);
+        if (message.labels) {
+            obj.labels = message.labels.map((e) => e ? RepositoryLabel.toJSON(e) : undefined);
+        }
+        else {
+            obj.labels = [];
+        }
+        message.labelsCount !== undefined &&
+            (obj.labelsCount = message.labelsCount);
         message.releases !== undefined && (obj.releases = message.releases);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
@@ -556,6 +576,7 @@ export const Repository = {
         message.tags = [];
         message.issues = [];
         message.pullRequests = [];
+        message.labels = [];
         message.stargazers = [];
         message.collaborators = [];
         if (object.creator !== undefined && object.creator !== null) {
@@ -638,10 +659,15 @@ export const Repository = {
             message.pullsCount = 0;
         }
         if (object.labels !== undefined && object.labels !== null) {
-            message.labels = object.labels;
+            for (const e of object.labels) {
+                message.labels.push(RepositoryLabel.fromPartial(e));
+            }
+        }
+        if (object.labelsCount !== undefined && object.labelsCount !== null) {
+            message.labelsCount = object.labelsCount;
         }
         else {
-            message.labels = "";
+            message.labelsCount = 0;
         }
         if (object.releases !== undefined && object.releases !== null) {
             message.releases = object.releases;
@@ -1134,6 +1160,120 @@ export const RepositoryCollaborator = {
         }
         else {
             message.permission = 0;
+        }
+        return message;
+    },
+};
+const baseRepositoryLabel = {
+    id: 0,
+    name: "",
+    color: "",
+    description: "",
+};
+export const RepositoryLabel = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(18).string(message.name);
+        }
+        if (message.color !== "") {
+            writer.uint32(26).string(message.color);
+        }
+        if (message.description !== "") {
+            writer.uint32(34).string(message.description);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseRepositoryLabel };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 2:
+                    message.name = reader.string();
+                    break;
+                case 3:
+                    message.color = reader.string();
+                    break;
+                case 4:
+                    message.description = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseRepositoryLabel };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = String(object.color);
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
+        message.color !== undefined && (obj.color = message.color);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseRepositoryLabel };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = object.color;
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
         }
         return message;
     },

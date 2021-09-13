@@ -45,6 +45,9 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 			argsLabels := strings.Split(args[3], ",")
+			if len(argsLabels) == 1 && argsLabels[0] == "" {
+				argsLabels = nil
+			}
 			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {
 				return err
@@ -74,9 +77,9 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue [id] [title] [description] [labels] [weight] [assignees]",
+		Use:   "update-issue [id] [title] [description] [weight] [assignees]",
 		Short: "Update a issue",
-		Args:  cobra.ExactArgs(6),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -91,19 +94,18 @@ func CmdUpdateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsLabels := strings.Split(args[3], ",")
-			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
+			argsWeight, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
 				return err
 			}
-			argsAssignees := strings.Split(args[5], ",")
+			argsAssignees := strings.Split(args[4], ",")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsLabels, argsWeight, argsAssignees)
+			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -269,6 +271,74 @@ func CmdRemoveIssueAssignees() *cobra.Command {
 			}
 
 			msg := types.NewMsgRemoveIssueAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdAddIssueLabels() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-issue-labels [id] [labels]",
+		Short: "Add issue labels",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsLabels := strings.Split(args[1], ",")
+			if len(argsLabels) == 1 && argsLabels[0] == "" {
+				argsLabels = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddIssueLabels(clientCtx.GetFromAddress().String(), id, argsLabels)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdRemoveIssueLabels() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-issue-labels [id] [labels]",
+		Short: "Remove issue labels",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsLabels := strings.Split(args[1], ",")
+			if len(argsLabels) == 1 && argsLabels[0] == "" {
+				argsLabels = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), id, argsLabels)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

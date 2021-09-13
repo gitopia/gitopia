@@ -55,6 +55,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdToggleIssueState())
 	cmd.AddCommand(CmdAddIssueAssignees())
 	cmd.AddCommand(CmdRemoveIssueAssignees())
+	cmd.AddCommand(CmdAddIssueLabels())
+	cmd.AddCommand(CmdRemoveIssueLabels())
 	cmd.AddCommand(CmdDeleteIssue())
 
 	cmd.AddCommand(CmdCreateRepository())
@@ -63,6 +65,9 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdChangeOwner())
 	cmd.AddCommand(CmdUpdateRepositoryCollaborator())
 	cmd.AddCommand(CmdRemoveRepositoryCollaborator())
+	cmd.AddCommand(CmdCreateRepositoryLabel())
+	cmd.AddCommand(CmdUpdateRepositoryLabel())
+	cmd.AddCommand(CmdDeleteRepositoryLabel())
 	cmd.AddCommand(CmdCreateBranch())
 	cmd.AddCommand(CmdSetDefaultBranch())
 	cmd.AddCommand(CmdDeleteBranch())

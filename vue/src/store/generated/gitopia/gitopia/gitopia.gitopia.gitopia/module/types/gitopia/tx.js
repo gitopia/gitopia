@@ -2546,7 +2546,6 @@ const baseMsgUpdateIssue = {
     id: 0,
     title: "",
     description: "",
-    labels: "",
     weight: 0,
     assignees: "",
 };
@@ -2564,14 +2563,11 @@ export const MsgUpdateIssue = {
         if (message.description !== "") {
             writer.uint32(34).string(message.description);
         }
-        for (const v of message.labels) {
-            writer.uint32(42).string(v);
-        }
         if (message.weight !== 0) {
-            writer.uint32(48).uint64(message.weight);
+            writer.uint32(40).uint64(message.weight);
         }
         for (const v of message.assignees) {
-            writer.uint32(58).string(v);
+            writer.uint32(50).string(v);
         }
         return writer;
     },
@@ -2579,7 +2575,6 @@ export const MsgUpdateIssue = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgUpdateIssue };
-        message.labels = [];
         message.assignees = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -2597,12 +2592,9 @@ export const MsgUpdateIssue = {
                     message.description = reader.string();
                     break;
                 case 5:
-                    message.labels.push(reader.string());
-                    break;
-                case 6:
                     message.weight = longToNumber(reader.uint64());
                     break;
-                case 7:
+                case 6:
                     message.assignees.push(reader.string());
                     break;
                 default:
@@ -2614,7 +2606,6 @@ export const MsgUpdateIssue = {
     },
     fromJSON(object) {
         const message = { ...baseMsgUpdateIssue };
-        message.labels = [];
         message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
@@ -2640,11 +2631,6 @@ export const MsgUpdateIssue = {
         else {
             message.description = "";
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(String(e));
-            }
-        }
         if (object.weight !== undefined && object.weight !== null) {
             message.weight = Number(object.weight);
         }
@@ -2665,12 +2651,6 @@ export const MsgUpdateIssue = {
         message.title !== undefined && (obj.title = message.title);
         message.description !== undefined &&
             (obj.description = message.description);
-        if (message.labels) {
-            obj.labels = message.labels.map((e) => e);
-        }
-        else {
-            obj.labels = [];
-        }
         message.weight !== undefined && (obj.weight = message.weight);
         if (message.assignees) {
             obj.assignees = message.assignees.map((e) => e);
@@ -2682,7 +2662,6 @@ export const MsgUpdateIssue = {
     },
     fromPartial(object) {
         const message = { ...baseMsgUpdateIssue };
-        message.labels = [];
         message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
@@ -2707,11 +2686,6 @@ export const MsgUpdateIssue = {
         }
         else {
             message.description = "";
-        }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(e);
-            }
         }
         if (object.weight !== undefined && object.weight !== null) {
             message.weight = object.weight;
@@ -3423,6 +3397,272 @@ export const MsgRemoveIssueAssigneesResponse = {
     fromPartial(_) {
         const message = {
             ...baseMsgRemoveIssueAssigneesResponse,
+        };
+        return message;
+    },
+};
+const baseMsgAddIssueLabels = { creator: "", id: 0, labels: "" };
+export const MsgAddIssueLabels = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.labels) {
+            writer.uint32(26).string(v);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgAddIssueLabels };
+        message.labels = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.labels.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgAddIssueLabels };
+        message.labels = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            for (const e of object.labels) {
+                message.labels.push(String(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.labels) {
+            obj.labels = message.labels.map((e) => e);
+        }
+        else {
+            obj.labels = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgAddIssueLabels };
+        message.labels = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            for (const e of object.labels) {
+                message.labels.push(e);
+            }
+        }
+        return message;
+    },
+};
+const baseMsgAddIssueLabelsResponse = {};
+export const MsgAddIssueLabelsResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgAddIssueLabelsResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgAddIssueLabelsResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgAddIssueLabelsResponse,
+        };
+        return message;
+    },
+};
+const baseMsgRemoveIssueLabels = { creator: "", id: 0, labels: "" };
+export const MsgRemoveIssueLabels = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.labels) {
+            writer.uint32(26).string(v);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgRemoveIssueLabels };
+        message.labels = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.labels.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgRemoveIssueLabels };
+        message.labels = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            for (const e of object.labels) {
+                message.labels.push(String(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.labels) {
+            obj.labels = message.labels.map((e) => e);
+        }
+        else {
+            obj.labels = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgRemoveIssueLabels };
+        message.labels = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            for (const e of object.labels) {
+                message.labels.push(e);
+            }
+        }
+        return message;
+    },
+};
+const baseMsgRemoveIssueLabelsResponse = {};
+export const MsgRemoveIssueLabelsResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgRemoveIssueLabelsResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgRemoveIssueLabelsResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgRemoveIssueLabelsResponse,
         };
         return message;
     },
@@ -4473,6 +4713,535 @@ export const MsgRemoveRepositoryCollaboratorResponse = {
     fromPartial(_) {
         const message = {
             ...baseMsgRemoveRepositoryCollaboratorResponse,
+        };
+        return message;
+    },
+};
+const baseMsgCreateRepositoryLabel = {
+    creator: "",
+    id: 0,
+    name: "",
+    color: "",
+    description: "",
+};
+export const MsgCreateRepositoryLabel = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(26).string(message.name);
+        }
+        if (message.color !== "") {
+            writer.uint32(34).string(message.color);
+        }
+        if (message.description !== "") {
+            writer.uint32(42).string(message.description);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgCreateRepositoryLabel,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.color = reader.string();
+                    break;
+                case 5:
+                    message.description = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgCreateRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = String(object.color);
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
+        message.color !== undefined && (obj.color = message.color);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgCreateRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = object.color;
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+};
+const baseMsgCreateRepositoryLabelResponse = { id: 0 };
+export const MsgCreateRepositoryLabelResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgCreateRepositoryLabelResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgCreateRepositoryLabelResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgCreateRepositoryLabelResponse,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgUpdateRepositoryLabel = {
+    creator: "",
+    repositoryId: 0,
+    labelId: 0,
+    name: "",
+    color: "",
+    description: "",
+};
+export const MsgUpdateRepositoryLabel = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.repositoryId !== 0) {
+            writer.uint32(16).uint64(message.repositoryId);
+        }
+        if (message.labelId !== 0) {
+            writer.uint32(24).uint64(message.labelId);
+        }
+        if (message.name !== "") {
+            writer.uint32(34).string(message.name);
+        }
+        if (message.color !== "") {
+            writer.uint32(42).string(message.color);
+        }
+        if (message.description !== "") {
+            writer.uint32(50).string(message.description);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateRepositoryLabel,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.repositoryId = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.labelId = longToNumber(reader.uint64());
+                    break;
+                case 4:
+                    message.name = reader.string();
+                    break;
+                case 5:
+                    message.color = reader.string();
+                    break;
+                case 6:
+                    message.description = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgUpdateRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = Number(object.repositoryId);
+        }
+        else {
+            message.repositoryId = 0;
+        }
+        if (object.labelId !== undefined && object.labelId !== null) {
+            message.labelId = Number(object.labelId);
+        }
+        else {
+            message.labelId = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = String(object.color);
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.repositoryId !== undefined &&
+            (obj.repositoryId = message.repositoryId);
+        message.labelId !== undefined && (obj.labelId = message.labelId);
+        message.name !== undefined && (obj.name = message.name);
+        message.color !== undefined && (obj.color = message.color);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgUpdateRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = object.repositoryId;
+        }
+        else {
+            message.repositoryId = 0;
+        }
+        if (object.labelId !== undefined && object.labelId !== null) {
+            message.labelId = object.labelId;
+        }
+        else {
+            message.labelId = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.color !== undefined && object.color !== null) {
+            message.color = object.color;
+        }
+        else {
+            message.color = "";
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdateRepositoryLabelResponse = {};
+export const MsgUpdateRepositoryLabelResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateRepositoryLabelResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdateRepositoryLabelResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdateRepositoryLabelResponse,
+        };
+        return message;
+    },
+};
+const baseMsgDeleteRepositoryLabel = { creator: "", id: 0, name: "" };
+export const MsgDeleteRepositoryLabel = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(26).string(message.name);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgDeleteRepositoryLabel,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgDeleteRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgDeleteRepositoryLabel,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        return message;
+    },
+};
+const baseMsgDeleteRepositoryLabelResponse = {};
+export const MsgDeleteRepositoryLabelResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgDeleteRepositoryLabelResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgDeleteRepositoryLabelResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgDeleteRepositoryLabelResponse,
         };
         return message;
     },
@@ -6864,6 +7633,16 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "RemoveIssueAssignees", data);
         return promise.then((data) => MsgRemoveIssueAssigneesResponse.decode(new Reader(data)));
     }
+    AddIssueLabels(request) {
+        const data = MsgAddIssueLabels.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "AddIssueLabels", data);
+        return promise.then((data) => MsgAddIssueLabelsResponse.decode(new Reader(data)));
+    }
+    RemoveIssueLabels(request) {
+        const data = MsgRemoveIssueLabels.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "RemoveIssueLabels", data);
+        return promise.then((data) => MsgRemoveIssueLabelsResponse.decode(new Reader(data)));
+    }
     DeleteIssue(request) {
         const data = MsgDeleteIssue.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteIssue", data);
@@ -6898,6 +7677,21 @@ export class MsgClientImpl {
         const data = MsgRemoveRepositoryCollaborator.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "RemoveRepositoryCollaborator", data);
         return promise.then((data) => MsgRemoveRepositoryCollaboratorResponse.decode(new Reader(data)));
+    }
+    CreateRepositoryLabel(request) {
+        const data = MsgCreateRepositoryLabel.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateRepositoryLabel", data);
+        return promise.then((data) => MsgCreateRepositoryLabelResponse.decode(new Reader(data)));
+    }
+    UpdateRepositoryLabel(request) {
+        const data = MsgUpdateRepositoryLabel.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateRepositoryLabel", data);
+        return promise.then((data) => MsgUpdateRepositoryLabelResponse.decode(new Reader(data)));
+    }
+    DeleteRepositoryLabel(request) {
+        const data = MsgDeleteRepositoryLabel.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteRepositoryLabel", data);
+        return promise.then((data) => MsgDeleteRepositoryLabelResponse.decode(new Reader(data)));
     }
     CreateBranch(request) {
         const data = MsgCreateBranch.encode(request).finish();

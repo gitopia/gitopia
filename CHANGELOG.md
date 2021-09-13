@@ -11,12 +11,22 @@ All notable changes will be documented here.
 - Organization address is deterministically generated using creater address and sequence number
 - Added transaction to create and delete tag
 - Added AddressRepository() and AddressRepositoryAll() api
+- Issue transactions generates system comment
+- Implemented transaction to UpdateRepositoryLabel
+- Implemented transaction to RemoveIssueLabel
+- Implemented transaction to AddIssueLabel
+- Added checks in CreateIssue
+- Implemented transaction to DeleteRepositoryLabel
+- Implemented transaction to CreateRepositoryLabel
+- Implemented transaction to RemoveIssueAssignees
+- Implemented transaction to AddIssueAssignees
 
 ### Changed
 
 - Organization key changed from id to address
 - Removed UserRepository() and UserRepositoryAll() api
 - Removed OrganizationRepositoryAll() api
+- Using message for labels
 
 ### Fixed
 

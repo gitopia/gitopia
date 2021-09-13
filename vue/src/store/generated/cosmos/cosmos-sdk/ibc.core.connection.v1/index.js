@@ -205,23 +205,6 @@ export default {
                 throw new SpVuexError('QueryClient:QueryConnectionConsensusState', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgConnectionOpenConfirm({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgConnectionOpenConfirm(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async sendMsgConnectionOpenTry({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -239,20 +222,20 @@ export default {
                 }
             }
         },
-        async sendMsgConnectionOpenAck({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgConnectionOpenConfirm({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgConnectionOpenAck(value);
+                const msg = await txClient.msgConnectionOpenConfirm(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -273,18 +256,20 @@ export default {
                 }
             }
         },
-        async MsgConnectionOpenConfirm({ rootGetters }, { value }) {
+        async sendMsgConnectionOpenAck({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgConnectionOpenConfirm(value);
-                return msg;
+                const msg = await txClient.msgConnectionOpenAck(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -303,18 +288,18 @@ export default {
                 }
             }
         },
-        async MsgConnectionOpenAck({ rootGetters }, { value }) {
+        async MsgConnectionOpenConfirm({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgConnectionOpenAck(value);
+                const msg = await txClient.msgConnectionOpenConfirm(value);
                 return msg;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgConnectionOpenConfirm:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -330,6 +315,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgConnectionOpenInit:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgConnectionOpenAck({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgConnectionOpenAck(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgConnectionOpenAck:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
