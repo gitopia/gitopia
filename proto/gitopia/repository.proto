@@ -86,7 +86,7 @@ message RepositoryLabel {
 
 message RepositoryRelease {
   uint64 id = 1;
-  string name = 2;
+  string tagName = 2;
 }
 
 message Attachment {

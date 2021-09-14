@@ -67,9 +67,9 @@ func RepositoryLabelIdExists(l []*types.RepositoryLabel, val uint64) (int, bool)
 	return 0, false
 }
 
-func RepositoryReleaseExists(r []*types.RepositoryRelease, val string) (int, bool) {
+func RepositoryReleaseTagExists(r []*types.RepositoryRelease, val string) (int, bool) {
 	for i, v := range r {
-		if v.Name == val {
+		if v.TagName == val {
 			return i, true
 		}
 	}

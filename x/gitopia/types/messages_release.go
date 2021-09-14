@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -66,9 +68,16 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 	if len(msg.Description) > 20000 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release description length exceeds limit: 20000")
 	}
-	if len(msg.Attachments) > 20 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+	if msg.Attachments != "" {
+		attachments := []*Attachment{}
+		if err := json.Unmarshal([]byte(msg.Attachments), &attachments); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal attachments")
+		}
+		if len(attachments) > 20 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		}
 	}
+
 	return nil
 }
 
@@ -133,8 +142,14 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 	if len(msg.Description) > 20000 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release description length exceeds limit: 20000")
 	}
-	if len(msg.Attachments) > 20 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+	if msg.Attachments != "" {
+		attachments := []*Attachment{}
+		if err := json.Unmarshal([]byte(msg.Attachments), &attachments); err != nil {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal attachments")
+		}
+		if len(attachments) > 20 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		}
 	}
 	return nil
 }

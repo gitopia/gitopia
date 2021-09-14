@@ -40,15 +40,15 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if _, exists := utils.RepositoryReleaseExists(repository.Releases, msg.Name); exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with name (%v) already exists", msg.Name))
-	}
-
 	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))
 	}
 
-	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.TagName); !exists {
+	if _, exists := utils.RepositoryReleaseTagExists(repository.Releases, msg.TagName); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with tag (%v) already exists", msg.TagName))
+	}
+
+	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.Target); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("target branch (%v) doesn't exists", msg.Target))
 	}
 
@@ -89,8 +89,8 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	)
 
 	var repositoryRelease = types.RepositoryRelease{
-		Name: msg.Name,
-		Id:   id,
+		TagName: msg.TagName,
+		Id:      id,
 	}
 
 	repository.Releases = append(repository.Releases, &repositoryRelease)
@@ -123,15 +123,15 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 
 	repository := k.GetRepository(ctx, release.RepositoryId)
 
-	if _, exists := utils.RepositoryReleaseExists(repository.Releases, msg.Name); exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with name (%v) already exists", msg.Name))
-	}
-
 	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))
 	}
 
-	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.TagName); !exists {
+	if _, exists := utils.RepositoryReleaseTagExists(repository.Releases, msg.TagName); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with tag (%v) already exists", msg.TagName))
+	}
+
+	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.Target); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("target branch (%v) doesn't exists", msg.Target))
 	}
 
@@ -162,8 +162,10 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 	}
 
 	if i, exists := utils.RepositoryReleaseIdExists(repository.Releases, msg.Id); exists {
-		repository.Releases[i].Name = msg.Name
-		k.SetRepository(ctx, repository)
+		if repository.Releases[i].TagName != msg.TagName {
+			repository.Releases[i].TagName = msg.TagName
+			k.SetRepository(ctx, repository)
+		}
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with Id (%d) doesn't exists in repository", msg.Id))
 	}
