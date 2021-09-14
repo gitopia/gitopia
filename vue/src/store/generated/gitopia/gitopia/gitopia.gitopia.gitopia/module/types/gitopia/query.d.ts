@@ -9,6 +9,13 @@ import { Repository, RepositoryBranch, RepositoryTag } from "../gitopia/reposito
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
+export interface QueryGetLatestReleaseRequest {
+    userId: string;
+    repositoryName: string;
+}
+export interface QueryGetLatestReleaseResponse {
+    Release: Release | undefined;
+}
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
     id: number;
@@ -195,6 +202,20 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetLatestReleaseRequest: {
+    encode(message: QueryGetLatestReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestReleaseRequest;
+    fromJSON(object: any): QueryGetLatestReleaseRequest;
+    toJSON(message: QueryGetLatestReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetLatestReleaseRequest>): QueryGetLatestReleaseRequest;
+};
+export declare const QueryGetLatestReleaseResponse: {
+    encode(message: QueryGetLatestReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestReleaseResponse;
+    fromJSON(object: any): QueryGetLatestReleaseResponse;
+    toJSON(message: QueryGetLatestReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetLatestReleaseResponse>): QueryGetLatestReleaseResponse;
+};
 export declare const QueryGetReleaseRequest: {
     encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
@@ -575,6 +596,7 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
+    LatestRelease(request: QueryGetLatestReleaseRequest): Promise<QueryGetLatestReleaseResponse>;
     /** Queries a release by id. */
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     /** Queries a list of release items. */
@@ -629,6 +651,7 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    LatestRelease(request: QueryGetLatestReleaseRequest): Promise<QueryGetLatestReleaseResponse>;
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;

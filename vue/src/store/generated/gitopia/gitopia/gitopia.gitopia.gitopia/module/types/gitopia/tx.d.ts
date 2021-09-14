@@ -3,18 +3,15 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateRelease {
     creator: string;
-    repositoryId: string;
+    repositoryId: number;
     tagName: string;
     target: string;
     name: string;
     description: string;
     attachments: string;
-    draft: string;
-    preRelease: string;
-    isTag: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
+    draft: boolean;
+    preRelease: boolean;
+    isTag: boolean;
 }
 export interface MsgCreateReleaseResponse {
     id: number;
@@ -22,18 +19,14 @@ export interface MsgCreateReleaseResponse {
 export interface MsgUpdateRelease {
     creator: string;
     id: number;
-    repositoryId: string;
     tagName: string;
     target: string;
     name: string;
     description: string;
     attachments: string;
-    draft: string;
-    preRelease: string;
-    isTag: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
+    draft: boolean;
+    preRelease: boolean;
+    isTag: boolean;
 }
 export interface MsgUpdateReleaseResponse {
 }

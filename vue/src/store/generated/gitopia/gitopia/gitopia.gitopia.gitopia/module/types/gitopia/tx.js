@@ -4,26 +4,23 @@ import * as Long from "long";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseMsgCreateRelease = {
     creator: "",
-    repositoryId: "",
+    repositoryId: 0,
     tagName: "",
     target: "",
     name: "",
     description: "",
     attachments: "",
-    draft: "",
-    preRelease: "",
-    isTag: "",
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
+    draft: false,
+    preRelease: false,
+    isTag: false,
 };
 export const MsgCreateRelease = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.repositoryId !== "") {
-            writer.uint32(18).string(message.repositoryId);
+        if (message.repositoryId !== 0) {
+            writer.uint32(16).uint64(message.repositoryId);
         }
         if (message.tagName !== "") {
             writer.uint32(26).string(message.tagName);
@@ -40,23 +37,14 @@ export const MsgCreateRelease = {
         if (message.attachments !== "") {
             writer.uint32(58).string(message.attachments);
         }
-        if (message.draft !== "") {
-            writer.uint32(66).string(message.draft);
+        if (message.draft === true) {
+            writer.uint32(64).bool(message.draft);
         }
-        if (message.preRelease !== "") {
-            writer.uint32(74).string(message.preRelease);
+        if (message.preRelease === true) {
+            writer.uint32(72).bool(message.preRelease);
         }
-        if (message.isTag !== "") {
-            writer.uint32(82).string(message.isTag);
-        }
-        if (message.createdAt !== "") {
-            writer.uint32(90).string(message.createdAt);
-        }
-        if (message.updatedAt !== "") {
-            writer.uint32(98).string(message.updatedAt);
-        }
-        if (message.publishedAt !== "") {
-            writer.uint32(106).string(message.publishedAt);
+        if (message.isTag === true) {
+            writer.uint32(80).bool(message.isTag);
         }
         return writer;
     },
@@ -71,7 +59,7 @@ export const MsgCreateRelease = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.repositoryId = reader.string();
+                    message.repositoryId = longToNumber(reader.uint64());
                     break;
                 case 3:
                     message.tagName = reader.string();
@@ -89,22 +77,13 @@ export const MsgCreateRelease = {
                     message.attachments = reader.string();
                     break;
                 case 8:
-                    message.draft = reader.string();
+                    message.draft = reader.bool();
                     break;
                 case 9:
-                    message.preRelease = reader.string();
+                    message.preRelease = reader.bool();
                     break;
                 case 10:
-                    message.isTag = reader.string();
-                    break;
-                case 11:
-                    message.createdAt = reader.string();
-                    break;
-                case 12:
-                    message.updatedAt = reader.string();
-                    break;
-                case 13:
-                    message.publishedAt = reader.string();
+                    message.isTag = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -122,10 +101,10 @@ export const MsgCreateRelease = {
             message.creator = "";
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = String(object.repositoryId);
+            message.repositoryId = Number(object.repositoryId);
         }
         else {
-            message.repositoryId = "";
+            message.repositoryId = 0;
         }
         if (object.tagName !== undefined && object.tagName !== null) {
             message.tagName = String(object.tagName);
@@ -158,40 +137,22 @@ export const MsgCreateRelease = {
             message.attachments = "";
         }
         if (object.draft !== undefined && object.draft !== null) {
-            message.draft = String(object.draft);
+            message.draft = Boolean(object.draft);
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.preRelease !== undefined && object.preRelease !== null) {
-            message.preRelease = String(object.preRelease);
+            message.preRelease = Boolean(object.preRelease);
         }
         else {
-            message.preRelease = "";
+            message.preRelease = false;
         }
         if (object.isTag !== undefined && object.isTag !== null) {
-            message.isTag = String(object.isTag);
+            message.isTag = Boolean(object.isTag);
         }
         else {
-            message.isTag = "";
-        }
-        if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = String(object.createdAt);
-        }
-        else {
-            message.createdAt = "";
-        }
-        if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = String(object.updatedAt);
-        }
-        else {
-            message.updatedAt = "";
-        }
-        if (object.publishedAt !== undefined && object.publishedAt !== null) {
-            message.publishedAt = String(object.publishedAt);
-        }
-        else {
-            message.publishedAt = "";
+            message.isTag = false;
         }
         return message;
     },
@@ -210,10 +171,6 @@ export const MsgCreateRelease = {
         message.draft !== undefined && (obj.draft = message.draft);
         message.preRelease !== undefined && (obj.preRelease = message.preRelease);
         message.isTag !== undefined && (obj.isTag = message.isTag);
-        message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-        message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-        message.publishedAt !== undefined &&
-            (obj.publishedAt = message.publishedAt);
         return obj;
     },
     fromPartial(object) {
@@ -228,7 +185,7 @@ export const MsgCreateRelease = {
             message.repositoryId = object.repositoryId;
         }
         else {
-            message.repositoryId = "";
+            message.repositoryId = 0;
         }
         if (object.tagName !== undefined && object.tagName !== null) {
             message.tagName = object.tagName;
@@ -264,37 +221,19 @@ export const MsgCreateRelease = {
             message.draft = object.draft;
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.preRelease !== undefined && object.preRelease !== null) {
             message.preRelease = object.preRelease;
         }
         else {
-            message.preRelease = "";
+            message.preRelease = false;
         }
         if (object.isTag !== undefined && object.isTag !== null) {
             message.isTag = object.isTag;
         }
         else {
-            message.isTag = "";
-        }
-        if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = object.createdAt;
-        }
-        else {
-            message.createdAt = "";
-        }
-        if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = object.updatedAt;
-        }
-        else {
-            message.updatedAt = "";
-        }
-        if (object.publishedAt !== undefined && object.publishedAt !== null) {
-            message.publishedAt = object.publishedAt;
-        }
-        else {
-            message.publishedAt = "";
+            message.isTag = false;
         }
         return message;
     },
@@ -359,18 +298,14 @@ export const MsgCreateReleaseResponse = {
 const baseMsgUpdateRelease = {
     creator: "",
     id: 0,
-    repositoryId: "",
     tagName: "",
     target: "",
     name: "",
     description: "",
     attachments: "",
-    draft: "",
-    preRelease: "",
-    isTag: "",
-    createdAt: "",
-    updatedAt: "",
-    publishedAt: "",
+    draft: false,
+    preRelease: false,
+    isTag: false,
 };
 export const MsgUpdateRelease = {
     encode(message, writer = Writer.create()) {
@@ -380,41 +315,29 @@ export const MsgUpdateRelease = {
         if (message.id !== 0) {
             writer.uint32(16).uint64(message.id);
         }
-        if (message.repositoryId !== "") {
-            writer.uint32(26).string(message.repositoryId);
-        }
         if (message.tagName !== "") {
-            writer.uint32(34).string(message.tagName);
+            writer.uint32(26).string(message.tagName);
         }
         if (message.target !== "") {
-            writer.uint32(42).string(message.target);
+            writer.uint32(34).string(message.target);
         }
         if (message.name !== "") {
-            writer.uint32(50).string(message.name);
+            writer.uint32(42).string(message.name);
         }
         if (message.description !== "") {
-            writer.uint32(58).string(message.description);
+            writer.uint32(50).string(message.description);
         }
         if (message.attachments !== "") {
-            writer.uint32(66).string(message.attachments);
+            writer.uint32(58).string(message.attachments);
         }
-        if (message.draft !== "") {
-            writer.uint32(74).string(message.draft);
+        if (message.draft === true) {
+            writer.uint32(64).bool(message.draft);
         }
-        if (message.preRelease !== "") {
-            writer.uint32(82).string(message.preRelease);
+        if (message.preRelease === true) {
+            writer.uint32(72).bool(message.preRelease);
         }
-        if (message.isTag !== "") {
-            writer.uint32(90).string(message.isTag);
-        }
-        if (message.createdAt !== "") {
-            writer.uint32(98).string(message.createdAt);
-        }
-        if (message.updatedAt !== "") {
-            writer.uint32(106).string(message.updatedAt);
-        }
-        if (message.publishedAt !== "") {
-            writer.uint32(114).string(message.publishedAt);
+        if (message.isTag === true) {
+            writer.uint32(80).bool(message.isTag);
         }
         return writer;
     },
@@ -432,40 +355,28 @@ export const MsgUpdateRelease = {
                     message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.repositoryId = reader.string();
-                    break;
-                case 4:
                     message.tagName = reader.string();
                     break;
-                case 5:
+                case 4:
                     message.target = reader.string();
                     break;
-                case 6:
+                case 5:
                     message.name = reader.string();
                     break;
-                case 7:
+                case 6:
                     message.description = reader.string();
                     break;
-                case 8:
+                case 7:
                     message.attachments = reader.string();
                     break;
+                case 8:
+                    message.draft = reader.bool();
+                    break;
                 case 9:
-                    message.draft = reader.string();
+                    message.preRelease = reader.bool();
                     break;
                 case 10:
-                    message.preRelease = reader.string();
-                    break;
-                case 11:
-                    message.isTag = reader.string();
-                    break;
-                case 12:
-                    message.createdAt = reader.string();
-                    break;
-                case 13:
-                    message.updatedAt = reader.string();
-                    break;
-                case 14:
-                    message.publishedAt = reader.string();
+                    message.isTag = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -487,12 +398,6 @@ export const MsgUpdateRelease = {
         }
         else {
             message.id = 0;
-        }
-        if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = String(object.repositoryId);
-        }
-        else {
-            message.repositoryId = "";
         }
         if (object.tagName !== undefined && object.tagName !== null) {
             message.tagName = String(object.tagName);
@@ -525,40 +430,22 @@ export const MsgUpdateRelease = {
             message.attachments = "";
         }
         if (object.draft !== undefined && object.draft !== null) {
-            message.draft = String(object.draft);
+            message.draft = Boolean(object.draft);
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.preRelease !== undefined && object.preRelease !== null) {
-            message.preRelease = String(object.preRelease);
+            message.preRelease = Boolean(object.preRelease);
         }
         else {
-            message.preRelease = "";
+            message.preRelease = false;
         }
         if (object.isTag !== undefined && object.isTag !== null) {
-            message.isTag = String(object.isTag);
+            message.isTag = Boolean(object.isTag);
         }
         else {
-            message.isTag = "";
-        }
-        if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = String(object.createdAt);
-        }
-        else {
-            message.createdAt = "";
-        }
-        if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = String(object.updatedAt);
-        }
-        else {
-            message.updatedAt = "";
-        }
-        if (object.publishedAt !== undefined && object.publishedAt !== null) {
-            message.publishedAt = String(object.publishedAt);
-        }
-        else {
-            message.publishedAt = "";
+            message.isTag = false;
         }
         return message;
     },
@@ -566,8 +453,6 @@ export const MsgUpdateRelease = {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.id !== undefined && (obj.id = message.id);
-        message.repositoryId !== undefined &&
-            (obj.repositoryId = message.repositoryId);
         message.tagName !== undefined && (obj.tagName = message.tagName);
         message.target !== undefined && (obj.target = message.target);
         message.name !== undefined && (obj.name = message.name);
@@ -578,10 +463,6 @@ export const MsgUpdateRelease = {
         message.draft !== undefined && (obj.draft = message.draft);
         message.preRelease !== undefined && (obj.preRelease = message.preRelease);
         message.isTag !== undefined && (obj.isTag = message.isTag);
-        message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-        message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-        message.publishedAt !== undefined &&
-            (obj.publishedAt = message.publishedAt);
         return obj;
     },
     fromPartial(object) {
@@ -597,12 +478,6 @@ export const MsgUpdateRelease = {
         }
         else {
             message.id = 0;
-        }
-        if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = object.repositoryId;
-        }
-        else {
-            message.repositoryId = "";
         }
         if (object.tagName !== undefined && object.tagName !== null) {
             message.tagName = object.tagName;
@@ -638,37 +513,19 @@ export const MsgUpdateRelease = {
             message.draft = object.draft;
         }
         else {
-            message.draft = "";
+            message.draft = false;
         }
         if (object.preRelease !== undefined && object.preRelease !== null) {
             message.preRelease = object.preRelease;
         }
         else {
-            message.preRelease = "";
+            message.preRelease = false;
         }
         if (object.isTag !== undefined && object.isTag !== null) {
             message.isTag = object.isTag;
         }
         else {
-            message.isTag = "";
-        }
-        if (object.createdAt !== undefined && object.createdAt !== null) {
-            message.createdAt = object.createdAt;
-        }
-        else {
-            message.createdAt = "";
-        }
-        if (object.updatedAt !== undefined && object.updatedAt !== null) {
-            message.updatedAt = object.updatedAt;
-        }
-        else {
-            message.updatedAt = "";
-        }
-        if (object.publishedAt !== undefined && object.publishedAt !== null) {
-            message.publishedAt = object.publishedAt;
-        }
-        else {
-            message.publishedAt = "";
+            message.isTag = false;
         }
         return message;
     },

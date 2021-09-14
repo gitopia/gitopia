@@ -22,6 +22,15 @@ export enum RepositoryCollaboratorPermission {
   ADMIN = "ADMIN",
 }
 
+export interface GitopiaAttachment {
+  name?: string;
+
+  /** @format uint64 */
+  size?: string;
+  sha?: string;
+  uploader?: string;
+}
+
 export interface GitopiaComment {
   creator?: string;
 
@@ -516,6 +525,10 @@ export interface GitopiaQueryGetIssueResponse {
   Issue?: GitopiaIssue;
 }
 
+export interface GitopiaQueryGetLatestReleaseResponse {
+  Release?: GitopiaRelease;
+}
+
 export interface GitopiaQueryGetOrganizationResponse {
   Organization?: GitopiaOrganization;
 }
@@ -557,17 +570,25 @@ export interface GitopiaRelease {
 
   /** @format uint64 */
   id?: string;
+
+  /** @format uint64 */
   repositoryId?: string;
   tagName?: string;
   target?: string;
   name?: string;
   description?: string;
-  attachments?: string;
-  draft?: string;
-  preRelease?: string;
-  isTag?: string;
+  attachments?: GitopiaAttachment[];
+  draft?: boolean;
+  preRelease?: boolean;
+  isTag?: boolean;
+
+  /** @format int64 */
   createdAt?: string;
+
+  /** @format int64 */
   updatedAt?: string;
+
+  /** @format int64 */
   publishedAt?: string;
 }
 
@@ -596,7 +617,7 @@ export interface GitopiaRepository {
 
   /** @format uint64 */
   labelsCount?: string;
-  releases?: string;
+  releases?: GitopiaRepositoryRelease[];
 
   /** @format int64 */
   createdAt?: string;
@@ -660,6 +681,12 @@ export interface GitopiaRepositoryPullRequest {
 
   /** @format uint64 */
   id?: string;
+}
+
+export interface GitopiaRepositoryRelease {
+  /** @format uint64 */
+  id?: string;
+  tagName?: string;
 }
 
 export interface GitopiaRepositoryTag {
@@ -1500,6 +1527,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRepositoryPullRequest = (userId: string, repositoryName: string, pullIid: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryPullRequestResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/pull/${pullIid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryLatestRelease
+   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
+   */
+  queryLatestRelease = (userId: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetLatestReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/latest`,
       method: "GET",
       format: "json",
       ...params,

@@ -24,20 +24,20 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Release struct {
-	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id           uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	RepositoryId string `protobuf:"bytes,3,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
-	TagName      string `protobuf:"bytes,4,opt,name=tagName,proto3" json:"tagName,omitempty"`
-	Target       string `protobuf:"bytes,5,opt,name=target,proto3" json:"target,omitempty"`
-	Name         string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	Description  string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Attachments  string `protobuf:"bytes,8,opt,name=attachments,proto3" json:"attachments,omitempty"`
-	Draft        string `protobuf:"bytes,9,opt,name=draft,proto3" json:"draft,omitempty"`
-	PreRelease   string `protobuf:"bytes,10,opt,name=preRelease,proto3" json:"preRelease,omitempty"`
-	IsTag        string `protobuf:"bytes,11,opt,name=isTag,proto3" json:"isTag,omitempty"`
-	CreatedAt    string `protobuf:"bytes,12,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt    string `protobuf:"bytes,13,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	PublishedAt  string `protobuf:"bytes,14,opt,name=publishedAt,proto3" json:"publishedAt,omitempty"`
+	Creator      string        `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id           uint64        `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	RepositoryId uint64        `protobuf:"varint,3,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
+	TagName      string        `protobuf:"bytes,4,opt,name=tagName,proto3" json:"tagName,omitempty"`
+	Target       string        `protobuf:"bytes,5,opt,name=target,proto3" json:"target,omitempty"`
+	Name         string        `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Description  string        `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Attachments  []*Attachment `protobuf:"bytes,8,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	Draft        bool          `protobuf:"varint,9,opt,name=draft,proto3" json:"draft,omitempty"`
+	PreRelease   bool          `protobuf:"varint,10,opt,name=preRelease,proto3" json:"preRelease,omitempty"`
+	IsTag        bool          `protobuf:"varint,11,opt,name=isTag,proto3" json:"isTag,omitempty"`
+	CreatedAt    int64         `protobuf:"varint,12,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt    int64         `protobuf:"varint,13,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	PublishedAt  int64         `protobuf:"varint,14,opt,name=publishedAt,proto3" json:"publishedAt,omitempty"`
 }
 
 func (m *Release) Reset()         { *m = Release{} }
@@ -87,11 +87,11 @@ func (m *Release) GetId() uint64 {
 	return 0
 }
 
-func (m *Release) GetRepositoryId() string {
+func (m *Release) GetRepositoryId() uint64 {
 	if m != nil {
 		return m.RepositoryId
 	}
-	return ""
+	return 0
 }
 
 func (m *Release) GetTagName() string {
@@ -122,53 +122,53 @@ func (m *Release) GetDescription() string {
 	return ""
 }
 
-func (m *Release) GetAttachments() string {
+func (m *Release) GetAttachments() []*Attachment {
 	if m != nil {
 		return m.Attachments
 	}
-	return ""
+	return nil
 }
 
-func (m *Release) GetDraft() string {
+func (m *Release) GetDraft() bool {
 	if m != nil {
 		return m.Draft
 	}
-	return ""
+	return false
 }
 
-func (m *Release) GetPreRelease() string {
+func (m *Release) GetPreRelease() bool {
 	if m != nil {
 		return m.PreRelease
 	}
-	return ""
+	return false
 }
 
-func (m *Release) GetIsTag() string {
+func (m *Release) GetIsTag() bool {
 	if m != nil {
 		return m.IsTag
 	}
-	return ""
+	return false
 }
 
-func (m *Release) GetCreatedAt() string {
+func (m *Release) GetCreatedAt() int64 {
 	if m != nil {
 		return m.CreatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Release) GetUpdatedAt() string {
+func (m *Release) GetUpdatedAt() int64 {
 	if m != nil {
 		return m.UpdatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Release) GetPublishedAt() string {
+func (m *Release) GetPublishedAt() int64 {
 	if m != nil {
 		return m.PublishedAt
 	}
-	return ""
+	return 0
 }
 
 func init() {
@@ -178,28 +178,30 @@ func init() {
 func init() { proto.RegisterFile("gitopia/release.proto", fileDescriptor_5fd2e3bb1bcbe1fb) }
 
 var fileDescriptor_5fd2e3bb1bcbe1fb = []byte{
-	// 335 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x91, 0xbf, 0x4e, 0x72, 0x31,
-	0x18, 0xc6, 0x39, 0xfc, 0xfd, 0x28, 0x7c, 0x0c, 0x0d, 0x6a, 0x63, 0x4c, 0x43, 0x98, 0x88, 0x03,
-	0x0c, 0x5e, 0x81, 0xc6, 0xc5, 0xc5, 0x81, 0x38, 0xb9, 0x95, 0xd3, 0x5a, 0x9a, 0x00, 0x6d, 0xda,
-	0x97, 0x44, 0xae, 0xc1, 0xc5, 0xcb, 0x72, 0x64, 0x74, 0x34, 0x70, 0x23, 0xa6, 0x6f, 0xcf, 0xc1,
-	0xa3, 0x53, 0xfb, 0xfc, 0x7e, 0x4f, 0xdf, 0xf4, 0x9c, 0x92, 0x33, 0x6d, 0xc0, 0x3a, 0x23, 0x66,
-	0x5e, 0xad, 0x94, 0x08, 0x6a, 0xea, 0xbc, 0x05, 0x4b, 0x2f, 0x0a, 0x3c, 0xfd, 0xb3, 0x5e, 0x0e,
-	0xb5, 0xd5, 0x16, 0x3b, 0xb3, 0xb8, 0x4b, 0xf5, 0xf1, 0x5b, 0x83, 0x74, 0xe6, 0x69, 0x00, 0x65,
-	0xa4, 0x93, 0x7b, 0x25, 0xc0, 0x7a, 0x96, 0x8d, 0xb2, 0x49, 0x77, 0x5e, 0x46, 0x3a, 0x20, 0x75,
-	0x23, 0x59, 0x7d, 0x94, 0x4d, 0x9a, 0xf3, 0xba, 0x91, 0x74, 0x4c, 0xfa, 0x5e, 0x39, 0x1b, 0x0c,
-	0x58, 0xbf, 0x7b, 0x90, 0xac, 0x81, 0xf5, 0x5f, 0x2c, 0x4e, 0x03, 0xa1, 0x1f, 0xc5, 0x5a, 0xb1,
-	0x66, 0x9a, 0x56, 0x44, 0x7a, 0x4e, 0xda, 0x20, 0xbc, 0x56, 0xc0, 0x5a, 0x28, 0x8a, 0x44, 0x29,
-	0x69, 0x6e, 0x62, 0xbd, 0x8d, 0x14, 0xf7, 0x74, 0x44, 0x7a, 0x52, 0x85, 0xdc, 0x1b, 0x07, 0xc6,
-	0x6e, 0x58, 0x07, 0x55, 0x15, 0xc5, 0x86, 0x00, 0x10, 0xf9, 0x72, 0xad, 0x36, 0x10, 0xd8, 0xbf,
-	0xd4, 0xa8, 0x20, 0x3a, 0x24, 0x2d, 0xe9, 0xc5, 0x0b, 0xb0, 0x2e, 0xba, 0x14, 0x28, 0x27, 0xc4,
-	0x79, 0x55, 0x7c, 0x3b, 0x23, 0xa8, 0x2a, 0x24, 0x9e, 0x32, 0xe1, 0x49, 0x68, 0xd6, 0x4b, 0xa7,
-	0x30, 0xd0, 0x2b, 0xd2, 0xc5, 0x9f, 0xa2, 0xe4, 0x2d, 0xb0, 0x3e, 0x9a, 0x1f, 0x10, 0xed, 0xd6,
-	0xc9, 0xc2, 0xfe, 0x4f, 0xf6, 0x04, 0xe2, 0x4d, 0xdd, 0x76, 0xb1, 0x32, 0x61, 0x89, 0x7e, 0x90,
-	0x6e, 0x5a, 0x41, 0x77, 0xf7, 0x1f, 0x07, 0x9e, 0xed, 0x0f, 0x3c, 0xfb, 0x3a, 0xf0, 0xec, 0xfd,
-	0xc8, 0x6b, 0xfb, 0x23, 0xaf, 0x7d, 0x1e, 0x79, 0xed, 0xf9, 0x5a, 0x1b, 0x58, 0x6e, 0x17, 0xd3,
-	0xdc, 0xae, 0x67, 0xe5, 0xc3, 0x97, 0xeb, 0xeb, 0x69, 0x07, 0x3b, 0xa7, 0xc2, 0xa2, 0x8d, 0x4f,
-	0x7b, 0xf3, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x4f, 0xaf, 0x15, 0x0e, 0x22, 0x02, 0x00, 0x00,
+	// 365 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xcf, 0x6e, 0xe2, 0x30,
+	0x10, 0xc6, 0x31, 0xe1, 0xef, 0x84, 0xe5, 0x60, 0xb1, 0xbb, 0x16, 0x5a, 0x45, 0x11, 0x7b, 0x89,
+	0x7a, 0x08, 0x52, 0xfb, 0x04, 0x54, 0xed, 0xa1, 0x97, 0x1e, 0xa2, 0x9e, 0x7a, 0x33, 0x89, 0x1b,
+	0x2c, 0x01, 0xb6, 0x9c, 0x41, 0x2a, 0x6f, 0xd1, 0x47, 0xe9, 0x63, 0xf4, 0xc8, 0xb1, 0xc7, 0x0a,
+	0x5e, 0xa4, 0x8a, 0x1d, 0x20, 0xad, 0xd4, 0x93, 0xe7, 0xfb, 0x7e, 0x33, 0x9f, 0xe4, 0x19, 0xf8,
+	0x9d, 0x4b, 0x54, 0x5a, 0xf2, 0xa9, 0x11, 0x4b, 0xc1, 0x0b, 0x11, 0x6b, 0xa3, 0x50, 0xd1, 0xbf,
+	0x95, 0x1d, 0x7f, 0x7b, 0xc7, 0xa3, 0x5c, 0xe5, 0xca, 0xf6, 0x4c, 0xcb, 0xca, 0xb5, 0x8f, 0xd9,
+	0x39, 0x45, 0xab, 0x42, 0xa2, 0x32, 0x5b, 0x47, 0x26, 0xaf, 0x1e, 0x74, 0x13, 0x17, 0x4d, 0x19,
+	0x74, 0x53, 0x23, 0x38, 0x2a, 0xc3, 0x48, 0x48, 0xa2, 0x7e, 0x72, 0x94, 0x74, 0x08, 0x4d, 0x99,
+	0xb1, 0x66, 0x48, 0xa2, 0x56, 0xd2, 0x94, 0x19, 0x9d, 0xc0, 0xe0, 0x9c, 0x74, 0x97, 0x31, 0xcf,
+	0x92, 0x2f, 0x5e, 0x99, 0x86, 0x3c, 0xbf, 0xe7, 0x2b, 0xc1, 0x5a, 0x2e, 0xad, 0x92, 0xf4, 0x0f,
+	0x74, 0x90, 0x9b, 0x5c, 0x20, 0x6b, 0x5b, 0x50, 0x29, 0x4a, 0xa1, 0xb5, 0x2e, 0xdb, 0x3b, 0xd6,
+	0xb5, 0x35, 0x0d, 0xc1, 0xcf, 0x44, 0x91, 0x1a, 0xa9, 0x51, 0xaa, 0x35, 0xeb, 0x5a, 0x54, 0xb7,
+	0xe8, 0x2d, 0xf8, 0x1c, 0x91, 0xa7, 0x8b, 0x95, 0x58, 0x63, 0xc1, 0x7a, 0xa1, 0x17, 0xf9, 0x97,
+	0xff, 0xe3, 0x1f, 0x16, 0x14, 0xcf, 0x4e, 0xbd, 0x49, 0x7d, 0x8e, 0x8e, 0xa0, 0x9d, 0x19, 0xfe,
+	0x84, 0xac, 0x1f, 0x92, 0xa8, 0x97, 0x38, 0x41, 0x03, 0x00, 0x6d, 0x44, 0xb5, 0x20, 0x06, 0x16,
+	0xd5, 0x9c, 0x72, 0x4a, 0x16, 0x0f, 0x3c, 0x67, 0xbe, 0x9b, 0xb2, 0x82, 0xfe, 0x83, 0xbe, 0xdd,
+	0x9c, 0xc8, 0x66, 0xc8, 0x06, 0x21, 0x89, 0xbc, 0xe4, 0x6c, 0x94, 0x74, 0xa3, 0xb3, 0x8a, 0xfe,
+	0x72, 0xf4, 0x64, 0x94, 0x1f, 0xd6, 0x9b, 0xf9, 0x52, 0x16, 0x0b, 0xcb, 0x87, 0x96, 0xd7, 0xad,
+	0xeb, 0x9b, 0xb7, 0x7d, 0x40, 0x76, 0xfb, 0x80, 0x7c, 0xec, 0x03, 0xf2, 0x72, 0x08, 0x1a, 0xbb,
+	0x43, 0xd0, 0x78, 0x3f, 0x04, 0x8d, 0xc7, 0x8b, 0x5c, 0xe2, 0x62, 0x33, 0x8f, 0x53, 0xb5, 0x9a,
+	0x1e, 0x2f, 0x7e, 0x7c, 0x9f, 0x4f, 0x15, 0x6e, 0xb5, 0x28, 0xe6, 0x1d, 0x7b, 0xff, 0xab, 0xcf,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x42, 0x23, 0x93, 0x88, 0x61, 0x02, 0x00, 0x00,
 }
 
 func (m *Release) Marshal() (dAtA []byte, err error) {
@@ -222,54 +224,64 @@ func (m *Release) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.PublishedAt) > 0 {
-		i -= len(m.PublishedAt)
-		copy(dAtA[i:], m.PublishedAt)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.PublishedAt)))
+	if m.PublishedAt != 0 {
+		i = encodeVarintRelease(dAtA, i, uint64(m.PublishedAt))
 		i--
-		dAtA[i] = 0x72
+		dAtA[i] = 0x70
 	}
-	if len(m.UpdatedAt) > 0 {
-		i -= len(m.UpdatedAt)
-		copy(dAtA[i:], m.UpdatedAt)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.UpdatedAt)))
+	if m.UpdatedAt != 0 {
+		i = encodeVarintRelease(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x6a
+		dAtA[i] = 0x68
 	}
-	if len(m.CreatedAt) > 0 {
-		i -= len(m.CreatedAt)
-		copy(dAtA[i:], m.CreatedAt)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.CreatedAt)))
+	if m.CreatedAt != 0 {
+		i = encodeVarintRelease(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x62
+		dAtA[i] = 0x60
 	}
-	if len(m.IsTag) > 0 {
-		i -= len(m.IsTag)
-		copy(dAtA[i:], m.IsTag)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.IsTag)))
+	if m.IsTag {
 		i--
-		dAtA[i] = 0x5a
+		if m.IsTag {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x58
 	}
-	if len(m.PreRelease) > 0 {
-		i -= len(m.PreRelease)
-		copy(dAtA[i:], m.PreRelease)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.PreRelease)))
+	if m.PreRelease {
 		i--
-		dAtA[i] = 0x52
+		if m.PreRelease {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x50
 	}
-	if len(m.Draft) > 0 {
-		i -= len(m.Draft)
-		copy(dAtA[i:], m.Draft)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.Draft)))
+	if m.Draft {
 		i--
-		dAtA[i] = 0x4a
+		if m.Draft {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x48
 	}
 	if len(m.Attachments) > 0 {
-		i -= len(m.Attachments)
-		copy(dAtA[i:], m.Attachments)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.Attachments)))
-		i--
-		dAtA[i] = 0x42
+		for iNdEx := len(m.Attachments) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Attachments[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintRelease(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x42
+		}
 	}
 	if len(m.Description) > 0 {
 		i -= len(m.Description)
@@ -299,12 +311,10 @@ func (m *Release) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	if len(m.RepositoryId) > 0 {
-		i -= len(m.RepositoryId)
-		copy(dAtA[i:], m.RepositoryId)
-		i = encodeVarintRelease(dAtA, i, uint64(len(m.RepositoryId)))
+	if m.RepositoryId != 0 {
+		i = encodeVarintRelease(dAtA, i, uint64(m.RepositoryId))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x18
 	}
 	if m.Id != 0 {
 		i = encodeVarintRelease(dAtA, i, uint64(m.Id))
@@ -345,9 +355,8 @@ func (m *Release) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovRelease(uint64(m.Id))
 	}
-	l = len(m.RepositoryId)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.RepositoryId != 0 {
+		n += 1 + sovRelease(uint64(m.RepositoryId))
 	}
 	l = len(m.TagName)
 	if l > 0 {
@@ -365,33 +374,29 @@ func (m *Release) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRelease(uint64(l))
 	}
-	l = len(m.Attachments)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if len(m.Attachments) > 0 {
+		for _, e := range m.Attachments {
+			l = e.Size()
+			n += 1 + l + sovRelease(uint64(l))
+		}
 	}
-	l = len(m.Draft)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.Draft {
+		n += 2
 	}
-	l = len(m.PreRelease)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.PreRelease {
+		n += 2
 	}
-	l = len(m.IsTag)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.IsTag {
+		n += 2
 	}
-	l = len(m.CreatedAt)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.CreatedAt != 0 {
+		n += 1 + sovRelease(uint64(m.CreatedAt))
 	}
-	l = len(m.UpdatedAt)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.UpdatedAt != 0 {
+		n += 1 + sovRelease(uint64(m.UpdatedAt))
 	}
-	l = len(m.PublishedAt)
-	if l > 0 {
-		n += 1 + l + sovRelease(uint64(l))
+	if m.PublishedAt != 0 {
+		n += 1 + sovRelease(uint64(m.PublishedAt))
 	}
 	return n
 }
@@ -483,10 +488,10 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 3:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
 			}
-			var stringLen uint64
+			m.RepositoryId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -496,24 +501,11 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.RepositoryId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RepositoryId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field TagName", wireType)
@@ -646,7 +638,7 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Attachments", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -656,29 +648,31 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthRelease
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthRelease
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Attachments = string(dAtA[iNdEx:postIndex])
+			m.Attachments = append(m.Attachments, &Attachment{})
+			if err := m.Attachments[len(m.Attachments)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 9:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Draft", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -688,29 +682,17 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Draft = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.Draft = bool(v != 0)
 		case 10:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PreRelease", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -720,29 +702,17 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PreRelease = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.PreRelease = bool(v != 0)
 		case 11:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IsTag", wireType)
 			}
-			var stringLen uint64
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -752,29 +722,17 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IsTag = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			m.IsTag = bool(v != 0)
 		case 12:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
-			var stringLen uint64
+			m.CreatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -784,29 +742,16 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.CreatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CreatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 13:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
-			var stringLen uint64
+			m.UpdatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -816,29 +761,16 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.UpdatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 14:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PublishedAt", wireType)
 			}
-			var stringLen uint64
+			m.PublishedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRelease
@@ -848,24 +780,11 @@ func (m *Release) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.PublishedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRelease
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRelease
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PublishedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipRelease(dAtA[iNdEx:])

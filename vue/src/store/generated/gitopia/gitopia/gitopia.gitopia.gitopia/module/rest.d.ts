@@ -9,6 +9,13 @@ export declare enum RepositoryCollaboratorPermission {
     MAINTAIN = "MAINTAIN",
     ADMIN = "ADMIN"
 }
+export interface GitopiaAttachment {
+    name?: string;
+    /** @format uint64 */
+    size?: string;
+    sha?: string;
+    uploader?: string;
+}
 export interface GitopiaComment {
     creator?: string;
     /** @format uint64 */
@@ -388,6 +395,9 @@ export interface GitopiaQueryGetCommentResponse {
 export interface GitopiaQueryGetIssueResponse {
     Issue?: GitopiaIssue;
 }
+export interface GitopiaQueryGetLatestReleaseResponse {
+    Release?: GitopiaRelease;
+}
 export interface GitopiaQueryGetOrganizationResponse {
     Organization?: GitopiaOrganization;
 }
@@ -419,17 +429,21 @@ export interface GitopiaRelease {
     creator?: string;
     /** @format uint64 */
     id?: string;
+    /** @format uint64 */
     repositoryId?: string;
     tagName?: string;
     target?: string;
     name?: string;
     description?: string;
-    attachments?: string;
-    draft?: string;
-    preRelease?: string;
-    isTag?: string;
+    attachments?: GitopiaAttachment[];
+    draft?: boolean;
+    preRelease?: boolean;
+    isTag?: boolean;
+    /** @format int64 */
     createdAt?: string;
+    /** @format int64 */
     updatedAt?: string;
+    /** @format int64 */
     publishedAt?: string;
 }
 export interface GitopiaRepository {
@@ -453,7 +467,7 @@ export interface GitopiaRepository {
     labels?: GitopiaRepositoryLabel[];
     /** @format uint64 */
     labelsCount?: string;
-    releases?: string;
+    releases?: GitopiaRepositoryRelease[];
     /** @format int64 */
     createdAt?: string;
     /** @format int64 */
@@ -504,6 +518,11 @@ export interface GitopiaRepositoryPullRequest {
     iid?: string;
     /** @format uint64 */
     id?: string;
+}
+export interface GitopiaRepositoryRelease {
+    /** @format uint64 */
+    id?: string;
+    tagName?: string;
 }
 export interface GitopiaRepositoryTag {
     name?: string;
@@ -955,5 +974,13 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}
      */
     queryRepositoryPullRequest: (userId: string, repositoryName: string, pullIid: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryPullRequestResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryLatestRelease
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
+     */
+    queryLatestRelease: (userId: string, repositoryName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetLatestReleaseResponse, RpcStatus>>;
 }
 export {};

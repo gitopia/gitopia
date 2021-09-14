@@ -20,6 +20,15 @@ import { Whois } from "../gitopia/whois";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
+export interface QueryGetLatestReleaseRequest {
+  userId: string;
+  repositoryName: string;
+}
+
+export interface QueryGetLatestReleaseResponse {
+  Release: Release | undefined;
+}
+
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
   id: number;
@@ -259,6 +268,168 @@ export interface QueryAllWhoisResponse {
   Whois: Whois[];
   pagination: PageResponse | undefined;
 }
+
+const baseQueryGetLatestReleaseRequest: object = {
+  userId: "",
+  repositoryName: "",
+};
+
+export const QueryGetLatestReleaseRequest = {
+  encode(
+    message: QueryGetLatestReleaseRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
+    if (message.repositoryName !== "") {
+      writer.uint32(18).string(message.repositoryName);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetLatestReleaseRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetLatestReleaseRequest,
+    } as QueryGetLatestReleaseRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.userId = reader.string();
+          break;
+        case 2:
+          message.repositoryName = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetLatestReleaseRequest {
+    const message = {
+      ...baseQueryGetLatestReleaseRequest,
+    } as QueryGetLatestReleaseRequest;
+    if (object.userId !== undefined && object.userId !== null) {
+      message.userId = String(object.userId);
+    } else {
+      message.userId = "";
+    }
+    if (object.repositoryName !== undefined && object.repositoryName !== null) {
+      message.repositoryName = String(object.repositoryName);
+    } else {
+      message.repositoryName = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetLatestReleaseRequest): unknown {
+    const obj: any = {};
+    message.userId !== undefined && (obj.userId = message.userId);
+    message.repositoryName !== undefined &&
+      (obj.repositoryName = message.repositoryName);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetLatestReleaseRequest>
+  ): QueryGetLatestReleaseRequest {
+    const message = {
+      ...baseQueryGetLatestReleaseRequest,
+    } as QueryGetLatestReleaseRequest;
+    if (object.userId !== undefined && object.userId !== null) {
+      message.userId = object.userId;
+    } else {
+      message.userId = "";
+    }
+    if (object.repositoryName !== undefined && object.repositoryName !== null) {
+      message.repositoryName = object.repositoryName;
+    } else {
+      message.repositoryName = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetLatestReleaseResponse: object = {};
+
+export const QueryGetLatestReleaseResponse = {
+  encode(
+    message: QueryGetLatestReleaseResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.Release !== undefined) {
+      Release.encode(message.Release, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetLatestReleaseResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetLatestReleaseResponse,
+    } as QueryGetLatestReleaseResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Release = Release.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetLatestReleaseResponse {
+    const message = {
+      ...baseQueryGetLatestReleaseResponse,
+    } as QueryGetLatestReleaseResponse;
+    if (object.Release !== undefined && object.Release !== null) {
+      message.Release = Release.fromJSON(object.Release);
+    } else {
+      message.Release = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetLatestReleaseResponse): unknown {
+    const obj: any = {};
+    message.Release !== undefined &&
+      (obj.Release = message.Release
+        ? Release.toJSON(message.Release)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetLatestReleaseResponse>
+  ): QueryGetLatestReleaseResponse {
+    const message = {
+      ...baseQueryGetLatestReleaseResponse,
+    } as QueryGetLatestReleaseResponse;
+    if (object.Release !== undefined && object.Release !== null) {
+      message.Release = Release.fromPartial(object.Release);
+    } else {
+      message.Release = undefined;
+    }
+    return message;
+  },
+};
 
 const baseQueryGetReleaseRequest: object = { id: 0 };
 
@@ -4457,6 +4628,9 @@ export const QueryAllWhoisResponse = {
 
 /** Query defines the gRPC querier service. */
 export interface Query {
+  LatestRelease(
+    request: QueryGetLatestReleaseRequest
+  ): Promise<QueryGetLatestReleaseResponse>;
   /** Queries a release by id. */
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
   /** Queries a list of release items. */
@@ -4544,6 +4718,20 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
+  LatestRelease(
+    request: QueryGetLatestReleaseRequest
+  ): Promise<QueryGetLatestReleaseResponse> {
+    const data = QueryGetLatestReleaseRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "LatestRelease",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetLatestReleaseResponse.decode(new Reader(data))
+    );
+  }
+
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse> {
     const data = QueryGetReleaseRequest.encode(request).finish();
     const promise = this.rpc.request(

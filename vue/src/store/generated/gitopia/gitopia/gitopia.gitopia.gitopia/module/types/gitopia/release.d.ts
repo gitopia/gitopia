@@ -1,20 +1,21 @@
 import { Writer, Reader } from "protobufjs/minimal";
+import { Attachment } from "../gitopia/repository";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Release {
     creator: string;
     id: number;
-    repositoryId: string;
+    repositoryId: number;
     tagName: string;
     target: string;
     name: string;
     description: string;
-    attachments: string;
-    draft: string;
-    preRelease: string;
-    isTag: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
+    attachments: Attachment[];
+    draft: boolean;
+    preRelease: boolean;
+    isTag: boolean;
+    createdAt: number;
+    updatedAt: number;
+    publishedAt: number;
 }
 export declare const Release: {
     encode(message: Release, writer?: Writer): Writer;

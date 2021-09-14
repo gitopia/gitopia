@@ -555,5 +555,18 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryLatestRelease
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
+         */
+        this.queryLatestRelease = (userId, repositoryName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/latest`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

@@ -17,7 +17,7 @@ export interface Repository {
     pullsCount: number;
     labels: RepositoryLabel[];
     labelsCount: number;
-    releases: string;
+    releases: RepositoryRelease[];
     createdAt: number;
     updatedAt: number;
     pushedAt: number;
@@ -77,6 +77,16 @@ export interface RepositoryLabel {
     color: string;
     description: string;
 }
+export interface RepositoryRelease {
+    id: number;
+    tagName: string;
+}
+export interface Attachment {
+    name: string;
+    size: number;
+    sha: string;
+    uploader: string;
+}
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;
@@ -132,6 +142,20 @@ export declare const RepositoryLabel: {
     fromJSON(object: any): RepositoryLabel;
     toJSON(message: RepositoryLabel): unknown;
     fromPartial(object: DeepPartial<RepositoryLabel>): RepositoryLabel;
+};
+export declare const RepositoryRelease: {
+    encode(message: RepositoryRelease, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryRelease;
+    fromJSON(object: any): RepositoryRelease;
+    toJSON(message: RepositoryRelease): unknown;
+    fromPartial(object: DeepPartial<RepositoryRelease>): RepositoryRelease;
+};
+export declare const Attachment: {
+    encode(message: Attachment, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): Attachment;
+    fromJSON(object: any): Attachment;
+    toJSON(message: Attachment): unknown;
+    fromPartial(object: DeepPartial<Attachment>): Attachment;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

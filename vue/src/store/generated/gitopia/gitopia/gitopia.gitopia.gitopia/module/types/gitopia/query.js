@@ -11,6 +11,146 @@ import { Repository, RepositoryBranch, RepositoryTag, } from "../gitopia/reposit
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseQueryGetLatestReleaseRequest = {
+    userId: "",
+    repositoryName: "",
+};
+export const QueryGetLatestReleaseRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLatestReleaseRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLatestReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLatestReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+};
+const baseQueryGetLatestReleaseResponse = {};
+export const QueryGetLatestReleaseResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Release !== undefined) {
+            Release.encode(message.Release, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLatestReleaseResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Release = Release.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLatestReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromJSON(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Release !== undefined &&
+            (obj.Release = message.Release
+                ? Release.toJSON(message.Release)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLatestReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromPartial(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+};
 const baseQueryGetReleaseRequest = { id: 0 };
 export const QueryGetReleaseRequest = {
     encode(message, writer = Writer.create()) {
@@ -3613,6 +3753,11 @@ export const QueryAllWhoisResponse = {
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
+    }
+    LatestRelease(request) {
+        const data = QueryGetLatestReleaseRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "LatestRelease", data);
+        return promise.then((data) => QueryGetLatestReleaseResponse.decode(new Reader(data)));
     }
     Release(request) {
         const data = QueryGetReleaseRequest.encode(request).finish();
