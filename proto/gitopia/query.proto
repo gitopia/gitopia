@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/organization.proto";
 import "gitopia/comment.proto";
@@ -17,6 +18,17 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+
+	// Queries a release by id.
+	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
+	}
+
+	// Queries a list of release items.
+	rpc ReleaseAll(QueryAllReleaseRequest) returns (QueryAllReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
+	}
+
 
 	// Queries a pullRequest by id.
 	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
@@ -144,6 +156,22 @@ service Query {
 }
 
 // this line is used by starport scaffolding # 3
+message QueryGetReleaseRequest {
+	uint64 id = 1;
+}
+
+message QueryGetReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllReleaseRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
 message QueryGetPullRequestRequest {
 	uint64 id = 1;
 }

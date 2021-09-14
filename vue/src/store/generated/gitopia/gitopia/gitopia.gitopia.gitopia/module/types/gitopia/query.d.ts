@@ -1,6 +1,7 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { PullRequest } from "../gitopia/pullRequest";
+import { Release } from "../gitopia/release";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
@@ -9,6 +10,19 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetReleaseRequest {
+    id: number;
+}
+export interface QueryGetReleaseResponse {
+    Release: Release | undefined;
+}
+export interface QueryAllReleaseRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllReleaseResponse {
+    Release: Release[];
+    pagination: PageResponse | undefined;
+}
 export interface QueryGetPullRequestRequest {
     id: number;
 }
@@ -181,6 +195,34 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetReleaseRequest: {
+    encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
+    fromJSON(object: any): QueryGetReleaseRequest;
+    toJSON(message: QueryGetReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetReleaseRequest>): QueryGetReleaseRequest;
+};
+export declare const QueryGetReleaseResponse: {
+    encode(message: QueryGetReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseResponse;
+    fromJSON(object: any): QueryGetReleaseResponse;
+    toJSON(message: QueryGetReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetReleaseResponse>): QueryGetReleaseResponse;
+};
+export declare const QueryAllReleaseRequest: {
+    encode(message: QueryAllReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllReleaseRequest;
+    fromJSON(object: any): QueryAllReleaseRequest;
+    toJSON(message: QueryAllReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllReleaseRequest>): QueryAllReleaseRequest;
+};
+export declare const QueryAllReleaseResponse: {
+    encode(message: QueryAllReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllReleaseResponse;
+    fromJSON(object: any): QueryAllReleaseResponse;
+    toJSON(message: QueryAllReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllReleaseResponse>): QueryAllReleaseResponse;
+};
 export declare const QueryGetPullRequestRequest: {
     encode(message: QueryGetPullRequestRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestRequest;
@@ -533,6 +575,10 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
+    /** Queries a release by id. */
+    Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
+    /** Queries a list of release items. */
+    ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     /** Queries a pullRequest by id. */
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
     /** Queries a list of pullRequest items. */
@@ -583,6 +629,8 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
+    ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
     PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     Organization(request: QueryGetOrganizationRequest): Promise<QueryGetOrganizationResponse>;

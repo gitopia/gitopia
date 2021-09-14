@@ -2,6 +2,7 @@
 	<div>
 		<div class="container">
       	<!-- this line is used by starport scaffolding # 4 -->
+		<SpType modulePath="gitopia.gitopia.gitopia" moduleType="Release"  />
 		<SpType modulePath="gitopia.gitopia.gitopia" moduleType="PullRequest"  />
 		<SpType modulePath="gitopia.gitopia.gitopia" moduleType="Organization"  />
 		<SpType modulePath="gitopia.gitopia.gitopia" moduleType="Comment"  />

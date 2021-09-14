@@ -59,3 +59,8 @@ const (
 	PullRequestKey      = "PullRequest-value-"
 	PullRequestCountKey = "PullRequest-count-"
 )
+
+const (
+	ReleaseKey      = "Release-value-"
+	ReleaseCountKey = "Release-count-"
+)

@@ -89,6 +89,10 @@ export interface GitopiaMsgCreatePullRequestResponse {
     /** @format uint64 */
     iid?: string;
 }
+export interface GitopiaMsgCreateReleaseResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export interface GitopiaMsgCreateRepositoryLabelResponse {
     /** @format uint64 */
     id?: string;
@@ -107,6 +111,7 @@ export declare type GitopiaMsgDeleteCommentResponse = object;
 export declare type GitopiaMsgDeleteIssueResponse = object;
 export declare type GitopiaMsgDeleteOrganizationResponse = object;
 export declare type GitopiaMsgDeletePullRequestResponse = object;
+export declare type GitopiaMsgDeleteReleaseResponse = object;
 export declare type GitopiaMsgDeleteRepositoryLabelResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
 export declare type GitopiaMsgDeleteTagResponse = object;
@@ -138,6 +143,7 @@ export declare type GitopiaMsgUpdateOrganizationResponse = object;
 export declare type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 export declare type GitopiaMsgUpdatePullRequestResponse = object;
 export declare type GitopiaMsgUpdatePullRequestTitleResponse = object;
+export declare type GitopiaMsgUpdateReleaseResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
@@ -283,6 +289,19 @@ export interface GitopiaQueryAllPullRequestResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllReleaseResponse {
+    Release?: GitopiaRelease[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryIssueResponse {
     Issue?: GitopiaIssue[];
     /**
@@ -375,6 +394,9 @@ export interface GitopiaQueryGetOrganizationResponse {
 export interface GitopiaQueryGetPullRequestResponse {
     PullRequest?: GitopiaPullRequest;
 }
+export interface GitopiaQueryGetReleaseResponse {
+    Release?: GitopiaRelease;
+}
 export interface GitopiaQueryGetRepositoryIssueResponse {
     Issue?: GitopiaIssue;
 }
@@ -392,6 +414,23 @@ export interface GitopiaQueryGetUserResponse {
 }
 export interface GitopiaQueryGetWhoisResponse {
     Whois?: GitopiaWhois;
+}
+export interface GitopiaRelease {
+    creator?: string;
+    /** @format uint64 */
+    id?: string;
+    repositoryId?: string;
+    tagName?: string;
+    target?: string;
+    name?: string;
+    description?: string;
+    attachments?: string;
+    draft?: string;
+    preRelease?: string;
+    isTag?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
 }
 export interface GitopiaRepository {
     creator?: string;
@@ -714,6 +753,29 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/pullRequest/{id}
      */
     queryPullRequest: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetPullRequestResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryReleaseAll
+     * @summary Queries a list of release items.
+     * @request GET:/gitopia/gitopia/gitopia/release
+     */
+    queryReleaseAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllReleaseResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRelease
+     * @summary Queries a release by id.
+     * @request GET:/gitopia/gitopia/gitopia/release/{id}
+     */
+    queryRelease: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetReleaseResponse, RpcStatus>>;
     /**
      * No description
      *

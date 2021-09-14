@@ -13,6 +13,7 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
 		// this line is used by starport scaffolding # genesis/types/default
+		ReleaseList:      []*Release{},
 		PullRequestList:  []*PullRequest{},
 		OrganizationList: []*Organization{},
 		CommentList:      []*Comment{},
@@ -29,6 +30,15 @@ func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # ibc/genesistype/validate
 
 	// this line is used by starport scaffolding # genesis/types/validate
+	// Check for duplicated ID in release
+	releaseIdMap := make(map[uint64]bool)
+
+	for _, elem := range gs.ReleaseList {
+		if _, ok := releaseIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for release")
+		}
+		releaseIdMap[elem.Id] = true
+	}
 	// Check for duplicated ID in pullRequest
 	pullRequestIdMap := make(map[uint64]bool)
 

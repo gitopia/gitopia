@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -14,6 +15,10 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
   /** this line is used by starport scaffolding # genesis/proto/state */
+  releaseList: Release[];
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
+  releaseCount: number;
+  /** this line is used by starport scaffolding # genesis/proto/stateField */
   pullRequestList: PullRequest[];
   /** this line is used by starport scaffolding # genesis/proto/stateField */
   pullRequestCount: number;
@@ -44,6 +49,7 @@ export interface GenesisState {
 }
 
 const baseGenesisState: object = {
+  releaseCount: 0,
   pullRequestCount: 0,
   organizationCount: 0,
   commentCount: 0,
@@ -55,6 +61,12 @@ const baseGenesisState: object = {
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.releaseList) {
+      Release.encode(v!, writer.uint32(122).fork()).ldelim();
+    }
+    if (message.releaseCount !== 0) {
+      writer.uint32(128).uint64(message.releaseCount);
+    }
     for (const v of message.pullRequestList) {
       PullRequest.encode(v!, writer.uint32(106).fork()).ldelim();
     }
@@ -104,6 +116,7 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
@@ -114,6 +127,12 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 15:
+          message.releaseList.push(Release.decode(reader, reader.uint32()));
+          break;
+        case 16:
+          message.releaseCount = longToNumber(reader.uint64() as Long);
+          break;
         case 13:
           message.pullRequestList.push(
             PullRequest.decode(reader, reader.uint32())
@@ -172,6 +191,7 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
@@ -179,6 +199,16 @@ export const GenesisState = {
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.releaseList !== undefined && object.releaseList !== null) {
+      for (const e of object.releaseList) {
+        message.releaseList.push(Release.fromJSON(e));
+      }
+    }
+    if (object.releaseCount !== undefined && object.releaseCount !== null) {
+      message.releaseCount = Number(object.releaseCount);
+    } else {
+      message.releaseCount = 0;
+    }
     if (
       object.pullRequestList !== undefined &&
       object.pullRequestList !== null
@@ -269,6 +299,15 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.releaseList) {
+      obj.releaseList = message.releaseList.map((e) =>
+        e ? Release.toJSON(e) : undefined
+      );
+    } else {
+      obj.releaseList = [];
+    }
+    message.releaseCount !== undefined &&
+      (obj.releaseCount = message.releaseCount);
     if (message.pullRequestList) {
       obj.pullRequestList = message.pullRequestList.map((e) =>
         e ? PullRequest.toJSON(e) : undefined
@@ -334,6 +373,7 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
     message.commentList = [];
@@ -341,6 +381,16 @@ export const GenesisState = {
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.releaseList !== undefined && object.releaseList !== null) {
+      for (const e of object.releaseList) {
+        message.releaseList.push(Release.fromPartial(e));
+      }
+    }
+    if (object.releaseCount !== undefined && object.releaseCount !== null) {
+      message.releaseCount = object.releaseCount;
+    } else {
+      message.releaseCount = 0;
+    }
     if (
       object.pullRequestList !== undefined &&
       object.pullRequestList !== null

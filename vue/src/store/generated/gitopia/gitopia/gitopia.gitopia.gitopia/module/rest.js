@@ -290,6 +290,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryReleaseAll
+         * @summary Queries a list of release items.
+         * @request GET:/gitopia/gitopia/gitopia/release
+         */
+        this.queryReleaseAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/release`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRelease
+         * @summary Queries a release by id.
+         * @request GET:/gitopia/gitopia/gitopia/release/{id}
+         */
+        this.queryRelease = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/release/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRepositoryAll
          * @summary Queries a list of repository items.
          * @request GET:/gitopia/gitopia/gitopia/repository
