@@ -15,11 +15,11 @@ import (
 
 func CmdCreateRelease() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-release [repositoryId] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag] [createdAt] [updatedAt] [publishedAt]",
+		Use:   "create-release [repositoryId] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag]",
 		Short: "Create a new release",
-		Args:  cobra.ExactArgs(12),
+		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsRepositoryId, err := cast.ToStringE(args[0])
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -43,27 +43,15 @@ func CmdCreateRelease() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsDraft, err := cast.ToStringE(args[6])
+			argsDraft, err := strconv.ParseBool(args[6])
 			if err != nil {
 				return err
 			}
-			argsPreRelease, err := cast.ToStringE(args[7])
+			argsPreRelease, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
-			argsIsTag, err := cast.ToStringE(args[8])
-			if err != nil {
-				return err
-			}
-			argsCreatedAt, err := cast.ToStringE(args[9])
-			if err != nil {
-				return err
-			}
-			argsUpdatedAt, err := cast.ToStringE(args[10])
-			if err != nil {
-				return err
-			}
-			argsPublishedAt, err := cast.ToStringE(args[11])
+			argsIsTag, err := strconv.ParseBool(args[8])
 			if err != nil {
 				return err
 			}
@@ -73,7 +61,7 @@ func CmdCreateRelease() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateRelease(clientCtx.GetFromAddress().String(), argsRepositoryId, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag, argsCreatedAt, argsUpdatedAt, argsPublishedAt)
+			msg := types.NewMsgCreateRelease(clientCtx.GetFromAddress().String(), argsRepositoryId, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -88,71 +76,43 @@ func CmdCreateRelease() *cobra.Command {
 
 func CmdUpdateRelease() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-release [id] [repositoryId] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag] [createdAt] [updatedAt] [publishedAt]",
+		Use:   "update-release [id] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag]",
 		Short: "Update a release",
-		Args:  cobra.ExactArgs(13),
+		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsRepositoryId, err := cast.ToStringE(args[1])
+			argsTagName, err := cast.ToStringE(args[1])
 			if err != nil {
 				return err
 			}
-
-			argsTagName, err := cast.ToStringE(args[2])
+			argsTarget, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
-
-			argsTarget, err := cast.ToStringE(args[3])
+			argsName, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
-
-			argsName, err := cast.ToStringE(args[4])
+			argsDescription, err := cast.ToStringE(args[4])
 			if err != nil {
 				return err
 			}
-
-			argsDescription, err := cast.ToStringE(args[5])
+			argsAttachments, err := cast.ToStringE(args[5])
 			if err != nil {
 				return err
 			}
-
-			argsAttachments, err := cast.ToStringE(args[6])
+			argsDraft, err := strconv.ParseBool(args[6])
 			if err != nil {
 				return err
 			}
-
-			argsDraft, err := cast.ToStringE(args[7])
+			argsPreRelease, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
-
-			argsPreRelease, err := cast.ToStringE(args[8])
-			if err != nil {
-				return err
-			}
-
-			argsIsTag, err := cast.ToStringE(args[9])
-			if err != nil {
-				return err
-			}
-
-			argsCreatedAt, err := cast.ToStringE(args[10])
-			if err != nil {
-				return err
-			}
-
-			argsUpdatedAt, err := cast.ToStringE(args[11])
-			if err != nil {
-				return err
-			}
-
-			argsPublishedAt, err := cast.ToStringE(args[12])
+			argsIsTag, err := strconv.ParseBool(args[8])
 			if err != nil {
 				return err
 			}
@@ -162,7 +122,7 @@ func CmdUpdateRelease() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateRelease(clientCtx.GetFromAddress().String(), id, argsRepositoryId, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag, argsCreatedAt, argsUpdatedAt, argsPublishedAt)
+			msg := types.NewMsgUpdateRelease(clientCtx.GetFromAddress().String(), id, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

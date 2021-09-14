@@ -69,18 +69,15 @@ service Msg {
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
   string creator = 1;
-  string repositoryId = 2;
+  uint64 repositoryId = 2;
   string tagName = 3;
   string target = 4;
   string name = 5;
   string description = 6;
   string attachments = 7;
-  string draft = 8;
-  string preRelease = 9;
-  string isTag = 10;
-  string createdAt = 11;
-  string updatedAt = 12;
-  string publishedAt = 13;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
 }
 
 message MsgCreateReleaseResponse {
@@ -90,18 +87,14 @@ message MsgCreateReleaseResponse {
 message MsgUpdateRelease {
   string creator = 1;
   uint64 id = 2;
-  string repositoryId = 3;
-  string tagName = 4;
-  string target = 5;
-  string name = 6;
-  string description = 7;
-  string attachments = 8;
-  string draft = 9;
-  string preRelease = 10;
-  string isTag = 11;
-  string createdAt = 12;
-  string updatedAt = 13;
-  string publishedAt = 14;
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
 }
 
 message MsgUpdateReleaseResponse { }

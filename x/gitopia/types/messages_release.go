@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateRelease{}
 
-func NewMsgCreateRelease(creator string, repositoryId string, tagName string, target string, name string, description string, attachments string, draft string, preRelease string, isTag string, createdAt string, updatedAt string, publishedAt string) *MsgCreateRelease {
+func NewMsgCreateRelease(creator string, repositoryId uint64, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool) *MsgCreateRelease {
 	return &MsgCreateRelease{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -19,9 +19,6 @@ func NewMsgCreateRelease(creator string, repositoryId string, tagName string, ta
 		Draft:        draft,
 		PreRelease:   preRelease,
 		IsTag:        isTag,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		PublishedAt:  publishedAt,
 	}
 }
 
@@ -51,27 +48,44 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.TagName) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tagName length exceeds limit: 63")
+	} else if len(msg.TagName) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tagName too short")
+	}
+	if len(msg.Target) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "target branch length exceeds limit: 63")
+	} else if len(msg.Target) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "target branch too short")
+	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release name length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release name too short")
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release description length exceeds limit: 20000")
+	}
+	if len(msg.Attachments) > 20 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateRelease{}
 
-func NewMsgUpdateRelease(creator string, id uint64, repositoryId string, tagName string, target string, name string, description string, attachments string, draft string, preRelease string, isTag string, createdAt string, updatedAt string, publishedAt string) *MsgUpdateRelease {
+func NewMsgUpdateRelease(creator string, id uint64, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool) *MsgUpdateRelease {
 	return &MsgUpdateRelease{
-		Id:           id,
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		TagName:      tagName,
-		Target:       target,
-		Name:         name,
-		Description:  description,
-		Attachments:  attachments,
-		Draft:        draft,
-		PreRelease:   preRelease,
-		IsTag:        isTag,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		PublishedAt:  publishedAt,
+		Id:          id,
+		Creator:     creator,
+		TagName:     tagName,
+		Target:      target,
+		Name:        name,
+		Description: description,
+		Attachments: attachments,
+		Draft:       draft,
+		PreRelease:  preRelease,
+		IsTag:       isTag,
 	}
 }
 
@@ -100,6 +114,27 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.TagName) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tagName length exceeds limit: 63")
+	} else if len(msg.TagName) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tagName too short")
+	}
+	if len(msg.Target) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "target branch length exceeds limit: 63")
+	} else if len(msg.Target) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "target branch too short")
+	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release name length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release name too short")
+	}
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "release description length exceeds limit: 20000")
+	}
+	if len(msg.Attachments) > 20 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
 	}
 	return nil
 }
@@ -138,5 +173,6 @@ func (msg *MsgDeleteRelease) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	return nil
 }

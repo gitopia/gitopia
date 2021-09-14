@@ -2,15 +2,72 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
+
+type Attachment struct {
+	Name     string
+	Size     uint64
+	Sha      string
+	Uploader string
+}
 
 func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRelease) (*types.MsgCreateReleaseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	}
+
+	repository := k.GetRepository(ctx, msg.RepositoryId)
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		if !k.HasOrganization(ctx, repository.Owner.Id) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		organization = k.GetOrganization(ctx, repository.Owner.Id)
+	}
+
+	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if _, exists := utils.RepositoryReleaseExists(repository.Releases, msg.Name); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with name (%v) already exists", msg.Name))
+	}
+
+	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))
+	}
+
+	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.TagName); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("target branch (%v) doesn't exists", msg.Target))
+	}
+
+	attachments := []*types.Attachment{}
+
+	if msg.Attachments != "" {
+		if err := json.Unmarshal([]byte(msg.Attachments), &attachments); err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal attachments")
+		}
+	}
+
+	currentTime := ctx.BlockTime().Unix()
 
 	var release = types.Release{
 		Creator:      msg.Creator,
@@ -19,19 +76,33 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 		Target:       msg.Target,
 		Name:         msg.Name,
 		Description:  msg.Description,
-		Attachments:  msg.Attachments,
+		Attachments:  attachments,
 		Draft:        msg.Draft,
 		PreRelease:   msg.PreRelease,
 		IsTag:        msg.IsTag,
-		CreatedAt:    msg.CreatedAt,
-		UpdatedAt:    msg.UpdatedAt,
-		PublishedAt:  msg.PublishedAt,
+		CreatedAt:    currentTime,
+		UpdatedAt:    currentTime,
+	}
+
+	if msg.Draft {
+		release.PublishedAt = time.Time{}.Unix()
+	} else {
+		release.PublishedAt = currentTime
 	}
 
 	id := k.AppendRelease(
 		ctx,
 		release,
 	)
+
+	var repositoryRelease = types.RepositoryRelease{
+		Name: msg.Name,
+		Id:   id,
+	}
+
+	repository.Releases = append(repository.Releases, &repositoryRelease)
+
+	k.SetRepository(ctx, repository)
 
 	return &types.MsgCreateReleaseResponse{
 		Id: id,
@@ -41,21 +112,8 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRelease) (*types.MsgUpdateReleaseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var release = types.Release{
-		Creator:      msg.Creator,
-		Id:           msg.Id,
-		RepositoryId: msg.RepositoryId,
-		TagName:      msg.TagName,
-		Target:       msg.Target,
-		Name:         msg.Name,
-		Description:  msg.Description,
-		Attachments:  msg.Attachments,
-		Draft:        msg.Draft,
-		PreRelease:   msg.PreRelease,
-		IsTag:        msg.IsTag,
-		CreatedAt:    msg.CreatedAt,
-		UpdatedAt:    msg.UpdatedAt,
-		PublishedAt:  msg.PublishedAt,
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
 	// Checks that the element exists
@@ -66,6 +124,55 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 	// Checks if the the msg sender is the same as the current owner
 	if msg.Creator != k.GetReleaseOwner(ctx, msg.Id) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	release := k.GetRelease(ctx, msg.Id)
+
+	repository := k.GetRepository(ctx, release.RepositoryId)
+
+	if _, exists := utils.RepositoryReleaseExists(repository.Releases, msg.Name); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with name (%v) already exists", msg.Name))
+	}
+
+	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))
+	}
+
+	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.TagName); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("target branch (%v) doesn't exists", msg.Target))
+	}
+
+	attachments := []*types.Attachment{}
+
+	if msg.Attachments != "" {
+		if err := json.Unmarshal([]byte(msg.Attachments), &attachments); err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to unmarshal attachments")
+		}
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	release.TagName = msg.TagName
+	release.Target = msg.Target
+	release.Name = msg.Name
+	release.Description = msg.Description
+	release.Attachments = []*types.Attachment{}
+	release.Draft = msg.Draft
+	release.PreRelease = msg.PreRelease
+	release.IsTag = msg.IsTag
+	release.UpdatedAt = currentTime
+
+	if msg.Draft {
+		release.PublishedAt = time.Time{}.Unix()
+	} else {
+		release.PublishedAt = currentTime
+	}
+
+	if i, exists := utils.RepositoryReleaseIdExists(repository.Releases, msg.Id); exists {
+		repository.Releases[i].Name = msg.Name
+		k.SetRepository(ctx, repository)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with Id (%d) doesn't exists in repository", msg.Id))
 	}
 
 	k.SetRelease(ctx, release)

@@ -22,7 +22,7 @@ message Repository {
   uint64 pullsCount = 14;
   repeated RepositoryLabel labels = 15;
   uint64 labelsCount = 16;
-  string releases = 17;
+  repeated RepositoryRelease releases = 17;
   int64 createdAt = 18;
   int64 updatedAt = 19;
   int64 pushedAt = 20;
@@ -82,4 +82,16 @@ message RepositoryLabel {
   string name = 2;
   string color = 3;
   string description = 4;
+} 
+
+message RepositoryRelease {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message Attachment {
+  string name = 1;
+  uint64 size = 2;
+  string sha = 3;
+  string uploader = 4;
 } 

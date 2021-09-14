@@ -4,20 +4,21 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
+import "gitopia/repository.proto";
 
 message Release {
   string creator = 1;
   uint64 id = 2;
-  string repositoryId = 3; 
+  uint64 repositoryId = 3; 
   string tagName = 4; 
   string target = 5; 
   string name = 6; 
   string description = 7; 
-  string attachments = 8; 
-  string draft = 9; 
-  string preRelease = 10; 
-  string isTag = 11; 
-  string createdAt = 12; 
-  string updatedAt = 13; 
-  string publishedAt = 14; 
+  repeated Attachment attachments = 8; 
+  bool draft = 9; 
+  bool preRelease = 10; 
+  bool isTag = 11; 
+  int64 createdAt = 12; 
+  int64 updatedAt = 13; 
+  int64 publishedAt = 14; 
 }
