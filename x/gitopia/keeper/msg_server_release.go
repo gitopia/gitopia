@@ -12,13 +12,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
-type Attachment struct {
-	Name     string
-	Size     uint64
-	Sha      string
-	Uploader string
-}
-
 func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRelease) (*types.MsgCreateReleaseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
