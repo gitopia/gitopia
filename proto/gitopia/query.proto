@@ -19,6 +19,10 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 service Query {
     // this line is used by starport scaffolding # 2
 
+	rpc LatestRelease(QueryGetLatestReleaseRequest) returns (QueryGetLatestReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
+	}
+
 	// Queries a release by id.
 	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
@@ -153,6 +157,15 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois";
 	}
 
+}
+
+message QueryGetLatestReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetLatestReleaseResponse {
+	Release Release = 1;
 }
 
 // this line is used by starport scaffolding # 3

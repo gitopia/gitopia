@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -56,4 +57,44 @@ func (k Keeper) Release(c context.Context, req *types.QueryGetReleaseRequest) (*
 	k.cdc.MustUnmarshalBinaryBare(store.Get(GetReleaseIDBytes(req.Id)), &release)
 
 	return &types.QueryGetReleaseResponse{Release: &release}, nil
+}
+
+func (k Keeper) LatestRelease(c context.Context, req *types.QueryGetLatestReleaseRequest) (*types.QueryGetLatestReleaseResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var user types.User
+	var repository types.Repository
+	var repositoryRelease *types.RepositoryRelease
+	var release types.Release
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if !k.HasUser(ctx, req.UserId) {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+	userKey := []byte(types.UserKey + req.UserId)
+	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+
+		len := len(repository.Releases)
+
+		if len == 0 {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+
+		repositoryRelease = repository.Releases[len-1]
+
+		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(repositoryRelease.Id)), &release)
+
+		return &types.QueryGetLatestReleaseResponse{Release: &release}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
 }
