@@ -64,6 +64,56 @@ func (k Keeper) Repository(c context.Context, req *types.QueryGetRepositoryReque
 	return &types.QueryGetRepositoryResponse{Repository: &repository}, nil
 }
 
+func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetRepositoryReleaseRequest) (*types.QueryGetRepositoryReleaseResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if k.HasUser(ctx, req.UserId) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.UserId) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	if i, exists := utils.RepositoryReleaseTagExists(repository.Releases, req.TagName); exists {
+		var release types.Release
+
+		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(uint64(i))), &release)
+
+		return &types.QueryGetRepositoryReleaseResponse{Release: &release}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
 func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepositoryReleaseRequest) (*types.QueryAllRepositoryReleaseResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

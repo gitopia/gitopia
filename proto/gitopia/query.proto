@@ -76,6 +76,10 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
 	}
 
+	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}";
+	}
+
 	rpc RepositoryReleaseAll(QueryAllRepositoryReleaseRequest) returns (QueryAllRepositoryReleaseResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases";
 	}
@@ -252,6 +256,16 @@ message QueryAllIssueRequest {
 message QueryAllIssueResponse {
 	repeated Issue Issue = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryReleaseResponse {
+	Release Release = 1;
 }
 
 message QueryAllRepositoryReleaseRequest { 
