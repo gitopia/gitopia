@@ -19,10 +19,6 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 service Query {
     // this line is used by starport scaffolding # 2
 
-	rpc LatestRelease(QueryGetLatestReleaseRequest) returns (QueryGetLatestReleaseResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
-	}
-
 	// Queries a release by id.
 	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
@@ -74,6 +70,10 @@ service Query {
 	// Queries a list of issue items.
 	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
+	}
+
+	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
 	}
 
 	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
@@ -167,15 +167,6 @@ service Query {
 
 }
 
-message QueryGetLatestReleaseRequest { 
-	string userId = 1;
-	string repositoryName = 2;
-}
-
-message QueryGetLatestReleaseResponse {
-	Release Release = 1;
-}
-
 // this line is used by starport scaffolding # 3
 message QueryGetReleaseRequest {
 	uint64 id = 1;
@@ -256,6 +247,15 @@ message QueryAllIssueRequest {
 message QueryAllIssueResponse {
 	repeated Issue Issue = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetLatestRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetLatestRepositoryReleaseResponse {
+	Release Release = 1;
 }
 
 message QueryGetRepositoryReleaseRequest { 
