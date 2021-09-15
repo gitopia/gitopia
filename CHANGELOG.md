@@ -2,6 +2,16 @@
 
 All notable changes will be documented here.
 
+## [Unreleased] - yyyy-mm-dd
+
+### Added
+
+- Implemented api to get latest repository release
+- Implemented api to get repository release by tag
+- Implemented api to get all repository releases
+- Implemented transaction to Update/Edit Release
+- Implemented transaction to Create Release
+
 ## [0.9.0] - 2021-09-13
 
 ### Added
