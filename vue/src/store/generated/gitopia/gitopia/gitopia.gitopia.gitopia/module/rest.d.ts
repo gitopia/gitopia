@@ -335,6 +335,19 @@ export interface GitopiaQueryAllRepositoryPullRequestResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllRepositoryReleaseResponse {
+    Release?: GitopiaRelease[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryResponse {
     Repository?: GitopiaRepository[];
     /**
@@ -395,7 +408,7 @@ export interface GitopiaQueryGetCommentResponse {
 export interface GitopiaQueryGetIssueResponse {
     Issue?: GitopiaIssue;
 }
-export interface GitopiaQueryGetLatestReleaseResponse {
+export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
     Release?: GitopiaRelease;
 }
 export interface GitopiaQueryGetOrganizationResponse {
@@ -412,6 +425,9 @@ export interface GitopiaQueryGetRepositoryIssueResponse {
 }
 export interface GitopiaQueryGetRepositoryPullRequestResponse {
     PullRequest?: GitopiaPullRequest;
+}
+export interface GitopiaQueryGetRepositoryReleaseResponse {
+    Release?: GitopiaRelease;
 }
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
@@ -978,9 +994,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryLatestRelease
+     * @name QueryRepositoryReleaseAll
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases
+     */
+    queryRepositoryReleaseAll: (userId: string, repositoryName: string, query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryReleaseResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryReleaseLatest
      * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
      */
-    queryLatestRelease: (userId: string, repositoryName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetLatestReleaseResponse, RpcStatus>>;
+    queryRepositoryReleaseLatest: (userId: string, repositoryName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetLatestRepositoryReleaseResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryRelease
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}
+     */
+    queryRepositoryRelease: (userId: string, repositoryName: string, tagName: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryReleaseResponse, RpcStatus>>;
 }
 export {};

@@ -452,6 +452,21 @@ export interface GitopiaQueryAllRepositoryPullRequestResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllRepositoryReleaseResponse {
+  Release?: GitopiaRelease[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface GitopiaQueryAllRepositoryResponse {
   Repository?: GitopiaRepository[];
 
@@ -525,7 +540,7 @@ export interface GitopiaQueryGetIssueResponse {
   Issue?: GitopiaIssue;
 }
 
-export interface GitopiaQueryGetLatestReleaseResponse {
+export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
   Release?: GitopiaRelease;
 }
 
@@ -547,6 +562,10 @@ export interface GitopiaQueryGetRepositoryIssueResponse {
 
 export interface GitopiaQueryGetRepositoryPullRequestResponse {
   PullRequest?: GitopiaPullRequest;
+}
+
+export interface GitopiaQueryGetRepositoryReleaseResponse {
+  Release?: GitopiaRelease;
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
@@ -1536,12 +1555,53 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryLatestRelease
+   * @name QueryRepositoryReleaseAll
+   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases
+   */
+  queryRepositoryReleaseAll = (
+    userId: string,
+    repositoryName: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllRepositoryReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryReleaseLatest
    * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
    */
-  queryLatestRelease = (userId: string, repositoryName: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetLatestReleaseResponse, RpcStatus>({
+  queryRepositoryReleaseLatest = (userId: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetLatestRepositoryReleaseResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/latest`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryRelease
+   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}
+   */
+  queryRepositoryRelease = (userId: string, repositoryName: string, tagName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetRepositoryReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/tag/${tagName}`,
       method: "GET",
       format: "json",
       ...params,

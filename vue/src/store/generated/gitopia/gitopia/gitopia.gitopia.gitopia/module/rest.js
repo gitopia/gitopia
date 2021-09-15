@@ -559,11 +559,38 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryLatestRelease
+         * @name QueryRepositoryReleaseAll
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases
+         */
+        this.queryRepositoryReleaseAll = (userId, repositoryName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryReleaseLatest
          * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
          */
-        this.queryLatestRelease = (userId, repositoryName, params = {}) => this.request({
+        this.queryRepositoryReleaseLatest = (userId, repositoryName, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/latest`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryRelease
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}
+         */
+        this.queryRepositoryRelease = (userId, repositoryName, tagName, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/tag/${tagName}`,
             method: "GET",
             format: "json",
             ...params,

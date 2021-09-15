@@ -11,146 +11,6 @@ import { Repository, RepositoryBranch, RepositoryTag, } from "../gitopia/reposit
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
-const baseQueryGetLatestReleaseRequest = {
-    userId: "",
-    repositoryName: "",
-};
-export const QueryGetLatestReleaseRequest = {
-    encode(message, writer = Writer.create()) {
-        if (message.userId !== "") {
-            writer.uint32(10).string(message.userId);
-        }
-        if (message.repositoryName !== "") {
-            writer.uint32(18).string(message.repositoryName);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseQueryGetLatestReleaseRequest,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.userId = reader.string();
-                    break;
-                case 2:
-                    message.repositoryName = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseQueryGetLatestReleaseRequest,
-        };
-        if (object.userId !== undefined && object.userId !== null) {
-            message.userId = String(object.userId);
-        }
-        else {
-            message.userId = "";
-        }
-        if (object.repositoryName !== undefined && object.repositoryName !== null) {
-            message.repositoryName = String(object.repositoryName);
-        }
-        else {
-            message.repositoryName = "";
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.userId !== undefined && (obj.userId = message.userId);
-        message.repositoryName !== undefined &&
-            (obj.repositoryName = message.repositoryName);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseQueryGetLatestReleaseRequest,
-        };
-        if (object.userId !== undefined && object.userId !== null) {
-            message.userId = object.userId;
-        }
-        else {
-            message.userId = "";
-        }
-        if (object.repositoryName !== undefined && object.repositoryName !== null) {
-            message.repositoryName = object.repositoryName;
-        }
-        else {
-            message.repositoryName = "";
-        }
-        return message;
-    },
-};
-const baseQueryGetLatestReleaseResponse = {};
-export const QueryGetLatestReleaseResponse = {
-    encode(message, writer = Writer.create()) {
-        if (message.Release !== undefined) {
-            Release.encode(message.Release, writer.uint32(10).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseQueryGetLatestReleaseResponse,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.Release = Release.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseQueryGetLatestReleaseResponse,
-        };
-        if (object.Release !== undefined && object.Release !== null) {
-            message.Release = Release.fromJSON(object.Release);
-        }
-        else {
-            message.Release = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.Release !== undefined &&
-            (obj.Release = message.Release
-                ? Release.toJSON(message.Release)
-                : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseQueryGetLatestReleaseResponse,
-        };
-        if (object.Release !== undefined && object.Release !== null) {
-            message.Release = Release.fromPartial(object.Release);
-        }
-        else {
-            message.Release = undefined;
-        }
-        return message;
-    },
-};
 const baseQueryGetReleaseRequest = { id: 0 };
 export const QueryGetReleaseRequest = {
     encode(message, writer = Writer.create()) {
@@ -1400,6 +1260,493 @@ export const QueryAllIssueResponse = {
         if (object.Issue !== undefined && object.Issue !== null) {
             for (const e of object.Issue) {
                 message.Issue.push(Issue.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryGetLatestRepositoryReleaseRequest = {
+    userId: "",
+    repositoryName: "",
+};
+export const QueryGetLatestRepositoryReleaseRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        return message;
+    },
+};
+const baseQueryGetLatestRepositoryReleaseResponse = {};
+export const QueryGetLatestRepositoryReleaseResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Release !== undefined) {
+            Release.encode(message.Release, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Release = Release.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromJSON(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Release !== undefined &&
+            (obj.Release = message.Release
+                ? Release.toJSON(message.Release)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLatestRepositoryReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromPartial(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryGetRepositoryReleaseRequest = {
+    userId: "",
+    repositoryName: "",
+    tagName: "",
+};
+export const QueryGetRepositoryReleaseRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        if (message.tagName !== "") {
+            writer.uint32(26).string(message.tagName);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetRepositoryReleaseRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                case 3:
+                    message.tagName = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.tagName !== undefined && object.tagName !== null) {
+            message.tagName = String(object.tagName);
+        }
+        else {
+            message.tagName = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        message.tagName !== undefined && (obj.tagName = message.tagName);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.tagName !== undefined && object.tagName !== null) {
+            message.tagName = object.tagName;
+        }
+        else {
+            message.tagName = "";
+        }
+        return message;
+    },
+};
+const baseQueryGetRepositoryReleaseResponse = {};
+export const QueryGetRepositoryReleaseResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Release !== undefined) {
+            Release.encode(message.Release, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetRepositoryReleaseResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Release = Release.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetRepositoryReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromJSON(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Release !== undefined &&
+            (obj.Release = message.Release
+                ? Release.toJSON(message.Release)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetRepositoryReleaseResponse,
+        };
+        if (object.Release !== undefined && object.Release !== null) {
+            message.Release = Release.fromPartial(object.Release);
+        }
+        else {
+            message.Release = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllRepositoryReleaseRequest = {
+    userId: "",
+    repositoryName: "",
+};
+export const QueryAllRepositoryReleaseRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllRepositoryReleaseRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                case 3:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllRepositoryReleaseRequest,
+        };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllRepositoryReleaseResponse = {};
+export const QueryAllRepositoryReleaseResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Release) {
+            Release.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllRepositoryReleaseResponse,
+        };
+        message.Release = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Release.push(Release.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllRepositoryReleaseResponse,
+        };
+        message.Release = [];
+        if (object.Release !== undefined && object.Release !== null) {
+            for (const e of object.Release) {
+                message.Release.push(Release.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Release) {
+            obj.Release = message.Release.map((e) => e ? Release.toJSON(e) : undefined);
+        }
+        else {
+            obj.Release = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllRepositoryReleaseResponse,
+        };
+        message.Release = [];
+        if (object.Release !== undefined && object.Release !== null) {
+            for (const e of object.Release) {
+                message.Release.push(Release.fromPartial(e));
             }
         }
         if (object.pagination !== undefined && object.pagination !== null) {
@@ -3754,11 +4101,6 @@ export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
     }
-    LatestRelease(request) {
-        const data = QueryGetLatestReleaseRequest.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "LatestRelease", data);
-        return promise.then((data) => QueryGetLatestReleaseResponse.decode(new Reader(data)));
-    }
     Release(request) {
         const data = QueryGetReleaseRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "Release", data);
@@ -3808,6 +4150,21 @@ export class QueryClientImpl {
         const data = QueryAllIssueRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "IssueAll", data);
         return promise.then((data) => QueryAllIssueResponse.decode(new Reader(data)));
+    }
+    RepositoryReleaseLatest(request) {
+        const data = QueryGetLatestRepositoryReleaseRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryReleaseLatest", data);
+        return promise.then((data) => QueryGetLatestRepositoryReleaseResponse.decode(new Reader(data)));
+    }
+    RepositoryRelease(request) {
+        const data = QueryGetRepositoryReleaseRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryRelease", data);
+        return promise.then((data) => QueryGetRepositoryReleaseResponse.decode(new Reader(data)));
+    }
+    RepositoryReleaseAll(request) {
+        const data = QueryAllRepositoryReleaseRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryReleaseAll", data);
+        return promise.then((data) => QueryAllRepositoryReleaseResponse.decode(new Reader(data)));
     }
     RepositoryIssue(request) {
         const data = QueryGetRepositoryIssueRequest.encode(request).finish();

@@ -9,13 +9,6 @@ import { Repository, RepositoryBranch, RepositoryTag } from "../gitopia/reposito
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
-export interface QueryGetLatestReleaseRequest {
-    userId: string;
-    repositoryName: string;
-}
-export interface QueryGetLatestReleaseResponse {
-    Release: Release | undefined;
-}
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
     id: number;
@@ -80,6 +73,30 @@ export interface QueryAllIssueRequest {
 }
 export interface QueryAllIssueResponse {
     Issue: Issue[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetLatestRepositoryReleaseRequest {
+    userId: string;
+    repositoryName: string;
+}
+export interface QueryGetLatestRepositoryReleaseResponse {
+    Release: Release | undefined;
+}
+export interface QueryGetRepositoryReleaseRequest {
+    userId: string;
+    repositoryName: string;
+    tagName: string;
+}
+export interface QueryGetRepositoryReleaseResponse {
+    Release: Release | undefined;
+}
+export interface QueryAllRepositoryReleaseRequest {
+    userId: string;
+    repositoryName: string;
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRepositoryReleaseResponse {
+    Release: Release[];
     pagination: PageResponse | undefined;
 }
 export interface QueryGetRepositoryIssueRequest {
@@ -202,20 +219,6 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
-export declare const QueryGetLatestReleaseRequest: {
-    encode(message: QueryGetLatestReleaseRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestReleaseRequest;
-    fromJSON(object: any): QueryGetLatestReleaseRequest;
-    toJSON(message: QueryGetLatestReleaseRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetLatestReleaseRequest>): QueryGetLatestReleaseRequest;
-};
-export declare const QueryGetLatestReleaseResponse: {
-    encode(message: QueryGetLatestReleaseResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestReleaseResponse;
-    fromJSON(object: any): QueryGetLatestReleaseResponse;
-    toJSON(message: QueryGetLatestReleaseResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetLatestReleaseResponse>): QueryGetLatestReleaseResponse;
-};
 export declare const QueryGetReleaseRequest: {
     encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
@@ -355,6 +358,48 @@ export declare const QueryAllIssueResponse: {
     fromJSON(object: any): QueryAllIssueResponse;
     toJSON(message: QueryAllIssueResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllIssueResponse>): QueryAllIssueResponse;
+};
+export declare const QueryGetLatestRepositoryReleaseRequest: {
+    encode(message: QueryGetLatestRepositoryReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestRepositoryReleaseRequest;
+    fromJSON(object: any): QueryGetLatestRepositoryReleaseRequest;
+    toJSON(message: QueryGetLatestRepositoryReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetLatestRepositoryReleaseRequest>): QueryGetLatestRepositoryReleaseRequest;
+};
+export declare const QueryGetLatestRepositoryReleaseResponse: {
+    encode(message: QueryGetLatestRepositoryReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLatestRepositoryReleaseResponse;
+    fromJSON(object: any): QueryGetLatestRepositoryReleaseResponse;
+    toJSON(message: QueryGetLatestRepositoryReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetLatestRepositoryReleaseResponse>): QueryGetLatestRepositoryReleaseResponse;
+};
+export declare const QueryGetRepositoryReleaseRequest: {
+    encode(message: QueryGetRepositoryReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryReleaseRequest;
+    fromJSON(object: any): QueryGetRepositoryReleaseRequest;
+    toJSON(message: QueryGetRepositoryReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryReleaseRequest>): QueryGetRepositoryReleaseRequest;
+};
+export declare const QueryGetRepositoryReleaseResponse: {
+    encode(message: QueryGetRepositoryReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRepositoryReleaseResponse;
+    fromJSON(object: any): QueryGetRepositoryReleaseResponse;
+    toJSON(message: QueryGetRepositoryReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRepositoryReleaseResponse>): QueryGetRepositoryReleaseResponse;
+};
+export declare const QueryAllRepositoryReleaseRequest: {
+    encode(message: QueryAllRepositoryReleaseRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryReleaseRequest;
+    fromJSON(object: any): QueryAllRepositoryReleaseRequest;
+    toJSON(message: QueryAllRepositoryReleaseRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryReleaseRequest>): QueryAllRepositoryReleaseRequest;
+};
+export declare const QueryAllRepositoryReleaseResponse: {
+    encode(message: QueryAllRepositoryReleaseResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryReleaseResponse;
+    fromJSON(object: any): QueryAllRepositoryReleaseResponse;
+    toJSON(message: QueryAllRepositoryReleaseResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryReleaseResponse>): QueryAllRepositoryReleaseResponse;
 };
 export declare const QueryGetRepositoryIssueRequest: {
     encode(message: QueryGetRepositoryIssueRequest, writer?: Writer): Writer;
@@ -596,7 +641,6 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
-    LatestRelease(request: QueryGetLatestReleaseRequest): Promise<QueryGetLatestReleaseResponse>;
     /** Queries a release by id. */
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     /** Queries a list of release items. */
@@ -617,6 +661,9 @@ export interface Query {
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
     /** Queries a list of issue items. */
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
+    RepositoryReleaseLatest(request: QueryGetLatestRepositoryReleaseRequest): Promise<QueryGetLatestRepositoryReleaseResponse>;
+    RepositoryRelease(request: QueryGetRepositoryReleaseRequest): Promise<QueryGetRepositoryReleaseResponse>;
+    RepositoryReleaseAll(request: QueryAllRepositoryReleaseRequest): Promise<QueryAllRepositoryReleaseResponse>;
     /** Queries a repository by id. */
     RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
     /** Queries a list of repository items. */
@@ -651,7 +698,6 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
-    LatestRelease(request: QueryGetLatestReleaseRequest): Promise<QueryGetLatestReleaseResponse>;
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
@@ -662,6 +708,9 @@ export declare class QueryClientImpl implements Query {
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;
     IssueAll(request: QueryAllIssueRequest): Promise<QueryAllIssueResponse>;
+    RepositoryReleaseLatest(request: QueryGetLatestRepositoryReleaseRequest): Promise<QueryGetLatestRepositoryReleaseResponse>;
+    RepositoryRelease(request: QueryGetRepositoryReleaseRequest): Promise<QueryGetRepositoryReleaseResponse>;
+    RepositoryReleaseAll(request: QueryAllRepositoryReleaseRequest): Promise<QueryAllRepositoryReleaseResponse>;
     RepositoryIssue(request: QueryGetRepositoryIssueRequest): Promise<QueryGetRepositoryIssueResponse>;
     RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
     RepositoryPullRequest(request: QueryGetRepositoryPullRequestRequest): Promise<QueryGetRepositoryPullRequestResponse>;
