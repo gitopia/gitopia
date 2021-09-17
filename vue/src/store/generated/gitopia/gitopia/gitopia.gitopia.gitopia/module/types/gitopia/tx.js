@@ -2963,7 +2963,7 @@ const baseMsgCreateIssue = {
     title: "",
     description: "",
     repositoryId: 0,
-    labels: "",
+    labelIds: 0,
     weight: 0,
     assignees: "",
 };
@@ -2981,9 +2981,11 @@ export const MsgCreateIssue = {
         if (message.repositoryId !== 0) {
             writer.uint32(32).uint64(message.repositoryId);
         }
-        for (const v of message.labels) {
-            writer.uint32(42).string(v);
+        writer.uint32(42).fork();
+        for (const v of message.labelIds) {
+            writer.uint64(v);
         }
+        writer.ldelim();
         if (message.weight !== 0) {
             writer.uint32(48).uint64(message.weight);
         }
@@ -2996,7 +2998,7 @@ export const MsgCreateIssue = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgCreateIssue };
-        message.labels = [];
+        message.labelIds = [];
         message.assignees = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -3014,7 +3016,15 @@ export const MsgCreateIssue = {
                     message.repositoryId = longToNumber(reader.uint64());
                     break;
                 case 5:
-                    message.labels.push(reader.string());
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labelIds.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labelIds.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 case 6:
                     message.weight = longToNumber(reader.uint64());
@@ -3031,7 +3041,7 @@ export const MsgCreateIssue = {
     },
     fromJSON(object) {
         const message = { ...baseMsgCreateIssue };
-        message.labels = [];
+        message.labelIds = [];
         message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
@@ -3057,9 +3067,9 @@ export const MsgCreateIssue = {
         else {
             message.repositoryId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(String(e));
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(Number(e));
             }
         }
         if (object.weight !== undefined && object.weight !== null) {
@@ -3083,11 +3093,11 @@ export const MsgCreateIssue = {
             (obj.description = message.description);
         message.repositoryId !== undefined &&
             (obj.repositoryId = message.repositoryId);
-        if (message.labels) {
-            obj.labels = message.labels.map((e) => e);
+        if (message.labelIds) {
+            obj.labelIds = message.labelIds.map((e) => e);
         }
         else {
-            obj.labels = [];
+            obj.labelIds = [];
         }
         message.weight !== undefined && (obj.weight = message.weight);
         if (message.assignees) {
@@ -3100,7 +3110,7 @@ export const MsgCreateIssue = {
     },
     fromPartial(object) {
         const message = { ...baseMsgCreateIssue };
-        message.labels = [];
+        message.labelIds = [];
         message.assignees = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
@@ -3126,9 +3136,9 @@ export const MsgCreateIssue = {
         else {
             message.repositoryId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(e);
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(e);
             }
         }
         if (object.weight !== undefined && object.weight !== null) {
@@ -4075,25 +4085,27 @@ export const MsgRemoveIssueAssigneesResponse = {
         return message;
     },
 };
-const baseMsgAddIssueLabels = { creator: "", id: 0, labels: "" };
+const baseMsgAddIssueLabels = { creator: "", issueId: 0, labelIds: 0 };
 export const MsgAddIssueLabels = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.issueId !== 0) {
+            writer.uint32(16).uint64(message.issueId);
         }
-        for (const v of message.labels) {
-            writer.uint32(26).string(v);
+        writer.uint32(26).fork();
+        for (const v of message.labelIds) {
+            writer.uint64(v);
         }
+        writer.ldelim();
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgAddIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -4101,10 +4113,18 @@ export const MsgAddIssueLabels = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.issueId = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.labels.push(reader.string());
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labelIds.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labelIds.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4115,22 +4135,22 @@ export const MsgAddIssueLabels = {
     },
     fromJSON(object) {
         const message = { ...baseMsgAddIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.issueId !== undefined && object.issueId !== null) {
+            message.issueId = Number(object.issueId);
         }
         else {
-            message.id = 0;
+            message.issueId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(String(e));
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(Number(e));
             }
         }
         return message;
@@ -4138,33 +4158,33 @@ export const MsgAddIssueLabels = {
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        if (message.labels) {
-            obj.labels = message.labels.map((e) => e);
+        message.issueId !== undefined && (obj.issueId = message.issueId);
+        if (message.labelIds) {
+            obj.labelIds = message.labelIds.map((e) => e);
         }
         else {
-            obj.labels = [];
+            obj.labelIds = [];
         }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseMsgAddIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.issueId !== undefined && object.issueId !== null) {
+            message.issueId = object.issueId;
         }
         else {
-            message.id = 0;
+            message.issueId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(e);
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(e);
             }
         }
         return message;
@@ -4208,25 +4228,31 @@ export const MsgAddIssueLabelsResponse = {
         return message;
     },
 };
-const baseMsgRemoveIssueLabels = { creator: "", id: 0, labels: "" };
+const baseMsgRemoveIssueLabels = {
+    creator: "",
+    issueId: 0,
+    labelIds: 0,
+};
 export const MsgRemoveIssueLabels = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.issueId !== 0) {
+            writer.uint32(16).uint64(message.issueId);
         }
-        for (const v of message.labels) {
-            writer.uint32(26).string(v);
+        writer.uint32(26).fork();
+        for (const v of message.labelIds) {
+            writer.uint64(v);
         }
+        writer.ldelim();
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseMsgRemoveIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -4234,10 +4260,18 @@ export const MsgRemoveIssueLabels = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.issueId = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.labels.push(reader.string());
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labelIds.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labelIds.push(longToNumber(reader.uint64()));
+                    }
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -4248,22 +4282,22 @@ export const MsgRemoveIssueLabels = {
     },
     fromJSON(object) {
         const message = { ...baseMsgRemoveIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.issueId !== undefined && object.issueId !== null) {
+            message.issueId = Number(object.issueId);
         }
         else {
-            message.id = 0;
+            message.issueId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(String(e));
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(Number(e));
             }
         }
         return message;
@@ -4271,33 +4305,33 @@ export const MsgRemoveIssueLabels = {
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        if (message.labels) {
-            obj.labels = message.labels.map((e) => e);
+        message.issueId !== undefined && (obj.issueId = message.issueId);
+        if (message.labelIds) {
+            obj.labelIds = message.labelIds.map((e) => e);
         }
         else {
-            obj.labels = [];
+            obj.labelIds = [];
         }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseMsgRemoveIssueLabels };
-        message.labels = [];
+        message.labelIds = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.issueId !== undefined && object.issueId !== null) {
+            message.issueId = object.issueId;
         }
         else {
-            message.id = 0;
+            message.issueId = 0;
         }
-        if (object.labels !== undefined && object.labels !== null) {
-            for (const e of object.labels) {
-                message.labels.push(e);
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(e);
             }
         }
         return message;
@@ -5787,17 +5821,21 @@ export const MsgUpdateRepositoryLabelResponse = {
         return message;
     },
 };
-const baseMsgDeleteRepositoryLabel = { creator: "", id: 0, name: "" };
+const baseMsgDeleteRepositoryLabel = {
+    creator: "",
+    repositoryId: 0,
+    labelId: 0,
+};
 export const MsgDeleteRepositoryLabel = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.repositoryId !== 0) {
+            writer.uint32(16).uint64(message.repositoryId);
         }
-        if (message.name !== "") {
-            writer.uint32(26).string(message.name);
+        if (message.labelId !== 0) {
+            writer.uint32(24).uint64(message.labelId);
         }
         return writer;
     },
@@ -5814,10 +5852,10 @@ export const MsgDeleteRepositoryLabel = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.repositoryId = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.name = reader.string();
+                    message.labelId = longToNumber(reader.uint64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -5836,25 +5874,26 @@ export const MsgDeleteRepositoryLabel = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = Number(object.repositoryId);
         }
         else {
-            message.id = 0;
+            message.repositoryId = 0;
         }
-        if (object.name !== undefined && object.name !== null) {
-            message.name = String(object.name);
+        if (object.labelId !== undefined && object.labelId !== null) {
+            message.labelId = Number(object.labelId);
         }
         else {
-            message.name = "";
+            message.labelId = 0;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        message.name !== undefined && (obj.name = message.name);
+        message.repositoryId !== undefined &&
+            (obj.repositoryId = message.repositoryId);
+        message.labelId !== undefined && (obj.labelId = message.labelId);
         return obj;
     },
     fromPartial(object) {
@@ -5867,17 +5906,17 @@ export const MsgDeleteRepositoryLabel = {
         else {
             message.creator = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = object.repositoryId;
         }
         else {
-            message.id = 0;
+            message.repositoryId = 0;
         }
-        if (object.name !== undefined && object.name !== null) {
-            message.name = object.name;
+        if (object.labelId !== undefined && object.labelId !== null) {
+            message.labelId = object.labelId;
         }
         else {
-            message.name = "";
+            message.labelId = 0;
         }
         return message;
     },

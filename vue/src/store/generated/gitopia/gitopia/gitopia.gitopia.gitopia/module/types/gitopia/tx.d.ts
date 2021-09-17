@@ -160,7 +160,7 @@ export interface MsgCreateIssue {
     title: string;
     description: string;
     repositoryId: number;
-    labels: string[];
+    labelIds: number[];
     weight: number;
     assignees: string[];
 }
@@ -215,15 +215,15 @@ export interface MsgRemoveIssueAssigneesResponse {
 }
 export interface MsgAddIssueLabels {
     creator: string;
-    id: number;
-    labels: string[];
+    issueId: number;
+    labelIds: number[];
 }
 export interface MsgAddIssueLabelsResponse {
 }
 export interface MsgRemoveIssueLabels {
     creator: string;
-    id: number;
-    labels: string[];
+    issueId: number;
+    labelIds: number[];
 }
 export interface MsgRemoveIssueLabelsResponse {
 }
@@ -305,8 +305,8 @@ export interface MsgUpdateRepositoryLabelResponse {
 }
 export interface MsgDeleteRepositoryLabel {
     creator: string;
-    id: number;
-    name: string;
+    repositoryId: number;
+    labelId: number;
 }
 export interface MsgDeleteRepositoryLabelResponse {
 }
