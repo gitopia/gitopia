@@ -385,11 +385,11 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteRepositoryLabel{}
 
-func NewMsgDeleteRepositoryLabel(creator string, id uint64, name string) *MsgDeleteRepositoryLabel {
+func NewMsgDeleteRepositoryLabel(creator string, repositoryId uint64, labelId uint64) *MsgDeleteRepositoryLabel {
 	return &MsgDeleteRepositoryLabel{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
+		RepositoryId: repositoryId,
+		Creator:      creator,
+		LabelId:      labelId,
 	}
 }
 
@@ -419,10 +419,8 @@ func (msg *MsgDeleteRepositoryLabel) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	if len(msg.Name) > 63 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label length exceeds limit: 63")
-	} else if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label too short")
+	if msg.LabelId < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid label id (%v)", msg.LabelId)
 	}
 	return nil
 }

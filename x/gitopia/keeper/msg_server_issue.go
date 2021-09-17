@@ -49,11 +49,11 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		ClosedAt:      closedAt,
 	}
 
-	for _, l := range msg.Labels {
-		if i, exists := utils.RepositoryLabelExists(repository.Labels, l); exists {
+	for _, labelId := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, labelId); exists {
 			issue.Labels = append(issue.Labels, repository.Labels[i].Id)
 		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in repository", l))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
 		}
 	}
 
@@ -377,31 +377,35 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	}
 
 	// Checks that the element exists
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	if !k.HasIssue(ctx, msg.IssueId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.IssueId))
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+	if msg.Creator != k.GetIssueOwner(ctx, msg.IssueId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var issue = k.GetIssue(ctx, msg.Id)
+	var issue = k.GetIssue(ctx, msg.IssueId)
 
 	repository := k.GetRepository(ctx, issue.RepositoryId)
 
-	if len(issue.Labels)+len(msg.Labels) > 50 {
+	if len(issue.Labels)+len(msg.LabelIds) > 50 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 50 labels")
 	}
 
-	for _, l := range msg.Labels {
-		if i, exists := utils.RepositoryLabelExists(repository.Labels, l); exists {
+	var labelNames []string
+
+	for _, l := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
 			if _, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) already exists in issue", l))
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) already exists in issue", l))
 			}
+			labelNames = append(labelNames, repository.Labels[i].Name)
+
 			issue.Labels = append(issue.Labels, repository.Labels[i].Id)
 		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in repository", l))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", l))
 		}
 	}
 
@@ -410,9 +414,9 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
+		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueAddLabelsCommentBody(msg.Creator, msg.Labels),
+		Body:        utils.IssueAddLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -439,32 +443,36 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 	}
 
 	// Checks that the element exists
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	if !k.HasIssue(ctx, msg.IssueId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.IssueId))
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+	if msg.Creator != k.GetIssueOwner(ctx, msg.IssueId) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var issue = k.GetIssue(ctx, msg.Id)
+	var issue = k.GetIssue(ctx, msg.IssueId)
 
 	repository := k.GetRepository(ctx, issue.RepositoryId)
 
-	if len(issue.Labels) < len(msg.Labels) {
+	if len(issue.Labels) < len(msg.LabelIds) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than existing labels")
 	}
 
-	for _, l := range msg.Labels {
-		if i, exists := utils.RepositoryLabelExists(repository.Labels, l); exists {
+	var labelNames []string
+
+	for _, l := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
 			if j, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+				labelNames = append(labelNames, repository.Labels[i].Name)
+
 				issue.Labels = append(issue.Labels[:j], issue.Labels[j+1:]...)
 			} else {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in issue", l))
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in issue", l))
 			}
 		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists in repository", l))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", l))
 		}
 	}
 
@@ -473,9 +481,9 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
+		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueRemoveLabelsCommentBody(msg.Creator, msg.Labels),
+		Body:        utils.IssueRemoveLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,

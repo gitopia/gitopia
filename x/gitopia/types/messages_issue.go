@@ -7,13 +7,13 @@ import (
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labels []string, weight uint64, assignees []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		Title:        title,
 		Description:  description,
 		RepositoryId: repositoryId,
-		Labels:       labels,
+		LabelIds:     labelIds,
 		Weight:       weight,
 		Assignees:    assignees,
 	}
@@ -57,7 +57,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 	if len(msg.Assignees) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
 	}
-	if len(msg.Labels) > 10 {
+	if len(msg.LabelIds) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
 	}
 
@@ -76,13 +76,13 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		}
 	}
 
-	if len(msg.Labels) > 0 {
-		unique := make(map[string]bool, len(msg.Labels))
-		for _, label := range msg.Labels {
-			if !unique[label] {
-				unique[label] = true
+	if len(msg.LabelIds) > 0 {
+		unique := make(map[uint64]bool, len(msg.LabelIds))
+		for _, labelId := range msg.LabelIds {
+			if !unique[labelId] {
+				unique[labelId] = true
 			} else {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", labelId)
 			}
 		}
 	}
@@ -393,11 +393,11 @@ func (msg *MsgRemoveIssueAssignees) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgAddIssueLabels{}
 
-func NewMsgAddIssueLabels(creator string, id uint64, labels []string) *MsgAddIssueLabels {
+func NewMsgAddIssueLabels(creator string, issueId uint64, labelIds []uint64) *MsgAddIssueLabels {
 	return &MsgAddIssueLabels{
-		Id:      id,
-		Creator: creator,
-		Labels:  labels,
+		IssueId:  issueId,
+		Creator:  creator,
+		LabelIds: labelIds,
 	}
 }
 
@@ -428,18 +428,18 @@ func (msg *MsgAddIssueLabels) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if len(msg.Labels) < 1 {
+	if len(msg.LabelIds) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
-	} else if len(msg.Labels) > 10 {
+	} else if len(msg.LabelIds) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
 	}
 
-	unique := make(map[string]bool, len(msg.Labels))
-	for _, label := range msg.Labels {
-		if !unique[label] {
-			unique[label] = true
+	unique := make(map[uint64]bool, len(msg.LabelIds))
+	for _, labelId := range msg.LabelIds {
+		if !unique[labelId] {
+			unique[labelId] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label id (%v)", labelId)
 		}
 	}
 	return nil
@@ -447,11 +447,11 @@ func (msg *MsgAddIssueLabels) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemoveIssueLabels{}
 
-func NewMsgRemoveIssueLabels(creator string, id uint64, labels []string) *MsgRemoveIssueLabels {
+func NewMsgRemoveIssueLabels(creator string, issueId uint64, labelIds []uint64) *MsgRemoveIssueLabels {
 	return &MsgRemoveIssueLabels{
-		Id:      id,
-		Creator: creator,
-		Labels:  labels,
+		IssueId:  issueId,
+		Creator:  creator,
+		LabelIds: labelIds,
 	}
 }
 
@@ -482,18 +482,18 @@ func (msg *MsgRemoveIssueLabels) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if len(msg.Labels) < 1 {
+	if len(msg.LabelIds) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
-	} else if len(msg.Labels) > 50 {
+	} else if len(msg.LabelIds) > 50 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 50 labels at a time")
 	}
 
-	unique := make(map[string]bool, len(msg.Labels))
-	for _, label := range msg.Labels {
-		if !unique[label] {
-			unique[label] = true
+	unique := make(map[uint64]bool, len(msg.LabelIds))
+	for _, labelId := range msg.LabelIds {
+		if !unique[labelId] {
+			unique[labelId] = true
 		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", label)
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label id (%v)", labelId)
 		}
 	}
 	return nil

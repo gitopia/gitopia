@@ -248,7 +248,7 @@ message MsgCreateIssue {
   string title = 2;
   string description = 3;
   uint64 repositoryId = 4;
-  repeated string labels = 5;
+  repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
 }
@@ -312,16 +312,16 @@ message MsgRemoveIssueAssigneesResponse { }
 
 message MsgAddIssueLabels {
   string creator = 1;
-  uint64 id = 2;
-  repeated string labels = 3;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
 }
 
 message MsgAddIssueLabelsResponse { }
 
 message MsgRemoveIssueLabels {
   string creator = 1;
-  uint64 id = 2;
-  repeated string labels = 3;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
 }
 
 message MsgRemoveIssueLabelsResponse { }
@@ -416,8 +416,8 @@ message MsgUpdateRepositoryLabelResponse { }
 
 message MsgDeleteRepositoryLabel {
   string creator = 1;
-  uint64 id = 2;
-  string name = 3;
+  uint64 repositoryId = 2;
+  uint64 labelId = 3;
 }
 
 message MsgDeleteRepositoryLabelResponse { }

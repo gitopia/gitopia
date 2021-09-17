@@ -678,11 +678,11 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 	}
 
 	// Checks that the element exists
-	if !k.HasRepository(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.Id))
+	if !k.HasRepository(ctx, msg.RepositoryId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
 	}
 
-	repository := k.GetRepository(ctx, msg.Id)
+	repository := k.GetRepository(ctx, msg.RepositoryId)
 
 	var organization types.Organization
 
@@ -698,10 +698,10 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if i, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
 		repository.Labels = append(repository.Labels[:i], repository.Labels[i+1:]...)
 	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) doesn't exists", msg.Name))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists", msg.LabelId))
 	}
 
 	k.SetRepository(ctx, repository)
