@@ -67,6 +67,24 @@ func RepositoryLabelIdExists(l []*types.RepositoryLabel, val uint64) (int, bool)
 	return 0, false
 }
 
+func RepositoryReleaseTagExists(r []*types.RepositoryRelease, val string) (int, bool) {
+	for i, v := range r {
+		if v.TagName == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+func RepositoryReleaseIdExists(r []*types.RepositoryRelease, val uint64) (int, bool) {
+	for i, v := range r {
+		if v.Id == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func HaveRepositoryPermission(repository types.Repository, creator string, o interface{}) bool {
 	ownerId := repository.Owner.Id
 	ownerType := repository.Owner.Type

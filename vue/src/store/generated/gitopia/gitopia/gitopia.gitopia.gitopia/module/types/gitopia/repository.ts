@@ -21,7 +21,7 @@ export interface Repository {
   pullsCount: number;
   labels: RepositoryLabel[];
   labelsCount: number;
-  releases: string;
+  releases: RepositoryRelease[];
   createdAt: number;
   updatedAt: number;
   pushedAt: number;
@@ -162,6 +162,18 @@ export interface RepositoryLabel {
   description: string;
 }
 
+export interface RepositoryRelease {
+  id: number;
+  tagName: string;
+}
+
+export interface Attachment {
+  name: string;
+  size: number;
+  sha: string;
+  uploader: string;
+}
+
 const baseRepository: object = {
   creator: "",
   id: 0,
@@ -173,7 +185,6 @@ const baseRepository: object = {
   issuesCount: 0,
   pullsCount: 0,
   labelsCount: 0,
-  releases: "",
   createdAt: 0,
   updatedAt: 0,
   pushedAt: 0,
@@ -238,8 +249,8 @@ export const Repository = {
     if (message.labelsCount !== 0) {
       writer.uint32(128).uint64(message.labelsCount);
     }
-    if (message.releases !== "") {
-      writer.uint32(138).string(message.releases);
+    for (const v of message.releases) {
+      RepositoryRelease.encode(v!, writer.uint32(138).fork()).ldelim();
     }
     if (message.createdAt !== 0) {
       writer.uint32(144).int64(message.createdAt);
@@ -289,6 +300,7 @@ export const Repository = {
     message.issues = [];
     message.pullRequests = [];
     message.labels = [];
+    message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
     while (reader.pos < end) {
@@ -354,7 +366,9 @@ export const Repository = {
           message.labelsCount = longToNumber(reader.uint64() as Long);
           break;
         case 17:
-          message.releases = reader.string();
+          message.releases.push(
+            RepositoryRelease.decode(reader, reader.uint32())
+          );
           break;
         case 18:
           message.createdAt = longToNumber(reader.int64() as Long);
@@ -414,6 +428,7 @@ export const Repository = {
     message.issues = [];
     message.pullRequests = [];
     message.labels = [];
+    message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
     if (object.creator !== undefined && object.creator !== null) {
@@ -497,9 +512,9 @@ export const Repository = {
       message.labelsCount = 0;
     }
     if (object.releases !== undefined && object.releases !== null) {
-      message.releases = String(object.releases);
-    } else {
-      message.releases = "";
+      for (const e of object.releases) {
+        message.releases.push(RepositoryRelease.fromJSON(e));
+      }
     }
     if (object.createdAt !== undefined && object.createdAt !== null) {
       message.createdAt = Number(object.createdAt);
@@ -618,7 +633,13 @@ export const Repository = {
     }
     message.labelsCount !== undefined &&
       (obj.labelsCount = message.labelsCount);
-    message.releases !== undefined && (obj.releases = message.releases);
+    if (message.releases) {
+      obj.releases = message.releases.map((e) =>
+        e ? RepositoryRelease.toJSON(e) : undefined
+      );
+    } else {
+      obj.releases = [];
+    }
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
     message.pushedAt !== undefined && (obj.pushedAt = message.pushedAt);
@@ -652,6 +673,7 @@ export const Repository = {
     message.issues = [];
     message.pullRequests = [];
     message.labels = [];
+    message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
     if (object.creator !== undefined && object.creator !== null) {
@@ -735,9 +757,9 @@ export const Repository = {
       message.labelsCount = 0;
     }
     if (object.releases !== undefined && object.releases !== null) {
-      message.releases = object.releases;
-    } else {
-      message.releases = "";
+      for (const e of object.releases) {
+        message.releases.push(RepositoryRelease.fromPartial(e));
+      }
     }
     if (object.createdAt !== undefined && object.createdAt !== null) {
       message.createdAt = object.createdAt;
@@ -1353,6 +1375,184 @@ export const RepositoryLabel = {
       message.description = object.description;
     } else {
       message.description = "";
+    }
+    return message;
+  },
+};
+
+const baseRepositoryRelease: object = { id: 0, tagName: "" };
+
+export const RepositoryRelease = {
+  encode(message: RepositoryRelease, writer: Writer = Writer.create()): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    if (message.tagName !== "") {
+      writer.uint32(18).string(message.tagName);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): RepositoryRelease {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseRepositoryRelease } as RepositoryRelease;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.tagName = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RepositoryRelease {
+    const message = { ...baseRepositoryRelease } as RepositoryRelease;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = String(object.tagName);
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+
+  toJSON(message: RepositoryRelease): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.tagName !== undefined && (obj.tagName = message.tagName);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<RepositoryRelease>): RepositoryRelease {
+    const message = { ...baseRepositoryRelease } as RepositoryRelease;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.tagName !== undefined && object.tagName !== null) {
+      message.tagName = object.tagName;
+    } else {
+      message.tagName = "";
+    }
+    return message;
+  },
+};
+
+const baseAttachment: object = { name: "", size: 0, sha: "", uploader: "" };
+
+export const Attachment = {
+  encode(message: Attachment, writer: Writer = Writer.create()): Writer {
+    if (message.name !== "") {
+      writer.uint32(10).string(message.name);
+    }
+    if (message.size !== 0) {
+      writer.uint32(16).uint64(message.size);
+    }
+    if (message.sha !== "") {
+      writer.uint32(26).string(message.sha);
+    }
+    if (message.uploader !== "") {
+      writer.uint32(34).string(message.uploader);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): Attachment {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseAttachment } as Attachment;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.name = reader.string();
+          break;
+        case 2:
+          message.size = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.sha = reader.string();
+          break;
+        case 4:
+          message.uploader = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Attachment {
+    const message = { ...baseAttachment } as Attachment;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
+    }
+    if (object.size !== undefined && object.size !== null) {
+      message.size = Number(object.size);
+    } else {
+      message.size = 0;
+    }
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = String(object.sha);
+    } else {
+      message.sha = "";
+    }
+    if (object.uploader !== undefined && object.uploader !== null) {
+      message.uploader = String(object.uploader);
+    } else {
+      message.uploader = "";
+    }
+    return message;
+  },
+
+  toJSON(message: Attachment): unknown {
+    const obj: any = {};
+    message.name !== undefined && (obj.name = message.name);
+    message.size !== undefined && (obj.size = message.size);
+    message.sha !== undefined && (obj.sha = message.sha);
+    message.uploader !== undefined && (obj.uploader = message.uploader);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Attachment>): Attachment {
+    const message = { ...baseAttachment } as Attachment;
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
+    }
+    if (object.size !== undefined && object.size !== null) {
+      message.size = object.size;
+    } else {
+      message.size = 0;
+    }
+    if (object.sha !== undefined && object.sha !== null) {
+      message.sha = object.sha;
+    } else {
+      message.sha = "";
+    }
+    if (object.uploader !== undefined && object.uploader !== null) {
+      message.uploader = object.uploader;
+    } else {
+      message.uploader = "";
     }
     return message;
   },

@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/organization.proto";
 import "gitopia/comment.proto";
@@ -17,6 +18,17 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+
+	// Queries a release by id.
+	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
+	}
+
+	// Queries a list of release items.
+	rpc ReleaseAll(QueryAllReleaseRequest) returns (QueryAllReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
+	}
+
 
 	// Queries a pullRequest by id.
 	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
@@ -58,6 +70,18 @@ service Query {
 	// Queries a list of issue items.
 	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
+	}
+
+	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
+	}
+
+	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}";
+	}
+
+	rpc RepositoryReleaseAll(QueryAllRepositoryReleaseRequest) returns (QueryAllRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases";
 	}
 
 	// Queries a repository by id.
@@ -144,6 +168,22 @@ service Query {
 }
 
 // this line is used by starport scaffolding # 3
+message QueryGetReleaseRequest {
+	uint64 id = 1;
+}
+
+message QueryGetReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllReleaseRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
 message QueryGetPullRequestRequest {
 	uint64 id = 1;
 }
@@ -206,6 +246,36 @@ message QueryAllIssueRequest {
 
 message QueryAllIssueResponse {
 	repeated Issue Issue = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetLatestRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetLatestRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryGetRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryReleaseResponse {
+	repeated Release Release = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

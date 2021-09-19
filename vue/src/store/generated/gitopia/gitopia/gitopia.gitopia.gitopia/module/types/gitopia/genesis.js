@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -10,6 +11,7 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseGenesisState = {
+    releaseCount: 0,
     pullRequestCount: 0,
     organizationCount: 0,
     commentCount: 0,
@@ -20,6 +22,12 @@ const baseGenesisState = {
 };
 export const GenesisState = {
     encode(message, writer = Writer.create()) {
+        for (const v of message.releaseList) {
+            Release.encode(v, writer.uint32(122).fork()).ldelim();
+        }
+        if (message.releaseCount !== 0) {
+            writer.uint32(128).uint64(message.releaseCount);
+        }
         for (const v of message.pullRequestList) {
             PullRequest.encode(v, writer.uint32(106).fork()).ldelim();
         }
@@ -68,6 +76,7 @@ export const GenesisState = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseGenesisState };
+        message.releaseList = [];
         message.pullRequestList = [];
         message.organizationList = [];
         message.commentList = [];
@@ -78,6 +87,12 @@ export const GenesisState = {
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
+                case 15:
+                    message.releaseList.push(Release.decode(reader, reader.uint32()));
+                    break;
+                case 16:
+                    message.releaseCount = longToNumber(reader.uint64());
+                    break;
                 case 13:
                     message.pullRequestList.push(PullRequest.decode(reader, reader.uint32()));
                     break;
@@ -129,6 +144,7 @@ export const GenesisState = {
     },
     fromJSON(object) {
         const message = { ...baseGenesisState };
+        message.releaseList = [];
         message.pullRequestList = [];
         message.organizationList = [];
         message.commentList = [];
@@ -136,6 +152,17 @@ export const GenesisState = {
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.releaseList !== undefined && object.releaseList !== null) {
+            for (const e of object.releaseList) {
+                message.releaseList.push(Release.fromJSON(e));
+            }
+        }
+        if (object.releaseCount !== undefined && object.releaseCount !== null) {
+            message.releaseCount = Number(object.releaseCount);
+        }
+        else {
+            message.releaseCount = 0;
+        }
         if (object.pullRequestList !== undefined &&
             object.pullRequestList !== null) {
             for (const e of object.pullRequestList) {
@@ -222,6 +249,14 @@ export const GenesisState = {
     },
     toJSON(message) {
         const obj = {};
+        if (message.releaseList) {
+            obj.releaseList = message.releaseList.map((e) => e ? Release.toJSON(e) : undefined);
+        }
+        else {
+            obj.releaseList = [];
+        }
+        message.releaseCount !== undefined &&
+            (obj.releaseCount = message.releaseCount);
         if (message.pullRequestList) {
             obj.pullRequestList = message.pullRequestList.map((e) => e ? PullRequest.toJSON(e) : undefined);
         }
@@ -279,6 +314,7 @@ export const GenesisState = {
     },
     fromPartial(object) {
         const message = { ...baseGenesisState };
+        message.releaseList = [];
         message.pullRequestList = [];
         message.organizationList = [];
         message.commentList = [];
@@ -286,6 +322,17 @@ export const GenesisState = {
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.releaseList !== undefined && object.releaseList !== null) {
+            for (const e of object.releaseList) {
+                message.releaseList.push(Release.fromPartial(e));
+            }
+        }
+        if (object.releaseCount !== undefined && object.releaseCount !== null) {
+            message.releaseCount = object.releaseCount;
+        }
+        else {
+            message.releaseCount = 0;
+        }
         if (object.pullRequestList !== undefined &&
             object.pullRequestList !== null) {
             for (const e of object.pullRequestList) {

@@ -12,19 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
-
-func sliceAtoi(str []string) ([]uint64, error) {
-	si := make([]uint64, 0, len(str))
-	for _, a := range str {
-		i, err := strconv.ParseUint(a, 10, 64)
-		if err != nil {
-			return si, err
-		}
-		si = append(si, i)
-	}
-	return si, nil
-}
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
@@ -45,8 +34,9 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 			argsLabels := strings.Split(args[3], ",")
-			if len(argsLabels) == 1 && argsLabels[0] == "" {
-				argsLabels = nil
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
 			}
 			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
 			if err != nil {
@@ -62,7 +52,7 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, argsLabels, argsWeight, argsAssignees)
+			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, labelIds, argsWeight, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -295,8 +285,9 @@ func CmdAddIssueLabels() *cobra.Command {
 			}
 
 			argsLabels := strings.Split(args[1], ",")
-			if len(argsLabels) == 1 && argsLabels[0] == "" {
-				argsLabels = nil
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -304,7 +295,7 @@ func CmdAddIssueLabels() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAddIssueLabels(clientCtx.GetFromAddress().String(), id, argsLabels)
+			msg := types.NewMsgAddIssueLabels(clientCtx.GetFromAddress().String(), id, labelIds)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -329,8 +320,9 @@ func CmdRemoveIssueLabels() *cobra.Command {
 			}
 
 			argsLabels := strings.Split(args[1], ",")
-			if len(argsLabels) == 1 && argsLabels[0] == "" {
-				argsLabels = nil
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -338,7 +330,7 @@ func CmdRemoveIssueLabels() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), id, argsLabels)
+			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), id, labelIds)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

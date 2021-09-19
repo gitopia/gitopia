@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/organization.proto";
 import "gitopia/comment.proto";
@@ -14,6 +15,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
+  rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
+  rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
   rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
@@ -63,6 +67,45 @@ service Msg {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateRelease {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+}
+
+message MsgCreateReleaseResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateRelease {
+  string creator = 1;
+  uint64 id = 2;
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+}
+
+message MsgUpdateReleaseResponse { }
+
+message MsgDeleteRelease {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteReleaseResponse { }
+
 message MsgCreatePullRequest {
   string creator = 1;
   string title = 2;
@@ -205,7 +248,7 @@ message MsgCreateIssue {
   string title = 2;
   string description = 3;
   uint64 repositoryId = 4;
-  repeated string labels = 5;
+  repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
 }
@@ -269,16 +312,16 @@ message MsgRemoveIssueAssigneesResponse { }
 
 message MsgAddIssueLabels {
   string creator = 1;
-  uint64 id = 2;
-  repeated string labels = 3;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
 }
 
 message MsgAddIssueLabelsResponse { }
 
 message MsgRemoveIssueLabels {
   string creator = 1;
-  uint64 id = 2;
-  repeated string labels = 3;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
 }
 
 message MsgRemoveIssueLabelsResponse { }
@@ -373,8 +416,8 @@ message MsgUpdateRepositoryLabelResponse { }
 
 message MsgDeleteRepositoryLabel {
   string creator = 1;
-  uint64 id = 2;
-  string name = 3;
+  uint64 repositoryId = 2;
+  uint64 labelId = 3;
 }
 
 message MsgDeleteRepositoryLabelResponse { }

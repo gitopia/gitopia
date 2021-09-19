@@ -325,7 +325,7 @@ func CmdUpdateRepositoryLabel() *cobra.Command {
 
 func CmdDeleteRepositoryLabel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-repository-label [id] [name]",
+		Use:   "delete-repository-label [repsitoryId] [labelId]",
 		Short: "Delete Repository Label",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -334,7 +334,7 @@ func CmdDeleteRepositoryLabel() *cobra.Command {
 				return err
 			}
 
-			argsName, err := cast.ToStringE(args[1])
+			labelId, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -344,7 +344,7 @@ func CmdDeleteRepositoryLabel() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteRepositoryLabel(clientCtx.GetFromAddress().String(), id, argsName)
+			msg := types.NewMsgDeleteRepositoryLabel(clientCtx.GetFromAddress().String(), id, labelId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

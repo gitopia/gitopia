@@ -64,6 +64,164 @@ func (k Keeper) Repository(c context.Context, req *types.QueryGetRepositoryReque
 	return &types.QueryGetRepositoryResponse{Repository: &repository}, nil
 }
 
+func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLatestRepositoryReleaseRequest) (*types.QueryGetLatestRepositoryReleaseResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if k.HasUser(ctx, req.UserId) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.UserId) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	totalReleaseCount := len(repository.Releases)
+
+	if totalReleaseCount > 0 {
+		var release types.Release
+
+		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(repository.Releases[totalReleaseCount-1].Id)), &release)
+
+		return &types.QueryGetLatestRepositoryReleaseResponse{Release: &release}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetRepositoryReleaseRequest) (*types.QueryGetRepositoryReleaseResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if k.HasUser(ctx, req.UserId) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.UserId) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	if i, exists := utils.RepositoryReleaseTagExists(repository.Releases, req.TagName); exists {
+		var release types.Release
+
+		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(uint64(i))), &release)
+
+		return &types.QueryGetRepositoryReleaseResponse{Release: &release}, nil
+	}
+
+	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepositoryReleaseRequest) (*types.QueryAllRepositoryReleaseResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	var releases []*types.Release
+	var pageRes *query.PageResponse
+	ctx := sdk.UnwrapSDKContext(c)
+
+	if k.HasUser(ctx, req.UserId) {
+		var user types.User
+
+		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
+		userKey := []byte(types.UserKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if k.HasOrganization(ctx, req.UserId) {
+		var organization types.Organization
+
+		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
+		organizationKey := []byte(types.OrganizationKey + req.UserId)
+		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	if repository.Creator != "" {
+		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+
+		var err error
+		pageRes, err = PaginateAllRepositoryRelease(k, ctx, releaseStore, repository, req.Pagination, func(release types.Release) error {
+			releases = append(releases, &release)
+			return nil
+		})
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	}
+
+	return &types.QueryAllRepositoryReleaseResponse{Release: releases, Pagination: pageRes}, nil
+}
+
 func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllRepositoryIssueRequest) (*types.QueryAllRepositoryIssueResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -503,6 +661,91 @@ func PaginateAllRepositoryPullRequest(
 	res := &query.PageResponse{NextKey: nextKey}
 	if countTotal {
 		res.Total = totalPullRequestCount
+	}
+
+	return res, nil
+}
+
+func PaginateAllRepositoryRelease(
+	k Keeper,
+	ctx sdk.Context,
+	releaseStore ks.KVStore,
+	repository types.Repository,
+	pageRequest *query.PageRequest,
+	onResult func(release types.Release) error,
+) (*query.PageResponse, error) {
+
+	totalReleaseCount := uint64(len(repository.Releases))
+	releases := repository.Releases
+
+	// if the PageRequest is nil, use default PageRequest
+	if pageRequest == nil {
+		pageRequest = &query.PageRequest{}
+	}
+
+	offset := pageRequest.Offset
+	key := pageRequest.Key
+	limit := pageRequest.Limit
+	countTotal := pageRequest.CountTotal
+
+	if offset > 0 && key != nil {
+		return nil, fmt.Errorf("invalid request, either offset or key is expected, got both")
+	}
+
+	if limit == 0 {
+		limit = DefaultLimit
+
+		// show total issue count when the limit is zero/not supplied
+		countTotal = true
+	}
+
+	if len(key) != 0 {
+
+		var count uint64
+		var nextKey []byte
+
+		for i := GetReleaseIDFromBytes(key); uint64(i) <= totalReleaseCount; i++ {
+			if count == limit {
+				nextKey = GetIssueIDBytes(uint64(i))
+				break
+			}
+
+			var release types.Release
+			k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
+			err := onResult(release)
+			if err != nil {
+				return nil, err
+			}
+
+			count++
+		}
+
+		return &query.PageResponse{
+			NextKey: nextKey,
+		}, nil
+	}
+
+	end := offset + limit
+
+	var nextKey []byte
+
+	for i := offset; uint64(i) < totalReleaseCount; i++ {
+		if uint64(i) < end {
+			var release types.Release
+			k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
+			err := onResult(release)
+			if err != nil {
+				return nil, err
+			}
+		} else if uint64(i) == end+1 {
+			nextKey = GetReleaseIDBytes(uint64(i))
+			break
+		}
+	}
+
+	res := &query.PageResponse{NextKey: nextKey}
+	if countTotal {
+		res.Total = totalReleaseCount
 	}
 
 	return res, nil
