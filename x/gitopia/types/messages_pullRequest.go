@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepoId uint64, baseBranch string, baseRepoId uint64) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepoId uint64, baseBranch string, baseRepoId uint64, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
 		Creator:     creator,
 		Title:       title,
@@ -16,6 +16,9 @@ func NewMsgCreatePullRequest(creator string, title string, description string, h
 		HeadRepoId:  headRepoId,
 		BaseBranch:  baseBranch,
 		BaseRepoId:  baseRepoId,
+		Reviewers:   reviewers,
+		Assignees:   assignees,
+		LabelIds:    labelIds,
 	}
 }
 
@@ -47,9 +50,68 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 	}
 	if len(msg.Title) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	} else if len(msg.Title) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
 	}
 	if len(msg.Description) > 20000 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+	if len(msg.HeadBranch) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head branch length exceeds limit: 63")
+	} else if len(msg.HeadBranch) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head branch too short")
+	}
+	if len(msg.BaseBranch) > 63 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base branch length exceeds limit: 63")
+	} else if len(msg.BaseBranch) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base branch too short")
+	}
+	if len(msg.Reviewers) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 reviewers at a time")
+	}
+	if len(msg.Assignees) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
+	}
+	if len(msg.LabelIds) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
+	}
+	if len(msg.Reviewers) > 0 {
+		unique := make(map[string]bool, len(msg.Reviewers))
+		for _, reviewer := range msg.Reviewers {
+			_, err := sdk.AccAddressFromBech32(reviewer)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reviewer (%v)", msg.Reviewers[0])
+			}
+			if !unique[reviewer] {
+				unique[reviewer] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate reviewer (%s)", reviewer)
+			}
+		}
+	}
+	if len(msg.Assignees) > 0 {
+		unique := make(map[string]bool, len(msg.Assignees))
+		for _, assignee := range msg.Assignees {
+			_, err := sdk.AccAddressFromBech32(assignee)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", msg.Assignees[0])
+			}
+			if !unique[assignee] {
+				unique[assignee] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+			}
+		}
+	}
+	if len(msg.LabelIds) > 0 {
+		unique := make(map[uint64]bool, len(msg.LabelIds))
+		for _, labelId := range msg.LabelIds {
+			if !unique[labelId] {
+				unique[labelId] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", labelId)
+			}
+		}
 	}
 	return nil
 }

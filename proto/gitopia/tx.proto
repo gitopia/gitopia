@@ -114,6 +114,9 @@ message MsgCreatePullRequest {
   uint64 headRepoId = 5; 
   string baseBranch = 6;
   uint64 baseRepoId = 7; 
+  repeated string reviewers = 8;
+  repeated string assignees = 9;
+  repeated uint64 labelIds = 10;
 }
 
 message MsgCreatePullRequestResponse {

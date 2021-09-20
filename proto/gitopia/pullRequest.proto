@@ -21,7 +21,7 @@ message PullRequest {
   repeated uint64 comments = 8; 
   uint64 commentsCount = 9;
   repeated uint64 issues = 10; 
-  repeated string labels = 11; 
+  repeated uint64 labels = 11;
   repeated string assignees = 12; 
   repeated string reviewers = 13; 
   bool draft = 14; 

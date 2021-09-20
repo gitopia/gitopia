@@ -2,6 +2,7 @@ package cli
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -11,13 +12,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func CmdCreatePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId]",
+		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId] [reviewers] [assignees] [labelIds]",
 		Short: "Create a new pullRequest",
-		Args:  cobra.ExactArgs(6),
+		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsTitle, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -43,13 +45,26 @@ func CmdCreatePullRequest() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsReviewers := strings.Split(args[6], ",")
+			if len(argsReviewers) == 1 && argsReviewers[0] == "" {
+				argsReviewers = nil
+			}
+			argsAssignees := strings.Split(args[7], ",")
+			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
+				argsAssignees = nil
+			}
+			argsLabels := strings.Split(args[8], ",")
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePullRequest(clientCtx.GetFromAddress().String(), argsTitle, argsDescription, argsHeadBranch, argsHeadRepoId, argsBaseBranch, argsBaseRepoId)
+			msg := types.NewMsgCreatePullRequest(clientCtx.GetFromAddress().String(), argsTitle, argsDescription, argsHeadBranch, argsHeadRepoId, argsBaseBranch, argsBaseRepoId, argsReviewers, argsAssignees, labelIds)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

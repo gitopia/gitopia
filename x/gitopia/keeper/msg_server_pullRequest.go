@@ -69,6 +69,28 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		BaseRepoId:          msg.BaseRepoId,
 	}
 
+	for _, r := range msg.Reviewers {
+		if !k.HasUser(ctx, r) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
+		}
+		pullRequest.Reviewers = append(pullRequest.Reviewers, r)
+	}
+
+	for _, a := range msg.Assignees {
+		if !k.HasUser(ctx, a) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		}
+		pullRequest.Assignees = append(pullRequest.Assignees, a)
+	}
+
+	for _, labelId := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(baseRepo.Labels, labelId); exists {
+			pullRequest.Labels = append(pullRequest.Labels, baseRepo.Labels[i].Id)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
+		}
+	}
+
 	id := k.AppendPullRequest(
 		ctx,
 		pullRequest,
