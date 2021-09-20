@@ -49,6 +49,16 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	createdAt := ctx.BlockTime().Unix()
 	zeroTime := time.Time{}.Unix()
 
+	head := types.PullRequestHead{
+		RepositoryId: msg.HeadRepoId,
+		Branch:       msg.HeadBranch,
+	}
+
+	base := types.PullRequestBase{
+		RepositoryId: msg.BaseRepoId,
+		Branch:       msg.BaseBranch,
+	}
+
 	var pullRequest = types.PullRequest{
 		Creator:             msg.Creator,
 		Iid:                 baseRepo.PullsCount,
@@ -63,10 +73,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		ClosedAt:            zeroTime,
 		MergedAt:            zeroTime,
 		MaintainerCanModify: false,
-		HeadBranch:          msg.HeadBranch,
-		HeadRepoId:          msg.HeadRepoId,
-		BaseBranch:          msg.BaseBranch,
-		BaseRepoId:          msg.BaseRepoId,
+		Head:                &head,
+		Base:                &base,
 	}
 
 	for _, r := range msg.Reviewers {
@@ -205,7 +213,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	var pullRequest = k.GetPullRequest(ctx, msg.Id)
 	currentTime := ctx.BlockTime().Unix()
 
-	repository := k.GetRepository(ctx, pullRequest.BaseRepoId)
+	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
 	var havePermission bool = false
 
 	ownerType := repository.Owner.Type
