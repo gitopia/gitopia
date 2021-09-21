@@ -226,7 +226,10 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		Type: types.RepositoryOwner_Type(ownerType),
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	repository.Owner = &owner
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -435,7 +438,10 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		k.SetOrganization(ctx, organization)
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	repository.Name = msg.Name
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -495,6 +501,8 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	permission, exists := types.RepositoryCollaborator_Permission_value[msg.Role]
 	if !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission arg (%v)", msg.Role))
@@ -513,6 +521,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 	}
 
 	repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -568,11 +577,15 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.User); exists {
 		repository.Collaborators = append(repository.Collaborators[:i], repository.Collaborators[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("collaborators with id (%v) doesn't exists", msg.User))
 	}
+
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -607,6 +620,8 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%v) already exists", msg.Name))
 	}
@@ -620,6 +635,7 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 	}
 
 	repository.Labels = append(repository.Labels, &repositoryLabel)
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -654,6 +670,8 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
 		if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label name (%v) already exists", msg.Name))
@@ -664,6 +682,8 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label (%d) doesn't exists", msg.LabelId))
 	}
+
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -698,12 +718,15 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
 		repository.Labels = append(repository.Labels[:i], repository.Labels[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists", msg.LabelId))
 	}
 
+	repository.UpdatedAt = currentTime
 	k.SetRepository(ctx, repository)
 
 	return &types.MsgDeleteRepositoryLabelResponse{}, nil
@@ -746,6 +769,8 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 		repository.Branches = append(repository.Branches, &repositoryBranch)
 	}
 
+	repository.UpdatedAt = currentTime
+
 	k.SetRepository(ctx, repository)
 
 	return &types.MsgCreateBranchResponse{}, nil
@@ -775,11 +800,15 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, msg.Name); exists {
 		repository.DefaultBranch = repository.Branches[i].Name
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) doesn't exist", msg.Name))
 	}
+
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -810,6 +839,8 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, msg.Name); exists {
 		if repository.DefaultBranch != repository.Branches[i].Name {
 			repository.Branches = append(repository.Branches[:i], repository.Branches[i+1:]...)
@@ -819,6 +850,8 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) doesn't exist", msg.Name))
 	}
+
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -863,6 +896,8 @@ func (k msgServer) CreateTag(goCtx context.Context, msg *types.MsgCreateTag) (*t
 		repository.Tags = append(repository.Tags, &repositoryTag)
 	}
 
+	repository.UpdatedAt = currentTime
+
 	k.SetRepository(ctx, repository)
 
 	return &types.MsgCreateTagResponse{}, nil
@@ -892,11 +927,15 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryTagExists(repository.Tags, msg.Name); exists {
 		repository.Tags = append(repository.Tags[:i], repository.Tags[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exist", msg.Name))
 	}
+
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
