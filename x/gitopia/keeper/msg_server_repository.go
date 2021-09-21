@@ -732,12 +732,16 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, msg.Name); exists {
 		repository.Branches[i].Sha = msg.CommitSHA
+		repository.Branches[i].LastUpdatedAt = currentTime
 	} else {
 		var repositoryBranch = types.RepositoryBranch{
-			Name: msg.Name,
-			Sha:  msg.CommitSHA,
+			Name:          msg.Name,
+			Sha:           msg.CommitSHA,
+			LastUpdatedAt: currentTime,
 		}
 		repository.Branches = append(repository.Branches, &repositoryBranch)
 	}
@@ -845,12 +849,16 @@ func (k msgServer) CreateTag(goCtx context.Context, msg *types.MsgCreateTag) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	currentTime := ctx.BlockTime().Unix()
+
 	if i, exists := utils.RepositoryTagExists(repository.Tags, msg.Name); exists {
 		repository.Tags[i].Sha = msg.Sha
+		repository.Tags[i].LastUpdatedAt = currentTime
 	} else {
 		var repositoryTag = types.RepositoryTag{
-			Name: msg.Name,
-			Sha:  msg.Sha,
+			Name:          msg.Name,
+			Sha:           msg.Sha,
+			LastUpdatedAt: currentTime,
 		}
 		repository.Tags = append(repository.Tags, &repositoryTag)
 	}
