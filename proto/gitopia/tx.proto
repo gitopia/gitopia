@@ -23,6 +23,8 @@ service Msg {
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
+  rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
+  rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
@@ -159,6 +161,22 @@ message MsgSetPullRequestState {
 message MsgSetPullRequestStateResponse {
   string state = 1;
 }
+
+message MsgAddPullRequestAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgAddPullRequestAssigneesResponse { }
+
+message MsgRemovePullRequestAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgRemovePullRequestAssigneesResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;

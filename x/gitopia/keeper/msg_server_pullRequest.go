@@ -294,6 +294,122 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}, nil
 }
 
+func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.MsgAddPullRequestAssignees) (*types.MsgAddPullRequestAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullrequest = k.GetPullRequest(ctx, msg.Id)
+
+	if len(pullrequest.Assignees)+len(msg.Assignees) > 10 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 assignees")
+	}
+
+	for _, a := range msg.Assignees {
+		if _, exists := utils.AssigneeExists(pullrequest.Assignees, a); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
+		}
+		if !k.HasUser(ctx, a) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		}
+		pullrequest.Assignees = append(pullrequest.Assignees, a)
+	}
+
+	pullrequest.CommentsCount += 1
+	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullrequest.CommentsCount,
+		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   pullrequest.UpdatedAt,
+		UpdatedAt:   pullrequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullrequest.Comments = append(pullrequest.Comments, id)
+
+	k.SetPullRequest(ctx, pullrequest)
+
+	return &types.MsgAddPullRequestAssigneesResponse{}, nil
+}
+
+func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.MsgRemovePullRequestAssignees) (*types.MsgRemovePullRequestAssigneesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullrequest = k.GetPullRequest(ctx, msg.Id)
+
+	if len(pullrequest.Assignees) < len(msg.Assignees) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than user assigned")
+	}
+
+	for _, a := range msg.Assignees {
+		if i, exists := utils.AssigneeExists(pullrequest.Assignees, a); exists {
+			pullrequest.Assignees = append(pullrequest.Assignees[:i], pullrequest.Assignees[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
+		}
+	}
+
+	pullrequest.CommentsCount += 1
+	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullrequest.CommentsCount,
+		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:      true,
+		CreatedAt:   pullrequest.UpdatedAt,
+		UpdatedAt:   pullrequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullrequest.Comments = append(pullrequest.Comments, id)
+
+	k.SetPullRequest(ctx, pullrequest)
+
+	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
+}
+
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

@@ -314,7 +314,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	}
 
 	for _, a := range msg.Assignees {
-		if _, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+		if _, exists := utils.AssigneeExists(issue.Assignees, a); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
 		}
 		if !k.HasUser(ctx, a) {
@@ -330,7 +330,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueAddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -381,7 +381,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	}
 
 	for _, a := range msg.Assignees {
-		if i, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+		if i, exists := utils.AssigneeExists(issue.Assignees, a); exists {
 			issue.Assignees = append(issue.Assignees[:i], issue.Assignees[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
@@ -395,7 +395,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueRemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,

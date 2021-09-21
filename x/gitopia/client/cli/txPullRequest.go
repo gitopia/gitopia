@@ -221,6 +221,74 @@ func CmdSetPullRequestState() *cobra.Command {
 	return cmd
 }
 
+func CmdAddPullRequestAssignees() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-pullrequest-assignees [id] [assignees]",
+		Short: "Add pullRequest assignees",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsAssignees := strings.Split(args[1], ",")
+			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
+				argsAssignees = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddPullRequestAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdRemovePullRequestAssignees() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-pullrequest-assignees [id] [assignees]",
+		Short: "Remove pullRequest assignees",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsAssignees := strings.Split(args[1], ",")
+			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
+				argsAssignees = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemovePullRequestAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeletePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-pullRequest [id]",
