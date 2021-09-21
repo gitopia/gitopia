@@ -1,14 +1,27 @@
+genesis:
+  app_state:
+    staking:
+      params:
+        bond_denom: "tlore"
 accounts:
-  - name: alice
-    coins: ["1000token", "100000000stake"]
-  - name: bob
-    coins: ["500token"]
+  - name: node0
+    coins: ["100000000tlore"]
+  - name: node1
+    coins: ["100000000tlore"]
+  - name: node2
+    coins: ["100000000tlore"]
+  - name: node3
+    coins: ["50000000tlore"]
+  - name: faucet
+    coins: ["100000000tlore"]
 validator:
-  name: alice
-  staked: "100000000stake"
+  name: node0
+  staked: "100000000tlore"
 client:
   vuex:
     path: "vue/src/store"
 faucet:
-  name: bob 
-  coins: ["5token"]
+  name: faucet
+  coins: ["5tlore"]
+  coins_max: ["15tlore"]
+  port: 4500

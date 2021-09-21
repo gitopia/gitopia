@@ -120,13 +120,7 @@ export interface ProtobufAny {
    * Schemes other than `http`, `https` (or the empty scheme) might be
    * used with implementation specific semantics.
    */
-  typeUrl?: string;
-
-  /**
-   * Must be a valid serialized protocol buffer of the above specified type.
-   * @format byte
-   */
-  value?: string;
+  "@type"?: string;
 }
 
 export interface RpcStatus {
@@ -1044,7 +1038,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title ibc/core/channel/v1/tx.proto
+ * @title ibc/core/channel/v1/channel.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {

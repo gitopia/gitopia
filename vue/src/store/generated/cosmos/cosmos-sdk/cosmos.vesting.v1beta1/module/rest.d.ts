@@ -109,12 +109,7 @@ export interface ProtobufAny {
      * Schemes other than `http`, `https` (or the empty scheme) might be
      * used with implementation specific semantics.
      */
-    typeUrl?: string;
-    /**
-     * Must be a valid serialized protocol buffer of the above specified type.
-     * @format byte
-     */
-    value?: string;
+    "@type"?: string;
 }
 export interface RpcStatus {
     /** @format int32 */
@@ -190,7 +185,7 @@ export declare class HttpClient<SecurityDataType = unknown> {
     request: <T = any, E = any>({ body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams) => Promise<HttpResponse<T, E>>;
 }
 /**
- * @title cosmos/vesting/v1beta1/vesting.proto
+ * @title cosmos/vesting/v1beta1/tx.proto
  * @version version not set
  */
 export declare class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {

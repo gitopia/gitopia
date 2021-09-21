@@ -3,6 +3,8 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/spf13/cast"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -12,11 +14,17 @@ import (
 func CmdCreateWhois() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-whois [name] [address]",
-		Short: "Creates a new whois",
+		Short: "Create a new whois",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsName := string(args[0])
-			argsAddress := string(args[1])
+			argsName, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+			argsAddress, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

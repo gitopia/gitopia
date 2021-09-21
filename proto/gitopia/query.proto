@@ -4,6 +4,13 @@ package gitopia.gitopia.gitopia;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "gitopia/release.proto";
+import "gitopia/pullRequest.proto";
+import "gitopia/organization.proto";
+import "gitopia/comment.proto";
+import "gitopia/issue.proto";
+import "gitopia/repository.proto";
+import "gitopia/user.proto";
 import "gitopia/whois.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
@@ -11,9 +18,149 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+
+	// Queries a release by id.
+	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
+	}
+
+	// Queries a list of release items.
+	rpc ReleaseAll(QueryAllReleaseRequest) returns (QueryAllReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
+	}
+
+
+	// Queries a pullRequest by id.
+	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest/{id}";
+	}
+
+	// Queries a list of pullRequest items.
+	rpc PullRequestAll(QueryAllPullRequestRequest) returns (QueryAllPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest";
+	}
+
+
+	// Queries a organization by id.
+	rpc Organization(QueryGetOrganizationRequest) returns (QueryGetOrganizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization/{id}";
+	}
+
+	// Queries a list of organization items.
+	rpc OrganizationAll(QueryAllOrganizationRequest) returns (QueryAllOrganizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/organization";
+	}
+
+
+	// Queries a comment by id.
+	rpc Comment(QueryGetCommentRequest) returns (QueryGetCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment/{id}";
+	}
+
+	// Queries a list of comment items.
+	rpc CommentAll(QueryAllCommentRequest) returns (QueryAllCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment";
+	}
+
+	// Queries a issue by id.
+	rpc Issue(QueryGetIssueRequest) returns (QueryGetIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue/{id}";
+	}
+
+	// Queries a list of issue items.
+	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
+	}
+
+	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
+	}
+
+	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}";
+	}
+
+	rpc RepositoryReleaseAll(QueryAllRepositoryReleaseRequest) returns (QueryAllRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases";
+	}
+
+	// Queries a repository by id.
+	rpc RepositoryIssue(QueryGetRepositoryIssueRequest) returns (QueryGetRepositoryIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}";
+	}
+
+	// Queries a list of repository items.
+	rpc RepositoryIssueAll(QueryAllRepositoryIssueRequest) returns (QueryAllRepositoryIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue";
+	}
+
+	// Queries a repository pullRequest by id.
+	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}";
+	}
+
+	rpc RepositoryPullRequestAll(QueryAllRepositoryPullRequestRequest) returns (QueryAllRepositoryPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull";
+	}
+
+	// Queries a repository by id.
+	rpc Repository(QueryGetRepositoryRequest) returns (QueryGetRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}";
+	}
+
+	// Queries a list of repository items.
+	rpc RepositoryAll(QueryAllRepositoryRequest) returns (QueryAllRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository";
+	}
+
+	// Queries a repository by id.
+	rpc BranchAll(QueryGetAllBranchRequest) returns (QueryGetAllBranchResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches";
+	}
+
+	rpc BranchSha(QueryGetBranchShaRequest) returns (QueryGetBranchShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}";
+	}
+
+	rpc TagAll(QueryGetAllTagRequest) returns (QueryGetAllTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags";
+	}
+
+	rpc TagSha(QueryGetTagShaRequest) returns (QueryGetTagShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/tags/{tagName}";
+	}
+
+	// Queries a user by id.
+	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
+	}
+
+	// Queries a list of user items.
+	rpc UserAll(QueryAllUserRequest) returns (QueryAllUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user";
+	}
+
+	// Queries a list of user repositories.
+	rpc AddressRepositoryAll(QueryAllAddressRepositoryRequest) returns (QueryAllAddressRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repositories";
+	}
+
+	// Queries a repository by user id and repository name
+	rpc AddressRepository(QueryGetAddressRepositoryRequest) returns (QueryGetAddressRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/{repositoryName}";
+	}
+
+	// Queries a list of user Organizations.
+	rpc UserOrganizationAll(QueryAllUserOrganizationRequest) returns (QueryAllUserOrganizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/organizations";
+	}
+
+	// Queries a whois by id.
 	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois/{name}";
 	}
+
+	// Queries a list of whois items.
 	rpc WhoisAll(QueryAllWhoisRequest) returns (QueryAllWhoisResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois";
 	}
@@ -21,6 +168,253 @@ service Query {
 }
 
 // this line is used by starport scaffolding # 3
+message QueryGetReleaseRequest {
+	uint64 id = 1;
+}
+
+message QueryGetReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllReleaseRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetPullRequestRequest {
+	uint64 id = 1;
+}
+
+message QueryGetPullRequestResponse {
+	PullRequest PullRequest = 1;
+}
+
+message QueryAllPullRequestRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPullRequestResponse {
+	repeated PullRequest PullRequest = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetOrganizationRequest {
+	string id = 1;
+}
+
+message QueryGetOrganizationResponse {
+	Organization Organization = 1;
+}
+
+message QueryAllOrganizationRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllOrganizationResponse {
+	repeated Organization Organization = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetCommentRequest {
+	uint64 id = 1;
+}
+
+message QueryGetCommentResponse {
+	Comment Comment = 1;
+}
+
+message QueryAllCommentRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetIssueRequest {
+	uint64 id = 1;
+}
+
+message QueryGetIssueResponse {
+	Issue Issue = 1;
+}
+
+message QueryAllIssueRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllIssueResponse {
+	repeated Issue Issue = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetLatestRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetLatestRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryGetRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllRepositoryReleaseRequest { 
+	string userId = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryIssueRequest {
+	string id = 1;
+	string repositoryName = 2;
+	uint64 issueIid = 3;
+}
+
+message QueryGetRepositoryIssueResponse {
+	Issue Issue = 1;
+}
+
+message QueryGetRepositoryPullRequestRequest {
+	string userId = 1;
+	string repositoryName = 2;
+	uint64 pullIid = 3;
+}
+
+message QueryGetRepositoryPullRequestResponse {
+	PullRequest PullRequest = 1;
+}
+
+message QueryAllRepositoryIssueRequest {
+	string id = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryIssueResponse {
+	repeated Issue Issue = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllRepositoryPullRequestRequest {
+	string userId = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryPullRequestResponse {
+	repeated PullRequest PullRequest = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryRequest {
+	uint64 id = 1;
+}
+
+message QueryGetRepositoryResponse {
+	Repository Repository = 1;
+}
+
+message QueryGetAllBranchRequest {
+	uint64 repositoryId = 1;
+}
+
+message QueryGetAllBranchResponse {
+	repeated RepositoryBranch Branches = 1;
+}
+
+message QueryGetBranchShaRequest {
+	uint64 repositoryId = 1;
+	string branchName = 2;
+}
+
+message QueryGetBranchShaResponse {
+	string sha = 1;
+}
+
+message QueryGetAllTagRequest {
+	uint64 repositoryId = 1;
+}
+
+message QueryGetAllTagResponse {
+	repeated RepositoryTag Tags = 1;
+}
+
+message QueryGetTagShaRequest {
+	uint64 repositoryId = 1;
+	string tagName = 2;
+}
+
+message QueryGetTagShaResponse {
+	string sha = 1;
+}
+
+message QueryAllRepositoryRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRepositoryResponse {
+	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetUserRequest {
+	string id = 1;
+}
+
+message QueryGetUserResponse {
+	User User = 1;
+}
+
+message QueryAllUserRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllUserResponse {
+	repeated User User = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllAddressRepositoryRequest {
+	string id = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryAllAddressRepositoryResponse {
+	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetAddressRepositoryRequest {
+	string id = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetAddressRepositoryResponse {
+	Repository Repository = 1;
+}
+
+message QueryAllUserOrganizationRequest {
+	string id = 1;
+}
+
+message QueryAllUserOrganizationResponse {
+	repeated Organization organization = 1;
+}
+
 message QueryGetWhoisRequest {
 	string name = 1;
 }

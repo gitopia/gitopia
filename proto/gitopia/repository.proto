@@ -1,0 +1,97 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message Repository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3; 
+  RepositoryOwner owner = 4; 
+  string description = 5; 
+  repeated uint64 forks = 6; 
+  repeated RepositoryBranch branches = 7;
+  repeated RepositoryTag tags = 8; 
+  string subscribers = 9; 
+  string commits = 10;
+  repeated RepositoryIssue issues = 11;
+  repeated RepositoryPullRequest pullRequests = 12;
+  uint64 issuesCount = 13;
+  uint64 pullsCount = 14;
+  repeated RepositoryLabel labels = 15;
+  uint64 labelsCount = 16;
+  repeated RepositoryRelease releases = 17;
+  int64 createdAt = 18;
+  int64 updatedAt = 19;
+  int64 pushedAt = 20;
+  repeated uint64 stargazers = 21;
+  bool archived = 22;
+  string license = 23;
+  string defaultBranch = 24;
+  uint64 parent = 25;
+  bool fork = 26;
+  repeated RepositoryCollaborator collaborators = 27;
+  string extensions = 28;
+}
+
+message RepositoryOwner {
+  string id = 1;
+  enum Type {
+    USER = 0;
+	  ORGANIZATION = 1;
+  }
+  Type type = 2;
+}
+
+message RepositoryBranch {
+  string name = 1;
+  string sha = 2;
+}
+
+message RepositoryTag {
+  string name = 1;
+  string sha = 2;
+}
+
+message RepositoryIssue {
+  uint64 iid = 1;
+  uint64 id = 2;
+}
+
+message RepositoryPullRequest {
+  uint64 iid = 1;
+  uint64 id = 2;
+} 
+
+message RepositoryCollaborator {
+  string id = 1;
+  enum Permission {
+    READ = 0;
+	  TRIAGE = 1;
+	  WRITE = 2;
+	  MAINTAIN = 3;
+	  ADMIN = 4;
+  }
+  Permission permission = 2;
+}
+
+message RepositoryLabel {
+  uint64 id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+} 
+
+message RepositoryRelease {
+  uint64 id = 1;
+  string tagName = 2;
+}
+
+message Attachment {
+  string name = 1;
+  uint64 size = 2;
+  string sha = 3;
+  string uploader = 4;
+} 

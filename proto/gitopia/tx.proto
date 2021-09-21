@@ -2,18 +2,540 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "gitopia/release.proto";
+import "gitopia/pullRequest.proto";
+import "gitopia/organization.proto";
+import "gitopia/comment.proto";
+import "gitopia/issue.proto";
+import "gitopia/repository.proto";
+import "gitopia/whois.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
+  rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
+  rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
+  rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
+  rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
+  rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
+  rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
+  rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
+  rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
+  rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
+  rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
+  rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
+  rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
+  rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
+  rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
+  rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
+  rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
+  rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
+  rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
+  rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
+  rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
+  rpc AddIssueAssignees(MsgAddIssueAssignees) returns (MsgAddIssueAssigneesResponse);
+  rpc RemoveIssueAssignees(MsgRemoveIssueAssignees) returns (MsgRemoveIssueAssigneesResponse);
+  rpc AddIssueLabels(MsgAddIssueLabels) returns (MsgAddIssueLabelsResponse);
+  rpc RemoveIssueLabels(MsgRemoveIssueLabels) returns (MsgRemoveIssueLabelsResponse);
+  rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
+  rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
+  rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
+  rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
+  rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
+  rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
+  rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
+  rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
+  rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
+  rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
+  rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
+  rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
+  rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
+  rpc CreateTag(MsgCreateTag) returns (MsgCreateTagResponse);
+  rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
+  rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
+  rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
+  rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
+  rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
+  rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
 }
 
 // this line is used by starport scaffolding # proto/tx/message
+message MsgCreateRelease {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+}
+
+message MsgCreateReleaseResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateRelease {
+  string creator = 1;
+  uint64 id = 2;
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+}
+
+message MsgUpdateReleaseResponse { }
+
+message MsgDeleteRelease {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteReleaseResponse { }
+
+message MsgCreatePullRequest {
+  string creator = 1;
+  string title = 2;
+  string description = 3;
+  string headBranch = 4;
+  uint64 headRepoId = 5; 
+  string baseBranch = 6;
+  uint64 baseRepoId = 7; 
+}
+
+message MsgCreatePullRequestResponse {
+  uint64 id = 1;
+  uint64 iid = 2;
+}
+
+message MsgUpdatePullRequest {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 4;
+  string description = 6;
+}
+
+message MsgUpdatePullRequestResponse { }
+
+message MsgUpdatePullRequestTitle {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+}
+
+message MsgUpdatePullRequestTitleResponse { }
+
+message MsgUpdatePullRequestDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdatePullRequestDescriptionResponse { }
+
+message MsgSetPullRequestState {
+  string creator = 1;
+  uint64 id = 2;
+  string state = 3;
+  string mergeCommitSha = 4; 
+}
+
+message MsgSetPullRequestStateResponse {
+  string state = 1;
+}
+
+message MsgDeletePullRequest {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeletePullRequestResponse { }
+
+message MsgCreateOrganization {
+  string creator = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message MsgCreateOrganizationResponse {
+  string id = 1;
+}
+
+message MsgUpdateOrganizationMember {
+  string creator = 1;
+  string id = 2;
+  string user = 3;
+  string role = 4;
+}
+
+message MsgUpdateOrganizationMemberResponse { }
+
+message MsgRemoveOrganizationMember {
+  string creator = 1;
+  string id = 2;
+  string user = 3;
+}
+
+message MsgRemoveOrganizationMemberResponse { }
+
+message MsgUpdateOrganization {
+  string creator = 1;
+  string id = 2;
+  string name = 3;
+  string avatarUrl = 4;
+  string location = 5;
+  string email = 6;
+  string website = 7;
+  string description = 8;
+}
+
+message MsgUpdateOrganizationResponse { }
+
+message MsgDeleteOrganization {
+  string creator = 1;
+  string id = 2;
+}
+
+message MsgDeleteOrganizationResponse { }
+
+message MsgCreateComment {
+  string creator = 1;
+  uint64 parentId = 2;
+  string body = 3;
+  repeated string attachments = 4;
+  string diffHunk = 5;
+  string path = 6;
+  bool system = 7;
+  string authorAssociation = 8;
+  string commentType = 9;
+}
+
+message MsgCreateCommentResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateComment {
+  string creator = 1;
+  uint64 id = 2;
+  string body = 3;
+  repeated string attachments = 4;
+}
+
+message MsgUpdateCommentResponse { }
+
+message MsgDeleteComment {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteCommentResponse { }
+
+message MsgCreateIssue {
+  string creator = 1;
+  string title = 2;
+  string description = 3;
+  uint64 repositoryId = 4;
+  repeated uint64 labelIds = 5;
+  uint64 weight = 6;
+  repeated string assignees = 7;
+}
+
+message MsgCreateIssueResponse {
+  uint64 id = 1;
+  uint64 iid = 2;
+}
+
+message MsgUpdateIssue {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+  string description = 4;
+  uint64 weight = 5;
+  repeated string assignees = 6;
+}
+
+message MsgUpdateIssueResponse { }
+
+message MsgUpdateIssueTitle {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+}
+
+message MsgUpdateIssueTitleResponse { }
+
+message MsgUpdateIssueDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdateIssueDescriptionResponse { }
+
+message MsgToggleIssueState {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgToggleIssueStateResponse {
+  string state = 1;
+}
+
+message MsgAddIssueAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgAddIssueAssigneesResponse { }
+
+message MsgRemoveIssueAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgRemoveIssueAssigneesResponse { }
+
+message MsgAddIssueLabels {
+  string creator = 1;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgAddIssueLabelsResponse { }
+
+message MsgRemoveIssueLabels {
+  string creator = 1;
+  uint64 issueId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgRemoveIssueLabelsResponse { }
+
+message MsgDeleteIssue {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteIssueResponse { }
+
+message MsgCreateRepository {
+  string creator = 1;
+  string name = 2;
+  string ownerId = 3;
+  string ownerType = 4;
+  string description = 5;
+}
+
+message MsgCreateRepositoryResponse {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message MsgForkRepository {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string ownerId = 3;
+  string ownerType = 4;
+}
+
+message MsgForkRepositoryResponse {
+  uint64 id = 1;
+}
+
+message MsgRenameRepository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgRenameRepositoryResponse { }
+
+message MsgChangeOwner {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string ownerId = 3;
+  string ownerType = 4;
+}
+
+message MsgChangeOwnerResponse { }
+
+message MsgUpdateRepositoryCollaborator {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+  string role = 4;
+}
+
+message MsgUpdateRepositoryCollaboratorResponse { }
+
+message MsgRemoveRepositoryCollaborator {
+  string creator = 1;
+  uint64 id = 2;
+  string user = 3;
+}
+
+message MsgRemoveRepositoryCollaboratorResponse { }
+
+message MsgCreateRepositoryLabel {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string color = 4;
+  string description = 5;
+}
+
+message MsgCreateRepositoryLabelResponse { 
+  uint64 id = 1;
+}
+
+message MsgUpdateRepositoryLabel {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 labelId = 3;
+  string name = 4;
+  string color = 5;
+  string description = 6;
+}
+
+message MsgUpdateRepositoryLabelResponse { }
+
+message MsgDeleteRepositoryLabel {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 labelId = 3;
+}
+
+message MsgDeleteRepositoryLabelResponse { }
+
+message MsgCreateBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string commitSHA = 4;
+}
+
+message MsgCreateBranchResponse { }
+
+message MsgSetDefaultBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgSetDefaultBranchResponse { }
+
+message MsgDeleteBranch {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteBranchResponse { }
+
+message MsgCreateTag {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string sha = 4;
+}
+
+message MsgCreateTagResponse { }
+
+message MsgDeleteTag {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+}
+
+message MsgDeleteTagResponse { }
+
+message MsgUpdateRepository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string owner = 4;
+  string description = 5;
+  string labels = 6;
+  string license = 7;
+  string defaultBranch = 8;
+}
+
+message MsgUpdateRepositoryResponse { }
+
+message MsgDeleteRepository {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteRepositoryResponse { }
+
+message MsgCreateUser {
+  string creator = 1;
+  string username = 2;
+  string usernameGithub = 3;
+  string avatarUrl = 4;
+  string followers = 5;
+  string following = 6;
+  string repositories = 7;
+  string repositories_archived = 8;
+  string organizations = 9;
+  string starred_repos = 10;
+  string subscriptions = 11;
+  string email = 12;
+  string bio = 13;
+  string createdAt = 14;
+  string updatedAt = 15;
+  string extensions = 16;
+}
+
+message MsgCreateUserResponse {
+  string id = 1;
+}
+
+message MsgUpdateUser {
+  string creator = 1;
+  string id = 2;
+  string username = 3;
+  string usernameGithub = 4;
+  string avatarUrl = 5;
+  string followers = 6;
+  string following = 7;
+  string repositories = 8;
+  string repositories_archived = 9;
+  string organizations = 10;
+  string starred_repos = 11;
+  string subscriptions = 12;
+  string email = 13;
+  string bio = 14;
+  string createdAt = 15;
+  string updatedAt = 16;
+  string extensions = 17;
+}
+
+message MsgUpdateUserResponse { }
+
+message MsgDeleteUser {
+  string creator = 1;
+  string id = 2;
+}
+
+message MsgDeleteUserResponse { }
+
 message MsgSetWhois {
   string creator = 1;
   string name = 2;

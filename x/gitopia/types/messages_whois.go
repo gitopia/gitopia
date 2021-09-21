@@ -10,7 +10,7 @@ var _ sdk.Msg = &MsgSetWhois{}
 func NewMsgSetWhois(creator string, name string, address string) *MsgSetWhois {
 	return &MsgSetWhois{
 		Creator: creator,
-		Name: name,
+		Name:    name,
 		Address: address,
 	}
 }
@@ -52,7 +52,7 @@ var _ sdk.Msg = &MsgUpdateWhois{}
 func NewMsgUpdateWhois(creator string, name string, address string) *MsgUpdateWhois {
 	return &MsgUpdateWhois{
 		Creator: creator,
-		Name: name,
+		Name:    name,
 		Address: address,
 	}
 }
@@ -90,7 +90,7 @@ var _ sdk.Msg = &MsgSetWhois{}
 
 func NewMsgDeleteWhois(creator string, name string) *MsgDeleteWhois {
 	return &MsgDeleteWhois{
-		Name: name,
+		Name:    name,
 		Creator: creator,
 	}
 }

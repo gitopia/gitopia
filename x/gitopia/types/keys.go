@@ -14,8 +14,12 @@ const (
 	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_capability"
+	MemStoreKey = "mem_gitopia"
+
+	// this line is used by starport scaffolding # ibc/keys/name
 )
+
+// this line is used by starport scaffolding # ibc/keys/port
 
 func KeyPrefix(p string) []byte {
 	return []byte(p)
@@ -24,4 +28,39 @@ func KeyPrefix(p string) []byte {
 const (
 	WhoisKey      = "Whois-value-"
 	WhoisCountKey = "Whois-count-"
+)
+
+const (
+	UserKey      = "User-value-"
+	UserCountKey = "User-count-"
+)
+
+const (
+	RepositoryKey      = "Repository-value-"
+	RepositoryCountKey = "Repository-count-"
+)
+
+const (
+	IssueKey      = "Issue-value-"
+	IssueCountKey = "Issue-count-"
+)
+
+const (
+	CommentKey      = "Comment-value-"
+	CommentCountKey = "Comment-count-"
+)
+
+const (
+	OrganizationKey      = "Organization-value-"
+	OrganizationCountKey = "Organization-count-"
+)
+
+const (
+	PullRequestKey      = "PullRequest-value-"
+	PullRequestCountKey = "PullRequest-count-"
+)
+
+const (
+	ReleaseKey      = "Release-value-"
+	ReleaseCountKey = "Release-count-"
 )
