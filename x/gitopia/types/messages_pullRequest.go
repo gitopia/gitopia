@@ -284,6 +284,122 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgAddPullRequestReviewers{}
+
+func NewMsgAddPullRequestReviewers(creator string, id uint64, reviewers []string) *MsgAddPullRequestReviewers {
+	return &MsgAddPullRequestReviewers{
+		Id:        id,
+		Creator:   creator,
+		Reviewers: reviewers,
+	}
+}
+
+func (msg *MsgAddPullRequestReviewers) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgAddPullRequestReviewers) Type() string {
+	return "AddPullRequestReviewers"
+}
+
+func (msg *MsgAddPullRequestReviewers) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgAddPullRequestReviewers) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgAddPullRequestReviewers) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.Reviewers) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty reviewers list")
+	} else if len(msg.Reviewers) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 reviewers at a time")
+	}
+
+	unique := make(map[string]bool, len(msg.Reviewers))
+	for _, reviewer := range msg.Reviewers {
+		_, err := sdk.AccAddressFromBech32(reviewer)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reviewer address(%s)", err)
+		}
+		if !unique[reviewer] {
+			unique[reviewer] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate reviewer (%s)", reviewer)
+		}
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgRemovePullRequestAssignees{}
+
+func NewMsgRemovePullRequestReviewers(creator string, id uint64, reviewers []string) *MsgRemovePullRequestReviewers {
+	return &MsgRemovePullRequestReviewers{
+		Id:        id,
+		Creator:   creator,
+		Reviewers: reviewers,
+	}
+}
+
+func (msg *MsgRemovePullRequestReviewers) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRemovePullRequestReviewers) Type() string {
+	return "RemovePullRequestReviewers"
+}
+
+func (msg *MsgRemovePullRequestReviewers) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRemovePullRequestReviewers) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRemovePullRequestReviewers) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.Reviewers) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty reviewers list")
+	} else if len(msg.Reviewers) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 reviewers at a time")
+	}
+
+	unique := make(map[string]bool, len(msg.Reviewers))
+	for _, reviewer := range msg.Reviewers {
+		_, err := sdk.AccAddressFromBech32(reviewer)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reviewer address(%s)", err)
+		}
+		if !unique[reviewer] {
+			unique[reviewer] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate reviewer (%s)", reviewer)
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgAddPullRequestAssignees{}
 
 func NewMsgAddPullRequestAssignees(creator string, id uint64, assignees []string) *MsgAddPullRequestAssignees {

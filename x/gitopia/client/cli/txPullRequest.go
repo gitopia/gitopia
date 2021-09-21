@@ -221,6 +221,74 @@ func CmdSetPullRequestState() *cobra.Command {
 	return cmd
 }
 
+func CmdAddPullRequestReviewers() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-pullrequest-reviewers [id] [reviewers]",
+		Short: "Add pullRequest reviewers",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsReviewers := strings.Split(args[1], ",")
+			if len(argsReviewers) == 1 && argsReviewers[0] == "" {
+				argsReviewers = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddPullRequestReviewers(clientCtx.GetFromAddress().String(), id, argsReviewers)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdRemovePullRequestReviewers() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-pullrequest-reviewers [id] [reviewers]",
+		Short: "Remove pullRequest reviewers",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsReviewers := strings.Split(args[1], ",")
+			if len(argsReviewers) == 1 && argsReviewers[0] == "" {
+				argsReviewers = nil
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemovePullRequestReviewers(clientCtx.GetFromAddress().String(), id, argsReviewers)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdAddPullRequestAssignees() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-pullrequest-assignees [id] [assignees]",
