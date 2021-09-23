@@ -357,6 +357,76 @@ func CmdRemovePullRequestAssignees() *cobra.Command {
 	return cmd
 }
 
+func CmdAddPullRequestLabels() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-pullrequest-labels [id] [labels]",
+		Short: "Add pullrequest labels",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsLabels := strings.Split(args[1], ",")
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddPullRequestLabels(clientCtx.GetFromAddress().String(), id, labelIds)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdRemovePullRequestLabels() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remove-pullrequest-labels [id] [labels]",
+		Short: "Remove issue labels",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsLabels := strings.Split(args[1], ",")
+			labelIds, err := utils.SliceAtoi(argsLabels)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgRemovePullRequestLabels(clientCtx.GetFromAddress().String(), id, labelIds)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeletePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-pullRequest [id]",

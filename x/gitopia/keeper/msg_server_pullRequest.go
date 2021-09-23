@@ -526,6 +526,139 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
 }
 
+func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAddPullRequestLabels) (*types.MsgAddPullRequestLabelsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.PullRequestId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.PullRequestId))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.PullRequestId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
+
+	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+
+	if len(pullRequest.Labels)+len(msg.LabelIds) > 50 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 50 labels")
+	}
+
+	var labelNames []string
+
+	for _, l := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
+			if _, exists := utils.LabelIdExists(pullRequest.Labels, repository.Labels[i].Id); exists {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) already exists in pullRequest", l))
+			}
+			labelNames = append(labelNames, repository.Labels[i].Name)
+
+			pullRequest.Labels = append(pullRequest.Labels, repository.Labels[i].Id)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", l))
+		}
+	}
+
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.PullRequestId,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
+		System:      true,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
+
+	k.SetPullRequest(ctx, pullRequest)
+
+	return &types.MsgAddPullRequestLabelsResponse{}, nil
+}
+
+func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.MsgRemovePullRequestLabels) (*types.MsgRemovePullRequestLabelsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	// Checks that the element exists
+	if !k.HasPullRequest(ctx, msg.PullRequestId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.PullRequestId))
+	}
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != k.GetPullRequestOwner(ctx, msg.PullRequestId) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
+
+	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+
+	if len(pullRequest.Labels) < len(msg.LabelIds) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than existing labels")
+	}
+
+	var labelNames []string
+
+	for _, l := range msg.LabelIds {
+		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
+			if j, exists := utils.LabelIdExists(pullRequest.Labels, repository.Labels[i].Id); exists {
+				labelNames = append(labelNames, repository.Labels[i].Name)
+
+				pullRequest.Labels = append(pullRequest.Labels[:j], pullRequest.Labels[j+1:]...)
+			} else {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in pullRequest", l))
+			}
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", l))
+		}
+	}
+
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.PullRequestId,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
+		System:      true,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
+
+	k.SetPullRequest(ctx, pullRequest)
+
+	return &types.MsgRemovePullRequestLabelsResponse{}, nil
+}
+
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

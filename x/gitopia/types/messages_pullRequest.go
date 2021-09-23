@@ -516,6 +516,114 @@ func (msg *MsgRemovePullRequestAssignees) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgAddPullRequestLabels{}
+
+func NewMsgAddPullRequestLabels(creator string, pullRequestId uint64, labelIds []uint64) *MsgAddPullRequestLabels {
+	return &MsgAddPullRequestLabels{
+		PullRequestId: pullRequestId,
+		Creator:       creator,
+		LabelIds:      labelIds,
+	}
+}
+
+func (msg *MsgAddPullRequestLabels) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgAddPullRequestLabels) Type() string {
+	return "AddPullRequestLabels"
+}
+
+func (msg *MsgAddPullRequestLabels) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgAddPullRequestLabels) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgAddPullRequestLabels) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.LabelIds) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
+	} else if len(msg.LabelIds) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 labels at a time")
+	}
+
+	unique := make(map[uint64]bool, len(msg.LabelIds))
+	for _, labelId := range msg.LabelIds {
+		if !unique[labelId] {
+			unique[labelId] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label id (%v)", labelId)
+		}
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgRemovePullRequestLabels{}
+
+func NewMsgRemovePullRequestLabels(creator string, pullRequestId uint64, labelIds []uint64) *MsgRemovePullRequestLabels {
+	return &MsgRemovePullRequestLabels{
+		PullRequestId: pullRequestId,
+		Creator:       creator,
+		LabelIds:      labelIds,
+	}
+}
+
+func (msg *MsgRemovePullRequestLabels) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRemovePullRequestLabels) Type() string {
+	return "AddPullRequestLabels"
+}
+
+func (msg *MsgRemovePullRequestLabels) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRemovePullRequestLabels) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRemovePullRequestLabels) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if len(msg.LabelIds) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty labels list")
+	} else if len(msg.LabelIds) > 50 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 50 labels at a time")
+	}
+
+	unique := make(map[uint64]bool, len(msg.LabelIds))
+	for _, labelId := range msg.LabelIds {
+		if !unique[labelId] {
+			unique[labelId] = true
+		} else {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label id (%v)", labelId)
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeletePullRequest{}
 
 func NewMsgDeletePullRequest(creator string, id uint64) *MsgDeletePullRequest {

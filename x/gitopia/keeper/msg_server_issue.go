@@ -449,7 +449,7 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 
 	for _, l := range msg.LabelIds {
 		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
-			if _, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+			if _, exists := utils.LabelIdExists(issue.Labels, repository.Labels[i].Id); exists {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) already exists in issue", l))
 			}
 			labelNames = append(labelNames, repository.Labels[i].Name)
@@ -467,7 +467,7 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 		Creator:     "GITOPIA",
 		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueAddLabelsCommentBody(msg.Creator, labelNames),
+		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -521,7 +521,7 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 
 	for _, l := range msg.LabelIds {
 		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
-			if j, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+			if j, exists := utils.LabelIdExists(issue.Labels, repository.Labels[i].Id); exists {
 				labelNames = append(labelNames, repository.Labels[i].Name)
 
 				issue.Labels = append(issue.Labels[:j], issue.Labels[j+1:]...)
@@ -540,7 +540,7 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 		Creator:     "GITOPIA",
 		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueRemoveLabelsCommentBody(msg.Creator, labelNames),
+		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,

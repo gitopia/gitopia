@@ -27,6 +27,8 @@ service Msg {
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
   rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
   rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
+  rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
+  rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
@@ -195,6 +197,22 @@ message MsgRemovePullRequestAssignees {
 }
 
 message MsgRemovePullRequestAssigneesResponse { }
+
+message MsgAddPullRequestLabels {
+  string creator = 1;
+  uint64 pullRequestId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgAddPullRequestLabelsResponse { }
+
+message MsgRemovePullRequestLabels {
+  string creator = 1;
+  uint64 pullRequestId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgRemovePullRequestLabelsResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;

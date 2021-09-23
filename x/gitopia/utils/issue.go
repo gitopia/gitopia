@@ -6,29 +6,8 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func JoinLabels(labels []string) string {
-	res := ""
-	len := len(labels)
-	for i, l := range labels {
-		res += fmt.Sprintf(" **%s**", l)
-		if i == len-2 && len > 1 {
-			res += " and"
-		}
-	}
-	return res
-}
-
 func IssueCommentExists(c []uint64, val uint64) (int, bool) {
 	for i, v := range c {
-		if v == val {
-			return i, true
-		}
-	}
-	return 0, false
-}
-
-func IssueLabelExists(l []uint64, val uint64) (int, bool) {
-	for i, v := range l {
 		if v == val {
 			return i, true
 		}
@@ -42,14 +21,6 @@ func IssueUpdateTitleCommentBody(creator string, oldTitle string, newTitle strin
 
 func IssueUpdateDescriptionCommentBody(creator string) string {
 	return fmt.Sprintf("@%v changed the description", creator)
-}
-
-func IssueAddLabelsCommentBody(creator string, labels []string) string {
-	return fmt.Sprintf("@%v added"+JoinLabels(labels)+" label", creator)
-}
-
-func IssueRemoveLabelsCommentBody(creator string, labels []string) string {
-	return fmt.Sprintf("@%v removed"+JoinLabels(labels)+" label", creator)
 }
 
 func IssueToggleStateCommentBody(creator string, state types.Issue_State) string {
