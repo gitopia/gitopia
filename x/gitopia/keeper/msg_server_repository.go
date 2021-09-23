@@ -858,7 +858,7 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	return &types.MsgDeleteBranchResponse{}, nil
 }
 
-func (k msgServer) CreateTag(goCtx context.Context, msg *types.MsgCreateTag) (*types.MsgCreateTagResponse, error) {
+func (k msgServer) SetRepositoryTag(goCtx context.Context, msg *types.MsgSetRepositoryTag) (*types.MsgSetRepositoryTagResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
@@ -900,7 +900,7 @@ func (k msgServer) CreateTag(goCtx context.Context, msg *types.MsgCreateTag) (*t
 
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgCreateTagResponse{}, nil
+	return &types.MsgSetRepositoryTagResponse{}, nil
 }
 
 func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*types.MsgDeleteTagResponse, error) {

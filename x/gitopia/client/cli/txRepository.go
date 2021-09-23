@@ -463,9 +463,9 @@ func CmdDeleteBranch() *cobra.Command {
 	return cmd
 }
 
-func CmdCreateTag() *cobra.Command {
+func CmdSetRepositoryTag() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-tag [repo id] [tag name] [sha]",
+		Use:   "set-repository-tag [repo id] [tag name] [sha]",
 		Short: "Create a tag",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -488,7 +488,7 @@ func CmdCreateTag() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateTag(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsSha))
+			msg := types.NewMsgSetRepositoryTag(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsSha))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
