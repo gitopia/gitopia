@@ -76,7 +76,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCreateRepositoryLabel())
 	cmd.AddCommand(CmdUpdateRepositoryLabel())
 	cmd.AddCommand(CmdDeleteRepositoryLabel())
-	cmd.AddCommand(CmdCreateBranch())
+	cmd.AddCommand(CmdSetRepositoryBranch())
 	cmd.AddCommand(CmdSetDefaultBranch())
 	cmd.AddCommand(CmdDeleteBranch())
 	cmd.AddCommand(CmdCreateTag())

@@ -732,7 +732,7 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 	return &types.MsgDeleteRepositoryLabelResponse{}, nil
 }
 
-func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranch) (*types.MsgCreateBranchResponse, error) {
+func (k msgServer) SetRepositoryBranch(goCtx context.Context, msg *types.MsgSetRepositoryBranch) (*types.MsgSetRepositoryBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
@@ -773,7 +773,7 @@ func (k msgServer) CreateBranch(goCtx context.Context, msg *types.MsgCreateBranc
 
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgCreateBranchResponse{}, nil
+	return &types.MsgSetRepositoryBranchResponse{}, nil
 }
 
 func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefaultBranch) (*types.MsgSetDefaultBranchResponse, error) {

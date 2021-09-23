@@ -425,10 +425,10 @@ func (msg *MsgDeleteRepositoryLabel) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgCreateBranch{}
+var _ sdk.Msg = &MsgSetRepositoryBranch{}
 
-func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string) *MsgCreateBranch {
-	return &MsgCreateBranch{
+func NewMsgSetRepositoryBranch(creator string, id uint64, name string, commitSHA string) *MsgSetRepositoryBranch {
+	return &MsgSetRepositoryBranch{
 		Id:        id,
 		Creator:   creator,
 		Name:      name,
@@ -436,15 +436,15 @@ func NewMsgCreateBranch(creator string, id uint64, name string, commitSHA string
 	}
 }
 
-func (msg *MsgCreateBranch) Route() string {
+func (msg *MsgSetRepositoryBranch) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgCreateBranch) Type() string {
-	return "CreateBranch"
+func (msg *MsgSetRepositoryBranch) Type() string {
+	return "SetRepositoryBranch"
 }
 
-func (msg *MsgCreateBranch) GetSigners() []sdk.AccAddress {
+func (msg *MsgSetRepositoryBranch) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -452,12 +452,12 @@ func (msg *MsgCreateBranch) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgCreateBranch) GetSignBytes() []byte {
+func (msg *MsgSetRepositoryBranch) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgCreateBranch) ValidateBasic() error {
+func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
