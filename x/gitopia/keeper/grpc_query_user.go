@@ -145,6 +145,10 @@ func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressR
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
+	if repository.Creator == "" {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
 	return &types.QueryGetAddressRepositoryResponse{Repository: &repository}, nil
 }
 
