@@ -42,34 +42,17 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (*types.MsgUpdateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var user = types.User{
-		Creator:        msg.Creator,
-		Username:       msg.Username,
-		UsernameGithub: msg.UsernameGithub,
-		AvatarUrl:      msg.AvatarUrl,
-		// Followers:             msg.Followers,
-		// Following:             msg.Following,
-		// Repositories:          msg.Repositories,
-		// RepositoriesArchived: msg.Repositories_archived,
-		// Organizations:         msg.Organizations,
-		// StarredRepos:         msg.Starred_repos,
-		Subscriptions: msg.Subscriptions,
-		Email:         msg.Email,
-		Bio:           msg.Bio,
-		// CreatedAt:             msg.CreatedAt,
-		// UpdatedAt:             msg.UpdatedAt,
-		Extensions: msg.Extensions,
-	}
-
 	// Checks that the element exists
-	if !k.HasUser(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetUserOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
+	user := k.GetUser(ctx, msg.Creator)
+
+	user.UsernameGithub = msg.UsernameGithub
+	user.AvatarUrl = msg.AvatarUrl
+	user.Email = msg.Email
+	user.Bio = msg.Bio
 
 	k.SetUser(ctx, user)
 
