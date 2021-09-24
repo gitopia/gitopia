@@ -42,21 +42,22 @@ func CmdCreateUser() *cobra.Command {
 
 func CmdUpdateUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-user [usernameGithub] [avatarUrl] [email] [bio]",
+		Use:   "update-user [name] [usernameGithub] [avatarUrl] [email] [bio]",
 		Short: "Update a user",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsUsernameGithub := string(args[0])
-			argsAvatarUrl := string(args[1])
-			argsEmail := string(args[2])
-			argsBio := string(args[3])
+			argsName := string(args[0])
+			argsUsernameGithub := string(args[1])
+			argsAvatarUrl := string(args[2])
+			argsEmail := string(args[3])
+			argsBio := string(args[4])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateUser(clientCtx.GetFromAddress().String(), string(argsUsernameGithub), string(argsAvatarUrl), string(argsEmail), string(argsBio))
+			msg := types.NewMsgUpdateUser(clientCtx.GetFromAddress().String(), string(argsName), string(argsUsernameGithub), string(argsAvatarUrl), string(argsEmail), string(argsBio))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

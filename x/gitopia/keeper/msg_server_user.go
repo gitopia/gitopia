@@ -49,6 +49,7 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 
 	user := k.GetUser(ctx, msg.Creator)
 
+	user.Name = msg.Name
 	user.UsernameGithub = msg.UsernameGithub
 	user.AvatarUrl = msg.AvatarUrl
 	user.Email = msg.Email

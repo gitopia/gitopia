@@ -566,10 +566,11 @@ message MsgCreateUserResponse {
 
 message MsgUpdateUser {
   string creator = 1;
-  string usernameGithub = 2;
-  string avatarUrl = 3;
-  string email = 4;
-  string bio = 5;
+  string name = 2;
+  string usernameGithub = 3;
+  string avatarUrl = 4;
+  string email = 5;
+  string bio = 6;
 }
 
 message MsgUpdateUserResponse { }

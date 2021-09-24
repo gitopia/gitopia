@@ -53,9 +53,10 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateUser{}
 
-func NewMsgUpdateUser(creator string, usernameGithub string, avatarUrl string, email string, bio string) *MsgUpdateUser {
+func NewMsgUpdateUser(creator string, name string, usernameGithub string, avatarUrl string, email string, bio string) *MsgUpdateUser {
 	return &MsgUpdateUser{
 		Creator:        creator,
+		Name:           name,
 		UsernameGithub: usernameGithub,
 		AvatarUrl:      avatarUrl,
 		Email:          email,
@@ -88,6 +89,9 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 73 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 73")
 	}
 	if len(msg.UsernameGithub) > 39 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "GitHub username exceeds limit: 39")
