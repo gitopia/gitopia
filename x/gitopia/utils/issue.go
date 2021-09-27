@@ -88,3 +88,39 @@ func IssueToggleStateCommentBody(creator string, state types.Issue_State) string
 		return fmt.Sprintf("@%v closed", creator)
 	}
 }
+
+func HaveIssuePermission(repository types.Repository, creator string, o interface{}) bool {
+	ownerId := repository.Owner.Id
+	ownerType := repository.Owner.Type
+	allowed := []types.RepositoryCollaborator_Permission{
+		types.RepositoryCollaborator_TRIAGE,
+		types.RepositoryCollaborator_WRITE,
+		types.RepositoryCollaborator_MAINTAIN,
+		types.RepositoryCollaborator_ADMIN,
+	}
+
+	var havePermission bool = false
+
+	if ownerType == types.RepositoryOwner_USER {
+		if creator == ownerId {
+			havePermission = true
+		}
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		organization := o.(types.Organization)
+		if i, exists := OrganizationMemberExists(organization.Members, creator); exists {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		if i, exists := RepositoryCollaboratorExists(repository.Collaborators, creator); exists {
+			if _, exists := HaveRepositoryCollaboratorPermission(allowed, repository.Collaborators[i].Permission); exists {
+				havePermission = true
+			}
+		}
+	}
+
+	return havePermission
+}
