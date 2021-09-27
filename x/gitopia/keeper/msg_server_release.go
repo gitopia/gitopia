@@ -127,8 +127,10 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))
 	}
 
-	if _, exists := utils.RepositoryReleaseTagExists(repository.Releases, msg.TagName); exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with tag (%v) already exists", msg.TagName))
+	if i, exists := utils.RepositoryReleaseTagExists(repository.Releases, msg.TagName); exists {
+		if repository.Releases[i].Id != msg.Id {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("release with tag (%v) already exists", msg.TagName))
+		}
 	}
 
 	if _, exists := utils.RepositoryBranchExists(repository.Branches, msg.Target); !exists {
@@ -149,7 +151,7 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 	release.Target = msg.Target
 	release.Name = msg.Name
 	release.Description = msg.Description
-	release.Attachments = []*types.Attachment{}
+	release.Attachments = attachments
 	release.Draft = msg.Draft
 	release.PreRelease = msg.PreRelease
 	release.IsTag = msg.IsTag
