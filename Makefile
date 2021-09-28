@@ -1,20 +1,34 @@
-PACKAGES=$(shell go list ./... | grep -v '/simulation')
+#!/usr/bin/make -f
 
-# VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+PACKAGES=$(shell go list ./... | grep -v '/simulation')
+BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 
-# ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=gitopia \
-# 	-X github.com/cosmos/cosmos-sdk/version.ServerName=gitopiad \
-# 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
-# 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
+TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::') # grab everything after the space in "github.com/tendermint/tendermint v0.34.10"
 
-# BUILD_FLAGS := -ldflags '$(ldflags)'
+# don't override user values
+ifeq (,$(VERSION))
+  VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+  # if VERSION is empty, then populate it with branch's name and raw commit hash
+  ifeq (,$(VERSION))
+    VERSION := $(BRANCH)-$(COMMIT)
+  endif
+endif
+
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=gitopia \
+	-X github.com/cosmos/cosmos-sdk/version.AppName=gitopiad \
+	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
+	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
+	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
+	-X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
+
+BUILD_FLAGS := -ldflags '$(ldflags)'
 
 all: install
 
 .PHONY: build
 build:
-		@go build -o build/ ./cmd/gitopiad
+		@go build -mod=readonly $(BUILD_FLAGS) -o build/ ./cmd/gitopiad
 
 install: go.sum
 		@echo "--> Installing gitopiad"
