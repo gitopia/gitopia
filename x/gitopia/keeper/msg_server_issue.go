@@ -225,23 +225,20 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 	var issue = k.GetIssue(ctx, msg.Id)
 	var repository = k.GetRepository(ctx, issue.RepositoryId)
-	var organization types.Organization
 
-	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+	if msg.Creator != issue.Creator {
+		var organization types.Organization
+		if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+			if !k.HasOrganization(ctx, repository.Owner.Id) {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+			}
+
+			organization = k.GetOrganization(ctx, repository.Owner.Id)
 		}
 
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
-	}
-
-	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
 	}
 
 	if issue.State == types.Issue_OPEN {
