@@ -2,6 +2,14 @@
 
 All notable changes will be documented here.
 
+## [0.10.1] - 2021-09-28
+
+### Added
+
+- Fix update release transaction
+- Added Issue permissions
+- Set version information in the binary
+
 ## [0.10.0] - 2021-09-19
 
 ### Added
