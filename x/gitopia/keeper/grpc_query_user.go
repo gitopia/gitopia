@@ -28,7 +28,7 @@ func (k Keeper) UserAll(c context.Context, req *types.QueryAllUserRequest) (*typ
 
 	pageRes, err := query.Paginate(userStore, req.Pagination, func(key []byte, value []byte) error {
 		var user types.User
-		if err := k.cdc.UnmarshalBinaryBare(value, &user); err != nil {
+		if err := k.cdc.Unmarshal(value, &user); err != nil {
 			return err
 		}
 
@@ -57,7 +57,7 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	key := []byte(types.UserKey + req.Id)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
+	k.cdc.MustUnmarshal(store.Get(key), &user)
 
 	return &types.QueryGetUserResponse{User: &user}, nil
 }
@@ -76,7 +76,7 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.MustUnmarshal(userStore.Get(userKey), &user)
 
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
@@ -93,7 +93,7 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.MustUnmarshal(organizationStore.Get(organizationKey), &organization)
 
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
@@ -126,20 +126,20 @@ func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressR
 	if k.HasUser(ctx, req.Id) {
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		}
 	} else if k.HasOrganization(ctx, req.Id) {
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.MustUnmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		}
 	} else {
 		return nil, sdkerrors.ErrKeyNotFound
@@ -163,14 +163,14 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 
 	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	userKey := []byte(types.UserKey + req.Id)
-	k.cdc.MustUnmarshalBinaryBare(userStore.Get(userKey), &user)
+	k.cdc.MustUnmarshal(userStore.Get(userKey), &user)
 
 	organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 
 	for _, userOrganization := range user.Organizations {
 		var organization types.Organization
 		key := []byte(types.OrganizationKey + userOrganization.Id)
-		k.cdc.MustUnmarshalBinaryBare(organizationStore.Get(key), &organization)
+		k.cdc.MustUnmarshal(organizationStore.Get(key), &organization)
 		organizations = append(organizations, &organization)
 	}
 
@@ -222,7 +222,7 @@ func PaginateAllUserRepository(
 			}
 
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err
@@ -243,7 +243,7 @@ func PaginateAllUserRepository(
 	for i := offset; uint64(i) < uint64(totalRepositoryCount); i++ {
 		if uint64(i) < end {
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err

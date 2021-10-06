@@ -25,7 +25,7 @@ func (k Keeper) IssueAll(c context.Context, req *types.QueryAllIssueRequest) (*t
 
 	pageRes, err := query.Paginate(issueStore, req.Pagination, func(key []byte, value []byte) error {
 		var issue types.Issue
-		if err := k.cdc.UnmarshalBinaryBare(value, &issue); err != nil {
+		if err := k.cdc.Unmarshal(value, &issue); err != nil {
 			return err
 		}
 
@@ -53,7 +53,7 @@ func (k Keeper) Issue(c context.Context, req *types.QueryGetIssueRequest) (*type
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetIssueIDBytes(req.Id)), &issue)
+	k.cdc.MustUnmarshal(store.Get(GetIssueIDBytes(req.Id)), &issue)
 
 	return &types.QueryGetIssueResponse{Issue: &issue}, nil
 }

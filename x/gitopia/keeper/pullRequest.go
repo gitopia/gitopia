@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetPullRequestCount get the total number of pullRequest
@@ -49,7 +50,7 @@ func (k Keeper) AppendPullRequest(
 	pullRequest.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&pullRequest)
+	appendedValue := k.cdc.MustMarshal(&pullRequest)
 	store.Set(GetPullRequestIDBytes(pullRequest.Id), appendedValue)
 
 	// Update pullRequest count
@@ -61,7 +62,7 @@ func (k Keeper) AppendPullRequest(
 // SetPullRequest set a specific pullRequest in the store
 func (k Keeper) SetPullRequest(ctx sdk.Context, pullRequest types.PullRequest) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	b := k.cdc.MustMarshalBinaryBare(&pullRequest)
+	b := k.cdc.MustMarshal(&pullRequest)
 	store.Set(GetPullRequestIDBytes(pullRequest.Id), b)
 }
 
@@ -69,7 +70,7 @@ func (k Keeper) SetPullRequest(ctx sdk.Context, pullRequest types.PullRequest) {
 func (k Keeper) GetPullRequest(ctx sdk.Context, id uint64) types.PullRequest {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 	var pullRequest types.PullRequest
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetPullRequestIDBytes(id)), &pullRequest)
+	k.cdc.MustUnmarshal(store.Get(GetPullRequestIDBytes(id)), &pullRequest)
 	return pullRequest
 }
 
@@ -99,7 +100,7 @@ func (k Keeper) GetAllPullRequest(ctx sdk.Context) (list []types.PullRequest) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PullRequest
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

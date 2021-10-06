@@ -25,7 +25,7 @@ func (k Keeper) CommentAll(c context.Context, req *types.QueryAllCommentRequest)
 
 	pageRes, err := query.Paginate(commentStore, req.Pagination, func(key []byte, value []byte) error {
 		var comment types.Comment
-		if err := k.cdc.UnmarshalBinaryBare(value, &comment); err != nil {
+		if err := k.cdc.Unmarshal(value, &comment); err != nil {
 			return err
 		}
 
@@ -53,7 +53,7 @@ func (k Keeper) Comment(c context.Context, req *types.QueryGetCommentRequest) (*
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetCommentIDBytes(req.Id)), &comment)
+	k.cdc.MustUnmarshal(store.Get(GetCommentIDBytes(req.Id)), &comment)
 
 	return &types.QueryGetCommentResponse{Comment: &comment}, nil
 }

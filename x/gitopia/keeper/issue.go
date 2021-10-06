@@ -50,7 +50,7 @@ func (k Keeper) AppendIssue(
 	issue.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&issue)
+	appendedValue := k.cdc.MustMarshal(&issue)
 	store.Set(GetIssueIDBytes(issue.Id), appendedValue)
 
 	// Update issue count
@@ -62,7 +62,7 @@ func (k Keeper) AppendIssue(
 // SetIssue set a specific issue in the store
 func (k Keeper) SetIssue(ctx sdk.Context, issue types.Issue) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	b := k.cdc.MustMarshalBinaryBare(&issue)
+	b := k.cdc.MustMarshal(&issue)
 	store.Set(GetIssueIDBytes(issue.Id), b)
 }
 
@@ -70,7 +70,7 @@ func (k Keeper) SetIssue(ctx sdk.Context, issue types.Issue) {
 func (k Keeper) GetIssue(ctx sdk.Context, id uint64) types.Issue {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 	var issue types.Issue
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetIssueIDBytes(id)), &issue)
+	k.cdc.MustUnmarshal(store.Get(GetIssueIDBytes(id)), &issue)
 	return issue
 }
 
@@ -100,7 +100,7 @@ func (k Keeper) GetAllIssue(ctx sdk.Context) (list []types.Issue) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Issue
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

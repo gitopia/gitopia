@@ -14,7 +14,7 @@ import (
 
 type (
 	Keeper struct {
-		cdc      codec.Marshaler
+		cdc      codec.BinaryCodec
 		storeKey sdk.StoreKey
 		memKey   sdk.StoreKey
 
@@ -25,7 +25,7 @@ type (
 )
 
 func NewKeeper(
-	cdc codec.Marshaler,
+	cdc codec.BinaryCodec,
 	storeKey,
 	memKey sdk.StoreKey,
 	ak authkeeper.AccountKeeper,

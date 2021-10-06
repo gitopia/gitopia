@@ -50,7 +50,7 @@ func (k Keeper) AppendComment(
 	comment.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&comment)
+	appendedValue := k.cdc.MustMarshal(&comment)
 	store.Set(GetCommentIDBytes(comment.Id), appendedValue)
 
 	// Update comment count
@@ -62,7 +62,7 @@ func (k Keeper) AppendComment(
 // SetComment set a specific comment in the store
 func (k Keeper) SetComment(ctx sdk.Context, comment types.Comment) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	b := k.cdc.MustMarshalBinaryBare(&comment)
+	b := k.cdc.MustMarshal(&comment)
 	store.Set(GetCommentIDBytes(comment.Id), b)
 }
 
@@ -70,7 +70,7 @@ func (k Keeper) SetComment(ctx sdk.Context, comment types.Comment) {
 func (k Keeper) GetComment(ctx sdk.Context, id uint64) types.Comment {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
 	var comment types.Comment
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetCommentIDBytes(id)), &comment)
+	k.cdc.MustUnmarshal(store.Get(GetCommentIDBytes(id)), &comment)
 	return comment
 }
 
@@ -100,7 +100,7 @@ func (k Keeper) GetAllComment(ctx sdk.Context) (list []types.Comment) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Comment
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

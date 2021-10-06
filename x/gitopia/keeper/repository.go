@@ -55,7 +55,7 @@ func (k Keeper) AppendRepository(
 	repository.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&repository)
+	appendedValue := k.cdc.MustMarshal(&repository)
 	store.Set(GetRepositoryIDBytes(repository.Id), appendedValue)
 
 	// Update repository count
@@ -67,7 +67,7 @@ func (k Keeper) AppendRepository(
 // SetRepository set a specific repository in the store
 func (k Keeper) SetRepository(ctx sdk.Context, repository types.Repository) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	b := k.cdc.MustMarshalBinaryBare(&repository)
+	b := k.cdc.MustMarshal(&repository)
 	store.Set(GetRepositoryIDBytes(repository.Id), b)
 }
 
@@ -75,7 +75,7 @@ func (k Keeper) SetRepository(ctx sdk.Context, repository types.Repository) {
 func (k Keeper) GetRepository(ctx sdk.Context, id uint64) types.Repository {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 	var repository types.Repository
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(id)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(id)), &repository)
 	return repository
 }
 
@@ -105,7 +105,7 @@ func (k Keeper) GetAllRepository(ctx sdk.Context) (list []types.Repository) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Repository
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

@@ -52,7 +52,7 @@ func (k Keeper) AppendOrganization(
 	organization.Address = k.GetOrganizationAddress(ctx, organization.Creator)
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&organization)
+	appendedValue := k.cdc.MustMarshal(&organization)
 	key := []byte(types.OrganizationKey + organization.Address)
 	store.Set(key, appendedValue)
 
@@ -65,7 +65,7 @@ func (k Keeper) AppendOrganization(
 // SetOrganization set a specific organization in the store
 func (k Keeper) SetOrganization(ctx sdk.Context, organization types.Organization) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	b := k.cdc.MustMarshalBinaryBare(&organization)
+	b := k.cdc.MustMarshal(&organization)
 	key := []byte(types.OrganizationKey + organization.Address)
 	store.Set(key, b)
 }
@@ -75,7 +75,7 @@ func (k Keeper) GetOrganization(ctx sdk.Context, id string) types.Organization {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 	var organization types.Organization
 	key := []byte(types.OrganizationKey + id)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &organization)
+	k.cdc.MustUnmarshal(store.Get(key), &organization)
 	return organization
 }
 
@@ -107,7 +107,7 @@ func (k Keeper) GetAllOrganization(ctx sdk.Context) (list []types.Organization) 
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Organization
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

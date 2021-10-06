@@ -50,7 +50,7 @@ func (k Keeper) AppendUser(
 	user.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&user)
+	appendedValue := k.cdc.MustMarshal(&user)
 	key := []byte(types.UserKey + user.Creator)
 	store.Set(key, appendedValue)
 
@@ -75,7 +75,7 @@ func (k Keeper) AppendUser(
 // SetUser set a specific user in the store
 func (k Keeper) SetUser(ctx sdk.Context, user types.User) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	b := k.cdc.MustMarshalBinaryBare(&user)
+	b := k.cdc.MustMarshal(&user)
 	key := []byte(types.UserKey + user.Creator)
 	store.Set(key, b)
 }
@@ -85,7 +85,7 @@ func (k Keeper) GetUser(ctx sdk.Context, id string) types.User {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	var user types.User
 	key := []byte(types.UserKey + id)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
+	k.cdc.MustUnmarshal(store.Get(key), &user)
 	return user
 }
 
@@ -117,7 +117,7 @@ func (k Keeper) GetAllUser(ctx sdk.Context) (list []types.User) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.User
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

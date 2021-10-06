@@ -40,7 +40,7 @@ func (k Keeper) SetWhoisCount(ctx sdk.Context, count uint64) {
 // SetWhois set a specific whois in the store
 func (k Keeper) SetWhois(ctx sdk.Context, name string, whois types.Whois) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	b := k.cdc.MustMarshalBinaryBare(&whois)
+	b := k.cdc.MustMarshal(&whois)
 	key := []byte(types.WhoisKey + name)
 	store.Set(key, b)
 }
@@ -50,7 +50,7 @@ func (k Keeper) GetWhois(ctx sdk.Context, key string) types.Whois {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	var whois types.Whois
 	byteKey := []byte(types.WhoisKey + key)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(byteKey), &whois)
+	k.cdc.MustUnmarshal(store.Get(byteKey), &whois)
 	return whois
 }
 
@@ -80,7 +80,7 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Whois
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

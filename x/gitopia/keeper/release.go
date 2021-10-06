@@ -2,10 +2,11 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetReleaseCount get the total number of release
@@ -49,7 +50,7 @@ func (k Keeper) AppendRelease(
 	release.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&release)
+	appendedValue := k.cdc.MustMarshal(&release)
 	store.Set(GetReleaseIDBytes(release.Id), appendedValue)
 
 	// Update release count
@@ -61,7 +62,7 @@ func (k Keeper) AppendRelease(
 // SetRelease set a specific release in the store
 func (k Keeper) SetRelease(ctx sdk.Context, release types.Release) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-	b := k.cdc.MustMarshalBinaryBare(&release)
+	b := k.cdc.MustMarshal(&release)
 	store.Set(GetReleaseIDBytes(release.Id), b)
 }
 
@@ -69,7 +70,7 @@ func (k Keeper) SetRelease(ctx sdk.Context, release types.Release) {
 func (k Keeper) GetRelease(ctx sdk.Context, id uint64) types.Release {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
 	var release types.Release
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetReleaseIDBytes(id)), &release)
+	k.cdc.MustUnmarshal(store.Get(GetReleaseIDBytes(id)), &release)
 	return release
 }
 
@@ -99,7 +100,7 @@ func (k Keeper) GetAllRelease(ctx sdk.Context) (list []types.Release) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Release
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

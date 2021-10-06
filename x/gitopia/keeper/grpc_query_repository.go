@@ -31,7 +31,7 @@ func (k Keeper) RepositoryAll(c context.Context, req *types.QueryAllRepositoryRe
 
 	pageRes, err := query.Paginate(repositoryStore, req.Pagination, func(key []byte, value []byte) error {
 		var repository types.Repository
-		if err := k.cdc.UnmarshalBinaryBare(value, &repository); err != nil {
+		if err := k.cdc.Unmarshal(value, &repository); err != nil {
 			return err
 		}
 
@@ -59,7 +59,7 @@ func (k Keeper) Repository(c context.Context, req *types.QueryGetRepositoryReque
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
 
 	return &types.QueryGetRepositoryResponse{Repository: &repository}, nil
 }
@@ -77,11 +77,11 @@ func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLa
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -90,11 +90,11 @@ func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLa
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.Unmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -108,7 +108,7 @@ func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLa
 		var release types.Release
 
 		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(repository.Releases[totalReleaseCount-1].Id)), &release)
+		k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(repository.Releases[totalReleaseCount-1].Id)), &release)
 
 		return &types.QueryGetLatestRepositoryReleaseResponse{Release: &release}, nil
 	}
@@ -129,11 +129,11 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -142,11 +142,11 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.Unmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -158,7 +158,7 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 		var release types.Release
 
 		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-		k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(uint64(i))), &release)
+		k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(uint64(i))), &release)
 
 		return &types.QueryGetRepositoryReleaseResponse{Release: &release}, nil
 	}
@@ -181,11 +181,11 @@ func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepos
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -194,11 +194,11 @@ func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepos
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.UserId)
-		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.Unmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -237,11 +237,11 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -250,11 +250,11 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.Unmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -292,11 +292,11 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 
 		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+		k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -305,11 +305,11 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 
 		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.UnmarshalBinaryBare(organizationStore.Get(organizationKey), &organization)
+		k.cdc.Unmarshal(organizationStore.Get(organizationKey), &organization)
 
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
@@ -320,7 +320,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 	if repository.Creator != "" {
 		if i, exists := utils.RepositoryIssueExists(repository.Issues, req.IssueIid); exists {
 			issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-			k.cdc.MustUnmarshalBinaryBare(issueStore.Get(GetIssueIDBytes(repository.Issues[i].Id)), &issue)
+			k.cdc.MustUnmarshal(issueStore.Get(GetIssueIDBytes(repository.Issues[i].Id)), &issue)
 
 			return &types.QueryGetRepositoryIssueResponse{Issue: &issue}, nil
 		}
@@ -346,11 +346,11 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 	store := ctx.KVStore(k.storeKey)
 	userStore := prefix.NewStore(store, types.KeyPrefix(types.UserKey))
 	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+	k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 
 		pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 
@@ -385,15 +385,15 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 
 	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	userKey := []byte(types.UserKey + req.UserId)
-	k.cdc.UnmarshalBinaryBare(userStore.Get(userKey), &user)
+	k.cdc.Unmarshal(userStore.Get(userKey), &user)
 
 	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 
 		if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, req.PullIid); exists {
 			pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(repository.PullRequests[i].Id)), &pullRequest)
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetPullRequestIDBytes(repository.PullRequests[i].Id)), &pullRequest)
 
 			return &types.QueryGetRepositoryPullRequestResponse{PullRequest: &pullRequest}, nil
 		}
@@ -416,7 +416,7 @@ func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryBranch := range repository.Branches {
 		branches = append(branches, repositoryBranch)
@@ -437,7 +437,7 @@ func (k Keeper) BranchSha(c context.Context, req *types.QueryGetBranchShaRequest
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, req.BranchName); exists {
 		return &types.QueryGetBranchShaResponse{Sha: repository.Branches[i].Sha}, nil
@@ -460,7 +460,7 @@ func (k Keeper) TagAll(c context.Context, req *types.QueryGetAllTagRequest) (*ty
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryTag := range repository.Tags {
 		tags = append(tags, repositoryTag)
@@ -481,7 +481,7 @@ func (k Keeper) TagSha(c context.Context, req *types.QueryGetTagShaRequest) (*ty
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
+	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	if i, exists := utils.RepositoryTagExists(repository.Tags, req.TagName); exists {
 		return &types.QueryGetTagShaResponse{Sha: repository.Tags[i].Sha}, nil
@@ -538,7 +538,7 @@ func PaginateAllRepositoryIssue(
 			}
 
 			var issue types.Issue
-			k.cdc.MustUnmarshalBinaryBare(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			err := onResult(issue)
 			if err != nil {
 				return nil, err
@@ -559,7 +559,7 @@ func PaginateAllRepositoryIssue(
 	for i := offset; uint64(i) < totalIssueCount; i++ {
 		if uint64(i) < end {
 			var issue types.Issue
-			k.cdc.MustUnmarshalBinaryBare(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			err := onResult(issue)
 			if err != nil {
 				return nil, err
@@ -626,7 +626,7 @@ func PaginateAllRepositoryPullRequest(
 			}
 
 			var pullRequest types.PullRequest
-			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetPullRequestIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			err := onResult(pullRequest)
 			if err != nil {
 				return nil, err
@@ -647,7 +647,7 @@ func PaginateAllRepositoryPullRequest(
 	for i := offset; uint64(i) < totalPullRequestCount; i++ {
 		if uint64(i) < end {
 			var pullRequest types.PullRequest
-			k.cdc.MustUnmarshalBinaryBare(pullRequestStore.Get(GetPullRequestIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetPullRequestIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			err := onResult(pullRequest)
 			if err != nil {
 				return nil, err
@@ -711,7 +711,7 @@ func PaginateAllRepositoryRelease(
 			}
 
 			var release types.Release
-			k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
+			k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
 			err := onResult(release)
 			if err != nil {
 				return nil, err
@@ -732,7 +732,7 @@ func PaginateAllRepositoryRelease(
 	for i := offset; uint64(i) < totalReleaseCount; i++ {
 		if uint64(i) < end {
 			var release types.Release
-			k.cdc.MustUnmarshalBinaryBare(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
+			k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(releases[uint64(i)].Id)), &release)
 			err := onResult(release)
 			if err != nil {
 				return nil, err
