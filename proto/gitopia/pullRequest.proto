@@ -35,7 +35,6 @@ message PullRequest {
   bool maintainerCanModify = 22; 
   PullRequestHead head = 23;
   PullRequestBase base = 25;
-  string extensions = 26; 
 }
 
 message PullRequestHead {

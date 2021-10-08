@@ -544,20 +544,6 @@ message MsgDeleteRepositoryResponse { }
 message MsgCreateUser {
   string creator = 1;
   string username = 2;
-  string usernameGithub = 3;
-  string avatarUrl = 4;
-  string followers = 5;
-  string following = 6;
-  string repositories = 7;
-  string repositories_archived = 8;
-  string organizations = 9;
-  string starred_repos = 10;
-  string subscriptions = 11;
-  string email = 12;
-  string bio = 13;
-  string createdAt = 14;
-  string updatedAt = 15;
-  string extensions = 16;
 }
 
 message MsgCreateUserResponse {
