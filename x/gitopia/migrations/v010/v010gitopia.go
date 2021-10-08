@@ -9,21 +9,21 @@ import (
 
 func migrateUser(store sdk.KVStore, cdc codec.BinaryCodec) {
 
-	oldStore := prefix.NewStore(store, types.KeyPrefix(types.UserKey))
+	userStore := prefix.NewStore(store, types.KeyPrefix(types.UserKey))
 
-	oldStoreIter := oldStore.Iterator(nil, nil)
-	defer oldStoreIter.Close()
+	userStoreIter := userStore.Iterator(nil, nil)
+	defer userStoreIter.Close()
 
-	for ; oldStoreIter.Valid(); oldStoreIter.Next() {
+	for ; userStoreIter.Valid(); userStoreIter.Next() {
 
 		var user types.User
-		userKey := oldStoreIter.Key()
-		cdc.MustUnmarshal(store.Get(userKey), &user)
+		userKey := userStoreIter.Key()
+		cdc.MustUnmarshal(userStore.Get(userKey), &user)
 
-		user.Email = "user@email.com"
+		// user.Name = user.Creator
 
 		// Set new value on store. Key don't change.
-		store.Set(userKey, cdc.MustMarshal(&user))
+		userStore.Set(userKey, cdc.MustMarshal(&user))
 	}
 
 }

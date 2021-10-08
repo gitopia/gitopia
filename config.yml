@@ -3,6 +3,18 @@ genesis:
     staking:
       params:
         bond_denom: "tlore"
+    gov:
+      deposit_params:
+        max_deposit_period: "60s"
+        min_deposit: [{ "amount": "10000000", "denom": "tlore" }]
+      voting_params:
+        voting_period: "60s"
+    mint:
+      params:
+        mint_denom: "tlore"
+    crisis:
+      constant_fee:
+        denom: "tlore"
 accounts:
   - name: node0
     coins: ["100000000tlore"]

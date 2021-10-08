@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -25,7 +24,6 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -87,13 +85,9 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-
 	"github.com/tendermint/spm/cosmoscmd"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
-
-const upgradeName = "v2"
 
 const (
 	AccountAddressPrefix = "gitopia"
@@ -215,7 +209,8 @@ type App struct {
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
-	mm *module.Manager
+	mm           *module.Manager
+	configurator module.Configurator
 }
 
 // New returns a reference to an initialized Gaia.
@@ -433,7 +428,9 @@ func New(
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
-	app.mm.RegisterServices(module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter()))
+
+	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.mm.RegisterServices(app.configurator)
 
 	// initialize stores
 	app.MountKVStores(keys)
@@ -460,34 +457,13 @@ func New(
 	app.SetAnteHandler(anteHandler)
 	app.SetEndBlocker(app.EndBlocker)
 
-	cfg := module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.UpgradeKeeper.SetUpgradeHandler(
-		upgradeName,
+		"v0.10.0",
 		func(ctx sdk.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+			return app.mm.RunMigrations(ctx, app.configurator, vm)
 
-			// override versions for _new_ modules as to not skip InitGenesis
-			vm[authz.ModuleName] = 0
-			vm[feegrant.ModuleName] = 0
-
-			vm[gitopiatypes.ModuleName] = gitopia.AppModule{}.ConsensusVersion()
-
-			return app.mm.RunMigrations(ctx, cfg, vm)
 		},
 	)
-
-	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-	if err != nil {
-		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
-	}
-
-	if upgradeInfo.Name == upgradeName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{authz.ModuleName, feegrant.ModuleName},
-		}
-
-		// configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-	}
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
