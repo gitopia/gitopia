@@ -16,11 +16,47 @@ func migrateUser(store sdk.KVStore, cdc codec.BinaryCodec) {
 
 	for ; userStoreIter.Valid(); userStoreIter.Next() {
 
-		var user types.User
+		var oldUser User
 		userKey := userStoreIter.Key()
-		cdc.MustUnmarshal(userStore.Get(userKey), &user)
+		cdc.MustUnmarshal(userStore.Get(userKey), &oldUser)
 
-		// user.Name = user.Creator
+		var repositories []*types.UserRepository
+		var organizations []*types.UserOrganization
+
+		for _, old := range oldUser.Repositories {
+			repository := types.UserRepository{
+				Name: old.Name,
+				Id:   old.Id,
+			}
+			repositories = append(repositories, &repository)
+		}
+
+		for _, old := range oldUser.Organizations {
+			organization := types.UserOrganization{
+				Name: old.Name,
+				Id:   old.Id,
+			}
+			organizations = append(organizations, &organization)
+		}
+
+		user := types.User{
+			Creator:        oldUser.Creator,
+			Id:             oldUser.Id,
+			Name:           "",
+			Username:       oldUser.Username,
+			UsernameGithub: oldUser.UsernameGithub,
+			AvatarUrl:      oldUser.AvatarUrl,
+			Followers:      oldUser.Followers,
+			Following:      oldUser.Following,
+			Repositories:   repositories,
+			Organizations:  organizations,
+			StarredRepos:   oldUser.StarredRepos,
+			Subscriptions:  oldUser.Subscriptions,
+			Email:          oldUser.Email,
+			Bio:            oldUser.Bio,
+			CreatedAt:      oldUser.CreatedAt,
+			UpdatedAt:      oldUser.UpdatedAt,
+		}
 
 		// Set new value on store. Key don't change.
 		userStore.Set(userKey, cdc.MustMarshal(&user))
