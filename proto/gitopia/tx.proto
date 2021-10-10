@@ -31,6 +31,7 @@ service Msg {
   rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc RenameOrganization(MsgRenameOrganization) returns (MsgRenameOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
   rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
@@ -230,6 +231,14 @@ message MsgCreateOrganization {
 message MsgCreateOrganizationResponse {
   string id = 1;
 }
+
+message MsgRenameOrganization {
+  string creator = 1;
+  string id = 2;
+  string name = 3;
+}
+
+message MsgRenameOrganizationResponse { }
 
 message MsgUpdateOrganizationMember {
   string creator = 1;

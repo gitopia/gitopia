@@ -87,6 +87,53 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 	}, nil
 }
 
+func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenameOrganization) (*types.MsgRenameOrganizationResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !k.HasUser(ctx, msg.Creator) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+	}
+
+	if !k.HasOrganization(ctx, msg.Id) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", msg.Id))
+	}
+
+	organization := k.GetOrganization(ctx, msg.Id)
+	user := k.GetUser(ctx, organization.Creator)
+
+	var havePermission bool = false
+
+	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+		if organization.Members[i].Role == types.OrganizationMember_OWNER {
+			havePermission = true
+		}
+	}
+
+	if !havePermission {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	if i, exists := utils.UserOrganizationExists(user.Organizations, msg.Name); exists {
+		if user.Organizations[i].Id != msg.Id {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("organization name (%v) already in use", msg.Name))
+		}
+	}
+
+	if i, exists := utils.UserOrganizationIdExists(user.Organizations, msg.Id); exists {
+		user.Organizations[i].Name = msg.Name
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	organization.Name = msg.Name
+	organization.UpdatedAt = currentTime
+
+	k.SetOrganization(ctx, organization)
+	k.SetUser(ctx, user)
+
+	return &types.MsgRenameOrganizationResponse{}, nil
+}
+
 func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.MsgUpdateOrganizationMember) (*types.MsgUpdateOrganizationMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
