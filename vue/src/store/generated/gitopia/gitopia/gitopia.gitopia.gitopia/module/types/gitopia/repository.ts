@@ -79,11 +79,13 @@ export function repositoryOwner_TypeToJSON(
 export interface RepositoryBranch {
   name: string;
   sha: string;
+  lastUpdatedAt: number;
 }
 
 export interface RepositoryTag {
   name: string;
   sha: string;
+  lastUpdatedAt: number;
 }
 
 export interface RepositoryIssue {
@@ -893,7 +895,7 @@ export const RepositoryOwner = {
   },
 };
 
-const baseRepositoryBranch: object = { name: "", sha: "" };
+const baseRepositoryBranch: object = { name: "", sha: "", lastUpdatedAt: 0 };
 
 export const RepositoryBranch = {
   encode(message: RepositoryBranch, writer: Writer = Writer.create()): Writer {
@@ -902,6 +904,9 @@ export const RepositoryBranch = {
     }
     if (message.sha !== "") {
       writer.uint32(18).string(message.sha);
+    }
+    if (message.lastUpdatedAt !== 0) {
+      writer.uint32(24).int64(message.lastUpdatedAt);
     }
     return writer;
   },
@@ -918,6 +923,9 @@ export const RepositoryBranch = {
           break;
         case 2:
           message.sha = reader.string();
+          break;
+        case 3:
+          message.lastUpdatedAt = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -939,6 +947,11 @@ export const RepositoryBranch = {
     } else {
       message.sha = "";
     }
+    if (object.lastUpdatedAt !== undefined && object.lastUpdatedAt !== null) {
+      message.lastUpdatedAt = Number(object.lastUpdatedAt);
+    } else {
+      message.lastUpdatedAt = 0;
+    }
     return message;
   },
 
@@ -946,6 +959,8 @@ export const RepositoryBranch = {
     const obj: any = {};
     message.name !== undefined && (obj.name = message.name);
     message.sha !== undefined && (obj.sha = message.sha);
+    message.lastUpdatedAt !== undefined &&
+      (obj.lastUpdatedAt = message.lastUpdatedAt);
     return obj;
   },
 
@@ -961,11 +976,16 @@ export const RepositoryBranch = {
     } else {
       message.sha = "";
     }
+    if (object.lastUpdatedAt !== undefined && object.lastUpdatedAt !== null) {
+      message.lastUpdatedAt = object.lastUpdatedAt;
+    } else {
+      message.lastUpdatedAt = 0;
+    }
     return message;
   },
 };
 
-const baseRepositoryTag: object = { name: "", sha: "" };
+const baseRepositoryTag: object = { name: "", sha: "", lastUpdatedAt: 0 };
 
 export const RepositoryTag = {
   encode(message: RepositoryTag, writer: Writer = Writer.create()): Writer {
@@ -974,6 +994,9 @@ export const RepositoryTag = {
     }
     if (message.sha !== "") {
       writer.uint32(18).string(message.sha);
+    }
+    if (message.lastUpdatedAt !== 0) {
+      writer.uint32(24).int64(message.lastUpdatedAt);
     }
     return writer;
   },
@@ -990,6 +1013,9 @@ export const RepositoryTag = {
           break;
         case 2:
           message.sha = reader.string();
+          break;
+        case 3:
+          message.lastUpdatedAt = longToNumber(reader.int64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -1011,6 +1037,11 @@ export const RepositoryTag = {
     } else {
       message.sha = "";
     }
+    if (object.lastUpdatedAt !== undefined && object.lastUpdatedAt !== null) {
+      message.lastUpdatedAt = Number(object.lastUpdatedAt);
+    } else {
+      message.lastUpdatedAt = 0;
+    }
     return message;
   },
 
@@ -1018,6 +1049,8 @@ export const RepositoryTag = {
     const obj: any = {};
     message.name !== undefined && (obj.name = message.name);
     message.sha !== undefined && (obj.sha = message.sha);
+    message.lastUpdatedAt !== undefined &&
+      (obj.lastUpdatedAt = message.lastUpdatedAt);
     return obj;
   },
 
@@ -1032,6 +1065,11 @@ export const RepositoryTag = {
       message.sha = object.sha;
     } else {
       message.sha = "";
+    }
+    if (object.lastUpdatedAt !== undefined && object.lastUpdatedAt !== null) {
+      message.lastUpdatedAt = object.lastUpdatedAt;
+    } else {
+      message.lastUpdatedAt = 0;
     }
     return message;
   },

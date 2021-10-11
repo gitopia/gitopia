@@ -109,9 +109,13 @@ export type GitopiaMsgAddIssueAssigneesResponse = object;
 
 export type GitopiaMsgAddIssueLabelsResponse = object;
 
-export type GitopiaMsgChangeOwnerResponse = object;
+export type GitopiaMsgAddPullRequestAssigneesResponse = object;
 
-export type GitopiaMsgCreateBranchResponse = object;
+export type GitopiaMsgAddPullRequestLabelsResponse = object;
+
+export type GitopiaMsgAddPullRequestReviewersResponse = object;
+
+export type GitopiaMsgChangeOwnerResponse = object;
 
 export interface GitopiaMsgCreateCommentResponse {
   /** @format uint64 */
@@ -154,8 +158,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
   name?: string;
 }
 
-export type GitopiaMsgCreateTagResponse = object;
-
 export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
@@ -193,7 +195,15 @@ export type GitopiaMsgRemoveIssueLabelsResponse = object;
 
 export type GitopiaMsgRemoveOrganizationMemberResponse = object;
 
+export type GitopiaMsgRemovePullRequestAssigneesResponse = object;
+
+export type GitopiaMsgRemovePullRequestLabelsResponse = object;
+
+export type GitopiaMsgRemovePullRequestReviewersResponse = object;
+
 export type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
+
+export type GitopiaMsgRenameOrganizationResponse = object;
 
 export type GitopiaMsgRenameRepositoryResponse = object;
 
@@ -202,6 +212,10 @@ export type GitopiaMsgSetDefaultBranchResponse = object;
 export interface GitopiaMsgSetPullRequestStateResponse {
   state?: string;
 }
+
+export type GitopiaMsgSetRepositoryBranchResponse = object;
+
+export type GitopiaMsgSetRepositoryTagResponse = object;
 
 export type GitopiaMsgSetWhoisResponse = object;
 
@@ -315,15 +329,20 @@ export interface GitopiaPullRequest {
   mergedBy?: string;
   mergeCommitSha?: string;
   maintainerCanModify?: boolean;
-  headBranch?: string;
+  head?: GitopiaPullRequestHead;
+  base?: GitopiaPullRequestBase;
+}
 
+export interface GitopiaPullRequestBase {
   /** @format uint64 */
-  headRepoId?: string;
-  baseBranch?: string;
+  repositoryId?: string;
+  branch?: string;
+}
 
+export interface GitopiaPullRequestHead {
   /** @format uint64 */
-  baseRepoId?: string;
-  extensions?: string;
+  repositoryId?: string;
+  branch?: string;
 }
 
 export enum GitopiaPullRequestState {
@@ -661,6 +680,9 @@ export interface GitopiaRepository {
 export interface GitopiaRepositoryBranch {
   name?: string;
   sha?: string;
+
+  /** @format int64 */
+  lastUpdatedAt?: string;
 }
 
 export interface GitopiaRepositoryCollaborator {
@@ -711,6 +733,9 @@ export interface GitopiaRepositoryRelease {
 export interface GitopiaRepositoryTag {
   name?: string;
   sha?: string;
+
+  /** @format int64 */
+  lastUpdatedAt?: string;
 }
 
 export interface GitopiaUser {
@@ -718,6 +743,7 @@ export interface GitopiaUser {
 
   /** @format uint64 */
   id?: string;
+  name?: string;
   username?: string;
   usernameGithub?: string;
   avatarUrl?: string;
@@ -735,7 +761,6 @@ export interface GitopiaUser {
 
   /** @format int64 */
   updatedAt?: string;
-  extensions?: string;
 }
 
 export interface GitopiaUserOrganization {
@@ -804,6 +829,9 @@ export interface V1Beta1PageRequest {
    * is set.
    */
   countTotal?: boolean;
+
+  /** reverse is set to true if results are to be returned in the descending order. */
+  reverse?: boolean;
 }
 
 /**
@@ -1033,6 +1061,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1074,6 +1103,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1115,6 +1145,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1156,6 +1187,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1197,6 +1229,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1238,6 +1271,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1356,6 +1390,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1414,6 +1449,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1439,6 +1475,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1482,6 +1519,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1524,6 +1562,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1566,6 +1605,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>

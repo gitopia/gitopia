@@ -75,8 +75,10 @@ export declare enum GitopiaIssueState {
 }
 export declare type GitopiaMsgAddIssueAssigneesResponse = object;
 export declare type GitopiaMsgAddIssueLabelsResponse = object;
+export declare type GitopiaMsgAddPullRequestAssigneesResponse = object;
+export declare type GitopiaMsgAddPullRequestLabelsResponse = object;
+export declare type GitopiaMsgAddPullRequestReviewersResponse = object;
 export declare type GitopiaMsgChangeOwnerResponse = object;
-export declare type GitopiaMsgCreateBranchResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
     /** @format uint64 */
     id?: string;
@@ -109,7 +111,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
     id?: string;
     name?: string;
 }
-export declare type GitopiaMsgCreateTagResponse = object;
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
 }
@@ -131,12 +132,18 @@ export interface GitopiaMsgForkRepositoryResponse {
 export declare type GitopiaMsgRemoveIssueAssigneesResponse = object;
 export declare type GitopiaMsgRemoveIssueLabelsResponse = object;
 export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
+export declare type GitopiaMsgRemovePullRequestAssigneesResponse = object;
+export declare type GitopiaMsgRemovePullRequestLabelsResponse = object;
+export declare type GitopiaMsgRemovePullRequestReviewersResponse = object;
 export declare type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
+export declare type GitopiaMsgRenameOrganizationResponse = object;
 export declare type GitopiaMsgRenameRepositoryResponse = object;
 export declare type GitopiaMsgSetDefaultBranchResponse = object;
 export interface GitopiaMsgSetPullRequestStateResponse {
     state?: string;
 }
+export declare type GitopiaMsgSetRepositoryBranchResponse = object;
+export declare type GitopiaMsgSetRepositoryTagResponse = object;
 export declare type GitopiaMsgSetWhoisResponse = object;
 export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
@@ -218,13 +225,18 @@ export interface GitopiaPullRequest {
     mergedBy?: string;
     mergeCommitSha?: string;
     maintainerCanModify?: boolean;
-    headBranch?: string;
+    head?: GitopiaPullRequestHead;
+    base?: GitopiaPullRequestBase;
+}
+export interface GitopiaPullRequestBase {
     /** @format uint64 */
-    headRepoId?: string;
-    baseBranch?: string;
+    repositoryId?: string;
+    branch?: string;
+}
+export interface GitopiaPullRequestHead {
     /** @format uint64 */
-    baseRepoId?: string;
-    extensions?: string;
+    repositoryId?: string;
+    branch?: string;
 }
 export declare enum GitopiaPullRequestState {
     OPEN = "OPEN",
@@ -503,6 +515,8 @@ export interface GitopiaRepository {
 export interface GitopiaRepositoryBranch {
     name?: string;
     sha?: string;
+    /** @format int64 */
+    lastUpdatedAt?: string;
 }
 export interface GitopiaRepositoryCollaborator {
     id?: string;
@@ -543,11 +557,14 @@ export interface GitopiaRepositoryRelease {
 export interface GitopiaRepositoryTag {
     name?: string;
     sha?: string;
+    /** @format int64 */
+    lastUpdatedAt?: string;
 }
 export interface GitopiaUser {
     creator?: string;
     /** @format uint64 */
     id?: string;
+    name?: string;
     username?: string;
     usernameGithub?: string;
     avatarUrl?: string;
@@ -563,7 +580,6 @@ export interface GitopiaUser {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    extensions?: string;
 }
 export interface GitopiaUserOrganization {
     name?: string;
@@ -622,6 +638,8 @@ export interface V1Beta1PageRequest {
      * is set.
      */
     countTotal?: boolean;
+    /** reverse is set to true if results are to be returned in the descending order. */
+    reverse?: boolean;
 }
 /**
 * PageResponse is to be embedded in gRPC response messages where the
@@ -709,6 +727,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllCommentResponse, RpcStatus>>;
     /**
      * No description
@@ -732,6 +751,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllIssueResponse, RpcStatus>>;
     /**
      * No description
@@ -755,6 +775,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllOrganizationResponse, RpcStatus>>;
     /**
      * No description
@@ -778,6 +799,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllPullRequestResponse, RpcStatus>>;
     /**
      * No description
@@ -801,6 +823,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllReleaseResponse, RpcStatus>>;
     /**
      * No description
@@ -824,6 +847,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryResponse, RpcStatus>>;
     /**
      * No description
@@ -889,6 +913,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllUserResponse, RpcStatus>>;
     /**
      * No description
@@ -921,6 +946,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllAddressRepositoryResponse, RpcStatus>>;
     /**
      * No description
@@ -935,6 +961,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllWhoisResponse, RpcStatus>>;
     /**
      * No description
@@ -958,6 +985,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryIssueResponse, RpcStatus>>;
     /**
      * No description
@@ -980,6 +1008,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryPullRequestResponse, RpcStatus>>;
     /**
      * No description
@@ -1002,6 +1031,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.offset"?: string;
         "pagination.limit"?: string;
         "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryReleaseResponse, RpcStatus>>;
     /**
      * No description
