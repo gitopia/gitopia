@@ -266,7 +266,7 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 		issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 
 		var err error
-		pageRes, err = PaginateAllRepositoryIssue(k, ctx, issueStore, repository, req.Pagination, func(issue types.Issue) error {
+		pageRes, err = PaginateAllRepositoryIssue(k, ctx, issueStore, repository, req.Pagination, req.Option, func(issue types.Issue) error {
 			issues = append(issues, &issue)
 			return nil
 		})
@@ -499,11 +499,33 @@ func PaginateAllRepositoryIssue(
 	issueStore ks.KVStore,
 	repository types.Repository,
 	pageRequest *query.PageRequest,
+	option *types.IssueOptions,
 	onResult func(issue types.Issue) error,
 ) (*query.PageResponse, error) {
 
 	totalIssueCount := repository.IssuesCount
 	issues := repository.Issues
+
+	if option == nil {
+		option = &types.IssueOptions{}
+	}
+
+	if option.CreatedBy != "" {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if issue.Creator == option.CreatedBy {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
 
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
