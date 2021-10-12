@@ -314,6 +314,8 @@ message IssueOptions {
 	repeated uint64 labelIds = 5;
 	string sort = 6;
 	string search = 7;
+	int64 updatedAfter = 8;
+	int64 updatedBefore = 9;
 }
 
 message QueryAllRepositoryIssueResponse {

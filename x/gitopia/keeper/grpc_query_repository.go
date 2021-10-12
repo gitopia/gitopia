@@ -640,6 +640,40 @@ func PaginateAllRepositoryIssue(
 		totalIssueCount = uint64(len(issueBuffer))
 	}
 
+	if option.UpdatedAfter != 0 {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if issue.UpdatedAt > option.UpdatedAfter {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
+
+	if option.UpdatedBefore != 0 {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if issue.UpdatedAt < option.UpdatedBefore {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
+
 	if option.Search != "" {
 		var issueBuffer []*types.RepositoryIssue
 		for i := 0; uint64(i) < totalIssueCount; i++ {
