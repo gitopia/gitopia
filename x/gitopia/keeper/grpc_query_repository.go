@@ -527,6 +527,38 @@ func PaginateAllRepositoryIssue(
 		totalIssueCount = uint64(len(issueBuffer))
 	}
 
+	if option.State == types.Issue_CLOSED.String() {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if issue.State == types.Issue_CLOSED {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	} else if option.State == types.Issue_OPEN.String() {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if issue.State == types.Issue_OPEN {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
+
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
 		pageRequest = &query.PageRequest{}
