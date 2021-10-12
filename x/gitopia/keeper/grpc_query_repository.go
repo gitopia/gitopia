@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	ks "github.com/cosmos/cosmos-sdk/store/types"
@@ -628,6 +629,23 @@ func PaginateAllRepositoryIssue(
 				}
 			}
 			if contains {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
+
+	if option.Search != "" {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			if strings.Contains(issue.Title, option.Search) {
 				repositoryIssue := types.RepositoryIssue{
 					Id:  issue.Id,
 					Iid: issue.Iid,

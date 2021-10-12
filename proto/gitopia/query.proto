@@ -313,6 +313,7 @@ message IssueOptions {
 	string assignee = 4;
 	repeated uint64 labelIds = 5;
 	string sort = 6;
+	string search = 7;
 }
 
 message QueryAllRepositoryIssueResponse {
