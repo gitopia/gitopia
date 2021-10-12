@@ -311,6 +311,7 @@ message IssueOptions {
 	string state = 2;
 	string labels = 3;
 	string assignee = 4;
+	repeated uint64 labelIds = 5;
 }
 
 message QueryAllRepositoryIssueResponse {

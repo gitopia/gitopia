@@ -608,6 +608,32 @@ func PaginateAllRepositoryIssue(
 		totalIssueCount = uint64(len(issueBuffer))
 	}
 
+	if len(option.LabelIds) > 0 {
+		var issueBuffer []*types.RepositoryIssue
+		for i := 0; uint64(i) < totalIssueCount; i++ {
+			var issue types.Issue
+			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
+			contains := false
+			for _, l := range option.LabelIds {
+				if _, exists := utils.LabelIdExists(issue.Labels, l); exists {
+					contains = true
+				} else {
+					contains = false
+					break
+				}
+			}
+			if contains {
+				repositoryIssue := types.RepositoryIssue{
+					Id:  issue.Id,
+					Iid: issue.Iid,
+				}
+				issueBuffer = append(issueBuffer, &repositoryIssue)
+			}
+		}
+		issues = issueBuffer
+		totalIssueCount = uint64(len(issueBuffer))
+	}
+
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
 		pageRequest = &query.PageRequest{}
