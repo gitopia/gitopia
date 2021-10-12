@@ -309,6 +309,7 @@ message QueryAllRepositoryIssueRequest {
 message IssueOptions {
 	string createdBy = 1;
 	string state = 2;
+	string labels = 3;
 }
 
 message QueryAllRepositoryIssueResponse {
