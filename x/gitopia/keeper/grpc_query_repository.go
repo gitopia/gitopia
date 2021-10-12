@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	ks "github.com/cosmos/cosmos-sdk/store/types"
@@ -508,6 +509,10 @@ func PaginateAllRepositoryIssue(
 
 	if option == nil {
 		option = &types.IssueOptions{}
+	}
+
+	if option.Sort != "ASC" {
+		sort.Sort(sort.Reverse(types.RepositoryIssueSlice(issues)))
 	}
 
 	if option.CreatedBy != "" {

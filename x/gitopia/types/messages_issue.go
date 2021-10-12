@@ -5,6 +5,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+type RepositoryIssueSlice []*RepositoryIssue
+
+func (r RepositoryIssueSlice) Len() int           { return len(r) }
+func (r RepositoryIssueSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r RepositoryIssueSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+
 var _ sdk.Msg = &MsgCreateIssue{}
 
 func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
