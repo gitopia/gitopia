@@ -332,6 +332,7 @@ message QueryAllRepositoryPullRequestRequest {
 
 message PullRequestOptions {
 	string createdBy = 1;
+	string state = 2;
 }
 
 message QueryAllRepositoryPullRequestResponse {
