@@ -338,6 +338,7 @@ message PullRequestOptions {
 	string reviewer = 5;
 	repeated uint64 labelIds = 6;
 	string sort = 7;
+	string search = 8;
 }
 
 message QueryAllRepositoryPullRequestResponse {
