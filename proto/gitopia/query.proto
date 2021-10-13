@@ -335,6 +335,7 @@ message PullRequestOptions {
 	string state = 2;
 	string labels = 3;
 	string assignee = 4;
+	string reviewer = 5;
 }
 
 message QueryAllRepositoryPullRequestResponse {
