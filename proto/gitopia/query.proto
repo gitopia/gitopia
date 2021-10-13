@@ -336,6 +336,7 @@ message PullRequestOptions {
 	string labels = 3;
 	string assignee = 4;
 	string reviewer = 5;
+	repeated uint64 labelIds = 6;
 }
 
 message QueryAllRepositoryPullRequestResponse {

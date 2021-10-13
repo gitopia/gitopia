@@ -914,6 +914,32 @@ func PaginateAllRepositoryPullRequest(
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	}
 
+	if len(option.LabelIds) > 0 {
+		var pullRequestBuffer []*types.RepositoryPullRequest
+		for i := 0; uint64(i) < totalPullRequestCount; i++ {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			contains := false
+			for _, l := range option.LabelIds {
+				if _, exists := utils.LabelIdExists(pullRequest.Labels, l); exists {
+					contains = true
+				} else {
+					contains = false
+					break
+				}
+			}
+			if contains {
+				repositoryPullRequest := types.RepositoryPullRequest{
+					Id:  pullRequest.Id,
+					Iid: pullRequest.Iid,
+				}
+				pullRequestBuffer = append(pullRequestBuffer, &repositoryPullRequest)
+			}
+		}
+		pullRequests = pullRequestBuffer
+		totalPullRequestCount = uint64(len(pullRequestBuffer))
+	}
+
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
 		pageRequest = &query.PageRequest{}
