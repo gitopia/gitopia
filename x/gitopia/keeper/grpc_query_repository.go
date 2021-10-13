@@ -944,6 +944,40 @@ func PaginateAllRepositoryPullRequest(
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	}
 
+	if option.UpdatedAfter != 0 {
+		var pullRequestBuffer []*types.RepositoryPullRequest
+		for i := 0; uint64(i) < totalPullRequestCount; i++ {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			if pullRequest.UpdatedAt > option.UpdatedAfter {
+				repositoryPullRequest := types.RepositoryPullRequest{
+					Id:  pullRequest.Id,
+					Iid: pullRequest.Iid,
+				}
+				pullRequestBuffer = append(pullRequestBuffer, &repositoryPullRequest)
+			}
+		}
+		pullRequests = pullRequestBuffer
+		totalPullRequestCount = uint64(len(pullRequestBuffer))
+	}
+
+	if option.UpdatedBefore != 0 {
+		var pullRequestBuffer []*types.RepositoryPullRequest
+		for i := 0; uint64(i) < totalPullRequestCount; i++ {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			if pullRequest.UpdatedAt < option.UpdatedBefore {
+				repositoryPullRequest := types.RepositoryPullRequest{
+					Id:  pullRequest.Id,
+					Iid: pullRequest.Iid,
+				}
+				pullRequestBuffer = append(pullRequestBuffer, &repositoryPullRequest)
+			}
+		}
+		pullRequests = pullRequestBuffer
+		totalPullRequestCount = uint64(len(pullRequestBuffer))
+	}
+
 	if option.Search != "" {
 		var pullRequestBuffer []*types.RepositoryPullRequest
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {

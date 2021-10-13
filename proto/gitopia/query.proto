@@ -339,6 +339,8 @@ message PullRequestOptions {
 	repeated uint64 labelIds = 6;
 	string sort = 7;
 	string search = 8;
+	int64 updatedAfter = 9;
+	int64 updatedBefore = 10;
 }
 
 message QueryAllRepositoryPullRequestResponse {
