@@ -326,7 +326,12 @@ message QueryAllRepositoryIssueResponse {
 message QueryAllRepositoryPullRequestRequest {
 	string userId = 1;
 	string repositoryName = 2;
-	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+	PullRequestOptions option = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message PullRequestOptions {
+	string createdBy = 1;
 }
 
 message QueryAllRepositoryPullRequestResponse {

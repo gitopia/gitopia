@@ -356,7 +356,7 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 
 		pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 
-		pageRes, err := PaginateAllRepositoryPullRequest(k, ctx, pullRequestStore, repository, req.Pagination, func(pullRequest types.PullRequest) error {
+		pageRes, err := PaginateAllRepositoryPullRequest(k, ctx, pullRequestStore, repository, req.Pagination, req.Option, func(pullRequest types.PullRequest) error {
 			pullRequests = append(pullRequests, &pullRequest)
 			return nil
 		})
@@ -773,11 +773,33 @@ func PaginateAllRepositoryPullRequest(
 	pullRequestStore ks.KVStore,
 	repository types.Repository,
 	pageRequest *query.PageRequest,
+	option *types.PullRequestOptions,
 	onResult func(pullRequest types.PullRequest) error,
 ) (*query.PageResponse, error) {
 
 	totalPullRequestCount := repository.PullsCount
 	pullRequests := repository.PullRequests
+
+	if option == nil {
+		option = &types.PullRequestOptions{}
+	}
+
+	if option.CreatedBy != "" {
+		var pullRequestBuffer []*types.RepositoryPullRequest
+		for i := 0; uint64(i) < totalPullRequestCount; i++ {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			if pullRequest.Creator == option.CreatedBy {
+				repositoryPullRequest := types.RepositoryPullRequest{
+					Id:  pullRequest.Id,
+					Iid: pullRequest.Iid,
+				}
+				pullRequestBuffer = append(pullRequestBuffer, &repositoryPullRequest)
+			}
+		}
+		pullRequests = pullRequestBuffer
+		totalPullRequestCount = uint64(len(pullRequestBuffer))
+	}
 
 	// if the PageRequest is nil, use default PageRequest
 	if pageRequest == nil {
