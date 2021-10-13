@@ -30,6 +30,8 @@ validator:
   name: node0
   staked: "100000000tlore"
 client:
+  openapi:
+    path: "docs/static/openapi.yml"
   vuex:
     path: "vue/src/store"
 faucet:
