@@ -801,6 +801,23 @@ func PaginateAllRepositoryPullRequest(
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	}
 
+	if option.Assignee != "" {
+		var pullRequestBuffer []*types.RepositoryPullRequest
+		for i := 0; uint64(i) < totalPullRequestCount; i++ {
+			var pullRequest types.PullRequest
+			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
+			if _, exists := utils.AssigneeExists(pullRequest.Assignees, option.Assignee); exists {
+				repositoryPullRequest := types.RepositoryPullRequest{
+					Id:  pullRequest.Id,
+					Iid: pullRequest.Iid,
+				}
+				pullRequestBuffer = append(pullRequestBuffer, &repositoryPullRequest)
+			}
+		}
+		pullRequests = pullRequestBuffer
+		totalPullRequestCount = uint64(len(pullRequestBuffer))
+	}
+
 	if option.State == types.PullRequest_OPEN.String() {
 		var pullRequestBuffer []*types.RepositoryPullRequest
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
