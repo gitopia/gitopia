@@ -5,6 +5,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+type RepositoryPullRequestSlice []*RepositoryPullRequest
+
+func (r RepositoryPullRequestSlice) Len() int           { return len(r) }
+func (r RepositoryPullRequestSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r RepositoryPullRequestSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
 func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepoId uint64, baseBranch string, baseRepoId uint64, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {

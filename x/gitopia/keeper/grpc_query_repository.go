@@ -784,6 +784,10 @@ func PaginateAllRepositoryPullRequest(
 		option = &types.PullRequestOptions{}
 	}
 
+	if option.Sort != "ASC" {
+		sort.Sort(sort.Reverse(types.RepositoryPullRequestSlice(pullRequests)))
+	}
+
 	if option.CreatedBy != "" {
 		var pullRequestBuffer []*types.RepositoryPullRequest
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
