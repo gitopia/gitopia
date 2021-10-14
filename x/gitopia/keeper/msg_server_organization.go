@@ -197,7 +197,7 @@ func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.Ms
 
 	// Checks that the element exists
 	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %v doesn't exist", msg.Id))
 	}
 
 	organization := k.GetOrganization(ctx, msg.Id)
@@ -214,6 +214,10 @@ func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.Ms
 		organization.Members = append(organization.Members[:i], organization.Members[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("User (%v) doesn't exists in organization members", msg.User))
+	}
+
+	if _, exists := utils.OrganizationMemberWithRoleExists(organization.Members, types.OrganizationMember_OWNER); !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove only owner")
 	}
 
 	k.SetOrganization(ctx, organization)
