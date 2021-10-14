@@ -19,12 +19,10 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasRepository(ctx, msg.RepositoryId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository %d doesn't exist", msg.RepositoryId))
+	repository, found := k.GetRepository(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
-
-	repository := k.GetRepository(ctx, msg.RepositoryId)
 
 	var organization types.Organization
 
@@ -121,7 +119,10 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 
 	release := k.GetRelease(ctx, msg.Id)
 
-	repository := k.GetRepository(ctx, release.RepositoryId)
+	repository, found := k.GetRepository(ctx, release.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
 
 	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exists", msg.TagName))

@@ -56,12 +56,10 @@ func (k Keeper) Repository(c context.Context, req *types.QueryGetRepositoryReque
 	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.Id) {
+	repository, found := k.GetRepository(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.Id)), &repository)
 
 	return &types.QueryGetRepositoryResponse{Repository: &repository}, nil
 }
@@ -409,16 +407,13 @@ func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	var branches []*types.RepositoryBranch
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.RepositoryId) {
+	repository, found := k.GetRepository(ctx, req.RepositoryId)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryBranch := range repository.Branches {
 		branches = append(branches, repositoryBranch)
@@ -431,15 +426,12 @@ func (k Keeper) BranchSha(c context.Context, req *types.QueryGetBranchShaRequest
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.RepositoryId) {
+	repository, found := k.GetRepository(ctx, req.RepositoryId)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	if i, exists := utils.RepositoryBranchExists(repository.Branches, req.BranchName); exists {
 		return &types.QueryGetBranchShaResponse{Sha: repository.Branches[i].Sha}, nil
@@ -453,16 +445,13 @@ func (k Keeper) TagAll(c context.Context, req *types.QueryGetAllTagRequest) (*ty
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	var tags []*types.RepositoryTag
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.RepositoryId) {
+	repository, found := k.GetRepository(ctx, req.RepositoryId)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	for _, repositoryTag := range repository.Tags {
 		tags = append(tags, repositoryTag)
@@ -474,16 +463,12 @@ func (k Keeper) TagSha(c context.Context, req *types.QueryGetTagShaRequest) (*ty
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
-	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRepository(ctx, req.RepositoryId) {
+	repository, found := k.GetRepository(ctx, req.RepositoryId)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-	k.cdc.MustUnmarshal(store.Get(GetRepositoryIDBytes(req.RepositoryId)), &repository)
 
 	if i, exists := utils.RepositoryTagExists(repository.Tags, req.TagName); exists {
 		return &types.QueryGetTagShaResponse{Sha: repository.Tags[i].Sha}, nil

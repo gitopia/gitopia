@@ -18,11 +18,10 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasRepository(ctx, msg.RepositoryId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository Id %d doesn't exist", msg.RepositoryId))
+	repository, found := k.GetRepository(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
-
-	repository := k.GetRepository(ctx, msg.RepositoryId)
 	repository.IssuesCount += 1
 
 	createdAt := ctx.BlockTime().Unix()
@@ -224,7 +223,10 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	}
 
 	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 
 	if msg.Creator != issue.Creator {
 		var organization types.Organization
@@ -294,7 +296,10 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	}
 
 	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
@@ -361,7 +366,10 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	}
 
 	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
@@ -426,7 +434,10 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	}
 
 	var issue = k.GetIssue(ctx, msg.IssueId)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
@@ -498,7 +509,10 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 	}
 
 	var issue = k.GetIssue(ctx, msg.IssueId)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {

@@ -19,21 +19,19 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("User (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasRepository(ctx, msg.HeadRepoId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("headRepositoryId %d doesn't exist", msg.HeadRepoId))
+	headRepo, found := k.GetRepository(ctx, msg.HeadRepoId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("headRepositoryId id (%d) doesn't exist", msg.HeadRepoId))
 	}
-
-	headRepo := k.GetRepository(ctx, msg.HeadRepoId)
 
 	if _, exists := utils.RepositoryBranchExists(headRepo.Branches, msg.HeadBranch); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", msg.HeadBranch))
 	}
 
-	if !k.HasRepository(ctx, msg.BaseRepoId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("baseRepositoryId %d doesn't exist", msg.BaseRepoId))
+	baseRepo, found := k.GetRepository(ctx, msg.BaseRepoId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("baseRepositoryId id (%d) doesn't exist", msg.BaseRepoId))
 	}
-
-	baseRepo := k.GetRepository(ctx, msg.BaseRepoId)
 
 	if _, exists := utils.RepositoryBranchExists(baseRepo.Branches, msg.BaseBranch); !exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", msg.BaseBranch))
@@ -213,7 +211,10 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	var pullRequest = k.GetPullRequest(ctx, msg.Id)
 	currentTime := ctx.BlockTime().Unix()
 
-	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
 	var havePermission bool = false
 
 	ownerType := repository.Owner.Type
@@ -545,7 +546,10 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 
 	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
 
-	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
 
 	if len(pullRequest.Labels)+len(msg.LabelIds) > 50 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 50 labels")
@@ -611,7 +615,10 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 
 	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
 
-	repository := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
 
 	if len(pullRequest.Labels) < len(msg.LabelIds) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than existing labels")
