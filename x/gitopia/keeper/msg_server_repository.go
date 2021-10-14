@@ -464,6 +464,10 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	if msg.Creator == msg.User {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
+	}
+
 	repository := k.GetRepository(ctx, msg.Id)
 
 	ownerId := repository.Owner.Id
