@@ -147,7 +147,11 @@ func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.Ms
 
 	// Checks that the element exists
 	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %d doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", msg.Id))
+	}
+
+	if msg.Creator == msg.User {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
 	}
 
 	organization := k.GetOrganization(ctx, msg.Id)
