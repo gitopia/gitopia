@@ -68,6 +68,7 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 	ctx := sdk.UnwrapSDKContext(c)
 
 	user, userFound := k.GetUser(ctx, req.Id)
+	organization, organizationFound := k.GetOrganization(ctx, req.Id)
 	if userFound {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
@@ -79,13 +80,7 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-	} else if k.HasOrganization(ctx, req.Id) {
-		var organization types.Organization
-
-		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.MustUnmarshal(organizationStore.Get(organizationKey), &organization)
-
+	} else if organizationFound {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
 		var err error
@@ -109,21 +104,17 @@ func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressR
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var organization types.Organization
 	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
 	user, userFound := k.GetUser(ctx, req.Id)
+	organization, organizationFound := k.GetOrganization(ctx, req.Id)
 	if userFound {
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		}
-	} else if k.HasOrganization(ctx, req.Id) {
-		organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-		organizationKey := []byte(types.OrganizationKey + req.Id)
-		k.cdc.MustUnmarshal(organizationStore.Get(organizationKey), &organization)
-
+	} else if organizationFound {
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)

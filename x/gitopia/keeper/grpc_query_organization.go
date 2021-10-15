@@ -50,13 +50,10 @@ func (k Keeper) Organization(c context.Context, req *types.QueryGetOrganizationR
 	var organization types.Organization
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasOrganization(ctx, req.Id) {
+	organization, found := k.GetOrganization(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	key := []byte(types.OrganizationKey + req.Id)
-	k.cdc.MustUnmarshal(store.Get(key), &organization)
 
 	return &types.QueryGetOrganizationResponse{Organization: &organization}, nil
 }

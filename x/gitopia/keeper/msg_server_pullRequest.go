@@ -216,11 +216,10 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			havePermission = true
 		}
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found := k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization := k.GetOrganization(ctx, repository.Owner.Id)
 
 		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
 			havePermission = true

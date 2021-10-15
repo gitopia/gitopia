@@ -28,11 +28,10 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {

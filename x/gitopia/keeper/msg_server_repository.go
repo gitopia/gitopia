@@ -24,12 +24,13 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 
 	var user types.User
 	var organization types.Organization
+	var found bool
 	if msg.OwnerType == types.RepositoryOwner_USER.String() {
 		if msg.Creator != msg.OwnerId {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
 		}
 
-		user, found := k.GetUser(ctx, msg.OwnerId)
+		user, found = k.GetUser(ctx, msg.OwnerId)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.OwnerId))
 		}
@@ -43,11 +44,10 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", msg.Name))
 		}
 	} else if msg.OwnerType == types.RepositoryOwner_ORGANIZATION.String() {
-		if !k.HasOrganization(ctx, msg.OwnerId) {
+		organization, found = k.GetOrganization(ctx, msg.OwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.OwnerId))
 		}
-
-		organization = k.GetOrganization(ctx, msg.OwnerId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 			if organization.Members[i].Role != types.OrganizationMember_OWNER {
@@ -162,7 +162,10 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) doesn't exists in currentUser repositories", repository.Name))
 		}
 	} else if currentOwner.Type == types.RepositoryOwner_ORGANIZATION {
-		currentOrganization = k.GetOrganization(ctx, currentOwner.Id)
+		currentOrganization, found = k.GetOrganization(ctx, currentOwner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", currentOwner.Id))
+		}
 
 		if i, exists := utils.OrganizationMemberExists(currentOrganization.Members, msg.Creator); exists {
 			if currentOrganization.Members[i].Role == types.OrganizationMember_OWNER {
@@ -203,11 +206,10 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		}
 		newUser.Repositories = append(newUser.Repositories, &newUserRepository)
 	} else if newOwnerType == types.RepositoryOwner_ORGANIZATION.String() {
-		if !k.HasOrganization(ctx, newOwnerId) {
+		newOrganization, found = k.GetOrganization(ctx, newOwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", newOwnerId))
 		}
-
-		newOrganization = k.GetOrganization(ctx, newOwnerId)
 
 		if _, exists := utils.OrganizationRepositoryExists(newOrganization.Repositories, repository.Name); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
@@ -263,7 +265,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
 		}
 
-		user, found := k.GetUser(ctx, msg.OwnerId)
+		user, found = k.GetUser(ctx, msg.OwnerId)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.OwnerId))
 		}
@@ -277,11 +279,10 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
 		}
 	} else if msg.OwnerType == types.RepositoryOwner_ORGANIZATION.String() {
-		if !k.HasOrganization(ctx, msg.OwnerId) {
+		organization, found = k.GetOrganization(ctx, msg.OwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.OwnerId))
 		}
-
-		organization = k.GetOrganization(ctx, msg.OwnerId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 			if organization.Members[i].Role != types.OrganizationMember_OWNER {
@@ -397,11 +398,10 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 
 		k.SetUser(ctx, user)
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, ownerId) {
+		organization, found := k.GetOrganization(ctx, ownerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", ownerId))
 		}
-
-		organization := k.GetOrganization(ctx, ownerId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 			if organization.Members[i].Role == types.OrganizationMember_OWNER {
@@ -476,11 +476,10 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 			havePermission = true
 		}
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, ownerId) {
+		organization, found := k.GetOrganization(ctx, ownerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", ownerId))
 		}
-
-		organization := k.GetOrganization(ctx, ownerId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 			if organization.Members[i].Role == types.OrganizationMember_OWNER {
@@ -551,11 +550,10 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 			havePermission = true
 		}
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, ownerId) {
+		organization, found := k.GetOrganization(ctx, ownerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", ownerId))
 		}
-
-		organization := k.GetOrganization(ctx, ownerId)
 
 		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 			if organization.Members[i].Role == types.OrganizationMember_OWNER {
@@ -607,11 +605,10 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
@@ -656,11 +653,10 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
@@ -703,11 +699,10 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
@@ -738,11 +733,10 @@ func (k msgServer) SetRepositoryBranch(goCtx context.Context, msg *types.MsgSetR
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
@@ -781,11 +775,10 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
@@ -818,11 +811,10 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
@@ -859,11 +851,10 @@ func (k msgServer) SetRepositoryTag(goCtx context.Context, msg *types.MsgSetRepo
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveTagPermission(repository, msg.Creator, organization) {
@@ -902,11 +893,10 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveTagPermission(repository, msg.Creator, organization) {

@@ -94,11 +94,10 @@ func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenam
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", msg.Id))
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
-
-	organization := k.GetOrganization(ctx, msg.Id)
 	user, found := k.GetUser(ctx, organization.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization creator (%v) doesn't exist", organization.Creator))
@@ -150,16 +149,14 @@ func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.Ms
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
 	}
 
-	// Checks that the element exists
-	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", msg.Id))
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
 	if msg.Creator == msg.User {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
 	}
-
-	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 		if organization.Members[i].Role != types.OrganizationMember_OWNER {
@@ -201,12 +198,10 @@ func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.Ms
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %v doesn't exist", msg.Id))
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
-
-	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 		if organization.Members[i].Role != types.OrganizationMember_OWNER {
@@ -234,12 +229,10 @@ func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.Ms
 func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdateOrganization) (*types.MsgUpdateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Checks that the element exists
-	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
-
-	organization := k.GetOrganization(ctx, msg.Id)
 
 	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
 		if organization.Members[i].Role != types.OrganizationMember_OWNER {
@@ -265,10 +258,11 @@ func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdat
 func (k msgServer) DeleteOrganization(goCtx context.Context, msg *types.MsgDeleteOrganization) (*types.MsgDeleteOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasOrganization(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetOrganizationOwner(ctx, msg.Id) {
+	if msg.Creator != organization.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
