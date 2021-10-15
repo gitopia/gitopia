@@ -109,17 +109,15 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasRelease(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	release, found := k.GetRelease(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("release id (%d) doesn't exist", msg.Id))
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetReleaseOwner(ctx, msg.Id) {
+	if msg.Creator != release.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	release := k.GetRelease(ctx, msg.Id)
 
 	repository, found := k.GetRepository(ctx, release.RepositoryId)
 	if !found {
@@ -183,10 +181,13 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRelease) (*types.MsgDeleteReleaseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasRelease(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	release, found := k.GetRelease(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("release id (%d) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetReleaseOwner(ctx, msg.Id) {
+
+	// Checks if the the msg sender is the same as the current owner
+	if msg.Creator != release.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 

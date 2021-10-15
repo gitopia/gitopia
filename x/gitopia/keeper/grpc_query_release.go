@@ -48,12 +48,10 @@ func (k Keeper) Release(c context.Context, req *types.QueryGetReleaseRequest) (*
 	var release types.Release
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRelease(ctx, req.Id) {
+	release, found := k.GetRelease(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-	k.cdc.MustUnmarshal(store.Get(GetReleaseIDBytes(req.Id)), &release)
 
 	return &types.QueryGetReleaseResponse{Release: &release}, nil
 }
