@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"strconv"
+	"encoding/binary"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,20 +20,15 @@ func (k Keeper) GetWhoisCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetWhoisCount set the total number of whois
 func (k Keeper) SetWhoisCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisCountKey))
 	byteKey := types.KeyPrefix(types.WhoisCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -46,23 +41,15 @@ func (k Keeper) SetWhois(ctx sdk.Context, name string, whois types.Whois) {
 }
 
 // GetWhois returns the whois information
-func (k Keeper) GetWhois(ctx sdk.Context, key string) types.Whois {
+func (k Keeper) GetWhois(ctx sdk.Context, key string) (val types.Whois, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	var whois types.Whois
 	byteKey := []byte(types.WhoisKey + key)
-	k.cdc.MustUnmarshal(store.Get(byteKey), &whois)
-	return whois
-}
-
-// HasWhois checks if the whois exists in the store
-func (k Keeper) HasWhois(ctx sdk.Context, key string) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	return store.Has([]byte(types.WhoisKey + key))
-}
-
-// GetWhoisOwner returns the creator of the whois
-func (k Keeper) GetWhoisOwner(ctx sdk.Context, key string) string {
-	return k.GetWhois(ctx, key).Creator
+	b := store.Get(byteKey)
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemoveWhois removes a whois from the store

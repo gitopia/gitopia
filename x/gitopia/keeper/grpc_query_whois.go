@@ -48,13 +48,10 @@ func (k Keeper) Whois(c context.Context, req *types.QueryGetWhoisRequest) (*type
 	var whois types.Whois
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasWhois(ctx, req.Name) {
+	whois, found := k.GetWhois(ctx, req.Name)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	byteKey := []byte(types.WhoisKey + req.Name)
-	k.cdc.MustUnmarshal(store.Get(byteKey), &whois)
 
 	return &types.QueryGetWhoisResponse{Whois: &whois}, nil
 }
