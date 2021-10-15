@@ -29,16 +29,15 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
 		}
 
-		if !k.HasUser(ctx, msg.OwnerId) {
+		user, found := k.GetUser(ctx, msg.OwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.OwnerId))
 		}
 
 		// Checks if the the msg sender is the same as the current owner
-		if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+		if msg.Creator != user.Creator {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 		}
-
-		user = k.GetUser(ctx, msg.OwnerId)
 
 		if _, exists := utils.UserRepositoryExists(user.Repositories, msg.Name); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", msg.Name))
@@ -152,7 +151,10 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 
-		currentUser = k.GetUser(ctx, currentOwner.Id)
+		currentUser, found := k.GetUser(ctx, currentOwner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", currentOwner.Id))
+		}
 
 		if i, exists := utils.UserRepositoryExists(currentUser.Repositories, repository.Name); exists {
 			currentUser.Repositories = append(currentUser.Repositories[:i], currentUser.Repositories[i+1:]...)
@@ -186,11 +188,10 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	}
 
 	if newOwnerType == types.RepositoryOwner_USER.String() {
-		if !k.HasUser(ctx, newOwnerId) {
+		newUser, found := k.GetUser(ctx, newOwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", newOwnerId))
 		}
-
-		newUser = k.GetUser(ctx, newOwnerId)
 
 		if _, exists := utils.UserRepositoryExists(newUser.Repositories, repository.Name); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
@@ -262,16 +263,16 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
 		}
 
-		if !k.HasUser(ctx, msg.OwnerId) {
+		user, found := k.GetUser(ctx, msg.OwnerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.OwnerId))
 		}
 
 		// Checks if the the msg sender is the same as the current owner
-		if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+		if msg.Creator != user.Creator {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 		}
 
-		user = k.GetUser(ctx, msg.OwnerId)
 		if _, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
 		}
@@ -365,7 +366,8 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	var havePermission bool = false
 
 	if ownerType == types.RepositoryOwner_USER {
-		if !k.HasUser(ctx, ownerId) {
+		user, found := k.GetUser(ctx, ownerId)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", ownerId))
 		}
 
@@ -380,8 +382,6 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		if !havePermission {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
-
-		user := k.GetUser(ctx, ownerId)
 
 		if i, exists := utils.UserRepositoryExists(user.Repositories, msg.Name); !exists {
 			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
@@ -447,11 +447,13 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateRepositoryCollaborator) (*types.MsgUpdateRepositoryCollaboratorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasUser(ctx, msg.User) {
+	_, found = k.GetUser(ctx, msg.User)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
 	}
 
@@ -529,7 +531,8 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *types.MsgRemoveRepositoryCollaborator) (*types.MsgRemoveRepositoryCollaboratorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
@@ -591,7 +594,8 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCreateRepositoryLabel) (*types.MsgCreateRepositoryLabelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
@@ -639,7 +643,8 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUpdateRepositoryLabel) (*types.MsgUpdateRepositoryLabelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
@@ -685,7 +690,8 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDeleteRepositoryLabel) (*types.MsgDeleteRepositoryLabelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 

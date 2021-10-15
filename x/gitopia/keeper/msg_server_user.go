@@ -12,9 +12,9 @@ import (
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if user exists already
-	if k.HasUser(ctx, msg.Creator) {
-		return &types.MsgCreateUserResponse{}, fmt.Errorf("user already exists: %v", msg.Creator)
+	_, found := k.GetUser(ctx, msg.Creator)
+	if found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user already exists: %v", msg.Creator))
 	}
 
 	/*
@@ -42,12 +42,10 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (*types.MsgUpdateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Checks that the element exists
-	if !k.HasUser(ctx, msg.Creator) {
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
-
-	user := k.GetUser(ctx, msg.Creator)
 
 	user.Name = msg.Name
 	user.UsernameGithub = msg.UsernameGithub
@@ -63,10 +61,12 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (*types.MsgDeleteUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	user, found := k.GetUser(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetUserOwner(ctx, msg.Id) {
+
+	if msg.Creator != user.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 

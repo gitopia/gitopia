@@ -13,16 +13,15 @@ import (
 func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreateOrganization) (*types.MsgCreateOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
 	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetUserOwner(ctx, msg.Creator) {
+	if msg.Creator != user.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	user := k.GetUser(ctx, msg.Creator)
 
 	// Check if username is available
 	// if k.HasWhois(ctx, msg.Name) {
@@ -90,8 +89,9 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenameOrganization) (*types.MsgRenameOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
 	if !k.HasOrganization(ctx, msg.Id) {
@@ -99,7 +99,10 @@ func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenam
 	}
 
 	organization := k.GetOrganization(ctx, msg.Id)
-	user := k.GetUser(ctx, organization.Creator)
+	user, found := k.GetUser(ctx, organization.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization creator (%v) doesn't exist", organization.Creator))
+	}
 
 	var havePermission bool = false
 
@@ -137,12 +140,14 @@ func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenam
 func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.MsgUpdateOrganizationMember) (*types.MsgUpdateOrganizationMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator %v doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasUser(ctx, msg.User) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", msg.User))
+	_, found = k.GetUser(ctx, msg.User)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
 	}
 
 	// Checks that the element exists
@@ -191,8 +196,9 @@ func (k msgServer) UpdateOrganizationMember(goCtx context.Context, msg *types.Ms
 func (k msgServer) RemoveOrganizationMember(goCtx context.Context, msg *types.MsgRemoveOrganizationMember) (*types.MsgRemoveOrganizationMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator %v doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
 	// Checks that the element exists

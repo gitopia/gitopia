@@ -48,16 +48,12 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.Id) {
+	user, found := k.GetUser(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	key := []byte(types.UserKey + req.Id)
-	k.cdc.MustUnmarshal(store.Get(key), &user)
 
 	return &types.QueryGetUserResponse{User: &user}, nil
 }
@@ -71,13 +67,8 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 	var pageRes *query.PageResponse
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if k.HasUser(ctx, req.Id) {
-		var user types.User
-
-		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.MustUnmarshal(userStore.Get(userKey), &user)
-
+	user, userFound := k.GetUser(ctx, req.Id)
+	if userFound {
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
 		var err error
@@ -118,16 +109,12 @@ func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressR
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	var organization types.Organization
 	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if k.HasUser(ctx, req.Id) {
-		userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-		userKey := []byte(types.UserKey + req.Id)
-		k.cdc.Unmarshal(userStore.Get(userKey), &user)
-
+	user, userFound := k.GetUser(ctx, req.Id)
+	if userFound {
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
@@ -157,17 +144,13 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var user types.User
 	var organizations []*types.Organization
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasUser(ctx, req.Id) {
+	user, found := k.GetUser(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	userStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	userKey := []byte(types.UserKey + req.Id)
-	k.cdc.MustUnmarshal(userStore.Get(userKey), &user)
 
 	organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 
