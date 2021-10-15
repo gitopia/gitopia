@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,20 +20,15 @@ func (k Keeper) GetCommentCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetCommentCount set the total number of comment
 func (k Keeper) SetCommentCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentCountKey))
 	byteKey := types.KeyPrefix(types.CommentCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -67,22 +61,14 @@ func (k Keeper) SetComment(ctx sdk.Context, comment types.Comment) {
 }
 
 // GetComment returns a comment from its id
-func (k Keeper) GetComment(ctx sdk.Context, id uint64) types.Comment {
+func (k Keeper) GetComment(ctx sdk.Context, id uint64) (val types.Comment, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	var comment types.Comment
-	k.cdc.MustUnmarshal(store.Get(GetCommentIDBytes(id)), &comment)
-	return comment
-}
-
-// HasComment checks if the comment exists in the store
-func (k Keeper) HasComment(ctx sdk.Context, id uint64) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	return store.Has(GetCommentIDBytes(id))
-}
-
-// GetCommentOwner returns the creator of the comment
-func (k Keeper) GetCommentOwner(ctx sdk.Context, id uint64) string {
-	return k.GetComment(ctx, id).Creator
+	b := store.Get(GetCommentIDBytes(id))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemoveComment removes a comment from the store

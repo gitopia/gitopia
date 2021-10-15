@@ -48,12 +48,9 @@ func (k Keeper) Comment(c context.Context, req *types.QueryGetCommentRequest) (*
 	var comment types.Comment
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasComment(ctx, req.Id) {
+	comment, found := k.GetComment(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	k.cdc.MustUnmarshal(store.Get(GetCommentIDBytes(req.Id)), &comment)
-
 	return &types.QueryGetCommentResponse{Comment: &comment}, nil
 }
