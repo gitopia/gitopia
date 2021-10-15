@@ -19,11 +19,11 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	var found bool
 
 	if msg.CommentType == types.Comment_ISSUE.String() {
-		if !k.HasIssue(ctx, msg.ParentId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id %d doesn't exist", msg.ParentId))
+		issue, found = k.GetIssue(ctx, msg.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.ParentId))
 		}
 
-		issue = k.GetIssue(ctx, msg.ParentId)
 		commentIid = issue.CommentsCount + 1
 	} else if msg.CommentType == types.Comment_PULLREQUEST.String() {
 		pullRequest, found = k.GetPullRequest(ctx, msg.ParentId)
@@ -111,11 +111,10 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 	var issue types.Issue
 
 	if comment.CommentType == types.Comment_ISSUE {
-		if !k.HasIssue(ctx, comment.ParentId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue Id (%d) doesn't exist", comment.ParentId))
+		issue, found = k.GetIssue(ctx, comment.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", comment.ParentId))
 		}
-
-		issue = k.GetIssue(ctx, comment.ParentId)
 
 		if i, exists := utils.IssueCommentExists(issue.Comments, msg.Id); exists {
 			issue.Comments = append(issue.Comments[:i], issue.Comments[i+1:]...)

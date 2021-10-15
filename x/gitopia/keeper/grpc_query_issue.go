@@ -45,15 +45,12 @@ func (k Keeper) Issue(c context.Context, req *types.QueryGetIssueRequest) (*type
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var issue types.Issue
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasIssue(ctx, req.Id) {
+	issue, found := k.GetIssue(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	k.cdc.MustUnmarshal(store.Get(GetIssueIDBytes(req.Id)), &issue)
 
 	return &types.QueryGetIssueResponse{Issue: &issue}, nil
 }
