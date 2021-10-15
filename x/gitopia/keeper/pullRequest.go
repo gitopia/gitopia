@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,20 +20,15 @@ func (k Keeper) GetPullRequestCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetPullRequestCount set the total number of pullRequest
 func (k Keeper) SetPullRequestCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestCountKey))
 	byteKey := types.KeyPrefix(types.PullRequestCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -67,22 +61,14 @@ func (k Keeper) SetPullRequest(ctx sdk.Context, pullRequest types.PullRequest) {
 }
 
 // GetPullRequest returns a pullRequest from its id
-func (k Keeper) GetPullRequest(ctx sdk.Context, id uint64) types.PullRequest {
+func (k Keeper) GetPullRequest(ctx sdk.Context, id uint64) (val types.PullRequest, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	var pullRequest types.PullRequest
-	k.cdc.MustUnmarshal(store.Get(GetPullRequestIDBytes(id)), &pullRequest)
-	return pullRequest
-}
-
-// HasPullRequest checks if the pullRequest exists in the store
-func (k Keeper) HasPullRequest(ctx sdk.Context, id uint64) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	return store.Has(GetPullRequestIDBytes(id))
-}
-
-// GetPullRequestOwner returns the creator of the pullRequest
-func (k Keeper) GetPullRequestOwner(ctx sdk.Context, id uint64) string {
-	return k.GetPullRequest(ctx, id).Creator
+	b := store.Get(GetPullRequestIDBytes(id))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemovePullRequest removes a pullRequest from the store

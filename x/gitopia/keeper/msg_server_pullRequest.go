@@ -121,17 +121,14 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 func (k msgServer) UpdatePullRequest(goCtx context.Context, msg *types.MsgUpdatePullRequest) (*types.MsgUpdatePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	var pullRequest = k.GetPullRequest(ctx, msg.Id)
 
 	pullRequest.Title = msg.Title
 	pullRequest.Description = msg.Description
@@ -149,22 +146,19 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
+	pullRequest.Title = msg.Title
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
-	pullrequest.Title = msg.Title
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
-
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgUpdatePullRequestTitleResponse{}, nil
 }
@@ -177,22 +171,19 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
+	pullRequest.Description = msg.Description
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
-	pullrequest.Description = msg.Description
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
-
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
 }
@@ -205,12 +196,11 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	var pullRequest = k.GetPullRequest(ctx, msg.Id)
 	currentTime := ctx.BlockTime().Unix()
 
 	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
@@ -305,44 +295,41 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
-
-	if len(pullrequest.Reviewers)+len(msg.Reviewers) > 10 {
+	if len(pullRequest.Reviewers)+len(msg.Reviewers) > 10 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 reviewers")
 	}
 
 	for _, r := range msg.Reviewers {
-		if _, exists := utils.ReviewerExists(pullrequest.Reviewers, r); exists {
+		if _, exists := utils.ReviewerExists(pullRequest.Reviewers, r); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reviewer (%v) already assigned", r))
 		}
 		_, found := k.GetUser(ctx, r)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
 		}
-		pullrequest.Reviewers = append(pullrequest.Reviewers, r)
+		pullRequest.Reviewers = append(pullRequest.Reviewers, r)
 	}
 
-	pullrequest.CommentsCount += 1
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
-		CommentIid:  pullrequest.CommentsCount,
+		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
 		System:      true,
-		CreatedAt:   pullrequest.UpdatedAt,
-		UpdatedAt:   pullrequest.UpdatedAt,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
 		CommentType: types.Comment_PULLREQUEST,
 	}
 
@@ -351,9 +338,9 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		comment,
 	)
 
-	pullrequest.Comments = append(pullrequest.Comments, id)
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgAddPullRequestReviewersResponse{}, nil
 }
@@ -366,41 +353,38 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
-
-	if len(pullrequest.Reviewers) < len(msg.Reviewers) {
+	if len(pullRequest.Reviewers) < len(msg.Reviewers) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than user assigned")
 	}
 
 	for _, r := range msg.Reviewers {
-		if i, exists := utils.AssigneeExists(pullrequest.Reviewers, r); exists {
-			pullrequest.Reviewers = append(pullrequest.Reviewers[:i], pullrequest.Reviewers[i+1:]...)
+		if i, exists := utils.AssigneeExists(pullRequest.Reviewers, r); exists {
+			pullRequest.Reviewers = append(pullRequest.Reviewers[:i], pullRequest.Reviewers[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reviewer (%v) aren't assigned", r))
 		}
 	}
 
-	pullrequest.CommentsCount += 1
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
-		CommentIid:  pullrequest.CommentsCount,
+		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
 		System:      true,
-		CreatedAt:   pullrequest.UpdatedAt,
-		UpdatedAt:   pullrequest.UpdatedAt,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
 		CommentType: types.Comment_PULLREQUEST,
 	}
 
@@ -409,9 +393,9 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		comment,
 	)
 
-	pullrequest.Comments = append(pullrequest.Comments, id)
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgRemovePullRequestReviewersResponse{}, nil
 }
@@ -424,44 +408,41 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
-
-	if len(pullrequest.Assignees)+len(msg.Assignees) > 10 {
+	if len(pullRequest.Assignees)+len(msg.Assignees) > 10 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 assignees")
 	}
 
 	for _, a := range msg.Assignees {
-		if _, exists := utils.AssigneeExists(pullrequest.Assignees, a); exists {
+		if _, exists := utils.AssigneeExists(pullRequest.Assignees, a); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
 		}
 		_, found := k.GetUser(ctx, a)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
 		}
-		pullrequest.Assignees = append(pullrequest.Assignees, a)
+		pullRequest.Assignees = append(pullRequest.Assignees, a)
 	}
 
-	pullrequest.CommentsCount += 1
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
-		CommentIid:  pullrequest.CommentsCount,
+		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
-		CreatedAt:   pullrequest.UpdatedAt,
-		UpdatedAt:   pullrequest.UpdatedAt,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
 		CommentType: types.Comment_PULLREQUEST,
 	}
 
@@ -470,9 +451,9 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		comment,
 	)
 
-	pullrequest.Comments = append(pullrequest.Comments, id)
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgAddPullRequestAssigneesResponse{}, nil
 }
@@ -485,41 +466,38 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var pullrequest = k.GetPullRequest(ctx, msg.Id)
-
-	if len(pullrequest.Assignees) < len(msg.Assignees) {
+	if len(pullRequest.Assignees) < len(msg.Assignees) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't remove more than user assigned")
 	}
 
 	for _, a := range msg.Assignees {
-		if i, exists := utils.AssigneeExists(pullrequest.Assignees, a); exists {
-			pullrequest.Assignees = append(pullrequest.Assignees[:i], pullrequest.Assignees[i+1:]...)
+		if i, exists := utils.AssigneeExists(pullRequest.Assignees, a); exists {
+			pullRequest.Assignees = append(pullRequest.Assignees[:i], pullRequest.Assignees[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
 		}
 	}
 
-	pullrequest.CommentsCount += 1
-	pullrequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
-		CommentIid:  pullrequest.CommentsCount,
+		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
-		CreatedAt:   pullrequest.UpdatedAt,
-		UpdatedAt:   pullrequest.UpdatedAt,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
 		CommentType: types.Comment_PULLREQUEST,
 	}
 
@@ -528,9 +506,9 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		comment,
 	)
 
-	pullrequest.Comments = append(pullrequest.Comments, id)
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
-	k.SetPullRequest(ctx, pullrequest)
+	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
 }
@@ -543,17 +521,14 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.PullRequestId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.PullRequestId))
+	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.PullRequestId) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
 
 	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
 	if !found {
@@ -613,17 +588,14 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasPullRequest(ctx, msg.PullRequestId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.PullRequestId))
+	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.PullRequestId) {
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	var pullRequest = k.GetPullRequest(ctx, msg.PullRequestId)
 
 	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
 	if !found {
@@ -679,10 +651,12 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasPullRequest(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetPullRequestOwner(ctx, msg.Id) {
+
+	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 

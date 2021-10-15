@@ -48,12 +48,10 @@ func (k Keeper) PullRequest(c context.Context, req *types.QueryGetPullRequestReq
 	var pullRequest types.PullRequest
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasPullRequest(ctx, req.Id) {
+	pullRequest, found := k.GetPullRequest(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	k.cdc.MustUnmarshal(store.Get(GetPullRequestIDBytes(req.Id)), &pullRequest)
 
 	return &types.QueryGetPullRequestResponse{PullRequest: &pullRequest}, nil
 }

@@ -16,6 +16,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	var commentIid uint64
 	var issue types.Issue
 	var pullRequest types.PullRequest
+	var found bool
 
 	if msg.CommentType == types.Comment_ISSUE.String() {
 		if !k.HasIssue(ctx, msg.ParentId) {
@@ -25,11 +26,10 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		issue = k.GetIssue(ctx, msg.ParentId)
 		commentIid = issue.CommentsCount + 1
 	} else if msg.CommentType == types.Comment_PULLREQUEST.String() {
-		if !k.HasPullRequest(ctx, msg.ParentId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest Id %d doesn't exist", msg.ParentId))
+		pullRequest, found = k.GetPullRequest(ctx, msg.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.ParentId))
 		}
-
-		pullRequest = k.GetPullRequest(ctx, msg.ParentId)
 		commentIid = pullRequest.CommentsCount + 1
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment type %v", msg.CommentType))
@@ -112,7 +112,6 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 	var comment = k.GetComment(ctx, msg.Id)
 	var issue types.Issue
-	var pullRequest types.PullRequest
 
 	if comment.CommentType == types.Comment_ISSUE {
 		if !k.HasIssue(ctx, comment.ParentId) {
@@ -129,11 +128,10 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 		k.SetIssue(ctx, issue)
 	} else if comment.CommentType == types.Comment_PULLREQUEST {
-		if !k.HasPullRequest(ctx, comment.ParentId) {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest Id (%d) doesn't exist", comment.ParentId))
+		pullRequest, found := k.GetPullRequest(ctx, comment.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", comment.ParentId))
 		}
-
-		pullRequest = k.GetPullRequest(ctx, comment.ParentId)
 
 		if i, exists := utils.PullRequestCommentExists(pullRequest.Comments, msg.Id); exists {
 			pullRequest.Comments = append(pullRequest.Comments[:i], pullRequest.Comments[i+1:]...)
