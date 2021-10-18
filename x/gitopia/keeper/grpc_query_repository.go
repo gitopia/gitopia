@@ -344,6 +344,55 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 	return nil, sdkerrors.ErrKeyNotFound
 }
 
+func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*types.QueryGetAllForkResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var pageRes *query.PageResponse
+	var repositoryId uint64
+	ctx := sdk.UnwrapSDKContext(c)
+
+	user, userFound := k.GetUser(ctx, req.UserId)
+	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
+
+	if userFound {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryId = user.Repositories[i].Id
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if organizationFound {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryId = organization.Repositories[i].Id
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	repository, found := k.GetRepository(ctx, repositoryId)
+	if !found {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	var forks []*types.RepositoryFork
+
+	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+
+	var err error
+	pageRes, err = PaginateAllForkRepository(k, ctx, repositoryStore, repository, req.Pagination, func(repositoryFork types.RepositoryFork) error {
+		forks = append(forks, &repositoryFork)
+		return nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryGetAllForkResponse{Forks: forks, Pagination: pageRes}, nil
+}
+
 func (k Keeper) BranchAll(c context.Context, req *types.QueryGetAllBranchRequest) (*types.QueryGetAllBranchResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -417,6 +466,113 @@ func (k Keeper) TagSha(c context.Context, req *types.QueryGetTagShaRequest) (*ty
 	}
 
 	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func PaginateAllForkRepository(
+	k Keeper,
+	ctx sdk.Context,
+	repositoryStore ks.KVStore,
+	repository types.Repository,
+	pageRequest *query.PageRequest,
+	onResult func(repository types.RepositoryFork) error,
+) (*query.PageResponse, error) {
+
+	totalRepositoryForkCount := len(repository.Forks)
+	repositoryForks := repository.Forks
+
+	// if the PageRequest is nil, use default PageRequest
+	if pageRequest == nil {
+		pageRequest = &query.PageRequest{}
+	}
+
+	offset := pageRequest.Offset
+	key := pageRequest.Key
+	limit := pageRequest.Limit
+	countTotal := pageRequest.CountTotal
+
+	if offset > 0 && key != nil {
+		return nil, fmt.Errorf("invalid request, either offset or key is expected, got both")
+	}
+
+	if limit == 0 {
+		limit = DefaultLimit
+
+		// show total issue count when the limit is zero/not supplied
+		countTotal = true
+	}
+
+	if len(key) != 0 {
+
+		var count uint64
+		var nextKey []byte
+
+		for i := GetIssueIDFromBytes(key); uint64(i) <= uint64(totalRepositoryForkCount); i++ {
+			if count == limit {
+				nextKey = GetIssueIDBytes(uint64(i))
+				break
+			}
+
+			var repository types.Repository
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositoryForks[i])), &repository)
+			repositoryFork := types.RepositoryFork{
+				Creator:     repository.Creator,
+				Id:          repository.Id,
+				Name:        repository.Name,
+				Owner:       repository.Owner,
+				Description: repository.Description,
+				Parent:      repository.Parent,
+				ForksCount:  uint64(len(repository.Forks)),
+				IssuesCount: repository.IssuesCount,
+				PullsCount:  repository.PullsCount,
+			}
+			err := onResult(repositoryFork)
+			if err != nil {
+				return nil, err
+			}
+
+			count++
+		}
+
+		return &query.PageResponse{
+			NextKey: nextKey,
+		}, nil
+	}
+
+	end := offset + limit
+
+	var nextKey []byte
+
+	for i := offset; uint64(i) < uint64(totalRepositoryForkCount); i++ {
+		if uint64(i) < end {
+			var repository types.Repository
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositoryForks[i])), &repository)
+			repositoryFork := types.RepositoryFork{
+				Creator:     repository.Creator,
+				Id:          repository.Id,
+				Name:        repository.Name,
+				Owner:       repository.Owner,
+				Description: repository.Description,
+				Parent:      repository.Parent,
+				ForksCount:  uint64(len(repository.Forks)),
+				IssuesCount: repository.IssuesCount,
+				PullsCount:  repository.PullsCount,
+			}
+			err := onResult(repositoryFork)
+			if err != nil {
+				return nil, err
+			}
+		} else if uint64(i) == end {
+			nextKey = GetIssueIDBytes(uint64(i))
+			break
+		}
+	}
+
+	res := &query.PageResponse{NextKey: nextKey}
+	if countTotal {
+		res.Total = uint64(totalRepositoryForkCount)
+	}
+
+	return res, nil
 }
 
 /* PaginateAllRepositoryIssue does pagination of all the results in the repository.IssueIids
