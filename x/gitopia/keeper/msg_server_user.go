@@ -26,9 +26,13 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		}
 	*/
 
+	createdAt := ctx.BlockTime().Unix()
+
 	var user = types.User{
-		Creator:  msg.Creator,
-		Username: "",
+		Creator:   msg.Creator,
+		Username:  "",
+		CreatedAt: createdAt,
+		UpdatedAt: createdAt,
 	}
 
 	id := k.AppendUser(
@@ -52,6 +56,7 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 	user.AvatarUrl = msg.AvatarUrl
 	user.Email = msg.Email
 	user.Bio = msg.Bio
+	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
 
