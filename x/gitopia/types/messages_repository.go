@@ -69,6 +69,8 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	}
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name exceeds limit: 100")
 	}
 	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 	if err != nil {
@@ -503,6 +505,8 @@ func (msg *MsgRenameRepository) ValidateBasic() error {
 	}
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name exceeds limit: 100")
 	}
 	sanitized := IsNameSanitized(msg.Name)
 	if !sanitized {
