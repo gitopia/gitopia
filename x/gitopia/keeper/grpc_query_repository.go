@@ -910,7 +910,7 @@ func PaginateAllRepositoryPullRequest(
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
-			if _, exists := utils.AssigneeExists(pullRequest.Reviewers, option.Reviewer); exists {
+			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, option.Reviewer); exists {
 				repositoryPullRequest := types.RepositoryPullRequest{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
