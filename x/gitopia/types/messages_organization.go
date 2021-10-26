@@ -41,6 +41,15 @@ func (msg *MsgCreateOrganization) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	sanitized := IsNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "organization name is not sanitized")
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name must be at least 3 characters long")
+	} else if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name exceeds limit: 39")
+	}
 	return nil
 }
 
@@ -80,8 +89,14 @@ func (msg *MsgRenameOrganization) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	sanitized := IsNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "organization name is not sanitized")
+	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name must be at least 3 characters long")
+	} else if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name exceeds limit: 39")
 	}
 	return nil
 }
