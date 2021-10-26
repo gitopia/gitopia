@@ -366,7 +366,7 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 	}
 
 	for _, r := range msg.Reviewers {
-		if i, exists := utils.AssigneeExists(pullRequest.Reviewers, r); exists {
+		if i, exists := utils.ReviewerExists(pullRequest.Reviewers, r); exists {
 			pullRequest.Reviewers = append(pullRequest.Reviewers[:i], pullRequest.Reviewers[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("reviewer (%v) aren't assigned", r))
