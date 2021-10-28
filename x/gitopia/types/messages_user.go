@@ -156,3 +156,44 @@ func (msg *MsgDeleteUser) ValidateBasic() error {
 	}
 	return nil
 }
+
+var _ sdk.Msg = &MsgTransferUser{}
+
+func NewMsgTransferUser(creator string, address string) *MsgTransferUser {
+	return &MsgTransferUser{
+		Creator: creator,
+		Address: address,
+	}
+}
+func (msg *MsgTransferUser) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgTransferUser) Type() string {
+	return "TransferUser"
+}
+
+func (msg *MsgTransferUser) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgTransferUser) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgTransferUser) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Address)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid transfer address (%s)", err)
+	}
+	return nil
+}

@@ -95,3 +95,29 @@ func CmdDeleteUser() *cobra.Command {
 
 	return cmd
 }
+
+func CmdTransferUser() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "transfer-user [address]",
+		Short: "Transfer the user to new address",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			address := string(args[0])
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgTransferUser(clientCtx.GetFromAddress().String(), address)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}

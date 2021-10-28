@@ -90,6 +90,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCreateUser())
 	cmd.AddCommand(CmdUpdateUser())
 	cmd.AddCommand(CmdDeleteUser())
+	cmd.AddCommand(CmdTransferUser())
 
 	cmd.AddCommand(CmdCreateWhois())
 	cmd.AddCommand(CmdUpdateWhois())

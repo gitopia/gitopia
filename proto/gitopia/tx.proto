@@ -577,6 +577,13 @@ message MsgDeleteUser {
 
 message MsgDeleteUserResponse { }
 
+message MsgTransferUser {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgTransferUserResponse { }
+
 message MsgSetWhois {
   string creator = 1;
   string name = 2;

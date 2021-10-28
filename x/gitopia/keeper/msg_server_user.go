@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
@@ -78,4 +80,133 @@ func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (
 	k.RemoveUser(ctx, msg.Id)
 
 	return &types.MsgDeleteUserResponse{}, nil
+}
+
+func (k msgServer) TransferUser(goCtx context.Context, msg *types.MsgTransferUser) (*types.MsgTransferUserResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	user.Creator = msg.Address
+
+	for _, org := range user.Organizations {
+		organization, found := k.GetOrganization(ctx, org.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", org.Id))
+		}
+
+		organization.Creator = msg.Address
+
+		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+			organization.Members[i].Id = msg.Address
+		}
+
+		k.SetOrganization(ctx, organization)
+	}
+
+	repoStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	repoIterator := sdk.KVStorePrefixIterator(repoStore, []byte{})
+	defer repoIterator.Close()
+
+	for ; repoIterator.Valid(); repoIterator.Next() {
+		var repository types.Repository
+		var isModified bool
+		k.cdc.MustUnmarshal(repoIterator.Value(), &repository)
+
+		if repository.Creator == msg.Creator {
+			repository.Creator = msg.Address
+			isModified = true
+		}
+
+		if repository.Owner.Id == msg.Creator {
+			repository.Owner.Id = msg.Address
+			isModified = true
+		}
+
+		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
+			repository.Collaborators[i].Id = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetRepository(ctx, repository)
+		}
+	}
+
+	issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
+	issueIterator := sdk.KVStorePrefixIterator(issueStore, []byte{})
+	defer issueIterator.Close()
+
+	for ; issueIterator.Valid(); issueIterator.Next() {
+		var issue types.Issue
+		var isModified bool
+		k.cdc.MustUnmarshal(issueIterator.Value(), &issue)
+
+		if issue.Creator == msg.Creator {
+			issue.Creator = msg.Address
+			isModified = true
+		}
+
+		if i, exists := utils.AssigneeExists(issue.Assignees, msg.Creator); exists {
+			issue.Assignees[i] = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetIssue(ctx, issue)
+		}
+	}
+
+	commentStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
+	commentIterator := sdk.KVStorePrefixIterator(commentStore, []byte{})
+	defer commentIterator.Close()
+
+	for ; commentIterator.Valid(); commentIterator.Next() {
+		var comment types.Comment
+		var isModified bool
+		k.cdc.MustUnmarshal(commentIterator.Value(), &comment)
+
+		if comment.Creator == msg.Creator {
+			comment.Creator = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetComment(ctx, comment)
+		}
+	}
+
+	releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+	releaseIterator := sdk.KVStorePrefixIterator(releaseStore, []byte{})
+	defer releaseIterator.Close()
+
+	for ; releaseIterator.Valid(); releaseIterator.Next() {
+		var release types.Release
+		var isModified bool
+		k.cdc.MustUnmarshal(releaseIterator.Value(), &release)
+
+		if release.Creator == msg.Creator {
+			release.Creator = msg.Address
+			isModified = true
+		}
+
+		for i := 0; i < len(release.Attachments); i++ {
+			if release.Attachments[i].Uploader == msg.Creator {
+				release.Attachments[i].Uploader = msg.Address
+				isModified = true
+			}
+		}
+
+		if isModified {
+			k.SetRelease(ctx, release)
+		}
+	}
+
+	k.SetUser(ctx, user)
+	k.RemoveUser(ctx, msg.Creator)
+
+	return &types.MsgTransferUserResponse{}, nil
 }
