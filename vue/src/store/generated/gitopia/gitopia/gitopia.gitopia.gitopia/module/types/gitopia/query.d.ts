@@ -5,7 +5,7 @@ import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch, RepositoryTag } from "../gitopia/repository";
+import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
@@ -118,7 +118,19 @@ export interface QueryGetRepositoryPullRequestResponse {
 export interface QueryAllRepositoryIssueRequest {
     id: string;
     repositoryName: string;
+    option: IssueOptions | undefined;
     pagination: PageRequest | undefined;
+}
+export interface IssueOptions {
+    createdBy: string;
+    state: string;
+    labels: string;
+    assignee: string;
+    labelIds: number[];
+    sort: string;
+    search: string;
+    updatedAfter: number;
+    updatedBefore: number;
 }
 export interface QueryAllRepositoryIssueResponse {
     Issue: Issue[];
@@ -127,7 +139,20 @@ export interface QueryAllRepositoryIssueResponse {
 export interface QueryAllRepositoryPullRequestRequest {
     userId: string;
     repositoryName: string;
+    option: PullRequestOptions | undefined;
     pagination: PageRequest | undefined;
+}
+export interface PullRequestOptions {
+    createdBy: string;
+    state: string;
+    labels: string;
+    assignee: string;
+    reviewer: string;
+    labelIds: number[];
+    sort: string;
+    search: string;
+    updatedAfter: number;
+    updatedBefore: number;
 }
 export interface QueryAllRepositoryPullRequestResponse {
     PullRequest: PullRequest[];
@@ -138,6 +163,26 @@ export interface QueryGetRepositoryRequest {
 }
 export interface QueryGetRepositoryResponse {
     Repository: Repository | undefined;
+}
+export interface RepositoryFork {
+    creator: string;
+    id: number;
+    name: string;
+    owner: RepositoryOwner | undefined;
+    description: string;
+    parent: number;
+    forksCount: number;
+    issuesCount: number;
+    pullsCount: number;
+}
+export interface QueryGetAllForkRequest {
+    userId: string;
+    repositoryName: string;
+    pagination: PageRequest | undefined;
+}
+export interface QueryGetAllForkResponse {
+    forks: RepositoryFork[];
+    pagination: PageResponse | undefined;
 }
 export interface QueryGetAllBranchRequest {
     repositoryId: number;
@@ -436,6 +481,13 @@ export declare const QueryAllRepositoryIssueRequest: {
     toJSON(message: QueryAllRepositoryIssueRequest): unknown;
     fromPartial(object: DeepPartial<QueryAllRepositoryIssueRequest>): QueryAllRepositoryIssueRequest;
 };
+export declare const IssueOptions: {
+    encode(message: IssueOptions, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): IssueOptions;
+    fromJSON(object: any): IssueOptions;
+    toJSON(message: IssueOptions): unknown;
+    fromPartial(object: DeepPartial<IssueOptions>): IssueOptions;
+};
 export declare const QueryAllRepositoryIssueResponse: {
     encode(message: QueryAllRepositoryIssueResponse, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryIssueResponse;
@@ -449,6 +501,13 @@ export declare const QueryAllRepositoryPullRequestRequest: {
     fromJSON(object: any): QueryAllRepositoryPullRequestRequest;
     toJSON(message: QueryAllRepositoryPullRequestRequest): unknown;
     fromPartial(object: DeepPartial<QueryAllRepositoryPullRequestRequest>): QueryAllRepositoryPullRequestRequest;
+};
+export declare const PullRequestOptions: {
+    encode(message: PullRequestOptions, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): PullRequestOptions;
+    fromJSON(object: any): PullRequestOptions;
+    toJSON(message: PullRequestOptions): unknown;
+    fromPartial(object: DeepPartial<PullRequestOptions>): PullRequestOptions;
 };
 export declare const QueryAllRepositoryPullRequestResponse: {
     encode(message: QueryAllRepositoryPullRequestResponse, writer?: Writer): Writer;
@@ -470,6 +529,27 @@ export declare const QueryGetRepositoryResponse: {
     fromJSON(object: any): QueryGetRepositoryResponse;
     toJSON(message: QueryGetRepositoryResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetRepositoryResponse>): QueryGetRepositoryResponse;
+};
+export declare const RepositoryFork: {
+    encode(message: RepositoryFork, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryFork;
+    fromJSON(object: any): RepositoryFork;
+    toJSON(message: RepositoryFork): unknown;
+    fromPartial(object: DeepPartial<RepositoryFork>): RepositoryFork;
+};
+export declare const QueryGetAllForkRequest: {
+    encode(message: QueryGetAllForkRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllForkRequest;
+    fromJSON(object: any): QueryGetAllForkRequest;
+    toJSON(message: QueryGetAllForkRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllForkRequest>): QueryGetAllForkRequest;
+};
+export declare const QueryGetAllForkResponse: {
+    encode(message: QueryGetAllForkResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetAllForkResponse;
+    fromJSON(object: any): QueryGetAllForkResponse;
+    toJSON(message: QueryGetAllForkResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetAllForkResponse>): QueryGetAllForkResponse;
 };
 export declare const QueryGetAllBranchRequest: {
     encode(message: QueryGetAllBranchRequest, writer?: Writer): Writer;
@@ -675,6 +755,8 @@ export interface Query {
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     /** Queries a list of repository items. */
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
+    /** Queries a repository forks by id. */
+    ForkAll(request: QueryGetAllForkRequest): Promise<QueryGetAllForkResponse>;
     /** Queries a repository by id. */
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
@@ -717,6 +799,7 @@ export declare class QueryClientImpl implements Query {
     RepositoryPullRequestAll(request: QueryAllRepositoryPullRequestRequest): Promise<QueryAllRepositoryPullRequestResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
+    ForkAll(request: QueryGetAllForkRequest): Promise<QueryGetAllForkResponse>;
     BranchAll(request: QueryGetAllBranchRequest): Promise<QueryGetAllBranchResponse>;
     BranchSha(request: QueryGetBranchShaRequest): Promise<QueryGetBranchShaResponse>;
     TagAll(request: QueryGetAllTagRequest): Promise<QueryGetAllTagResponse>;

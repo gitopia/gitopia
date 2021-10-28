@@ -440,6 +440,12 @@ export interface MsgDeleteUser {
 }
 export interface MsgDeleteUserResponse {
 }
+export interface MsgTransferUser {
+    creator: string;
+    address: string;
+}
+export interface MsgTransferUserResponse {
+}
 export interface MsgSetWhois {
     creator: string;
     name: string;
@@ -1201,6 +1207,20 @@ export declare const MsgDeleteUserResponse: {
     fromJSON(_: any): MsgDeleteUserResponse;
     toJSON(_: MsgDeleteUserResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteUserResponse>): MsgDeleteUserResponse;
+};
+export declare const MsgTransferUser: {
+    encode(message: MsgTransferUser, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgTransferUser;
+    fromJSON(object: any): MsgTransferUser;
+    toJSON(message: MsgTransferUser): unknown;
+    fromPartial(object: DeepPartial<MsgTransferUser>): MsgTransferUser;
+};
+export declare const MsgTransferUserResponse: {
+    encode(_: MsgTransferUserResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgTransferUserResponse;
+    fromJSON(_: any): MsgTransferUserResponse;
+    toJSON(_: MsgTransferUserResponse): unknown;
+    fromPartial(_: DeepPartial<MsgTransferUserResponse>): MsgTransferUserResponse;
 };
 export declare const MsgSetWhois: {
     encode(message: MsgSetWhois, writer?: Writer): Writer;

@@ -508,6 +508,13 @@ export interface MsgDeleteUser {
 
 export interface MsgDeleteUserResponse {}
 
+export interface MsgTransferUser {
+  creator: string;
+  address: string;
+}
+
+export interface MsgTransferUserResponse {}
+
 export interface MsgSetWhois {
   creator: string;
   name: string;
@@ -9767,6 +9774,124 @@ export const MsgDeleteUserResponse = {
 
   fromPartial(_: DeepPartial<MsgDeleteUserResponse>): MsgDeleteUserResponse {
     const message = { ...baseMsgDeleteUserResponse } as MsgDeleteUserResponse;
+    return message;
+  },
+};
+
+const baseMsgTransferUser: object = { creator: "", address: "" };
+
+export const MsgTransferUser = {
+  encode(message: MsgTransferUser, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgTransferUser {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgTransferUser } as MsgTransferUser;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.address = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgTransferUser {
+    const message = { ...baseMsgTransferUser } as MsgTransferUser;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address);
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgTransferUser): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.address !== undefined && (obj.address = message.address);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgTransferUser>): MsgTransferUser {
+    const message = { ...baseMsgTransferUser } as MsgTransferUser;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address;
+    } else {
+      message.address = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgTransferUserResponse: object = {};
+
+export const MsgTransferUserResponse = {
+  encode(_: MsgTransferUserResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgTransferUserResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgTransferUserResponse,
+    } as MsgTransferUserResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgTransferUserResponse {
+    const message = {
+      ...baseMsgTransferUserResponse,
+    } as MsgTransferUserResponse;
+    return message;
+  },
+
+  toJSON(_: MsgTransferUserResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgTransferUserResponse>
+  ): MsgTransferUserResponse {
+    const message = {
+      ...baseMsgTransferUserResponse,
+    } as MsgTransferUserResponse;
     return message;
   },
 };

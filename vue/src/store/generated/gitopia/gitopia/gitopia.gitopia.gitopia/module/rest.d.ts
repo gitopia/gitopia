@@ -69,6 +69,19 @@ export interface GitopiaIssue {
     closedBy?: string;
     extensions?: string;
 }
+export interface GitopiaIssueOptions {
+    createdBy?: string;
+    state?: string;
+    labels?: string;
+    assignee?: string;
+    labelIds?: string[];
+    sort?: string;
+    search?: string;
+    /** @format int64 */
+    updatedAfter?: string;
+    /** @format int64 */
+    updatedBefore?: string;
+}
 export declare enum GitopiaIssueState {
     OPEN = "OPEN",
     CLOSED = "CLOSED"
@@ -237,6 +250,20 @@ export interface GitopiaPullRequestHead {
     /** @format uint64 */
     repositoryId?: string;
     branch?: string;
+}
+export interface GitopiaPullRequestOptions {
+    createdBy?: string;
+    state?: string;
+    labels?: string;
+    assignee?: string;
+    reviewer?: string;
+    labelIds?: string[];
+    sort?: string;
+    search?: string;
+    /** @format int64 */
+    updatedAfter?: string;
+    /** @format int64 */
+    updatedBefore?: string;
 }
 export declare enum GitopiaPullRequestState {
     OPEN = "OPEN",
@@ -408,6 +435,19 @@ export interface GitopiaQueryGetAddressRepositoryResponse {
 export interface GitopiaQueryGetAllBranchResponse {
     Branches?: GitopiaRepositoryBranch[];
 }
+export interface GitopiaQueryGetAllForkResponse {
+    forks?: GitopiaRepositoryFork[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryGetAllTagResponse {
     Tags?: GitopiaRepositoryTag[];
 }
@@ -521,6 +561,22 @@ export interface GitopiaRepositoryBranch {
 export interface GitopiaRepositoryCollaborator {
     id?: string;
     permission?: RepositoryCollaboratorPermission;
+}
+export interface GitopiaRepositoryFork {
+    creator?: string;
+    /** @format uint64 */
+    id?: string;
+    name?: string;
+    owner?: GitopiaRepositoryOwner;
+    description?: string;
+    /** @format uint64 */
+    parent?: string;
+    /** @format uint64 */
+    forksCount?: string;
+    /** @format uint64 */
+    issuesCount?: string;
+    /** @format uint64 */
+    pullsCount?: string;
 }
 export interface GitopiaRepositoryIssue {
     /** @format uint64 */
@@ -981,6 +1037,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
      */
     queryRepositoryIssueAll: (id: string, repositoryName: string, query?: {
+        "option.createdBy"?: string;
+        "option.state"?: string;
+        "option.labels"?: string;
+        "option.assignee"?: string;
+        "option.labelIds"?: string[];
+        "option.sort"?: string;
+        "option.search"?: string;
+        "option.updatedAfter"?: string;
+        "option.updatedBefore"?: string;
         "pagination.key"?: string;
         "pagination.offset"?: string;
         "pagination.limit"?: string;
@@ -1000,10 +1065,35 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryForkAll
+     * @summary Queries a repository forks by id.
+     * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks
+     */
+    queryForkAll: (userId: string, repositoryName: string, query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetAllForkResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryRepositoryPullRequestAll
      * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
      */
     queryRepositoryPullRequestAll: (userId: string, repositoryName: string, query?: {
+        "option.createdBy"?: string;
+        "option.state"?: string;
+        "option.labels"?: string;
+        "option.assignee"?: string;
+        "option.reviewer"?: string;
+        "option.labelIds"?: string[];
+        "option.sort"?: string;
+        "option.search"?: string;
+        "option.updatedAfter"?: string;
+        "option.updatedBefore"?: string;
         "pagination.key"?: string;
         "pagination.offset"?: string;
         "pagination.limit"?: string;
