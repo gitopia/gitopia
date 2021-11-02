@@ -29,3 +29,9 @@ Exit the process and run the new binary which includes the specified upgrade pla
 3:07AM ERR BINARY UPDATED BEFORE TRIGGER! UPGRADE "v0.10.0" - in binary but not executed on chain
 3:07AM ERR CONSENSUS FAILURE!!! err="BINARY UPDATED BEFORE TRIGGER! UPGRADE \"v0.10.0\" - in binary but not executed on chain
 ```
+
+- Set the minimum gas price to 0tlore in ~/.gitopia/config/app.toml
+
+```
+minimum-gas-prices = "0tlore"
+```
