@@ -10392,6 +10392,7 @@ export interface Msg {
   CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
   UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
   DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
+  TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
   SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
   UpdateWhois(request: MsgUpdateWhois): Promise<MsgUpdateWhoisResponse>;
   DeleteWhois(request: MsgDeleteWhois): Promise<MsgDeleteWhoisResponse>;
@@ -11111,6 +11112,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgDeleteUserResponse.decode(new Reader(data))
+    );
+  }
+
+  TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse> {
+    const data = MsgTransferUser.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "TransferUser",
+      data
+    );
+    return promise.then((data) =>
+      MsgTransferUserResponse.decode(new Reader(data))
     );
   }
 

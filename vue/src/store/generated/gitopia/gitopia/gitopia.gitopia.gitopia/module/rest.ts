@@ -239,6 +239,8 @@ export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;
 }
 
+export type GitopiaMsgTransferUserResponse = object;
+
 export type GitopiaMsgUpdateCommentResponse = object;
 
 export type GitopiaMsgUpdateIssueDescriptionResponse = object;

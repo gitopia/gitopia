@@ -9202,6 +9202,11 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteUser", data);
         return promise.then((data) => MsgDeleteUserResponse.decode(new Reader(data)));
     }
+    TransferUser(request) {
+        const data = MsgTransferUser.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "TransferUser", data);
+        return promise.then((data) => MsgTransferUserResponse.decode(new Reader(data)));
+    }
     SetWhois(request) {
         const data = MsgSetWhois.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetWhois", data);

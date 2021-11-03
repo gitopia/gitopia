@@ -161,6 +161,7 @@ export declare type GitopiaMsgSetWhoisResponse = object;
 export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
 }
+export declare type GitopiaMsgTransferUserResponse = object;
 export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;

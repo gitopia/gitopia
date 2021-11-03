@@ -1320,6 +1320,7 @@ export interface Msg {
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
+    TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
     UpdateWhois(request: MsgUpdateWhois): Promise<MsgUpdateWhoisResponse>;
     DeleteWhois(request: MsgDeleteWhois): Promise<MsgDeleteWhoisResponse>;
@@ -1380,6 +1381,7 @@ export declare class MsgClientImpl implements Msg {
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
+    TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
     UpdateWhois(request: MsgUpdateWhois): Promise<MsgUpdateWhoisResponse>;
     DeleteWhois(request: MsgDeleteWhois): Promise<MsgDeleteWhoisResponse>;
