@@ -24148,6 +24148,8 @@ definitions:
     properties:
       state:
         type: string
+  gitopia.gitopia.gitopia.MsgTransferUserResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateCommentResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateIssueDescriptionResponse:
