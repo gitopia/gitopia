@@ -230,6 +230,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgTransferUser:
+			res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgSetWhois:
 			res, err := msgServer.SetWhois(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
