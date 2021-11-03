@@ -68,6 +68,7 @@ service Msg {
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
+  rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
