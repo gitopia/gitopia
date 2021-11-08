@@ -800,7 +800,7 @@ func PaginateAllRepositoryIssue(
 		var count uint64
 		var nextKey []byte
 
-		for i := GetIssueIDFromBytes(key); uint64(i) <= totalIssueCount; i++ {
+		for i := GetIssueIDFromBytes(key); uint64(i) < totalIssueCount; i++ {
 			if count == limit {
 				nextKey = GetIssueIDBytes(uint64(i))
 				break
@@ -833,7 +833,7 @@ func PaginateAllRepositoryIssue(
 			if err != nil {
 				return nil, err
 			}
-		} else if uint64(i) == end+1 {
+		} else if uint64(i) == end {
 			nextKey = GetIssueIDBytes(uint64(i))
 			break
 		}
@@ -1104,7 +1104,7 @@ func PaginateAllRepositoryPullRequest(
 		var count uint64
 		var nextKey []byte
 
-		for i := GetPullRequestIDFromBytes(key); uint64(i) <= totalPullRequestCount; i++ {
+		for i := GetPullRequestIDFromBytes(key); uint64(i) < totalPullRequestCount; i++ {
 			if count == limit {
 				nextKey = GetPullRequestIDBytes(uint64(i))
 				break
@@ -1137,7 +1137,7 @@ func PaginateAllRepositoryPullRequest(
 			if err != nil {
 				return nil, err
 			}
-		} else if uint64(i) == end+1 {
+		} else if uint64(i) == end {
 			nextKey = GetPullRequestIDBytes(uint64(i))
 			break
 		}
