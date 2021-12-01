@@ -2,6 +2,62 @@
 
 All notable changes will be documented here.
 
+## [0.11.0] - 2021-12-01
+
+### Added
+
+- Implemented tx to transfer user to new address
+- Added API to get repository forks
+- `/issue?option.state=CLOSED` : Returns open issues
+- `/issue?option.state=OPEN` : Returns closed issues
+- `/issue?option.labels=ANY/NONE` : ANY - Returns issues with any label, NONE - Returns issues with no label
+- `/issue?option.createdBy={address}` : Returns issues created by address
+- `/issue?option.search={string}` : Returns issues containing string in title
+- `/issue?option.assignee={address}` : Returns issues assigned to address
+- `/issue?option.sort=ASC/DESC` : Returns sorted issues in ascending and descending order. Default DESC .
+- `/issue?option.updatedAfter={date}` : Returns issues created after date. Expected in UNIX format.
+- `/issue?option.updatedBefore={date}` : Returns issues created before date. Expected in UNIX format.
+- `/issue?option.labelIds={id}` : Returns issues containing ids.
+- `/pull?option.state=CLOSED` : Returns open pullRequests
+- `/pull?option.state=OPEN` : Returns closed pullRequests
+- `/pull?option.state=MERGED` : Returns merged pullRequests
+- `/pull?option.labels=ANY/NONE` : ANY - Returns pullRequests with any label, NONE - Returns pullRequests with no label
+- `/pull?option.createdBy={address}` : Returns pullRequests created by address
+- `/pull?option.search={string}` : Returns pullRequests containing string in title
+- `/pull?option.assignee={address}` : Returns pullRequests assigned to address
+- `/pull?option.reviewer={address}` : Returns pullRequests with reviewer address
+- `/pull?option.sort=ASC/DESC` : Returns sorted pullRequests in ascending and descending order. Default DESC .
+- `/pull?option.updatedAfter={date}` : Returns pullRequests created after date. Expected in UNIX format.
+- `/pull?option.updatedBefore={date}` : Returns pullRequests created before date. Expected in UNIX format.
+- `/pull?option.labelIds={id}` : Returns pullRequests containing ids.
+- Added migration script to migrate user
+- Added transaction to RenameOrganization
+- Added name in user.proto
+- Added transaction to UpdateUser
+- Added transaction to Add/Remove PullRequest Labels
+- Added LastUpdatedAt in branches and tags
+- Added validations for attachment
+
+### Changed
+
+- Migration to ibc-go
+- Use values instead of references in genesis
+- Removed `Has{type}()` checks in favour of `Get{types}()`
+- Upgraded to starport v0.18.0
+- Rename s/CreateTag/SetRepositoryTag
+- Rename s/CreateBranch/SetRepositoryBranch
+- seperate message for head and base in pullRequest
+- Allow reviewers, assignees and labels while creating PullRequest
+
+### Fixed
+
+- Fix pagination in repository issue and pull APIs
+- Fix AddressRepository query API response
+- Updating updatingAt for repository transactions
+- Can't remove only owner
+- Don't allow organization member to modify self role
+- Don't allow collaborator to modify self role
+
 ## [0.10.1] - 2021-09-28
 
 ### Added
