@@ -264,6 +264,13 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State.String()))
 		}
+
+		// Update the branch ref in the base repository
+		if i, exists := utils.RepositoryBranchExists(repository.Branches, pullRequest.Base.Branch); exists {
+			repository.Branches[i].Sha = msg.MergeCommitSha
+			repository.Branches[i].LastUpdatedAt = currentTime
+		}
+
 		pullRequest.MergedAt = currentTime
 		pullRequest.MergedBy = msg.Creator
 		pullRequest.MergeCommitSha = msg.MergeCommitSha
@@ -279,6 +286,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	pullRequest.State = types.PullRequest_State(state)
 	pullRequest.UpdatedAt = currentTime
 
+	k.SetRepository(ctx, repository)
 	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgSetPullRequestStateResponse{
