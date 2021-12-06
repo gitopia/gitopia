@@ -650,6 +650,16 @@ func (msg *MsgSetRepositoryTag) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+	}
+	if len(msg.Sha) > 64 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha length exceeds limit: 64")
+	} else if len(msg.Sha) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha can't be empty")
+	}
 	return nil
 }
 
