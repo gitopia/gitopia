@@ -68,9 +68,9 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
 	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
 	} else if len(msg.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name exceeds limit: 100")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
 	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 	if err != nil {
