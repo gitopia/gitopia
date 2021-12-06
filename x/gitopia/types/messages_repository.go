@@ -315,7 +315,7 @@ func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
 	}
 	if len(msg.Color) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
-	} else if len(msg.Name) < 1 {
+	} else if len(msg.Color) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
 	}
 	if len(msg.Description) > 255 {
@@ -376,7 +376,7 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 	}
 	if len(msg.Color) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
-	} else if len(msg.Name) < 1 {
+	} else if len(msg.Color) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
 	}
 	if len(msg.Description) > 255 {
