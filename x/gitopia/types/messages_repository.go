@@ -464,6 +464,16 @@ func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	}
+	if len(msg.CommitSHA) > 64 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha length exceeds limit: 64")
+	} else if len(msg.CommitSHA) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha can't be empty")
+	}
 	return nil
 }
 
