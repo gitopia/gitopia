@@ -44,6 +44,9 @@ func (msg *MsgSetWhois) ValidateBasic() error {
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name must be at least 3 characters long")
 	}
+	if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 39")
+	}
 	return nil
 }
 
