@@ -97,9 +97,9 @@ func (msg *MsgRenameOrganization) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "organization name is not sanitized")
 	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Organization name must be at least 3 characters long")
 	} else if len(msg.Name) > 39 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name exceeds limit: 39")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Organization name exceeds limit: 39")
 	}
 	return nil
 }
