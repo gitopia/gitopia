@@ -668,7 +668,7 @@ func TestMsgAddPullRequestAssignees_ValidateBasic(t *testing.T) {
 				Assignees: []string{sample.AccAddress()},
 			},
 		}, {
-			name: "empty reviewers list",
+			name: "empty assignees list",
 			msg: MsgAddPullRequestAssignees{
 				Creator:   sample.AccAddress(),
 				Assignees: []string{},
