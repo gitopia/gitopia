@@ -40,9 +40,11 @@ message PullRequest {
 message PullRequestHead {
   uint64 repositoryId = 1;
   string branch = 2;
+  string commitSha = 3;
 }
 
 message PullRequestBase {
   uint64 repositoryId = 1;
   string branch = 2;
+  string commitSha = 3;
 }

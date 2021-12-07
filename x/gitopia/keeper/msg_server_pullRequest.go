@@ -203,22 +203,22 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	currentTime := ctx.BlockTime().Unix()
 
-	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	baseRepository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
 	var havePermission bool = false
 
-	ownerType := repository.Owner.Type
+	ownerType := baseRepository.Owner.Type
 
 	if ownerType == types.RepositoryOwner_USER {
-		if ((msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator) || msg.Creator == repository.Owner.Id {
+		if ((msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator) || msg.Creator == baseRepository.Owner.Id {
 			havePermission = true
 		}
 	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		organization, found := k.GetOrganization(ctx, repository.Owner.Id)
+		organization, found := k.GetOrganization(ctx, baseRepository.Owner.Id)
 		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", baseRepository.Owner.Id))
 		}
 
 		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
@@ -236,8 +236,8 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	}
 
 	if !havePermission {
-		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
+		if i, exists := utils.RepositoryCollaboratorExists(baseRepository.Collaborators, msg.Creator); exists {
+			if baseRepository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
 				havePermission = true
 			}
 		}
@@ -266,9 +266,23 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		}
 
 		// Update the branch ref in the base repository
-		if i, exists := utils.RepositoryBranchExists(repository.Branches, pullRequest.Base.Branch); exists {
-			repository.Branches[i].Sha = msg.MergeCommitSha
-			repository.Branches[i].LastUpdatedAt = currentTime
+		if i, exists := utils.RepositoryBranchExists(baseRepository.Branches, pullRequest.Base.Branch); exists {
+			pullRequest.Base.CommitSha = baseRepository.Branches[i].Sha
+
+			baseRepository.Branches[i].Sha = msg.MergeCommitSha
+			baseRepository.Branches[i].LastUpdatedAt = currentTime
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
+		}
+
+		headRepository, found := k.GetRepository(ctx, pullRequest.Head.RepositoryId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
+		}
+		if i, exists := utils.RepositoryBranchExists(headRepository.Branches, pullRequest.Head.Branch); exists {
+			pullRequest.Head.CommitSha = headRepository.Branches[i].Sha
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", pullRequest.Head.Branch))
 		}
 
 		pullRequest.MergedAt = currentTime
@@ -286,7 +300,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	pullRequest.State = types.PullRequest_State(state)
 	pullRequest.UpdatedAt = currentTime
 
-	k.SetRepository(ctx, repository)
+	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
 
 	return &types.MsgSetPullRequestStateResponse{
