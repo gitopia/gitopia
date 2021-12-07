@@ -142,6 +142,10 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
 	}
 
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+
 	unique := make(map[string]bool, len(msg.Assignees))
 	for _, assignee := range msg.Assignees {
 		_, err := sdk.AccAddressFromBech32(assignee)
