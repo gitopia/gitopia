@@ -72,7 +72,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		for _, assignee := range msg.Assignees {
 			_, err := sdk.AccAddressFromBech32(assignee)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", msg.Assignees[0])
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", assignee)
 			}
 			if !unique[assignee] {
 				unique[assignee] = true
