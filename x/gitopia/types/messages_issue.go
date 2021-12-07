@@ -145,17 +145,22 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 	if len(msg.Description) > 20000 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
 	}
+	if len(msg.Assignees) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
+	}
 
-	unique := make(map[string]bool, len(msg.Assignees))
-	for _, assignee := range msg.Assignees {
-		_, err := sdk.AccAddressFromBech32(assignee)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
-		}
-		if !unique[assignee] {
-			unique[assignee] = true
-		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+	if len(msg.Assignees) > 0 {
+		unique := make(map[string]bool, len(msg.Assignees))
+		for _, assignee := range msg.Assignees {
+			_, err := sdk.AccAddressFromBech32(assignee)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", assignee)
+			}
+			if !unique[assignee] {
+				unique[assignee] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+			}
 		}
 	}
 	return nil
