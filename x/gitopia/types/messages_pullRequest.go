@@ -200,6 +200,8 @@ func (msg *MsgUpdatePullRequestTitle) ValidateBasic() error {
 	}
 	if len(msg.Title) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
+	} else if len(msg.Title) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
 	}
 	return nil
 }
