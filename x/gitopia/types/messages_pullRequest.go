@@ -86,7 +86,7 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 		for _, reviewer := range msg.Reviewers {
 			_, err := sdk.AccAddressFromBech32(reviewer)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reviewer (%v)", msg.Reviewers[0])
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid reviewer (%v)", reviewer)
 			}
 			if !unique[reviewer] {
 				unique[reviewer] = true
@@ -100,7 +100,7 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 		for _, assignee := range msg.Assignees {
 			_, err := sdk.AccAddressFromBech32(assignee)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", msg.Assignees[0])
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", assignee)
 			}
 			if !unique[assignee] {
 				unique[assignee] = true
