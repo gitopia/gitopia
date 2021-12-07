@@ -72,11 +72,13 @@ export function pullRequest_StateToJSON(object: PullRequest_State): string {
 export interface PullRequestHead {
   repositoryId: number;
   branch: string;
+  commitSha: string;
 }
 
 export interface PullRequestBase {
   repositoryId: number;
   branch: string;
+  commitSha: string;
 }
 
 const basePullRequest: object = {
@@ -627,7 +629,11 @@ export const PullRequest = {
   },
 };
 
-const basePullRequestHead: object = { repositoryId: 0, branch: "" };
+const basePullRequestHead: object = {
+  repositoryId: 0,
+  branch: "",
+  commitSha: "",
+};
 
 export const PullRequestHead = {
   encode(message: PullRequestHead, writer: Writer = Writer.create()): Writer {
@@ -636,6 +642,9 @@ export const PullRequestHead = {
     }
     if (message.branch !== "") {
       writer.uint32(18).string(message.branch);
+    }
+    if (message.commitSha !== "") {
+      writer.uint32(26).string(message.commitSha);
     }
     return writer;
   },
@@ -652,6 +661,9 @@ export const PullRequestHead = {
           break;
         case 2:
           message.branch = reader.string();
+          break;
+        case 3:
+          message.commitSha = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -673,6 +685,11 @@ export const PullRequestHead = {
     } else {
       message.branch = "";
     }
+    if (object.commitSha !== undefined && object.commitSha !== null) {
+      message.commitSha = String(object.commitSha);
+    } else {
+      message.commitSha = "";
+    }
     return message;
   },
 
@@ -681,6 +698,7 @@ export const PullRequestHead = {
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
     message.branch !== undefined && (obj.branch = message.branch);
+    message.commitSha !== undefined && (obj.commitSha = message.commitSha);
     return obj;
   },
 
@@ -696,11 +714,20 @@ export const PullRequestHead = {
     } else {
       message.branch = "";
     }
+    if (object.commitSha !== undefined && object.commitSha !== null) {
+      message.commitSha = object.commitSha;
+    } else {
+      message.commitSha = "";
+    }
     return message;
   },
 };
 
-const basePullRequestBase: object = { repositoryId: 0, branch: "" };
+const basePullRequestBase: object = {
+  repositoryId: 0,
+  branch: "",
+  commitSha: "",
+};
 
 export const PullRequestBase = {
   encode(message: PullRequestBase, writer: Writer = Writer.create()): Writer {
@@ -709,6 +736,9 @@ export const PullRequestBase = {
     }
     if (message.branch !== "") {
       writer.uint32(18).string(message.branch);
+    }
+    if (message.commitSha !== "") {
+      writer.uint32(26).string(message.commitSha);
     }
     return writer;
   },
@@ -725,6 +755,9 @@ export const PullRequestBase = {
           break;
         case 2:
           message.branch = reader.string();
+          break;
+        case 3:
+          message.commitSha = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -746,6 +779,11 @@ export const PullRequestBase = {
     } else {
       message.branch = "";
     }
+    if (object.commitSha !== undefined && object.commitSha !== null) {
+      message.commitSha = String(object.commitSha);
+    } else {
+      message.commitSha = "";
+    }
     return message;
   },
 
@@ -754,6 +792,7 @@ export const PullRequestBase = {
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId);
     message.branch !== undefined && (obj.branch = message.branch);
+    message.commitSha !== undefined && (obj.commitSha = message.commitSha);
     return obj;
   },
 
@@ -768,6 +807,11 @@ export const PullRequestBase = {
       message.branch = object.branch;
     } else {
       message.branch = "";
+    }
+    if (object.commitSha !== undefined && object.commitSha !== null) {
+      message.commitSha = object.commitSha;
+    } else {
+      message.commitSha = "";
     }
     return message;
   },

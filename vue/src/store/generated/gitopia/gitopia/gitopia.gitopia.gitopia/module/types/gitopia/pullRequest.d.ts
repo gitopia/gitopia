@@ -37,10 +37,12 @@ export declare function pullRequest_StateToJSON(object: PullRequest_State): stri
 export interface PullRequestHead {
     repositoryId: number;
     branch: string;
+    commitSha: string;
 }
 export interface PullRequestBase {
     repositoryId: number;
     branch: string;
+    commitSha: string;
 }
 export declare const PullRequest: {
     encode(message: PullRequest, writer?: Writer): Writer;

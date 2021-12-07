@@ -622,7 +622,11 @@ export const PullRequest = {
         return message;
     },
 };
-const basePullRequestHead = { repositoryId: 0, branch: "" };
+const basePullRequestHead = {
+    repositoryId: 0,
+    branch: "",
+    commitSha: "",
+};
 export const PullRequestHead = {
     encode(message, writer = Writer.create()) {
         if (message.repositoryId !== 0) {
@@ -631,6 +635,9 @@ export const PullRequestHead = {
         if (message.branch !== "") {
             writer.uint32(18).string(message.branch);
         }
+        if (message.commitSha !== "") {
+            writer.uint32(26).string(message.commitSha);
+        }
         return writer;
     },
     decode(input, length) {
@@ -645,6 +652,9 @@ export const PullRequestHead = {
                     break;
                 case 2:
                     message.branch = reader.string();
+                    break;
+                case 3:
+                    message.commitSha = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -667,6 +677,12 @@ export const PullRequestHead = {
         else {
             message.branch = "";
         }
+        if (object.commitSha !== undefined && object.commitSha !== null) {
+            message.commitSha = String(object.commitSha);
+        }
+        else {
+            message.commitSha = "";
+        }
         return message;
     },
     toJSON(message) {
@@ -674,6 +690,7 @@ export const PullRequestHead = {
         message.repositoryId !== undefined &&
             (obj.repositoryId = message.repositoryId);
         message.branch !== undefined && (obj.branch = message.branch);
+        message.commitSha !== undefined && (obj.commitSha = message.commitSha);
         return obj;
     },
     fromPartial(object) {
@@ -690,10 +707,20 @@ export const PullRequestHead = {
         else {
             message.branch = "";
         }
+        if (object.commitSha !== undefined && object.commitSha !== null) {
+            message.commitSha = object.commitSha;
+        }
+        else {
+            message.commitSha = "";
+        }
         return message;
     },
 };
-const basePullRequestBase = { repositoryId: 0, branch: "" };
+const basePullRequestBase = {
+    repositoryId: 0,
+    branch: "",
+    commitSha: "",
+};
 export const PullRequestBase = {
     encode(message, writer = Writer.create()) {
         if (message.repositoryId !== 0) {
@@ -702,6 +729,9 @@ export const PullRequestBase = {
         if (message.branch !== "") {
             writer.uint32(18).string(message.branch);
         }
+        if (message.commitSha !== "") {
+            writer.uint32(26).string(message.commitSha);
+        }
         return writer;
     },
     decode(input, length) {
@@ -716,6 +746,9 @@ export const PullRequestBase = {
                     break;
                 case 2:
                     message.branch = reader.string();
+                    break;
+                case 3:
+                    message.commitSha = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -738,6 +771,12 @@ export const PullRequestBase = {
         else {
             message.branch = "";
         }
+        if (object.commitSha !== undefined && object.commitSha !== null) {
+            message.commitSha = String(object.commitSha);
+        }
+        else {
+            message.commitSha = "";
+        }
         return message;
     },
     toJSON(message) {
@@ -745,6 +784,7 @@ export const PullRequestBase = {
         message.repositoryId !== undefined &&
             (obj.repositoryId = message.repositoryId);
         message.branch !== undefined && (obj.branch = message.branch);
+        message.commitSha !== undefined && (obj.commitSha = message.commitSha);
         return obj;
     },
     fromPartial(object) {
@@ -760,6 +800,12 @@ export const PullRequestBase = {
         }
         else {
             message.branch = "";
+        }
+        if (object.commitSha !== undefined && object.commitSha !== null) {
+            message.commitSha = object.commitSha;
+        }
+        else {
+            message.commitSha = "";
         }
         return message;
     },

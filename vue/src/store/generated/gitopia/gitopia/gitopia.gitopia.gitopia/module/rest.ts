@@ -355,12 +355,14 @@ export interface GitopiaPullRequestBase {
   /** @format uint64 */
   repositoryId?: string;
   branch?: string;
+  commitSha?: string;
 }
 
 export interface GitopiaPullRequestHead {
   /** @format uint64 */
   repositoryId?: string;
   branch?: string;
+  commitSha?: string;
 }
 
 export interface GitopiaPullRequestOptions {
