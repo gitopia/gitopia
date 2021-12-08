@@ -1,0 +1,11 @@
+{
+    "name": "gitopiajs",
+    "version": "0.11.0-rc",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+  }
