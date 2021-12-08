@@ -13,6 +13,11 @@ import (
 func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComment) (*types.MsgCreateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, creatorFound := k.GetUser(ctx, msg.Creator)
+	if !creatorFound {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	var commentIid uint64
 	var issue types.Issue
 	var pullRequest types.PullRequest
