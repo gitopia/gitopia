@@ -83,6 +83,11 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComment) (*types.MsgUpdateCommentResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	comment, found := k.GetComment(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment id (%d) doesn't exist", msg.Id))
