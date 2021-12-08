@@ -726,6 +726,11 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 func (k msgServer) SetRepositoryBranch(goCtx context.Context, msg *types.MsgSetRepositoryBranch) (*types.MsgSetRepositoryBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	repository, found := k.GetRepository(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
