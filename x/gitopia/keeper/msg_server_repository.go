@@ -948,9 +948,12 @@ func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateR
 func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteRepository) (*types.MsgDeleteRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetRepository(ctx, msg.Id)
+	repository, found := k.GetRepository(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+	if msg.Creator != repository.Owner.Id {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 	/*
 		owner, err := k.GetRepositoryOwner(ctx, msg.Id)
