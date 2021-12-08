@@ -16,35 +16,21 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 export interface GenesisState {
   /** this line is used by starport scaffolding # genesis/proto/state */
   releaseList: Release[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   releaseCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   pullRequestList: PullRequest[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   pullRequestCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   organizationList: Organization[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   organizationCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   commentList: Comment[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   commentCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   issueList: Issue[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   issueCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   repositoryList: Repository[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   repositoryCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   userList: User[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   userCount: number;
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
   whoisList: Whois[];
-  /** this line is used by starport scaffolding # genesis/proto/stateField */
+  /** this line is used by starport scaffolding # ibc/genesis/proto */
   whoisCount: number;
 }
 

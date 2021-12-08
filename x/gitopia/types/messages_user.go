@@ -1,6 +1,9 @@
 package types
 
 import (
+	"net/mail"
+	"net/url"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -50,25 +53,14 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateUser{}
 
-func NewMsgUpdateUser(creator string, id string, username string, usernameGithub string, avatarUrl string, followers string, following string, repositories string, repositories_archived string, organizations string, starred_repos string, subscriptions string, email string, bio string, createdAt string, updatedAt string, extensions string) *MsgUpdateUser {
+func NewMsgUpdateUser(creator string, name string, usernameGithub string, avatarUrl string, email string, bio string) *MsgUpdateUser {
 	return &MsgUpdateUser{
-		Id:                   id,
-		Creator:              creator,
-		Username:             username,
-		UsernameGithub:       usernameGithub,
-		AvatarUrl:            avatarUrl,
-		Followers:            followers,
-		Following:            following,
-		Repositories:         repositories,
-		RepositoriesArchived: repositories_archived,
-		Organizations:        organizations,
-		StarredRepos:         starred_repos,
-		Subscriptions:        subscriptions,
-		Email:                email,
-		Bio:                  bio,
-		CreatedAt:            createdAt,
-		UpdatedAt:            updatedAt,
-		Extensions:           extensions,
+		Creator:        creator,
+		Name:           name,
+		UsernameGithub: usernameGithub,
+		AvatarUrl:      avatarUrl,
+		Email:          email,
+		Bio:            bio,
 	}
 }
 
@@ -97,6 +89,33 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 73 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 73")
+	}
+	if len(msg.UsernameGithub) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "GitHub username exceeds limit: 39")
+	}
+	if len(msg.AvatarUrl) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "User Avatar url exceeds limit: 2048")
+	}
+	if len(msg.Bio) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
+	}
+	if len(msg.Email) > 254 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Email exceeds limit: 254")
+	}
+	if msg.Email != "" {
+		_, err = mail.ParseAddress(msg.Email)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid email address (%s)", msg.Email)
+		}
+	}
+	if msg.AvatarUrl != "" {
+		_, err := url.ParseRequestURI(msg.AvatarUrl)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.AvatarUrl)
+		}
 	}
 	return nil
 }
@@ -134,6 +153,47 @@ func (msg *MsgDeleteUser) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgTransferUser{}
+
+func NewMsgTransferUser(creator string, address string) *MsgTransferUser {
+	return &MsgTransferUser{
+		Creator: creator,
+		Address: address,
+	}
+}
+func (msg *MsgTransferUser) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgTransferUser) Type() string {
+	return "TransferUser"
+}
+
+func (msg *MsgTransferUser) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgTransferUser) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgTransferUser) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Address)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid transfer address (%s)", err)
 	}
 	return nil
 }

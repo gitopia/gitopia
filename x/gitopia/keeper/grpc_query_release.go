@@ -25,7 +25,7 @@ func (k Keeper) ReleaseAll(c context.Context, req *types.QueryAllReleaseRequest)
 
 	pageRes, err := query.Paginate(releaseStore, req.Pagination, func(key []byte, value []byte) error {
 		var release types.Release
-		if err := k.cdc.UnmarshalBinaryBare(value, &release); err != nil {
+		if err := k.cdc.Unmarshal(value, &release); err != nil {
 			return err
 		}
 
@@ -48,12 +48,10 @@ func (k Keeper) Release(c context.Context, req *types.QueryGetReleaseRequest) (*
 	var release types.Release
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasRelease(ctx, req.Id) {
+	release, found := k.GetRelease(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetReleaseIDBytes(req.Id)), &release)
 
 	return &types.QueryGetReleaseResponse{Release: &release}, nil
 }

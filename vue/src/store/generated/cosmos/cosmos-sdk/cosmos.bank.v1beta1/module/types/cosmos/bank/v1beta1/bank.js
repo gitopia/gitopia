@@ -455,7 +455,13 @@ export const DenomUnit = {
         return message;
     },
 };
-const baseMetadata = { description: "", base: "", display: "" };
+const baseMetadata = {
+    description: "",
+    base: "",
+    display: "",
+    name: "",
+    symbol: "",
+};
 export const Metadata = {
     encode(message, writer = Writer.create()) {
         if (message.description !== "") {
@@ -469,6 +475,12 @@ export const Metadata = {
         }
         if (message.display !== "") {
             writer.uint32(34).string(message.display);
+        }
+        if (message.name !== "") {
+            writer.uint32(42).string(message.name);
+        }
+        if (message.symbol !== "") {
+            writer.uint32(50).string(message.symbol);
         }
         return writer;
     },
@@ -491,6 +503,12 @@ export const Metadata = {
                     break;
                 case 4:
                     message.display = reader.string();
+                    break;
+                case 5:
+                    message.name = reader.string();
+                    break;
+                case 6:
+                    message.symbol = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -525,6 +543,18 @@ export const Metadata = {
         else {
             message.display = "";
         }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.symbol !== undefined && object.symbol !== null) {
+            message.symbol = String(object.symbol);
+        }
+        else {
+            message.symbol = "";
+        }
         return message;
     },
     toJSON(message) {
@@ -539,6 +569,8 @@ export const Metadata = {
         }
         message.base !== undefined && (obj.base = message.base);
         message.display !== undefined && (obj.display = message.display);
+        message.name !== undefined && (obj.name = message.name);
+        message.symbol !== undefined && (obj.symbol = message.symbol);
         return obj;
     },
     fromPartial(object) {
@@ -566,6 +598,18 @@ export const Metadata = {
         }
         else {
             message.display = "";
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.symbol !== undefined && object.symbol !== null) {
+            message.symbol = object.symbol;
+        }
+        else {
+            message.symbol = "";
         }
         return message;
     },

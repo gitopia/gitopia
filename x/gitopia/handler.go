@@ -50,12 +50,40 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.SetPullRequestState(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgAddPullRequestReviewers:
+			res, err := msgServer.AddPullRequestReviewers(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemovePullRequestReviewers:
+			res, err := msgServer.RemovePullRequestReviewers(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgAddPullRequestAssignees:
+			res, err := msgServer.AddPullRequestAssignees(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemovePullRequestAssignees:
+			res, err := msgServer.RemovePullRequestAssignees(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgAddPullRequestLabels:
+			res, err := msgServer.AddPullRequestLabels(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemovePullRequestLabels:
+			res, err := msgServer.RemovePullRequestLabels(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeletePullRequest:
 			res, err := msgServer.DeletePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateOrganization:
 			res, err := msgServer.CreateOrganization(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRenameOrganization:
+			res, err := msgServer.RenameOrganization(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateOrganizationMember:
@@ -162,8 +190,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCreateBranch:
-			res, err := msgServer.CreateBranch(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgSetRepositoryBranch:
+			res, err := msgServer.SetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgSetDefaultBranch:
@@ -174,8 +202,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCreateTag:
-			res, err := msgServer.CreateTag(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgSetRepositoryTag:
+			res, err := msgServer.SetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteTag:
@@ -200,6 +228,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgDeleteUser:
 			res, err := msgServer.DeleteUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgTransferUser:
+			res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgSetWhois:

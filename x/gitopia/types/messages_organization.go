@@ -41,6 +41,63 @@ func (msg *MsgCreateOrganization) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	sanitized := IsNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "organization name is not sanitized")
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name must be at least 3 characters long")
+	} else if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name exceeds limit: 39")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgRenameOrganization{}
+
+func NewMsgRenameOrganization(creator string, id string, name string) *MsgRenameOrganization {
+	return &MsgRenameOrganization{
+		Id:      id,
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgRenameOrganization) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRenameOrganization) Type() string {
+	return "RenameOrganization"
+}
+
+func (msg *MsgRenameOrganization) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRenameOrganization) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRenameOrganization) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	sanitized := IsNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "organization name is not sanitized")
+	}
+	if len(msg.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name must be at least 3 characters long")
+	} else if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Organization name exceeds limit: 39")
+	}
 	return nil
 }
 

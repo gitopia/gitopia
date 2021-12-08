@@ -531,6 +531,21 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryForkAll
+         * @summary Queries a repository forks by id.
+         * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks
+         */
+        this.queryForkAll = (userId, repositoryName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/forks`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRepositoryPullRequestAll
          * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
          */

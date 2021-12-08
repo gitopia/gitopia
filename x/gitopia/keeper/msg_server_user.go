@@ -4,17 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if user exists already
-	if k.HasUser(ctx, msg.Creator) {
-		return &types.MsgCreateUserResponse{}, fmt.Errorf("user already exists: %v", msg.Creator)
+	_, found := k.GetUser(ctx, msg.Creator)
+	if found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user already exists: %v", msg.Creator))
 	}
 
 	/*
@@ -26,9 +28,13 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		}
 	*/
 
+	createdAt := ctx.BlockTime().Unix()
+
 	var user = types.User{
-		Creator:  msg.Creator,
-		Username: "",
+		Creator:   msg.Creator,
+		Username:  "",
+		CreatedAt: createdAt,
+		UpdatedAt: createdAt,
 	}
 
 	id := k.AppendUser(
@@ -42,34 +48,17 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (*types.MsgUpdateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var user = types.User{
-		Creator:        msg.Creator,
-		Username:       msg.Username,
-		UsernameGithub: msg.UsernameGithub,
-		AvatarUrl:      msg.AvatarUrl,
-		// Followers:             msg.Followers,
-		// Following:             msg.Following,
-		// Repositories:          msg.Repositories,
-		// RepositoriesArchived: msg.Repositories_archived,
-		// Organizations:         msg.Organizations,
-		// StarredRepos:         msg.Starred_repos,
-		Subscriptions: msg.Subscriptions,
-		Email:         msg.Email,
-		Bio:           msg.Bio,
-		// CreatedAt:             msg.CreatedAt,
-		// UpdatedAt:             msg.UpdatedAt,
-		Extensions: msg.Extensions,
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasUser(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetUserOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
+	user.Name = msg.Name
+	user.UsernameGithub = msg.UsernameGithub
+	user.AvatarUrl = msg.AvatarUrl
+	user.Email = msg.Email
+	user.Bio = msg.Bio
+	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
 
@@ -79,14 +68,145 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (*types.MsgDeleteUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	user, found := k.GetUser(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetUserOwner(ctx, msg.Id) {
+
+	if msg.Creator != user.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	k.RemoveUser(ctx, msg.Id)
 
 	return &types.MsgDeleteUserResponse{}, nil
+}
+
+func (k msgServer) TransferUser(goCtx context.Context, msg *types.MsgTransferUser) (*types.MsgTransferUserResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	user.Creator = msg.Address
+
+	for _, org := range user.Organizations {
+		organization, found := k.GetOrganization(ctx, org.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", org.Id))
+		}
+
+		organization.Creator = msg.Address
+
+		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+			organization.Members[i].Id = msg.Address
+		}
+
+		k.SetOrganization(ctx, organization)
+	}
+
+	repoStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+	repoIterator := sdk.KVStorePrefixIterator(repoStore, []byte{})
+	defer repoIterator.Close()
+
+	for ; repoIterator.Valid(); repoIterator.Next() {
+		var repository types.Repository
+		var isModified bool
+		k.cdc.MustUnmarshal(repoIterator.Value(), &repository)
+
+		if repository.Creator == msg.Creator {
+			repository.Creator = msg.Address
+			isModified = true
+		}
+
+		if repository.Owner.Id == msg.Creator {
+			repository.Owner.Id = msg.Address
+			isModified = true
+		}
+
+		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
+			repository.Collaborators[i].Id = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetRepository(ctx, repository)
+		}
+	}
+
+	issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
+	issueIterator := sdk.KVStorePrefixIterator(issueStore, []byte{})
+	defer issueIterator.Close()
+
+	for ; issueIterator.Valid(); issueIterator.Next() {
+		var issue types.Issue
+		var isModified bool
+		k.cdc.MustUnmarshal(issueIterator.Value(), &issue)
+
+		if issue.Creator == msg.Creator {
+			issue.Creator = msg.Address
+			isModified = true
+		}
+
+		if i, exists := utils.AssigneeExists(issue.Assignees, msg.Creator); exists {
+			issue.Assignees[i] = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetIssue(ctx, issue)
+		}
+	}
+
+	commentStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
+	commentIterator := sdk.KVStorePrefixIterator(commentStore, []byte{})
+	defer commentIterator.Close()
+
+	for ; commentIterator.Valid(); commentIterator.Next() {
+		var comment types.Comment
+		var isModified bool
+		k.cdc.MustUnmarshal(commentIterator.Value(), &comment)
+
+		if comment.Creator == msg.Creator {
+			comment.Creator = msg.Address
+			isModified = true
+		}
+
+		if isModified {
+			k.SetComment(ctx, comment)
+		}
+	}
+
+	releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
+	releaseIterator := sdk.KVStorePrefixIterator(releaseStore, []byte{})
+	defer releaseIterator.Close()
+
+	for ; releaseIterator.Valid(); releaseIterator.Next() {
+		var release types.Release
+		var isModified bool
+		k.cdc.MustUnmarshal(releaseIterator.Value(), &release)
+
+		if release.Creator == msg.Creator {
+			release.Creator = msg.Address
+			isModified = true
+		}
+
+		for i := 0; i < len(release.Attachments); i++ {
+			if release.Attachments[i].Uploader == msg.Creator {
+				release.Attachments[i].Uploader = msg.Address
+				isModified = true
+			}
+		}
+
+		if isModified {
+			k.SetRelease(ctx, release)
+		}
+	}
+
+	k.SetUser(ctx, user)
+	k.RemoveUser(ctx, msg.Creator)
+
+	return &types.MsgTransferUserResponse{}, nil
 }

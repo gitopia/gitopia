@@ -44,10 +44,12 @@ export declare function repositoryOwner_TypeToJSON(object: RepositoryOwner_Type)
 export interface RepositoryBranch {
     name: string;
     sha: string;
+    lastUpdatedAt: number;
 }
 export interface RepositoryTag {
     name: string;
     sha: string;
+    lastUpdatedAt: number;
 }
 export interface RepositoryIssue {
     iid: number;

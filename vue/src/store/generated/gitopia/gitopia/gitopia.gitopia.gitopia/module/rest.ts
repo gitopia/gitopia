@@ -100,6 +100,22 @@ export interface GitopiaIssue {
   extensions?: string;
 }
 
+export interface GitopiaIssueOptions {
+  createdBy?: string;
+  state?: string;
+  labels?: string;
+  assignee?: string;
+  labelIds?: string[];
+  sort?: string;
+  search?: string;
+
+  /** @format int64 */
+  updatedAfter?: string;
+
+  /** @format int64 */
+  updatedBefore?: string;
+}
+
 export enum GitopiaIssueState {
   OPEN = "OPEN",
   CLOSED = "CLOSED",
@@ -109,9 +125,13 @@ export type GitopiaMsgAddIssueAssigneesResponse = object;
 
 export type GitopiaMsgAddIssueLabelsResponse = object;
 
-export type GitopiaMsgChangeOwnerResponse = object;
+export type GitopiaMsgAddPullRequestAssigneesResponse = object;
 
-export type GitopiaMsgCreateBranchResponse = object;
+export type GitopiaMsgAddPullRequestLabelsResponse = object;
+
+export type GitopiaMsgAddPullRequestReviewersResponse = object;
+
+export type GitopiaMsgChangeOwnerResponse = object;
 
 export interface GitopiaMsgCreateCommentResponse {
   /** @format uint64 */
@@ -154,8 +174,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
   name?: string;
 }
 
-export type GitopiaMsgCreateTagResponse = object;
-
 export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
@@ -193,7 +211,15 @@ export type GitopiaMsgRemoveIssueLabelsResponse = object;
 
 export type GitopiaMsgRemoveOrganizationMemberResponse = object;
 
+export type GitopiaMsgRemovePullRequestAssigneesResponse = object;
+
+export type GitopiaMsgRemovePullRequestLabelsResponse = object;
+
+export type GitopiaMsgRemovePullRequestReviewersResponse = object;
+
 export type GitopiaMsgRemoveRepositoryCollaboratorResponse = object;
+
+export type GitopiaMsgRenameOrganizationResponse = object;
 
 export type GitopiaMsgRenameRepositoryResponse = object;
 
@@ -203,11 +229,17 @@ export interface GitopiaMsgSetPullRequestStateResponse {
   state?: string;
 }
 
+export type GitopiaMsgSetRepositoryBranchResponse = object;
+
+export type GitopiaMsgSetRepositoryTagResponse = object;
+
 export type GitopiaMsgSetWhoisResponse = object;
 
 export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;
 }
+
+export type GitopiaMsgTransferUserResponse = object;
 
 export type GitopiaMsgUpdateCommentResponse = object;
 
@@ -315,15 +347,39 @@ export interface GitopiaPullRequest {
   mergedBy?: string;
   mergeCommitSha?: string;
   maintainerCanModify?: boolean;
-  headBranch?: string;
+  head?: GitopiaPullRequestHead;
+  base?: GitopiaPullRequestBase;
+}
 
+export interface GitopiaPullRequestBase {
   /** @format uint64 */
-  headRepoId?: string;
-  baseBranch?: string;
+  repositoryId?: string;
+  branch?: string;
+  commitSha?: string;
+}
 
+export interface GitopiaPullRequestHead {
   /** @format uint64 */
-  baseRepoId?: string;
-  extensions?: string;
+  repositoryId?: string;
+  branch?: string;
+  commitSha?: string;
+}
+
+export interface GitopiaPullRequestOptions {
+  createdBy?: string;
+  state?: string;
+  labels?: string;
+  assignee?: string;
+  reviewer?: string;
+  labelIds?: string[];
+  sort?: string;
+  search?: string;
+
+  /** @format int64 */
+  updatedAfter?: string;
+
+  /** @format int64 */
+  updatedBefore?: string;
 }
 
 export enum GitopiaPullRequestState {
@@ -524,6 +580,21 @@ export interface GitopiaQueryGetAllBranchResponse {
   Branches?: GitopiaRepositoryBranch[];
 }
 
+export interface GitopiaQueryGetAllForkResponse {
+  forks?: GitopiaRepositoryFork[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface GitopiaQueryGetAllTagResponse {
   Tags?: GitopiaRepositoryTag[];
 }
@@ -661,11 +732,36 @@ export interface GitopiaRepository {
 export interface GitopiaRepositoryBranch {
   name?: string;
   sha?: string;
+
+  /** @format int64 */
+  lastUpdatedAt?: string;
 }
 
 export interface GitopiaRepositoryCollaborator {
   id?: string;
   permission?: RepositoryCollaboratorPermission;
+}
+
+export interface GitopiaRepositoryFork {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  name?: string;
+  owner?: GitopiaRepositoryOwner;
+  description?: string;
+
+  /** @format uint64 */
+  parent?: string;
+
+  /** @format uint64 */
+  forksCount?: string;
+
+  /** @format uint64 */
+  issuesCount?: string;
+
+  /** @format uint64 */
+  pullsCount?: string;
 }
 
 export interface GitopiaRepositoryIssue {
@@ -711,6 +807,9 @@ export interface GitopiaRepositoryRelease {
 export interface GitopiaRepositoryTag {
   name?: string;
   sha?: string;
+
+  /** @format int64 */
+  lastUpdatedAt?: string;
 }
 
 export interface GitopiaUser {
@@ -718,6 +817,7 @@ export interface GitopiaUser {
 
   /** @format uint64 */
   id?: string;
+  name?: string;
   username?: string;
   usernameGithub?: string;
   avatarUrl?: string;
@@ -735,7 +835,6 @@ export interface GitopiaUser {
 
   /** @format int64 */
   updatedAt?: string;
-  extensions?: string;
 }
 
 export interface GitopiaUserOrganization {
@@ -804,6 +903,9 @@ export interface V1Beta1PageRequest {
    * is set.
    */
   countTotal?: boolean;
+
+  /** reverse is set to true if results are to be returned in the descending order. */
+  reverse?: boolean;
 }
 
 /**
@@ -1033,6 +1135,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1074,6 +1177,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1115,6 +1219,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1156,6 +1261,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1197,6 +1303,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1238,6 +1345,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1356,6 +1464,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1414,6 +1523,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1439,6 +1549,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1478,10 +1589,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     id: string,
     repositoryName: string,
     query?: {
+      "option.createdBy"?: string;
+      "option.state"?: string;
+      "option.labels"?: string;
+      "option.assignee"?: string;
+      "option.labelIds"?: string[];
+      "option.sort"?: string;
+      "option.search"?: string;
+      "option.updatedAfter"?: string;
+      "option.updatedBefore"?: string;
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1513,10 +1634,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryRepositoryPullRequestAll
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
+   * @name QueryForkAll
+   * @summary Queries a repository forks by id.
+   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks
    */
-  queryRepositoryPullRequestAll = (
+  queryForkAll = (
     userId: string,
     repositoryName: string,
     query?: {
@@ -1524,6 +1646,44 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryGetAllForkResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/forks`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryPullRequestAll
+   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
+   */
+  queryRepositoryPullRequestAll = (
+    userId: string,
+    repositoryName: string,
+    query?: {
+      "option.createdBy"?: string;
+      "option.state"?: string;
+      "option.labels"?: string;
+      "option.assignee"?: string;
+      "option.reviewer"?: string;
+      "option.labelIds"?: string[];
+      "option.sort"?: string;
+      "option.search"?: string;
+      "option.updatedAfter"?: string;
+      "option.updatedBefore"?: string;
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -1566,6 +1726,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>

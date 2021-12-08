@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,20 +20,15 @@ func (k Keeper) GetIssueCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetIssueCount set the total number of issue
 func (k Keeper) SetIssueCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueCountKey))
 	byteKey := types.KeyPrefix(types.IssueCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -50,7 +44,7 @@ func (k Keeper) AppendIssue(
 	issue.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&issue)
+	appendedValue := k.cdc.MustMarshal(&issue)
 	store.Set(GetIssueIDBytes(issue.Id), appendedValue)
 
 	// Update issue count
@@ -62,27 +56,19 @@ func (k Keeper) AppendIssue(
 // SetIssue set a specific issue in the store
 func (k Keeper) SetIssue(ctx sdk.Context, issue types.Issue) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	b := k.cdc.MustMarshalBinaryBare(&issue)
+	b := k.cdc.MustMarshal(&issue)
 	store.Set(GetIssueIDBytes(issue.Id), b)
 }
 
 // GetIssue returns a issue from its id
-func (k Keeper) GetIssue(ctx sdk.Context, id uint64) types.Issue {
+func (k Keeper) GetIssue(ctx sdk.Context, id uint64) (val types.Issue, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	var issue types.Issue
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetIssueIDBytes(id)), &issue)
-	return issue
-}
-
-// HasIssue checks if the issue exists in the store
-func (k Keeper) HasIssue(ctx sdk.Context, id uint64) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	return store.Has(GetIssueIDBytes(id))
-}
-
-// GetIssueOwner returns the creator of the issue
-func (k Keeper) GetIssueOwner(ctx sdk.Context, id uint64) string {
-	return k.GetIssue(ctx, id).Creator
+	b := store.Get(GetIssueIDBytes(id))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemoveIssue removes a issue from the store
@@ -100,7 +86,7 @@ func (k Keeper) GetAllIssue(ctx sdk.Context) (list []types.Issue) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Issue
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

@@ -25,7 +25,7 @@ func (k Keeper) PullRequestAll(c context.Context, req *types.QueryAllPullRequest
 
 	pageRes, err := query.Paginate(pullRequestStore, req.Pagination, func(key []byte, value []byte) error {
 		var pullRequest types.PullRequest
-		if err := k.cdc.UnmarshalBinaryBare(value, &pullRequest); err != nil {
+		if err := k.cdc.Unmarshal(value, &pullRequest); err != nil {
 			return err
 		}
 
@@ -48,12 +48,10 @@ func (k Keeper) PullRequest(c context.Context, req *types.QueryGetPullRequestReq
 	var pullRequest types.PullRequest
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasPullRequest(ctx, req.Id) {
+	pullRequest, found := k.GetPullRequest(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetPullRequestIDBytes(req.Id)), &pullRequest)
 
 	return &types.QueryGetPullRequestResponse{PullRequest: &pullRequest}, nil
 }

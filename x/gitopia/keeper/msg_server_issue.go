@@ -14,15 +14,15 @@ import (
 func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue) (*types.MsgCreateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasRepository(ctx, msg.RepositoryId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository Id %d doesn't exist", msg.RepositoryId))
+	repository, found := k.GetRepository(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
-
-	repository := k.GetRepository(ctx, msg.RepositoryId)
 	repository.IssuesCount += 1
 
 	createdAt := ctx.BlockTime().Unix()
@@ -46,11 +46,10 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		var organization types.Organization
 
 		if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-			if !k.HasOrganization(ctx, repository.Owner.Id) {
+			organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+			if !found {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 			}
-
-			organization = k.GetOrganization(ctx, repository.Owner.Id)
 		}
 
 		if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -58,7 +57,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		}
 
 		for _, a := range msg.Assignees {
-			if !k.HasUser(ctx, a) {
+			_, found := k.GetUser(ctx, a)
+			if !found {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
 			}
 		}
@@ -95,23 +95,20 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue) (*types.MsgUpdateIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var issue = k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+	}
+
+	if msg.Creator != issue.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
 
 	issue.Title = msg.Title
 	issue.Description = msg.Description
 	issue.Weight = msg.Weight
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 	issue.Assignees = msg.Assignees
-
-	// Checks that the element exists
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
 
 	k.SetIssue(ctx, issue)
 
@@ -121,21 +118,19 @@ func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue)
 func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateIssueTitle) (*types.MsgUpdateIssueTitleResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+	if msg.Creator != issue.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	var issue = k.GetIssue(ctx, msg.Id)
 
 	oldTitle := issue.Title
 
@@ -169,21 +164,19 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgUpdateIssueDescription) (*types.MsgUpdateIssueDescriptionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	// Checks that the element exists
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+	if msg.Creator != issue.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
-
-	var issue = k.GetIssue(ctx, msg.Id)
 
 	issue.Description = msg.Description
 	issue.UpdatedAt = ctx.BlockTime().Unix()
@@ -215,25 +208,28 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleIssueState) (*types.MsgToggleIssueStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 
 	if msg.Creator != issue.Creator {
 		var organization types.Organization
 		if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-			if !k.HasOrganization(ctx, repository.Owner.Id) {
+			organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+			if !found {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 			}
-
-			organization = k.GetOrganization(ctx, repository.Owner.Id)
 		}
 
 		if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -285,24 +281,27 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIssueAssignees) (*types.MsgAddIssueAssigneesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -314,10 +313,11 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	}
 
 	for _, a := range msg.Assignees {
-		if _, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+		if _, exists := utils.AssigneeExists(issue.Assignees, a); exists {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) already assigned", a))
 		}
-		if !k.HasUser(ctx, a) {
+		_, found := k.GetUser(ctx, a)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
 		}
 		issue.Assignees = append(issue.Assignees, a)
@@ -330,7 +330,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueAddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -352,24 +352,27 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRemoveIssueAssignees) (*types.MsgRemoveIssueAssigneesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	var issue = k.GetIssue(ctx, msg.Id)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -381,7 +384,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	}
 
 	for _, a := range msg.Assignees {
-		if i, exists := utils.IssueAssigneeExists(issue.Assignees, a); exists {
+		if i, exists := utils.AssigneeExists(issue.Assignees, a); exists {
 			issue.Assignees = append(issue.Assignees[:i], issue.Assignees[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("assignee (%v) aren't assigned", a))
@@ -395,7 +398,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 		Creator:     "GITOPIA",
 		ParentId:    msg.Id,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueRemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -417,24 +420,27 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueLabels) (*types.MsgAddIssueLabelsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasIssue(ctx, msg.IssueId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.IssueId))
+	issue, found := k.GetIssue(ctx, msg.IssueId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.IssueId))
 	}
 
-	var issue = k.GetIssue(ctx, msg.IssueId)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -449,7 +455,7 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 
 	for _, l := range msg.LabelIds {
 		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
-			if _, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+			if _, exists := utils.LabelIdExists(issue.Labels, repository.Labels[i].Id); exists {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) already exists in issue", l))
 			}
 			labelNames = append(labelNames, repository.Labels[i].Name)
@@ -467,7 +473,7 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 		Creator:     "GITOPIA",
 		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueAddLabelsCommentBody(msg.Creator, labelNames),
+		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -489,24 +495,27 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemoveIssueLabels) (*types.MsgRemoveIssueLabelsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasUser(ctx, msg.Creator) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	if !k.HasIssue(ctx, msg.IssueId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.IssueId))
+	issue, found := k.GetIssue(ctx, msg.IssueId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.IssueId))
 	}
 
-	var issue = k.GetIssue(ctx, msg.IssueId)
-	var repository = k.GetRepository(ctx, issue.RepositoryId)
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
+	}
 	var organization types.Organization
 
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		if !k.HasOrganization(ctx, repository.Owner.Id) {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
-
-		organization = k.GetOrganization(ctx, repository.Owner.Id)
 	}
 
 	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
@@ -521,7 +530,7 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 
 	for _, l := range msg.LabelIds {
 		if i, exists := utils.RepositoryLabelIdExists(repository.Labels, l); exists {
-			if j, exists := utils.IssueLabelExists(issue.Labels, repository.Labels[i].Id); exists {
+			if j, exists := utils.LabelIdExists(issue.Labels, repository.Labels[i].Id); exists {
 				labelNames = append(labelNames, repository.Labels[i].Name)
 
 				issue.Labels = append(issue.Labels[:j], issue.Labels[j+1:]...)
@@ -540,7 +549,7 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 		Creator:     "GITOPIA",
 		ParentId:    msg.IssueId,
 		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueRemoveLabelsCommentBody(msg.Creator, labelNames),
+		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
 		System:      true,
 		CreatedAt:   issue.UpdatedAt,
 		UpdatedAt:   issue.UpdatedAt,
@@ -562,10 +571,12 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasIssue(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	issue, found := k.GetIssue(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
-	if msg.Creator != k.GetIssueOwner(ctx, msg.Id) {
+
+	if msg.Creator != issue.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
