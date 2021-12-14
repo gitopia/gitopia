@@ -388,14 +388,14 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("renaming with same name not allowed"))
 		}
 
+		if _, exists := utils.UserRepositoryExists(user.Repositories, msg.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository with name (%v) already exists", msg.Name))
+		}
+
 		if i, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
 			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) doesn't exist in owner repositories", repository.Name))
-		}
-
-		if _, exists := utils.UserRepositoryExists(user.Repositories, msg.Name); exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository with name (%v) already exists", msg.Name))
 		}
 
 		var userRepository = types.UserRepository{
