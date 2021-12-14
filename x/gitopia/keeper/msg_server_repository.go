@@ -361,6 +361,10 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
 	}
 
+	if msg.Name == repository.Name {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("renaming with same name not allowed"))
+	}
+
 	ownerId := repository.Owner.Id
 	ownerType := repository.Owner.Type
 
@@ -382,10 +386,6 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		}
 		if !havePermission {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
-		}
-
-		if msg.Name == repository.Name {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("renaming with same name not allowed"))
 		}
 
 		if _, exists := utils.UserRepositoryExists(user.Repositories, msg.Name); exists {
@@ -427,10 +427,14 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 
-		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, msg.Name); !exists {
+		if _, exists := utils.OrganizationRepositoryExists(organization.Repositories, msg.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository with name (%v) already exists", msg.Name))
+		}
+
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, repository.Name); exists {
 			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
 		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository with name (%v) already exists", msg.Name))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) doesn't exist in organization repositories", repository.Name))
 		}
 
 		var organizationRepository = types.OrganizationRepository{
