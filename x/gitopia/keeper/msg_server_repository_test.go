@@ -185,6 +185,11 @@ func TestRepositoryMsgServerRename(t *testing.T) {
 		},
 		{
 			desc:    "Repository Already Exists",
+			request: &types.MsgRenameRepository{Id: 0, Creator: "A", Name: "repository-00"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc:    "Rename With Same Name",
 			request: &types.MsgRenameRepository{Id: 0, Creator: "A", Name: "repository"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
@@ -199,6 +204,8 @@ func TestRepositoryMsgServerRename(t *testing.T) {
 			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
 			require.NoError(t, err)
 			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository-00", OwnerId: user.Id, OwnerType: "USER"})
 			require.NoError(t, err)
 
 			_, err = srv.RenameRepository(ctx, tc.request)
