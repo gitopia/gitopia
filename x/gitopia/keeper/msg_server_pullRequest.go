@@ -339,6 +339,25 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	pullRequest.State = types.PullRequest_State(state)
 	pullRequest.UpdatedAt = currentTime
+	pullRequest.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
+		System:      true,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)

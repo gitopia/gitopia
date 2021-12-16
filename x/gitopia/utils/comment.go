@@ -38,6 +38,17 @@ func IssueToggleStateCommentBody(creator string, state types.Issue_State) string
 	}
 }
 
+func PullRequestToggleStateCommentBody(creator string, state types.PullRequest_State) string {
+	if state == types.PullRequest_OPEN {
+		return fmt.Sprintf("@%v reopened", creator)
+	} else if state == types.PullRequest_CLOSED {
+		return fmt.Sprintf("@%v closed", creator)
+	} else if state == types.PullRequest_MERGED {
+		return fmt.Sprintf("@%v merged", creator)
+	}
+	return "undefined"
+}
+
 func AddReviewersCommentBody(creator string, reviewers []string) string {
 	return fmt.Sprintf("@%v requested review from"+JoinReviewers(reviewers), creator)
 }
