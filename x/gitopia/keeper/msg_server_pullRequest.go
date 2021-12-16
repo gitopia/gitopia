@@ -203,6 +203,25 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 
 	pullRequest.Description = msg.Description
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.UpdateDescriptionCommentBody(msg.Creator),
+		System:      true,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetPullRequest(ctx, pullRequest)
 
