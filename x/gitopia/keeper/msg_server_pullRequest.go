@@ -155,8 +155,29 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
+	oldTitle := pullRequest.Title
+
 	pullRequest.Title = msg.Title
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+
+	var comment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
+		System:      true,
+		CreatedAt:   pullRequest.UpdatedAt,
+		UpdatedAt:   pullRequest.UpdatedAt,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+
+	id := k.AppendComment(
+		ctx,
+		comment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetPullRequest(ctx, pullRequest)
 
