@@ -22,11 +22,3 @@ func JoinAssignees(assignees []string) string {
 	}
 	return res
 }
-
-func AddAssigneesCommentBody(creator string, assignees []string) string {
-	return fmt.Sprintf("@%v assigned to"+JoinAssignees(assignees), creator)
-}
-
-func RemoveAssigneesCommentBody(creator string, assignees []string) string {
-	return fmt.Sprintf("@%v unassigned"+JoinAssignees(assignees), creator)
-}
