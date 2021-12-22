@@ -13301,8 +13301,8 @@ paths:
                               - MAINTAIN
                               - ADMIN
                             default: READ
-                    extensions:
-                      type: string
+                    allowForking:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -13566,8 +13566,8 @@ paths:
                             - MAINTAIN
                             - ADMIN
                           default: READ
-                  extensions:
-                    type: string
+                  allowForking:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -13756,8 +13756,8 @@ paths:
                             - MAINTAIN
                             - ADMIN
                           default: READ
-                  extensions:
-                    type: string
+                  allowForking:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -14501,8 +14501,8 @@ paths:
                               - MAINTAIN
                               - ADMIN
                             default: READ
-                    extensions:
-                      type: string
+                    allowForking:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -24164,6 +24164,11 @@ definitions:
     properties:
       state:
         type: string
+  gitopia.gitopia.gitopia.MsgToggleRepositoryForkingResponse:
+    type: object
+    properties:
+      allowForking:
+        type: boolean
   gitopia.gitopia.gitopia.MsgTransferUserResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateCommentResponse:
@@ -24593,8 +24598,8 @@ definitions:
                       - MAINTAIN
                       - ADMIN
                     default: READ
-            extensions:
-              type: string
+            allowForking:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -25531,8 +25536,8 @@ definitions:
                       - MAINTAIN
                       - ADMIN
                     default: READ
-            extensions:
-              type: string
+            allowForking:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -25915,8 +25920,8 @@ definitions:
                     - MAINTAIN
                     - ADMIN
                   default: READ
-          extensions:
-            type: string
+          allowForking:
+            type: boolean
   gitopia.gitopia.gitopia.QueryGetAllBranchResponse:
     type: object
     properties:
@@ -26761,8 +26766,8 @@ definitions:
                     - MAINTAIN
                     - ADMIN
                   default: READ
-          extensions:
-            type: string
+          allowForking:
+            type: boolean
   gitopia.gitopia.gitopia.QueryGetTagShaResponse:
     type: object
     properties:
@@ -27043,8 +27048,8 @@ definitions:
                 - MAINTAIN
                 - ADMIN
               default: READ
-      extensions:
-        type: string
+      allowForking:
+        type: boolean
   gitopia.gitopia.gitopia.RepositoryBranch:
     type: object
     properties:

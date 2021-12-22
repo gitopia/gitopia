@@ -399,6 +399,13 @@ export interface MsgDeleteTag {
 }
 export interface MsgDeleteTagResponse {
 }
+export interface MsgToggleRepositoryForking {
+    creator: string;
+    id: number;
+}
+export interface MsgToggleRepositoryForkingResponse {
+    allowForking: boolean;
+}
 export interface MsgUpdateRepository {
     creator: string;
     id: number;
@@ -1138,6 +1145,20 @@ export declare const MsgDeleteTagResponse: {
     toJSON(_: MsgDeleteTagResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteTagResponse>): MsgDeleteTagResponse;
 };
+export declare const MsgToggleRepositoryForking: {
+    encode(message: MsgToggleRepositoryForking, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleRepositoryForking;
+    fromJSON(object: any): MsgToggleRepositoryForking;
+    toJSON(message: MsgToggleRepositoryForking): unknown;
+    fromPartial(object: DeepPartial<MsgToggleRepositoryForking>): MsgToggleRepositoryForking;
+};
+export declare const MsgToggleRepositoryForkingResponse: {
+    encode(message: MsgToggleRepositoryForkingResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleRepositoryForkingResponse;
+    fromJSON(object: any): MsgToggleRepositoryForkingResponse;
+    toJSON(message: MsgToggleRepositoryForkingResponse): unknown;
+    fromPartial(object: DeepPartial<MsgToggleRepositoryForkingResponse>): MsgToggleRepositoryForkingResponse;
+};
 export declare const MsgUpdateRepository: {
     encode(message: MsgUpdateRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
@@ -1315,6 +1336,7 @@ export interface Msg {
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
     SetRepositoryTag(request: MsgSetRepositoryTag): Promise<MsgSetRepositoryTagResponse>;
     DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
+    ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
@@ -1376,6 +1398,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
     SetRepositoryTag(request: MsgSetRepositoryTag): Promise<MsgSetRepositoryTagResponse>;
     DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
+    ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
     UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;

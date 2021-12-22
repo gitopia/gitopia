@@ -239,6 +239,10 @@ export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;
 }
 
+export interface GitopiaMsgToggleRepositoryForkingResponse {
+  allowForking?: boolean;
+}
+
 export type GitopiaMsgTransferUserResponse = object;
 
 export type GitopiaMsgUpdateCommentResponse = object;
@@ -726,7 +730,7 @@ export interface GitopiaRepository {
   parent?: string;
   fork?: boolean;
   collaborators?: GitopiaRepositoryCollaborator[];
-  extensions?: string;
+  allowForking?: boolean;
 }
 
 export interface GitopiaRepositoryBranch {
