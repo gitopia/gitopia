@@ -15,6 +15,18 @@ genesis:
     crisis:
       constant_fee:
         denom: "tlore"
+    bank:
+      denom_metadata:
+        - description: "The native staking token of the Gitopia Hub."
+          denom_units:
+            - denom: "utlore"
+              exponent: 0
+            - denom: "tlore"
+              exponent: 6
+          base: "utlore"
+          display: "tlore"
+          name: "tlore"
+          symbol: "tlore"
 accounts:
   - name: node0
     coins: ["100000000tlore"]
