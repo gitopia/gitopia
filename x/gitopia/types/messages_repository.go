@@ -707,6 +707,44 @@ func (msg *MsgDeleteTag) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgToggleRepositoryForking{}
+
+func NewMsgToggleRepositoryForking(creator string, id uint64) *MsgToggleRepositoryForking {
+	return &MsgToggleRepositoryForking{
+		Id:      id,
+		Creator: creator,
+	}
+}
+
+func (msg *MsgToggleRepositoryForking) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgToggleRepositoryForking) Type() string {
+	return "ToggleRepositoryForking"
+}
+
+func (msg *MsgToggleRepositoryForking) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgToggleRepositoryForking) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgToggleRepositoryForking) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateRepository{}
 
 func NewMsgUpdateRepository(creator string, id uint64, name string, owner string, description string, labels string, license string, defaultBranch string) *MsgUpdateRepository {
