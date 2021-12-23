@@ -168,7 +168,7 @@ func TestMsgUpdateIssue_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgCreateIssue",
+			name: "valid MsgUpdateIssue",
 			msg: MsgUpdateIssue{
 				Creator:     sample.AccAddress(),
 				Title:       "title",

@@ -108,18 +108,17 @@ func TestMsgUpdateUser_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid avatarUrl",
 			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Email:   "invalid URL",
+				Creator:   sample.AccAddress(),
+				AvatarUrl: "invalid URL",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
 		{
 			name: "valid avatarUrl",
 			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Email:   "https://domain.com",
+				Creator:   sample.AccAddress(),
+				AvatarUrl: "https://domain.com",
 			},
-			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

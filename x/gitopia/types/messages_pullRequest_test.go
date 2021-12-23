@@ -863,7 +863,7 @@ func TestMsgAddPullRequestLabels_ValidateBasic(t *testing.T) {
 				LabelIds: []uint64{0, 1},
 			},
 		}, {
-			name: "empty labelIds ",
+			name: "empty labelIds",
 			msg: MsgAddPullRequestLabels{
 				Creator: sample.AccAddress(),
 			},
@@ -922,7 +922,7 @@ func TestMsgRemovePullRequestLabels_ValidateBasic(t *testing.T) {
 				LabelIds: []uint64{0, 1},
 			},
 		}, {
-			name: "empty labelIds ",
+			name: "empty labelIds",
 			msg: MsgRemovePullRequestLabels{
 				Creator: sample.AccAddress(),
 			},

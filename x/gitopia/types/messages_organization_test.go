@@ -211,7 +211,7 @@ func TestMsgRemoveOrganizationMember_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgUpdateOrganizationMember",
+			name: "valid MsgRemoveOrganizationMember",
 			msg: MsgRemoveOrganizationMember{
 				Id:      sample.AccAddress(),
 				Creator: sample.AccAddress(),
@@ -260,7 +260,7 @@ func TestMsgUpdateOrganization_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgDeleteOrganization",
+			name: "valid MsgUpdateOrganization",
 			msg: MsgUpdateOrganization{
 				Id:      sample.AccAddress(),
 				Creator: sample.AccAddress(),

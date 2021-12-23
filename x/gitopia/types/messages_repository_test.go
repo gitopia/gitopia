@@ -717,7 +717,7 @@ func TestMsgDeleteTag_ValidateBasic(t *testing.T) {
 				Name:    "branch",
 			},
 		}, {
-			name: "empty branch name",
+			name: "empty tag name",
 			msg: MsgDeleteTag{
 				Creator: sample.AccAddress(),
 			},
