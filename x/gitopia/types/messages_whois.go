@@ -42,7 +42,10 @@ func (msg *MsgSetWhois) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name must be at least 3 characters long")
+	}
+	if len(msg.Name) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 39")
 	}
 	return nil
 }

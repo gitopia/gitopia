@@ -94,7 +94,7 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 				if !unique[attachment.Name] {
 					unique[attachment.Name] = true
 				} else {
-					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", attachment.Name)
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
 				}
 			}
 		}
@@ -190,7 +190,7 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 				if !unique[attachment.Name] {
 					unique[attachment.Name] = true
 				} else {
-					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", attachment.Name)
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
 				}
 			}
 		}

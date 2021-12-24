@@ -68,9 +68,9 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
 	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
 	} else if len(msg.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name exceeds limit: 100")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
 	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 	if err != nil {
@@ -315,7 +315,7 @@ func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
 	}
 	if len(msg.Color) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
-	} else if len(msg.Name) < 1 {
+	} else if len(msg.Color) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
 	}
 	if len(msg.Description) > 255 {
@@ -376,7 +376,7 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 	}
 	if len(msg.Color) > 10 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length exceeds limit: 10")
-	} else if len(msg.Name) < 1 {
+	} else if len(msg.Color) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "color length too short")
 	}
 	if len(msg.Description) > 255 {
@@ -464,6 +464,16 @@ func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	}
+	if len(msg.CommitSHA) > 64 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha length exceeds limit: 64")
+	} else if len(msg.CommitSHA) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha can't be empty")
+	}
 	return nil
 }
 
@@ -504,9 +514,9 @@ func (msg *MsgRenameRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name must be at least 3 characters long")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
 	} else if len(msg.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Repository name exceeds limit: 100")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
 	sanitized := IsNameSanitized(msg.Name)
 	if !sanitized {
@@ -551,6 +561,11 @@ func (msg *MsgSetDefaultBranch) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	}
 	return nil
 }
 
@@ -589,6 +604,11 @@ func (msg *MsgDeleteBranch) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 	}
 	return nil
 }
@@ -630,6 +650,16 @@ func (msg *MsgSetRepositoryTag) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+	}
+	if len(msg.Sha) > 64 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha length exceeds limit: 64")
+	} else if len(msg.Sha) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha can't be empty")
+	}
 	return nil
 }
 
@@ -668,6 +698,11 @@ func (msg *MsgDeleteTag) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
+	} else if len(msg.Name) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
 	}
 	return nil
 }

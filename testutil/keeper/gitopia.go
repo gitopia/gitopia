@@ -8,9 +8,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/require"
@@ -33,7 +33,6 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 	registry := codectypes.NewInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(registry)
-	capabilityKeeper := capabilitykeeper.NewKeeper(appCodec, storeKey, memStoreKey)
 
 	amino := codec.NewLegacyAmino()
 	ss := typesparams.NewSubspace(appCodec,
@@ -42,22 +41,20 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		"GitopiaSubSpace",
 	)
-	IBCKeeper := ibckeeper.NewKeeper(
+
+	ak := authkeeper.NewAccountKeeper(
 		appCodec,
 		storeKey,
 		ss,
 		nil,
 		nil,
-		capabilityKeeper.ScopeToModule("GitopiaIBCKeeper"),
 	)
 
 	k := keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		storeKey,
 		memStoreKey,
-		IBCKeeper.ChannelKeeper,
-		&IBCKeeper.PortKeeper,
-		capabilityKeeper.ScopeToModule("GitopiaScopedKeeper"),
+		ak,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
