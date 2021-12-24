@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"fmt"
-
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -13,22 +11,6 @@ func IssueCommentExists(c []uint64, val uint64) (int, bool) {
 		}
 	}
 	return 0, false
-}
-
-func IssueUpdateTitleCommentBody(creator string, oldTitle string, newTitle string) string {
-	return fmt.Sprintf("@%v changed title from **~~%v~~** to **%v**", creator, oldTitle, newTitle)
-}
-
-func IssueUpdateDescriptionCommentBody(creator string) string {
-	return fmt.Sprintf("@%v changed the description", creator)
-}
-
-func IssueToggleStateCommentBody(creator string, state types.Issue_State) string {
-	if state == types.Issue_OPEN {
-		return fmt.Sprintf("@%v reopened", creator)
-	} else {
-		return fmt.Sprintf("@%v closed", creator)
-	}
 }
 
 func HaveIssuePermission(repository types.Repository, creator string, o interface{}) bool {

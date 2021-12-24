@@ -31,11 +31,3 @@ func JoinReviewers(reviewers []string) string {
 	}
 	return res
 }
-
-func AddReviewersCommentBody(creator string, reviewers []string) string {
-	return fmt.Sprintf("@%v requested review from"+JoinReviewers(reviewers), creator)
-}
-
-func RemoveReviewersCommentBody(creator string, reviewers []string) string {
-	return fmt.Sprintf("@%v removed review request for"+JoinReviewers(reviewers), creator)
-}

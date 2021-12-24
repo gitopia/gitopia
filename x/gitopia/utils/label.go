@@ -22,11 +22,3 @@ func JoinLabels(labels []string) string {
 	}
 	return res
 }
-
-func AddLabelsCommentBody(creator string, labels []string) string {
-	return fmt.Sprintf("@%v added"+JoinLabels(labels)+" label", creator)
-}
-
-func RemoveLabelsCommentBody(creator string, labels []string) string {
-	return fmt.Sprintf("@%v removed"+JoinLabels(labels)+" label", creator)
-}
