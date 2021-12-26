@@ -258,6 +258,10 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
 
+	if !repository.AllowForking {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
+	}
+
 	var user types.User
 	var organization types.Organization
 	if msg.OwnerType == types.RepositoryOwner_USER.String() {

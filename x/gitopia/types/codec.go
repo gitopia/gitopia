@@ -137,6 +137,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDeleteBranch{},
 		&MsgSetRepositoryTag{},
 		&MsgDeleteTag{},
+		&MsgToggleRepositoryForking{},
 		&MsgUpdateRepository{},
 		&MsgDeleteRepository{},
 	)
