@@ -743,6 +743,39 @@ func TestMsgDeleteTag_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgToggleRepositoryForking_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgToggleRepositoryForking
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgToggleRepositoryForking{
+				Creator: "invalid_address",
+				Id:      0,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid MsgToggleRepositoryForking",
+			msg: MsgToggleRepositoryForking{
+				Creator: sample.AccAddress(),
+				Id:      0,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgRenameRepository_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string

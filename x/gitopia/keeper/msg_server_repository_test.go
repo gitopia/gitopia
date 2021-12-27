@@ -754,6 +754,53 @@ func TestRepositoryMsgServerDeleteTag(t *testing.T) {
 	}
 }
 
+func TestRepositoryMsgToggleRepositoryForking(t *testing.T) {
+	creator := "A"
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgToggleRepositoryForking
+		err     error
+	}{
+		{
+			desc:    "Completed",
+			request: &types.MsgToggleRepositoryForking{Id: 0, Creator: "A"},
+		},
+		{
+			desc:    "Repository Not Exists",
+			request: &types.MsgToggleRepositoryForking{Id: 10},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Creator Not Exists",
+			request: &types.MsgToggleRepositoryForking{Id: 0, Creator: "C"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Unauthorized",
+			request: &types.MsgToggleRepositoryForking{Id: 0, Creator: "B"},
+			err:     sdkerrors.ErrUnauthorized,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			srv, ctx := setupMsgServer(t)
+			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
+			require.NoError(t, err)
+			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
+			require.NoError(t, err)
+
+			_, err = srv.ToggleRepositoryForking(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestRepositoryMsgServerUpdate(t *testing.T) {
 	creator := "A"
 
