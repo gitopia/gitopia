@@ -7731,6 +7731,140 @@ export const MsgDeleteTagResponse = {
         return message;
     },
 };
+const baseMsgToggleRepositoryForking = { creator: "", id: 0 };
+export const MsgToggleRepositoryForking = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgToggleRepositoryForking,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgToggleRepositoryForking,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgToggleRepositoryForking,
+        };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseMsgToggleRepositoryForkingResponse = { allowForking: false };
+export const MsgToggleRepositoryForkingResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.allowForking === true) {
+            writer.uint32(8).bool(message.allowForking);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgToggleRepositoryForkingResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.allowForking = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgToggleRepositoryForkingResponse,
+        };
+        if (object.allowForking !== undefined && object.allowForking !== null) {
+            message.allowForking = Boolean(object.allowForking);
+        }
+        else {
+            message.allowForking = false;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.allowForking !== undefined &&
+            (obj.allowForking = message.allowForking);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgToggleRepositoryForkingResponse,
+        };
+        if (object.allowForking !== undefined && object.allowForking !== null) {
+            message.allowForking = object.allowForking;
+        }
+        else {
+            message.allowForking = false;
+        }
+        return message;
+    },
+};
 const baseMsgUpdateRepository = {
     creator: "",
     id: 0,
@@ -9176,6 +9310,11 @@ export class MsgClientImpl {
         const data = MsgDeleteTag.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteTag", data);
         return promise.then((data) => MsgDeleteTagResponse.decode(new Reader(data)));
+    }
+    ToggleRepositoryForking(request) {
+        const data = MsgToggleRepositoryForking.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleRepositoryForking", data);
+        return promise.then((data) => MsgToggleRepositoryForkingResponse.decode(new Reader(data)));
     }
     UpdateRepository(request) {
         const data = MsgUpdateRepository.encode(request).finish();

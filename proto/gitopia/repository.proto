@@ -33,7 +33,7 @@ message Repository {
   uint64 parent = 25;
   bool fork = 26;
   repeated RepositoryCollaborator collaborators = 27;
-  string extensions = 28;
+  bool allowForking = 28;
 }
 
 message RepositoryOwner {

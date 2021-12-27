@@ -32,7 +32,7 @@ export interface Repository {
   parent: number;
   fork: boolean;
   collaborators: RepositoryCollaborator[];
-  extensions: string;
+  allowForking: boolean;
 }
 
 export interface RepositoryOwner {
@@ -196,7 +196,7 @@ const baseRepository: object = {
   defaultBranch: "",
   parent: 0,
   fork: false,
-  extensions: "",
+  allowForking: false,
 };
 
 export const Repository = {
@@ -286,8 +286,8 @@ export const Repository = {
     for (const v of message.collaborators) {
       RepositoryCollaborator.encode(v!, writer.uint32(218).fork()).ldelim();
     }
-    if (message.extensions !== "") {
-      writer.uint32(226).string(message.extensions);
+    if (message.allowForking === true) {
+      writer.uint32(224).bool(message.allowForking);
     }
     return writer;
   },
@@ -412,7 +412,7 @@ export const Repository = {
           );
           break;
         case 28:
-          message.extensions = reader.string();
+          message.allowForking = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -568,10 +568,10 @@ export const Repository = {
         message.collaborators.push(RepositoryCollaborator.fromJSON(e));
       }
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
+    if (object.allowForking !== undefined && object.allowForking !== null) {
+      message.allowForking = Boolean(object.allowForking);
     } else {
-      message.extensions = "";
+      message.allowForking = false;
     }
     return message;
   },
@@ -663,7 +663,8 @@ export const Repository = {
     } else {
       obj.collaborators = [];
     }
-    message.extensions !== undefined && (obj.extensions = message.extensions);
+    message.allowForking !== undefined &&
+      (obj.allowForking = message.allowForking);
     return obj;
   },
 
@@ -813,10 +814,10 @@ export const Repository = {
         message.collaborators.push(RepositoryCollaborator.fromPartial(e));
       }
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
+    if (object.allowForking !== undefined && object.allowForking !== null) {
+      message.allowForking = object.allowForking;
     } else {
-      message.extensions = "";
+      message.allowForking = false;
     }
     return message;
   },

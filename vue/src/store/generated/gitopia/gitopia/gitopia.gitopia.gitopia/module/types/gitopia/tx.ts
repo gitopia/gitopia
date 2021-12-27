@@ -461,6 +461,15 @@ export interface MsgDeleteTag {
 
 export interface MsgDeleteTagResponse {}
 
+export interface MsgToggleRepositoryForking {
+  creator: string;
+  id: number;
+}
+
+export interface MsgToggleRepositoryForkingResponse {
+  allowForking: boolean;
+}
+
 export interface MsgUpdateRepository {
   creator: string;
   id: number;
@@ -8983,6 +8992,162 @@ export const MsgDeleteTagResponse = {
   },
 };
 
+const baseMsgToggleRepositoryForking: object = { creator: "", id: 0 };
+
+export const MsgToggleRepositoryForking = {
+  encode(
+    message: MsgToggleRepositoryForking,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgToggleRepositoryForking {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgToggleRepositoryForking,
+    } as MsgToggleRepositoryForking;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgToggleRepositoryForking {
+    const message = {
+      ...baseMsgToggleRepositoryForking,
+    } as MsgToggleRepositoryForking;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgToggleRepositoryForking): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgToggleRepositoryForking>
+  ): MsgToggleRepositoryForking {
+    const message = {
+      ...baseMsgToggleRepositoryForking,
+    } as MsgToggleRepositoryForking;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgToggleRepositoryForkingResponse: object = { allowForking: false };
+
+export const MsgToggleRepositoryForkingResponse = {
+  encode(
+    message: MsgToggleRepositoryForkingResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.allowForking === true) {
+      writer.uint32(8).bool(message.allowForking);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgToggleRepositoryForkingResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgToggleRepositoryForkingResponse,
+    } as MsgToggleRepositoryForkingResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.allowForking = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgToggleRepositoryForkingResponse {
+    const message = {
+      ...baseMsgToggleRepositoryForkingResponse,
+    } as MsgToggleRepositoryForkingResponse;
+    if (object.allowForking !== undefined && object.allowForking !== null) {
+      message.allowForking = Boolean(object.allowForking);
+    } else {
+      message.allowForking = false;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgToggleRepositoryForkingResponse): unknown {
+    const obj: any = {};
+    message.allowForking !== undefined &&
+      (obj.allowForking = message.allowForking);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgToggleRepositoryForkingResponse>
+  ): MsgToggleRepositoryForkingResponse {
+    const message = {
+      ...baseMsgToggleRepositoryForkingResponse,
+    } as MsgToggleRepositoryForkingResponse;
+    if (object.allowForking !== undefined && object.allowForking !== null) {
+      message.allowForking = object.allowForking;
+    } else {
+      message.allowForking = false;
+    }
+    return message;
+  },
+};
+
 const baseMsgUpdateRepository: object = {
   creator: "",
   id: 0,
@@ -10383,6 +10548,9 @@ export interface Msg {
     request: MsgSetRepositoryTag
   ): Promise<MsgSetRepositoryTagResponse>;
   DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
+  ToggleRepositoryForking(
+    request: MsgToggleRepositoryForking
+  ): Promise<MsgToggleRepositoryForkingResponse>;
   UpdateRepository(
     request: MsgUpdateRepository
   ): Promise<MsgUpdateRepositoryResponse>;
@@ -11048,6 +11216,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgDeleteTagResponse.decode(new Reader(data))
+    );
+  }
+
+  ToggleRepositoryForking(
+    request: MsgToggleRepositoryForking
+  ): Promise<MsgToggleRepositoryForkingResponse> {
+    const data = MsgToggleRepositoryForking.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "ToggleRepositoryForking",
+      data
+    );
+    return promise.then((data) =>
+      MsgToggleRepositoryForkingResponse.decode(new Reader(data))
     );
   }
 

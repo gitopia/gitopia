@@ -535,6 +535,35 @@ func CmdDeleteTag() *cobra.Command {
 	return cmd
 }
 
+func CmdToggleRepositoryForking() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "toggle-repository-forking [repo_id]",
+		Short: "Toggle repository forking",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgToggleRepositoryForking(clientCtx.GetFromAddress().String(), id)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-repository [id] [name] [owner] [description] [labels] [license] [defaultBranch]",

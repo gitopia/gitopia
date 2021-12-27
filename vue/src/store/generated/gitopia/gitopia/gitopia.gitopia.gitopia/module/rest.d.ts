@@ -161,6 +161,9 @@ export declare type GitopiaMsgSetWhoisResponse = object;
 export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
 }
+export interface GitopiaMsgToggleRepositoryForkingResponse {
+    allowForking?: boolean;
+}
 export declare type GitopiaMsgTransferUserResponse = object;
 export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
@@ -553,7 +556,7 @@ export interface GitopiaRepository {
     parent?: string;
     fork?: boolean;
     collaborators?: GitopiaRepositoryCollaborator[];
-    extensions?: string;
+    allowForking?: boolean;
 }
 export interface GitopiaRepositoryBranch {
     name?: string;
