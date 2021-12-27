@@ -142,12 +142,19 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "D", OwnerId: "D", OwnerType: "USER"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
+		{
+			desc:    "Forking is not allowed",
+			request: &types.MsgForkRepository{RepositoryId: 1, Creator: "C", OwnerId: "C", OwnerType: "USER"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			srv, ctx := setupMsgServer(t)
 			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
 			require.NoError(t, err)
 			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.ToggleRepositoryForking(ctx, &types.MsgToggleRepositoryForking{Creator: creator, Id: 0})
 			require.NoError(t, err)
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
 			require.NoError(t, err)
