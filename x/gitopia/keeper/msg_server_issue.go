@@ -133,6 +133,10 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
+	if issue.Title == msg.Title {
+		return &types.MsgUpdateIssueTitleResponse{}, nil
+	}
+
 	if msg.Creator != issue.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
@@ -177,6 +181,10 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 	issue, found := k.GetIssue(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+	}
+
+	if issue.Description == msg.Description {
+		return &types.MsgUpdateIssueDescriptionResponse{}, nil
 	}
 
 	if msg.Creator != issue.Creator {

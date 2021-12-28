@@ -160,6 +160,10 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
+	if pullRequest.Title == msg.Title {
+		return &types.MsgUpdatePullRequestTitleResponse{}, nil
+	}
+
 	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
@@ -204,6 +208,10 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+	}
+
+	if pullRequest.Description == msg.Description {
+		return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
 	}
 
 	if msg.Creator != pullRequest.Creator {
