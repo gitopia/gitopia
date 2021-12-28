@@ -46,6 +46,16 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
 	}
 
+	for _, p := range baseRepo.PullRequests {
+		pullRequest, _ := k.GetPullRequest(ctx, p.Id)
+		if pullRequest.Head.RepositoryId == msg.HeadRepoId &&
+			pullRequest.State == types.PullRequest_OPEN &&
+			pullRequest.Base.Branch == msg.BaseBranch &&
+			pullRequest.Head.Branch == msg.HeadBranch {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest already exists")
+		}
+	}
+
 	baseRepo.PullsCount += 1
 
 	createdAt := ctx.BlockTime().Unix()
