@@ -19,17 +19,14 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 	require.NoError(t, err)
 	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
 	require.NoError(t, err)
+	_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch"})
+	require.NoError(t, err)
 	_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch-1"})
 	require.NoError(t, err)
 	_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch-2"})
 	require.NoError(t, err)
-
-	/* Test multiple PullRequest create */
-	for i := 0; i < 5; i++ {
-		resp, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch-1", BaseRepoId: 0, BaseBranch: "branch-2"})
-		require.NoError(t, err)
-		require.Equal(t, uint64(i), resp.Id)
-	}
+	_, err = srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch-1", BaseRepoId: 0, BaseBranch: "branch-2"})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -38,7 +35,7 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch-1", BaseRepoId: 0, BaseBranch: "branch-2"},
+			request: &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch", BaseRepoId: 0, BaseBranch: "branch-1"},
 		},
 		{
 			desc:    "Creator Not Exists",
@@ -68,6 +65,11 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 		{
 			desc:    "Same Head and Base Branch",
 			request: &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch-1", BaseRepoId: 0, BaseBranch: "branch-1"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc:    "Duplicate PullRequest",
+			request: &types.MsgCreatePullRequest{Creator: creator, HeadRepoId: 0, HeadBranch: "branch-1", BaseRepoId: 0, BaseBranch: "branch-2"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
@@ -164,7 +166,7 @@ func TestPullRequestMsgServerUpdateTitle(t *testing.T) {
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdatePullRequestTitle{Id: 0, Creator: "B"},
+			request: &types.MsgUpdatePullRequestTitle{Id: 0, Creator: "B", Title: "title"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
@@ -217,7 +219,7 @@ func TestPullRequestMsgServerUpdateDescription(t *testing.T) {
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdatePullRequestDescription{Id: 0, Creator: "B"},
+			request: &types.MsgUpdatePullRequestDescription{Id: 0, Creator: "B", Description: "description"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {

@@ -46,6 +46,16 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
 	}
 
+	for _, p := range baseRepo.PullRequests {
+		pullRequest, _ := k.GetPullRequest(ctx, p.Id)
+		if pullRequest.Head.RepositoryId == msg.HeadRepoId &&
+			pullRequest.State == types.PullRequest_OPEN &&
+			pullRequest.Base.Branch == msg.BaseBranch &&
+			pullRequest.Head.Branch == msg.HeadBranch {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest already exists")
+		}
+	}
+
 	baseRepo.PullsCount += 1
 
 	createdAt := ctx.BlockTime().Unix()
@@ -160,6 +170,10 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
+	if pullRequest.Title == msg.Title {
+		return &types.MsgUpdatePullRequestTitleResponse{}, nil
+	}
+
 	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
@@ -204,6 +218,10 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+	}
+
+	if pullRequest.Description == msg.Description {
+		return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
 	}
 
 	if msg.Creator != pullRequest.Creator {

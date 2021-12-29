@@ -126,7 +126,7 @@ func TestIssueMsgServerUpdateTitle(t *testing.T) {
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateIssueTitle{Id: 0, Creator: "B"},
+			request: &types.MsgUpdateIssueTitle{Id: 0, Creator: "B", Title: "title"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
@@ -175,7 +175,7 @@ func TestIssueMsgServerUpdateDescription(t *testing.T) {
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateIssueDescription{Id: 0, Creator: "B"},
+			request: &types.MsgUpdateIssueDescription{Id: 0, Creator: "B", Description: "description"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
