@@ -2,19 +2,19 @@ genesis:
   app_state:
     staking:
       params:
-        bond_denom: "tlore"
+        bond_denom: "utlore"
     gov:
       deposit_params:
         max_deposit_period: "60s"
-        min_deposit: [{ "amount": "10000000", "denom": "tlore" }]
+        min_deposit: [{ "amount": "10000000", "denom": "utlore" }]
       voting_params:
         voting_period: "60s"
     mint:
       params:
-        mint_denom: "tlore"
+        mint_denom: "utlore"
     crisis:
       constant_fee:
-        denom: "tlore"
+        denom: "utlore"
     bank:
       denom_metadata:
         - description: "The native staking token of the Gitopia Hub."
@@ -29,18 +29,18 @@ genesis:
           symbol: "tlore"
 accounts:
   - name: node0
-    coins: ["100000000tlore"]
+    coins: ["100000000utlore"]
   - name: node1
-    coins: ["100000000tlore"]
+    coins: ["100000000utlore"]
   - name: node2
-    coins: ["100000000tlore"]
+    coins: ["100000000utlore"]
   - name: node3
-    coins: ["50000000tlore"]
+    coins: ["50000000utlore"]
   - name: faucet
-    coins: ["100000000tlore"]
+    coins: ["100000000utlore"]
 validator:
   name: node0
-  staked: "100000000tlore"
+  staked: "100000000utlore"
 client:
   openapi:
     path: "docs/static/openapi.yml"
@@ -48,6 +48,6 @@ client:
     path: "vue/src/store"
 faucet:
   name: faucet
-  coins: ["5tlore"]
-  coins_max: ["15tlore"]
+  coins: ["50utlore"]
+  coins_max: ["150utlore"]
   port: 4500
