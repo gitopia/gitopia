@@ -48,6 +48,6 @@ client:
     path: "vue/src/store"
 faucet:
   name: faucet
-  coins: ["50utlore"]
-  coins_max: ["150utlore"]
+  coins: ["1000000utlore"]
+  coins_max: ["3000000utlore"]
   port: 4500
