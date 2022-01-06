@@ -5,6 +5,7 @@ import (
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/gitopia/gitopia/app"
+	"github.com/gitopia/gitopia/cmd/gitopiad/cmd"
 	"github.com/tendermint/spm/cosmoscmd"
 )
 
@@ -20,6 +21,7 @@ func main() {
 		app.New,
 		// this line is used by starport scaffolding # root/arguments
 	)
+	rootCmd.AddCommand(cmd.MigrateCmd())
 
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
 		os.Exit(1)

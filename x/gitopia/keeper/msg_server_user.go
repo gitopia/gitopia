@@ -11,6 +11,10 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
+const (
+	CreateUserGas = 10
+)
+
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -41,6 +45,8 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		ctx,
 		user,
 	)
+
+	ctx.GasMeter().ConsumeGas(CreateUserGas, "Create user")
 
 	return &types.MsgCreateUserResponse{Id: id}, nil
 }
