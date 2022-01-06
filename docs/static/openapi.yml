@@ -13303,6 +13303,8 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
+                    extensions:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -13568,6 +13570,8 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
+                  extensions:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13758,6 +13762,8 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
+                  extensions:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14036,6 +14042,8 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
+                    extensions:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -14207,6 +14215,8 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
+                  extensions:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14503,6 +14513,8 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
+                    extensions:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -24600,6 +24612,8 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
+            extensions:
+              type: string
       pagination:
         type: object
         properties:
@@ -25538,6 +25552,8 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
+            extensions:
+              type: string
       pagination:
         type: object
         properties:
@@ -25701,6 +25717,8 @@ definitions:
             updatedAt:
               type: string
               format: int64
+            extensions:
+              type: string
       pagination:
         type: object
         properties:
@@ -25922,6 +25940,8 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
+          extensions:
+            type: string
   gitopia.gitopia.gitopia.QueryGetAllBranchResponse:
     type: object
     properties:
@@ -26768,6 +26788,8 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
+          extensions:
+            type: string
   gitopia.gitopia.gitopia.QueryGetTagShaResponse:
     type: object
     properties:
@@ -26836,6 +26858,8 @@ definitions:
           updatedAt:
             type: string
             format: int64
+          extensions:
+            type: string
   gitopia.gitopia.gitopia.QueryGetWhoisResponse:
     type: object
     properties:
@@ -27050,6 +27074,8 @@ definitions:
               default: READ
       allowForking:
         type: boolean
+      extensions:
+        type: string
   gitopia.gitopia.gitopia.RepositoryBranch:
     type: object
     properties:
@@ -27243,6 +27269,8 @@ definitions:
       updatedAt:
         type: string
         format: int64
+      extensions:
+        type: string
   gitopia.gitopia.gitopia.UserOrganization:
     type: object
     properties:

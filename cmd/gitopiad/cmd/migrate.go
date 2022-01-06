@@ -17,6 +17,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibctypes "github.com/cosmos/ibc-go/modules/core/types"
 	"github.com/spf13/cobra"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -70,22 +71,26 @@ func MigrateCmd() *cobra.Command {
 				crisisGenesis crisistypes.GenesisState
 				govGenesis    govtypes.GenesisState
 				mintGenesis   minttypes.GenesisState
+				ibcGenesis    ibctypes.GenesisState
 			)
 
 			ctx.Codec.MustUnmarshalJSON(state[banktypes.ModuleName], &bankGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[crisistypes.ModuleName], &crisisGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[govtypes.ModuleName], &govGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[minttypes.ModuleName], &mintGenesis)
+			ctx.Codec.MustUnmarshalJSON(state["ibc"], &ibcGenesis)
 
 			bankGenesis.DenomMetadata = []banktypes.Metadata{
 				{
 					Description: "The native staking token of the Gitopia Hub.",
 					DenomUnits: []*banktypes.DenomUnit{
-						{Denom: "tlore", Exponent: uint32(6), Aliases: []string{}},
 						{Denom: "utlore", Exponent: uint32(0), Aliases: []string{"microtlore"}},
+						{Denom: "tlore", Exponent: uint32(6), Aliases: []string{}},
 					},
 					Base:    "utlore",
 					Display: "tlore",
+					Name:    "tlore",
+					Symbol:  "tlore",
 				},
 			}
 
@@ -112,6 +117,8 @@ func MigrateCmd() *cobra.Command {
 
 			mintGenesis.Params.MintDenom = "utlore"
 
+			ibcGenesis.ConnectionGenesis.Params.MaxExpectedTimePerBlock = 30000000000
+
 			var (
 				distributionGenesis = distributiontypes.DefaultGenesisState()
 				slashingGenesis     = slashingtypes.DefaultGenesisState()
@@ -129,6 +136,7 @@ func MigrateCmd() *cobra.Command {
 			state[slashingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(slashingGenesis)
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
+			state["ibc"] = ctx.Codec.MustMarshalJSON(&ibcGenesis)
 
 			genesis.AppState, err = json.Marshal(state)
 			if err != nil {
@@ -156,12 +164,12 @@ func MigrateCmd() *cobra.Command {
 				return err
 			}
 
-			sortedBlob, err := sdk.SortJSON(blob)
-			if err != nil {
-				return err
-			}
+			// sortedBlob, err := sdk.SortJSON(blob)
+			// if err != nil {
+			// 	return err
+			// }
 
-			fmt.Println(string(sortedBlob))
+			fmt.Println(string(blob))
 			return nil
 		},
 	}

@@ -21,6 +21,7 @@ export interface User {
   bio: string;
   createdAt: number;
   updatedAt: number;
+  extensions: string;
 }
 
 export interface UserRepository {
@@ -48,6 +49,7 @@ const baseUser: object = {
   bio: "",
   createdAt: 0,
   updatedAt: 0,
+  extensions: "",
 };
 
 export const User = {
@@ -101,6 +103,9 @@ export const User = {
     }
     if (message.updatedAt !== 0) {
       writer.uint32(128).int64(message.updatedAt);
+    }
+    if (message.extensions !== "") {
+      writer.uint32(138).string(message.extensions);
     }
     return writer;
   },
@@ -175,6 +180,9 @@ export const User = {
           break;
         case 16:
           message.updatedAt = longToNumber(reader.int64() as Long);
+          break;
+        case 17:
+          message.extensions = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -271,6 +279,11 @@ export const User = {
     } else {
       message.updatedAt = 0;
     }
+    if (object.extensions !== undefined && object.extensions !== null) {
+      message.extensions = String(object.extensions);
+    } else {
+      message.extensions = "";
+    }
     return message;
   },
 
@@ -318,6 +331,7 @@ export const User = {
     message.bio !== undefined && (obj.bio = message.bio);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+    message.extensions !== undefined && (obj.extensions = message.extensions);
     return obj;
   },
 
@@ -407,6 +421,11 @@ export const User = {
       message.updatedAt = object.updatedAt;
     } else {
       message.updatedAt = 0;
+    }
+    if (object.extensions !== undefined && object.extensions !== null) {
+      message.extensions = object.extensions;
+    } else {
+      message.extensions = "";
     }
     return message;
   },

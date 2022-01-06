@@ -22,6 +22,7 @@ message User {
   string bio = 14; 
   int64 createdAt = 15; 
   int64 updatedAt = 16; 
+  string extensions = 17;
 }
 
 message UserRepository {

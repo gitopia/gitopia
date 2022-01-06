@@ -17,6 +17,7 @@ export interface User {
     bio: string;
     createdAt: number;
     updatedAt: number;
+    extensions: string;
 }
 export interface UserRepository {
     name: string;

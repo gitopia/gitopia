@@ -731,6 +731,7 @@ export interface GitopiaRepository {
   fork?: boolean;
   collaborators?: GitopiaRepositoryCollaborator[];
   allowForking?: boolean;
+  extensions?: string;
 }
 
 export interface GitopiaRepositoryBranch {
@@ -839,6 +840,7 @@ export interface GitopiaUser {
 
   /** @format int64 */
   updatedAt?: string;
+  extensions?: string;
 }
 
 export interface GitopiaUserOrganization {
