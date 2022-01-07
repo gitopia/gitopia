@@ -8,7 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -27,6 +29,16 @@ const (
 	flagGenesisTime   = "genesis-time"
 	flagInitialHeight = "initial-height"
 )
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
 
 func MigrateCmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -67,6 +79,7 @@ func MigrateCmd() *cobra.Command {
 			}
 
 			var (
+				authGenesis   authtypes.GenesisState
 				bankGenesis   banktypes.GenesisState
 				crisisGenesis crisistypes.GenesisState
 				govGenesis    govtypes.GenesisState
@@ -74,11 +87,23 @@ func MigrateCmd() *cobra.Command {
 				ibcGenesis    ibctypes.GenesisState
 			)
 
+			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[banktypes.ModuleName], &bankGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[crisistypes.ModuleName], &crisisGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[govtypes.ModuleName], &govGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[minttypes.ModuleName], &mintGenesis)
 			ctx.Codec.MustUnmarshalJSON(state["ibc"], &ibcGenesis)
+
+			var baseAccounts []*codectypes.Any
+			var moduleAccounts []string
+			for i := range authGenesis.Accounts {
+				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
+					baseAccounts = append(baseAccounts, authGenesis.Accounts[i])
+				} else {
+					moduleAccounts = append(moduleAccounts, string(authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI).GetAddress().String()))
+				}
+			}
+			authGenesis.Accounts = baseAccounts
 
 			bankGenesis.DenomMetadata = []banktypes.Metadata{
 				{
@@ -96,19 +121,27 @@ func MigrateCmd() *cobra.Command {
 
 			totalBalance := sdk.NewInt(0)
 
-			for i := range bankGenesis.Balances {
-				for j := range bankGenesis.Balances[i].Coins {
-					if bankGenesis.Balances[i].Coins[j].Denom == "tlore" {
-						bankGenesis.Balances[i].Coins[j].Denom = "utlore"
+			var balances []banktypes.Balance
+			for _, balance := range bankGenesis.Balances {
+				if contains(moduleAccounts, balance.Address) {
+					continue
+				}
+				for j := range balance.Coins {
+					if balance.Coins[j].Denom == "tlore" {
+						balance.Coins[j].Denom = "utlore"
 						// bankGenesis.Balances[i].Coins[j].Amount = bankGenesis.Balances[i].Coins[j].Amount.Mul(sdk.NewInt(1000000))
-						totalBalance = totalBalance.Add(bankGenesis.Balances[i].Coins[j].Amount)
+						totalBalance = totalBalance.Add(balance.Coins[j].Amount)
 					}
 				}
+				balances = append(balances, balance)
 			}
+
+			bankGenesis.Balances = balances
 
 			// fmt.Fprintln(os.Stderr, "total", totalBalance.String())
 
 			bankGenesis.Supply[0].Denom = "utlore"
+			bankGenesis.Supply[0].Amount = totalBalance
 
 			crisisGenesis.ConstantFee.Denom = "utlore"
 
@@ -128,6 +161,7 @@ func MigrateCmd() *cobra.Command {
 
 			stakingGenesis.Params.BondDenom = "utlore"
 
+			state[authtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&authGenesis)
 			state[banktypes.ModuleName] = ctx.Codec.MustMarshalJSON(&bankGenesis)
 			state[crisistypes.ModuleName] = ctx.Codec.MustMarshalJSON(&crisisGenesis)
 			state[govtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&govGenesis)
