@@ -33,7 +33,7 @@ export interface Repository {
   fork: boolean;
   collaborators: RepositoryCollaborator[];
   allowForking: boolean;
-  extensions: string;
+  sentRequests: number[];
 }
 
 export interface RepositoryOwner {
@@ -198,7 +198,7 @@ const baseRepository: object = {
   parent: 0,
   fork: false,
   allowForking: false,
-  extensions: "",
+  sentRequests: 0,
 };
 
 export const Repository = {
@@ -291,9 +291,11 @@ export const Repository = {
     if (message.allowForking === true) {
       writer.uint32(224).bool(message.allowForking);
     }
-    if (message.extensions !== "") {
-      writer.uint32(234).string(message.extensions);
+    writer.uint32(234).fork();
+    for (const v of message.sentRequests) {
+      writer.uint64(v);
     }
+    writer.ldelim();
     return writer;
   },
 
@@ -310,6 +312,7 @@ export const Repository = {
     message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
+    message.sentRequests = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -420,7 +423,14 @@ export const Repository = {
           message.allowForking = reader.bool();
           break;
         case 29:
-          message.extensions = reader.string();
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.sentRequests.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.sentRequests.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         default:
           reader.skipType(tag & 7);
@@ -441,6 +451,7 @@ export const Repository = {
     message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
+    message.sentRequests = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -581,10 +592,10 @@ export const Repository = {
     } else {
       message.allowForking = false;
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
-    } else {
-      message.extensions = "";
+    if (object.sentRequests !== undefined && object.sentRequests !== null) {
+      for (const e of object.sentRequests) {
+        message.sentRequests.push(Number(e));
+      }
     }
     return message;
   },
@@ -678,7 +689,11 @@ export const Repository = {
     }
     message.allowForking !== undefined &&
       (obj.allowForking = message.allowForking);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
+    if (message.sentRequests) {
+      obj.sentRequests = message.sentRequests.map((e) => e);
+    } else {
+      obj.sentRequests = [];
+    }
     return obj;
   },
 
@@ -693,6 +708,7 @@ export const Repository = {
     message.releases = [];
     message.stargazers = [];
     message.collaborators = [];
+    message.sentRequests = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -833,10 +849,10 @@ export const Repository = {
     } else {
       message.allowForking = false;
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
-    } else {
-      message.extensions = "";
+    if (object.sentRequests !== undefined && object.sentRequests !== null) {
+      for (const e of object.sentRequests) {
+        message.sentRequests.push(e);
+      }
     }
     return message;
   },

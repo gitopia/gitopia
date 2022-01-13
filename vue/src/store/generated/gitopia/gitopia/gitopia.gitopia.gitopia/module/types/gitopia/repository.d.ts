@@ -29,7 +29,7 @@ export interface Repository {
     fork: boolean;
     collaborators: RepositoryCollaborator[];
     allowForking: boolean;
-    extensions: string;
+    sentRequests: number[];
 }
 export interface RepositoryOwner {
     id: string;

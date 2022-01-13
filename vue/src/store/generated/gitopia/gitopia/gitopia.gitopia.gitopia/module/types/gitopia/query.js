@@ -1,8 +1,9 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Release } from "../gitopia/release";
 import { PageRequest, PageResponse, } from "../cosmos/base/query/v1beta1/pagination";
+import { Request } from "../gitopia/request";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -11,6 +12,745 @@ import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag, } from ".
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseQueryAllAddressRequestReceivedRequest = { address: "" };
+export const QueryAllAddressRequestReceivedRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.address !== "") {
+            writer.uint32(10).string(message.address);
+        }
+        if (message.option !== undefined) {
+            RequestOptions.encode(message.option, writer.uint32(26).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(34).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllAddressRequestReceivedRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.address = reader.string();
+                    break;
+                case 3:
+                    message.option = RequestOptions.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllAddressRequestReceivedRequest,
+        };
+        if (object.address !== undefined && object.address !== null) {
+            message.address = String(object.address);
+        }
+        else {
+            message.address = "";
+        }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = RequestOptions.fromJSON(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.address !== undefined && (obj.address = message.address);
+        message.option !== undefined &&
+            (obj.option = message.option
+                ? RequestOptions.toJSON(message.option)
+                : undefined);
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllAddressRequestReceivedRequest,
+        };
+        if (object.address !== undefined && object.address !== null) {
+            message.address = object.address;
+        }
+        else {
+            message.address = "";
+        }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = RequestOptions.fromPartial(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllAddressRequestReceivedResponse = {};
+export const QueryAllAddressRequestReceivedResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Request) {
+            Request.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllAddressRequestReceivedResponse,
+        };
+        message.Request = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Request.push(Request.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllAddressRequestReceivedResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Request) {
+            obj.Request = message.Request.map((e) => e ? Request.toJSON(e) : undefined);
+        }
+        else {
+            obj.Request = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllAddressRequestReceivedResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllRepositoryRequestRequest = {
+    id: "",
+    repositoryName: "",
+};
+export const QueryAllRepositoryRequestRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== "") {
+            writer.uint32(10).string(message.id);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        if (message.option !== undefined) {
+            RequestOptions.encode(message.option, writer.uint32(26).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(34).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllRepositoryRequestRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                case 3:
+                    message.option = RequestOptions.decode(reader, reader.uint32());
+                    break;
+                case 4:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllRepositoryRequestRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = String(object.id);
+        }
+        else {
+            message.id = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = RequestOptions.fromJSON(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        message.option !== undefined &&
+            (obj.option = message.option
+                ? RequestOptions.toJSON(message.option)
+                : undefined);
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllRepositoryRequestRequest,
+        };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = RequestOptions.fromPartial(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseRequestOptions = {
+    state: "",
+    includeExpired: false,
+    sort: "",
+};
+export const RequestOptions = {
+    encode(message, writer = Writer.create()) {
+        if (message.state !== "") {
+            writer.uint32(10).string(message.state);
+        }
+        if (message.includeExpired === true) {
+            writer.uint32(16).bool(message.includeExpired);
+        }
+        if (message.sort !== "") {
+            writer.uint32(26).string(message.sort);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseRequestOptions };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.state = reader.string();
+                    break;
+                case 2:
+                    message.includeExpired = reader.bool();
+                    break;
+                case 3:
+                    message.sort = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseRequestOptions };
+        if (object.state !== undefined && object.state !== null) {
+            message.state = String(object.state);
+        }
+        else {
+            message.state = "";
+        }
+        if (object.includeExpired !== undefined && object.includeExpired !== null) {
+            message.includeExpired = Boolean(object.includeExpired);
+        }
+        else {
+            message.includeExpired = false;
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = String(object.sort);
+        }
+        else {
+            message.sort = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.state !== undefined && (obj.state = message.state);
+        message.includeExpired !== undefined &&
+            (obj.includeExpired = message.includeExpired);
+        message.sort !== undefined && (obj.sort = message.sort);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseRequestOptions };
+        if (object.state !== undefined && object.state !== null) {
+            message.state = object.state;
+        }
+        else {
+            message.state = "";
+        }
+        if (object.includeExpired !== undefined && object.includeExpired !== null) {
+            message.includeExpired = object.includeExpired;
+        }
+        else {
+            message.includeExpired = false;
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = object.sort;
+        }
+        else {
+            message.sort = "";
+        }
+        return message;
+    },
+};
+const baseQueryAllRepositoryRequestResponse = {};
+export const QueryAllRepositoryRequestResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Request) {
+            Request.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllRepositoryRequestResponse,
+        };
+        message.Request = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Request.push(Request.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllRepositoryRequestResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Request) {
+            obj.Request = message.Request.map((e) => e ? Request.toJSON(e) : undefined);
+        }
+        else {
+            obj.Request = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllRepositoryRequestResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryGetRequestRequest = { id: 0 };
+export const QueryGetRequestRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.id !== 0) {
+            writer.uint32(8).uint64(message.id);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRequestRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRequestRequest };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.id !== undefined && (obj.id = message.id);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRequestRequest };
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        return message;
+    },
+};
+const baseQueryGetRequestResponse = {};
+export const QueryGetRequestResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.Request !== undefined) {
+            Request.encode(message.Request, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetRequestResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Request = Request.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetRequestResponse,
+        };
+        if (object.Request !== undefined && object.Request !== null) {
+            message.Request = Request.fromJSON(object.Request);
+        }
+        else {
+            message.Request = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.Request !== undefined &&
+            (obj.Request = message.Request
+                ? Request.toJSON(message.Request)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetRequestResponse,
+        };
+        if (object.Request !== undefined && object.Request !== null) {
+            message.Request = Request.fromPartial(object.Request);
+        }
+        else {
+            message.Request = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllRequestRequest = {};
+export const QueryAllRequestRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRequestRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRequestRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRequestRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryAllRequestResponse = {};
+export const QueryAllRequestResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.Request) {
+            Request.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryAllRequestResponse,
+        };
+        message.Request = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.Request.push(Request.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryAllRequestResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.Request) {
+            obj.Request = message.Request.map((e) => e ? Request.toJSON(e) : undefined);
+        }
+        else {
+            obj.Request = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryAllRequestResponse,
+        };
+        message.Request = [];
+        if (object.Request !== undefined && object.Request !== null) {
+            for (const e of object.Request) {
+                message.Request.push(Request.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
 const baseQueryGetReleaseRequest = { id: 0 };
 export const QueryGetReleaseRequest = {
     encode(message, writer = Writer.create()) {
@@ -5022,6 +5762,16 @@ export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
     }
+    Request(request) {
+        const data = QueryGetRequestRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "Request", data);
+        return promise.then((data) => QueryGetRequestResponse.decode(new Reader(data)));
+    }
+    RequestAll(request) {
+        const data = QueryAllRequestRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RequestAll", data);
+        return promise.then((data) => QueryAllRequestResponse.decode(new Reader(data)));
+    }
     Release(request) {
         const data = QueryGetReleaseRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "Release", data);
@@ -5107,6 +5857,11 @@ export class QueryClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryPullRequestAll", data);
         return promise.then((data) => QueryAllRepositoryPullRequestResponse.decode(new Reader(data)));
     }
+    RepositoryRequestAll(request) {
+        const data = QueryAllRepositoryRequestRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryRequestAll", data);
+        return promise.then((data) => QueryAllRepositoryRequestResponse.decode(new Reader(data)));
+    }
     Repository(request) {
         const data = QueryGetRepositoryRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "Repository", data);
@@ -5161,6 +5916,11 @@ export class QueryClientImpl {
         const data = QueryGetAddressRepositoryRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "AddressRepository", data);
         return promise.then((data) => QueryGetAddressRepositoryResponse.decode(new Reader(data)));
+    }
+    AddressRequestReceivedAll(request) {
+        const data = QueryAllAddressRequestReceivedRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "AddressRequestReceivedAll", data);
+        return promise.then((data) => QueryAllAddressRequestReceivedResponse.decode(new Reader(data)));
     }
     UserOrganizationAll(request) {
         const data = QueryAllUserOrganizationRequest.encode(request).finish();

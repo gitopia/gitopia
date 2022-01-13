@@ -42,6 +42,17 @@ export var GitopiaRepositoryOwnerType;
     GitopiaRepositoryOwnerType["USER"] = "USER";
     GitopiaRepositoryOwnerType["ORGANIZATION"] = "ORGANIZATION";
 })(GitopiaRepositoryOwnerType || (GitopiaRepositoryOwnerType = {}));
+export var GitopiaRequestState;
+(function (GitopiaRequestState) {
+    GitopiaRequestState["AWAITED"] = "AWAITED";
+    GitopiaRequestState["ACCEPTED"] = "ACCEPTED";
+    GitopiaRequestState["REJECTED"] = "REJECTED";
+})(GitopiaRequestState || (GitopiaRequestState = {}));
+export var GitopiaRequestType;
+(function (GitopiaRequestType) {
+    GitopiaRequestType["UPDATEREPOSITORYCOLLABORATOR"] = "UPDATEREPOSITORYCOLLABORATOR";
+    GitopiaRequestType["UPDATEDAOMEMBER"] = "UPDATEDAOMEMBER";
+})(GitopiaRequestType || (GitopiaRequestType = {}));
 export var ContentType;
 (function (ContentType) {
     ContentType["Json"] = "application/json";
@@ -415,6 +426,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryRequestAll
+         * @summary Queries a list of request items.
+         * @request GET:/gitopia/gitopia/gitopia/request
+         */
+        this.queryRequestAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/request`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRequest
+         * @summary Queries a request by id.
+         * @request GET:/gitopia/gitopia/gitopia/request/{id}
+         */
+        this.queryRequest = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/request/${id}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryUserAll
          * @summary Queries a list of user items.
          * @request GET:/gitopia/gitopia/gitopia/user
@@ -502,6 +542,20 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryAddressRequestReceivedAll
+         * @request GET:/gitopia/gitopia/gitopia/{address}/request
+         */
+        this.queryAddressRequestReceivedAll = (address, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${address}/request`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRepositoryIssueAll
          * @summary Queries a list of repository items.
          * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
@@ -524,6 +578,20 @@ export class Api extends HttpClient {
         this.queryRepositoryIssue = (id, repositoryName, issueIid, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/issue/${issueIid}`,
             method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRepositoryRequestAll
+         * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/request
+         */
+        this.queryRepositoryRequestAll = (id, repositoryName, query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/request`,
+            method: "GET",
+            query: query,
             format: "json",
             ...params,
         });

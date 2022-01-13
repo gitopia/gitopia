@@ -11821,8 +11821,6 @@ paths:
                         - ISSUE
                         - PULLREQUEST
                       default: ISSUE
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -11974,8 +11972,6 @@ paths:
                       - ISSUE
                       - PULLREQUEST
                     default: ISSUE
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12073,8 +12069,6 @@ paths:
                       type: string
                       format: int64
                     closedBy:
-                      type: string
-                    extensions:
                       type: string
               pagination:
                 type: object
@@ -12247,8 +12241,6 @@ paths:
                     format: int64
                   closedBy:
                     type: string
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12353,8 +12345,19 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
+                    requests:
+                      type: object
+                      properties:
+                        sent:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
+                        received:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
               pagination:
                 type: object
                 properties:
@@ -12532,8 +12535,19 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
-                  extensions:
-                    type: string
+                  requests:
+                    type: object
+                    properties:
+                      sent:
+                        type: array
+                        items:
+                          type: string
+                          format: uint64
+                      received:
+                        type: array
+                        items:
+                          type: string
+                          format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -13303,8 +13317,11 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
-                    extensions:
-                      type: string
+                    sentRequests:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
               pagination:
                 type: object
                 properties:
@@ -13570,8 +13587,11 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
-                  extensions:
-                    type: string
+                  sentRequests:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -13762,8 +13782,11 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
-                  extensions:
-                    type: string
+                  sentRequests:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -13970,6 +13993,217 @@ paths:
           type: string
       tags:
         - Query
+  /gitopia/gitopia/gitopia/request:
+    get:
+      summary: Queries a list of request items.
+      operationId: GitopiaGitopiaGitopiaRequestAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Request:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    source:
+                      type: string
+                    target:
+                      type: string
+                    requestType:
+                      type: string
+                      enum:
+                        - UPDATEREPOSITORYCOLLABORATOR
+                        - UPDATEDAOMEMBER
+                      default: UPDATEREPOSITORYCOLLABORATOR
+                    state:
+                      type: string
+                      enum:
+                        - AWAITED
+                        - ACCEPTED
+                        - REJECTED
+                      default: AWAITED
+                    message:
+                      type: string
+                    expiry:
+                      type: string
+                      format: int64
+                    createdAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/request/{id}':
+    get:
+      summary: Queries a request by id.
+      operationId: GitopiaGitopiaGitopiaRequest
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Request:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  source:
+                    type: string
+                  target:
+                    type: string
+                  requestType:
+                    type: string
+                    enum:
+                      - UPDATEREPOSITORYCOLLABORATOR
+                      - UPDATEDAOMEMBER
+                    default: UPDATEREPOSITORYCOLLABORATOR
+                  state:
+                    type: string
+                    enum:
+                      - AWAITED
+                      - ACCEPTED
+                      - REJECTED
+                    default: AWAITED
+                  message:
+                    type: string
+                  expiry:
+                    type: string
+                    format: int64
+                  createdAt:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/user:
     get:
       summary: Queries a list of user items.
@@ -14042,8 +14276,19 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
+                    requests:
+                      type: object
+                      properties:
+                        sent:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
+                        received:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
               pagination:
                 type: object
                 properties:
@@ -14215,8 +14460,19 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
-                  extensions:
-                    type: string
+                  requests:
+                    type: object
+                    properties:
+                      sent:
+                        type: array
+                        items:
+                          type: string
+                          format: uint64
+                      received:
+                        type: array
+                        items:
+                          type: string
+                          format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -14320,8 +14576,19 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
+                    requests:
+                      type: object
+                      properties:
+                        sent:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
+                        received:
+                          type: array
+                          items:
+                            type: string
+                            format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -14513,8 +14780,11 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
-                    extensions:
-                      type: string
+                    sentRequests:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
               pagination:
                 type: object
                 properties:
@@ -14786,6 +15056,165 @@ paths:
           type: string
       tags:
         - Query
+  '/gitopia/gitopia/gitopia/{address}/request':
+    get:
+      operationId: GitopiaGitopiaGitopiaAddressRequestReceivedAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Request:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    source:
+                      type: string
+                    target:
+                      type: string
+                    requestType:
+                      type: string
+                      enum:
+                        - UPDATEREPOSITORYCOLLABORATOR
+                        - UPDATEDAOMEMBER
+                      default: UPDATEREPOSITORYCOLLABORATOR
+                    state:
+                      type: string
+                      enum:
+                        - AWAITED
+                        - ACCEPTED
+                        - REJECTED
+                      default: AWAITED
+                    message:
+                      type: string
+                    expiry:
+                      type: string
+                      format: int64
+                    createdAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+        - name: option.state
+          in: query
+          required: false
+          type: string
+        - name: option.includeExpired
+          in: query
+          required: false
+          type: boolean
+        - name: option.sort
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   '/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue':
     get:
       summary: Queries a list of repository items.
@@ -14857,8 +15286,6 @@ paths:
                       type: string
                       format: int64
                     closedBy:
-                      type: string
-                    extensions:
                       type: string
               pagination:
                 type: object
@@ -15081,8 +15508,6 @@ paths:
                     format: int64
                   closedBy:
                     type: string
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -15115,6 +15540,169 @@ paths:
           required: true
           type: string
           format: uint64
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/{repositoryName}/request':
+    get:
+      operationId: GitopiaGitopiaGitopiaRepositoryRequestAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Request:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    source:
+                      type: string
+                    target:
+                      type: string
+                    requestType:
+                      type: string
+                      enum:
+                        - UPDATEREPOSITORYCOLLABORATOR
+                        - UPDATEDAOMEMBER
+                      default: UPDATEREPOSITORYCOLLABORATOR
+                    state:
+                      type: string
+                      enum:
+                        - AWAITED
+                        - ACCEPTED
+                        - REJECTED
+                      default: AWAITED
+                    message:
+                      type: string
+                    expiry:
+                      type: string
+                      format: int64
+                    createdAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: option.state
+          in: query
+          required: false
+          type: string
+        - name: option.includeExpired
+          in: query
+          required: false
+          type: boolean
+        - name: option.sort
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   '/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks':
@@ -23944,8 +24532,6 @@ definitions:
           - ISSUE
           - PULLREQUEST
         default: ISSUE
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.Comment.Type:
     type: string
     enum:
@@ -24012,8 +24598,6 @@ definitions:
         format: int64
       closedBy:
         type: string
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.Issue.State:
     type: string
     enum:
@@ -24057,6 +24641,8 @@ definitions:
   gitopia.gitopia.gitopia.MsgAddPullRequestReviewersResponse:
     type: object
   gitopia.gitopia.gitopia.MsgChangeOwnerResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgChangeRequestStateResponse:
     type: object
   gitopia.gitopia.gitopia.MsgCreateCommentResponse:
     type: object
@@ -24107,6 +24693,12 @@ definitions:
         format: uint64
       name:
         type: string
+  gitopia.gitopia.gitopia.MsgCreateRequestResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   gitopia.gitopia.gitopia.MsgCreateUserResponse:
     type: object
     properties:
@@ -24127,6 +24719,8 @@ definitions:
   gitopia.gitopia.gitopia.MsgDeleteRepositoryLabelResponse:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteRepositoryResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgDeleteRequestResponse:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteTagResponse:
     type: object
@@ -24209,6 +24803,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgUpdateRequestResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateUserResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateWhoisResponse:
@@ -24279,8 +24875,19 @@ definitions:
       updatedAt:
         type: string
         format: int64
-      extensions:
-        type: string
+      requests:
+        type: object
+        properties:
+          sent:
+            type: array
+            items:
+              type: string
+              format: uint64
+          received:
+            type: array
+            items:
+              type: string
+              format: uint64
   gitopia.gitopia.gitopia.OrganizationMember:
     type: object
     properties:
@@ -24612,8 +25219,72 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
-            extensions:
+            sentRequests:
+              type: array
+              items:
+                type: string
+                format: uint64
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllAddressRequestReceivedResponse:
+    type: object
+    properties:
+      Request:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
               type: string
+              format: uint64
+            source:
+              type: string
+            target:
+              type: string
+            requestType:
+              type: string
+              enum:
+                - UPDATEREPOSITORYCOLLABORATOR
+                - UPDATEDAOMEMBER
+              default: UPDATEREPOSITORYCOLLABORATOR
+            state:
+              type: string
+              enum:
+                - AWAITED
+                - ACCEPTED
+                - REJECTED
+              default: AWAITED
+            message:
+              type: string
+            expiry:
+              type: string
+              format: int64
+            createdAt:
+              type: string
+              format: int64
       pagination:
         type: object
         properties:
@@ -24684,8 +25355,6 @@ definitions:
                 - ISSUE
                 - PULLREQUEST
               default: ISSUE
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -24775,8 +25444,6 @@ definitions:
               type: string
               format: int64
             closedBy:
-              type: string
-            extensions:
               type: string
       pagination:
         type: object
@@ -24874,8 +25541,19 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
+            requests:
+              type: object
+              properties:
+                sent:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
+                received:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
       pagination:
         type: object
         properties:
@@ -25166,8 +25844,6 @@ definitions:
               format: int64
             closedBy:
               type: string
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -25393,6 +26069,67 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  gitopia.gitopia.gitopia.QueryAllRepositoryRequestResponse:
+    type: object
+    properties:
+      Request:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            source:
+              type: string
+            target:
+              type: string
+            requestType:
+              type: string
+              enum:
+                - UPDATEREPOSITORYCOLLABORATOR
+                - UPDATEDAOMEMBER
+              default: UPDATEREPOSITORYCOLLABORATOR
+            state:
+              type: string
+              enum:
+                - AWAITED
+                - ACCEPTED
+                - REJECTED
+              default: AWAITED
+            message:
+              type: string
+            expiry:
+              type: string
+              format: int64
+            createdAt:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   gitopia.gitopia.gitopia.QueryAllRepositoryResponse:
     type: object
     properties:
@@ -25552,8 +26289,72 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
-            extensions:
+            sentRequests:
+              type: array
+              items:
+                type: string
+                format: uint64
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllRequestResponse:
+    type: object
+    properties:
+      Request:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
               type: string
+              format: uint64
+            source:
+              type: string
+            target:
+              type: string
+            requestType:
+              type: string
+              enum:
+                - UPDATEREPOSITORYCOLLABORATOR
+                - UPDATEDAOMEMBER
+              default: UPDATEREPOSITORYCOLLABORATOR
+            state:
+              type: string
+              enum:
+                - AWAITED
+                - ACCEPTED
+                - REJECTED
+              default: AWAITED
+            message:
+              type: string
+            expiry:
+              type: string
+              format: int64
+            createdAt:
+              type: string
+              format: int64
       pagination:
         type: object
         properties:
@@ -25650,8 +26451,19 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
+            requests:
+              type: object
+              properties:
+                sent:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
+                received:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
   gitopia.gitopia.gitopia.QueryAllUserResponse:
     type: object
     properties:
@@ -25717,8 +26529,19 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
+            requests:
+              type: object
+              properties:
+                sent:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
+                received:
+                  type: array
+                  items:
+                    type: string
+                    format: uint64
       pagination:
         type: object
         properties:
@@ -25940,8 +26763,11 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-          extensions:
-            type: string
+          sentRequests:
+            type: array
+            items:
+              type: string
+              format: uint64
   gitopia.gitopia.gitopia.QueryGetAllBranchResponse:
     type: object
     properties:
@@ -26085,8 +26911,6 @@ definitions:
               - ISSUE
               - PULLREQUEST
             default: ISSUE
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetIssueResponse:
     type: object
     properties:
@@ -26149,8 +26973,6 @@ definitions:
             type: string
             format: int64
           closedBy:
-            type: string
-          extensions:
             type: string
   gitopia.gitopia.gitopia.QueryGetLatestRepositoryReleaseResponse:
     type: object
@@ -26272,8 +27094,19 @@ definitions:
           updatedAt:
             type: string
             format: int64
-          extensions:
-            type: string
+          requests:
+            type: object
+            properties:
+              sent:
+                type: array
+                items:
+                  type: string
+                  format: uint64
+              received:
+                type: array
+                items:
+                  type: string
+                  format: uint64
   gitopia.gitopia.gitopia.QueryGetPullRequestResponse:
     type: object
     properties:
@@ -26482,8 +27315,6 @@ definitions:
             type: string
             format: int64
           closedBy:
-            type: string
-          extensions:
             type: string
   gitopia.gitopia.gitopia.QueryGetRepositoryPullRequestResponse:
     type: object
@@ -26788,8 +27619,45 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-          extensions:
+          sentRequests:
+            type: array
+            items:
+              type: string
+              format: uint64
+  gitopia.gitopia.gitopia.QueryGetRequestResponse:
+    type: object
+    properties:
+      Request:
+        type: object
+        properties:
+          id:
             type: string
+            format: uint64
+          source:
+            type: string
+          target:
+            type: string
+          requestType:
+            type: string
+            enum:
+              - UPDATEREPOSITORYCOLLABORATOR
+              - UPDATEDAOMEMBER
+            default: UPDATEREPOSITORYCOLLABORATOR
+          state:
+            type: string
+            enum:
+              - AWAITED
+              - ACCEPTED
+              - REJECTED
+            default: AWAITED
+          message:
+            type: string
+          expiry:
+            type: string
+            format: int64
+          createdAt:
+            type: string
+            format: int64
   gitopia.gitopia.gitopia.QueryGetTagShaResponse:
     type: object
     properties:
@@ -26858,8 +27726,19 @@ definitions:
           updatedAt:
             type: string
             format: int64
-          extensions:
-            type: string
+          requests:
+            type: object
+            properties:
+              sent:
+                type: array
+                items:
+                  type: string
+                  format: uint64
+              received:
+                type: array
+                items:
+                  type: string
+                  format: uint64
   gitopia.gitopia.gitopia.QueryGetWhoisResponse:
     type: object
     properties:
@@ -27074,8 +27953,11 @@ definitions:
               default: READ
       allowForking:
         type: boolean
-      extensions:
-        type: string
+      sentRequests:
+        type: array
+        items:
+          type: string
+          format: uint64
   gitopia.gitopia.gitopia.RepositoryBranch:
     type: object
     properties:
@@ -27209,6 +28091,72 @@ definitions:
       lastUpdatedAt:
         type: string
         format: int64
+  gitopia.gitopia.gitopia.Request:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      source:
+        type: string
+      target:
+        type: string
+      requestType:
+        type: string
+        enum:
+          - UPDATEREPOSITORYCOLLABORATOR
+          - UPDATEDAOMEMBER
+        default: UPDATEREPOSITORYCOLLABORATOR
+      state:
+        type: string
+        enum:
+          - AWAITED
+          - ACCEPTED
+          - REJECTED
+        default: AWAITED
+      message:
+        type: string
+      expiry:
+        type: string
+        format: int64
+      createdAt:
+        type: string
+        format: int64
+  gitopia.gitopia.gitopia.Request.State:
+    type: string
+    enum:
+      - AWAITED
+      - ACCEPTED
+      - REJECTED
+    default: AWAITED
+  gitopia.gitopia.gitopia.Request.Type:
+    type: string
+    enum:
+      - UPDATEREPOSITORYCOLLABORATOR
+      - UPDATEDAOMEMBER
+    default: UPDATEREPOSITORYCOLLABORATOR
+  gitopia.gitopia.gitopia.RequestOptions:
+    type: object
+    properties:
+      state:
+        type: string
+      includeExpired:
+        type: boolean
+      sort:
+        type: string
+  gitopia.gitopia.gitopia.Requests:
+    type: object
+    properties:
+      sent:
+        type: array
+        items:
+          type: string
+          format: uint64
+      received:
+        type: array
+        items:
+          type: string
+          format: uint64
   gitopia.gitopia.gitopia.User:
     type: object
     properties:
@@ -27269,8 +28217,19 @@ definitions:
       updatedAt:
         type: string
         format: int64
-      extensions:
-        type: string
+      requests:
+        type: object
+        properties:
+          sent:
+            type: array
+            items:
+              type: string
+              format: uint64
+          received:
+            type: array
+            items:
+              type: string
+              format: uint64
   gitopia.gitopia.gitopia.UserOrganization:
     type: object
     properties:

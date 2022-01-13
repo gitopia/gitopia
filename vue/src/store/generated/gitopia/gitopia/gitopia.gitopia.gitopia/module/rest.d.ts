@@ -35,7 +35,6 @@ export interface GitopiaComment {
     /** @format int64 */
     updatedAt?: string;
     commentType?: GitopiaCommentType;
-    extensions?: string;
 }
 export declare enum GitopiaCommentType {
     ISSUE = "ISSUE",
@@ -67,7 +66,6 @@ export interface GitopiaIssue {
     /** @format int64 */
     closedAt?: string;
     closedBy?: string;
-    extensions?: string;
 }
 export interface GitopiaIssueOptions {
     createdBy?: string;
@@ -92,6 +90,7 @@ export declare type GitopiaMsgAddPullRequestAssigneesResponse = object;
 export declare type GitopiaMsgAddPullRequestLabelsResponse = object;
 export declare type GitopiaMsgAddPullRequestReviewersResponse = object;
 export declare type GitopiaMsgChangeOwnerResponse = object;
+export declare type GitopiaMsgChangeRequestStateResponse = object;
 export interface GitopiaMsgCreateCommentResponse {
     /** @format uint64 */
     id?: string;
@@ -124,6 +123,10 @@ export interface GitopiaMsgCreateRepositoryResponse {
     id?: string;
     name?: string;
 }
+export interface GitopiaMsgCreateRequestResponse {
+    /** @format uint64 */
+    id?: string;
+}
 export interface GitopiaMsgCreateUserResponse {
     id?: string;
 }
@@ -135,6 +138,7 @@ export declare type GitopiaMsgDeletePullRequestResponse = object;
 export declare type GitopiaMsgDeleteReleaseResponse = object;
 export declare type GitopiaMsgDeleteRepositoryLabelResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
+export declare type GitopiaMsgDeleteRequestResponse = object;
 export declare type GitopiaMsgDeleteTagResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
 export declare type GitopiaMsgDeleteWhoisResponse = object;
@@ -178,6 +182,7 @@ export declare type GitopiaMsgUpdateReleaseResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
 export declare type GitopiaMsgUpdateRepositoryResponse = object;
+export declare type GitopiaMsgUpdateRequestResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
 export interface GitopiaOrganization {
@@ -201,7 +206,7 @@ export interface GitopiaOrganization {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    extensions?: string;
+    requests?: GitopiaRequests;
 }
 export interface GitopiaOrganizationMember {
     id?: string;
@@ -278,6 +283,19 @@ export declare enum GitopiaPullRequestState {
 }
 export interface GitopiaQueryAllAddressRepositoryResponse {
     Repository?: GitopiaRepository[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface GitopiaQueryAllAddressRequestReceivedResponse {
+    Request?: GitopiaRequest[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -393,8 +411,34 @@ export interface GitopiaQueryAllRepositoryReleaseResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface GitopiaQueryAllRepositoryRequestResponse {
+    Request?: GitopiaRequest[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface GitopiaQueryAllRepositoryResponse {
     Repository?: GitopiaRepository[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface GitopiaQueryAllRequestResponse {
+    Request?: GitopiaRequest[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -490,6 +534,9 @@ export interface GitopiaQueryGetRepositoryReleaseResponse {
 export interface GitopiaQueryGetRepositoryResponse {
     Repository?: GitopiaRepository;
 }
+export interface GitopiaQueryGetRequestResponse {
+    Request?: GitopiaRequest;
+}
 export interface GitopiaQueryGetTagShaResponse {
     sha?: string;
 }
@@ -557,7 +604,7 @@ export interface GitopiaRepository {
     fork?: boolean;
     collaborators?: GitopiaRepositoryCollaborator[];
     allowForking?: boolean;
-    extensions?: string;
+    sentRequests?: string[];
 }
 export interface GitopiaRepositoryBranch {
     name?: string;
@@ -623,6 +670,37 @@ export interface GitopiaRepositoryTag {
     /** @format int64 */
     lastUpdatedAt?: string;
 }
+export interface GitopiaRequest {
+    /** @format uint64 */
+    id?: string;
+    source?: string;
+    target?: string;
+    requestType?: GitopiaRequestType;
+    state?: GitopiaRequestState;
+    message?: string;
+    /** @format int64 */
+    expiry?: string;
+    /** @format int64 */
+    createdAt?: string;
+}
+export interface GitopiaRequestOptions {
+    state?: string;
+    includeExpired?: boolean;
+    sort?: string;
+}
+export declare enum GitopiaRequestState {
+    AWAITED = "AWAITED",
+    ACCEPTED = "ACCEPTED",
+    REJECTED = "REJECTED"
+}
+export declare enum GitopiaRequestType {
+    UPDATEREPOSITORYCOLLABORATOR = "UPDATEREPOSITORYCOLLABORATOR",
+    UPDATEDAOMEMBER = "UPDATEDAOMEMBER"
+}
+export interface GitopiaRequests {
+    sent?: string[];
+    received?: string[];
+}
 export interface GitopiaUser {
     creator?: string;
     /** @format uint64 */
@@ -643,7 +721,7 @@ export interface GitopiaUser {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    extensions?: string;
+    requests?: GitopiaRequests;
 }
 export interface GitopiaUserOrganization {
     name?: string;
@@ -968,6 +1046,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryRequestAll
+     * @summary Queries a list of request items.
+     * @request GET:/gitopia/gitopia/gitopia/request
+     */
+    queryRequestAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRequestResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRequest
+     * @summary Queries a request by id.
+     * @request GET:/gitopia/gitopia/gitopia/request/{id}
+     */
+    queryRequest: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRequestResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryUserAll
      * @summary Queries a list of user items.
      * @request GET:/gitopia/gitopia/gitopia/user
@@ -1040,6 +1142,23 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryAddressRequestReceivedAll
+     * @request GET:/gitopia/gitopia/gitopia/{address}/request
+     */
+    queryAddressRequestReceivedAll: (address: string, query?: {
+        "option.state"?: string;
+        "option.includeExpired"?: boolean;
+        "option.sort"?: string;
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllAddressRequestReceivedResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryRepositoryIssueAll
      * @summary Queries a list of repository items.
      * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
@@ -1069,6 +1188,23 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}
      */
     queryRepositoryIssue: (id: string, repositoryName: string, issueIid: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryIssueResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRepositoryRequestAll
+     * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/request
+     */
+    queryRepositoryRequestAll: (id: string, repositoryName: string, query?: {
+        "option.state"?: string;
+        "option.includeExpired"?: boolean;
+        "option.sort"?: string;
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllRepositoryRequestResponse, RpcStatus>>;
     /**
      * No description
      *

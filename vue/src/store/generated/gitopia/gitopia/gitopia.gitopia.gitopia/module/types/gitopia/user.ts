@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Requests } from "../gitopia/request";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -21,7 +22,7 @@ export interface User {
   bio: string;
   createdAt: number;
   updatedAt: number;
-  extensions: string;
+  requests: Requests | undefined;
 }
 
 export interface UserRepository {
@@ -49,7 +50,6 @@ const baseUser: object = {
   bio: "",
   createdAt: 0,
   updatedAt: 0,
-  extensions: "",
 };
 
 export const User = {
@@ -104,8 +104,8 @@ export const User = {
     if (message.updatedAt !== 0) {
       writer.uint32(128).int64(message.updatedAt);
     }
-    if (message.extensions !== "") {
-      writer.uint32(138).string(message.extensions);
+    if (message.requests !== undefined) {
+      Requests.encode(message.requests, writer.uint32(138).fork()).ldelim();
     }
     return writer;
   },
@@ -182,7 +182,7 @@ export const User = {
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
         case 17:
-          message.extensions = reader.string();
+          message.requests = Requests.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -279,10 +279,10 @@ export const User = {
     } else {
       message.updatedAt = 0;
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
+    if (object.requests !== undefined && object.requests !== null) {
+      message.requests = Requests.fromJSON(object.requests);
     } else {
-      message.extensions = "";
+      message.requests = undefined;
     }
     return message;
   },
@@ -331,7 +331,10 @@ export const User = {
     message.bio !== undefined && (obj.bio = message.bio);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
+    message.requests !== undefined &&
+      (obj.requests = message.requests
+        ? Requests.toJSON(message.requests)
+        : undefined);
     return obj;
   },
 
@@ -422,10 +425,10 @@ export const User = {
     } else {
       message.updatedAt = 0;
     }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
+    if (object.requests !== undefined && object.requests !== null) {
+      message.requests = Requests.fromPartial(object.requests);
     } else {
-      message.extensions = "";
+      message.requests = undefined;
     }
     return message;
   },

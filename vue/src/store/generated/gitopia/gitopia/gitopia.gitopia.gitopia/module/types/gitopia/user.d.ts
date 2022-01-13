@@ -1,4 +1,5 @@
 import { Writer, Reader } from "protobufjs/minimal";
+import { Requests } from "../gitopia/request";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface User {
     creator: string;
@@ -17,7 +18,7 @@ export interface User {
     bio: string;
     createdAt: number;
     updatedAt: number;
-    extensions: string;
+    requests: Requests | undefined;
 }
 export interface UserRepository {
     name: string;

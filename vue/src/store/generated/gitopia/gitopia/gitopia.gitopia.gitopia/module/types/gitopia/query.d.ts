@@ -1,6 +1,7 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Release } from "../gitopia/release";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Request } from "../gitopia/request";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -9,6 +10,43 @@ import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag } from "..
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
+export interface QueryAllAddressRequestReceivedRequest {
+    address: string;
+    option: RequestOptions | undefined;
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllAddressRequestReceivedResponse {
+    Request: Request[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryAllRepositoryRequestRequest {
+    id: string;
+    repositoryName: string;
+    option: RequestOptions | undefined;
+    pagination: PageRequest | undefined;
+}
+export interface RequestOptions {
+    state: string;
+    includeExpired: boolean;
+    sort: string;
+}
+export interface QueryAllRepositoryRequestResponse {
+    Request: Request[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetRequestRequest {
+    id: number;
+}
+export interface QueryGetRequestResponse {
+    Request: Request | undefined;
+}
+export interface QueryAllRequestRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRequestResponse {
+    Request: Request[];
+    pagination: PageResponse | undefined;
+}
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
     id: number;
@@ -264,6 +302,69 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryAllAddressRequestReceivedRequest: {
+    encode(message: QueryAllAddressRequestReceivedRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllAddressRequestReceivedRequest;
+    fromJSON(object: any): QueryAllAddressRequestReceivedRequest;
+    toJSON(message: QueryAllAddressRequestReceivedRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllAddressRequestReceivedRequest>): QueryAllAddressRequestReceivedRequest;
+};
+export declare const QueryAllAddressRequestReceivedResponse: {
+    encode(message: QueryAllAddressRequestReceivedResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllAddressRequestReceivedResponse;
+    fromJSON(object: any): QueryAllAddressRequestReceivedResponse;
+    toJSON(message: QueryAllAddressRequestReceivedResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllAddressRequestReceivedResponse>): QueryAllAddressRequestReceivedResponse;
+};
+export declare const QueryAllRepositoryRequestRequest: {
+    encode(message: QueryAllRepositoryRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryRequestRequest;
+    fromJSON(object: any): QueryAllRepositoryRequestRequest;
+    toJSON(message: QueryAllRepositoryRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryRequestRequest>): QueryAllRepositoryRequestRequest;
+};
+export declare const RequestOptions: {
+    encode(message: RequestOptions, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RequestOptions;
+    fromJSON(object: any): RequestOptions;
+    toJSON(message: RequestOptions): unknown;
+    fromPartial(object: DeepPartial<RequestOptions>): RequestOptions;
+};
+export declare const QueryAllRepositoryRequestResponse: {
+    encode(message: QueryAllRepositoryRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRepositoryRequestResponse;
+    fromJSON(object: any): QueryAllRepositoryRequestResponse;
+    toJSON(message: QueryAllRepositoryRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRepositoryRequestResponse>): QueryAllRepositoryRequestResponse;
+};
+export declare const QueryGetRequestRequest: {
+    encode(message: QueryGetRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRequestRequest;
+    fromJSON(object: any): QueryGetRequestRequest;
+    toJSON(message: QueryGetRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRequestRequest>): QueryGetRequestRequest;
+};
+export declare const QueryGetRequestResponse: {
+    encode(message: QueryGetRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRequestResponse;
+    fromJSON(object: any): QueryGetRequestResponse;
+    toJSON(message: QueryGetRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRequestResponse>): QueryGetRequestResponse;
+};
+export declare const QueryAllRequestRequest: {
+    encode(message: QueryAllRequestRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRequestRequest;
+    fromJSON(object: any): QueryAllRequestRequest;
+    toJSON(message: QueryAllRequestRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRequestRequest>): QueryAllRequestRequest;
+};
+export declare const QueryAllRequestResponse: {
+    encode(message: QueryAllRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRequestResponse;
+    fromJSON(object: any): QueryAllRequestResponse;
+    toJSON(message: QueryAllRequestResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRequestResponse>): QueryAllRequestResponse;
+};
 export declare const QueryGetReleaseRequest: {
     encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
@@ -721,6 +822,10 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
+    /** Queries a request by id. */
+    Request(request: QueryGetRequestRequest): Promise<QueryGetRequestResponse>;
+    /** Queries a list of request items. */
+    RequestAll(request: QueryAllRequestRequest): Promise<QueryAllRequestResponse>;
     /** Queries a release by id. */
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     /** Queries a list of release items. */
@@ -751,6 +856,7 @@ export interface Query {
     /** Queries a repository pullRequest by id. */
     RepositoryPullRequest(request: QueryGetRepositoryPullRequestRequest): Promise<QueryGetRepositoryPullRequestResponse>;
     RepositoryPullRequestAll(request: QueryAllRepositoryPullRequestRequest): Promise<QueryAllRepositoryPullRequestResponse>;
+    RepositoryRequestAll(request: QueryAllRepositoryRequestRequest): Promise<QueryAllRepositoryRequestResponse>;
     /** Queries a repository by id. */
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     /** Queries a list of repository items. */
@@ -770,6 +876,7 @@ export interface Query {
     AddressRepositoryAll(request: QueryAllAddressRepositoryRequest): Promise<QueryAllAddressRepositoryResponse>;
     /** Queries a repository by user id and repository name */
     AddressRepository(request: QueryGetAddressRepositoryRequest): Promise<QueryGetAddressRepositoryResponse>;
+    AddressRequestReceivedAll(request: QueryAllAddressRequestReceivedRequest): Promise<QueryAllAddressRequestReceivedResponse>;
     /** Queries a list of user Organizations. */
     UserOrganizationAll(request: QueryAllUserOrganizationRequest): Promise<QueryAllUserOrganizationResponse>;
     /** Queries a whois by id. */
@@ -780,6 +887,8 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    Request(request: QueryGetRequestRequest): Promise<QueryGetRequestResponse>;
+    RequestAll(request: QueryAllRequestRequest): Promise<QueryAllRequestResponse>;
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
@@ -797,6 +906,7 @@ export declare class QueryClientImpl implements Query {
     RepositoryIssueAll(request: QueryAllRepositoryIssueRequest): Promise<QueryAllRepositoryIssueResponse>;
     RepositoryPullRequest(request: QueryGetRepositoryPullRequestRequest): Promise<QueryGetRepositoryPullRequestResponse>;
     RepositoryPullRequestAll(request: QueryAllRepositoryPullRequestRequest): Promise<QueryAllRepositoryPullRequestResponse>;
+    RepositoryRequestAll(request: QueryAllRepositoryRequestRequest): Promise<QueryAllRepositoryRequestResponse>;
     Repository(request: QueryGetRepositoryRequest): Promise<QueryGetRepositoryResponse>;
     RepositoryAll(request: QueryAllRepositoryRequest): Promise<QueryAllRepositoryResponse>;
     ForkAll(request: QueryGetAllForkRequest): Promise<QueryGetAllForkResponse>;
@@ -808,6 +918,7 @@ export declare class QueryClientImpl implements Query {
     UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
     AddressRepositoryAll(request: QueryAllAddressRepositoryRequest): Promise<QueryAllAddressRepositoryResponse>;
     AddressRepository(request: QueryGetAddressRepositoryRequest): Promise<QueryGetAddressRepositoryResponse>;
+    AddressRequestReceivedAll(request: QueryAllAddressRequestReceivedRequest): Promise<QueryAllAddressRequestReceivedResponse>;
     UserOrganizationAll(request: QueryAllUserOrganizationRequest): Promise<QueryAllUserOrganizationResponse>;
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;

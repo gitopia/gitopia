@@ -18,7 +18,6 @@ export interface Issue {
     updatedAt: number;
     closedAt: number;
     closedBy: string;
-    extensions: string;
 }
 export declare enum Issue_State {
     OPEN = 0,
