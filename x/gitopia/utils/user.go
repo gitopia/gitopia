@@ -30,3 +30,12 @@ func UserOrganizationIdExists(r []*types.UserOrganization, val string) (int, boo
 	}
 	return 0, false
 }
+
+func UserRequestIdExists(r []uint64, val uint64) (int, bool) {
+	for i, v := range r {
+		if v == val {
+			return i, true
+		}
+	}
+	return 0, false
+}

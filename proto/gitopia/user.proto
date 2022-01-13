@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
+import "gitopia/request.proto";
 
 message User {
   string creator = 1;
@@ -22,7 +23,7 @@ message User {
   string bio = 14; 
   int64 createdAt = 15; 
   int64 updatedAt = 16; 
-  string extensions = 17;
+  Requests requests = 17;
 }
 
 message UserRepository {

@@ -34,7 +34,7 @@ message Repository {
   bool fork = 26;
   repeated RepositoryCollaborator collaborators = 27;
   bool allowForking = 28;
-  string extensions = 29;
+  repeated uint64 sentRequests = 29;
 }
 
 message RepositoryOwner {

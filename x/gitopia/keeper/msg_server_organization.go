@@ -52,6 +52,7 @@ func (k msgServer) CreateOrganization(goCtx context.Context, msg *types.MsgCreat
 		UpdatedAt:   updatedAt,
 		Members:     members,
 		Verified:    verified,
+		Requests:    &types.Requests{},
 	}
 
 	id := k.AppendOrganization(

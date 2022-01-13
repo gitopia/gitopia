@@ -1,6 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
+import "gitopia/request.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
@@ -16,7 +17,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
-    // this line is used by starport scaffolding # genesis/proto/state
+  // this line is used by starport scaffolding # genesis/proto/state
+    	repeated Request requestList = 17 [(gogoproto.nullable) = false];
+  		uint64 requestCount = 18;
 		repeated Release releaseList = 15 [(gogoproto.nullable) = false];
 		uint64 releaseCount = 16;
 		repeated PullRequest pullRequestList = 13 [(gogoproto.nullable) = false];

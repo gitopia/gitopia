@@ -1,0 +1,31 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message Request {
+  uint64 id = 1;
+  string source = 2; 
+  string target = 3; 
+  enum Type {
+    UPDATEREPOSITORYCOLLABORATOR = 0;
+    UPDATEDAOMEMBER = 1;
+  }
+  Type requestType = 4; 
+  enum State {
+    AWAITED = 0;
+    ACCEPTED = 1;
+	  REJECTED = 2;
+  }
+  State state = 5; 
+  string message = 6; 
+  int64 expiry = 7;
+  int64 createdAt = 8; 
+}
+
+message Requests {
+  repeated uint64 sent = 1;
+  repeated uint64 received = 2;
+}

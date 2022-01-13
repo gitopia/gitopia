@@ -39,6 +39,7 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		Username:  "",
 		CreatedAt: createdAt,
 		UpdatedAt: createdAt,
+		Requests:  &types.Requests{},
 	}
 
 	id := k.AppendUser(

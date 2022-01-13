@@ -64,3 +64,8 @@ const (
 	ReleaseKey      = "Release-value-"
 	ReleaseCountKey = "Release-count-"
 )
+
+const (
+	RequestKey      = "Request-value-"
+	RequestCountKey = "Request-count-"
+)

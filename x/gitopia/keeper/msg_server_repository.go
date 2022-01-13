@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -474,7 +475,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	_, found = k.GetUser(ctx, msg.User)
+	targetUser, found := k.GetUser(ctx, msg.User)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
 	}
@@ -488,37 +489,20 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
 	}
 
-	ownerId := repository.Owner.Id
-	ownerType := repository.Owner.Type
+	var organization types.Organization
 
-	var havePermission bool = false
-
-	if ownerType == types.RepositoryOwner_USER {
-		if msg.Creator == ownerId {
-			havePermission = true
-		}
-	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
-		organization, found := k.GetOrganization(ctx, ownerId)
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", ownerId))
-		}
-
-		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
-			if organization.Members[i].Role == types.OrganizationMember_OWNER {
-				havePermission = true
-			}
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
 		}
 	}
 
-	if !havePermission {
-		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.Creator); exists {
-			if repository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
-				havePermission = true
-			}
-		}
+	allowed := []types.RepositoryCollaborator_Permission{
+		types.RepositoryCollaborator_ADMIN,
 	}
 
-	if !havePermission {
+	if !utils.HavePermission(repository, allowed, msg.Creator, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -536,14 +520,50 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
 	}
 
-	var repositoryCollaborator = types.RepositoryCollaborator{
-		Id:         msg.User,
-		Permission: types.RepositoryCollaborator_Permission(permission),
+	/* Create Request */
+
+	requestMsg, err := json.Marshal(msg)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "unable to marshal request msg")
 	}
 
-	repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
-	repository.UpdatedAt = currentTime
+	request := types.Request{
+		Source:      msg.Creator,
+		Target:      msg.User,
+		RequestType: types.Request_UPDATEREPOSITORYCOLLABORATOR,
+		Message:     string(requestMsg),
+		State:       types.Request_AWAITED,
+		CreatedAt:   currentTime,
+		Expiry:      currentTime + utils.OneDay*7,
+	}
 
+	repositoryRequestCount := len(repository.SentRequests)
+	repositoryRequestIds := repository.SentRequests
+	for i := repositoryRequestCount - 1; i >= 0; i-- {
+		r, found := k.GetRequest(ctx, repositoryRequestIds[i])
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("request id (%v) doesn't exist", repositoryRequestIds[i]))
+		}
+		if currentTime-r.Expiry > 0 {
+			break
+		}
+		if r.Target == request.Target {
+			var rm types.MsgUpdateRepositoryCollaborator
+			json.Unmarshal([]byte(request.Message), &rm)
+			if r.RequestType == request.RequestType && r.State == types.Request_AWAITED {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "duplicate request")
+			}
+		}
+	}
+
+	requestId := k.AppendRequest(
+		ctx,
+		request,
+	)
+
+	targetUser.Requests.Received = append(targetUser.Requests.Received, requestId)
+	repository.SentRequests = append(repository.SentRequests, requestId)
+	k.SetUser(ctx, targetUser)
 	k.SetRepository(ctx, repository)
 
 	return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil

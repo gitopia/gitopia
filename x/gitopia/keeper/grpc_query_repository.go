@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	ks "github.com/cosmos/cosmos-sdk/store/types"
@@ -342,6 +343,52 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 	}
 
 	return nil, sdkerrors.ErrKeyNotFound
+}
+
+func (k Keeper) RepositoryRequestAll(c context.Context, req *types.QueryAllRepositoryRequestRequest) (*types.QueryAllRepositoryRequestResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	var repository types.Repository
+	var requests []*types.Request
+	var pageRes *query.PageResponse
+	ctx := sdk.UnwrapSDKContext(c)
+
+	user, userFound := k.GetUser(ctx, req.Id)
+	organization, organizationFound := k.GetOrganization(ctx, req.Id)
+	if userFound {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if organizationFound {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	if repository.Creator != "" {
+		requestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RequestKey))
+
+		var err error
+		pageRes, err = PaginateAllRepositoryRequest(k, ctx, requestStore, repository, req.Pagination, req.Option, func(request types.Request) error {
+			requests = append(requests, &request)
+			return nil
+		})
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+	}
+
+	return &types.QueryAllRepositoryRequestResponse{Request: requests, Pagination: pageRes}, nil
 }
 
 func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*types.QueryGetAllForkResponse, error) {
@@ -1146,6 +1193,135 @@ func PaginateAllRepositoryPullRequest(
 	res := &query.PageResponse{NextKey: nextKey}
 	if countTotal {
 		res.Total = totalPullRequestCount
+	}
+
+	return res, nil
+}
+
+func PaginateAllRepositoryRequest(
+	k Keeper,
+	ctx sdk.Context,
+	requestStore ks.KVStore,
+	repository types.Repository,
+	pageRequest *query.PageRequest,
+	option *types.RequestOptions,
+	onResult func(request types.Request) error,
+) (*query.PageResponse, error) {
+
+	totalRequestCount := uint64(len(repository.SentRequests))
+	requestIds := repository.SentRequests
+	var requests []*types.Request
+
+	if option == nil {
+		option = &types.RequestOptions{}
+	}
+
+	if option.Sort != "ASC" {
+		sort.Sort(sort.Reverse(utils.UInt64Slice(requestIds)))
+	}
+
+	if option.Sort == "ASC" && option.IncludeExpired == false {
+		return nil, fmt.Errorf("invalid request, IncludeExpired expected to be true in case of ascending sort")
+	}
+
+	currentTime := time.Now().Unix()
+
+	if option.IncludeExpired {
+		for i := 0; uint64(i) < uint64(totalRequestCount); i++ {
+			var request types.Request
+			k.cdc.MustUnmarshal(requestStore.Get(GetRepositoryIDBytes(requestIds[uint64(i)])), &request)
+			if request.Expiry-currentTime > 0 {
+				requests = append(requests, &request)
+			} else {
+				break
+			}
+		}
+		totalRequestCount = uint64(len(requests))
+	} else {
+		for i := 0; uint64(i) < uint64(totalRequestCount); i++ {
+			var request types.Request
+			k.cdc.MustUnmarshal(requestStore.Get(GetRepositoryIDBytes(requestIds[uint64(i)])), &request)
+			requests = append(requests, &request)
+		}
+		totalRequestCount = uint64(len(requests))
+	}
+
+	if option.State != "" {
+		var requestBuffer []*types.Request
+		for i := 0; uint64(i) < uint64(totalRequestCount); i++ {
+			var request types.Request
+			k.cdc.MustUnmarshal(requestStore.Get(GetRepositoryIDBytes(requestIds[uint64(i)])), &request)
+			if request.State.String() == option.State {
+				requestBuffer = append(requestBuffer, &request)
+			}
+		}
+		requests = requestBuffer
+		totalRequestCount = uint64(len(requestBuffer))
+	}
+
+	// if the PageRequest is nil, use default PageRequest
+	if pageRequest == nil {
+		pageRequest = &query.PageRequest{}
+	}
+
+	offset := pageRequest.Offset
+	key := pageRequest.Key
+	limit := pageRequest.Limit
+	countTotal := pageRequest.CountTotal
+
+	if offset > 0 && key != nil {
+		return nil, fmt.Errorf("invalid request, either offset or key is expected, got both")
+	}
+
+	if limit == 0 {
+		limit = DefaultLimit
+
+		// show total issue count when the limit is zero/not supplied
+		countTotal = true
+	}
+
+	if len(key) != 0 {
+
+		var count uint64
+		var nextKey []byte
+
+		for i := GetRequestIDFromBytes(key); uint64(i) < totalRequestCount; i++ {
+			if count == limit {
+				nextKey = GetRequestIDBytes(uint64(i))
+				break
+			}
+			err := onResult(*requests[i])
+			if err != nil {
+				return nil, err
+			}
+
+			count++
+		}
+
+		return &query.PageResponse{
+			NextKey: nextKey,
+		}, nil
+	}
+
+	end := offset + limit
+
+	var nextKey []byte
+
+	for i := offset; uint64(i) < totalRequestCount; i++ {
+		if uint64(i) < end {
+			err := onResult(*requests[i])
+			if err != nil {
+				return nil, err
+			}
+		} else if uint64(i) == end {
+			nextKey = GetIssueIDBytes(uint64(i))
+			break
+		}
+	}
+
+	res := &query.PageResponse{NextKey: nextKey}
+	if countTotal {
+		res.Total = totalRequestCount
 	}
 
 	return res, nil

@@ -1,6 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
+import "gitopia/request.proto";
 // this line is used by starport scaffolding # proto/tx/import
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
@@ -14,7 +15,11 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateRequest(MsgCreateRequest) returns (MsgCreateRequestResponse);
+  rpc UpdateRequest(MsgUpdateRequest) returns (MsgUpdateRequestResponse);
+  rpc ChangeRequestState(MsgChangeRequestState) returns (MsgChangeRequestStateResponse);
+  rpc DeleteRequest(MsgDeleteRequest) returns (MsgDeleteRequestResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
@@ -74,6 +79,41 @@ service Msg {
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
 }
+
+message MsgCreateRequest {
+  string source = 1;
+  string target = 2;
+  string requestType = 3;
+  string message = 5;
+  int64 expiry = 6;
+}
+
+message MsgCreateRequestResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateRequest {
+  string creator = 1;
+  uint64 id = 2;
+  string message = 3;
+}
+
+message MsgUpdateRequestResponse {}
+
+message MsgChangeRequestState {
+  string creator = 1;
+  uint64 id = 2;
+  string state = 3;
+}
+
+message MsgChangeRequestStateResponse {}
+
+message MsgDeleteRequest {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteRequestResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {

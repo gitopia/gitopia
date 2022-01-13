@@ -85,6 +85,15 @@ func RepositoryReleaseIdExists(r []*types.RepositoryRelease, val uint64) (int, b
 	return 0, false
 }
 
+func RepositoryRequestIdExists(r []uint64, val uint64) (int, bool) {
+	for i, v := range r {
+		if v == val {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
 func HaveRepositoryPermission(repository types.Repository, creator string, o interface{}) bool {
 	ownerId := repository.Owner.Id
 	ownerType := repository.Owner.Type
