@@ -249,13 +249,18 @@ func TestRepositoryMsgServerUpdateCollaborator(t *testing.T) {
 		},
 		{
 			desc:    "User Not Exists",
-			request: &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "C"},
+			request: &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "D"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized Self",
 			request: &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "A", Role: "READ"},
 			err:     sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc:    "Duplicate Request",
+			request: &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "C", Role: "READ"},
+			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -265,6 +270,10 @@ func TestRepositoryMsgServerUpdateCollaborator(t *testing.T) {
 			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
 			require.NoError(t, err)
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
+			require.NoError(t, err)
+			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "C"})
+			require.NoError(t, err)
+			_, err = srv.UpdateRepositoryCollaborator(ctx, &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "C", Role: "READ"})
 			require.NoError(t, err)
 
 			_, err = srv.UpdateRepositoryCollaborator(ctx, tc.request)
@@ -314,6 +323,8 @@ func TestRepositoryMsgServerRemoveCollaborator(t *testing.T) {
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
 			require.NoError(t, err)
 			_, err = srv.UpdateRepositoryCollaborator(ctx, &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "B", Role: "READ"})
+			require.NoError(t, err)
+			_, err = srv.ChangeRequestState(ctx, &types.MsgChangeRequestState{Id: 0, Creator: "B", State: "ACCEPTED"})
 			require.NoError(t, err)
 
 			_, err = srv.RemoveRepositoryCollaborator(ctx, tc.request)

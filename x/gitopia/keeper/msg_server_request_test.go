@@ -9,16 +9,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func TestRequestMsgServerCreate(t *testing.T) {
-	srv, ctx := setupMsgServer(t)
-	creator := "A"
-	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateRequest(ctx, &types.MsgCreateRequest{Source: creator})
-		require.NoError(t, err)
-		require.Equal(t, i, int(resp.Id))
-	}
-}
-
 func TestRequestMsgServerUpdate(t *testing.T) {
 	creator := "A"
 
@@ -29,22 +19,28 @@ func TestRequestMsgServerUpdate(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdateRequest{Creator: creator},
+			request: &types.MsgUpdateRequest{Id: 0, Creator: creator, Message: "{\"role\":\"TRIAGE\"}"},
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateRequest{Creator: "B"},
+			request: &types.MsgUpdateRequest{Id: 0, Creator: "B"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateRequest{Creator: creator, Id: 10},
+			request: &types.MsgUpdateRequest{Id: 10},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateRequest(ctx, &types.MsgCreateRequest{Source: creator})
+			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
+			require.NoError(t, err)
+			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
+			require.NoError(t, err)
+			_, err = srv.UpdateRepositoryCollaborator(ctx, &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "B", Role: "READ"})
 			require.NoError(t, err)
 
 			_, err = srv.UpdateRequest(ctx, tc.request)
@@ -67,24 +63,35 @@ func TestRequestMsgServerDelete(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgDeleteRequest{Creator: creator},
+			request: &types.MsgDeleteRequest{Id: 0, Creator: creator},
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgDeleteRequest{Creator: "B"},
+			request: &types.MsgDeleteRequest{Id: 0, Creator: "B"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
+			desc:    "Creator Not Exists",
+			request: &types.MsgDeleteRequest{Id: 0, Creator: "C"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
 			desc:    "KeyNotFound",
-			request: &types.MsgDeleteRequest{Creator: creator, Id: 10},
+			request: &types.MsgDeleteRequest{Id: 10},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			srv, ctx := setupMsgServer(t)
-
-			_, err := srv.CreateRequest(ctx, &types.MsgCreateRequest{Source: creator})
+			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
 			require.NoError(t, err)
+			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
+			require.NoError(t, err)
+			_, err = srv.UpdateRepositoryCollaborator(ctx, &types.MsgUpdateRepositoryCollaborator{Id: 0, Creator: "A", User: "B", Role: "READ"})
+			require.NoError(t, err)
+
 			_, err = srv.DeleteRequest(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
