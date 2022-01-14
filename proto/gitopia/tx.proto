@@ -15,7 +15,6 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc CreateRequest(MsgCreateRequest) returns (MsgCreateRequestResponse);
   rpc UpdateRequest(MsgUpdateRequest) returns (MsgUpdateRequestResponse);
   rpc ChangeRequestState(MsgChangeRequestState) returns (MsgChangeRequestStateResponse);
   rpc DeleteRequest(MsgDeleteRequest) returns (MsgDeleteRequestResponse);
@@ -78,18 +77,6 @@ service Msg {
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
-}
-
-message MsgCreateRequest {
-  string source = 1;
-  string target = 2;
-  string requestType = 3;
-  string message = 5;
-  int64 expiry = 6;
-}
-
-message MsgCreateRequestResponse {
-  uint64 id = 1;
 }
 
 message MsgUpdateRequest {

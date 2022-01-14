@@ -3,7 +3,6 @@ package cli
 import (
 	"strconv"
 
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -11,38 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
-
-func CmdCreateRequest() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "create-request [target] [request-type] [state] [expiry]",
-		Short: "Create a new request",
-		Args:  cobra.ExactArgs(4),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTarget := args[0]
-			argRequestType := args[1]
-			argMessage := args[2]
-			argExpiry, err := cast.ToInt64E(args[3])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgCreateRequest(clientCtx.GetFromAddress().String(), argTarget, argRequestType, argMessage, argExpiry)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
 
 func CmdUpdateRequest() *cobra.Command {
 	cmd := &cobra.Command{

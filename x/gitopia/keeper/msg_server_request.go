@@ -11,27 +11,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
-func (k msgServer) CreateRequest(goCtx context.Context, msg *types.MsgCreateRequest) (*types.MsgCreateRequestResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	var request = types.Request{
-		Source:      msg.Source,
-		Target:      msg.Target,
-		RequestType: types.Request_Type(types.Request_Type_value[msg.RequestType]),
-		Message:     msg.Message,
-		Expiry:      msg.Expiry,
-	}
-
-	id := k.AppendRequest(
-		ctx,
-		request,
-	)
-
-	return &types.MsgCreateRequestResponse{
-		Id: id,
-	}, nil
-}
-
 func (k msgServer) UpdateRequest(goCtx context.Context, msg *types.MsgUpdateRequest) (*types.MsgUpdateRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
