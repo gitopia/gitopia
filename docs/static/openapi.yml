@@ -24693,12 +24693,6 @@ definitions:
         format: uint64
       name:
         type: string
-  gitopia.gitopia.gitopia.MsgCreateRequestResponse:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uint64
   gitopia.gitopia.gitopia.MsgCreateUserResponse:
     type: object
     properties:

@@ -1,15 +1,5 @@
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
-export interface MsgCreateRequest {
-    source: string;
-    target: string;
-    requestType: string;
-    message: string;
-    expiry: number;
-}
-export interface MsgCreateRequestResponse {
-    id: number;
-}
 export interface MsgUpdateRequest {
     creator: string;
     id: number;
@@ -503,20 +493,6 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
-export declare const MsgCreateRequest: {
-    encode(message: MsgCreateRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateRequest;
-    fromJSON(object: any): MsgCreateRequest;
-    toJSON(message: MsgCreateRequest): unknown;
-    fromPartial(object: DeepPartial<MsgCreateRequest>): MsgCreateRequest;
-};
-export declare const MsgCreateRequestResponse: {
-    encode(message: MsgCreateRequestResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateRequestResponse;
-    fromJSON(object: any): MsgCreateRequestResponse;
-    toJSON(message: MsgCreateRequestResponse): unknown;
-    fromPartial(object: DeepPartial<MsgCreateRequestResponse>): MsgCreateRequestResponse;
-};
 export declare const MsgUpdateRequest: {
     encode(message: MsgUpdateRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgUpdateRequest;
@@ -1373,7 +1349,6 @@ export declare const MsgDeleteWhoisResponse: {
 };
 /** Msg defines the Msg service. */
 export interface Msg {
-    CreateRequest(request: MsgCreateRequest): Promise<MsgCreateRequestResponse>;
     UpdateRequest(request: MsgUpdateRequest): Promise<MsgUpdateRequestResponse>;
     ChangeRequestState(request: MsgChangeRequestState): Promise<MsgChangeRequestStateResponse>;
     DeleteRequest(request: MsgDeleteRequest): Promise<MsgDeleteRequestResponse>;
@@ -1440,7 +1415,6 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
-    CreateRequest(request: MsgCreateRequest): Promise<MsgCreateRequestResponse>;
     UpdateRequest(request: MsgUpdateRequest): Promise<MsgUpdateRequestResponse>;
     ChangeRequestState(request: MsgChangeRequestState): Promise<MsgChangeRequestStateResponse>;
     DeleteRequest(request: MsgDeleteRequest): Promise<MsgDeleteRequestResponse>;

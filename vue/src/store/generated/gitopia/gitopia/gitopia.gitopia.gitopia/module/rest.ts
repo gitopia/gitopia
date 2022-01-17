@@ -174,11 +174,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
   name?: string;
 }
 
-export interface GitopiaMsgCreateRequestResponse {
-  /** @format uint64 */
-  id?: string;
-}
-
 export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }

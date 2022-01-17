@@ -4,18 +4,6 @@ import * as Long from "long";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
-export interface MsgCreateRequest {
-  source: string;
-  target: string;
-  requestType: string;
-  message: string;
-  expiry: number;
-}
-
-export interface MsgCreateRequestResponse {
-  id: number;
-}
-
 export interface MsgUpdateRequest {
   creator: string;
   id: number;
@@ -581,205 +569,6 @@ export interface MsgDeleteWhois {
 }
 
 export interface MsgDeleteWhoisResponse {}
-
-const baseMsgCreateRequest: object = {
-  source: "",
-  target: "",
-  requestType: "",
-  message: "",
-  expiry: 0,
-};
-
-export const MsgCreateRequest = {
-  encode(message: MsgCreateRequest, writer: Writer = Writer.create()): Writer {
-    if (message.source !== "") {
-      writer.uint32(10).string(message.source);
-    }
-    if (message.target !== "") {
-      writer.uint32(18).string(message.target);
-    }
-    if (message.requestType !== "") {
-      writer.uint32(26).string(message.requestType);
-    }
-    if (message.message !== "") {
-      writer.uint32(42).string(message.message);
-    }
-    if (message.expiry !== 0) {
-      writer.uint32(48).int64(message.expiry);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgCreateRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgCreateRequest } as MsgCreateRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.source = reader.string();
-          break;
-        case 2:
-          message.target = reader.string();
-          break;
-        case 3:
-          message.requestType = reader.string();
-          break;
-        case 5:
-          message.message = reader.string();
-          break;
-        case 6:
-          message.expiry = longToNumber(reader.int64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgCreateRequest {
-    const message = { ...baseMsgCreateRequest } as MsgCreateRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = String(object.source);
-    } else {
-      message.source = "";
-    }
-    if (object.target !== undefined && object.target !== null) {
-      message.target = String(object.target);
-    } else {
-      message.target = "";
-    }
-    if (object.requestType !== undefined && object.requestType !== null) {
-      message.requestType = String(object.requestType);
-    } else {
-      message.requestType = "";
-    }
-    if (object.message !== undefined && object.message !== null) {
-      message.message = String(object.message);
-    } else {
-      message.message = "";
-    }
-    if (object.expiry !== undefined && object.expiry !== null) {
-      message.expiry = Number(object.expiry);
-    } else {
-      message.expiry = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgCreateRequest): unknown {
-    const obj: any = {};
-    message.source !== undefined && (obj.source = message.source);
-    message.target !== undefined && (obj.target = message.target);
-    message.requestType !== undefined &&
-      (obj.requestType = message.requestType);
-    message.message !== undefined && (obj.message = message.message);
-    message.expiry !== undefined && (obj.expiry = message.expiry);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<MsgCreateRequest>): MsgCreateRequest {
-    const message = { ...baseMsgCreateRequest } as MsgCreateRequest;
-    if (object.source !== undefined && object.source !== null) {
-      message.source = object.source;
-    } else {
-      message.source = "";
-    }
-    if (object.target !== undefined && object.target !== null) {
-      message.target = object.target;
-    } else {
-      message.target = "";
-    }
-    if (object.requestType !== undefined && object.requestType !== null) {
-      message.requestType = object.requestType;
-    } else {
-      message.requestType = "";
-    }
-    if (object.message !== undefined && object.message !== null) {
-      message.message = object.message;
-    } else {
-      message.message = "";
-    }
-    if (object.expiry !== undefined && object.expiry !== null) {
-      message.expiry = object.expiry;
-    } else {
-      message.expiry = 0;
-    }
-    return message;
-  },
-};
-
-const baseMsgCreateRequestResponse: object = { id: 0 };
-
-export const MsgCreateRequestResponse = {
-  encode(
-    message: MsgCreateRequestResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgCreateRequestResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgCreateRequestResponse,
-    } as MsgCreateRequestResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgCreateRequestResponse {
-    const message = {
-      ...baseMsgCreateRequestResponse,
-    } as MsgCreateRequestResponse;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgCreateRequestResponse): unknown {
-    const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgCreateRequestResponse>
-  ): MsgCreateRequestResponse {
-    const message = {
-      ...baseMsgCreateRequestResponse,
-    } as MsgCreateRequestResponse;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-};
 
 const baseMsgUpdateRequest: object = { creator: "", id: 0, message: "" };
 
@@ -11072,7 +10861,6 @@ export const MsgDeleteWhoisResponse = {
 
 /** Msg defines the Msg service. */
 export interface Msg {
-  CreateRequest(request: MsgCreateRequest): Promise<MsgCreateRequestResponse>;
   UpdateRequest(request: MsgUpdateRequest): Promise<MsgUpdateRequestResponse>;
   ChangeRequestState(
     request: MsgChangeRequestState
@@ -11222,18 +11010,6 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
-  CreateRequest(request: MsgCreateRequest): Promise<MsgCreateRequestResponse> {
-    const data = MsgCreateRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "CreateRequest",
-      data
-    );
-    return promise.then((data) =>
-      MsgCreateRequestResponse.decode(new Reader(data))
-    );
-  }
-
   UpdateRequest(request: MsgUpdateRequest): Promise<MsgUpdateRequestResponse> {
     const data = MsgUpdateRequest.encode(request).finish();
     const promise = this.rpc.request(
