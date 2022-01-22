@@ -1,11 +1,11 @@
 {
-    "name": "gitopiajs",
+    "name": "@gitopia/gitopia-js",
     "version": "0.11.0",
-    "description": "",
+    "description": "Gitopia JavaScript API",
     "main": "index.js",
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
-    "license": "ISC"
+    "author": "gitopia.com",
+    "license": "LGPL-3.0"
   }
