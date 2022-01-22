@@ -98,7 +98,16 @@ func MigrateCmd() *cobra.Command {
 			var moduleAccounts []string
 			for i := range authGenesis.Accounts {
 				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
-					baseAccounts = append(baseAccounts, authGenesis.Accounts[i])
+					acc := authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI)
+					err = acc.SetSequence(0)
+					if err != nil {
+						return err
+					}
+					accAny, err := codectypes.NewAnyWithValue(acc)
+					if err != nil {
+						return err
+					}
+					baseAccounts = append(baseAccounts, accAny)
 				} else {
 					moduleAccounts = append(moduleAccounts, string(authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI).GetAddress().String()))
 				}
