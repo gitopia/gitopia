@@ -138,7 +138,7 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 		var release types.Release
 
 		releaseStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseKey))
-		k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(uint64(i))), &release)
+		k.cdc.MustUnmarshal(releaseStore.Get(GetReleaseIDBytes(repository.Releases[i].Id)), &release)
 
 		return &types.QueryGetRepositoryReleaseResponse{Release: &release}, nil
 	}
