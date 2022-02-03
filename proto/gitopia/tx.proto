@@ -23,8 +23,15 @@ service Msg {
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
+  rpc AddPullRequestReviewers(MsgAddPullRequestReviewers) returns (MsgAddPullRequestReviewersResponse);
+  rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
+  rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
+  rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
+  rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
+  rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
   rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
+  rpc RenameOrganization(MsgRenameOrganization) returns (MsgRenameOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
   rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
@@ -51,16 +58,18 @@ service Msg {
   rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
   rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
   rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
-  rpc CreateBranch(MsgCreateBranch) returns (MsgCreateBranchResponse);
+  rpc SetRepositoryBranch(MsgSetRepositoryBranch) returns (MsgSetRepositoryBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
-  rpc CreateTag(MsgCreateTag) returns (MsgCreateTagResponse);
+  rpc SetRepositoryTag(MsgSetRepositoryTag) returns (MsgSetRepositoryTagResponse);
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
+  rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
+  rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
@@ -114,6 +123,9 @@ message MsgCreatePullRequest {
   uint64 headRepoId = 5; 
   string baseBranch = 6;
   uint64 baseRepoId = 7; 
+  repeated string reviewers = 8;
+  repeated string assignees = 9;
+  repeated uint64 labelIds = 10;
 }
 
 message MsgCreatePullRequestResponse {
@@ -157,6 +169,54 @@ message MsgSetPullRequestStateResponse {
   string state = 1;
 }
 
+message MsgAddPullRequestReviewers {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string reviewers = 3;
+}
+
+message MsgAddPullRequestReviewersResponse { }
+
+message MsgRemovePullRequestReviewers {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string reviewers = 3;
+}
+
+message MsgRemovePullRequestReviewersResponse { }
+
+message MsgAddPullRequestAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgAddPullRequestAssigneesResponse { }
+
+message MsgRemovePullRequestAssignees {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string assignees = 3;
+}
+
+message MsgRemovePullRequestAssigneesResponse { }
+
+message MsgAddPullRequestLabels {
+  string creator = 1;
+  uint64 pullRequestId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgAddPullRequestLabelsResponse { }
+
+message MsgRemovePullRequestLabels {
+  string creator = 1;
+  uint64 pullRequestId = 2;
+  repeated uint64 labelIds = 3;
+}
+
+message MsgRemovePullRequestLabelsResponse { }
+
 message MsgDeletePullRequest {
   string creator = 1;
   uint64 id = 2;
@@ -173,6 +233,14 @@ message MsgCreateOrganization {
 message MsgCreateOrganizationResponse {
   string id = 1;
 }
+
+message MsgRenameOrganization {
+  string creator = 1;
+  string id = 2;
+  string name = 3;
+}
+
+message MsgRenameOrganizationResponse { }
 
 message MsgUpdateOrganizationMember {
   string creator = 1;
@@ -422,14 +490,14 @@ message MsgDeleteRepositoryLabel {
 
 message MsgDeleteRepositoryLabelResponse { }
 
-message MsgCreateBranch {
+message MsgSetRepositoryBranch {
   string creator = 1;
   uint64 id = 2;
   string name = 3;
   string commitSHA = 4;
 }
 
-message MsgCreateBranchResponse { }
+message MsgSetRepositoryBranchResponse { }
 
 message MsgSetDefaultBranch {
   string creator = 1;
@@ -447,14 +515,14 @@ message MsgDeleteBranch {
 
 message MsgDeleteBranchResponse { }
 
-message MsgCreateTag {
+message MsgSetRepositoryTag {
   string creator = 1;
   uint64 id = 2;
   string name = 3;
   string sha = 4;
 }
 
-message MsgCreateTagResponse { }
+message MsgSetRepositoryTagResponse { }
 
 message MsgDeleteTag {
   string creator = 1;
@@ -463,6 +531,15 @@ message MsgDeleteTag {
 }
 
 message MsgDeleteTagResponse { }
+
+message MsgToggleRepositoryForking {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgToggleRepositoryForkingResponse { 
+  bool allowForking = 1;
+}
 
 message MsgUpdateRepository {
   string creator = 1;
@@ -487,20 +564,6 @@ message MsgDeleteRepositoryResponse { }
 message MsgCreateUser {
   string creator = 1;
   string username = 2;
-  string usernameGithub = 3;
-  string avatarUrl = 4;
-  string followers = 5;
-  string following = 6;
-  string repositories = 7;
-  string repositories_archived = 8;
-  string organizations = 9;
-  string starred_repos = 10;
-  string subscriptions = 11;
-  string email = 12;
-  string bio = 13;
-  string createdAt = 14;
-  string updatedAt = 15;
-  string extensions = 16;
 }
 
 message MsgCreateUserResponse {
@@ -509,22 +572,11 @@ message MsgCreateUserResponse {
 
 message MsgUpdateUser {
   string creator = 1;
-  string id = 2;
-  string username = 3;
-  string usernameGithub = 4;
-  string avatarUrl = 5;
-  string followers = 6;
-  string following = 7;
-  string repositories = 8;
-  string repositories_archived = 9;
-  string organizations = 10;
-  string starred_repos = 11;
-  string subscriptions = 12;
-  string email = 13;
-  string bio = 14;
-  string createdAt = 15;
-  string updatedAt = 16;
-  string extensions = 17;
+  string name = 2;
+  string usernameGithub = 3;
+  string avatarUrl = 4;
+  string email = 5;
+  string bio = 6;
 }
 
 message MsgUpdateUserResponse { }
@@ -535,6 +587,13 @@ message MsgDeleteUser {
 }
 
 message MsgDeleteUserResponse { }
+
+message MsgTransferUser {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgTransferUserResponse { }
 
 message MsgSetWhois {
   string creator = 1;

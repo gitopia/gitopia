@@ -18,7 +18,7 @@ export interface GenesisState {
    */
   signingInfos: SigningInfo[];
   /**
-   * signing_infos represents a map between validator addresses and their
+   * missed_blocks represents a map between validator addresses and their
    * missed blocks.
    */
   missedBlocks: ValidatorMissedBlocks[];

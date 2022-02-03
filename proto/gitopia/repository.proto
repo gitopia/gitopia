@@ -33,7 +33,8 @@ message Repository {
   uint64 parent = 25;
   bool fork = 26;
   repeated RepositoryCollaborator collaborators = 27;
-  string extensions = 28;
+  bool allowForking = 28;
+  string extensions = 29;
 }
 
 message RepositoryOwner {
@@ -48,11 +49,13 @@ message RepositoryOwner {
 message RepositoryBranch {
   string name = 1;
   string sha = 2;
+  int64 lastUpdatedAt = 3;
 }
 
 message RepositoryTag {
   string name = 1;
   string sha = 2;
+  int64 lastUpdatedAt = 3;
 }
 
 message RepositoryIssue {

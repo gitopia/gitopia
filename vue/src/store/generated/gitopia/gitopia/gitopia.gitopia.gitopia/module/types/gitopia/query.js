@@ -7,7 +7,7 @@ import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository, RepositoryBranch, RepositoryTag, } from "../gitopia/repository";
+import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag, } from "../gitopia/repository";
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
@@ -2088,8 +2088,11 @@ export const QueryAllRepositoryIssueRequest = {
         if (message.repositoryName !== "") {
             writer.uint32(18).string(message.repositoryName);
         }
+        if (message.option !== undefined) {
+            IssueOptions.encode(message.option, writer.uint32(26).fork()).ldelim();
+        }
         if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+            PageRequest.encode(message.pagination, writer.uint32(34).fork()).ldelim();
         }
         return writer;
     },
@@ -2109,6 +2112,9 @@ export const QueryAllRepositoryIssueRequest = {
                     message.repositoryName = reader.string();
                     break;
                 case 3:
+                    message.option = IssueOptions.decode(reader, reader.uint32());
+                    break;
+                case 4:
                     message.pagination = PageRequest.decode(reader, reader.uint32());
                     break;
                 default:
@@ -2134,6 +2140,12 @@ export const QueryAllRepositoryIssueRequest = {
         else {
             message.repositoryName = "";
         }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = IssueOptions.fromJSON(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromJSON(object.pagination);
         }
@@ -2147,6 +2159,10 @@ export const QueryAllRepositoryIssueRequest = {
         message.id !== undefined && (obj.id = message.id);
         message.repositoryName !== undefined &&
             (obj.repositoryName = message.repositoryName);
+        message.option !== undefined &&
+            (obj.option = message.option
+                ? IssueOptions.toJSON(message.option)
+                : undefined);
         message.pagination !== undefined &&
             (obj.pagination = message.pagination
                 ? PageRequest.toJSON(message.pagination)
@@ -2169,11 +2185,248 @@ export const QueryAllRepositoryIssueRequest = {
         else {
             message.repositoryName = "";
         }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = IssueOptions.fromPartial(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromPartial(object.pagination);
         }
         else {
             message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseIssueOptions = {
+    createdBy: "",
+    state: "",
+    labels: "",
+    assignee: "",
+    labelIds: 0,
+    sort: "",
+    search: "",
+    updatedAfter: 0,
+    updatedBefore: 0,
+};
+export const IssueOptions = {
+    encode(message, writer = Writer.create()) {
+        if (message.createdBy !== "") {
+            writer.uint32(10).string(message.createdBy);
+        }
+        if (message.state !== "") {
+            writer.uint32(18).string(message.state);
+        }
+        if (message.labels !== "") {
+            writer.uint32(26).string(message.labels);
+        }
+        if (message.assignee !== "") {
+            writer.uint32(34).string(message.assignee);
+        }
+        writer.uint32(42).fork();
+        for (const v of message.labelIds) {
+            writer.uint64(v);
+        }
+        writer.ldelim();
+        if (message.sort !== "") {
+            writer.uint32(50).string(message.sort);
+        }
+        if (message.search !== "") {
+            writer.uint32(58).string(message.search);
+        }
+        if (message.updatedAfter !== 0) {
+            writer.uint32(64).int64(message.updatedAfter);
+        }
+        if (message.updatedBefore !== 0) {
+            writer.uint32(72).int64(message.updatedBefore);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseIssueOptions };
+        message.labelIds = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.createdBy = reader.string();
+                    break;
+                case 2:
+                    message.state = reader.string();
+                    break;
+                case 3:
+                    message.labels = reader.string();
+                    break;
+                case 4:
+                    message.assignee = reader.string();
+                    break;
+                case 5:
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labelIds.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labelIds.push(longToNumber(reader.uint64()));
+                    }
+                    break;
+                case 6:
+                    message.sort = reader.string();
+                    break;
+                case 7:
+                    message.search = reader.string();
+                    break;
+                case 8:
+                    message.updatedAfter = longToNumber(reader.int64());
+                    break;
+                case 9:
+                    message.updatedBefore = longToNumber(reader.int64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseIssueOptions };
+        message.labelIds = [];
+        if (object.createdBy !== undefined && object.createdBy !== null) {
+            message.createdBy = String(object.createdBy);
+        }
+        else {
+            message.createdBy = "";
+        }
+        if (object.state !== undefined && object.state !== null) {
+            message.state = String(object.state);
+        }
+        else {
+            message.state = "";
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            message.labels = String(object.labels);
+        }
+        else {
+            message.labels = "";
+        }
+        if (object.assignee !== undefined && object.assignee !== null) {
+            message.assignee = String(object.assignee);
+        }
+        else {
+            message.assignee = "";
+        }
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(Number(e));
+            }
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = String(object.sort);
+        }
+        else {
+            message.sort = "";
+        }
+        if (object.search !== undefined && object.search !== null) {
+            message.search = String(object.search);
+        }
+        else {
+            message.search = "";
+        }
+        if (object.updatedAfter !== undefined && object.updatedAfter !== null) {
+            message.updatedAfter = Number(object.updatedAfter);
+        }
+        else {
+            message.updatedAfter = 0;
+        }
+        if (object.updatedBefore !== undefined && object.updatedBefore !== null) {
+            message.updatedBefore = Number(object.updatedBefore);
+        }
+        else {
+            message.updatedBefore = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.createdBy !== undefined && (obj.createdBy = message.createdBy);
+        message.state !== undefined && (obj.state = message.state);
+        message.labels !== undefined && (obj.labels = message.labels);
+        message.assignee !== undefined && (obj.assignee = message.assignee);
+        if (message.labelIds) {
+            obj.labelIds = message.labelIds.map((e) => e);
+        }
+        else {
+            obj.labelIds = [];
+        }
+        message.sort !== undefined && (obj.sort = message.sort);
+        message.search !== undefined && (obj.search = message.search);
+        message.updatedAfter !== undefined &&
+            (obj.updatedAfter = message.updatedAfter);
+        message.updatedBefore !== undefined &&
+            (obj.updatedBefore = message.updatedBefore);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseIssueOptions };
+        message.labelIds = [];
+        if (object.createdBy !== undefined && object.createdBy !== null) {
+            message.createdBy = object.createdBy;
+        }
+        else {
+            message.createdBy = "";
+        }
+        if (object.state !== undefined && object.state !== null) {
+            message.state = object.state;
+        }
+        else {
+            message.state = "";
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            message.labels = object.labels;
+        }
+        else {
+            message.labels = "";
+        }
+        if (object.assignee !== undefined && object.assignee !== null) {
+            message.assignee = object.assignee;
+        }
+        else {
+            message.assignee = "";
+        }
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(e);
+            }
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = object.sort;
+        }
+        else {
+            message.sort = "";
+        }
+        if (object.search !== undefined && object.search !== null) {
+            message.search = object.search;
+        }
+        else {
+            message.search = "";
+        }
+        if (object.updatedAfter !== undefined && object.updatedAfter !== null) {
+            message.updatedAfter = object.updatedAfter;
+        }
+        else {
+            message.updatedAfter = 0;
+        }
+        if (object.updatedBefore !== undefined && object.updatedBefore !== null) {
+            message.updatedBefore = object.updatedBefore;
+        }
+        else {
+            message.updatedBefore = 0;
         }
         return message;
     },
@@ -2275,8 +2528,11 @@ export const QueryAllRepositoryPullRequestRequest = {
         if (message.repositoryName !== "") {
             writer.uint32(18).string(message.repositoryName);
         }
+        if (message.option !== undefined) {
+            PullRequestOptions.encode(message.option, writer.uint32(26).fork()).ldelim();
+        }
         if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+            PageRequest.encode(message.pagination, writer.uint32(34).fork()).ldelim();
         }
         return writer;
     },
@@ -2296,6 +2552,9 @@ export const QueryAllRepositoryPullRequestRequest = {
                     message.repositoryName = reader.string();
                     break;
                 case 3:
+                    message.option = PullRequestOptions.decode(reader, reader.uint32());
+                    break;
+                case 4:
                     message.pagination = PageRequest.decode(reader, reader.uint32());
                     break;
                 default:
@@ -2321,6 +2580,12 @@ export const QueryAllRepositoryPullRequestRequest = {
         else {
             message.repositoryName = "";
         }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = PullRequestOptions.fromJSON(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromJSON(object.pagination);
         }
@@ -2334,6 +2599,10 @@ export const QueryAllRepositoryPullRequestRequest = {
         message.userId !== undefined && (obj.userId = message.userId);
         message.repositoryName !== undefined &&
             (obj.repositoryName = message.repositoryName);
+        message.option !== undefined &&
+            (obj.option = message.option
+                ? PullRequestOptions.toJSON(message.option)
+                : undefined);
         message.pagination !== undefined &&
             (obj.pagination = message.pagination
                 ? PageRequest.toJSON(message.pagination)
@@ -2356,11 +2625,268 @@ export const QueryAllRepositoryPullRequestRequest = {
         else {
             message.repositoryName = "";
         }
+        if (object.option !== undefined && object.option !== null) {
+            message.option = PullRequestOptions.fromPartial(object.option);
+        }
+        else {
+            message.option = undefined;
+        }
         if (object.pagination !== undefined && object.pagination !== null) {
             message.pagination = PageRequest.fromPartial(object.pagination);
         }
         else {
             message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const basePullRequestOptions = {
+    createdBy: "",
+    state: "",
+    labels: "",
+    assignee: "",
+    reviewer: "",
+    labelIds: 0,
+    sort: "",
+    search: "",
+    updatedAfter: 0,
+    updatedBefore: 0,
+};
+export const PullRequestOptions = {
+    encode(message, writer = Writer.create()) {
+        if (message.createdBy !== "") {
+            writer.uint32(10).string(message.createdBy);
+        }
+        if (message.state !== "") {
+            writer.uint32(18).string(message.state);
+        }
+        if (message.labels !== "") {
+            writer.uint32(26).string(message.labels);
+        }
+        if (message.assignee !== "") {
+            writer.uint32(34).string(message.assignee);
+        }
+        if (message.reviewer !== "") {
+            writer.uint32(42).string(message.reviewer);
+        }
+        writer.uint32(50).fork();
+        for (const v of message.labelIds) {
+            writer.uint64(v);
+        }
+        writer.ldelim();
+        if (message.sort !== "") {
+            writer.uint32(58).string(message.sort);
+        }
+        if (message.search !== "") {
+            writer.uint32(66).string(message.search);
+        }
+        if (message.updatedAfter !== 0) {
+            writer.uint32(72).int64(message.updatedAfter);
+        }
+        if (message.updatedBefore !== 0) {
+            writer.uint32(80).int64(message.updatedBefore);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...basePullRequestOptions };
+        message.labelIds = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.createdBy = reader.string();
+                    break;
+                case 2:
+                    message.state = reader.string();
+                    break;
+                case 3:
+                    message.labels = reader.string();
+                    break;
+                case 4:
+                    message.assignee = reader.string();
+                    break;
+                case 5:
+                    message.reviewer = reader.string();
+                    break;
+                case 6:
+                    if ((tag & 7) === 2) {
+                        const end2 = reader.uint32() + reader.pos;
+                        while (reader.pos < end2) {
+                            message.labelIds.push(longToNumber(reader.uint64()));
+                        }
+                    }
+                    else {
+                        message.labelIds.push(longToNumber(reader.uint64()));
+                    }
+                    break;
+                case 7:
+                    message.sort = reader.string();
+                    break;
+                case 8:
+                    message.search = reader.string();
+                    break;
+                case 9:
+                    message.updatedAfter = longToNumber(reader.int64());
+                    break;
+                case 10:
+                    message.updatedBefore = longToNumber(reader.int64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...basePullRequestOptions };
+        message.labelIds = [];
+        if (object.createdBy !== undefined && object.createdBy !== null) {
+            message.createdBy = String(object.createdBy);
+        }
+        else {
+            message.createdBy = "";
+        }
+        if (object.state !== undefined && object.state !== null) {
+            message.state = String(object.state);
+        }
+        else {
+            message.state = "";
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            message.labels = String(object.labels);
+        }
+        else {
+            message.labels = "";
+        }
+        if (object.assignee !== undefined && object.assignee !== null) {
+            message.assignee = String(object.assignee);
+        }
+        else {
+            message.assignee = "";
+        }
+        if (object.reviewer !== undefined && object.reviewer !== null) {
+            message.reviewer = String(object.reviewer);
+        }
+        else {
+            message.reviewer = "";
+        }
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(Number(e));
+            }
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = String(object.sort);
+        }
+        else {
+            message.sort = "";
+        }
+        if (object.search !== undefined && object.search !== null) {
+            message.search = String(object.search);
+        }
+        else {
+            message.search = "";
+        }
+        if (object.updatedAfter !== undefined && object.updatedAfter !== null) {
+            message.updatedAfter = Number(object.updatedAfter);
+        }
+        else {
+            message.updatedAfter = 0;
+        }
+        if (object.updatedBefore !== undefined && object.updatedBefore !== null) {
+            message.updatedBefore = Number(object.updatedBefore);
+        }
+        else {
+            message.updatedBefore = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.createdBy !== undefined && (obj.createdBy = message.createdBy);
+        message.state !== undefined && (obj.state = message.state);
+        message.labels !== undefined && (obj.labels = message.labels);
+        message.assignee !== undefined && (obj.assignee = message.assignee);
+        message.reviewer !== undefined && (obj.reviewer = message.reviewer);
+        if (message.labelIds) {
+            obj.labelIds = message.labelIds.map((e) => e);
+        }
+        else {
+            obj.labelIds = [];
+        }
+        message.sort !== undefined && (obj.sort = message.sort);
+        message.search !== undefined && (obj.search = message.search);
+        message.updatedAfter !== undefined &&
+            (obj.updatedAfter = message.updatedAfter);
+        message.updatedBefore !== undefined &&
+            (obj.updatedBefore = message.updatedBefore);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...basePullRequestOptions };
+        message.labelIds = [];
+        if (object.createdBy !== undefined && object.createdBy !== null) {
+            message.createdBy = object.createdBy;
+        }
+        else {
+            message.createdBy = "";
+        }
+        if (object.state !== undefined && object.state !== null) {
+            message.state = object.state;
+        }
+        else {
+            message.state = "";
+        }
+        if (object.labels !== undefined && object.labels !== null) {
+            message.labels = object.labels;
+        }
+        else {
+            message.labels = "";
+        }
+        if (object.assignee !== undefined && object.assignee !== null) {
+            message.assignee = object.assignee;
+        }
+        else {
+            message.assignee = "";
+        }
+        if (object.reviewer !== undefined && object.reviewer !== null) {
+            message.reviewer = object.reviewer;
+        }
+        else {
+            message.reviewer = "";
+        }
+        if (object.labelIds !== undefined && object.labelIds !== null) {
+            for (const e of object.labelIds) {
+                message.labelIds.push(e);
+            }
+        }
+        if (object.sort !== undefined && object.sort !== null) {
+            message.sort = object.sort;
+        }
+        else {
+            message.sort = "";
+        }
+        if (object.search !== undefined && object.search !== null) {
+            message.search = object.search;
+        }
+        else {
+            message.search = "";
+        }
+        if (object.updatedAfter !== undefined && object.updatedAfter !== null) {
+            message.updatedAfter = object.updatedAfter;
+        }
+        else {
+            message.updatedAfter = 0;
+        }
+        if (object.updatedBefore !== undefined && object.updatedBefore !== null) {
+            message.updatedBefore = object.updatedBefore;
+        }
+        else {
+            message.updatedBefore = 0;
         }
         return message;
     },
@@ -2563,6 +3089,401 @@ export const QueryGetRepositoryResponse = {
         }
         else {
             message.Repository = undefined;
+        }
+        return message;
+    },
+};
+const baseRepositoryFork = {
+    creator: "",
+    id: 0,
+    name: "",
+    description: "",
+    parent: 0,
+    forksCount: 0,
+    issuesCount: 0,
+    pullsCount: 0,
+};
+export const RepositoryFork = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        if (message.name !== "") {
+            writer.uint32(26).string(message.name);
+        }
+        if (message.owner !== undefined) {
+            RepositoryOwner.encode(message.owner, writer.uint32(34).fork()).ldelim();
+        }
+        if (message.description !== "") {
+            writer.uint32(42).string(message.description);
+        }
+        if (message.parent !== 0) {
+            writer.uint32(48).uint64(message.parent);
+        }
+        if (message.forksCount !== 0) {
+            writer.uint32(56).uint64(message.forksCount);
+        }
+        if (message.issuesCount !== 0) {
+            writer.uint32(64).uint64(message.issuesCount);
+        }
+        if (message.pullsCount !== 0) {
+            writer.uint32(72).uint64(message.pullsCount);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseRepositoryFork };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.name = reader.string();
+                    break;
+                case 4:
+                    message.owner = RepositoryOwner.decode(reader, reader.uint32());
+                    break;
+                case 5:
+                    message.description = reader.string();
+                    break;
+                case 6:
+                    message.parent = longToNumber(reader.uint64());
+                    break;
+                case 7:
+                    message.forksCount = longToNumber(reader.uint64());
+                    break;
+                case 8:
+                    message.issuesCount = longToNumber(reader.uint64());
+                    break;
+                case 9:
+                    message.pullsCount = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseRepositoryFork };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = RepositoryOwner.fromJSON(object.owner);
+        }
+        else {
+            message.owner = undefined;
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = String(object.description);
+        }
+        else {
+            message.description = "";
+        }
+        if (object.parent !== undefined && object.parent !== null) {
+            message.parent = Number(object.parent);
+        }
+        else {
+            message.parent = 0;
+        }
+        if (object.forksCount !== undefined && object.forksCount !== null) {
+            message.forksCount = Number(object.forksCount);
+        }
+        else {
+            message.forksCount = 0;
+        }
+        if (object.issuesCount !== undefined && object.issuesCount !== null) {
+            message.issuesCount = Number(object.issuesCount);
+        }
+        else {
+            message.issuesCount = 0;
+        }
+        if (object.pullsCount !== undefined && object.pullsCount !== null) {
+            message.pullsCount = Number(object.pullsCount);
+        }
+        else {
+            message.pullsCount = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        message.name !== undefined && (obj.name = message.name);
+        message.owner !== undefined &&
+            (obj.owner = message.owner
+                ? RepositoryOwner.toJSON(message.owner)
+                : undefined);
+        message.description !== undefined &&
+            (obj.description = message.description);
+        message.parent !== undefined && (obj.parent = message.parent);
+        message.forksCount !== undefined && (obj.forksCount = message.forksCount);
+        message.issuesCount !== undefined &&
+            (obj.issuesCount = message.issuesCount);
+        message.pullsCount !== undefined && (obj.pullsCount = message.pullsCount);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseRepositoryFork };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.owner !== undefined && object.owner !== null) {
+            message.owner = RepositoryOwner.fromPartial(object.owner);
+        }
+        else {
+            message.owner = undefined;
+        }
+        if (object.description !== undefined && object.description !== null) {
+            message.description = object.description;
+        }
+        else {
+            message.description = "";
+        }
+        if (object.parent !== undefined && object.parent !== null) {
+            message.parent = object.parent;
+        }
+        else {
+            message.parent = 0;
+        }
+        if (object.forksCount !== undefined && object.forksCount !== null) {
+            message.forksCount = object.forksCount;
+        }
+        else {
+            message.forksCount = 0;
+        }
+        if (object.issuesCount !== undefined && object.issuesCount !== null) {
+            message.issuesCount = object.issuesCount;
+        }
+        else {
+            message.issuesCount = 0;
+        }
+        if (object.pullsCount !== undefined && object.pullsCount !== null) {
+            message.pullsCount = object.pullsCount;
+        }
+        else {
+            message.pullsCount = 0;
+        }
+        return message;
+    },
+};
+const baseQueryGetAllForkRequest = { userId: "", repositoryName: "" };
+export const QueryGetAllForkRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userId !== "") {
+            writer.uint32(10).string(message.userId);
+        }
+        if (message.repositoryName !== "") {
+            writer.uint32(18).string(message.repositoryName);
+        }
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetAllForkRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userId = reader.string();
+                    break;
+                case 2:
+                    message.repositoryName = reader.string();
+                    break;
+                case 3:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetAllForkRequest };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = String(object.userId);
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = String(object.repositoryName);
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userId !== undefined && (obj.userId = message.userId);
+        message.repositoryName !== undefined &&
+            (obj.repositoryName = message.repositoryName);
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageRequest.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetAllForkRequest };
+        if (object.userId !== undefined && object.userId !== null) {
+            message.userId = object.userId;
+        }
+        else {
+            message.userId = "";
+        }
+        if (object.repositoryName !== undefined && object.repositoryName !== null) {
+            message.repositoryName = object.repositoryName;
+        }
+        else {
+            message.repositoryName = "";
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+};
+const baseQueryGetAllForkResponse = {};
+export const QueryGetAllForkResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.forks) {
+            RepositoryFork.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetAllForkResponse,
+        };
+        message.forks = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.forks.push(RepositoryFork.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetAllForkResponse,
+        };
+        message.forks = [];
+        if (object.forks !== undefined && object.forks !== null) {
+            for (const e of object.forks) {
+                message.forks.push(RepositoryFork.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.forks) {
+            obj.forks = message.forks.map((e) => e ? RepositoryFork.toJSON(e) : undefined);
+        }
+        else {
+            obj.forks = [];
+        }
+        message.pagination !== undefined &&
+            (obj.pagination = message.pagination
+                ? PageResponse.toJSON(message.pagination)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetAllForkResponse,
+        };
+        message.forks = [];
+        if (object.forks !== undefined && object.forks !== null) {
+            for (const e of object.forks) {
+                message.forks.push(RepositoryFork.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
         }
         return message;
     },
@@ -4195,6 +5116,11 @@ export class QueryClientImpl {
         const data = QueryAllRepositoryRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "RepositoryAll", data);
         return promise.then((data) => QueryAllRepositoryResponse.decode(new Reader(data)));
+    }
+    ForkAll(request) {
+        const data = QueryGetAllForkRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "ForkAll", data);
+        return promise.then((data) => QueryGetAllForkResponse.decode(new Reader(data)));
     }
     BranchAll(request) {
         const data = QueryGetAllBranchRequest.encode(request).finish();

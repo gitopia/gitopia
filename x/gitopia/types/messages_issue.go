@@ -5,6 +5,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+type RepositoryIssueSlice []*RepositoryIssue
+
+func (r RepositoryIssueSlice) Len() int           { return len(r) }
+func (r RepositoryIssueSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r RepositoryIssueSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+
 var _ sdk.Msg = &MsgCreateIssue{}
 
 func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
@@ -66,7 +72,7 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		for _, assignee := range msg.Assignees {
 			_, err := sdk.AccAddressFromBech32(assignee)
 			if err != nil {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", msg.Assignees[0])
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", assignee)
 			}
 			if !unique[assignee] {
 				unique[assignee] = true
@@ -136,16 +142,25 @@ func (msg *MsgUpdateIssue) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title too short")
 	}
 
-	unique := make(map[string]bool, len(msg.Assignees))
-	for _, assignee := range msg.Assignees {
-		_, err := sdk.AccAddressFromBech32(assignee)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%s)", err)
-		}
-		if !unique[assignee] {
-			unique[assignee] = true
-		} else {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+	if len(msg.Description) > 20000 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 20000")
+	}
+	if len(msg.Assignees) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "can't give more than 10 assignees at a time")
+	}
+
+	if len(msg.Assignees) > 0 {
+		unique := make(map[string]bool, len(msg.Assignees))
+		for _, assignee := range msg.Assignees {
+			_, err := sdk.AccAddressFromBech32(assignee)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid assignee (%v)", assignee)
+			}
+			if !unique[assignee] {
+				unique[assignee] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
+			}
 		}
 	}
 	return nil

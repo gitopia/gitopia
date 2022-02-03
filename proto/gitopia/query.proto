@@ -113,6 +113,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository";
 	}
 
+	// Queries a repository forks by id.
+	rpc ForkAll(QueryGetAllForkRequest) returns (QueryGetAllForkResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks";
+	}
+
 	// Queries a repository by id.
 	rpc BranchAll(QueryGetAllBranchRequest) returns (QueryGetAllBranchResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/branches";
@@ -302,7 +307,20 @@ message QueryGetRepositoryPullRequestResponse {
 message QueryAllRepositoryIssueRequest {
 	string id = 1;
 	string repositoryName = 2;
-	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+	IssueOptions option = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message IssueOptions {
+	string createdBy = 1;
+	string state = 2;
+	string labels = 3;
+	string assignee = 4;
+	repeated uint64 labelIds = 5;
+	string sort = 6;
+	string search = 7;
+	int64 updatedAfter = 8;
+	int64 updatedBefore = 9;
 }
 
 message QueryAllRepositoryIssueResponse {
@@ -313,7 +331,21 @@ message QueryAllRepositoryIssueResponse {
 message QueryAllRepositoryPullRequestRequest {
 	string userId = 1;
 	string repositoryName = 2;
-	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+	PullRequestOptions option = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message PullRequestOptions {
+	string createdBy = 1;
+	string state = 2;
+	string labels = 3;
+	string assignee = 4;
+	string reviewer = 5;
+	repeated uint64 labelIds = 6;
+	string sort = 7;
+	string search = 8;
+	int64 updatedAfter = 9;
+	int64 updatedBefore = 10;
 }
 
 message QueryAllRepositoryPullRequestResponse {
@@ -327,6 +359,29 @@ message QueryGetRepositoryRequest {
 
 message QueryGetRepositoryResponse {
 	Repository Repository = 1;
+}
+
+message RepositoryFork {
+	string creator = 1;
+	uint64 id = 2;
+	string name = 3; 
+	RepositoryOwner owner = 4; 
+	string description = 5; 
+	uint64 parent = 6;
+	uint64 forksCount = 7; 
+	uint64 issuesCount = 8;
+	uint64 pullsCount = 9;
+}
+
+message QueryGetAllForkRequest {
+	string userId = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryGetAllForkResponse {
+	repeated RepositoryFork forks = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetAllBranchRequest {

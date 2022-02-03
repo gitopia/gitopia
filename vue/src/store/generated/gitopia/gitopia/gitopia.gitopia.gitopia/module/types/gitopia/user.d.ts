@@ -3,6 +3,7 @@ export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface User {
     creator: string;
     id: number;
+    name: string;
     username: string;
     usernameGithub: string;
     avatarUrl: string;

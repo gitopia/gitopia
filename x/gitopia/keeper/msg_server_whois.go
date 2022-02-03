@@ -30,21 +30,18 @@ func (k msgServer) SetWhois(goCtx context.Context, msg *types.MsgSetWhois) (*typ
 func (k msgServer) UpdateWhois(goCtx context.Context, msg *types.MsgUpdateWhois) (*types.MsgUpdateWhoisResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var whois = types.Whois{
-		Creator: msg.Creator,
-		Name:    msg.Name,
-		Address: msg.Address,
+	whois, found := k.GetWhois(ctx, msg.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("whois (%v) doesn't exist", msg.Name))
 	}
 
-	// Checks that the element exists
-	if !k.HasWhois(ctx, msg.Name) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Name))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetWhoisOwner(ctx, msg.Name) {
+	if msg.Creator != whois.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
+
+	whois.Creator = msg.Creator
+	whois.Name = msg.Name
+	whois.Address = msg.Address
 
 	k.Keeper.SetWhois(ctx, whois.Name, whois)
 
@@ -54,10 +51,12 @@ func (k msgServer) UpdateWhois(goCtx context.Context, msg *types.MsgUpdateWhois)
 func (k msgServer) DeleteWhois(goCtx context.Context, msg *types.MsgDeleteWhois) (*types.MsgDeleteWhoisResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasWhois(ctx, msg.Name) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Name))
+	whois, found := k.GetWhois(ctx, msg.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("whois (%v) doesn't exist", msg.Name))
 	}
-	if msg.Creator != k.GetWhoisOwner(ctx, msg.Name) {
+
+	if msg.Creator != whois.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 

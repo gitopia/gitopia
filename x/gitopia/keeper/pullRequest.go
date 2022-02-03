@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"encoding/binary"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"strconv"
 )
 
 // GetPullRequestCount get the total number of pullRequest
@@ -20,20 +20,15 @@ func (k Keeper) GetPullRequestCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetPullRequestCount set the total number of pullRequest
 func (k Keeper) SetPullRequestCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestCountKey))
 	byteKey := types.KeyPrefix(types.PullRequestCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -49,7 +44,7 @@ func (k Keeper) AppendPullRequest(
 	pullRequest.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&pullRequest)
+	appendedValue := k.cdc.MustMarshal(&pullRequest)
 	store.Set(GetPullRequestIDBytes(pullRequest.Id), appendedValue)
 
 	// Update pullRequest count
@@ -61,27 +56,19 @@ func (k Keeper) AppendPullRequest(
 // SetPullRequest set a specific pullRequest in the store
 func (k Keeper) SetPullRequest(ctx sdk.Context, pullRequest types.PullRequest) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	b := k.cdc.MustMarshalBinaryBare(&pullRequest)
+	b := k.cdc.MustMarshal(&pullRequest)
 	store.Set(GetPullRequestIDBytes(pullRequest.Id), b)
 }
 
 // GetPullRequest returns a pullRequest from its id
-func (k Keeper) GetPullRequest(ctx sdk.Context, id uint64) types.PullRequest {
+func (k Keeper) GetPullRequest(ctx sdk.Context, id uint64) (val types.PullRequest, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	var pullRequest types.PullRequest
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetPullRequestIDBytes(id)), &pullRequest)
-	return pullRequest
-}
-
-// HasPullRequest checks if the pullRequest exists in the store
-func (k Keeper) HasPullRequest(ctx sdk.Context, id uint64) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
-	return store.Has(GetPullRequestIDBytes(id))
-}
-
-// GetPullRequestOwner returns the creator of the pullRequest
-func (k Keeper) GetPullRequestOwner(ctx sdk.Context, id uint64) string {
-	return k.GetPullRequest(ctx, id).Creator
+	b := store.Get(GetPullRequestIDBytes(id))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemovePullRequest removes a pullRequest from the store
@@ -99,7 +86,7 @@ func (k Keeper) GetAllPullRequest(ctx sdk.Context) (list []types.PullRequest) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PullRequest
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

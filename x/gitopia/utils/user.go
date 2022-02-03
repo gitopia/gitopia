@@ -21,3 +21,12 @@ func UserOrganizationExists(r []*types.UserOrganization, val string) (int, bool)
 	}
 	return 0, false
 }
+
+func UserOrganizationIdExists(r []*types.UserOrganization, val string) (int, bool) {
+	for i, v := range r {
+		if v.Id == val {
+			return i, true
+		}
+	}
+	return 0, false
+}

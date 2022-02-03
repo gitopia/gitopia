@@ -7,6 +7,7 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 export interface User {
   creator: string;
   id: number;
+  name: string;
   username: string;
   usernameGithub: string;
   avatarUrl: string;
@@ -36,6 +37,7 @@ export interface UserOrganization {
 const baseUser: object = {
   creator: "",
   id: 0,
+  name: "",
   username: "",
   usernameGithub: "",
   avatarUrl: "",
@@ -58,49 +60,52 @@ export const User = {
     if (message.id !== 0) {
       writer.uint32(16).uint64(message.id);
     }
+    if (message.name !== "") {
+      writer.uint32(26).string(message.name);
+    }
     if (message.username !== "") {
-      writer.uint32(26).string(message.username);
+      writer.uint32(34).string(message.username);
     }
     if (message.usernameGithub !== "") {
-      writer.uint32(34).string(message.usernameGithub);
+      writer.uint32(42).string(message.usernameGithub);
     }
     if (message.avatarUrl !== "") {
-      writer.uint32(42).string(message.avatarUrl);
+      writer.uint32(50).string(message.avatarUrl);
     }
     for (const v of message.followers) {
-      writer.uint32(50).string(v!);
-    }
-    for (const v of message.following) {
       writer.uint32(58).string(v!);
     }
+    for (const v of message.following) {
+      writer.uint32(66).string(v!);
+    }
     for (const v of message.repositories) {
-      UserRepository.encode(v!, writer.uint32(66).fork()).ldelim();
+      UserRepository.encode(v!, writer.uint32(74).fork()).ldelim();
     }
     for (const v of message.organizations) {
-      UserOrganization.encode(v!, writer.uint32(74).fork()).ldelim();
+      UserOrganization.encode(v!, writer.uint32(82).fork()).ldelim();
     }
-    writer.uint32(82).fork();
+    writer.uint32(90).fork();
     for (const v of message.starredRepos) {
       writer.uint64(v);
     }
     writer.ldelim();
     if (message.subscriptions !== "") {
-      writer.uint32(90).string(message.subscriptions);
+      writer.uint32(98).string(message.subscriptions);
     }
     if (message.email !== "") {
-      writer.uint32(98).string(message.email);
+      writer.uint32(106).string(message.email);
     }
     if (message.bio !== "") {
-      writer.uint32(106).string(message.bio);
+      writer.uint32(114).string(message.bio);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(112).int64(message.createdAt);
+      writer.uint32(120).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(120).int64(message.updatedAt);
+      writer.uint32(128).int64(message.updatedAt);
     }
     if (message.extensions !== "") {
-      writer.uint32(130).string(message.extensions);
+      writer.uint32(138).string(message.extensions);
     }
     return writer;
   },
@@ -124,31 +129,34 @@ export const User = {
           message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.username = reader.string();
+          message.name = reader.string();
           break;
         case 4:
-          message.usernameGithub = reader.string();
+          message.username = reader.string();
           break;
         case 5:
-          message.avatarUrl = reader.string();
+          message.usernameGithub = reader.string();
           break;
         case 6:
-          message.followers.push(reader.string());
+          message.avatarUrl = reader.string();
           break;
         case 7:
-          message.following.push(reader.string());
+          message.followers.push(reader.string());
           break;
         case 8:
+          message.following.push(reader.string());
+          break;
+        case 9:
           message.repositories.push(
             UserRepository.decode(reader, reader.uint32())
           );
           break;
-        case 9:
+        case 10:
           message.organizations.push(
             UserOrganization.decode(reader, reader.uint32())
           );
           break;
-        case 10:
+        case 11:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -158,22 +166,22 @@ export const User = {
             message.starredRepos.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 11:
+        case 12:
           message.subscriptions = reader.string();
           break;
-        case 12:
+        case 13:
           message.email = reader.string();
           break;
-        case 13:
+        case 14:
           message.bio = reader.string();
           break;
-        case 14:
+        case 15:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 15:
+        case 16:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 17:
           message.extensions = reader.string();
           break;
         default:
@@ -200,6 +208,11 @@ export const User = {
       message.id = Number(object.id);
     } else {
       message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name);
+    } else {
+      message.name = "";
     }
     if (object.username !== undefined && object.username !== null) {
       message.username = String(object.username);
@@ -278,6 +291,7 @@ export const User = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.id !== undefined && (obj.id = message.id);
+    message.name !== undefined && (obj.name = message.name);
     message.username !== undefined && (obj.username = message.username);
     message.usernameGithub !== undefined &&
       (obj.usernameGithub = message.usernameGithub);
@@ -337,6 +351,11 @@ export const User = {
       message.id = object.id;
     } else {
       message.id = 0;
+    }
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name;
+    } else {
+      message.name = "";
     }
     if (object.username !== undefined && object.username !== null) {
       message.username = object.username;

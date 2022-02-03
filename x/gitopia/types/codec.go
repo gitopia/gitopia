@@ -18,9 +18,16 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestDescription{}, "gitopia/UpdatePullRequestDescription", nil)
 	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
+	cdc.RegisterConcrete(&MsgAddPullRequestReviewers{}, "gitopia/AddPullRequestReviewers", nil)
+	cdc.RegisterConcrete(&MsgRemovePullRequestReviewers{}, "gitopia/RemovePullRequestReviewers", nil)
+	cdc.RegisterConcrete(&MsgAddPullRequestAssignees{}, "gitopia/AddPullRequestAssignees", nil)
+	cdc.RegisterConcrete(&MsgRemovePullRequestAssignees{}, "gitopia/RemovePullRequestAssignees", nil)
+	cdc.RegisterConcrete(&MsgAddPullRequestLabels{}, "gitopia/AddPullRequestLabels", nil)
+	cdc.RegisterConcrete(&MsgRemovePullRequestLabels{}, "gitopia/RemovePullRequestLabels", nil)
 	cdc.RegisterConcrete(&MsgDeletePullRequest{}, "gitopia/DeletePullRequest", nil)
 
 	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
+	cdc.RegisterConcrete(&MsgRenameOrganization{}, "gitopia/RenameOrganization", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgRemoveOrganizationMember{}, "gitopia/RemoveOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganization{}, "gitopia/UpdateOrganization", nil)
@@ -50,17 +57,19 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateRepositoryLabel{}, "gitopia/CreateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryLabel{}, "gitopia/UpdateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepositoryLabel{}, "gitopia/DeleteRepositoryLabel", nil)
-	cdc.RegisterConcrete(&MsgCreateBranch{}, "gitopia/CreateBranch", nil)
+	cdc.RegisterConcrete(&MsgSetRepositoryBranch{}, "gitopia/SetRepositoryBranch", nil)
 	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
 	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
-	cdc.RegisterConcrete(&MsgCreateTag{}, "gitopia/CreateTag", nil)
+	cdc.RegisterConcrete(&MsgSetRepositoryTag{}, "gitopia/SetRepositoryTag", nil)
 	cdc.RegisterConcrete(&MsgDeleteTag{}, "gitopia/DeleteTag", nil)
+	cdc.RegisterConcrete(&MsgToggleRepositoryForking{}, "gitopia/ToggleRepositoryForking", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepository{}, "gitopia/UpdateRepository", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepository{}, "gitopia/DeleteRepository", nil)
 
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
 	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
+	cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
 	cdc.RegisterConcrete(&MsgSetWhois{}, "gitopia/SetWhois", nil)
 	cdc.RegisterConcrete(&MsgUpdateWhois{}, "gitopia/UpdateWhois", nil)
@@ -81,10 +90,17 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdatePullRequestTitle{},
 		&MsgUpdatePullRequestDescription{},
 		&MsgSetPullRequestState{},
+		&MsgAddPullRequestReviewers{},
+		&MsgRemovePullRequestReviewers{},
+		&MsgAddPullRequestAssignees{},
+		&MsgRemovePullRequestAssignees{},
+		&MsgAddPullRequestLabels{},
+		&MsgRemovePullRequestLabels{},
 		&MsgDeletePullRequest{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateOrganization{},
+		&MsgRenameOrganization{},
 		&MsgUpdateOrganizationMember{},
 		&MsgRemoveOrganizationMember{},
 		&MsgUpdateOrganization{},
@@ -117,11 +133,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateRepositoryLabel{},
 		&MsgUpdateRepositoryLabel{},
 		&MsgDeleteRepositoryLabel{},
-		&MsgCreateBranch{},
+		&MsgSetRepositoryBranch{},
 		&MsgSetDefaultBranch{},
 		&MsgDeleteBranch{},
-		&MsgCreateTag{},
+		&MsgSetRepositoryTag{},
 		&MsgDeleteTag{},
+		&MsgToggleRepositoryForking{},
 		&MsgUpdateRepository{},
 		&MsgDeleteRepository{},
 	)
@@ -129,6 +146,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateUser{},
 		&MsgUpdateUser{},
 		&MsgDeleteUser{},
+		&MsgTransferUser{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSetWhois{},

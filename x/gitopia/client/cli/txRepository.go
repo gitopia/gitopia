@@ -357,9 +357,9 @@ func CmdDeleteRepositoryLabel() *cobra.Command {
 	return cmd
 }
 
-func CmdCreateBranch() *cobra.Command {
+func CmdSetRepositoryBranch() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-branch [repo id] [branch name] [commit SHA]",
+		Use:   "set-repository-branch [repo id] [branch name] [commit SHA]",
 		Short: "Create a branch",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -382,7 +382,7 @@ func CmdCreateBranch() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateBranch(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsCommitSHA))
+			msg := types.NewMsgSetRepositoryBranch(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsCommitSHA))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -463,9 +463,9 @@ func CmdDeleteBranch() *cobra.Command {
 	return cmd
 }
 
-func CmdCreateTag() *cobra.Command {
+func CmdSetRepositoryTag() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-tag [repo id] [tag name] [sha]",
+		Use:   "set-repository-tag [repo id] [tag name] [sha]",
 		Short: "Create a tag",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -488,7 +488,7 @@ func CmdCreateTag() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateTag(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsSha))
+			msg := types.NewMsgSetRepositoryTag(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsSha))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -523,6 +523,35 @@ func CmdDeleteTag() *cobra.Command {
 			}
 
 			msg := types.NewMsgDeleteTag(clientCtx.GetFromAddress().String(), id, string(argsName))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdToggleRepositoryForking() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "toggle-repository-forking [repo_id]",
+		Short: "Toggle repository forking",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgToggleRepositoryForking(clientCtx.GetFromAddress().String(), id)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

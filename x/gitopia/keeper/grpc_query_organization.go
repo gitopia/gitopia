@@ -27,7 +27,7 @@ func (k Keeper) OrganizationAll(c context.Context, req *types.QueryAllOrganizati
 
 	pageRes, err := query.Paginate(organizationStore, req.Pagination, func(key []byte, value []byte) error {
 		var organization types.Organization
-		if err := k.cdc.UnmarshalBinaryBare(value, &organization); err != nil {
+		if err := k.cdc.Unmarshal(value, &organization); err != nil {
 			return err
 		}
 
@@ -50,13 +50,10 @@ func (k Keeper) Organization(c context.Context, req *types.QueryGetOrganizationR
 	var organization types.Organization
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasOrganization(ctx, req.Id) {
+	organization, found := k.GetOrganization(ctx, req.Id)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
-	key := []byte(types.OrganizationKey + req.Id)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &organization)
 
 	return &types.QueryGetOrganizationResponse{Organization: &organization}, nil
 }
@@ -109,7 +106,7 @@ func PaginateAllOrganizationRepository(
 			}
 
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err
@@ -130,7 +127,7 @@ func PaginateAllOrganizationRepository(
 	for i := offset; uint64(i) < uint64(totalRepositoryCount); i++ {
 		if uint64(i) < end {
 			var repository types.Repository
-			k.cdc.MustUnmarshalBinaryBare(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(repositories[i].Id)), &repository)
 			err := onResult(repository)
 			if err != nil {
 				return nil, err

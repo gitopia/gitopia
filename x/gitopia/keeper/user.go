@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/binary"
-	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,20 +20,15 @@ func (k Keeper) GetUserCount(ctx sdk.Context) uint64 {
 	}
 
 	// Parse bytes
-	count, err := strconv.ParseUint(string(bz), 10, 64)
-	if err != nil {
-		// Panic because the count should be always formattable to iint64
-		panic("cannot decode count")
-	}
-
-	return count
+	return binary.BigEndian.Uint64(bz)
 }
 
 // SetUserCount set the total number of user
 func (k Keeper) SetUserCount(ctx sdk.Context, count uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserCountKey))
 	byteKey := types.KeyPrefix(types.UserCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
 	store.Set(byteKey, bz)
 }
 
@@ -50,7 +44,7 @@ func (k Keeper) AppendUser(
 	user.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&user)
+	appendedValue := k.cdc.MustMarshal(&user)
 	key := []byte(types.UserKey + user.Creator)
 	store.Set(key, appendedValue)
 
@@ -75,30 +69,21 @@ func (k Keeper) AppendUser(
 // SetUser set a specific user in the store
 func (k Keeper) SetUser(ctx sdk.Context, user types.User) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	b := k.cdc.MustMarshalBinaryBare(&user)
+	b := k.cdc.MustMarshal(&user)
 	key := []byte(types.UserKey + user.Creator)
 	store.Set(key, b)
 }
 
 // GetUser returns a user from its id
-func (k Keeper) GetUser(ctx sdk.Context, id string) types.User {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
-	var user types.User
-	key := []byte(types.UserKey + id)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(key), &user)
-	return user
-}
-
-// HasUser checks if the user exists in the store
-func (k Keeper) HasUser(ctx sdk.Context, id string) bool {
+func (k Keeper) GetUser(ctx sdk.Context, id string) (val types.User, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserKey))
 	key := []byte(types.UserKey + id)
-	return store.Has(key)
-}
-
-// GetUserOwner returns the creator of the user
-func (k Keeper) GetUserOwner(ctx sdk.Context, id string) string {
-	return k.GetUser(ctx, id).Creator
+	b := store.Get(key)
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }
 
 // RemoveUser removes a user from the store
@@ -117,7 +102,7 @@ func (k Keeper) GetAllUser(ctx sdk.Context) (list []types.User) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.User
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

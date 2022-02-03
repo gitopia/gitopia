@@ -75,6 +75,28 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 		}
 		if len(attachments) > 20 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		} else if len(attachments) > 0 {
+			unique := make(map[string]bool, len(attachments))
+			for _, attachment := range attachments {
+				if attachment.Size_ == 0 {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment size can't be 0")
+				}
+				if attachment.Name == "" {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment name can't be empty")
+				}
+				if attachment.Sha == "" {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment sha can't be empty")
+				}
+				_, err := sdk.AccAddressFromBech32(attachment.Uploader)
+				if err != nil {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid uploader (%v)", attachment.Uploader)
+				}
+				if !unique[attachment.Name] {
+					unique[attachment.Name] = true
+				} else {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
+				}
+			}
 		}
 	}
 
@@ -149,6 +171,28 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 		}
 		if len(attachments) > 20 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		} else if len(attachments) > 0 {
+			unique := make(map[string]bool, len(attachments))
+			for _, attachment := range attachments {
+				if attachment.Size_ == 0 {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment size can't be 0")
+				}
+				if attachment.Name == "" {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment name can't be empty")
+				}
+				if attachment.Sha == "" {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment sha can't be empty")
+				}
+				_, err := sdk.AccAddressFromBech32(attachment.Uploader)
+				if err != nil {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid uploader (%v)", attachment.Uploader)
+				}
+				if !unique[attachment.Name] {
+					unique[attachment.Name] = true
+				} else {
+					return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
+				}
+			}
 		}
 	}
 	return nil

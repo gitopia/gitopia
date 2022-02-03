@@ -4,10 +4,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-const (
-	AccountAddressPrefix = "gitopia"
-)
-
 var (
 	AccountPubKeyPrefix    = AccountAddressPrefix + "pub"
 	ValidatorAddressPrefix = AccountAddressPrefix + "valoper"

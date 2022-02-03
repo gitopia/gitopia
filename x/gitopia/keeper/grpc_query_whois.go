@@ -25,7 +25,7 @@ func (k Keeper) WhoisAll(c context.Context, req *types.QueryAllWhoisRequest) (*t
 
 	pageRes, err := query.Paginate(whoisStore, req.Pagination, func(key []byte, value []byte) error {
 		var whois types.Whois
-		if err := k.cdc.UnmarshalBinaryBare(value, &whois); err != nil {
+		if err := k.cdc.Unmarshal(value, &whois); err != nil {
 			return err
 		}
 
@@ -48,13 +48,10 @@ func (k Keeper) Whois(c context.Context, req *types.QueryGetWhoisRequest) (*type
 	var whois types.Whois
 	ctx := sdk.UnwrapSDKContext(c)
 
-	if !k.HasWhois(ctx, req.Name) {
+	whois, found := k.GetWhois(ctx, req.Name)
+	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	byteKey := []byte(types.WhoisKey + req.Name)
-	k.cdc.MustUnmarshalBinaryBare(store.Get(byteKey), &whois)
 
 	return &types.QueryGetWhoisResponse{Whois: &whois}, nil
 }
