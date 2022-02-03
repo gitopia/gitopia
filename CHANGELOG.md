@@ -2,6 +2,26 @@
 
 All notable changes will be documented here.
 
+## [v0.12.0] - 2022-02-03
+
+### Fixes
+
+- Fix release API
+- Don't allow duplicate pullRequest
+- Don't change state if Title/Description unchanged
+
+### Features
+
+- Transaction to toggle repository forking
+- Tests for genesis, gitopia keeper and types
+- Consume gas when creating user or repository
+- System comments for PullRequest
+- Script to migrate existing state to new genesis
+
+### Breaking Changes
+
+- denom units, tlore -> utlore.
+
 ## [0.11.0] - 2021-12-01
 
 ### Added
