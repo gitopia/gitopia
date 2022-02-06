@@ -6,7 +6,7 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/gitopia/gitopia/app"
 	"github.com/gitopia/gitopia/cmd/gitopiad/cmd"
-	"github.com/tendermint/spm/cosmoscmd"
+	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
 )
 
 func main() {
