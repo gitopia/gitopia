@@ -776,6 +776,9 @@ func (k msgServer) SetRepositoryBranch(goCtx context.Context, msg *types.MsgSetR
 		repository.Branches[i].Sha = msg.CommitSHA
 		repository.Branches[i].LastUpdatedAt = currentTime
 	} else {
+		if len(repository.Branches) == 0 {
+			repository.DefaultBranch = msg.Name
+		}
 		var repositoryBranch = types.RepositoryBranch{
 			Name:          msg.Name,
 			Sha:           msg.CommitSHA,
