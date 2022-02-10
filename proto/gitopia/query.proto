@@ -170,7 +170,21 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois";
 	}
 
+	rpc PullRequestMergePermission(QueryGetPullRequestMergePermissionRequest) returns (QueryGetPullRequestMergePermissionResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge";
+	}
 }
+
+// this line is used by starport scaffolding # 3
+message QueryGetPullRequestMergePermissionRequest {
+	string userAddress = 1;
+	uint64 pullId = 2;
+}
+
+message QueryGetPullRequestMergePermissionResponse {
+	bool havePermission = 1;
+}
+
 
 // this line is used by starport scaffolding # 3
 message QueryGetReleaseRequest {
