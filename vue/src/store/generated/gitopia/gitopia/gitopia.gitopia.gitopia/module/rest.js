@@ -261,6 +261,19 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryPullRequestMergePermission
+         * @request GET:/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge
+         */
+        this.queryPullRequestMergePermission = (userAddress, pullId, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/permissions/${userAddress}/pull/${pullId}/merge`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryPullRequestAll
          * @summary Queries a list of pullRequest items.
          * @request GET:/gitopia/gitopia/gitopia/pullRequest

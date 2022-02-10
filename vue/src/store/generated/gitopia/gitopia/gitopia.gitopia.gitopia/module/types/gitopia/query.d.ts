@@ -10,6 +10,14 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetPullRequestMergePermissionRequest {
+    userAddress: string;
+    pullId: number;
+}
+export interface QueryGetPullRequestMergePermissionResponse {
+    havePermission: boolean;
+}
+/** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
     id: number;
 }
@@ -264,6 +272,20 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetPullRequestMergePermissionRequest: {
+    encode(message: QueryGetPullRequestMergePermissionRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestMergePermissionRequest;
+    fromJSON(object: any): QueryGetPullRequestMergePermissionRequest;
+    toJSON(message: QueryGetPullRequestMergePermissionRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetPullRequestMergePermissionRequest>): QueryGetPullRequestMergePermissionRequest;
+};
+export declare const QueryGetPullRequestMergePermissionResponse: {
+    encode(message: QueryGetPullRequestMergePermissionResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestMergePermissionResponse;
+    fromJSON(object: any): QueryGetPullRequestMergePermissionResponse;
+    toJSON(message: QueryGetPullRequestMergePermissionResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetPullRequestMergePermissionResponse>): QueryGetPullRequestMergePermissionResponse;
+};
 export declare const QueryGetReleaseRequest: {
     encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
@@ -776,6 +798,7 @@ export interface Query {
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     /** Queries a list of whois items. */
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
+    PullRequestMergePermission(request: QueryGetPullRequestMergePermissionRequest): Promise<QueryGetPullRequestMergePermissionResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -811,6 +834,7 @@ export declare class QueryClientImpl implements Query {
     UserOrganizationAll(request: QueryAllUserOrganizationRequest): Promise<QueryAllUserOrganizationResponse>;
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
+    PullRequestMergePermission(request: QueryGetPullRequestMergePermissionRequest): Promise<QueryGetPullRequestMergePermissionResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

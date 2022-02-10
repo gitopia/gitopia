@@ -12559,6 +12559,47 @@ paths:
           type: string
       tags:
         - Query
+  '/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge':
+    get:
+      operationId: GitopiaGitopiaGitopiaPullRequestMergePermission
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              havePermission:
+                type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: userAddress
+          in: path
+          required: true
+          type: string
+        - name: pullId
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/pullRequest:
     get:
       summary: Queries a list of pullRequest items.
@@ -26274,6 +26315,11 @@ definitions:
             format: int64
           extensions:
             type: string
+  gitopia.gitopia.gitopia.QueryGetPullRequestMergePermissionResponse:
+    type: object
+    properties:
+      havePermission:
+        type: boolean
   gitopia.gitopia.gitopia.QueryGetPullRequestResponse:
     type: object
     properties:

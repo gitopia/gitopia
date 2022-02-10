@@ -623,6 +623,10 @@ export interface GitopiaQueryGetOrganizationResponse {
   Organization?: GitopiaOrganization;
 }
 
+export interface GitopiaQueryGetPullRequestMergePermissionResponse {
+  havePermission?: boolean;
+}
+
 export interface GitopiaQueryGetPullRequestResponse {
   PullRequest?: GitopiaPullRequest;
 }
@@ -1248,6 +1252,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryOrganization = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetOrganizationResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/organization/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPullRequestMergePermission
+   * @request GET:/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge
+   */
+  queryPullRequestMergePermission = (userAddress: string, pullId: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetPullRequestMergePermissionResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/permissions/${userAddress}/pull/${pullId}/merge`,
       method: "GET",
       format: "json",
       ...params,

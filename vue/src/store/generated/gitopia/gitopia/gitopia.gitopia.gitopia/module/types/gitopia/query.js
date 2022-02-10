@@ -11,6 +11,146 @@ import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag, } from ".
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
+const baseQueryGetPullRequestMergePermissionRequest = {
+    userAddress: "",
+    pullId: 0,
+};
+export const QueryGetPullRequestMergePermissionRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.userAddress !== "") {
+            writer.uint32(10).string(message.userAddress);
+        }
+        if (message.pullId !== 0) {
+            writer.uint32(16).uint64(message.pullId);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.userAddress = reader.string();
+                    break;
+                case 2:
+                    message.pullId = longToNumber(reader.uint64());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionRequest,
+        };
+        if (object.userAddress !== undefined && object.userAddress !== null) {
+            message.userAddress = String(object.userAddress);
+        }
+        else {
+            message.userAddress = "";
+        }
+        if (object.pullId !== undefined && object.pullId !== null) {
+            message.pullId = Number(object.pullId);
+        }
+        else {
+            message.pullId = 0;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.userAddress !== undefined &&
+            (obj.userAddress = message.userAddress);
+        message.pullId !== undefined && (obj.pullId = message.pullId);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionRequest,
+        };
+        if (object.userAddress !== undefined && object.userAddress !== null) {
+            message.userAddress = object.userAddress;
+        }
+        else {
+            message.userAddress = "";
+        }
+        if (object.pullId !== undefined && object.pullId !== null) {
+            message.pullId = object.pullId;
+        }
+        else {
+            message.pullId = 0;
+        }
+        return message;
+    },
+};
+const baseQueryGetPullRequestMergePermissionResponse = {
+    havePermission: false,
+};
+export const QueryGetPullRequestMergePermissionResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.havePermission === true) {
+            writer.uint32(8).bool(message.havePermission);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.havePermission = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionResponse,
+        };
+        if (object.havePermission !== undefined && object.havePermission !== null) {
+            message.havePermission = Boolean(object.havePermission);
+        }
+        else {
+            message.havePermission = false;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.havePermission !== undefined &&
+            (obj.havePermission = message.havePermission);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetPullRequestMergePermissionResponse,
+        };
+        if (object.havePermission !== undefined && object.havePermission !== null) {
+            message.havePermission = object.havePermission;
+        }
+        else {
+            message.havePermission = false;
+        }
+        return message;
+    },
+};
 const baseQueryGetReleaseRequest = { id: 0 };
 export const QueryGetReleaseRequest = {
     encode(message, writer = Writer.create()) {
@@ -5176,6 +5316,11 @@ export class QueryClientImpl {
         const data = QueryAllWhoisRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "WhoisAll", data);
         return promise.then((data) => QueryAllWhoisResponse.decode(new Reader(data)));
+    }
+    PullRequestMergePermission(request) {
+        const data = QueryGetPullRequestMergePermissionRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "PullRequestMergePermission", data);
+        return promise.then((data) => QueryGetPullRequestMergePermissionResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {
