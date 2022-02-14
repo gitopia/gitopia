@@ -194,6 +194,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.SetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgMultiSetRepositoryBranch:
+			res, err := msgServer.MultiSetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgSetDefaultBranch:
 			res, err := msgServer.SetDefaultBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

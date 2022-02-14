@@ -477,6 +477,46 @@ func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgMultiSetRepositoryBranch{}
+
+func NewMsgMultiSetRepositoryBranch(creator string, id uint64, branches []*MsgMultiSetRepositoryBranch_Branch) *MsgMultiSetRepositoryBranch {
+	return &MsgMultiSetRepositoryBranch{
+		Id:       id,
+		Creator:  creator,
+		Branches: branches,
+	}
+}
+
+func (msg *MsgMultiSetRepositoryBranch) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMultiSetRepositoryBranch) Type() string {
+	return "MultiSetRepositoryBranch"
+}
+
+func (msg *MsgMultiSetRepositoryBranch) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMultiSetRepositoryBranch) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMultiSetRepositoryBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
 var _ sdk.Msg = &MsgRenameRepository{}
 
 func NewMsgRenameRepository(creator string, id uint64, name string) *MsgRenameRepository {

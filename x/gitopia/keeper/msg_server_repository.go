@@ -706,6 +706,56 @@ func (k msgServer) SetRepositoryBranch(goCtx context.Context, msg *types.MsgSetR
 	return &types.MsgSetRepositoryBranchResponse{}, nil
 }
 
+func (k msgServer) MultiSetRepositoryBranch(goCtx context.Context, msg *types.MsgMultiSetRepositoryBranch) (*types.MsgMultiSetRepositoryBranchResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	repository, found := k.GetRepository(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	for _, branch := range msg.Branches {
+		if i, exists := utils.RepositoryBranchExists(repository.Branches, branch.Name); exists {
+			if repository.Branches[i].Sha != branch.CommitSHA {
+				repository.Branches[i].Sha = branch.CommitSHA
+				repository.Branches[i].LastUpdatedAt = currentTime
+			}
+		} else {
+			var repositoryBranch = types.RepositoryBranch{
+				Name:          branch.Name,
+				Sha:           branch.CommitSHA,
+				LastUpdatedAt: currentTime,
+			}
+			repository.Branches = append(repository.Branches, &repositoryBranch)
+		}
+	}
+
+	repository.UpdatedAt = currentTime
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgMultiSetRepositoryBranchResponse{}, nil
+}
+
 func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefaultBranch) (*types.MsgSetDefaultBranchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

@@ -59,6 +59,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateRepositoryLabel{}, "gitopia/UpdateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepositoryLabel{}, "gitopia/DeleteRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgSetRepositoryBranch{}, "gitopia/SetRepositoryBranch", nil)
+	cdc.RegisterConcrete(&MsgMultiSetRepositoryBranch{}, "gitopia/MultiSetRepositoryBranch", nil)
 	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
 	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
 	cdc.RegisterConcrete(&MsgSetRepositoryTag{}, "gitopia/SetRepositoryTag", nil)
@@ -135,6 +136,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateRepositoryLabel{},
 		&MsgDeleteRepositoryLabel{},
 		&MsgSetRepositoryBranch{},
+		&MsgMultiSetRepositoryBranch{},
 		&MsgSetDefaultBranch{},
 		&MsgDeleteBranch{},
 		&MsgSetRepositoryTag{},
