@@ -740,6 +740,9 @@ func (k msgServer) MultiSetRepositoryBranch(goCtx context.Context, msg *types.Ms
 				repository.Branches[i].LastUpdatedAt = currentTime
 			}
 		} else {
+			if len(repository.Branches) == 0 {
+				repository.DefaultBranch = branch.Name
+			}
 			var repositoryBranch = types.RepositoryBranch{
 				Name:          branch.Name,
 				Sha:           branch.CommitSHA,
