@@ -543,7 +543,7 @@ func (msg *MsgRenameRepository) Route() string {
 }
 
 func (msg *MsgRenameRepository) Type() string {
-	return "SetDefaultBranch"
+	return "RenameRepository"
 }
 
 func (msg *MsgRenameRepository) GetSigners() []sdk.AccAddress {
@@ -775,7 +775,7 @@ func (msg *MsgMultiSetRepositoryTag) Route() string {
 }
 
 func (msg *MsgMultiSetRepositoryTag) Type() string {
-	return "SetRepositoryTag"
+	return "MultiSetRepositoryTag"
 }
 
 func (msg *MsgMultiSetRepositoryTag) GetSigners() []sdk.AccAddress {
