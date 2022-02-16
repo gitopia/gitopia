@@ -843,6 +843,53 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	return &types.MsgDeleteBranchResponse{}, nil
 }
 
+func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiDeleteBranch) (*types.MsgMultiDeleteBranchResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	repository, found := k.GetRepository(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	for _, branch := range msg.Branches {
+		if i, exists := utils.RepositoryBranchExists(repository.Branches, branch); exists {
+			if repository.DefaultBranch != repository.Branches[i].Name {
+				repository.Branches = append(repository.Branches[:i], repository.Branches[i+1:]...)
+			} else {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) is default branch", branch))
+			}
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) doesn't exist", branch))
+		}
+	}
+
+	repository.UpdatedAt = currentTime
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgMultiDeleteBranchResponse{}, nil
+}
+
 func (k msgServer) SetRepositoryTag(goCtx context.Context, msg *types.MsgSetRepositoryTag) (*types.MsgSetRepositoryTagResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

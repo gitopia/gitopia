@@ -62,6 +62,7 @@ service Msg {
   rpc MultiSetRepositoryBranch(MsgMultiSetRepositoryBranch) returns (MsgMultiSetRepositoryBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
+  rpc MultiDeleteBranch(MsgMultiDeleteBranch) returns (MsgMultiDeleteBranchResponse);
   rpc SetRepositoryTag(MsgSetRepositoryTag) returns (MsgSetRepositoryTagResponse);
   rpc MultiSetRepositoryTag(MsgMultiSetRepositoryTag) returns (MsgMultiSetRepositoryTagResponse);
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
@@ -528,6 +529,14 @@ message MsgDeleteBranch {
 }
 
 message MsgDeleteBranchResponse { }
+
+message MsgMultiDeleteBranch {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string branches = 3;
+}
+
+message MsgMultiDeleteBranchResponse { }
 
 message MsgSetRepositoryTag {
   string creator = 1;

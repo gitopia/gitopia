@@ -664,6 +664,52 @@ func (msg *MsgDeleteBranch) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgMultiDeleteBranch{}
+
+func NewMsgMultiDeleteBranch(creator string, id uint64, branches []string) *MsgMultiDeleteBranch {
+	return &MsgMultiDeleteBranch{
+		Id:       id,
+		Creator:  creator,
+		Branches: branches,
+	}
+}
+
+func (msg *MsgMultiDeleteBranch) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMultiDeleteBranch) Type() string {
+	return "MultiDeleteBranch"
+}
+
+func (msg *MsgMultiDeleteBranch) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMultiDeleteBranch) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	for _, branch := range msg.Branches {
+		if len(branch) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+		} else if len(branch) < 1 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgSetRepositoryTag{}
 
 func NewMsgSetRepositoryTag(creator string, id uint64, name string, sha string) *MsgSetRepositoryTag {
