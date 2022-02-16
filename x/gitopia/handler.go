@@ -210,6 +210,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.SetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgMultiSetRepositoryTag:
+			res, err := msgServer.MultiSetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteTag:
 			res, err := msgServer.DeleteTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

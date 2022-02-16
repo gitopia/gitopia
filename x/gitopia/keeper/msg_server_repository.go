@@ -889,6 +889,55 @@ func (k msgServer) SetRepositoryTag(goCtx context.Context, msg *types.MsgSetRepo
 	return &types.MsgSetRepositoryTagResponse{}, nil
 }
 
+func (k msgServer) MultiSetRepositoryTag(goCtx context.Context, msg *types.MsgMultiSetRepositoryTag) (*types.MsgMultiSetRepositoryTagResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	repository, found := k.GetRepository(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HaveTagPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	for _, tag := range msg.Tags {
+		if i, exists := utils.RepositoryTagExists(repository.Tags, tag.Name); exists {
+			repository.Tags[i].Sha = tag.CommitSHA
+			repository.Tags[i].LastUpdatedAt = currentTime
+		} else {
+			var repositoryTag = types.RepositoryTag{
+				Name:          tag.Name,
+				Sha:           tag.CommitSHA,
+				LastUpdatedAt: currentTime,
+			}
+			repository.Tags = append(repository.Tags, &repositoryTag)
+		}
+	}
+
+	repository.UpdatedAt = currentTime
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgMultiSetRepositoryTagResponse{}, nil
+}
+
 func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*types.MsgDeleteTagResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

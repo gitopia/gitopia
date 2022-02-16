@@ -714,6 +714,57 @@ func (msg *MsgSetRepositoryTag) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgMultiSetRepositoryTag{}
+
+func NewMsgMultiSetRepositoryTag(creator string, id uint64, tags []*MsgMultiSetRepositoryTag_Tag) *MsgMultiSetRepositoryTag {
+	return &MsgMultiSetRepositoryTag{
+		Id:      id,
+		Creator: creator,
+		Tags:    tags,
+	}
+}
+
+func (msg *MsgMultiSetRepositoryTag) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMultiSetRepositoryTag) Type() string {
+	return "SetRepositoryTag"
+}
+
+func (msg *MsgMultiSetRepositoryTag) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMultiSetRepositoryTag) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMultiSetRepositoryTag) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	for _, tag := range msg.Tags {
+		if len(tag.Name) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
+		} else if len(tag.Name) < 1 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+		}
+		if len(tag.CommitSHA) > 64 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha length exceeds limit: 64")
+		} else if len(tag.CommitSHA) < 1 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha can't be empty")
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteTag{}
 
 func NewMsgDeleteTag(creator string, id uint64, name string) *MsgDeleteTag {
