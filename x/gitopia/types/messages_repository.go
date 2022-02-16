@@ -855,6 +855,52 @@ func (msg *MsgDeleteTag) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgMultiDeleteTag{}
+
+func NewMsgMultiDeleteTag(creator string, id uint64, tags []string) *MsgMultiDeleteTag {
+	return &MsgMultiDeleteTag{
+		Id:      id,
+		Creator: creator,
+		Tags:    tags,
+	}
+}
+
+func (msg *MsgMultiDeleteTag) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMultiDeleteTag) Type() string {
+	return "MultiDeleteTag"
+}
+
+func (msg *MsgMultiDeleteTag) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMultiDeleteTag) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMultiDeleteTag) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	for _, tag := range msg.Tags {
+		if len(tag) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
+		} else if len(tag) < 1 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgToggleRepositoryForking{}
 
 func NewMsgToggleRepositoryForking(creator string, id uint64) *MsgToggleRepositoryForking {

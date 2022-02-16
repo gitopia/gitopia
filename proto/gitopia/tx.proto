@@ -66,6 +66,7 @@ service Msg {
   rpc SetRepositoryTag(MsgSetRepositoryTag) returns (MsgSetRepositoryTagResponse);
   rpc MultiSetRepositoryTag(MsgMultiSetRepositoryTag) returns (MsgMultiSetRepositoryTagResponse);
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
+  rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
@@ -566,6 +567,14 @@ message MsgDeleteTag {
 }
 
 message MsgDeleteTagResponse { }
+
+message MsgMultiDeleteTag {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string tags = 3;
+}
+
+message MsgMultiDeleteTagResponse { }
 
 message MsgToggleRepositoryForking {
   string creator = 1;

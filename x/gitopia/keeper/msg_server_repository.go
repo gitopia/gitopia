@@ -1025,6 +1025,49 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 	return &types.MsgDeleteTagResponse{}, nil
 }
 
+func (k msgServer) MultiDeleteTag(goCtx context.Context, msg *types.MsgMultiDeleteTag) (*types.MsgMultiDeleteTagResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	repository, found := k.GetRepository(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+
+	var organization types.Organization
+
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HaveTagPermission(repository, msg.Creator, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	currentTime := ctx.BlockTime().Unix()
+
+	for _, tag := range msg.Tags {
+		if i, exists := utils.RepositoryTagExists(repository.Tags, tag); exists {
+			repository.Tags = append(repository.Tags[:i], repository.Tags[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exist", tag))
+		}
+	}
+
+	repository.UpdatedAt = currentTime
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgMultiDeleteTagResponse{}, nil
+}
+
 func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.MsgToggleRepositoryForking) (*types.MsgToggleRepositoryForkingResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
