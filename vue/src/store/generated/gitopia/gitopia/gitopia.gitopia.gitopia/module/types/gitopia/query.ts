@@ -22,6 +22,16 @@ import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** this line is used by starport scaffolding # 3 */
+export interface QueryGetPullRequestMergePermissionRequest {
+  userAddress: string;
+  pullId: number;
+}
+
+export interface QueryGetPullRequestMergePermissionResponse {
+  havePermission: boolean;
+}
+
+/** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
   id: number;
 }
@@ -340,6 +350,168 @@ export interface QueryAllWhoisResponse {
   Whois: Whois[];
   pagination: PageResponse | undefined;
 }
+
+const baseQueryGetPullRequestMergePermissionRequest: object = {
+  userAddress: "",
+  pullId: 0,
+};
+
+export const QueryGetPullRequestMergePermissionRequest = {
+  encode(
+    message: QueryGetPullRequestMergePermissionRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.userAddress !== "") {
+      writer.uint32(10).string(message.userAddress);
+    }
+    if (message.pullId !== 0) {
+      writer.uint32(16).uint64(message.pullId);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetPullRequestMergePermissionRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionRequest,
+    } as QueryGetPullRequestMergePermissionRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.userAddress = reader.string();
+          break;
+        case 2:
+          message.pullId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetPullRequestMergePermissionRequest {
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionRequest,
+    } as QueryGetPullRequestMergePermissionRequest;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = String(object.userAddress);
+    } else {
+      message.userAddress = "";
+    }
+    if (object.pullId !== undefined && object.pullId !== null) {
+      message.pullId = Number(object.pullId);
+    } else {
+      message.pullId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetPullRequestMergePermissionRequest): unknown {
+    const obj: any = {};
+    message.userAddress !== undefined &&
+      (obj.userAddress = message.userAddress);
+    message.pullId !== undefined && (obj.pullId = message.pullId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPullRequestMergePermissionRequest>
+  ): QueryGetPullRequestMergePermissionRequest {
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionRequest,
+    } as QueryGetPullRequestMergePermissionRequest;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = object.userAddress;
+    } else {
+      message.userAddress = "";
+    }
+    if (object.pullId !== undefined && object.pullId !== null) {
+      message.pullId = object.pullId;
+    } else {
+      message.pullId = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetPullRequestMergePermissionResponse: object = {
+  havePermission: false,
+};
+
+export const QueryGetPullRequestMergePermissionResponse = {
+  encode(
+    message: QueryGetPullRequestMergePermissionResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.havePermission === true) {
+      writer.uint32(8).bool(message.havePermission);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetPullRequestMergePermissionResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionResponse,
+    } as QueryGetPullRequestMergePermissionResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.havePermission = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetPullRequestMergePermissionResponse {
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionResponse,
+    } as QueryGetPullRequestMergePermissionResponse;
+    if (object.havePermission !== undefined && object.havePermission !== null) {
+      message.havePermission = Boolean(object.havePermission);
+    } else {
+      message.havePermission = false;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetPullRequestMergePermissionResponse): unknown {
+    const obj: any = {};
+    message.havePermission !== undefined &&
+      (obj.havePermission = message.havePermission);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetPullRequestMergePermissionResponse>
+  ): QueryGetPullRequestMergePermissionResponse {
+    const message = {
+      ...baseQueryGetPullRequestMergePermissionResponse,
+    } as QueryGetPullRequestMergePermissionResponse;
+    if (object.havePermission !== undefined && object.havePermission !== null) {
+      message.havePermission = object.havePermission;
+    } else {
+      message.havePermission = false;
+    }
+    return message;
+  },
+};
 
 const baseQueryGetReleaseRequest: object = { id: 0 };
 
@@ -6085,6 +6257,9 @@ export interface Query {
   Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
   /** Queries a list of whois items. */
   WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
+  PullRequestMergePermission(
+    request: QueryGetPullRequestMergePermissionRequest
+  ): Promise<QueryGetPullRequestMergePermissionResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -6503,6 +6678,22 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllWhoisResponse.decode(new Reader(data))
+    );
+  }
+
+  PullRequestMergePermission(
+    request: QueryGetPullRequestMergePermissionRequest
+  ): Promise<QueryGetPullRequestMergePermissionResponse> {
+    const data = QueryGetPullRequestMergePermissionRequest.encode(
+      request
+    ).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "PullRequestMergePermission",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetPullRequestMergePermissionResponse.decode(new Reader(data))
     );
   }
 }

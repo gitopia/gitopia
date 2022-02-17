@@ -472,6 +472,9 @@ export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
 export interface GitopiaQueryGetOrganizationResponse {
     Organization?: GitopiaOrganization;
 }
+export interface GitopiaQueryGetPullRequestMergePermissionResponse {
+    havePermission?: boolean;
+}
 export interface GitopiaQueryGetPullRequestResponse {
     PullRequest?: GitopiaPullRequest;
 }
@@ -850,6 +853,14 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/organization/{id}
      */
     queryOrganization: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetOrganizationResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryPullRequestMergePermission
+     * @request GET:/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge
+     */
+    queryPullRequestMergePermission: (userAddress: string, pullId: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetPullRequestMergePermissionResponse, RpcStatus>>;
     /**
      * No description
      *
