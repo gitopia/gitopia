@@ -46,6 +46,7 @@ const (
 	AssignPermission                      = types.RepositoryCollaborator_TRIAGE
 	DefaultBranchPermission               = types.RepositoryCollaborator_ADMIN
 	LabelPermission                       = types.RepositoryCollaborator_TRIAGE
+	PullRequestMergePermission            = types.RepositoryCollaborator_WRITE
 	PushBranchPermission                  = types.RepositoryCollaborator_WRITE
 	PushProtectedBranchPermission         = types.RepositoryCollaborator_ADMIN
 	PushTagPermission                     = types.RepositoryCollaborator_WRITE
