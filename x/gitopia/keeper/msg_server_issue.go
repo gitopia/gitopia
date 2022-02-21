@@ -44,7 +44,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	if len(msg.Assignees) > 0 || len(msg.LabelIds) > 0 {
 		var organization types.Organization
-
 		if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 			organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 			if !found {
@@ -52,7 +51,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			}
 		}
 
-		if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+		if !utils.HavePermission(repository, msg.Creator, utils.AssignPermission, organization) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 
@@ -245,7 +244,7 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 			}
 		}
 
-		if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+		if !utils.HavePermission(repository, msg.Creator, utils.ToggleIssueStatePermission, organization) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	}
@@ -308,8 +307,8 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
-	var organization types.Organization
 
+	var organization types.Organization
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
@@ -317,7 +316,7 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		}
 	}
 
-	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.AssignPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -379,8 +378,8 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
-	var organization types.Organization
 
+	var organization types.Organization
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
@@ -388,7 +387,7 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 		}
 	}
 
-	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.AssignPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -447,8 +446,8 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
-	var organization types.Organization
 
+	var organization types.Organization
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
@@ -456,7 +455,7 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 		}
 	}
 
-	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.LabelPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -522,8 +521,8 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
-	var organization types.Organization
 
+	var organization types.Organization
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
@@ -531,7 +530,7 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 		}
 	}
 
-	if !utils.HaveIssuePermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.LabelPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 

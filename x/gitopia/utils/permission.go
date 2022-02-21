@@ -43,7 +43,9 @@ func HavePermission(repository types.Repository, creator string, minAllowedPermi
 
 /* Minimum Allowed Permissions */
 const (
+	AssignPermission                      = types.RepositoryCollaborator_TRIAGE
 	DefaultBranchPermission               = types.RepositoryCollaborator_ADMIN
+	LabelPermission                       = types.RepositoryCollaborator_TRIAGE
 	PushBranchPermission                  = types.RepositoryCollaborator_WRITE
 	PushProtectedBranchPermission         = types.RepositoryCollaborator_ADMIN
 	PushTagPermission                     = types.RepositoryCollaborator_WRITE
@@ -52,4 +54,5 @@ const (
 	RepositoryRenamePermission            = types.RepositoryCollaborator_ADMIN
 	RepositoryTransferOwnershipPermission = types.RepositoryCollaborator_ADMIN
 	ToggleRepositoryForkingPermission     = types.RepositoryCollaborator_ADMIN
+	ToggleIssueStatePermission            = types.RepositoryCollaborator_TRIAGE
 )
