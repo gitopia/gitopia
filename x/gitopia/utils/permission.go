@@ -2,15 +2,6 @@ package utils
 
 import "github.com/gitopia/gitopia/x/gitopia/types"
 
-func HaveRepositoryCollaboratorPermission(p []types.RepositoryCollaborator_Permission, val types.RepositoryCollaborator_Permission) (int, bool) {
-	for i, v := range p {
-		if v == val {
-			return i, true
-		}
-	}
-	return 0, false
-}
-
 func HavePermission(repository types.Repository, creator string, minAllowedPermission types.RepositoryCollaborator_Permission, o interface{}) bool {
 	ownerId := repository.Owner.Id
 	ownerType := repository.Owner.Type
