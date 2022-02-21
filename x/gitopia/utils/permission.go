@@ -50,6 +50,7 @@ const (
 	PushBranchPermission                  = types.RepositoryCollaborator_WRITE
 	PushProtectedBranchPermission         = types.RepositoryCollaborator_ADMIN
 	PushTagPermission                     = types.RepositoryCollaborator_WRITE
+	ReleasePermission                     = types.RepositoryCollaborator_WRITE
 	RepositoryCollaboratorPermission      = types.RepositoryCollaborator_ADMIN
 	RepositoryLabelPermission             = types.RepositoryCollaborator_WRITE
 	RepositoryRenamePermission            = types.RepositoryCollaborator_ADMIN
