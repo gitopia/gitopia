@@ -688,8 +688,13 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 	currentTime := ctx.BlockTime().Unix()
 
 	if i, exists := utils.RepositoryLabelIdExists(repository.Labels, msg.LabelId); exists {
-		if _, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label name (%v) already exists", msg.Name))
+		if j, exists := utils.RepositoryLabelExists(repository.Labels, msg.Name); exists {
+			if repository.Labels[i].Id != repository.Labels[j].Id {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label name (%v) already exists", msg.Name))
+			}
+		}
+		if repository.Labels[i].Name == msg.Name && repository.Labels[i].Color == msg.Color && repository.Labels[i].Description == msg.Description {
+			return &types.MsgUpdateRepositoryLabelResponse{}, nil
 		}
 		repository.Labels[i].Name = msg.Name
 		repository.Labels[i].Color = msg.Color
