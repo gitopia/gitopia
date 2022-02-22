@@ -26,7 +26,6 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	}
 
 	var organization types.Organization
-
 	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
 		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
 		if !found {
@@ -34,7 +33,7 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 		}
 	}
 
-	if !utils.HaveRepositoryPermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.ReleasePermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -113,14 +112,21 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("release id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != release.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
 	repository, found := k.GetRepository(ctx, release.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+
+	var organization types.Organization
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HavePermission(repository, msg.Creator, utils.ReleasePermission, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	if _, exists := utils.RepositoryTagExists(repository.Tags, msg.TagName); !exists {
