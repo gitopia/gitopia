@@ -1,0 +1,21 @@
+syntax="proto3";
+
+package gitopia.gitopia.offchain;
+
+option go_package="github.com/gitopia/gitopia/x/offchain/types";
+
+import "gogoproto/gogo.proto";
+
+// MsgSignData defines an arbitrary, general-purpose, off-chain message
+message MsgSignData {
+    // signer is the bech32 representation of the signer's account address
+    string signer = 1;
+    // data represents the raw bytes of the content that is signed (text, json, etc)
+    bytes data = 2;
+}
+
+// ListOfMsgSignData defines a list of MsgSignData, used to marshal and unmarshal them in a clean way
+message ListOfMsgSignData {
+    // msgs is a list of messages
+    repeated MsgSignData msgs = 1;
+}
