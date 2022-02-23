@@ -18,7 +18,7 @@ func RegisterInterfaces(ir types.InterfaceRegistry) {
 
 // RegisterLegacyAminoCodec registers amino's legacy codec
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgSignData{}, "offchain/MsgSignData", nil)
+	cdc.RegisterConcrete(&MsgSignData{}, "sign/MsgSignData", nil)
 }
 
 func init() {
