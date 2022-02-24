@@ -727,7 +727,7 @@ func (k msgServer) MultiSetRepositoryBranch(goCtx context.Context, msg *types.Ms
 		}
 	}
 
-	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.PushBranchPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -865,7 +865,7 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 		}
 	}
 
-	if !utils.HaveBranchPermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.PushBranchPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -958,7 +958,7 @@ func (k msgServer) MultiSetRepositoryTag(goCtx context.Context, msg *types.MsgMu
 		}
 	}
 
-	if !utils.HaveTagPermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.PushTagPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -1047,7 +1047,7 @@ func (k msgServer) MultiDeleteTag(goCtx context.Context, msg *types.MsgMultiDele
 		}
 	}
 
-	if !utils.HaveTagPermission(repository, msg.Creator, organization) {
+	if !utils.HavePermission(repository, msg.Creator, utils.PushTagPermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
