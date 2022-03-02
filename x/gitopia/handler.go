@@ -194,6 +194,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.SetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgMultiSetRepositoryBranch:
+			res, err := msgServer.MultiSetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgSetDefaultBranch:
 			res, err := msgServer.SetDefaultBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -202,12 +206,24 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgMultiDeleteBranch:
+			res, err := msgServer.MultiDeleteBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgSetRepositoryTag:
 			res, err := msgServer.SetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgMultiSetRepositoryTag:
+			res, err := msgServer.MultiSetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteTag:
 			res, err := msgServer.DeleteTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgMultiDeleteTag:
+			res, err := msgServer.MultiDeleteTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgToggleRepositoryForking:

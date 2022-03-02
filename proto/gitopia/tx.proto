@@ -59,10 +59,14 @@ service Msg {
   rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
   rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
   rpc SetRepositoryBranch(MsgSetRepositoryBranch) returns (MsgSetRepositoryBranchResponse);
+  rpc MultiSetRepositoryBranch(MsgMultiSetRepositoryBranch) returns (MsgMultiSetRepositoryBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
+  rpc MultiDeleteBranch(MsgMultiDeleteBranch) returns (MsgMultiDeleteBranchResponse);
   rpc SetRepositoryTag(MsgSetRepositoryTag) returns (MsgSetRepositoryTagResponse);
+  rpc MultiSetRepositoryTag(MsgMultiSetRepositoryTag) returns (MsgMultiSetRepositoryTagResponse);
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
+  rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
   rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
@@ -499,6 +503,18 @@ message MsgSetRepositoryBranch {
 
 message MsgSetRepositoryBranchResponse { }
 
+message MsgMultiSetRepositoryBranch {
+  string creator = 1;
+  uint64 id = 2;
+  repeated Branch branches=3;
+  message Branch { 
+    string name = 1;
+    string commitSHA = 2;
+  }
+}
+
+message MsgMultiSetRepositoryBranchResponse { }
+
 message MsgSetDefaultBranch {
   string creator = 1;
   uint64 id = 2;
@@ -515,6 +531,14 @@ message MsgDeleteBranch {
 
 message MsgDeleteBranchResponse { }
 
+message MsgMultiDeleteBranch {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string branches = 3;
+}
+
+message MsgMultiDeleteBranchResponse { }
+
 message MsgSetRepositoryTag {
   string creator = 1;
   uint64 id = 2;
@@ -524,6 +548,18 @@ message MsgSetRepositoryTag {
 
 message MsgSetRepositoryTagResponse { }
 
+message MsgMultiSetRepositoryTag {
+  string creator = 1;
+  uint64 id = 2;
+  repeated Tag tags=3;
+  message Tag { 
+    string name = 1;
+    string commitSHA = 2;
+  }
+}
+
+message MsgMultiSetRepositoryTagResponse { }
+
 message MsgDeleteTag {
   string creator = 1;
   uint64 id = 2;
@@ -531,6 +567,14 @@ message MsgDeleteTag {
 }
 
 message MsgDeleteTagResponse { }
+
+message MsgMultiDeleteTag {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string tags = 3;
+}
+
+message MsgMultiDeleteTagResponse { }
 
 message MsgToggleRepositoryForking {
   string creator = 1;
