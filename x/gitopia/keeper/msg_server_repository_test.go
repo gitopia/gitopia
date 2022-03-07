@@ -808,46 +808,6 @@ func TestRepositoryMsgToggleRepositoryForking(t *testing.T) {
 	}
 }
 
-func TestRepositoryMsgServerUpdate(t *testing.T) {
-	creator := "A"
-
-	for _, tc := range []struct {
-		desc    string
-		request *types.MsgUpdateRepository
-		err     error
-	}{
-		{
-			desc:    "Completed",
-			request: &types.MsgUpdateRepository{Creator: creator, Id: 0},
-		},
-		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdateRepository{Creator: "B", Id: 0},
-			err:     sdkerrors.ErrUnauthorized,
-		},
-		{
-			desc:    "KeyNotFound",
-			request: &types.MsgUpdateRepository{Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
-		},
-	} {
-		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-			require.NoError(t, err)
-			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
-			require.NoError(t, err)
-
-			_, err = srv.UpdateRepository(ctx, tc.request)
-			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
 func TestRepositoryMsgServerDelete(t *testing.T) {
 	creator := "A"
 

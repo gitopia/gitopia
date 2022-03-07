@@ -68,7 +68,6 @@ service Msg {
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
   rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
-  rpc UpdateRepository(MsgUpdateRepository) returns (MsgUpdateRepositoryResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
@@ -584,19 +583,6 @@ message MsgToggleRepositoryForking {
 message MsgToggleRepositoryForkingResponse { 
   bool allowForking = 1;
 }
-
-message MsgUpdateRepository {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-  string owner = 4;
-  string description = 5;
-  string labels = 6;
-  string license = 7;
-  string defaultBranch = 8;
-}
-
-message MsgUpdateRepositoryResponse { }
 
 message MsgDeleteRepository {
   string creator = 1;

@@ -1103,33 +1103,6 @@ func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.Msg
 	return &types.MsgToggleRepositoryForkingResponse{AllowForking: repository.AllowForking}, nil
 }
 
-func (k msgServer) UpdateRepository(goCtx context.Context, msg *types.MsgUpdateRepository) (*types.MsgUpdateRepositoryResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	repository, found := k.GetRepository(ctx, msg.Id)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
-	}
-
-	repository.Name = msg.Name
-	repository.Description = msg.Description
-	repository.UpdatedAt = ctx.BlockTime().Unix()
-	repository.License = msg.License
-	repository.DefaultBranch = msg.DefaultBranch
-
-	ownerId := repository.Owner.Id
-	//ownerType := repository.Owner.Type.String()
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != ownerId {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	k.SetRepository(ctx, repository)
-
-	return &types.MsgUpdateRepositoryResponse{}, nil
-}
-
 func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteRepository) (*types.MsgDeleteRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

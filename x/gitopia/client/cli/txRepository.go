@@ -564,60 +564,6 @@ func CmdToggleRepositoryForking() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateRepository() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-repository [id] [name] [owner] [description] [labels] [license] [defaultBranch]",
-		Short: "Update a repository",
-		Args:  cobra.ExactArgs(7),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			argsName, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-			argsOwner, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsDescription, err := cast.ToStringE(args[3])
-			if err != nil {
-				return err
-			}
-			argsLabels, err := cast.ToStringE(args[4])
-			if err != nil {
-				return err
-			}
-			argsLicense, err := cast.ToStringE(args[5])
-			if err != nil {
-				return err
-			}
-			argsDefaultBranch, err := cast.ToStringE(args[6])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgUpdateRepository(clientCtx.GetFromAddress().String(), id, string(argsName), string(argsOwner), string(argsDescription), string(argsLabels), string(argsLicense), string(argsDefaultBranch))
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdDeleteRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-repository [id]",

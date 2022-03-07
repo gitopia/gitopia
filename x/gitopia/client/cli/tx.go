@@ -85,7 +85,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdSetRepositoryTag())
 	cmd.AddCommand(CmdDeleteTag())
 	cmd.AddCommand(CmdToggleRepositoryForking())
-	cmd.AddCommand(CmdUpdateRepository())
 	cmd.AddCommand(CmdDeleteRepository())
 
 	cmd.AddCommand(CmdCreateUser())
