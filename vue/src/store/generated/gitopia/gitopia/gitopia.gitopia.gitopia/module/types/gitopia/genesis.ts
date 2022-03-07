@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { Task } from "../gitopia/task";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
@@ -14,6 +15,8 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
+  taskList: Task[];
+  taskCount: number;
   /** this line is used by starport scaffolding # genesis/proto/state */
   releaseList: Release[];
   releaseCount: number;
@@ -35,6 +38,7 @@ export interface GenesisState {
 }
 
 const baseGenesisState: object = {
+  taskCount: 0,
   releaseCount: 0,
   pullRequestCount: 0,
   organizationCount: 0,
@@ -47,6 +51,12 @@ const baseGenesisState: object = {
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.taskList) {
+      Task.encode(v!, writer.uint32(138).fork()).ldelim();
+    }
+    if (message.taskCount !== 0) {
+      writer.uint32(144).uint64(message.taskCount);
+    }
     for (const v of message.releaseList) {
       Release.encode(v!, writer.uint32(122).fork()).ldelim();
     }
@@ -102,6 +112,7 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.taskList = [];
     message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
@@ -113,6 +124,12 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 17:
+          message.taskList.push(Task.decode(reader, reader.uint32()));
+          break;
+        case 18:
+          message.taskCount = longToNumber(reader.uint64() as Long);
+          break;
         case 15:
           message.releaseList.push(Release.decode(reader, reader.uint32()));
           break;
@@ -177,6 +194,7 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.taskList = [];
     message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
@@ -185,6 +203,16 @@ export const GenesisState = {
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.taskList !== undefined && object.taskList !== null) {
+      for (const e of object.taskList) {
+        message.taskList.push(Task.fromJSON(e));
+      }
+    }
+    if (object.taskCount !== undefined && object.taskCount !== null) {
+      message.taskCount = Number(object.taskCount);
+    } else {
+      message.taskCount = 0;
+    }
     if (object.releaseList !== undefined && object.releaseList !== null) {
       for (const e of object.releaseList) {
         message.releaseList.push(Release.fromJSON(e));
@@ -285,6 +313,14 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.taskList) {
+      obj.taskList = message.taskList.map((e) =>
+        e ? Task.toJSON(e) : undefined
+      );
+    } else {
+      obj.taskList = [];
+    }
+    message.taskCount !== undefined && (obj.taskCount = message.taskCount);
     if (message.releaseList) {
       obj.releaseList = message.releaseList.map((e) =>
         e ? Release.toJSON(e) : undefined
@@ -359,6 +395,7 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.taskList = [];
     message.releaseList = [];
     message.pullRequestList = [];
     message.organizationList = [];
@@ -367,6 +404,16 @@ export const GenesisState = {
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (object.taskList !== undefined && object.taskList !== null) {
+      for (const e of object.taskList) {
+        message.taskList.push(Task.fromPartial(e));
+      }
+    }
+    if (object.taskCount !== undefined && object.taskCount !== null) {
+      message.taskCount = object.taskCount;
+    } else {
+      message.taskCount = 0;
+    }
     if (object.releaseList !== undefined && object.releaseList !== null) {
       for (const e of object.releaseList) {
         message.releaseList.push(Release.fromPartial(e));

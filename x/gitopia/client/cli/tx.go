@@ -17,6 +17,7 @@ var (
 
 const (
 	flagPacketTimeoutTimestamp = "packet-timeout-timestamp"
+	flagExpiration             = "expiration"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -29,6 +30,9 @@ func GetTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
+	cmd.AddCommand(CmdCreateTask())
+	cmd.AddCommand(CmdUpdateTask())
+	cmd.AddCommand(CmdDeleteTask())
 	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())
@@ -39,6 +43,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdatePullRequest())
 	cmd.AddCommand(CmdUpdatePullRequestTitle())
 	cmd.AddCommand(CmdUpdatePullRequestDescription())
+	cmd.AddCommand(CmdInvokeMergePullRequest())
 	cmd.AddCommand(CmdSetPullRequestState())
 	cmd.AddCommand(CmdAddPullRequestAssignees())
 	cmd.AddCommand(CmdRemovePullRequestAssignees())
@@ -71,6 +76,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdDeleteIssue())
 
 	cmd.AddCommand(CmdCreateRepository())
+	cmd.AddCommand(CmdInvokeForkRepository())
+	cmd.AddCommand(CmdAuthorizeGitServer())
 	cmd.AddCommand(CmdForkRepository())
 	cmd.AddCommand(CmdRenameRepository())
 	cmd.AddCommand(CmdChangeOwner())

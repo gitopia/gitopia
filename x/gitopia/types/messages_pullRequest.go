@@ -248,12 +248,54 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgInvokeMergePullRequest{}
+
+func NewMsgInvokeMergePullRequest(creator string, id uint64) *MsgInvokeMergePullRequest {
+	return &MsgInvokeMergePullRequest{
+		Id:      id,
+		Creator: creator,
+	}
+}
+
+func (msg *MsgInvokeMergePullRequest) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgInvokeMergePullRequest) Type() string {
+	return "InvokeMergePullRequest"
+}
+
+func (msg *MsgInvokeMergePullRequest) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgInvokeMergePullRequest) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgInvokeMergePullRequest) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgSetPullRequestState{}
 
 func NewMsgSetPullRequestState(creator string, id uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
 	return &MsgSetPullRequestState{
-		Id:             id,
 		Creator:        creator,
+		Id:             id,
 		State:          state,
 		MergeCommitSha: mergeCommitSha,
 	}

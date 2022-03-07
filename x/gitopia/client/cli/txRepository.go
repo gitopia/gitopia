@@ -54,10 +54,10 @@ func CmdCreateRepository() *cobra.Command {
 	return cmd
 }
 
-func CmdForkRepository() *cobra.Command {
+func CmdInvokeForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fork-repository [repositoryId] [ownerId] [ownerType]",
-		Short: "Fork existing repository",
+		Use:   "invoke-fork-repository [repositoryId] [ownerId] [ownerType]",
+		Short: "Emits an event for git-server to fork an existing repository",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
@@ -78,7 +78,48 @@ func CmdForkRepository() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType))
+			msg := types.NewMsgInvokeForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdForkRepository() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "fork-repository [repositoryId] [ownerId] [ownerType] [taskId]",
+		Short: "Fork existing repository",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsOwnerId, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsOwnerType, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsTaskId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType), argsTaskId)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

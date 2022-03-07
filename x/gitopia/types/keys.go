@@ -64,3 +64,28 @@ const (
 	ReleaseKey      = "Release-value-"
 	ReleaseCountKey = "Release-count-"
 )
+
+const (
+	InvokeForkRepositoryEventKey               = "InvokeForkRepository"
+	ForkRepositoryEventKey                     = "ForkRepository"
+	InvokeMergePullRequestEventKey             = "InvokeMergePullRequest"
+	SetPullRequestStateEventKey                = "SetPullRequestState"
+	EventAttributeCreatorKey                   = "Creator"
+	EventAttributeRepoNameKey                  = "RepositoryName"
+	EventAttributeRepoIdKey                    = "RepositoryId"
+	EventAttributeStorageProviderKey           = "StorageProvider"
+	EventAttributeOwnerIdKey                   = "OwnerId"
+	EventAttributeOwnerTypeKey                 = "OwnerType"
+	EventAttributePullRequestIdKey             = "PullRequestId"
+	EventAttributePullRequestStateKey          = "PullRequestState"
+	EventAttributePullRequestMergeCommitShaKey = "PullRequestMergeCommitSha"
+	EventAttributeTaskIdKey                    = "TaskId"
+	EventAttributeTaskStateKey                 = "TaskState"
+	EventAttributeMessageKey                   = "Message"
+	EventAttributeParentRepoId                 = "ParentRepositoryId"
+)
+
+const (
+	TaskKey      = "Task-value-"
+	TaskCountKey = "Task-count-"
+)

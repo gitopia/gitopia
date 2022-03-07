@@ -1,5 +1,34 @@
+import { TaskType, TaskState } from "../gitopia/task";
 import { Reader, Writer } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
+export interface MsgAuthorizeGitServer {
+    creator: string;
+    provider: string;
+}
+export interface MsgAuthorizeGitServerResponse {
+}
+export interface MsgCreateTask {
+    creator: string;
+    taskType: TaskType;
+    provider: string;
+}
+export interface MsgCreateTaskResponse {
+    id: number;
+}
+export interface MsgUpdateTask {
+    creator: string;
+    id: number;
+    state: TaskState;
+    message: string;
+}
+export interface MsgUpdateTaskResponse {
+}
+export interface MsgDeleteTask {
+    creator: string;
+    id: number;
+}
+export interface MsgDeleteTaskResponse {
+}
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateRelease {
     creator: string;
@@ -74,11 +103,19 @@ export interface MsgUpdatePullRequestDescription {
 }
 export interface MsgUpdatePullRequestDescriptionResponse {
 }
+export interface MsgInvokeMergePullRequest {
+    creator: string;
+    id: number;
+    provider: string;
+}
+export interface MsgInvokeMergePullRequestResponse {
+}
 export interface MsgSetPullRequestState {
     creator: string;
     id: number;
     state: string;
     mergeCommitSha: string;
+    taskId: number;
 }
 export interface MsgSetPullRequestStateResponse {
     state: string;
@@ -295,13 +332,31 @@ export interface MsgCreateRepositoryResponse {
     id: number;
     name: string;
 }
+export interface MsgInvokeForkRepository {
+    creator: string;
+    repositoryId: number;
+    ownerId: string;
+    ownerType: string;
+    provider: string;
+}
+export interface MsgInvokeForkRepositoryResponse {
+}
 export interface MsgForkRepository {
     creator: string;
     repositoryId: number;
     ownerId: string;
     ownerType: string;
+    taskId: number;
 }
 export interface MsgForkRepositoryResponse {
+    id: number;
+}
+export interface MsgForkRepositorySuccess {
+    creator: string;
+    repositoryId: number;
+    taskId: number;
+}
+export interface MsgForkRepositorySuccessResponse {
     id: number;
 }
 export interface MsgRenameRepository {
@@ -495,6 +550,62 @@ export interface MsgDeleteWhois {
 }
 export interface MsgDeleteWhoisResponse {
 }
+export declare const MsgAuthorizeGitServer: {
+    encode(message: MsgAuthorizeGitServer, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAuthorizeGitServer;
+    fromJSON(object: any): MsgAuthorizeGitServer;
+    toJSON(message: MsgAuthorizeGitServer): unknown;
+    fromPartial(object: DeepPartial<MsgAuthorizeGitServer>): MsgAuthorizeGitServer;
+};
+export declare const MsgAuthorizeGitServerResponse: {
+    encode(_: MsgAuthorizeGitServerResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAuthorizeGitServerResponse;
+    fromJSON(_: any): MsgAuthorizeGitServerResponse;
+    toJSON(_: MsgAuthorizeGitServerResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAuthorizeGitServerResponse>): MsgAuthorizeGitServerResponse;
+};
+export declare const MsgCreateTask: {
+    encode(message: MsgCreateTask, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTask;
+    fromJSON(object: any): MsgCreateTask;
+    toJSON(message: MsgCreateTask): unknown;
+    fromPartial(object: DeepPartial<MsgCreateTask>): MsgCreateTask;
+};
+export declare const MsgCreateTaskResponse: {
+    encode(message: MsgCreateTaskResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgCreateTaskResponse;
+    fromJSON(object: any): MsgCreateTaskResponse;
+    toJSON(message: MsgCreateTaskResponse): unknown;
+    fromPartial(object: DeepPartial<MsgCreateTaskResponse>): MsgCreateTaskResponse;
+};
+export declare const MsgUpdateTask: {
+    encode(message: MsgUpdateTask, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateTask;
+    fromJSON(object: any): MsgUpdateTask;
+    toJSON(message: MsgUpdateTask): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateTask>): MsgUpdateTask;
+};
+export declare const MsgUpdateTaskResponse: {
+    encode(_: MsgUpdateTaskResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateTaskResponse;
+    fromJSON(_: any): MsgUpdateTaskResponse;
+    toJSON(_: MsgUpdateTaskResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateTaskResponse>): MsgUpdateTaskResponse;
+};
+export declare const MsgDeleteTask: {
+    encode(message: MsgDeleteTask, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTask;
+    fromJSON(object: any): MsgDeleteTask;
+    toJSON(message: MsgDeleteTask): unknown;
+    fromPartial(object: DeepPartial<MsgDeleteTask>): MsgDeleteTask;
+};
+export declare const MsgDeleteTaskResponse: {
+    encode(_: MsgDeleteTaskResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDeleteTaskResponse;
+    fromJSON(_: any): MsgDeleteTaskResponse;
+    toJSON(_: MsgDeleteTaskResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDeleteTaskResponse>): MsgDeleteTaskResponse;
+};
 export declare const MsgCreateRelease: {
     encode(message: MsgCreateRelease, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateRelease;
@@ -592,6 +703,20 @@ export declare const MsgUpdatePullRequestDescriptionResponse: {
     fromJSON(_: any): MsgUpdatePullRequestDescriptionResponse;
     toJSON(_: MsgUpdatePullRequestDescriptionResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdatePullRequestDescriptionResponse>): MsgUpdatePullRequestDescriptionResponse;
+};
+export declare const MsgInvokeMergePullRequest: {
+    encode(message: MsgInvokeMergePullRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgInvokeMergePullRequest;
+    fromJSON(object: any): MsgInvokeMergePullRequest;
+    toJSON(message: MsgInvokeMergePullRequest): unknown;
+    fromPartial(object: DeepPartial<MsgInvokeMergePullRequest>): MsgInvokeMergePullRequest;
+};
+export declare const MsgInvokeMergePullRequestResponse: {
+    encode(_: MsgInvokeMergePullRequestResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgInvokeMergePullRequestResponse;
+    fromJSON(_: any): MsgInvokeMergePullRequestResponse;
+    toJSON(_: MsgInvokeMergePullRequestResponse): unknown;
+    fromPartial(_: DeepPartial<MsgInvokeMergePullRequestResponse>): MsgInvokeMergePullRequestResponse;
 };
 export declare const MsgSetPullRequestState: {
     encode(message: MsgSetPullRequestState, writer?: Writer): Writer;
@@ -985,6 +1110,20 @@ export declare const MsgCreateRepositoryResponse: {
     toJSON(message: MsgCreateRepositoryResponse): unknown;
     fromPartial(object: DeepPartial<MsgCreateRepositoryResponse>): MsgCreateRepositoryResponse;
 };
+export declare const MsgInvokeForkRepository: {
+    encode(message: MsgInvokeForkRepository, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgInvokeForkRepository;
+    fromJSON(object: any): MsgInvokeForkRepository;
+    toJSON(message: MsgInvokeForkRepository): unknown;
+    fromPartial(object: DeepPartial<MsgInvokeForkRepository>): MsgInvokeForkRepository;
+};
+export declare const MsgInvokeForkRepositoryResponse: {
+    encode(_: MsgInvokeForkRepositoryResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgInvokeForkRepositoryResponse;
+    fromJSON(_: any): MsgInvokeForkRepositoryResponse;
+    toJSON(_: MsgInvokeForkRepositoryResponse): unknown;
+    fromPartial(_: DeepPartial<MsgInvokeForkRepositoryResponse>): MsgInvokeForkRepositoryResponse;
+};
 export declare const MsgForkRepository: {
     encode(message: MsgForkRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgForkRepository;
@@ -998,6 +1137,20 @@ export declare const MsgForkRepositoryResponse: {
     fromJSON(object: any): MsgForkRepositoryResponse;
     toJSON(message: MsgForkRepositoryResponse): unknown;
     fromPartial(object: DeepPartial<MsgForkRepositoryResponse>): MsgForkRepositoryResponse;
+};
+export declare const MsgForkRepositorySuccess: {
+    encode(message: MsgForkRepositorySuccess, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgForkRepositorySuccess;
+    fromJSON(object: any): MsgForkRepositorySuccess;
+    toJSON(message: MsgForkRepositorySuccess): unknown;
+    fromPartial(object: DeepPartial<MsgForkRepositorySuccess>): MsgForkRepositorySuccess;
+};
+export declare const MsgForkRepositorySuccessResponse: {
+    encode(message: MsgForkRepositorySuccessResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgForkRepositorySuccessResponse;
+    fromJSON(object: any): MsgForkRepositorySuccessResponse;
+    toJSON(message: MsgForkRepositorySuccessResponse): unknown;
+    fromPartial(object: DeepPartial<MsgForkRepositorySuccessResponse>): MsgForkRepositorySuccessResponse;
 };
 export declare const MsgRenameRepository: {
     encode(message: MsgRenameRepository, writer?: Writer): Writer;
@@ -1365,6 +1518,10 @@ export declare const MsgDeleteWhoisResponse: {
 };
 /** Msg defines the Msg service. */
 export interface Msg {
+    AuthorizeGitServer(request: MsgAuthorizeGitServer): Promise<MsgAuthorizeGitServerResponse>;
+    CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
+    UpdateTask(request: MsgUpdateTask): Promise<MsgUpdateTaskResponse>;
+    DeleteTask(request: MsgDeleteTask): Promise<MsgDeleteTaskResponse>;
     /** this line is used by starport scaffolding # proto/tx/rpc */
     CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse>;
     UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
@@ -1373,6 +1530,7 @@ export interface Msg {
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    InvokeMergePullRequest(request: MsgInvokeMergePullRequest): Promise<MsgInvokeMergePullRequestResponse>;
     SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     AddPullRequestReviewers(request: MsgAddPullRequestReviewers): Promise<MsgAddPullRequestReviewersResponse>;
     RemovePullRequestReviewers(request: MsgRemovePullRequestReviewers): Promise<MsgRemovePullRequestReviewersResponse>;
@@ -1401,7 +1559,9 @@ export interface Msg {
     RemoveIssueLabels(request: MsgRemoveIssueLabels): Promise<MsgRemoveIssueLabelsResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    InvokeForkRepository(request: MsgInvokeForkRepository): Promise<MsgInvokeForkRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
+    ForkRepositorySuccess(request: MsgForkRepositorySuccess): Promise<MsgForkRepositorySuccessResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;
@@ -1431,6 +1591,10 @@ export interface Msg {
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
+    AuthorizeGitServer(request: MsgAuthorizeGitServer): Promise<MsgAuthorizeGitServerResponse>;
+    CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
+    UpdateTask(request: MsgUpdateTask): Promise<MsgUpdateTaskResponse>;
+    DeleteTask(request: MsgDeleteTask): Promise<MsgDeleteTaskResponse>;
     CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse>;
     UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
     DeleteRelease(request: MsgDeleteRelease): Promise<MsgDeleteReleaseResponse>;
@@ -1438,6 +1602,7 @@ export declare class MsgClientImpl implements Msg {
     UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
+    InvokeMergePullRequest(request: MsgInvokeMergePullRequest): Promise<MsgInvokeMergePullRequestResponse>;
     SetPullRequestState(request: MsgSetPullRequestState): Promise<MsgSetPullRequestStateResponse>;
     AddPullRequestReviewers(request: MsgAddPullRequestReviewers): Promise<MsgAddPullRequestReviewersResponse>;
     RemovePullRequestReviewers(request: MsgRemovePullRequestReviewers): Promise<MsgRemovePullRequestReviewersResponse>;
@@ -1466,7 +1631,9 @@ export declare class MsgClientImpl implements Msg {
     RemoveIssueLabels(request: MsgRemoveIssueLabels): Promise<MsgRemoveIssueLabelsResponse>;
     DeleteIssue(request: MsgDeleteIssue): Promise<MsgDeleteIssueResponse>;
     CreateRepository(request: MsgCreateRepository): Promise<MsgCreateRepositoryResponse>;
+    InvokeForkRepository(request: MsgInvokeForkRepository): Promise<MsgInvokeForkRepositoryResponse>;
     ForkRepository(request: MsgForkRepository): Promise<MsgForkRepositoryResponse>;
+    ForkRepositorySuccess(request: MsgForkRepositorySuccess): Promise<MsgForkRepositorySuccessResponse>;
     RenameRepository(request: MsgRenameRepository): Promise<MsgRenameRepositoryResponse>;
     ChangeOwner(request: MsgChangeOwner): Promise<MsgChangeOwnerResponse>;
     UpdateRepositoryCollaborator(request: MsgUpdateRepositoryCollaborator): Promise<MsgUpdateRepositoryCollaboratorResponse>;

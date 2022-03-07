@@ -1,6 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
+import "gitopia/task.proto";
 // this line is used by starport scaffolding # proto/tx/import
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
@@ -14,7 +15,11 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc AuthorizeGitServer(MsgAuthorizeGitServer) returns (MsgAuthorizeGitServerResponse);
+  rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
+  rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
+  rpc DeleteTask(MsgDeleteTask) returns (MsgDeleteTaskResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
@@ -22,6 +27,7 @@ service Msg {
   rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
+  rpc InvokeMergePullRequest(MsgInvokeMergePullRequest) returns (MsgInvokeMergePullRequestResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc AddPullRequestReviewers(MsgAddPullRequestReviewers) returns (MsgAddPullRequestReviewersResponse);
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
@@ -50,7 +56,9 @@ service Msg {
   rpc RemoveIssueLabels(MsgRemoveIssueLabels) returns (MsgRemoveIssueLabelsResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
+  rpc InvokeForkRepository(MsgInvokeForkRepository) returns (MsgInvokeForkRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
+  rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
@@ -77,6 +85,39 @@ service Msg {
   rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
   rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
 }
+
+message MsgAuthorizeGitServer {
+  string creator = 1;
+  string provider = 2;
+}
+
+message MsgAuthorizeGitServerResponse {}
+
+message MsgCreateTask {
+  string creator = 1;
+  TaskType taskType = 2;
+  string provider = 3;
+}
+
+message MsgCreateTaskResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateTask {
+  string creator = 1;
+  uint64 id = 2;
+  TaskState state = 3;
+  string message = 4;
+}
+
+message MsgUpdateTaskResponse {}
+
+message MsgDeleteTask {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteTaskResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
@@ -161,11 +202,20 @@ message MsgUpdatePullRequestDescription {
 
 message MsgUpdatePullRequestDescriptionResponse { }
 
+message MsgInvokeMergePullRequest {
+  string creator = 1;
+  uint64 id = 2;
+  string provider = 3;
+}
+
+message MsgInvokeMergePullRequestResponse { }
+
 message MsgSetPullRequestState {
   string creator = 1;
   uint64 id = 2;
   string state = 3;
-  string mergeCommitSha = 4; 
+  string mergeCommitSha = 4;
+  uint64 taskId = 5;
 }
 
 message MsgSetPullRequestStateResponse {
@@ -416,14 +466,35 @@ message MsgCreateRepositoryResponse {
   string name = 2;
 }
 
+message MsgInvokeForkRepository {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string ownerId = 3;
+  string ownerType = 4;
+  string provider = 5;
+}
+
+message MsgInvokeForkRepositoryResponse {}
+
 message MsgForkRepository {
   string creator = 1;
   uint64 repositoryId = 2;
   string ownerId = 3;
   string ownerType = 4;
+  uint64 taskId = 5;
 }
 
 message MsgForkRepositoryResponse {
+  uint64 id = 1;
+}
+
+message MsgForkRepositorySuccess {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 taskId = 3;
+}
+
+message MsgForkRepositorySuccessResponse {
   uint64 id = 1;
 }
 

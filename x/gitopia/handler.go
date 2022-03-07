@@ -17,7 +17,23 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		// this line is used by starport scaffolding # 1
+		case *types.MsgAuthorizeGitServer:
+			res, err := msgServer.AuthorizeGitServer(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgCreateTask:
+			res, err := msgServer.CreateTask(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateTask:
+			res, err := msgServer.UpdateTask(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteTask:
+			res, err := msgServer.DeleteTask(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -44,6 +60,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdatePullRequestDescription:
 			res, err := msgServer.UpdatePullRequestDescription(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgInvokeMergePullRequest:
+			res, err := msgServer.InvokeMergePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgSetPullRequestState:
@@ -158,8 +178,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgInvokeForkRepository:
+			res, err := msgServer.InvokeForkRepository(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgForkRepository:
 			res, err := msgServer.ForkRepository(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgForkRepositorySuccess:
+			res, err := msgServer.ForkRepositorySuccess(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgRenameRepository:

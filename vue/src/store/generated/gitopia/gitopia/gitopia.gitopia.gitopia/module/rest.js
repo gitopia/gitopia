@@ -42,6 +42,17 @@ export var GitopiaRepositoryOwnerType;
     GitopiaRepositoryOwnerType["USER"] = "USER";
     GitopiaRepositoryOwnerType["ORGANIZATION"] = "ORGANIZATION";
 })(GitopiaRepositoryOwnerType || (GitopiaRepositoryOwnerType = {}));
+export var GitopiaTaskState;
+(function (GitopiaTaskState) {
+    GitopiaTaskState["TASK_STATE_PENDING"] = "TASK_STATE_PENDING";
+    GitopiaTaskState["TASK_STATE_SUCCESS"] = "TASK_STATE_SUCCESS";
+    GitopiaTaskState["TASK_STATE_FAILURE"] = "TASK_STATE_FAILURE";
+})(GitopiaTaskState || (GitopiaTaskState = {}));
+export var GitopiaTaskType;
+(function (GitopiaTaskType) {
+    GitopiaTaskType["TASK_TYPE_FORK_REPOSITORY"] = "TASK_TYPE_FORK_REPOSITORY";
+    GitopiaTaskType["TASK_TYPE_SET_PULL_REQUEST_STATE"] = "TASK_TYPE_SET_PULL_REQUEST_STATE";
+})(GitopiaTaskType || (GitopiaTaskType = {}));
 export var ContentType;
 (function (ContentType) {
     ContentType["Json"] = "application/json";
@@ -170,6 +181,19 @@ export class HttpClient {
 export class Api extends HttpClient {
     constructor() {
         super(...arguments);
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCheckGitServerAuthorization
+         * @request GET:/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}
+         */
+        this.queryCheckGitServerAuthorization = (userAddress, providerAddress, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/authorizations/git-server/${userAddress}/${providerAddress}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
         /**
          * No description
          *
@@ -420,6 +444,35 @@ export class Api extends HttpClient {
          */
         this.queryTagSha = (repositoryId, tagName, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/tags/${tagName}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryTaskAll
+         * @summary Queries a list of Task items.
+         * @request GET:/gitopia/gitopia/gitopia/task
+         */
+        this.queryTaskAll = (query, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/task`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryTask
+         * @summary Queries a Task by id.
+         * @request GET:/gitopia/gitopia/gitopia/task/{id}
+         */
+        this.queryTask = (id, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/task/${id}`,
             method: "GET",
             format: "json",
             ...params,

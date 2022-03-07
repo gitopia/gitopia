@@ -1,8 +1,49 @@
 /* eslint-disable */
+import {
+  TaskType,
+  TaskState,
+  taskTypeFromJSON,
+  taskTypeToJSON,
+  taskStateFromJSON,
+  taskStateToJSON,
+} from "../gitopia/task";
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
+
+export interface MsgAuthorizeGitServer {
+  creator: string;
+  provider: string;
+}
+
+export interface MsgAuthorizeGitServerResponse {}
+
+export interface MsgCreateTask {
+  creator: string;
+  taskType: TaskType;
+  provider: string;
+}
+
+export interface MsgCreateTaskResponse {
+  id: number;
+}
+
+export interface MsgUpdateTask {
+  creator: string;
+  id: number;
+  state: TaskState;
+  message: string;
+}
+
+export interface MsgUpdateTaskResponse {}
+
+export interface MsgDeleteTask {
+  creator: string;
+  id: number;
+}
+
+export interface MsgDeleteTaskResponse {}
 
 /** this line is used by starport scaffolding # proto/tx/message */
 export interface MsgCreateRelease {
@@ -87,11 +128,20 @@ export interface MsgUpdatePullRequestDescription {
 
 export interface MsgUpdatePullRequestDescriptionResponse {}
 
+export interface MsgInvokeMergePullRequest {
+  creator: string;
+  id: number;
+  provider: string;
+}
+
+export interface MsgInvokeMergePullRequestResponse {}
+
 export interface MsgSetPullRequestState {
   creator: string;
   id: number;
   state: string;
   mergeCommitSha: string;
+  taskId: number;
 }
 
 export interface MsgSetPullRequestStateResponse {
@@ -342,14 +392,35 @@ export interface MsgCreateRepositoryResponse {
   name: string;
 }
 
+export interface MsgInvokeForkRepository {
+  creator: string;
+  repositoryId: number;
+  ownerId: string;
+  ownerType: string;
+  provider: string;
+}
+
+export interface MsgInvokeForkRepositoryResponse {}
+
 export interface MsgForkRepository {
   creator: string;
   repositoryId: number;
   ownerId: string;
   ownerType: string;
+  taskId: number;
 }
 
 export interface MsgForkRepositoryResponse {
+  id: number;
+}
+
+export interface MsgForkRepositorySuccess {
+  creator: string;
+  repositoryId: number;
+  taskId: number;
+}
+
+export interface MsgForkRepositorySuccessResponse {
   id: number;
 }
 
@@ -573,6 +644,539 @@ export interface MsgDeleteWhois {
 }
 
 export interface MsgDeleteWhoisResponse {}
+
+const baseMsgAuthorizeGitServer: object = { creator: "", provider: "" };
+
+export const MsgAuthorizeGitServer = {
+  encode(
+    message: MsgAuthorizeGitServer,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.provider !== "") {
+      writer.uint32(18).string(message.provider);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgAuthorizeGitServer {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgAuthorizeGitServer } as MsgAuthorizeGitServer;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.provider = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAuthorizeGitServer {
+    const message = { ...baseMsgAuthorizeGitServer } as MsgAuthorizeGitServer;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = String(object.provider);
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgAuthorizeGitServer): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.provider !== undefined && (obj.provider = message.provider);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgAuthorizeGitServer>
+  ): MsgAuthorizeGitServer {
+    const message = { ...baseMsgAuthorizeGitServer } as MsgAuthorizeGitServer;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = object.provider;
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgAuthorizeGitServerResponse: object = {};
+
+export const MsgAuthorizeGitServerResponse = {
+  encode(
+    _: MsgAuthorizeGitServerResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgAuthorizeGitServerResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgAuthorizeGitServerResponse,
+    } as MsgAuthorizeGitServerResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAuthorizeGitServerResponse {
+    const message = {
+      ...baseMsgAuthorizeGitServerResponse,
+    } as MsgAuthorizeGitServerResponse;
+    return message;
+  },
+
+  toJSON(_: MsgAuthorizeGitServerResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgAuthorizeGitServerResponse>
+  ): MsgAuthorizeGitServerResponse {
+    const message = {
+      ...baseMsgAuthorizeGitServerResponse,
+    } as MsgAuthorizeGitServerResponse;
+    return message;
+  },
+};
+
+const baseMsgCreateTask: object = { creator: "", taskType: 0, provider: "" };
+
+export const MsgCreateTask = {
+  encode(message: MsgCreateTask, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.taskType !== 0) {
+      writer.uint32(16).int32(message.taskType);
+    }
+    if (message.provider !== "") {
+      writer.uint32(26).string(message.provider);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateTask {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateTask } as MsgCreateTask;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.taskType = reader.int32() as any;
+          break;
+        case 3:
+          message.provider = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateTask {
+    const message = { ...baseMsgCreateTask } as MsgCreateTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.taskType !== undefined && object.taskType !== null) {
+      message.taskType = taskTypeFromJSON(object.taskType);
+    } else {
+      message.taskType = 0;
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = String(object.provider);
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateTask): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.taskType !== undefined &&
+      (obj.taskType = taskTypeToJSON(message.taskType));
+    message.provider !== undefined && (obj.provider = message.provider);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateTask>): MsgCreateTask {
+    const message = { ...baseMsgCreateTask } as MsgCreateTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.taskType !== undefined && object.taskType !== null) {
+      message.taskType = object.taskType;
+    } else {
+      message.taskType = 0;
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = object.provider;
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateTaskResponse: object = { id: 0 };
+
+export const MsgCreateTaskResponse = {
+  encode(
+    message: MsgCreateTaskResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateTaskResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateTaskResponse } as MsgCreateTaskResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateTaskResponse {
+    const message = { ...baseMsgCreateTaskResponse } as MsgCreateTaskResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateTaskResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgCreateTaskResponse>
+  ): MsgCreateTaskResponse {
+    const message = { ...baseMsgCreateTaskResponse } as MsgCreateTaskResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateTask: object = { creator: "", id: 0, state: 0, message: "" };
+
+export const MsgUpdateTask = {
+  encode(message: MsgUpdateTask, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.state !== 0) {
+      writer.uint32(24).int32(message.state);
+    }
+    if (message.message !== "") {
+      writer.uint32(34).string(message.message);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgUpdateTask {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgUpdateTask } as MsgUpdateTask;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.state = reader.int32() as any;
+          break;
+        case 4:
+          message.message = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateTask {
+    const message = { ...baseMsgUpdateTask } as MsgUpdateTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.state !== undefined && object.state !== null) {
+      message.state = taskStateFromJSON(object.state);
+    } else {
+      message.state = 0;
+    }
+    if (object.message !== undefined && object.message !== null) {
+      message.message = String(object.message);
+    } else {
+      message.message = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateTask): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.state !== undefined && (obj.state = taskStateToJSON(message.state));
+    message.message !== undefined && (obj.message = message.message);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgUpdateTask>): MsgUpdateTask {
+    const message = { ...baseMsgUpdateTask } as MsgUpdateTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.state !== undefined && object.state !== null) {
+      message.state = object.state;
+    } else {
+      message.state = 0;
+    }
+    if (object.message !== undefined && object.message !== null) {
+      message.message = object.message;
+    } else {
+      message.message = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateTaskResponse: object = {};
+
+export const MsgUpdateTaskResponse = {
+  encode(_: MsgUpdateTaskResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgUpdateTaskResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgUpdateTaskResponse } as MsgUpdateTaskResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateTaskResponse {
+    const message = { ...baseMsgUpdateTaskResponse } as MsgUpdateTaskResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateTaskResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgUpdateTaskResponse>): MsgUpdateTaskResponse {
+    const message = { ...baseMsgUpdateTaskResponse } as MsgUpdateTaskResponse;
+    return message;
+  },
+};
+
+const baseMsgDeleteTask: object = { creator: "", id: 0 };
+
+export const MsgDeleteTask = {
+  encode(message: MsgDeleteTask, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteTask {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteTask } as MsgDeleteTask;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteTask {
+    const message = { ...baseMsgDeleteTask } as MsgDeleteTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteTask): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteTask>): MsgDeleteTask {
+    const message = { ...baseMsgDeleteTask } as MsgDeleteTask;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgDeleteTaskResponse: object = {};
+
+export const MsgDeleteTaskResponse = {
+  encode(_: MsgDeleteTaskResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteTaskResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteTaskResponse } as MsgDeleteTaskResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgDeleteTaskResponse {
+    const message = { ...baseMsgDeleteTaskResponse } as MsgDeleteTaskResponse;
+    return message;
+  },
+
+  toJSON(_: MsgDeleteTaskResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgDeleteTaskResponse>): MsgDeleteTaskResponse {
+    const message = { ...baseMsgDeleteTaskResponse } as MsgDeleteTaskResponse;
+    return message;
+  },
+};
 
 const baseMsgCreateRelease: object = {
   creator: "",
@@ -2083,11 +2687,171 @@ export const MsgUpdatePullRequestDescriptionResponse = {
   },
 };
 
+const baseMsgInvokeMergePullRequest: object = {
+  creator: "",
+  id: 0,
+  provider: "",
+};
+
+export const MsgInvokeMergePullRequest = {
+  encode(
+    message: MsgInvokeMergePullRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.provider !== "") {
+      writer.uint32(26).string(message.provider);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgInvokeMergePullRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgInvokeMergePullRequest,
+    } as MsgInvokeMergePullRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.provider = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgInvokeMergePullRequest {
+    const message = {
+      ...baseMsgInvokeMergePullRequest,
+    } as MsgInvokeMergePullRequest;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = String(object.provider);
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgInvokeMergePullRequest): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.provider !== undefined && (obj.provider = message.provider);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgInvokeMergePullRequest>
+  ): MsgInvokeMergePullRequest {
+    const message = {
+      ...baseMsgInvokeMergePullRequest,
+    } as MsgInvokeMergePullRequest;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = object.provider;
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgInvokeMergePullRequestResponse: object = {};
+
+export const MsgInvokeMergePullRequestResponse = {
+  encode(
+    _: MsgInvokeMergePullRequestResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgInvokeMergePullRequestResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgInvokeMergePullRequestResponse,
+    } as MsgInvokeMergePullRequestResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgInvokeMergePullRequestResponse {
+    const message = {
+      ...baseMsgInvokeMergePullRequestResponse,
+    } as MsgInvokeMergePullRequestResponse;
+    return message;
+  },
+
+  toJSON(_: MsgInvokeMergePullRequestResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgInvokeMergePullRequestResponse>
+  ): MsgInvokeMergePullRequestResponse {
+    const message = {
+      ...baseMsgInvokeMergePullRequestResponse,
+    } as MsgInvokeMergePullRequestResponse;
+    return message;
+  },
+};
+
 const baseMsgSetPullRequestState: object = {
   creator: "",
   id: 0,
   state: "",
   mergeCommitSha: "",
+  taskId: 0,
 };
 
 export const MsgSetPullRequestState = {
@@ -2106,6 +2870,9 @@ export const MsgSetPullRequestState = {
     }
     if (message.mergeCommitSha !== "") {
       writer.uint32(34).string(message.mergeCommitSha);
+    }
+    if (message.taskId !== 0) {
+      writer.uint32(40).uint64(message.taskId);
     }
     return writer;
   },
@@ -2128,6 +2895,9 @@ export const MsgSetPullRequestState = {
           break;
         case 4:
           message.mergeCommitSha = reader.string();
+          break;
+        case 5:
+          message.taskId = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -2159,6 +2929,11 @@ export const MsgSetPullRequestState = {
     } else {
       message.mergeCommitSha = "";
     }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = Number(object.taskId);
+    } else {
+      message.taskId = 0;
+    }
     return message;
   },
 
@@ -2169,6 +2944,7 @@ export const MsgSetPullRequestState = {
     message.state !== undefined && (obj.state = message.state);
     message.mergeCommitSha !== undefined &&
       (obj.mergeCommitSha = message.mergeCommitSha);
+    message.taskId !== undefined && (obj.taskId = message.taskId);
     return obj;
   },
 
@@ -2195,6 +2971,11 @@ export const MsgSetPullRequestState = {
       message.mergeCommitSha = object.mergeCommitSha;
     } else {
       message.mergeCommitSha = "";
+    }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = object.taskId;
+    } else {
+      message.taskId = 0;
     }
     return message;
   },
@@ -6862,11 +7643,205 @@ export const MsgCreateRepositoryResponse = {
   },
 };
 
+const baseMsgInvokeForkRepository: object = {
+  creator: "",
+  repositoryId: 0,
+  ownerId: "",
+  ownerType: "",
+  provider: "",
+};
+
+export const MsgInvokeForkRepository = {
+  encode(
+    message: MsgInvokeForkRepository,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.repositoryId !== 0) {
+      writer.uint32(16).uint64(message.repositoryId);
+    }
+    if (message.ownerId !== "") {
+      writer.uint32(26).string(message.ownerId);
+    }
+    if (message.ownerType !== "") {
+      writer.uint32(34).string(message.ownerType);
+    }
+    if (message.provider !== "") {
+      writer.uint32(42).string(message.provider);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgInvokeForkRepository {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgInvokeForkRepository,
+    } as MsgInvokeForkRepository;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.ownerId = reader.string();
+          break;
+        case 4:
+          message.ownerType = reader.string();
+          break;
+        case 5:
+          message.provider = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgInvokeForkRepository {
+    const message = {
+      ...baseMsgInvokeForkRepository,
+    } as MsgInvokeForkRepository;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = String(object.ownerId);
+    } else {
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = String(object.ownerType);
+    } else {
+      message.ownerType = "";
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = String(object.provider);
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgInvokeForkRepository): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.ownerId !== undefined && (obj.ownerId = message.ownerId);
+    message.ownerType !== undefined && (obj.ownerType = message.ownerType);
+    message.provider !== undefined && (obj.provider = message.provider);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgInvokeForkRepository>
+  ): MsgInvokeForkRepository {
+    const message = {
+      ...baseMsgInvokeForkRepository,
+    } as MsgInvokeForkRepository;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.ownerId !== undefined && object.ownerId !== null) {
+      message.ownerId = object.ownerId;
+    } else {
+      message.ownerId = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = object.ownerType;
+    } else {
+      message.ownerType = "";
+    }
+    if (object.provider !== undefined && object.provider !== null) {
+      message.provider = object.provider;
+    } else {
+      message.provider = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgInvokeForkRepositoryResponse: object = {};
+
+export const MsgInvokeForkRepositoryResponse = {
+  encode(
+    _: MsgInvokeForkRepositoryResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgInvokeForkRepositoryResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgInvokeForkRepositoryResponse,
+    } as MsgInvokeForkRepositoryResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgInvokeForkRepositoryResponse {
+    const message = {
+      ...baseMsgInvokeForkRepositoryResponse,
+    } as MsgInvokeForkRepositoryResponse;
+    return message;
+  },
+
+  toJSON(_: MsgInvokeForkRepositoryResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgInvokeForkRepositoryResponse>
+  ): MsgInvokeForkRepositoryResponse {
+    const message = {
+      ...baseMsgInvokeForkRepositoryResponse,
+    } as MsgInvokeForkRepositoryResponse;
+    return message;
+  },
+};
+
 const baseMsgForkRepository: object = {
   creator: "",
   repositoryId: 0,
   ownerId: "",
   ownerType: "",
+  taskId: 0,
 };
 
 export const MsgForkRepository = {
@@ -6882,6 +7857,9 @@ export const MsgForkRepository = {
     }
     if (message.ownerType !== "") {
       writer.uint32(34).string(message.ownerType);
+    }
+    if (message.taskId !== 0) {
+      writer.uint32(40).uint64(message.taskId);
     }
     return writer;
   },
@@ -6904,6 +7882,9 @@ export const MsgForkRepository = {
           break;
         case 4:
           message.ownerType = reader.string();
+          break;
+        case 5:
+          message.taskId = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -6935,6 +7916,11 @@ export const MsgForkRepository = {
     } else {
       message.ownerType = "";
     }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = Number(object.taskId);
+    } else {
+      message.taskId = 0;
+    }
     return message;
   },
 
@@ -6945,6 +7931,7 @@ export const MsgForkRepository = {
       (obj.repositoryId = message.repositoryId);
     message.ownerId !== undefined && (obj.ownerId = message.ownerId);
     message.ownerType !== undefined && (obj.ownerType = message.ownerType);
+    message.taskId !== undefined && (obj.taskId = message.taskId);
     return obj;
   },
 
@@ -6969,6 +7956,11 @@ export const MsgForkRepository = {
       message.ownerType = object.ownerType;
     } else {
       message.ownerType = "";
+    }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = object.taskId;
+    } else {
+      message.taskId = 0;
     }
     return message;
   },
@@ -7034,6 +8026,183 @@ export const MsgForkRepositoryResponse = {
     const message = {
       ...baseMsgForkRepositoryResponse,
     } as MsgForkRepositoryResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgForkRepositorySuccess: object = {
+  creator: "",
+  repositoryId: 0,
+  taskId: 0,
+};
+
+export const MsgForkRepositorySuccess = {
+  encode(
+    message: MsgForkRepositorySuccess,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.repositoryId !== 0) {
+      writer.uint32(16).uint64(message.repositoryId);
+    }
+    if (message.taskId !== 0) {
+      writer.uint32(24).uint64(message.taskId);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgForkRepositorySuccess {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgForkRepositorySuccess,
+    } as MsgForkRepositorySuccess;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.repositoryId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.taskId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgForkRepositorySuccess {
+    const message = {
+      ...baseMsgForkRepositorySuccess,
+    } as MsgForkRepositorySuccess;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = Number(object.repositoryId);
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = Number(object.taskId);
+    } else {
+      message.taskId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgForkRepositorySuccess): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.repositoryId !== undefined &&
+      (obj.repositoryId = message.repositoryId);
+    message.taskId !== undefined && (obj.taskId = message.taskId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgForkRepositorySuccess>
+  ): MsgForkRepositorySuccess {
+    const message = {
+      ...baseMsgForkRepositorySuccess,
+    } as MsgForkRepositorySuccess;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.repositoryId !== undefined && object.repositoryId !== null) {
+      message.repositoryId = object.repositoryId;
+    } else {
+      message.repositoryId = 0;
+    }
+    if (object.taskId !== undefined && object.taskId !== null) {
+      message.taskId = object.taskId;
+    } else {
+      message.taskId = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgForkRepositorySuccessResponse: object = { id: 0 };
+
+export const MsgForkRepositorySuccessResponse = {
+  encode(
+    message: MsgForkRepositorySuccessResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgForkRepositorySuccessResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgForkRepositorySuccessResponse,
+    } as MsgForkRepositorySuccessResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgForkRepositorySuccessResponse {
+    const message = {
+      ...baseMsgForkRepositorySuccessResponse,
+    } as MsgForkRepositorySuccessResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgForkRepositorySuccessResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgForkRepositorySuccessResponse>
+  ): MsgForkRepositorySuccessResponse {
+    const message = {
+      ...baseMsgForkRepositorySuccessResponse,
+    } as MsgForkRepositorySuccessResponse;
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
@@ -10992,6 +12161,12 @@ export const MsgDeleteWhoisResponse = {
 
 /** Msg defines the Msg service. */
 export interface Msg {
+  AuthorizeGitServer(
+    request: MsgAuthorizeGitServer
+  ): Promise<MsgAuthorizeGitServerResponse>;
+  CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
+  UpdateTask(request: MsgUpdateTask): Promise<MsgUpdateTaskResponse>;
+  DeleteTask(request: MsgDeleteTask): Promise<MsgDeleteTaskResponse>;
   /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse>;
   UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
@@ -11008,6 +12183,9 @@ export interface Msg {
   UpdatePullRequestDescription(
     request: MsgUpdatePullRequestDescription
   ): Promise<MsgUpdatePullRequestDescriptionResponse>;
+  InvokeMergePullRequest(
+    request: MsgInvokeMergePullRequest
+  ): Promise<MsgInvokeMergePullRequestResponse>;
   SetPullRequestState(
     request: MsgSetPullRequestState
   ): Promise<MsgSetPullRequestStateResponse>;
@@ -11080,9 +12258,15 @@ export interface Msg {
   CreateRepository(
     request: MsgCreateRepository
   ): Promise<MsgCreateRepositoryResponse>;
+  InvokeForkRepository(
+    request: MsgInvokeForkRepository
+  ): Promise<MsgInvokeForkRepositoryResponse>;
   ForkRepository(
     request: MsgForkRepository
   ): Promise<MsgForkRepositoryResponse>;
+  ForkRepositorySuccess(
+    request: MsgForkRepositorySuccess
+  ): Promise<MsgForkRepositorySuccessResponse>;
   RenameRepository(
     request: MsgRenameRepository
   ): Promise<MsgRenameRepositoryResponse>;
@@ -11145,6 +12329,56 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
+  AuthorizeGitServer(
+    request: MsgAuthorizeGitServer
+  ): Promise<MsgAuthorizeGitServerResponse> {
+    const data = MsgAuthorizeGitServer.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "AuthorizeGitServer",
+      data
+    );
+    return promise.then((data) =>
+      MsgAuthorizeGitServerResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse> {
+    const data = MsgCreateTask.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "CreateTask",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateTaskResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateTask(request: MsgUpdateTask): Promise<MsgUpdateTaskResponse> {
+    const data = MsgUpdateTask.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdateTask",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateTaskResponse.decode(new Reader(data))
+    );
+  }
+
+  DeleteTask(request: MsgDeleteTask): Promise<MsgDeleteTaskResponse> {
+    const data = MsgDeleteTask.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "DeleteTask",
+      data
+    );
+    return promise.then((data) =>
+      MsgDeleteTaskResponse.decode(new Reader(data))
+    );
+  }
+
   CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse> {
     const data = MsgCreateRelease.encode(request).finish();
     const promise = this.rpc.request(
@@ -11234,6 +12468,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdatePullRequestDescriptionResponse.decode(new Reader(data))
+    );
+  }
+
+  InvokeMergePullRequest(
+    request: MsgInvokeMergePullRequest
+  ): Promise<MsgInvokeMergePullRequestResponse> {
+    const data = MsgInvokeMergePullRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "InvokeMergePullRequest",
+      data
+    );
+    return promise.then((data) =>
+      MsgInvokeMergePullRequestResponse.decode(new Reader(data))
     );
   }
 
@@ -11617,6 +12865,20 @@ export class MsgClientImpl implements Msg {
     );
   }
 
+  InvokeForkRepository(
+    request: MsgInvokeForkRepository
+  ): Promise<MsgInvokeForkRepositoryResponse> {
+    const data = MsgInvokeForkRepository.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "InvokeForkRepository",
+      data
+    );
+    return promise.then((data) =>
+      MsgInvokeForkRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
   ForkRepository(
     request: MsgForkRepository
   ): Promise<MsgForkRepositoryResponse> {
@@ -11628,6 +12890,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgForkRepositoryResponse.decode(new Reader(data))
+    );
+  }
+
+  ForkRepositorySuccess(
+    request: MsgForkRepositorySuccess
+  ): Promise<MsgForkRepositorySuccessResponse> {
+    const data = MsgForkRepositorySuccess.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "ForkRepositorySuccess",
+      data
+    );
+    return promise.then((data) =>
+      MsgForkRepositorySuccessResponse.decode(new Reader(data))
     );
   }
 

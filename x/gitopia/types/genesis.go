@@ -12,6 +12,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
+		TaskList: []Task{},
 		// this line is used by starport scaffolding # genesis/types/default
 		ReleaseList:      []Release{},
 		PullRequestList:  []PullRequest{},
@@ -29,6 +30,18 @@ func DefaultGenesis() *GenesisState {
 func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # ibc/genesistype/validate
 
+	// Check for duplicated ID in task
+	taskIdMap := make(map[uint64]bool)
+	taskCount := gs.GetTaskCount()
+	for _, elem := range gs.TaskList {
+		if _, ok := taskIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for task")
+		}
+		if elem.Id >= taskCount {
+			return fmt.Errorf("task id should be lower or equal than the last id")
+		}
+		taskIdMap[elem.Id] = true
+	}
 	// this line is used by starport scaffolding # genesis/types/validate
 	// Check for duplicated ID in release
 	releaseIdMap := make(map[uint64]bool)

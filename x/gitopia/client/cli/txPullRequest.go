@@ -4,15 +4,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/spf13/cobra"
-
-	"github.com/spf13/cast"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
+	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 )
 
 func CmdCreatePullRequest() *cobra.Command {
@@ -182,9 +180,38 @@ func CmdUpdatePullRequestDescription() *cobra.Command {
 	return cmd
 }
 
+func CmdInvokeMergePullRequest() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "invoke-merge-pullrequest [id]",
+		Short: "Emits an event for git-server to merge a Pull Request",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), id)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdSetPullRequestState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set-pullrequest-state [id]",
+		Use:   "set-pullrequest-state [id] [state] [merge_commit_sha]",
 		Short: "Set pullrequest state",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -193,12 +220,12 @@ func CmdSetPullRequestState() *cobra.Command {
 				return err
 			}
 
-			argsState, err := cast.ToStringE(args[1])
+			argsState, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
 
-			argsMergeCommitSha, err := cast.ToStringE(args[2])
+			argsMergeCommitSha, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}

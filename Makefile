@@ -68,6 +68,8 @@ ifeq (,$(findstring nostrip,$(GITOPIA_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
+.PHONY: build
+
 all: install
 
 BUILD_TARGETS := build install

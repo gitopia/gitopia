@@ -141,6 +141,8 @@ export type GitopiaMsgAddPullRequestLabelsResponse = object;
 
 export type GitopiaMsgAddPullRequestReviewersResponse = object;
 
+export type GitopiaMsgAuthorizeGitServerResponse = object;
+
 export type GitopiaMsgChangeOwnerResponse = object;
 
 export interface GitopiaMsgCreateCommentResponse {
@@ -184,6 +186,11 @@ export interface GitopiaMsgCreateRepositoryResponse {
   name?: string;
 }
 
+export interface GitopiaMsgCreateTaskResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
@@ -206,6 +213,8 @@ export type GitopiaMsgDeleteRepositoryResponse = object;
 
 export type GitopiaMsgDeleteTagResponse = object;
 
+export type GitopiaMsgDeleteTaskResponse = object;
+
 export type GitopiaMsgDeleteUserResponse = object;
 
 export type GitopiaMsgDeleteWhoisResponse = object;
@@ -214,6 +223,15 @@ export interface GitopiaMsgForkRepositoryResponse {
   /** @format uint64 */
   id?: string;
 }
+
+export interface GitopiaMsgForkRepositorySuccessResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
+export type GitopiaMsgInvokeForkRepositoryResponse = object;
+
+export type GitopiaMsgInvokeMergePullRequestResponse = object;
 
 export type GitopiaMsgMultiDeleteBranchResponse = object;
 
@@ -286,6 +304,8 @@ export type GitopiaMsgUpdateReleaseResponse = object;
 export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 
 export type GitopiaMsgUpdateRepositoryLabelResponse = object;
+
+export type GitopiaMsgUpdateTaskResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
 
@@ -558,6 +578,21 @@ export interface GitopiaQueryAllRepositoryResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllTaskResponse {
+  Task?: GitopiaTask[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface GitopiaQueryAllUserOrganizationResponse {
   organization?: GitopiaOrganization[];
 }
@@ -590,6 +625,10 @@ export interface GitopiaQueryAllWhoisResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryCheckGitServerAuthorizationResponse {
+  haveAuthorization?: boolean;
 }
 
 export interface GitopiaQueryGetAddressRepositoryResponse {
@@ -669,6 +708,10 @@ export interface GitopiaQueryGetRepositoryResponse {
 
 export interface GitopiaQueryGetTagShaResponse {
   sha?: string;
+}
+
+export interface GitopiaQueryGetTaskResponse {
+  Task?: GitopiaTask;
 }
 
 export interface GitopiaQueryGetUserResponse {
@@ -835,6 +878,27 @@ export interface GitopiaRepositoryTag {
 
   /** @format int64 */
   lastUpdatedAt?: string;
+}
+
+export interface GitopiaTask {
+  /** @format uint64 */
+  id?: string;
+  type?: GitopiaTaskType;
+  state?: GitopiaTaskState;
+  message?: string;
+  creator?: string;
+  provider?: string;
+}
+
+export enum GitopiaTaskState {
+  TASK_STATE_PENDING = "TASK_STATE_PENDING",
+  TASK_STATE_SUCCESS = "TASK_STATE_SUCCESS",
+  TASK_STATE_FAILURE = "TASK_STATE_FAILURE",
+}
+
+export enum GitopiaTaskType {
+  TASK_TYPE_FORK_REPOSITORY = "TASK_TYPE_FORK_REPOSITORY",
+  TASK_TYPE_SET_PULL_REQUEST_STATE = "TASK_TYPE_SET_PULL_REQUEST_STATE",
 }
 
 export interface GitopiaUser {
@@ -1151,6 +1215,21 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryCheckGitServerAuthorization
+   * @request GET:/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}
+   */
+  queryCheckGitServerAuthorization = (userAddress: string, providerAddress: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryCheckGitServerAuthorizationResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/authorizations/git-server/${userAddress}/${providerAddress}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
@@ -1490,6 +1569,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryTagSha = (repositoryId: string, tagName: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetTagShaResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/tags/${tagName}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTaskAll
+   * @summary Queries a list of Task items.
+   * @request GET:/gitopia/gitopia/gitopia/task
+   */
+  queryTaskAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllTaskResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/task`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryTask
+   * @summary Queries a Task by id.
+   * @request GET:/gitopia/gitopia/gitopia/task/{id}
+   */
+  queryTask = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetTaskResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/task/${id}`,
       method: "GET",
       format: "json",
       ...params,
