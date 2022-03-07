@@ -583,15 +583,34 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue) (*types.MsgDeleteIssueResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	issue, found := k.GetIssue(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != issue.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepository(ctx, issue.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
 
+	if repository.Owner.Id != msg.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	for _, commentId := range issue.Comments {
+		k.RemoveComment(ctx, commentId)
+	}
+
+	if i, exists := utils.RepositoryIssueExists(repository.Issues, issue.Iid); exists {
+		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
+	}
+
+	k.SetRepository(ctx, repository)
 	k.RemoveIssue(ctx, msg.Id)
 
 	return &types.MsgDeleteIssueResponse{}, nil
