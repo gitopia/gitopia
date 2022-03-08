@@ -91,7 +91,7 @@ func initAppConfig() (string, interface{}) {
 	srvCfg := serverconfig.DefaultConfig()
 	srvCfg.StateSync.SnapshotInterval = 1500
 	srvCfg.StateSync.SnapshotKeepRecent = 2
-	srvCfg.MinGasPrices = "0.025utlore"
+	srvCfg.MinGasPrices = "0.001utlore"
 
 	GitopiaAppCfg := CustomAppConfig{Config: *srvCfg}
 
@@ -110,6 +110,8 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		InitCmd(gitopia.ModuleBasics, gitopia.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, gitopia.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
+		MigrateCmd(),
+		AddGenesisAccountCmd(gitopia.DefaultNodeHome),
 		genutilcli.GenTxCmd(gitopia.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, gitopia.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(gitopia.ModuleBasics),
 		tmcli.NewCompletionCmd(rootCmd, true),

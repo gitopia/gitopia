@@ -80,9 +80,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
-			seeds := []string{
-				"b69315f41a845ffd0587f7e774af8dce689a32c8@35.247.188.203:26656", // Gitopia
-			}
+			seeds := []string{}
 
 			//Override default settings in config.toml
 			config.P2P.Seeds = strings.Join(seeds[:], ",")
@@ -90,6 +88,7 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.P2P.MaxNumOutboundPeers = 35
 			config.Mempool.Size = 10000
 			config.StateSync.TrustPeriod = 112 * time.Hour
+			config.StateSync.Enable = true
 			config.FastSync.Version = "v0"
 			config.Consensus.TimeoutCommit = time.Millisecond * 500
 
