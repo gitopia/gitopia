@@ -1,6 +1,7 @@
 package types
 
 import (
+	"regexp"
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -469,10 +470,9 @@ func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 	}
-	if len(msg.CommitSHA) > 64 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha length exceeds limit: 64")
-	} else if len(msg.CommitSHA) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha can't be empty")
+	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.CommitSHA)
+	if !isShaValid {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
 	}
 	return nil
 }
@@ -519,10 +519,9 @@ func (msg *MsgMultiSetRepositoryBranch) ValidateBasic() error {
 		} else if len(branch.Name) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 		}
-		if len(branch.CommitSHA) > 64 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha length exceeds limit: 64")
-		} else if len(branch.CommitSHA) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "commitSha can't be empty")
+		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", branch.CommitSHA)
+		if !isShaValid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
 		}
 	}
 	return nil
@@ -752,10 +751,9 @@ func (msg *MsgSetRepositoryTag) ValidateBasic() error {
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
 	}
-	if len(msg.Sha) > 64 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha length exceeds limit: 64")
-	} else if len(msg.Sha) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha can't be empty")
+	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.Sha)
+	if !isShaValid {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
 	}
 	return nil
 }
@@ -802,10 +800,9 @@ func (msg *MsgMultiSetRepositoryTag) ValidateBasic() error {
 		} else if len(tag.Name) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
 		}
-		if len(tag.CommitSHA) > 64 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha length exceeds limit: 64")
-		} else if len(tag.CommitSHA) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Sha can't be empty")
+		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", tag.CommitSHA)
+		if !isShaValid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
 		}
 	}
 	return nil
