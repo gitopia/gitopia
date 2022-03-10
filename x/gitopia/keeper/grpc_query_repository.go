@@ -587,8 +587,7 @@ func PaginateAllRepositoryIssue(
 	option *types.IssueOptions,
 	onResult func(issue types.Issue) error,
 ) (*query.PageResponse, error) {
-
-	totalIssueCount := repository.IssuesCount
+	totalIssueCount := uint64(len(repository.Issues))
 	issues := repository.Issues
 
 	if option == nil {
@@ -859,8 +858,7 @@ func PaginateAllRepositoryPullRequest(
 	option *types.PullRequestOptions,
 	onResult func(pullRequest types.PullRequest) error,
 ) (*query.PageResponse, error) {
-
-	totalPullRequestCount := repository.PullsCount
+	totalPullRequestCount := uint64(len(repository.PullRequests))
 	pullRequests := repository.PullRequests
 
 	if option == nil {
