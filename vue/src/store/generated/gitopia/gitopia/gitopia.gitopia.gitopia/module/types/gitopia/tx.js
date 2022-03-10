@@ -7205,6 +7205,224 @@ export const MsgSetRepositoryBranchResponse = {
         return message;
     },
 };
+const baseMsgMultiSetRepositoryBranch = { creator: "", id: 0 };
+export const MsgMultiSetRepositoryBranch = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.branches) {
+            MsgMultiSetRepositoryBranch_Branch.encode(v, writer.uint32(26).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch,
+        };
+        message.branches = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.branches.push(MsgMultiSetRepositoryBranch_Branch.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch,
+        };
+        message.branches = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.branches !== undefined && object.branches !== null) {
+            for (const e of object.branches) {
+                message.branches.push(MsgMultiSetRepositoryBranch_Branch.fromJSON(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.branches) {
+            obj.branches = message.branches.map((e) => e ? MsgMultiSetRepositoryBranch_Branch.toJSON(e) : undefined);
+        }
+        else {
+            obj.branches = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch,
+        };
+        message.branches = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.branches !== undefined && object.branches !== null) {
+            for (const e of object.branches) {
+                message.branches.push(MsgMultiSetRepositoryBranch_Branch.fromPartial(e));
+            }
+        }
+        return message;
+    },
+};
+const baseMsgMultiSetRepositoryBranch_Branch = {
+    name: "",
+    commitSHA: "",
+};
+export const MsgMultiSetRepositoryBranch_Branch = {
+    encode(message, writer = Writer.create()) {
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
+        }
+        if (message.commitSHA !== "") {
+            writer.uint32(18).string(message.commitSHA);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch_Branch,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.name = reader.string();
+                    break;
+                case 2:
+                    message.commitSHA = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch_Branch,
+        };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.commitSHA !== undefined && object.commitSHA !== null) {
+            message.commitSHA = String(object.commitSHA);
+        }
+        else {
+            message.commitSHA = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.name !== undefined && (obj.name = message.name);
+        message.commitSHA !== undefined && (obj.commitSHA = message.commitSHA);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranch_Branch,
+        };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.commitSHA !== undefined && object.commitSHA !== null) {
+            message.commitSHA = object.commitSHA;
+        }
+        else {
+            message.commitSHA = "";
+        }
+        return message;
+    },
+};
+const baseMsgMultiSetRepositoryBranchResponse = {};
+export const MsgMultiSetRepositoryBranchResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryBranchResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranchResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgMultiSetRepositoryBranchResponse,
+        };
+        return message;
+    },
+};
 const baseMsgSetDefaultBranch = { creator: "", id: 0, name: "" };
 export const MsgSetDefaultBranch = {
     encode(message, writer = Writer.create()) {
@@ -7459,6 +7677,139 @@ export const MsgDeleteBranchResponse = {
         return message;
     },
 };
+const baseMsgMultiDeleteBranch = { creator: "", id: 0, branches: "" };
+export const MsgMultiDeleteBranch = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.branches) {
+            writer.uint32(26).string(v);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgMultiDeleteBranch };
+        message.branches = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.branches.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgMultiDeleteBranch };
+        message.branches = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.branches !== undefined && object.branches !== null) {
+            for (const e of object.branches) {
+                message.branches.push(String(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.branches) {
+            obj.branches = message.branches.map((e) => e);
+        }
+        else {
+            obj.branches = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgMultiDeleteBranch };
+        message.branches = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.branches !== undefined && object.branches !== null) {
+            for (const e of object.branches) {
+                message.branches.push(e);
+            }
+        }
+        return message;
+    },
+};
+const baseMsgMultiDeleteBranchResponse = {};
+export const MsgMultiDeleteBranchResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiDeleteBranchResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgMultiDeleteBranchResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgMultiDeleteBranchResponse,
+        };
+        return message;
+    },
+};
 const baseMsgSetRepositoryTag = {
     creator: "",
     id: 0,
@@ -7610,6 +7961,221 @@ export const MsgSetRepositoryTagResponse = {
         return message;
     },
 };
+const baseMsgMultiSetRepositoryTag = { creator: "", id: 0 };
+export const MsgMultiSetRepositoryTag = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.tags) {
+            MsgMultiSetRepositoryTag_Tag.encode(v, writer.uint32(26).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryTag,
+        };
+        message.tags = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.tags.push(MsgMultiSetRepositoryTag_Tag.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTag,
+        };
+        message.tags = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.tags !== undefined && object.tags !== null) {
+            for (const e of object.tags) {
+                message.tags.push(MsgMultiSetRepositoryTag_Tag.fromJSON(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.tags) {
+            obj.tags = message.tags.map((e) => e ? MsgMultiSetRepositoryTag_Tag.toJSON(e) : undefined);
+        }
+        else {
+            obj.tags = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTag,
+        };
+        message.tags = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.tags !== undefined && object.tags !== null) {
+            for (const e of object.tags) {
+                message.tags.push(MsgMultiSetRepositoryTag_Tag.fromPartial(e));
+            }
+        }
+        return message;
+    },
+};
+const baseMsgMultiSetRepositoryTag_Tag = { name: "", commitSHA: "" };
+export const MsgMultiSetRepositoryTag_Tag = {
+    encode(message, writer = Writer.create()) {
+        if (message.name !== "") {
+            writer.uint32(10).string(message.name);
+        }
+        if (message.commitSHA !== "") {
+            writer.uint32(18).string(message.commitSHA);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryTag_Tag,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.name = reader.string();
+                    break;
+                case 2:
+                    message.commitSHA = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTag_Tag,
+        };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = "";
+        }
+        if (object.commitSHA !== undefined && object.commitSHA !== null) {
+            message.commitSHA = String(object.commitSHA);
+        }
+        else {
+            message.commitSHA = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.name !== undefined && (obj.name = message.name);
+        message.commitSHA !== undefined && (obj.commitSHA = message.commitSHA);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTag_Tag,
+        };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = "";
+        }
+        if (object.commitSHA !== undefined && object.commitSHA !== null) {
+            message.commitSHA = object.commitSHA;
+        }
+        else {
+            message.commitSHA = "";
+        }
+        return message;
+    },
+};
+const baseMsgMultiSetRepositoryTagResponse = {};
+export const MsgMultiSetRepositoryTagResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiSetRepositoryTagResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTagResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgMultiSetRepositoryTagResponse,
+        };
+        return message;
+    },
+};
 const baseMsgDeleteTag = { creator: "", id: 0, name: "" };
 export const MsgDeleteTag = {
     encode(message, writer = Writer.create()) {
@@ -7728,6 +8294,139 @@ export const MsgDeleteTagResponse = {
     },
     fromPartial(_) {
         const message = { ...baseMsgDeleteTagResponse };
+        return message;
+    },
+};
+const baseMsgMultiDeleteTag = { creator: "", id: 0, tags: "" };
+export const MsgMultiDeleteTag = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
+        for (const v of message.tags) {
+            writer.uint32(26).string(v);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgMultiDeleteTag };
+        message.tags = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.id = longToNumber(reader.uint64());
+                    break;
+                case 3:
+                    message.tags.push(reader.string());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgMultiDeleteTag };
+        message.tags = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.tags !== undefined && object.tags !== null) {
+            for (const e of object.tags) {
+                message.tags.push(String(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
+        if (message.tags) {
+            obj.tags = message.tags.map((e) => e);
+        }
+        else {
+            obj.tags = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgMultiDeleteTag };
+        message.tags = [];
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
+        }
+        if (object.tags !== undefined && object.tags !== null) {
+            for (const e of object.tags) {
+                message.tags.push(e);
+            }
+        }
+        return message;
+    },
+};
+const baseMsgMultiDeleteTagResponse = {};
+export const MsgMultiDeleteTagResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgMultiDeleteTagResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgMultiDeleteTagResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgMultiDeleteTagResponse,
+        };
         return message;
     },
 };
@@ -7862,239 +8561,6 @@ export const MsgToggleRepositoryForkingResponse = {
         else {
             message.allowForking = false;
         }
-        return message;
-    },
-};
-const baseMsgUpdateRepository = {
-    creator: "",
-    id: 0,
-    name: "",
-    owner: "",
-    description: "",
-    labels: "",
-    license: "",
-    defaultBranch: "",
-};
-export const MsgUpdateRepository = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
-        }
-        if (message.name !== "") {
-            writer.uint32(26).string(message.name);
-        }
-        if (message.owner !== "") {
-            writer.uint32(34).string(message.owner);
-        }
-        if (message.description !== "") {
-            writer.uint32(42).string(message.description);
-        }
-        if (message.labels !== "") {
-            writer.uint32(50).string(message.labels);
-        }
-        if (message.license !== "") {
-            writer.uint32(58).string(message.license);
-        }
-        if (message.defaultBranch !== "") {
-            writer.uint32(66).string(message.defaultBranch);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgUpdateRepository };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                case 3:
-                    message.name = reader.string();
-                    break;
-                case 4:
-                    message.owner = reader.string();
-                    break;
-                case 5:
-                    message.description = reader.string();
-                    break;
-                case 6:
-                    message.labels = reader.string();
-                    break;
-                case 7:
-                    message.license = reader.string();
-                    break;
-                case 8:
-                    message.defaultBranch = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseMsgUpdateRepository };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.name !== undefined && object.name !== null) {
-            message.name = String(object.name);
-        }
-        else {
-            message.name = "";
-        }
-        if (object.owner !== undefined && object.owner !== null) {
-            message.owner = String(object.owner);
-        }
-        else {
-            message.owner = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = String(object.description);
-        }
-        else {
-            message.description = "";
-        }
-        if (object.labels !== undefined && object.labels !== null) {
-            message.labels = String(object.labels);
-        }
-        else {
-            message.labels = "";
-        }
-        if (object.license !== undefined && object.license !== null) {
-            message.license = String(object.license);
-        }
-        else {
-            message.license = "";
-        }
-        if (object.defaultBranch !== undefined && object.defaultBranch !== null) {
-            message.defaultBranch = String(object.defaultBranch);
-        }
-        else {
-            message.defaultBranch = "";
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        message.name !== undefined && (obj.name = message.name);
-        message.owner !== undefined && (obj.owner = message.owner);
-        message.description !== undefined &&
-            (obj.description = message.description);
-        message.labels !== undefined && (obj.labels = message.labels);
-        message.license !== undefined && (obj.license = message.license);
-        message.defaultBranch !== undefined &&
-            (obj.defaultBranch = message.defaultBranch);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseMsgUpdateRepository };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.name !== undefined && object.name !== null) {
-            message.name = object.name;
-        }
-        else {
-            message.name = "";
-        }
-        if (object.owner !== undefined && object.owner !== null) {
-            message.owner = object.owner;
-        }
-        else {
-            message.owner = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = object.description;
-        }
-        else {
-            message.description = "";
-        }
-        if (object.labels !== undefined && object.labels !== null) {
-            message.labels = object.labels;
-        }
-        else {
-            message.labels = "";
-        }
-        if (object.license !== undefined && object.license !== null) {
-            message.license = object.license;
-        }
-        else {
-            message.license = "";
-        }
-        if (object.defaultBranch !== undefined && object.defaultBranch !== null) {
-            message.defaultBranch = object.defaultBranch;
-        }
-        else {
-            message.defaultBranch = "";
-        }
-        return message;
-    },
-};
-const baseMsgUpdateRepositoryResponse = {};
-export const MsgUpdateRepositoryResponse = {
-    encode(_, writer = Writer.create()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgUpdateRepositoryResponse,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(_) {
-        const message = {
-            ...baseMsgUpdateRepositoryResponse,
-        };
-        return message;
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    fromPartial(_) {
-        const message = {
-            ...baseMsgUpdateRepositoryResponse,
-        };
         return message;
     },
 };
@@ -9291,6 +9757,11 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetRepositoryBranch", data);
         return promise.then((data) => MsgSetRepositoryBranchResponse.decode(new Reader(data)));
     }
+    MultiSetRepositoryBranch(request) {
+        const data = MsgMultiSetRepositoryBranch.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "MultiSetRepositoryBranch", data);
+        return promise.then((data) => MsgMultiSetRepositoryBranchResponse.decode(new Reader(data)));
+    }
     SetDefaultBranch(request) {
         const data = MsgSetDefaultBranch.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetDefaultBranch", data);
@@ -9301,25 +9772,35 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteBranch", data);
         return promise.then((data) => MsgDeleteBranchResponse.decode(new Reader(data)));
     }
+    MultiDeleteBranch(request) {
+        const data = MsgMultiDeleteBranch.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "MultiDeleteBranch", data);
+        return promise.then((data) => MsgMultiDeleteBranchResponse.decode(new Reader(data)));
+    }
     SetRepositoryTag(request) {
         const data = MsgSetRepositoryTag.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "SetRepositoryTag", data);
         return promise.then((data) => MsgSetRepositoryTagResponse.decode(new Reader(data)));
+    }
+    MultiSetRepositoryTag(request) {
+        const data = MsgMultiSetRepositoryTag.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "MultiSetRepositoryTag", data);
+        return promise.then((data) => MsgMultiSetRepositoryTagResponse.decode(new Reader(data)));
     }
     DeleteTag(request) {
         const data = MsgDeleteTag.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteTag", data);
         return promise.then((data) => MsgDeleteTagResponse.decode(new Reader(data)));
     }
+    MultiDeleteTag(request) {
+        const data = MsgMultiDeleteTag.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "MultiDeleteTag", data);
+        return promise.then((data) => MsgMultiDeleteTagResponse.decode(new Reader(data)));
+    }
     ToggleRepositoryForking(request) {
         const data = MsgToggleRepositoryForking.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleRepositoryForking", data);
         return promise.then((data) => MsgToggleRepositoryForkingResponse.decode(new Reader(data)));
-    }
-    UpdateRepository(request) {
-        const data = MsgUpdateRepository.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateRepository", data);
-        return promise.then((data) => MsgUpdateRepositoryResponse.decode(new Reader(data)));
     }
     DeleteRepository(request) {
         const data = MsgDeleteRepository.encode(request).finish();

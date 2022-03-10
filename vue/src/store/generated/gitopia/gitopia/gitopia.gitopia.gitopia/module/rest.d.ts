@@ -1,3 +1,11 @@
+export interface MsgMultiSetRepositoryBranchBranch {
+    name?: string;
+    commitSHA?: string;
+}
+export interface MsgMultiSetRepositoryTagTag {
+    name?: string;
+    commitSHA?: string;
+}
 export declare enum OrganizationMemberRole {
     MEMBER = "MEMBER",
     OWNER = "OWNER"
@@ -142,6 +150,10 @@ export interface GitopiaMsgForkRepositoryResponse {
     /** @format uint64 */
     id?: string;
 }
+export declare type GitopiaMsgMultiDeleteBranchResponse = object;
+export declare type GitopiaMsgMultiDeleteTagResponse = object;
+export declare type GitopiaMsgMultiSetRepositoryBranchResponse = object;
+export declare type GitopiaMsgMultiSetRepositoryTagResponse = object;
 export declare type GitopiaMsgRemoveIssueAssigneesResponse = object;
 export declare type GitopiaMsgRemoveIssueLabelsResponse = object;
 export declare type GitopiaMsgRemoveOrganizationMemberResponse = object;
@@ -177,7 +189,6 @@ export declare type GitopiaMsgUpdatePullRequestTitleResponse = object;
 export declare type GitopiaMsgUpdateReleaseResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
-export declare type GitopiaMsgUpdateRepositoryResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
 export interface GitopiaOrganization {
@@ -705,7 +716,11 @@ export interface V1Beta1PageRequest {
      * is set.
      */
     countTotal?: boolean;
-    /** reverse is set to true if results are to be returned in the descending order. */
+    /**
+     * reverse is set to true if results are to be returned in the descending order.
+     *
+     * Since: cosmos-sdk 0.43
+     */
     reverse?: boolean;
 }
 /**
