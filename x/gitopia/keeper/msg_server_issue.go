@@ -610,6 +610,12 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	DoRemoveIssue(ctx, k, issue, repository)
+
+	return &types.MsgDeleteIssueResponse{}, nil
+}
+
+func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
 	for _, commentId := range issue.Comments {
 		k.RemoveComment(ctx, commentId)
 	}
@@ -619,7 +625,5 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 	}
 
 	k.SetRepository(ctx, repository)
-	k.RemoveIssue(ctx, msg.Id)
-
-	return &types.MsgDeleteIssueResponse{}, nil
+	k.RemoveIssue(ctx, issue.Id)
 }
