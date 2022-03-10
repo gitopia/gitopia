@@ -370,6 +370,17 @@ export interface MsgSetRepositoryBranch {
 }
 export interface MsgSetRepositoryBranchResponse {
 }
+export interface MsgMultiSetRepositoryBranch {
+    creator: string;
+    id: number;
+    branches: MsgMultiSetRepositoryBranch_Branch[];
+}
+export interface MsgMultiSetRepositoryBranch_Branch {
+    name: string;
+    commitSHA: string;
+}
+export interface MsgMultiSetRepositoryBranchResponse {
+}
 export interface MsgSetDefaultBranch {
     creator: string;
     id: number;
@@ -384,6 +395,13 @@ export interface MsgDeleteBranch {
 }
 export interface MsgDeleteBranchResponse {
 }
+export interface MsgMultiDeleteBranch {
+    creator: string;
+    id: number;
+    branches: string[];
+}
+export interface MsgMultiDeleteBranchResponse {
+}
 export interface MsgSetRepositoryTag {
     creator: string;
     id: number;
@@ -392,6 +410,17 @@ export interface MsgSetRepositoryTag {
 }
 export interface MsgSetRepositoryTagResponse {
 }
+export interface MsgMultiSetRepositoryTag {
+    creator: string;
+    id: number;
+    tags: MsgMultiSetRepositoryTag_Tag[];
+}
+export interface MsgMultiSetRepositoryTag_Tag {
+    name: string;
+    commitSHA: string;
+}
+export interface MsgMultiSetRepositoryTagResponse {
+}
 export interface MsgDeleteTag {
     creator: string;
     id: number;
@@ -399,24 +428,19 @@ export interface MsgDeleteTag {
 }
 export interface MsgDeleteTagResponse {
 }
+export interface MsgMultiDeleteTag {
+    creator: string;
+    id: number;
+    tags: string[];
+}
+export interface MsgMultiDeleteTagResponse {
+}
 export interface MsgToggleRepositoryForking {
     creator: string;
     id: number;
 }
 export interface MsgToggleRepositoryForkingResponse {
     allowForking: boolean;
-}
-export interface MsgUpdateRepository {
-    creator: string;
-    id: number;
-    name: string;
-    owner: string;
-    description: string;
-    labels: string;
-    license: string;
-    defaultBranch: string;
-}
-export interface MsgUpdateRepositoryResponse {
 }
 export interface MsgDeleteRepository {
     creator: string;
@@ -1089,6 +1113,27 @@ export declare const MsgSetRepositoryBranchResponse: {
     toJSON(_: MsgSetRepositoryBranchResponse): unknown;
     fromPartial(_: DeepPartial<MsgSetRepositoryBranchResponse>): MsgSetRepositoryBranchResponse;
 };
+export declare const MsgMultiSetRepositoryBranch: {
+    encode(message: MsgMultiSetRepositoryBranch, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryBranch;
+    fromJSON(object: any): MsgMultiSetRepositoryBranch;
+    toJSON(message: MsgMultiSetRepositoryBranch): unknown;
+    fromPartial(object: DeepPartial<MsgMultiSetRepositoryBranch>): MsgMultiSetRepositoryBranch;
+};
+export declare const MsgMultiSetRepositoryBranch_Branch: {
+    encode(message: MsgMultiSetRepositoryBranch_Branch, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryBranch_Branch;
+    fromJSON(object: any): MsgMultiSetRepositoryBranch_Branch;
+    toJSON(message: MsgMultiSetRepositoryBranch_Branch): unknown;
+    fromPartial(object: DeepPartial<MsgMultiSetRepositoryBranch_Branch>): MsgMultiSetRepositoryBranch_Branch;
+};
+export declare const MsgMultiSetRepositoryBranchResponse: {
+    encode(_: MsgMultiSetRepositoryBranchResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryBranchResponse;
+    fromJSON(_: any): MsgMultiSetRepositoryBranchResponse;
+    toJSON(_: MsgMultiSetRepositoryBranchResponse): unknown;
+    fromPartial(_: DeepPartial<MsgMultiSetRepositoryBranchResponse>): MsgMultiSetRepositoryBranchResponse;
+};
 export declare const MsgSetDefaultBranch: {
     encode(message: MsgSetDefaultBranch, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgSetDefaultBranch;
@@ -1117,6 +1162,20 @@ export declare const MsgDeleteBranchResponse: {
     toJSON(_: MsgDeleteBranchResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteBranchResponse>): MsgDeleteBranchResponse;
 };
+export declare const MsgMultiDeleteBranch: {
+    encode(message: MsgMultiDeleteBranch, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiDeleteBranch;
+    fromJSON(object: any): MsgMultiDeleteBranch;
+    toJSON(message: MsgMultiDeleteBranch): unknown;
+    fromPartial(object: DeepPartial<MsgMultiDeleteBranch>): MsgMultiDeleteBranch;
+};
+export declare const MsgMultiDeleteBranchResponse: {
+    encode(_: MsgMultiDeleteBranchResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiDeleteBranchResponse;
+    fromJSON(_: any): MsgMultiDeleteBranchResponse;
+    toJSON(_: MsgMultiDeleteBranchResponse): unknown;
+    fromPartial(_: DeepPartial<MsgMultiDeleteBranchResponse>): MsgMultiDeleteBranchResponse;
+};
 export declare const MsgSetRepositoryTag: {
     encode(message: MsgSetRepositoryTag, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgSetRepositoryTag;
@@ -1130,6 +1189,27 @@ export declare const MsgSetRepositoryTagResponse: {
     fromJSON(_: any): MsgSetRepositoryTagResponse;
     toJSON(_: MsgSetRepositoryTagResponse): unknown;
     fromPartial(_: DeepPartial<MsgSetRepositoryTagResponse>): MsgSetRepositoryTagResponse;
+};
+export declare const MsgMultiSetRepositoryTag: {
+    encode(message: MsgMultiSetRepositoryTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryTag;
+    fromJSON(object: any): MsgMultiSetRepositoryTag;
+    toJSON(message: MsgMultiSetRepositoryTag): unknown;
+    fromPartial(object: DeepPartial<MsgMultiSetRepositoryTag>): MsgMultiSetRepositoryTag;
+};
+export declare const MsgMultiSetRepositoryTag_Tag: {
+    encode(message: MsgMultiSetRepositoryTag_Tag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryTag_Tag;
+    fromJSON(object: any): MsgMultiSetRepositoryTag_Tag;
+    toJSON(message: MsgMultiSetRepositoryTag_Tag): unknown;
+    fromPartial(object: DeepPartial<MsgMultiSetRepositoryTag_Tag>): MsgMultiSetRepositoryTag_Tag;
+};
+export declare const MsgMultiSetRepositoryTagResponse: {
+    encode(_: MsgMultiSetRepositoryTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiSetRepositoryTagResponse;
+    fromJSON(_: any): MsgMultiSetRepositoryTagResponse;
+    toJSON(_: MsgMultiSetRepositoryTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgMultiSetRepositoryTagResponse>): MsgMultiSetRepositoryTagResponse;
 };
 export declare const MsgDeleteTag: {
     encode(message: MsgDeleteTag, writer?: Writer): Writer;
@@ -1145,6 +1225,20 @@ export declare const MsgDeleteTagResponse: {
     toJSON(_: MsgDeleteTagResponse): unknown;
     fromPartial(_: DeepPartial<MsgDeleteTagResponse>): MsgDeleteTagResponse;
 };
+export declare const MsgMultiDeleteTag: {
+    encode(message: MsgMultiDeleteTag, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiDeleteTag;
+    fromJSON(object: any): MsgMultiDeleteTag;
+    toJSON(message: MsgMultiDeleteTag): unknown;
+    fromPartial(object: DeepPartial<MsgMultiDeleteTag>): MsgMultiDeleteTag;
+};
+export declare const MsgMultiDeleteTagResponse: {
+    encode(_: MsgMultiDeleteTagResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgMultiDeleteTagResponse;
+    fromJSON(_: any): MsgMultiDeleteTagResponse;
+    toJSON(_: MsgMultiDeleteTagResponse): unknown;
+    fromPartial(_: DeepPartial<MsgMultiDeleteTagResponse>): MsgMultiDeleteTagResponse;
+};
 export declare const MsgToggleRepositoryForking: {
     encode(message: MsgToggleRepositoryForking, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgToggleRepositoryForking;
@@ -1158,20 +1252,6 @@ export declare const MsgToggleRepositoryForkingResponse: {
     fromJSON(object: any): MsgToggleRepositoryForkingResponse;
     toJSON(message: MsgToggleRepositoryForkingResponse): unknown;
     fromPartial(object: DeepPartial<MsgToggleRepositoryForkingResponse>): MsgToggleRepositoryForkingResponse;
-};
-export declare const MsgUpdateRepository: {
-    encode(message: MsgUpdateRepository, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepository;
-    fromJSON(object: any): MsgUpdateRepository;
-    toJSON(message: MsgUpdateRepository): unknown;
-    fromPartial(object: DeepPartial<MsgUpdateRepository>): MsgUpdateRepository;
-};
-export declare const MsgUpdateRepositoryResponse: {
-    encode(_: MsgUpdateRepositoryResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryResponse;
-    fromJSON(_: any): MsgUpdateRepositoryResponse;
-    toJSON(_: MsgUpdateRepositoryResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdateRepositoryResponse>): MsgUpdateRepositoryResponse;
 };
 export declare const MsgDeleteRepository: {
     encode(message: MsgDeleteRepository, writer?: Writer): Writer;
@@ -1332,12 +1412,15 @@ export interface Msg {
     UpdateRepositoryLabel(request: MsgUpdateRepositoryLabel): Promise<MsgUpdateRepositoryLabelResponse>;
     DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     SetRepositoryBranch(request: MsgSetRepositoryBranch): Promise<MsgSetRepositoryBranchResponse>;
+    MultiSetRepositoryBranch(request: MsgMultiSetRepositoryBranch): Promise<MsgMultiSetRepositoryBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    MultiDeleteBranch(request: MsgMultiDeleteBranch): Promise<MsgMultiDeleteBranchResponse>;
     SetRepositoryTag(request: MsgSetRepositoryTag): Promise<MsgSetRepositoryTagResponse>;
+    MultiSetRepositoryTag(request: MsgMultiSetRepositoryTag): Promise<MsgMultiSetRepositoryTagResponse>;
     DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
+    MultiDeleteTag(request: MsgMultiDeleteTag): Promise<MsgMultiDeleteTagResponse>;
     ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
-    UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
@@ -1394,12 +1477,15 @@ export declare class MsgClientImpl implements Msg {
     UpdateRepositoryLabel(request: MsgUpdateRepositoryLabel): Promise<MsgUpdateRepositoryLabelResponse>;
     DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     SetRepositoryBranch(request: MsgSetRepositoryBranch): Promise<MsgSetRepositoryBranchResponse>;
+    MultiSetRepositoryBranch(request: MsgMultiSetRepositoryBranch): Promise<MsgMultiSetRepositoryBranchResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     DeleteBranch(request: MsgDeleteBranch): Promise<MsgDeleteBranchResponse>;
+    MultiDeleteBranch(request: MsgMultiDeleteBranch): Promise<MsgMultiDeleteBranchResponse>;
     SetRepositoryTag(request: MsgSetRepositoryTag): Promise<MsgSetRepositoryTagResponse>;
+    MultiSetRepositoryTag(request: MsgMultiSetRepositoryTag): Promise<MsgMultiSetRepositoryTagResponse>;
     DeleteTag(request: MsgDeleteTag): Promise<MsgDeleteTagResponse>;
+    MultiDeleteTag(request: MsgMultiDeleteTag): Promise<MsgMultiDeleteTagResponse>;
     ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
-    UpdateRepository(request: MsgUpdateRepository): Promise<MsgUpdateRepositoryResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;

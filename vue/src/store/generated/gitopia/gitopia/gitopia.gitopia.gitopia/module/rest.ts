@@ -9,6 +9,16 @@
  * ---------------------------------------------------------------
  */
 
+export interface MsgMultiSetRepositoryBranchBranch {
+  name?: string;
+  commitSHA?: string;
+}
+
+export interface MsgMultiSetRepositoryTagTag {
+  name?: string;
+  commitSHA?: string;
+}
+
 export enum OrganizationMemberRole {
   MEMBER = "MEMBER",
   OWNER = "OWNER",
@@ -205,6 +215,14 @@ export interface GitopiaMsgForkRepositoryResponse {
   id?: string;
 }
 
+export type GitopiaMsgMultiDeleteBranchResponse = object;
+
+export type GitopiaMsgMultiDeleteTagResponse = object;
+
+export type GitopiaMsgMultiSetRepositoryBranchResponse = object;
+
+export type GitopiaMsgMultiSetRepositoryTagResponse = object;
+
 export type GitopiaMsgRemoveIssueAssigneesResponse = object;
 
 export type GitopiaMsgRemoveIssueLabelsResponse = object;
@@ -268,8 +286,6 @@ export type GitopiaMsgUpdateReleaseResponse = object;
 export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 
 export type GitopiaMsgUpdateRepositoryLabelResponse = object;
-
-export type GitopiaMsgUpdateRepositoryResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
 
@@ -914,7 +930,11 @@ export interface V1Beta1PageRequest {
    */
   countTotal?: boolean;
 
-  /** reverse is set to true if results are to be returned in the descending order. */
+  /**
+   * reverse is set to true if results are to be returned in the descending order.
+   *
+   * Since: cosmos-sdk 0.43
+   */
   reverse?: boolean;
 }
 
