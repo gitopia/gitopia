@@ -773,3 +773,16 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 
 	return &types.MsgDeletePullRequestResponse{}, nil
 }
+
+func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
+	for _, commentId := range pullRequest.Comments {
+		k.RemoveComment(ctx, commentId)
+	}
+
+	if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, pullRequest.Iid); exists {
+		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
+	}
+
+	k.SetRepository(ctx, repository)
+	k.RemoveIssue(ctx, pullRequest.Id)
+}
