@@ -83,9 +83,23 @@ func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	k.RemoveUser(ctx, msg.Id)
+	DoRemoveUser(ctx, k, user)
 
 	return &types.MsgDeleteUserResponse{}, nil
+}
+
+func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
+	for _, o := range user.Organizations {
+		organization, _ := k.GetOrganization(ctx, o.Id)
+		DoRemoveOrganization(ctx, k, user, organization)
+	}
+
+	for _, r := range user.Repositories {
+		repository, _ := k.GetRepository(ctx, r.Id)
+		DoRemoveRepository(ctx, k, user, repository)
+	}
+
+	k.RemoveUser(ctx, user.Creator)
 }
 
 func (k msgServer) TransferUser(goCtx context.Context, msg *types.MsgTransferUser) (*types.MsgTransferUserResponse, error) {
