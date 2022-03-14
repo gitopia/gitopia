@@ -258,15 +258,35 @@ func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdat
 func (k msgServer) DeleteOrganization(goCtx context.Context, msg *types.MsgDeleteOrganization) (*types.MsgDeleteOrganizationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	organization, found := k.GetOrganization(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
+
 	if msg.Creator != organization.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	k.RemoveOrganization(ctx, msg.Id)
+	DoRemoveOrganization(ctx, k, user, organization)
 
 	return &types.MsgDeleteOrganizationResponse{}, nil
+}
+
+func DoRemoveOrganization(ctx sdk.Context, k msgServer, user types.User, organization types.Organization) {
+	for _, r := range organization.Repositories {
+		repository, _ := k.GetRepository(ctx, r.Id)
+		DoRemoveRepository(ctx, k, user, repository)
+	}
+
+	if i, exists := utils.UserOrganizationExists(user.Organizations, organization.Name); exists {
+		user.Organizations = append(user.Organizations[:i], user.Organizations[i+1:]...)
+	}
+
+	k.SetUser(ctx, user)
+	k.RemoveOrganization(ctx, organization.Address)
 }
