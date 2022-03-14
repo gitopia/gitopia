@@ -756,6 +756,8 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 }
 
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
+	return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "not allowed")
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
