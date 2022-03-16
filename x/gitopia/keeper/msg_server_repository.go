@@ -1149,7 +1149,8 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, user *types.User, organiza
 	}
 
 	for _, r := range repository.Releases {
-		k.RemoveRelease(ctx, r.Id)
+		release, _ := k.GetRelease(ctx, r.Id)
+		DoRemoveRelease(ctx, k, release, repository)
 	}
 
 	if repository.Owner.Type == types.RepositoryOwner_USER {
