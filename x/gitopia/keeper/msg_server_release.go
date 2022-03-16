@@ -213,7 +213,7 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	k.RemoveIssue(ctx, release.Id)
+	k.RemoveRelease(ctx, release.Id)
 
 	return &types.MsgDeleteReleaseResponse{}, nil
 }
