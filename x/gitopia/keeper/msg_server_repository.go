@@ -1158,12 +1158,14 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, user *types.User, organiza
 			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
 		}
 
+		user.UpdatedAt = ctx.BlockTime().Unix()
 		k.SetUser(ctx, *user)
 	} else {
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, repository.Name); exists {
 			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
 		}
 
+		organization.UpdatedAt = ctx.BlockTime().Unix()
 		k.SetOrganization(ctx, *organization)
 	}
 

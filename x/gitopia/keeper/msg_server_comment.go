@@ -137,6 +137,8 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under issue (%d)", msg.Id, comment.ParentId))
 		}
 
+		issue.UpdatedAt = ctx.BlockTime().Unix()
+
 		k.SetIssue(ctx, issue)
 	} else if comment.CommentType == types.Comment_PULLREQUEST {
 		pullRequest, found := k.GetPullRequest(ctx, comment.ParentId)
@@ -149,6 +151,8 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find commentId (%d) under pullRequest (%d)", msg.Id, comment.ParentId))
 		}
+
+		pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 		k.SetPullRequest(ctx, pullRequest)
 	}

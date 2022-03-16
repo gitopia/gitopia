@@ -783,6 +783,8 @@ func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullReq
 		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
 	}
 
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
 	k.SetRepository(ctx, repository)
 	k.RemovePullRequest(ctx, pullRequest.Id)
 }

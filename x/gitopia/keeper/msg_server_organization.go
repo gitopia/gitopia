@@ -287,6 +287,8 @@ func DoRemoveOrganization(ctx sdk.Context, k msgServer, user types.User, organiz
 		user.Organizations = append(user.Organizations[:i], user.Organizations[i+1:]...)
 	}
 
+	user.UpdatedAt = ctx.BlockTime().Unix()
+
 	k.SetUser(ctx, user)
 	k.RemoveOrganization(ctx, organization.Address)
 }

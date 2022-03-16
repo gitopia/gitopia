@@ -624,6 +624,8 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
 	}
 
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
 	k.SetRepository(ctx, repository)
 	k.RemoveIssue(ctx, issue.Id)
 }
