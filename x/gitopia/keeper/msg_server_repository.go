@@ -1128,16 +1128,14 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	DoRemoveRepository(ctx, k, user, repository)
+	DoRemoveRepository(ctx, k, &user, &organization, repository)
 
 	return &types.MsgDeleteRepositoryResponse{}, nil
 }
 
-func DoRemoveRepository(ctx sdk.Context, k msgServer, user types.User, repository types.Repository) {
+func DoRemoveRepository(ctx sdk.Context, k msgServer, user *types.User, organization *types.Organization, repository types.Repository) {
 	for _, fork := range repository.Forks {
-		forkedRepository, _ := k.GetRepository(ctx, fork)
-		forkedRepositoryOwner, _ := k.GetUser(ctx, forkedRepository.Owner.Id)
-		DoRemoveRepository(ctx, k, forkedRepositoryOwner, forkedRepository)
+		DecoupleForkRepository(ctx, k, fork)
 	}
 
 	for _, i := range repository.Issues {
@@ -1154,10 +1152,31 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, user types.User, repositor
 		k.RemoveRelease(ctx, r.Id)
 	}
 
-	if i, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
-		user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
+	if repository.Owner.Type == types.RepositoryOwner_USER {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
+			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
+		}
+
+		k.SetUser(ctx, *user)
+	} else {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, repository.Name); exists {
+			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
+		}
+
+		k.SetOrganization(ctx, *organization)
 	}
 
-	k.SetUser(ctx, user)
 	k.RemoveRepository(ctx, repository.Id)
+}
+
+func DecoupleForkRepository(ctx sdk.Context, k msgServer, repositoryId uint64) error {
+	forkedRepository, found := k.GetRepository(ctx, repositoryId)
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", repositoryId))
+	}
+	forkedRepository.Parent = 0
+	forkedRepository.Fork = false
+	forkedRepository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, forkedRepository)
+	return nil
 }

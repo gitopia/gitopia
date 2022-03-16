@@ -280,7 +280,7 @@ func (k msgServer) DeleteOrganization(goCtx context.Context, msg *types.MsgDelet
 func DoRemoveOrganization(ctx sdk.Context, k msgServer, user types.User, organization types.Organization) {
 	for _, r := range organization.Repositories {
 		repository, _ := k.GetRepository(ctx, r.Id)
-		DoRemoveRepository(ctx, k, user, repository)
+		DoRemoveRepository(ctx, k, nil, &organization, repository)
 	}
 
 	if i, exists := utils.UserOrganizationExists(user.Organizations, organization.Name); exists {

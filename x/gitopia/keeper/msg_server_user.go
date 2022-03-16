@@ -96,7 +96,7 @@ func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
 
 	for _, r := range user.Repositories {
 		repository, _ := k.GetRepository(ctx, r.Id)
-		DoRemoveRepository(ctx, k, user, repository)
+		DoRemoveRepository(ctx, k, &user, nil, repository)
 	}
 
 	k.RemoveUser(ctx, user.Creator)
