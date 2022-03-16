@@ -784,5 +784,5 @@ func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullReq
 	}
 
 	k.SetRepository(ctx, repository)
-	k.RemoveIssue(ctx, pullRequest.Id)
+	k.RemovePullRequest(ctx, pullRequest.Id)
 }
