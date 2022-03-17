@@ -167,7 +167,6 @@ export interface MsgUpdateOrganization {
     name: string;
     avatarUrl: string;
     location: string;
-    email: string;
     website: string;
     description: string;
 }
@@ -460,7 +459,6 @@ export interface MsgUpdateUser {
     name: string;
     usernameGithub: string;
     avatarUrl: string;
-    email: string;
     bio: string;
 }
 export interface MsgUpdateUserResponse {

@@ -194,7 +194,6 @@ export interface MsgUpdateOrganization {
   name: string;
   avatarUrl: string;
   location: string;
-  email: string;
   website: string;
   description: string;
 }
@@ -533,7 +532,6 @@ export interface MsgUpdateUser {
   name: string;
   usernameGithub: string;
   avatarUrl: string;
-  email: string;
   bio: string;
 }
 
@@ -4067,7 +4065,6 @@ const baseMsgUpdateOrganization: object = {
   name: "",
   avatarUrl: "",
   location: "",
-  email: "",
   website: "",
   description: "",
 };
@@ -4091,9 +4088,6 @@ export const MsgUpdateOrganization = {
     }
     if (message.location !== "") {
       writer.uint32(42).string(message.location);
-    }
-    if (message.email !== "") {
-      writer.uint32(50).string(message.email);
     }
     if (message.website !== "") {
       writer.uint32(58).string(message.website);
@@ -4125,9 +4119,6 @@ export const MsgUpdateOrganization = {
           break;
         case 5:
           message.location = reader.string();
-          break;
-        case 6:
-          message.email = reader.string();
           break;
         case 7:
           message.website = reader.string();
@@ -4170,11 +4161,6 @@ export const MsgUpdateOrganization = {
     } else {
       message.location = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = String(object.email);
-    } else {
-      message.email = "";
-    }
     if (object.website !== undefined && object.website !== null) {
       message.website = String(object.website);
     } else {
@@ -4195,7 +4181,6 @@ export const MsgUpdateOrganization = {
     message.name !== undefined && (obj.name = message.name);
     message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
     message.location !== undefined && (obj.location = message.location);
-    message.email !== undefined && (obj.email = message.email);
     message.website !== undefined && (obj.website = message.website);
     message.description !== undefined &&
       (obj.description = message.description);
@@ -4230,11 +4215,6 @@ export const MsgUpdateOrganization = {
       message.location = object.location;
     } else {
       message.location = "";
-    }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = object.email;
-    } else {
-      message.email = "";
     }
     if (object.website !== undefined && object.website !== null) {
       message.website = object.website;
@@ -10255,7 +10235,6 @@ const baseMsgUpdateUser: object = {
   name: "",
   usernameGithub: "",
   avatarUrl: "",
-  email: "",
   bio: "",
 };
 
@@ -10273,11 +10252,8 @@ export const MsgUpdateUser = {
     if (message.avatarUrl !== "") {
       writer.uint32(34).string(message.avatarUrl);
     }
-    if (message.email !== "") {
-      writer.uint32(42).string(message.email);
-    }
     if (message.bio !== "") {
-      writer.uint32(50).string(message.bio);
+      writer.uint32(42).string(message.bio);
     }
     return writer;
   },
@@ -10302,9 +10278,6 @@ export const MsgUpdateUser = {
           message.avatarUrl = reader.string();
           break;
         case 5:
-          message.email = reader.string();
-          break;
-        case 6:
           message.bio = reader.string();
           break;
         default:
@@ -10337,11 +10310,6 @@ export const MsgUpdateUser = {
     } else {
       message.avatarUrl = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = String(object.email);
-    } else {
-      message.email = "";
-    }
     if (object.bio !== undefined && object.bio !== null) {
       message.bio = String(object.bio);
     } else {
@@ -10357,7 +10325,6 @@ export const MsgUpdateUser = {
     message.usernameGithub !== undefined &&
       (obj.usernameGithub = message.usernameGithub);
     message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
-    message.email !== undefined && (obj.email = message.email);
     message.bio !== undefined && (obj.bio = message.bio);
     return obj;
   },
@@ -10383,11 +10350,6 @@ export const MsgUpdateUser = {
       message.avatarUrl = object.avatarUrl;
     } else {
       message.avatarUrl = "";
-    }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = object.email;
-    } else {
-      message.email = "";
     }
     if (object.bio !== undefined && object.bio !== null) {
       message.bio = object.bio;
