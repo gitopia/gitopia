@@ -86,26 +86,6 @@ func TestMsgUpdateUser_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "email exceeds limit",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Email:   strings.Repeat(sample.String100, 3),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "invalid email",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Email:   "invalid email",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "valid email",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Email:   "valid@email.com",
-			},
-		}, {
 			name: "invalid avatarUrl",
 			msg: MsgUpdateUser{
 				Creator:   sample.AccAddress(),

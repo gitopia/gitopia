@@ -62,7 +62,6 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 	user.Name = msg.Name
 	user.UsernameGithub = msg.UsernameGithub
 	user.AvatarUrl = msg.AvatarUrl
-	user.Email = msg.Email
 	user.Bio = msg.Bio
 	user.UpdatedAt = ctx.BlockTime().Unix()
 

@@ -268,7 +268,6 @@ message MsgUpdateOrganization {
   string name = 3;
   string avatarUrl = 4;
   string location = 5;
-  string email = 6;
   string website = 7;
   string description = 8;
 }
@@ -605,8 +604,7 @@ message MsgUpdateUser {
   string name = 2;
   string usernameGithub = 3;
   string avatarUrl = 4;
-  string email = 5;
-  string bio = 6;
+  string bio = 5;
 }
 
 message MsgUpdateUserResponse { }

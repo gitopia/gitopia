@@ -245,7 +245,6 @@ func (k msgServer) UpdateOrganization(goCtx context.Context, msg *types.MsgUpdat
 	organization.Name = msg.Name
 	organization.AvatarUrl = msg.AvatarUrl
 	organization.Location = msg.Location
-	organization.Email = msg.Email
 	organization.Website = msg.Website
 	organization.Description = msg.Description
 	organization.UpdatedAt = ctx.BlockTime().Unix()
