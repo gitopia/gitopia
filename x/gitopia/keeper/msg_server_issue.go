@@ -598,10 +598,24 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
 
-	if repository.Owner.Id != msg.Creator {
+	var organization types.Organization
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HavePermission(repository, msg.Creator, utils.DeleteIssuePermission, organization) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	DoRemoveIssue(ctx, k, issue, repository)
+
+	return &types.MsgDeleteIssueResponse{}, nil
+}
+
+func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
 	for _, commentId := range issue.Comments {
 		k.RemoveComment(ctx, commentId)
 	}
@@ -610,8 +624,8 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
 	}
 
-	k.SetRepository(ctx, repository)
-	k.RemoveIssue(ctx, msg.Id)
+	repository.UpdatedAt = ctx.BlockTime().Unix()
 
-	return &types.MsgDeleteIssueResponse{}, nil
+	k.SetRepository(ctx, repository)
+	k.RemoveIssue(ctx, issue.Id)
 }

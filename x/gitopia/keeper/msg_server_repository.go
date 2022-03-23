@@ -1106,63 +1106,80 @@ func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.Msg
 func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteRepository) (*types.MsgDeleteRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	repository, found := k.GetRepository(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
 	}
-	if msg.Creator != repository.Owner.Id {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+
+	var organization types.Organization
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
 	}
-	/*
-		owner, err := k.GetRepositoryOwner(ctx, msg.Id)
-		if err != nil {
-			return nil, err
-		}
 
-		var repository = k.GetRepository(ctx, msg.Id)
+	if !utils.HavePermission(repository, msg.Creator, utils.DeleteRepositoryPermission, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
 
-		if owner.Type == "User" {
-			if msg.Creator != owner.ID && repository.Collaborators[msg.Creator] != "Admin" {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-			}
-			if !k.HasUser(ctx, owner.ID) {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user %v doesn't exist", owner.ID))
-			}
-
-			user := k.GetUser(ctx, owner.ID)
-
-			if _, exists := user.Repositories[repository.Name]; !exists {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in user %v repositories", repository.Name, owner.ID))
-			}
-			delete(user.Repositories, repository.Name)
-
-			k.SetUser(ctx, user)
-		} else if owner.Type == "Organization" {
-			orgId, err := strconv.ParseUint(owner.ID, 10, 64)
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid organization Id")
-			}
-			if !k.HasOrganization(ctx, orgId) {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization %v doesn't exist", owner.ID))
-			}
-
-			organization := k.GetOrganization(ctx, orgId)
-
-			if organization.Members[msg.Creator] != "Owner" && repository.Collaborators[msg.Creator] != "Admin" {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user %v doesn't have permission to perform this operation", msg.Creator))
-			}
-
-			if _, exists := organization.Repositories[repository.Name]; !exists {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository %v doesn't exist in organization %v repositories", repository.Name, organization.Name))
-			}
-
-			delete(organization.Repositories, repository.Name)
-
-			k.SetOrganization(ctx, organization)
-		}
-	*/
-
-	k.RemoveRepository(ctx, msg.Id)
+	DoRemoveRepository(ctx, k, &user, &organization, repository)
 
 	return &types.MsgDeleteRepositoryResponse{}, nil
+}
+
+func DoRemoveRepository(ctx sdk.Context, k msgServer, user *types.User, organization *types.Organization, repository types.Repository) {
+	for _, fork := range repository.Forks {
+		DecoupleForkRepository(ctx, k, fork)
+	}
+
+	for _, i := range repository.Issues {
+		issue, _ := k.GetIssue(ctx, i.Id)
+		DoRemoveIssue(ctx, k, issue, repository)
+	}
+
+	for _, pr := range repository.PullRequests {
+		pullRequest, _ := k.GetPullRequest(ctx, pr.Id)
+		DoRemovePullRequest(ctx, k, pullRequest, repository)
+	}
+
+	for _, r := range repository.Releases {
+		release, _ := k.GetRelease(ctx, r.Id)
+		DoRemoveRelease(ctx, k, release, repository)
+	}
+
+	if repository.Owner.Type == types.RepositoryOwner_USER {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
+			user.Repositories = append(user.Repositories[:i], user.Repositories[i+1:]...)
+		}
+
+		user.UpdatedAt = ctx.BlockTime().Unix()
+		k.SetUser(ctx, *user)
+	} else {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, repository.Name); exists {
+			organization.Repositories = append(organization.Repositories[:i], organization.Repositories[i+1:]...)
+		}
+
+		organization.UpdatedAt = ctx.BlockTime().Unix()
+		k.SetOrganization(ctx, *organization)
+	}
+
+	k.RemoveRepository(ctx, repository.Id)
+}
+
+func DecoupleForkRepository(ctx sdk.Context, k msgServer, repositoryId uint64) error {
+	forkedRepository, found := k.GetRepository(ctx, repositoryId)
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", repositoryId))
+	}
+	forkedRepository.Parent = 0
+	forkedRepository.Fork = false
+	forkedRepository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, forkedRepository)
+	return nil
 }

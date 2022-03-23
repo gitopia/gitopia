@@ -186,17 +186,45 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRelease) (*types.MsgDeleteReleaseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	release, found := k.GetRelease(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("release id (%d) doesn't exist", msg.Id))
 	}
 
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != release.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepository(ctx, release.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", release.RepositoryId))
 	}
 
-	k.RemoveRelease(ctx, msg.Id)
+	var organization types.Organization
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HavePermission(repository, msg.Creator, utils.ReleasePermission, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	DoRemoveRelease(ctx, k, release, repository)
 
 	return &types.MsgDeleteReleaseResponse{}, nil
+}
+
+func DoRemoveRelease(ctx sdk.Context, k msgServer, release types.Release, repository types.Repository) {
+	if i, exists := utils.RepositoryReleaseIdExists(repository.Releases, release.Id); exists {
+		repository.Releases = append(repository.Releases[:i], repository.Releases[i+1:]...)
+	}
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetRepository(ctx, repository)
+	k.RemoveRelease(ctx, release.Id)
 }

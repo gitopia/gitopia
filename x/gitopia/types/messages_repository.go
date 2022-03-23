@@ -1,11 +1,13 @@
 package types
 
 import (
+	"bytes"
 	"regexp"
 	"unicode"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gitopia/gitopia/x/gitopia/utils/revision"
 )
 
 type Owner struct {
@@ -24,6 +26,15 @@ func IsNameSanitized(msg string) bool {
 		}
 	}
 	return true
+}
+
+func IsValidRefname(refName string) (isValid bool, err error) {
+	parser := revision.NewParser(bytes.NewBufferString(refName))
+	_, err = parser.Parse()
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 var _ sdk.Msg = &MsgCreateRepository{}
@@ -470,6 +481,9 @@ func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 	}
+	if valid, err := IsValidRefname(msg.Name); !valid {
+		return err
+	}
 	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.CommitSHA)
 	if !isShaValid {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
@@ -518,6 +532,9 @@ func (msg *MsgMultiSetRepositoryBranch) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
 		} else if len(branch.Name) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+		}
+		if valid, err := IsValidRefname(branch.Name); !valid {
+			return err
 		}
 		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", branch.CommitSHA)
 		if !isShaValid {
@@ -616,6 +633,9 @@ func (msg *MsgSetDefaultBranch) ValidateBasic() error {
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 	}
+	if valid, err := IsValidRefname(msg.Name); !valid {
+		return err
+	}
 	return nil
 }
 
@@ -659,6 +679,9 @@ func (msg *MsgDeleteBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	}
+	if valid, err := IsValidRefname(msg.Name); !valid {
+		return err
 	}
 	return nil
 }
@@ -705,6 +728,9 @@ func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
 		} else if len(branch) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
 		}
+		if valid, err := IsValidRefname(branch); !valid {
+			return err
+		}
 	}
 	return nil
 }
@@ -750,6 +776,9 @@ func (msg *MsgSetRepositoryTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+	}
+	if valid, err := IsValidRefname(msg.Name); !valid {
+		return err
 	}
 	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.Sha)
 	if !isShaValid {
@@ -800,6 +829,9 @@ func (msg *MsgMultiSetRepositoryTag) ValidateBasic() error {
 		} else if len(tag.Name) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
 		}
+		if valid, err := IsValidRefname(tag.Name); !valid {
+			return err
+		}
 		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", tag.CommitSHA)
 		if !isShaValid {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
@@ -849,6 +881,9 @@ func (msg *MsgDeleteTag) ValidateBasic() error {
 	} else if len(msg.Name) < 1 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
 	}
+	if valid, err := IsValidRefname(msg.Name); !valid {
+		return err
+	}
 	return nil
 }
 
@@ -893,6 +928,9 @@ func (msg *MsgMultiDeleteTag) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
 		} else if len(tag) < 1 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
+		}
+		if valid, err := IsValidRefname(tag); !valid {
+			return err
 		}
 	}
 	return nil

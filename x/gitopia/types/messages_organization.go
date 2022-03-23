@@ -205,14 +205,13 @@ func (msg *MsgRemoveOrganizationMember) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateOrganization{}
 
-func NewMsgUpdateOrganization(creator string, id string, name string, avatarUrl string, location string, email string, website string, description string) *MsgUpdateOrganization {
+func NewMsgUpdateOrganization(creator string, id string, name string, avatarUrl string, location string, website string, description string) *MsgUpdateOrganization {
 	return &MsgUpdateOrganization{
 		Id:          id,
 		Creator:     creator,
 		Name:        name,
 		AvatarUrl:   avatarUrl,
 		Location:    location,
-		Email:       email,
 		Website:     website,
 		Description: description,
 	}

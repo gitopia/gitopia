@@ -153,9 +153,9 @@ func CmdRemoveOrganizationMember() *cobra.Command {
 
 func CmdUpdateOrganization() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization [id] [name] [avatarUrl] [location] [email] [website] [description]",
+		Use:   "update-organization [id] [name] [avatarUrl] [location] [website] [description]",
 		Short: "Update a organization",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -177,17 +177,12 @@ func CmdUpdateOrganization() *cobra.Command {
 				return err
 			}
 
-			argsEmail, err := cast.ToStringE(args[4])
+			argsWebsite, err := cast.ToStringE(args[4])
 			if err != nil {
 				return err
 			}
 
-			argsWebsite, err := cast.ToStringE(args[5])
-			if err != nil {
-				return err
-			}
-
-			argsDescription, err := cast.ToStringE(args[6])
+			argsDescription, err := cast.ToStringE(args[5])
 			if err != nil {
 				return err
 			}
@@ -197,7 +192,7 @@ func CmdUpdateOrganization() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganization(clientCtx.GetFromAddress().String(), id, argsName, argsAvatarUrl, argsLocation, argsEmail, argsWebsite, argsDescription)
+			msg := types.NewMsgUpdateOrganization(clientCtx.GetFromAddress().String(), id, argsName, argsAvatarUrl, argsLocation, argsWebsite, argsDescription)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

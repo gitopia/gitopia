@@ -1,7 +1,6 @@
 package types
 
 import (
-	"net/mail"
 	"net/url"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -53,13 +52,12 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateUser{}
 
-func NewMsgUpdateUser(creator string, name string, usernameGithub string, avatarUrl string, email string, bio string) *MsgUpdateUser {
+func NewMsgUpdateUser(creator string, name string, usernameGithub string, avatarUrl string, bio string) *MsgUpdateUser {
 	return &MsgUpdateUser{
 		Creator:        creator,
 		Name:           name,
 		UsernameGithub: usernameGithub,
 		AvatarUrl:      avatarUrl,
-		Email:          email,
 		Bio:            bio,
 	}
 }
@@ -101,15 +99,6 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 	}
 	if len(msg.Bio) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
-	}
-	if len(msg.Email) > 254 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Email exceeds limit: 254")
-	}
-	if msg.Email != "" {
-		_, err = mail.ParseAddress(msg.Email)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid email address (%s)", msg.Email)
-		}
 	}
 	if msg.AvatarUrl != "" {
 		_, err := url.ParseRequestURI(msg.AvatarUrl)

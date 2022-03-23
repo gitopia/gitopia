@@ -756,6 +756,8 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 }
 
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
+	return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "not allowed")
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
@@ -770,4 +772,19 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	k.RemovePullRequest(ctx, msg.Id)
 
 	return &types.MsgDeletePullRequestResponse{}, nil
+}
+
+func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
+	for _, commentId := range pullRequest.Comments {
+		k.RemoveComment(ctx, commentId)
+	}
+
+	if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, pullRequest.Iid); exists {
+		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
+	}
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetRepository(ctx, repository)
+	k.RemovePullRequest(ctx, pullRequest.Id)
 }
