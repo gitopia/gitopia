@@ -61,7 +61,7 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		ak,
-		authzKeeper,
+		&authzKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
