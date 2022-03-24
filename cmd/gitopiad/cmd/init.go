@@ -88,7 +88,6 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 			config.P2P.MaxNumOutboundPeers = 35
 			config.Mempool.Size = 10000
 			config.StateSync.TrustPeriod = 112 * time.Hour
-			config.StateSync.Enable = true
 			config.FastSync.Version = "v0"
 			config.Consensus.TimeoutCommit = time.Millisecond * 500
 
