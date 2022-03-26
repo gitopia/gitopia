@@ -39,6 +39,10 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
+	if task.State != types.StatePending {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "only pending state can be updated")
+	}
+
 	// Checks if the msg creator is the same as the current owner
 	if msg.Creator != task.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")

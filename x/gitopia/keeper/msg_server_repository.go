@@ -425,6 +425,10 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
 
+	if msg.Creator != repository.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "msg creator and repository creator are different")
+	}
+
 	task, found := k.GetTask(ctx, msg.TaskId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))

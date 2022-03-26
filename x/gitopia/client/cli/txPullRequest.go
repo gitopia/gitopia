@@ -191,12 +191,17 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 				return err
 			}
 
+			argsProvider, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), id, string(argsProvider))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

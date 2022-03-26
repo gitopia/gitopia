@@ -17,9 +17,9 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
-    repeated Task taskList = 17 [(gogoproto.nullable) = false];
-  uint64 taskCount = 18;
-  // this line is used by starport scaffolding # genesis/proto/state
+    	repeated Task taskList = 17 [(gogoproto.nullable) = false];
+  		uint64 taskCount = 18;
+  		// this line is used by starport scaffolding # genesis/proto/state
 		repeated Release releaseList = 15 [(gogoproto.nullable) = false];
 		uint64 releaseCount = 16;
 		repeated PullRequest pullRequestList = 13 [(gogoproto.nullable) = false];
