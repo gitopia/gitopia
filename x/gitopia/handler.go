@@ -21,19 +21,19 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.AuthorizeGitServer(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCreateTask:
-			res, err := msgServer.CreateTask(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
+		// case *types.MsgCreateTask:
+		// 	res, err := msgServer.CreateTask(sdk.WrapSDKContext(ctx), msg)
+		// 	return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateTask:
 			res, err := msgServer.UpdateTask(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgDeleteTask:
-			res, err := msgServer.DeleteTask(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
+		// case *types.MsgDeleteTask:
+		// 	res, err := msgServer.DeleteTask(sdk.WrapSDKContext(ctx), msg)
+		// 	return sdk.WrapServiceResult(ctx, res, err)
 
-			// this line is used by starport scaffolding # 1
+		// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

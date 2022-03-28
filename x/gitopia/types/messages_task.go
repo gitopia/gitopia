@@ -95,9 +95,8 @@ func (msg *MsgUpdateTask) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	_, exists := TaskState_value[msg.State.String()]
-	if !exists {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid task state (%s)", msg.State.String())
+	if msg.State != StateFailure && msg.State != StateSuccess {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid task state")
 	}
 	if len(msg.Message) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "message length exceeds limit: 255")

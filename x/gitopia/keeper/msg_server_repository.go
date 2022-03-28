@@ -426,7 +426,7 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 	}
 
 	if msg.Creator != repository.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "msg creator and repository creator are different")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "msg creator and repository creator are different")
 	}
 
 	task, found := k.GetTask(ctx, msg.TaskId)
@@ -435,6 +435,10 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 	}
 
 	// Update task state
+	if task.Creator != msg.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
+	}
+
 	task.State = types.StateSuccess
 	k.SetTask(ctx, task)
 

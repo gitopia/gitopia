@@ -308,12 +308,20 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	id := k.AppendTask(ctx, types.Task{
+		Type:     types.TaskType(types.TypeSetPullRequestState),
+		State:    types.TaskState(types.StatePending),
+		Creator:  msg.Creator,
+		Provider: msg.Provider,
+	})
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeMergePullRequestEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
 	return &types.MsgInvokeMergePullRequestResponse{}, nil
@@ -335,12 +343,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.TaskId != 0 {
-		task, found = k.GetTask(ctx, msg.TaskId)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
-		}
-	}
+	task, _ = k.GetTask(ctx, msg.TaskId)
 
 	currentTime := ctx.BlockTime().Unix()
 
@@ -431,17 +434,17 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		pullRequest.MergeCommitSha = msg.MergeCommitSha
 
 		// Update task state
+		if task.Creator != msg.Creator {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
+		}
+
 		task.State = types.StateSuccess
+		k.SetTask(ctx, task)
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
 
-	state, exists := types.PullRequest_State_value[msg.State]
-	if !exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
-	}
-
-	pullRequest.State = types.PullRequest_State(state)
+	pullRequest.State = types.PullRequest_State(types.PullRequest_State_value[msg.State])
 	pullRequest.UpdatedAt = currentTime
 	pullRequest.CommentsCount += 1
 
@@ -465,10 +468,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
-
-	if msg.TaskId != 0 {
-		k.SetTask(ctx, task)
-	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,

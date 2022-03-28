@@ -10,9 +10,9 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgAuthorizeGitServer{}, "gitopia/AuthorizeGitServer", nil)
-	cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
+	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
-	cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
+	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
 	cdc.RegisterConcrete(&MsgUpdateRelease{}, "gitopia/UpdateRelease", nil)
@@ -91,9 +91,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgAuthorizeGitServer{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreateTask{},
+		// &MsgCreateTask{},
 		&MsgUpdateTask{},
-		&MsgDeleteTask{},
+		// &MsgDeleteTask{},
 	)
 	// this line is used by starport scaffolding # 3
 	registry.RegisterImplementations((*sdk.Msg)(nil),

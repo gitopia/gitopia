@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -12,7 +13,7 @@ import (
 
 func CmdCreateTask() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-task [state] [message]",
+		Use:   "create-task [task-type] [provider]",
 		Short: "Create a new task",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -21,7 +22,7 @@ func CmdCreateTask() *cobra.Command {
 
 			value, ok := types.TaskType_value[argTaskType]
 			if !ok {
-				return err
+				return errors.New("invalid task type")
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
