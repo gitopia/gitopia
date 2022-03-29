@@ -97,12 +97,13 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeForkRepository{}
 
-func NewMsgInvokeForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgInvokeForkRepository {
+func NewMsgInvokeForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string, provider string) *MsgInvokeForkRepository {
 	return &MsgInvokeForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		OwnerId:      ownerId,
 		OwnerType:    ownerType,
+		Provider:     provider,
 	}
 }
 

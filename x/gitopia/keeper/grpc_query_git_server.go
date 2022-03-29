@@ -21,6 +21,11 @@ func (k Keeper) CheckGitServerAuthorization(c context.Context, req *types.QueryC
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 	}
 
+	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
+	if authorization == nil {
+		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
+	}
+
 	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
 	if authorization == nil {
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil

@@ -182,9 +182,9 @@ func CmdUpdatePullRequestDescription() *cobra.Command {
 
 func CmdInvokeMergePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "invoke-merge-pullrequest [id]",
+		Use:   "invoke-merge-pullrequest [id] [provider]",
 		Short: "Emits an event for git-server to merge a Pull Request",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {

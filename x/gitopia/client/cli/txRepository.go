@@ -58,7 +58,7 @@ func CmdInvokeForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "invoke-fork-repository [repositoryId] [ownerId] [ownerType]",
 		Short: "Emits an event for git-server to fork an existing repository",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -72,13 +72,17 @@ func CmdInvokeForkRepository() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsProvider, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgInvokeForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType))
+			msg := types.NewMsgInvokeForkRepository(clientCtx.GetFromAddress().String(), id, string(argsOwnerId), string(argsOwnerType), string(argsProvider))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
