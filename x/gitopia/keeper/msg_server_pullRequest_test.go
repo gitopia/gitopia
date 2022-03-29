@@ -702,8 +702,9 @@ func TestPullRequestMsgServerDelete(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
+			desc:    "Valid - still Unauthorized!",
 			request: &types.MsgDeletePullRequest{Creator: creator, Id: 0},
+			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Unauthorized",
@@ -711,9 +712,9 @@ func TestPullRequestMsgServerDelete(t *testing.T) {
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
-			desc:    "KeyNotFound",
+			desc:    "KeyNotFound - unauthorized first!",
 			request: &types.MsgDeletePullRequest{Creator: creator, Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
+			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {

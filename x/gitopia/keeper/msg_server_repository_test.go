@@ -125,7 +125,7 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "C", OwnerId: "C", OwnerType: "USER"},
+			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "C", OwnerId: "C", OwnerType: "USER", TaskId: 0},
 		},
 		{
 			desc:    "Repository Not Exists",
@@ -134,17 +134,17 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 		},
 		{
 			desc:    "Repository Already Exists",
-			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "B", OwnerId: "B", OwnerType: "USER"},
+			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "B", OwnerId: "B", OwnerType: "USER", TaskId: 0},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Owner Not Exists",
-			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "D", OwnerId: "D", OwnerType: "USER"},
+			request: &types.MsgForkRepository{RepositoryId: 0, Creator: "D", OwnerId: "D", OwnerType: "USER", TaskId: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Forking is not allowed",
-			request: &types.MsgForkRepository{RepositoryId: 1, Creator: "C", OwnerId: "C", OwnerType: "USER"},
+			request: &types.MsgForkRepository{RepositoryId: 1, Creator: "C", OwnerId: "C", OwnerType: "USER", TaskId: 0},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -161,6 +161,8 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: "B", Name: "repository", OwnerId: "B", OwnerType: "USER"})
 			require.NoError(t, err)
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "C"})
+			require.NoError(t, err)
+			_, err = srv.CreateTask(ctx, &types.MsgCreateTask{Creator: "C", TaskType: types.TaskType(0), Provider: creator})
 			require.NoError(t, err)
 
 			_, err = srv.ForkRepository(ctx, tc.request)
@@ -404,7 +406,7 @@ func TestRepositoryMsgServerUpdateLabel(t *testing.T) {
 		},
 		{
 			desc:    "Label Already Exists",
-			request: &types.MsgUpdateRepositoryLabel{RepositoryId: 0, Creator: "A", LabelId: 1, Name: "label"},
+			request: &types.MsgUpdateRepositoryLabel{RepositoryId: 0, Creator: "A", LabelId: 1, Name: "another-label"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
@@ -427,6 +429,8 @@ func TestRepositoryMsgServerUpdateLabel(t *testing.T) {
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
 			require.NoError(t, err)
 			_, err = srv.CreateRepositoryLabel(ctx, &types.MsgCreateRepositoryLabel{Id: 0, Creator: creator, Name: "label"})
+			require.NoError(t, err)
+			_, err = srv.CreateRepositoryLabel(ctx, &types.MsgCreateRepositoryLabel{Id: 0, Creator: creator, Name: "another-label"})
 			require.NoError(t, err)
 
 			_, err = srv.UpdateRepositoryLabel(ctx, tc.request)
@@ -641,6 +645,8 @@ func TestRepositoryMsgServerDeleteBranch(t *testing.T) {
 			require.NoError(t, err)
 			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
 			require.NoError(t, err)
+			_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "default-branch"})
+			require.NoError(t, err)
 			_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch"})
 			require.NoError(t, err)
 
@@ -836,6 +842,8 @@ func TestRepositoryMsgServerDelete(t *testing.T) {
 			user, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
 			require.NoError(t, err)
 			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: user.Id, OwnerType: "USER"})
+			require.NoError(t, err)
+			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
 			require.NoError(t, err)
 
 			_, err = srv.DeleteRepository(ctx, tc.request)

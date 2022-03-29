@@ -494,7 +494,7 @@ func TestMsgSetRepositoryBranch_ValidateBasic(t *testing.T) {
 			msg: MsgSetRepositoryBranch{
 				Creator:   sample.AccAddress(),
 				Name:      "branch",
-				CommitSHA: "commit_sha",
+				CommitSHA: "56e05fced214c44a37759efa2dfc25a65d8ae98d",
 			},
 		}, {
 			name: "empty branch name",
@@ -519,11 +519,11 @@ func TestMsgSetRepositoryBranch_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "commitSha exceeds limit",
+			name: "invalid commitSha",
 			msg: MsgSetRepositoryBranch{
 				Creator:   sample.AccAddress(),
 				Name:      "branch",
-				CommitSHA: strings.Repeat("c", 65),
+				CommitSHA: "commit_sha",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
@@ -642,7 +642,7 @@ func TestMsgSetRepositoryTag_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgSetRepositoryTag{
 				Creator: "invalid_address",
-				Name:    "branch",
+				Name:    "tag",
 				Sha:     "commit_sha",
 			},
 			err: sdkerrors.ErrInvalidAddress,
@@ -650,18 +650,18 @@ func TestMsgSetRepositoryTag_ValidateBasic(t *testing.T) {
 			name: "valid MsgSetRepositoryTag",
 			msg: MsgSetRepositoryTag{
 				Creator: sample.AccAddress(),
-				Name:    "branch",
-				Sha:     "commit_sha",
+				Name:    "tag",
+				Sha:     "56e05fced214c44a37759efa2dfc25a65d8ae98d",
 			},
 		}, {
-			name: "empty branch name",
+			name: "empty tag name",
 			msg: MsgSetRepositoryTag{
 				Creator: sample.AccAddress(),
 				Sha:     "Sha",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "branch name exceeds limit",
+			name: "tag name exceeds limit",
 			msg: MsgSetRepositoryTag{
 				Creator: sample.AccAddress(),
 				Name:    strings.Repeat("b", 256),
@@ -672,15 +672,15 @@ func TestMsgSetRepositoryTag_ValidateBasic(t *testing.T) {
 			name: "empty Sha",
 			msg: MsgSetRepositoryTag{
 				Creator: sample.AccAddress(),
-				Name:    "branch",
+				Name:    "tag",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "Sha exceeds limit",
+			name: "invalid Sha",
 			msg: MsgSetRepositoryTag{
 				Creator: sample.AccAddress(),
-				Name:    "branch",
-				Sha:     strings.Repeat("c", 65),
+				Name:    "tag",
+				Sha:     "sha",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},

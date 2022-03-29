@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strings"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -15,15 +16,27 @@ func TestMsgCreateTask_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
+			name: "invalid creator address",
 			msg: MsgCreateTask{
-				Creator: "invalid_address",
+				Creator:  "invalid_address",
+				TaskType: TypeForkRepository,
+				Provider: sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid provider address",
 			msg: MsgCreateTask{
-				Creator: sample.AccAddress(),
+				Creator:  sample.AccAddress(),
+				TaskType: TypeForkRepository,
+				Provider: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid",
+			msg: MsgCreateTask{
+				Creator:  sample.AccAddress(),
+				TaskType: TypeForkRepository,
+				Provider: sample.AccAddress(),
 			},
 		},
 	}
@@ -49,13 +62,30 @@ func TestMsgUpdateTask_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgUpdateTask{
 				Creator: "invalid_address",
+				State:   StateSuccess,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgUpdateTask{
 				Creator: sample.AccAddress(),
+				State:   StateSuccess,
 			},
+		}, {
+			name: "invalid state",
+			msg: MsgUpdateTask{
+				Creator: sample.AccAddress(),
+				State:   StatePending,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "message exceeds limit",
+			msg: MsgUpdateTask{
+				Creator: sample.AccAddress(),
+				State:   StatePending,
+				Message: strings.Repeat("m", 256),
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

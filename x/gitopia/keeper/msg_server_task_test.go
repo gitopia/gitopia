@@ -12,8 +12,10 @@ import (
 func TestTaskMsgServerCreate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	creator := "A"
+
+	/* Test multiple Task create */
 	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateTask(ctx, &types.MsgCreateTask{Creator: creator})
+		resp, err := srv.CreateTask(ctx, &types.MsgCreateTask{Creator: creator, TaskType: types.TypeForkRepository})
 		require.NoError(t, err)
 		require.Equal(t, i, int(resp.Id))
 	}
