@@ -19,27 +19,29 @@ func (k msgServer) AuthorizeGitServer(goCtx context.Context, msg *types.MsgAutho
 	}
 
 	now := ctx.BlockTime()
+	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
+	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	forkRepositoryAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgForkRepository{}))
-	err := k.authzKeeper.SaveGrant(ctx, sdk.AccAddress(msg.Provider), sdk.AccAddress(msg.Creator), forkRepositoryAuthorization, now.AddDate(1, 0, 0))
+	err := k.authzKeeper.SaveGrant(ctx, grantee, granter, forkRepositoryAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
 	}
 
 	forkRepositorySuccessAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
-	err = k.authzKeeper.SaveGrant(ctx, sdk.AccAddress(msg.Provider), sdk.AccAddress(msg.Creator), forkRepositorySuccessAuthorization, now.AddDate(1, 0, 0))
+	err = k.authzKeeper.SaveGrant(ctx, grantee, granter, forkRepositorySuccessAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
 	}
 
 	setPullRequestStateAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
-	err = k.authzKeeper.SaveGrant(ctx, sdk.AccAddress(msg.Provider), sdk.AccAddress(msg.Creator), setPullRequestStateAuthorization, now.AddDate(1, 0, 0))
+	err = k.authzKeeper.SaveGrant(ctx, grantee, granter, setPullRequestStateAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
 	}
 
 	updateTaskAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgUpdateTask{}))
-	err = k.authzKeeper.SaveGrant(ctx, sdk.AccAddress(msg.Provider), sdk.AccAddress(msg.Creator), updateTaskAuthorization, now.AddDate(1, 0, 0))
+	err = k.authzKeeper.SaveGrant(ctx, grantee, granter, updateTaskAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
 	}

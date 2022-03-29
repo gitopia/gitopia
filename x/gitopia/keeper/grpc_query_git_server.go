@@ -16,22 +16,25 @@ func (k Keeper) CheckGitServerAuthorization(c context.Context, req *types.QueryC
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	authorization, _ := k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgForkRepository{}))
+	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
+	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
+
+	authorization, _ := k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepository{}))
 	if authorization == nil {
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 	}
 
-	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
+	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
 	if authorization == nil {
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 	}
 
-	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
+	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
 	if authorization == nil {
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 	}
 
-	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, sdk.AccAddress(req.ProviderAddress), sdk.AccAddress(req.UserAddress), sdk.MsgTypeURL(&types.MsgUpdateTask{}))
+	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateTask{}))
 	if authorization == nil {
 		return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 	}
