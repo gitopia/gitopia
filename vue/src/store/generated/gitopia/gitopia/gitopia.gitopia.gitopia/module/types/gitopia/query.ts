@@ -1,11 +1,12 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
-import { Release } from "../gitopia/release";
+import { Task } from "../gitopia/task";
 import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -20,6 +21,32 @@ import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
+
+export interface QueryGetTaskRequest {
+  id: number;
+}
+
+export interface QueryGetTaskResponse {
+  Task: Task | undefined;
+}
+
+export interface QueryAllTaskRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllTaskResponse {
+  Task: Task[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryCheckGitServerAuthorizationRequest {
+  userAddress: string;
+  providerAddress: string;
+}
+
+export interface QueryCheckGitServerAuthorizationResponse {
+  haveAuthorization: boolean;
+}
 
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetPullRequestMergePermissionRequest {
@@ -350,6 +377,447 @@ export interface QueryAllWhoisResponse {
   Whois: Whois[];
   pagination: PageResponse | undefined;
 }
+
+const baseQueryGetTaskRequest: object = { id: 0 };
+
+export const QueryGetTaskRequest = {
+  encode(
+    message: QueryGetTaskRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTaskRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTaskRequest } as QueryGetTaskRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTaskRequest {
+    const message = { ...baseQueryGetTaskRequest } as QueryGetTaskRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTaskRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetTaskRequest>): QueryGetTaskRequest {
+    const message = { ...baseQueryGetTaskRequest } as QueryGetTaskRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetTaskResponse: object = {};
+
+export const QueryGetTaskResponse = {
+  encode(
+    message: QueryGetTaskResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.Task !== undefined) {
+      Task.encode(message.Task, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetTaskResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetTaskResponse } as QueryGetTaskResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Task = Task.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetTaskResponse {
+    const message = { ...baseQueryGetTaskResponse } as QueryGetTaskResponse;
+    if (object.Task !== undefined && object.Task !== null) {
+      message.Task = Task.fromJSON(object.Task);
+    } else {
+      message.Task = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetTaskResponse): unknown {
+    const obj: any = {};
+    message.Task !== undefined &&
+      (obj.Task = message.Task ? Task.toJSON(message.Task) : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryGetTaskResponse>): QueryGetTaskResponse {
+    const message = { ...baseQueryGetTaskResponse } as QueryGetTaskResponse;
+    if (object.Task !== undefined && object.Task !== null) {
+      message.Task = Task.fromPartial(object.Task);
+    } else {
+      message.Task = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllTaskRequest: object = {};
+
+export const QueryAllTaskRequest = {
+  encode(
+    message: QueryAllTaskRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllTaskRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllTaskRequest } as QueryAllTaskRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllTaskRequest {
+    const message = { ...baseQueryAllTaskRequest } as QueryAllTaskRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllTaskRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryAllTaskRequest>): QueryAllTaskRequest {
+    const message = { ...baseQueryAllTaskRequest } as QueryAllTaskRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllTaskResponse: object = {};
+
+export const QueryAllTaskResponse = {
+  encode(
+    message: QueryAllTaskResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.Task) {
+      Task.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllTaskResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllTaskResponse } as QueryAllTaskResponse;
+    message.Task = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Task.push(Task.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllTaskResponse {
+    const message = { ...baseQueryAllTaskResponse } as QueryAllTaskResponse;
+    message.Task = [];
+    if (object.Task !== undefined && object.Task !== null) {
+      for (const e of object.Task) {
+        message.Task.push(Task.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllTaskResponse): unknown {
+    const obj: any = {};
+    if (message.Task) {
+      obj.Task = message.Task.map((e) => (e ? Task.toJSON(e) : undefined));
+    } else {
+      obj.Task = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryAllTaskResponse>): QueryAllTaskResponse {
+    const message = { ...baseQueryAllTaskResponse } as QueryAllTaskResponse;
+    message.Task = [];
+    if (object.Task !== undefined && object.Task !== null) {
+      for (const e of object.Task) {
+        message.Task.push(Task.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryCheckGitServerAuthorizationRequest: object = {
+  userAddress: "",
+  providerAddress: "",
+};
+
+export const QueryCheckGitServerAuthorizationRequest = {
+  encode(
+    message: QueryCheckGitServerAuthorizationRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.userAddress !== "") {
+      writer.uint32(10).string(message.userAddress);
+    }
+    if (message.providerAddress !== "") {
+      writer.uint32(18).string(message.providerAddress);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryCheckGitServerAuthorizationRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationRequest,
+    } as QueryCheckGitServerAuthorizationRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.userAddress = reader.string();
+          break;
+        case 2:
+          message.providerAddress = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCheckGitServerAuthorizationRequest {
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationRequest,
+    } as QueryCheckGitServerAuthorizationRequest;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = String(object.userAddress);
+    } else {
+      message.userAddress = "";
+    }
+    if (
+      object.providerAddress !== undefined &&
+      object.providerAddress !== null
+    ) {
+      message.providerAddress = String(object.providerAddress);
+    } else {
+      message.providerAddress = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryCheckGitServerAuthorizationRequest): unknown {
+    const obj: any = {};
+    message.userAddress !== undefined &&
+      (obj.userAddress = message.userAddress);
+    message.providerAddress !== undefined &&
+      (obj.providerAddress = message.providerAddress);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryCheckGitServerAuthorizationRequest>
+  ): QueryCheckGitServerAuthorizationRequest {
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationRequest,
+    } as QueryCheckGitServerAuthorizationRequest;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = object.userAddress;
+    } else {
+      message.userAddress = "";
+    }
+    if (
+      object.providerAddress !== undefined &&
+      object.providerAddress !== null
+    ) {
+      message.providerAddress = object.providerAddress;
+    } else {
+      message.providerAddress = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryCheckGitServerAuthorizationResponse: object = {
+  haveAuthorization: false,
+};
+
+export const QueryCheckGitServerAuthorizationResponse = {
+  encode(
+    message: QueryCheckGitServerAuthorizationResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.haveAuthorization === true) {
+      writer.uint32(8).bool(message.haveAuthorization);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryCheckGitServerAuthorizationResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationResponse,
+    } as QueryCheckGitServerAuthorizationResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.haveAuthorization = reader.bool();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCheckGitServerAuthorizationResponse {
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationResponse,
+    } as QueryCheckGitServerAuthorizationResponse;
+    if (
+      object.haveAuthorization !== undefined &&
+      object.haveAuthorization !== null
+    ) {
+      message.haveAuthorization = Boolean(object.haveAuthorization);
+    } else {
+      message.haveAuthorization = false;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryCheckGitServerAuthorizationResponse): unknown {
+    const obj: any = {};
+    message.haveAuthorization !== undefined &&
+      (obj.haveAuthorization = message.haveAuthorization);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryCheckGitServerAuthorizationResponse>
+  ): QueryCheckGitServerAuthorizationResponse {
+    const message = {
+      ...baseQueryCheckGitServerAuthorizationResponse,
+    } as QueryCheckGitServerAuthorizationResponse;
+    if (
+      object.haveAuthorization !== undefined &&
+      object.haveAuthorization !== null
+    ) {
+      message.haveAuthorization = object.haveAuthorization;
+    } else {
+      message.haveAuthorization = false;
+    }
+    return message;
+  },
+};
 
 const baseQueryGetPullRequestMergePermissionRequest: object = {
   userAddress: "",
@@ -6166,6 +6634,10 @@ export const QueryAllWhoisResponse = {
 
 /** Query defines the gRPC querier service. */
 export interface Query {
+  /** Queries a Task by id. */
+  Task(request: QueryGetTaskRequest): Promise<QueryGetTaskResponse>;
+  /** Queries a list of Task items. */
+  TaskAll(request: QueryAllTaskRequest): Promise<QueryAllTaskResponse>;
   /** Queries a release by id. */
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
   /** Queries a list of release items. */
@@ -6260,6 +6732,9 @@ export interface Query {
   PullRequestMergePermission(
     request: QueryGetPullRequestMergePermissionRequest
   ): Promise<QueryGetPullRequestMergePermissionResponse>;
+  CheckGitServerAuthorization(
+    request: QueryCheckGitServerAuthorizationRequest
+  ): Promise<QueryCheckGitServerAuthorizationResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -6267,6 +6742,30 @@ export class QueryClientImpl implements Query {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
   }
+  Task(request: QueryGetTaskRequest): Promise<QueryGetTaskResponse> {
+    const data = QueryGetTaskRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "Task",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetTaskResponse.decode(new Reader(data))
+    );
+  }
+
+  TaskAll(request: QueryAllTaskRequest): Promise<QueryAllTaskResponse> {
+    const data = QueryAllTaskRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "TaskAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllTaskResponse.decode(new Reader(data))
+    );
+  }
+
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse> {
     const data = QueryGetReleaseRequest.encode(request).finish();
     const promise = this.rpc.request(
@@ -6694,6 +7193,22 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryGetPullRequestMergePermissionResponse.decode(new Reader(data))
+    );
+  }
+
+  CheckGitServerAuthorization(
+    request: QueryCheckGitServerAuthorizationRequest
+  ): Promise<QueryCheckGitServerAuthorizationResponse> {
+    const data = QueryCheckGitServerAuthorizationRequest.encode(
+      request
+    ).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Query",
+      "CheckGitServerAuthorization",
+      data
+    );
+    return promise.then((data) =>
+      QueryCheckGitServerAuthorizationResponse.decode(new Reader(data))
     );
   }
 }

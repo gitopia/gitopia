@@ -9,7 +9,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
@@ -50,11 +50,18 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		nil,
 	)
 
+	authzKeeper := authzkeeper.NewKeeper(
+		storeKey,
+		appCodec,
+		nil,
+	)
+
 	k := keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		storeKey,
 		memStoreKey,
 		ak,
+		&authzKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)

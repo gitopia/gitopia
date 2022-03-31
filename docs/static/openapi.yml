@@ -11842,6 +11842,46 @@ paths:
           type: boolean
       tags:
         - Query
+  '/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}':
+    get:
+      operationId: GitopiaGitopiaGitopiaCheckGitServerAuthorization
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              haveAuthorization:
+                type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: userAddress
+          in: path
+          required: true
+          type: string
+        - name: providerAddress
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/comment:
     get:
       summary: Queries a list of comment items.
@@ -14100,6 +14140,208 @@ paths:
           in: path
           required: true
           type: string
+      tags:
+        - Query
+  /gitopia/gitopia/gitopia/task:
+    get:
+      summary: Queries a list of Task items.
+      operationId: GitopiaGitopiaGitopiaTaskAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Task:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    type:
+                      type: string
+                      enum:
+                        - TASK_TYPE_FORK_REPOSITORY
+                        - TASK_TYPE_SET_PULL_REQUEST_STATE
+                      default: TASK_TYPE_FORK_REPOSITORY
+                    state:
+                      type: string
+                      enum:
+                        - TASK_STATE_PENDING
+                        - TASK_STATE_SUCCESS
+                        - TASK_STATE_FAILURE
+                      default: TASK_STATE_PENDING
+                    message:
+                      type: string
+                    creator:
+                      type: string
+                    provider:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/task/{id}':
+    get:
+      summary: Queries a Task by id.
+      operationId: GitopiaGitopiaGitopiaTask
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Task:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  type:
+                    type: string
+                    enum:
+                      - TASK_TYPE_FORK_REPOSITORY
+                      - TASK_TYPE_SET_PULL_REQUEST_STATE
+                    default: TASK_TYPE_FORK_REPOSITORY
+                  state:
+                    type: string
+                    enum:
+                      - TASK_STATE_PENDING
+                      - TASK_STATE_SUCCESS
+                      - TASK_STATE_FAILURE
+                    default: TASK_STATE_PENDING
+                  message:
+                    type: string
+                  creator:
+                    type: string
+                  provider:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
       tags:
         - Query
   /gitopia/gitopia/gitopia/user:
@@ -24245,6 +24487,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgAddPullRequestReviewersResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgAuthorizeGitServerResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgChangeOwnerResponse:
     type: object
   gitopia.gitopia.gitopia.MsgCreateCommentResponse:
@@ -24296,6 +24540,12 @@ definitions:
         format: uint64
       name:
         type: string
+  gitopia.gitopia.gitopia.MsgCreateTaskResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   gitopia.gitopia.gitopia.MsgCreateUserResponse:
     type: object
     properties:
@@ -24319,6 +24569,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteTagResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgDeleteTaskResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgDeleteUserResponse:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteWhoisResponse:
@@ -24329,6 +24581,16 @@ definitions:
       id:
         type: string
         format: uint64
+  gitopia.gitopia.gitopia.MsgForkRepositorySuccessResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+  gitopia.gitopia.gitopia.MsgInvokeForkRepositoryResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgInvokeMergePullRequestResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgMultiDeleteBranchResponse:
     type: object
   gitopia.gitopia.gitopia.MsgMultiDeleteTagResponse:
@@ -24417,6 +24679,8 @@ definitions:
   gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaboratorResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryLabelResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateTaskResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateUserResponse:
     type: object
@@ -25788,6 +26052,61 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  gitopia.gitopia.gitopia.QueryAllTaskResponse:
+    type: object
+    properties:
+      Task:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            type:
+              type: string
+              enum:
+                - TASK_TYPE_FORK_REPOSITORY
+                - TASK_TYPE_SET_PULL_REQUEST_STATE
+              default: TASK_TYPE_FORK_REPOSITORY
+            state:
+              type: string
+              enum:
+                - TASK_STATE_PENDING
+                - TASK_STATE_SUCCESS
+                - TASK_STATE_FAILURE
+              default: TASK_STATE_PENDING
+            message:
+              type: string
+            creator:
+              type: string
+            provider:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   gitopia.gitopia.gitopia.QueryAllUserOrganizationResponse:
     type: object
     properties:
@@ -25992,6 +26311,11 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  gitopia.gitopia.gitopia.QueryCheckGitServerAuthorizationResponse:
+    type: object
+    properties:
+      haveAuthorization:
+        type: boolean
   gitopia.gitopia.gitopia.QueryGetAddressRepositoryResponse:
     type: object
     properties:
@@ -27009,6 +27333,34 @@ definitions:
     properties:
       sha:
         type: string
+  gitopia.gitopia.gitopia.QueryGetTaskResponse:
+    type: object
+    properties:
+      Task:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          type:
+            type: string
+            enum:
+              - TASK_TYPE_FORK_REPOSITORY
+              - TASK_TYPE_SET_PULL_REQUEST_STATE
+            default: TASK_TYPE_FORK_REPOSITORY
+          state:
+            type: string
+            enum:
+              - TASK_STATE_PENDING
+              - TASK_STATE_SUCCESS
+              - TASK_STATE_FAILURE
+            default: TASK_STATE_PENDING
+          message:
+            type: string
+          creator:
+            type: string
+          provider:
+            type: string
   gitopia.gitopia.gitopia.QueryGetUserResponse:
     type: object
     properties:
@@ -27423,6 +27775,44 @@ definitions:
       lastUpdatedAt:
         type: string
         format: int64
+  gitopia.gitopia.gitopia.Task:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      type:
+        type: string
+        enum:
+          - TASK_TYPE_FORK_REPOSITORY
+          - TASK_TYPE_SET_PULL_REQUEST_STATE
+        default: TASK_TYPE_FORK_REPOSITORY
+      state:
+        type: string
+        enum:
+          - TASK_STATE_PENDING
+          - TASK_STATE_SUCCESS
+          - TASK_STATE_FAILURE
+        default: TASK_STATE_PENDING
+      message:
+        type: string
+      creator:
+        type: string
+      provider:
+        type: string
+  gitopia.gitopia.gitopia.TaskState:
+    type: string
+    enum:
+      - TASK_STATE_PENDING
+      - TASK_STATE_SUCCESS
+      - TASK_STATE_FAILURE
+    default: TASK_STATE_PENDING
+  gitopia.gitopia.gitopia.TaskType:
+    type: string
+    enum:
+      - TASK_TYPE_FORK_REPOSITORY
+      - TASK_TYPE_SET_PULL_REQUEST_STATE
+    default: TASK_TYPE_FORK_REPOSITORY
   gitopia.gitopia.gitopia.User:
     type: object
     properties:

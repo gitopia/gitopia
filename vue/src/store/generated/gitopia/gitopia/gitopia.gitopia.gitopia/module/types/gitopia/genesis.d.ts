@@ -1,4 +1,5 @@
 import { Writer, Reader } from "protobufjs/minimal";
+import { Task } from "../gitopia/task";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
@@ -10,6 +11,8 @@ import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
+    taskList: Task[];
+    taskCount: number;
     /** this line is used by starport scaffolding # genesis/proto/state */
     releaseList: Release[];
     releaseCount: number;

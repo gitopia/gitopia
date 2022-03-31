@@ -11,6 +11,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -166,6 +167,7 @@ func MigrateCmd() *cobra.Command {
 				slashingGenesis     = slashingtypes.DefaultGenesisState()
 				genutilGenesis      = genutiltypes.DefaultGenesisState()
 				stakingGenesis      = stakingtypes.DefaultGenesisState()
+				authzGenesis        = authz.DefaultGenesisState()
 			)
 
 			stakingGenesis.Params.BondDenom = "utlore"
@@ -180,6 +182,7 @@ func MigrateCmd() *cobra.Command {
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
 			state["ibc"] = ctx.Codec.MustMarshalJSON(&ibcGenesis)
+			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(authzGenesis)
 
 			genesis.AppState, err = json.Marshal(state)
 			if err != nil {

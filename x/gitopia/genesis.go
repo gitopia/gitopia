@@ -9,6 +9,13 @@ import (
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+	// Set all the task
+	for _, elem := range genState.TaskList {
+		k.SetTask(ctx, elem)
+	}
+
+	// Set task count
+	k.SetTaskCount(ctx, genState.TaskCount)
 	// this line is used by starport scaffolding # genesis/module/init
 	// Set all the release
 	for _, elem := range genState.ReleaseList {
@@ -80,6 +87,8 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
+	genesis.TaskList = k.GetAllTask(ctx)
+	genesis.TaskCount = k.GetTaskCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 	// Get all release
 	genesis.ReleaseList = k.GetAllRelease(ctx)

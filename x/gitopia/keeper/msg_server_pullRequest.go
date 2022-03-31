@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -255,7 +256,7 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
 }
 
-func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetPullRequestState) (*types.MsgSetPullRequestStateResponse, error) {
+func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgInvokeMergePullRequest) (*types.MsgInvokeMergePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -267,6 +268,82 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
+
+	baseRepository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+	var havePermission bool = false
+
+	ownerType := baseRepository.Owner.Type
+
+	if ownerType == types.RepositoryOwner_USER {
+		if msg.Creator == baseRepository.Owner.Id {
+			havePermission = true
+		}
+	} else if ownerType == types.RepositoryOwner_ORGANIZATION {
+		organization, found := k.GetOrganization(ctx, baseRepository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", baseRepository.Owner.Id))
+		}
+
+		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+			if organization.Members[i].Role == types.OrganizationMember_OWNER {
+				havePermission = true
+			}
+		}
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't fetch baseRepository owner"))
+	}
+
+	if !havePermission {
+		if i, exists := utils.RepositoryCollaboratorExists(baseRepository.Collaborators, msg.Creator); exists {
+			if baseRepository.Collaborators[i].Permission == types.RepositoryCollaborator_ADMIN {
+				havePermission = true
+			}
+		}
+	}
+
+	if !havePermission {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	id := k.AppendTask(ctx, types.Task{
+		Type:     types.TaskType(types.TypeSetPullRequestState),
+		State:    types.TaskState(types.StatePending),
+		Creator:  msg.Creator,
+		Provider: msg.Provider,
+	})
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeMergePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+		),
+	)
+	return &types.MsgInvokeMergePullRequestResponse{}, nil
+}
+
+func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetPullRequestState) (*types.MsgSetPullRequestStateResponse, error) {
+	var task types.Task
+	var found bool
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found = k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+	}
+
+	task, _ = k.GetTask(ctx, msg.TaskId)
 
 	currentTime := ctx.BlockTime().Unix()
 
@@ -355,16 +432,19 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		pullRequest.MergedAt = currentTime
 		pullRequest.MergedBy = msg.Creator
 		pullRequest.MergeCommitSha = msg.MergeCommitSha
+
+		// Update task state
+		if task.Creator != msg.Creator {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
+		}
+
+		task.State = types.StateSuccess
+		k.SetTask(ctx, task)
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
 
-	state, exists := types.PullRequest_State_value[msg.State]
-	if !exists {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
-	}
-
-	pullRequest.State = types.PullRequest_State(state)
+	pullRequest.State = types.PullRequest_State(types.PullRequest_State_value[msg.State])
 	pullRequest.UpdatedAt = currentTime
 	pullRequest.CommentsCount += 1
 
@@ -388,6 +468,19 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.SetPullRequestStateEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestStateKey, msg.State),
+			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
+		),
+	)
 
 	return &types.MsgSetPullRequestStateResponse{
 		State: pullRequest.State.String(),

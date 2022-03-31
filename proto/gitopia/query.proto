@@ -3,7 +3,9 @@ package gitopia.gitopia.gitopia;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "gitopia/task.proto";
 // this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/organization.proto";
@@ -17,7 +19,17 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a Task by id.
+	rpc Task(QueryGetTaskRequest) returns (QueryGetTaskResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/task/{id}";
+	}
+
+	// Queries a list of Task items.
+	rpc TaskAll(QueryAllTaskRequest) returns (QueryAllTaskResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/task";
+	}
+
+// this line is used by starport scaffolding # 2
 
 	// Queries a release by id.
 	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
@@ -173,6 +185,36 @@ service Query {
 	rpc PullRequestMergePermission(QueryGetPullRequestMergePermissionRequest) returns (QueryGetPullRequestMergePermissionResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge";
 	}
+
+	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}";
+	}
+}
+
+message QueryGetTaskRequest {
+	uint64 id = 1;
+}
+
+message QueryGetTaskResponse {
+	Task Task = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllTaskRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllTaskResponse {
+	repeated Task Task = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryCheckGitServerAuthorizationRequest {
+	string userAddress = 1;
+	string providerAddress = 2;
+}
+
+message QueryCheckGitServerAuthorizationResponse {
+	bool haveAuthorization = 1;
 }
 
 // this line is used by starport scaffolding # 3

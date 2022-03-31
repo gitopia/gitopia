@@ -95,14 +95,68 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgInvokeForkRepository{}
+
+func NewMsgInvokeForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string, provider string) *MsgInvokeForkRepository {
+	return &MsgInvokeForkRepository{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		OwnerId:      ownerId,
+		OwnerType:    ownerType,
+		Provider:     provider,
+	}
+}
+
+func (msg *MsgInvokeForkRepository) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgInvokeForkRepository) Type() string {
+	return "InvokeForkRepository"
+}
+
+func (msg *MsgInvokeForkRepository) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgInvokeForkRepository) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgInvokeForkRepository) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
+	return nil
+}
+
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string, taskId uint64) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		OwnerId:      ownerId,
 		OwnerType:    ownerType,
+		TaskId:       taskId,
 	}
 }
 
@@ -138,6 +192,46 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 	}
 	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgForkRepositorySuccess{}
+
+func NewMsgForkRepositorySuccess(creator string, repositoryId uint64, taskId uint64) *MsgForkRepositorySuccess {
+	return &MsgForkRepositorySuccess{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		TaskId:       taskId,
+	}
+}
+
+func (msg *MsgForkRepositorySuccess) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgForkRepositorySuccess) Type() string {
+	return "ForkRepositorySuccess"
+}
+
+func (msg *MsgForkRepositorySuccess) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgForkRepositorySuccess) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgForkRepositorySuccess) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	return nil

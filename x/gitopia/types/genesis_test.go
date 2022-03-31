@@ -122,6 +122,15 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				ReleaseCount: 2,
+				TaskList: []types.Task{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				TaskCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -308,6 +317,32 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				ReleaseCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated task",
+			genState: &types.GenesisState{
+				TaskList: []types.Task{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid task count",
+			genState: &types.GenesisState{
+				TaskList: []types.Task{
+					{
+						Id: 1,
+					},
+				},
+				TaskCount: 0,
 			},
 			valid: false,
 		},

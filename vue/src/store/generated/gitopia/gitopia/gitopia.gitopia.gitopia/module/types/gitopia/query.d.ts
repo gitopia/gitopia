@@ -1,6 +1,7 @@
 import { Reader, Writer } from "protobufjs/minimal";
-import { Release } from "../gitopia/release";
+import { Task } from "../gitopia/task";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Organization } from "../gitopia/organization";
 import { Comment } from "../gitopia/comment";
@@ -9,6 +10,26 @@ import { Repository, RepositoryOwner, RepositoryBranch, RepositoryTag } from "..
 import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
+export interface QueryGetTaskRequest {
+    id: number;
+}
+export interface QueryGetTaskResponse {
+    Task: Task | undefined;
+}
+export interface QueryAllTaskRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllTaskResponse {
+    Task: Task[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryCheckGitServerAuthorizationRequest {
+    userAddress: string;
+    providerAddress: string;
+}
+export interface QueryCheckGitServerAuthorizationResponse {
+    haveAuthorization: boolean;
+}
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetPullRequestMergePermissionRequest {
     userAddress: string;
@@ -272,6 +293,48 @@ export interface QueryAllWhoisResponse {
     Whois: Whois[];
     pagination: PageResponse | undefined;
 }
+export declare const QueryGetTaskRequest: {
+    encode(message: QueryGetTaskRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTaskRequest;
+    fromJSON(object: any): QueryGetTaskRequest;
+    toJSON(message: QueryGetTaskRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetTaskRequest>): QueryGetTaskRequest;
+};
+export declare const QueryGetTaskResponse: {
+    encode(message: QueryGetTaskResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetTaskResponse;
+    fromJSON(object: any): QueryGetTaskResponse;
+    toJSON(message: QueryGetTaskResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetTaskResponse>): QueryGetTaskResponse;
+};
+export declare const QueryAllTaskRequest: {
+    encode(message: QueryAllTaskRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllTaskRequest;
+    fromJSON(object: any): QueryAllTaskRequest;
+    toJSON(message: QueryAllTaskRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllTaskRequest>): QueryAllTaskRequest;
+};
+export declare const QueryAllTaskResponse: {
+    encode(message: QueryAllTaskResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllTaskResponse;
+    fromJSON(object: any): QueryAllTaskResponse;
+    toJSON(message: QueryAllTaskResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllTaskResponse>): QueryAllTaskResponse;
+};
+export declare const QueryCheckGitServerAuthorizationRequest: {
+    encode(message: QueryCheckGitServerAuthorizationRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryCheckGitServerAuthorizationRequest;
+    fromJSON(object: any): QueryCheckGitServerAuthorizationRequest;
+    toJSON(message: QueryCheckGitServerAuthorizationRequest): unknown;
+    fromPartial(object: DeepPartial<QueryCheckGitServerAuthorizationRequest>): QueryCheckGitServerAuthorizationRequest;
+};
+export declare const QueryCheckGitServerAuthorizationResponse: {
+    encode(message: QueryCheckGitServerAuthorizationResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryCheckGitServerAuthorizationResponse;
+    fromJSON(object: any): QueryCheckGitServerAuthorizationResponse;
+    toJSON(message: QueryCheckGitServerAuthorizationResponse): unknown;
+    fromPartial(object: DeepPartial<QueryCheckGitServerAuthorizationResponse>): QueryCheckGitServerAuthorizationResponse;
+};
 export declare const QueryGetPullRequestMergePermissionRequest: {
     encode(message: QueryGetPullRequestMergePermissionRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetPullRequestMergePermissionRequest;
@@ -743,6 +806,10 @@ export declare const QueryAllWhoisResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
+    /** Queries a Task by id. */
+    Task(request: QueryGetTaskRequest): Promise<QueryGetTaskResponse>;
+    /** Queries a list of Task items. */
+    TaskAll(request: QueryAllTaskRequest): Promise<QueryAllTaskResponse>;
     /** Queries a release by id. */
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     /** Queries a list of release items. */
@@ -799,10 +866,13 @@ export interface Query {
     /** Queries a list of whois items. */
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
     PullRequestMergePermission(request: QueryGetPullRequestMergePermissionRequest): Promise<QueryGetPullRequestMergePermissionResponse>;
+    CheckGitServerAuthorization(request: QueryCheckGitServerAuthorizationRequest): Promise<QueryCheckGitServerAuthorizationResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
+    Task(request: QueryGetTaskRequest): Promise<QueryGetTaskResponse>;
+    TaskAll(request: QueryAllTaskRequest): Promise<QueryAllTaskResponse>;
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
@@ -835,6 +905,7 @@ export declare class QueryClientImpl implements Query {
     Whois(request: QueryGetWhoisRequest): Promise<QueryGetWhoisResponse>;
     WhoisAll(request: QueryAllWhoisRequest): Promise<QueryAllWhoisResponse>;
     PullRequestMergePermission(request: QueryGetPullRequestMergePermissionRequest): Promise<QueryGetPullRequestMergePermissionResponse>;
+    CheckGitServerAuthorization(request: QueryCheckGitServerAuthorizationRequest): Promise<QueryCheckGitServerAuthorizationResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

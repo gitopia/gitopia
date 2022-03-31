@@ -111,6 +111,15 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		ReleaseCount: 2,
+		TaskList: []types.Task{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		TaskCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -150,5 +159,7 @@ func TestGenesis(t *testing.T) {
 	require.Len(t, got.ReleaseList, len(genesisState.ReleaseList))
 	require.Subset(t, genesisState.ReleaseList, got.ReleaseList)
 	require.Equal(t, genesisState.ReleaseCount, got.ReleaseCount)
+	require.ElementsMatch(t, genesisState.TaskList, got.TaskList)
+	require.Equal(t, genesisState.TaskCount, got.TaskCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

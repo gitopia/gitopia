@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -232,6 +233,78 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	return &types.MsgChangeOwnerResponse{}, nil
 }
 
+func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInvokeForkRepository) (*types.MsgInvokeForkRepositoryResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	repository, found := k.GetRepository(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
+	}
+
+	if !repository.AllowForking {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
+	}
+
+	var user types.User
+	var organization types.Organization
+	if msg.OwnerType == types.RepositoryOwner_USER.String() {
+		if msg.Creator != msg.OwnerId {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "owner and creator mismatched")
+		}
+
+		user, found = k.GetUser(ctx, msg.OwnerId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.OwnerId))
+		}
+
+		// Checks if the the msg sender is the same as the current owner
+		if msg.Creator != user.Creator {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		}
+
+		if _, exists := utils.UserRepositoryExists(user.Repositories, repository.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
+		}
+	} else if msg.OwnerType == types.RepositoryOwner_ORGANIZATION.String() {
+		organization, found = k.GetOrganization(ctx, msg.OwnerId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.OwnerId))
+		}
+
+		if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+			if organization.Members[i].Role != types.OrganizationMember_OWNER {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+			}
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a part of organization", msg.Creator))
+		}
+
+		if _, exists := utils.OrganizationRepositoryExists(organization.Repositories, repository.Name); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v) already exists", repository.Name))
+		}
+	}
+
+	id := k.AppendTask(ctx, types.Task{
+		Type:     types.TaskType(types.TypeForkRepository),
+		State:    types.TaskState(types.StatePending),
+		Creator:  msg.Creator,
+		Provider: msg.Provider,
+	})
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeOwnerIdKey, msg.OwnerId),
+			sdk.NewAttribute(types.EventAttributeOwnerTypeKey, msg.OwnerType),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+		),
+	)
+	return &types.MsgInvokeForkRepositoryResponse{}, nil
+}
+
 func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepository) (*types.MsgForkRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -242,6 +315,11 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	if !repository.AllowForking {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
+	}
+
+	_, found = k.GetTask(ctx, msg.TaskId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
 	}
 
 	var user types.User
@@ -336,6 +414,48 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	return &types.MsgForkRepositoryResponse{
 		Id: id,
+	}, nil
+}
+
+func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgForkRepositorySuccess) (*types.MsgForkRepositorySuccessResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	repository, found := k.GetRepository(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
+	}
+
+	if msg.Creator != repository.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "msg creator and repository creator are different")
+	}
+
+	task, found := k.GetTask(ctx, msg.TaskId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
+	}
+
+	// Update task state
+	if task.Creator != msg.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
+	}
+
+	task.State = types.StateSuccess
+	k.SetTask(ctx, task)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(repository.Parent, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
+		),
+	)
+	return &types.MsgForkRepositorySuccessResponse{
+		Id: repository.Id,
 	}, nil
 }
 
