@@ -1,6 +1,8 @@
 package types
 
 import (
+	"net/url"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -246,6 +248,39 @@ func (msg *MsgUpdateOrganization) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 73 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 73")
+	}
+	if len(msg.AvatarUrl) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Avatar url exceeds limit: 2048")
+	}
+	if len(msg.Website) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Website url exceeds limit: 2048")
+	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
+	}
+	if len(msg.Location) > 30 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Location exceeds limit: 30")
+	}
+	if msg.Website != "" {
+		url, err := url.ParseRequestURI(msg.Website)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Website)
+		}
+		if url.Scheme != "https" && url.Scheme != "http" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https and http URL scheme is allowed in Website")
+		}
+	}
+	if msg.AvatarUrl != "" {
+		url, err := url.ParseRequestURI(msg.AvatarUrl)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.AvatarUrl)
+		}
+		if url.Scheme != "https" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed in Avatar URL")
+		}
 	}
 	return nil
 }

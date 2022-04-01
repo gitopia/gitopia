@@ -101,9 +101,12 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
 	}
 	if msg.AvatarUrl != "" {
-		_, err := url.ParseRequestURI(msg.AvatarUrl)
+		url, err := url.ParseRequestURI(msg.AvatarUrl)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.AvatarUrl)
+		}
+		if url.Scheme != "https" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
 		}
 	}
 	return nil
