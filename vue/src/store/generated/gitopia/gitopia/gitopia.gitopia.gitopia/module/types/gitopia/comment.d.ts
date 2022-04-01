@@ -14,7 +14,6 @@ export interface Comment {
     createdAt: number;
     updatedAt: number;
     commentType: Comment_Type;
-    extensions: string;
 }
 export declare enum Comment_Type {
     ISSUE = 0,

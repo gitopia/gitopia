@@ -12,13 +12,11 @@ export interface Organization {
     teams: number[];
     members: OrganizationMember[];
     location: string;
-    email: string;
     website: string;
     verified: boolean;
     description: string;
     createdAt: number;
     updatedAt: number;
-    extensions: string;
 }
 export interface OrganizationRepository {
     name: string;

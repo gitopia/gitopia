@@ -16,13 +16,11 @@ export interface Organization {
   teams: number[];
   members: OrganizationMember[];
   location: string;
-  email: string;
   website: string;
   verified: boolean;
   description: string;
   createdAt: number;
   updatedAt: number;
-  extensions: string;
 }
 
 export interface OrganizationRepository {
@@ -81,13 +79,11 @@ const baseOrganization: object = {
   following: "",
   teams: 0,
   location: "",
-  email: "",
   website: "",
   verified: false,
   description: "",
   createdAt: 0,
   updatedAt: 0,
-  extensions: "",
 };
 
 export const Organization = {
@@ -127,26 +123,20 @@ export const Organization = {
     if (message.location !== "") {
       writer.uint32(90).string(message.location);
     }
-    if (message.email !== "") {
-      writer.uint32(98).string(message.email);
-    }
     if (message.website !== "") {
-      writer.uint32(106).string(message.website);
+      writer.uint32(98).string(message.website);
     }
     if (message.verified === true) {
-      writer.uint32(112).bool(message.verified);
+      writer.uint32(104).bool(message.verified);
     }
     if (message.description !== "") {
-      writer.uint32(122).string(message.description);
+      writer.uint32(114).string(message.description);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(128).int64(message.createdAt);
+      writer.uint32(120).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(136).int64(message.updatedAt);
-    }
-    if (message.extensions !== "") {
-      writer.uint32(146).string(message.extensions);
+      writer.uint32(128).int64(message.updatedAt);
     }
     return writer;
   },
@@ -208,25 +198,19 @@ export const Organization = {
           message.location = reader.string();
           break;
         case 12:
-          message.email = reader.string();
-          break;
-        case 13:
           message.website = reader.string();
           break;
-        case 14:
+        case 13:
           message.verified = reader.bool();
           break;
-        case 15:
+        case 14:
           message.description = reader.string();
           break;
-        case 16:
+        case 15:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 16:
           message.updatedAt = longToNumber(reader.int64() as Long);
-          break;
-        case 18:
-          message.extensions = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -298,11 +282,6 @@ export const Organization = {
     } else {
       message.location = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = String(object.email);
-    } else {
-      message.email = "";
-    }
     if (object.website !== undefined && object.website !== null) {
       message.website = String(object.website);
     } else {
@@ -327,11 +306,6 @@ export const Organization = {
       message.updatedAt = Number(object.updatedAt);
     } else {
       message.updatedAt = 0;
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
-    } else {
-      message.extensions = "";
     }
     return message;
   },
@@ -373,14 +347,12 @@ export const Organization = {
       obj.members = [];
     }
     message.location !== undefined && (obj.location = message.location);
-    message.email !== undefined && (obj.email = message.email);
     message.website !== undefined && (obj.website = message.website);
     message.verified !== undefined && (obj.verified = message.verified);
     message.description !== undefined &&
       (obj.description = message.description);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
     return obj;
   },
 
@@ -446,11 +418,6 @@ export const Organization = {
     } else {
       message.location = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = object.email;
-    } else {
-      message.email = "";
-    }
     if (object.website !== undefined && object.website !== null) {
       message.website = object.website;
     } else {
@@ -475,11 +442,6 @@ export const Organization = {
       message.updatedAt = object.updatedAt;
     } else {
       message.updatedAt = 0;
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
-    } else {
-      message.extensions = "";
     }
     return message;
   },

@@ -11934,8 +11934,6 @@ paths:
                         - ISSUE
                         - PULLREQUEST
                       default: ISSUE
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -12090,8 +12088,6 @@ paths:
                       - ISSUE
                       - PULLREQUEST
                     default: ISSUE
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12189,8 +12185,6 @@ paths:
                       type: string
                       format: int64
                     closedBy:
-                      type: string
-                    extensions:
                       type: string
               pagination:
                 type: object
@@ -12366,8 +12360,6 @@ paths:
                     format: int64
                   closedBy:
                     type: string
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12458,8 +12450,6 @@ paths:
                             default: MEMBER
                     location:
                       type: string
-                    email:
-                      type: string
                     website:
                       type: string
                     verified:
@@ -12472,8 +12462,6 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -12640,8 +12628,6 @@ paths:
                           default: MEMBER
                   location:
                     type: string
-                  email:
-                    type: string
                   website:
                     type: string
                   verified:
@@ -12654,8 +12640,6 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13472,8 +13456,6 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -13742,8 +13724,6 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13934,8 +13914,6 @@ paths:
                           default: READ
                   allowForking:
                     type: boolean
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14406,8 +14384,6 @@ paths:
                         format: uint64
                     subscriptions:
                       type: string
-                    email:
-                      type: string
                     bio:
                       type: string
                     createdAt:
@@ -14416,8 +14392,6 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -14582,8 +14556,6 @@ paths:
                       format: uint64
                   subscriptions:
                     type: string
-                  email:
-                    type: string
                   bio:
                     type: string
                   createdAt:
@@ -14592,8 +14564,6 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
-                  extensions:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14683,8 +14653,6 @@ paths:
                             default: MEMBER
                     location:
                       type: string
-                    email:
-                      type: string
                     website:
                       type: string
                     verified:
@@ -14697,8 +14665,6 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    extensions:
-                      type: string
         default:
           description: An unexpected error response.
           schema:
@@ -14890,8 +14856,6 @@ paths:
                             default: READ
                     allowForking:
                       type: boolean
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -15241,8 +15205,6 @@ paths:
                       format: int64
                     closedBy:
                       type: string
-                    extensions:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -15466,8 +15428,6 @@ paths:
                     type: string
                     format: int64
                   closedBy:
-                    type: string
-                  extensions:
                     type: string
         default:
           description: An unexpected error response.
@@ -24375,8 +24335,6 @@ definitions:
           - ISSUE
           - PULLREQUEST
         default: ISSUE
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.Comment.Type:
     type: string
     enum:
@@ -24442,8 +24400,6 @@ definitions:
         type: string
         format: int64
       closedBy:
-        type: string
-      extensions:
         type: string
   gitopia.gitopia.gitopia.Issue.State:
     type: string
@@ -24738,8 +24694,6 @@ definitions:
               default: MEMBER
       location:
         type: string
-      email:
-        type: string
       website:
         type: string
       verified:
@@ -24752,8 +24706,6 @@ definitions:
       updatedAt:
         type: string
         format: int64
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.OrganizationMember:
     type: object
     properties:
@@ -25085,8 +25037,6 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -25157,8 +25107,6 @@ definitions:
                 - ISSUE
                 - PULLREQUEST
               default: ISSUE
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -25249,8 +25197,6 @@ definitions:
               format: int64
             closedBy:
               type: string
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -25333,8 +25279,6 @@ definitions:
                     default: MEMBER
             location:
               type: string
-            email:
-              type: string
             website:
               type: string
             verified:
@@ -25347,8 +25291,6 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -25638,8 +25580,6 @@ definitions:
               type: string
               format: int64
             closedBy:
-              type: string
-            extensions:
               type: string
       pagination:
         type: object
@@ -26025,8 +25965,6 @@ definitions:
                     default: READ
             allowForking:
               type: boolean
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -26164,8 +26102,6 @@ definitions:
                     default: MEMBER
             location:
               type: string
-            email:
-              type: string
             website:
               type: string
             verified:
@@ -26178,8 +26114,6 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
   gitopia.gitopia.gitopia.QueryAllUserResponse:
     type: object
     properties:
@@ -26235,8 +26169,6 @@ definitions:
                 format: uint64
             subscriptions:
               type: string
-            email:
-              type: string
             bio:
               type: string
             createdAt:
@@ -26245,8 +26177,6 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            extensions:
-              type: string
       pagination:
         type: object
         properties:
@@ -26473,8 +26403,6 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetAllBranchResponse:
     type: object
     properties:
@@ -26618,8 +26546,6 @@ definitions:
               - ISSUE
               - PULLREQUEST
             default: ISSUE
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetIssueResponse:
     type: object
     properties:
@@ -26682,8 +26608,6 @@ definitions:
             type: string
             format: int64
           closedBy:
-            type: string
-          extensions:
             type: string
   gitopia.gitopia.gitopia.QueryGetLatestRepositoryReleaseResponse:
     type: object
@@ -26791,8 +26715,6 @@ definitions:
                   default: MEMBER
           location:
             type: string
-          email:
-            type: string
           website:
             type: string
           verified:
@@ -26805,8 +26727,6 @@ definitions:
           updatedAt:
             type: string
             format: int64
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetPullRequestMergePermissionResponse:
     type: object
     properties:
@@ -27020,8 +26940,6 @@ definitions:
             type: string
             format: int64
           closedBy:
-            type: string
-          extensions:
             type: string
   gitopia.gitopia.gitopia.QueryGetRepositoryPullRequestResponse:
     type: object
@@ -27326,8 +27244,6 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetTagShaResponse:
     type: object
     properties:
@@ -27414,8 +27330,6 @@ definitions:
               format: uint64
           subscriptions:
             type: string
-          email:
-            type: string
           bio:
             type: string
           createdAt:
@@ -27424,8 +27338,6 @@ definitions:
           updatedAt:
             type: string
             format: int64
-          extensions:
-            type: string
   gitopia.gitopia.gitopia.QueryGetWhoisResponse:
     type: object
     properties:
@@ -27640,8 +27552,6 @@ definitions:
               default: READ
       allowForking:
         type: boolean
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.RepositoryBranch:
     type: object
     properties:
@@ -27863,8 +27773,6 @@ definitions:
           format: uint64
       subscriptions:
         type: string
-      email:
-        type: string
       bio:
         type: string
       createdAt:
@@ -27873,8 +27781,6 @@ definitions:
       updatedAt:
         type: string
         format: int64
-      extensions:
-        type: string
   gitopia.gitopia.gitopia.UserOrganization:
     type: object
     properties:
