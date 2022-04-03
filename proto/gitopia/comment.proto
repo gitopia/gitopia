@@ -23,5 +23,4 @@ message Comment {
 	  PULLREQUEST = 1;
   }
   Type commentType = 13;
-  string extensions = 14;
 }

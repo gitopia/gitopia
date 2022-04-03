@@ -27,5 +27,4 @@ message Issue {
   int64 updatedAt = 15;
   int64 closedAt = 16;
   string closedBy = 17;
-  string extensions = 18;
 }

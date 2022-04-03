@@ -43,7 +43,6 @@ export interface GitopiaComment {
     /** @format int64 */
     updatedAt?: string;
     commentType?: GitopiaCommentType;
-    extensions?: string;
 }
 export declare enum GitopiaCommentType {
     ISSUE = "ISSUE",
@@ -75,7 +74,6 @@ export interface GitopiaIssue {
     /** @format int64 */
     closedAt?: string;
     closedBy?: string;
-    extensions?: string;
 }
 export interface GitopiaIssueOptions {
     createdBy?: string;
@@ -217,7 +215,6 @@ export interface GitopiaOrganization {
     teams?: string[];
     members?: GitopiaOrganizationMember[];
     location?: string;
-    email?: string;
     website?: string;
     verified?: boolean;
     description?: string;
@@ -225,7 +222,6 @@ export interface GitopiaOrganization {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    extensions?: string;
 }
 export interface GitopiaOrganizationMember {
     id?: string;
@@ -603,7 +599,6 @@ export interface GitopiaRepository {
     fork?: boolean;
     collaborators?: GitopiaRepositoryCollaborator[];
     allowForking?: boolean;
-    extensions?: string;
 }
 export interface GitopiaRepositoryBranch {
     name?: string;
@@ -701,13 +696,11 @@ export interface GitopiaUser {
     organizations?: GitopiaUserOrganization[];
     starredRepos?: string[];
     subscriptions?: string;
-    email?: string;
     bio?: string;
     /** @format int64 */
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    extensions?: string;
 }
 export interface GitopiaUserOrganization {
     name?: string;

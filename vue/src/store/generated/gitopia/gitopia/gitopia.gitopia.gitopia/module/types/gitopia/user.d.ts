@@ -13,11 +13,9 @@ export interface User {
     organizations: UserOrganization[];
     starredRepos: number[];
     subscriptions: string;
-    email: string;
     bio: string;
     createdAt: number;
     updatedAt: number;
-    extensions: string;
 }
 export interface UserRepository {
     name: string;

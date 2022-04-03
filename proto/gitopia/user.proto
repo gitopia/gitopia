@@ -18,11 +18,9 @@ message User {
   repeated UserOrganization organizations = 10; 
   repeated uint64 starred_repos = 11; 
   string subscriptions = 12; 
-  string email = 13; 
-  string bio = 14; 
-  int64 createdAt = 15; 
-  int64 updatedAt = 16; 
-  string extensions = 17;
+  string bio = 13; 
+  int64 createdAt = 14; 
+  int64 updatedAt = 15; 
 }
 
 message UserRepository {

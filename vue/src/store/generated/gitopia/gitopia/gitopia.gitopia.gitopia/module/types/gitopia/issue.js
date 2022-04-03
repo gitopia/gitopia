@@ -50,7 +50,6 @@ const baseIssue = {
     updatedAt: 0,
     closedAt: 0,
     closedBy: "",
-    extensions: "",
 };
 export const Issue = {
     encode(message, writer = Writer.create()) {
@@ -110,9 +109,6 @@ export const Issue = {
         }
         if (message.closedBy !== "") {
             writer.uint32(138).string(message.closedBy);
-        }
-        if (message.extensions !== "") {
-            writer.uint32(146).string(message.extensions);
         }
         return writer;
     },
@@ -201,9 +197,6 @@ export const Issue = {
                     break;
                 case 17:
                     message.closedBy = reader.string();
-                    break;
-                case 18:
-                    message.extensions = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -316,12 +309,6 @@ export const Issue = {
         else {
             message.closedBy = "";
         }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = String(object.extensions);
-        }
-        else {
-            message.extensions = "";
-        }
         return message;
     },
     toJSON(message) {
@@ -367,7 +354,6 @@ export const Issue = {
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
         message.closedAt !== undefined && (obj.closedAt = message.closedAt);
         message.closedBy !== undefined && (obj.closedBy = message.closedBy);
-        message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
     fromPartial(object) {
@@ -473,12 +459,6 @@ export const Issue = {
         }
         else {
             message.closedBy = "";
-        }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = object.extensions;
-        }
-        else {
-            message.extensions = "";
         }
         return message;
     },

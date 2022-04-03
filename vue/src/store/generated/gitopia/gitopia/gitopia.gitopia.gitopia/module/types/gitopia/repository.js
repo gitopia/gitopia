@@ -101,7 +101,6 @@ const baseRepository = {
     parent: 0,
     fork: false,
     allowForking: false,
-    extensions: "",
 };
 export const Repository = {
     encode(message, writer = Writer.create()) {
@@ -192,9 +191,6 @@ export const Repository = {
         }
         if (message.allowForking === true) {
             writer.uint32(224).bool(message.allowForking);
-        }
-        if (message.extensions !== "") {
-            writer.uint32(234).string(message.extensions);
         }
         return writer;
     },
@@ -313,9 +309,6 @@ export const Repository = {
                     break;
                 case 28:
                     message.allowForking = reader.bool();
-                    break;
-                case 29:
-                    message.extensions = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -494,12 +487,6 @@ export const Repository = {
         else {
             message.allowForking = false;
         }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = String(object.extensions);
-        }
-        else {
-            message.extensions = "";
-        }
         return message;
     },
     toJSON(message) {
@@ -586,7 +573,6 @@ export const Repository = {
         }
         message.allowForking !== undefined &&
             (obj.allowForking = message.allowForking);
-        message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
     fromPartial(object) {
@@ -758,12 +744,6 @@ export const Repository = {
         }
         else {
             message.allowForking = false;
-        }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = object.extensions;
-        }
-        else {
-            message.extensions = "";
         }
         return message;
     },

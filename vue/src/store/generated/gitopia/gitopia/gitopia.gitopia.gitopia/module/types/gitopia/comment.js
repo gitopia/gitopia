@@ -46,7 +46,6 @@ const baseComment = {
     createdAt: 0,
     updatedAt: 0,
     commentType: 0,
-    extensions: "",
 };
 export const Comment = {
     encode(message, writer = Writer.create()) {
@@ -88,9 +87,6 @@ export const Comment = {
         }
         if (message.commentType !== 0) {
             writer.uint32(104).int32(message.commentType);
-        }
-        if (message.extensions !== "") {
-            writer.uint32(114).string(message.extensions);
         }
         return writer;
     },
@@ -140,9 +136,6 @@ export const Comment = {
                     break;
                 case 13:
                     message.commentType = reader.int32();
-                    break;
-                case 14:
-                    message.extensions = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -232,12 +225,6 @@ export const Comment = {
         else {
             message.commentType = 0;
         }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = String(object.extensions);
-        }
-        else {
-            message.extensions = "";
-        }
         return message;
     },
     toJSON(message) {
@@ -262,7 +249,6 @@ export const Comment = {
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
         message.commentType !== undefined &&
             (obj.commentType = comment_TypeToJSON(message.commentType));
-        message.extensions !== undefined && (obj.extensions = message.extensions);
         return obj;
     },
     fromPartial(object) {
@@ -345,12 +331,6 @@ export const Comment = {
         }
         else {
             message.commentType = 0;
-        }
-        if (object.extensions !== undefined && object.extensions !== null) {
-            message.extensions = object.extensions;
-        }
-        else {
-            message.extensions = "";
         }
         return message;
     },

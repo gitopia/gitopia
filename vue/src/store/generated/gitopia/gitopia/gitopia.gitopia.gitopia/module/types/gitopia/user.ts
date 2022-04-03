@@ -17,11 +17,9 @@ export interface User {
   organizations: UserOrganization[];
   starredRepos: number[];
   subscriptions: string;
-  email: string;
   bio: string;
   createdAt: number;
   updatedAt: number;
-  extensions: string;
 }
 
 export interface UserRepository {
@@ -45,11 +43,9 @@ const baseUser: object = {
   following: "",
   starredRepos: 0,
   subscriptions: "",
-  email: "",
   bio: "",
   createdAt: 0,
   updatedAt: 0,
-  extensions: "",
 };
 
 export const User = {
@@ -92,20 +88,14 @@ export const User = {
     if (message.subscriptions !== "") {
       writer.uint32(98).string(message.subscriptions);
     }
-    if (message.email !== "") {
-      writer.uint32(106).string(message.email);
-    }
     if (message.bio !== "") {
-      writer.uint32(114).string(message.bio);
+      writer.uint32(106).string(message.bio);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(120).int64(message.createdAt);
+      writer.uint32(112).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(128).int64(message.updatedAt);
-    }
-    if (message.extensions !== "") {
-      writer.uint32(138).string(message.extensions);
+      writer.uint32(120).int64(message.updatedAt);
     }
     return writer;
   },
@@ -170,19 +160,13 @@ export const User = {
           message.subscriptions = reader.string();
           break;
         case 13:
-          message.email = reader.string();
-          break;
-        case 14:
           message.bio = reader.string();
           break;
-        case 15:
+        case 14:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 15:
           message.updatedAt = longToNumber(reader.int64() as Long);
-          break;
-        case 17:
-          message.extensions = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -259,11 +243,6 @@ export const User = {
     } else {
       message.subscriptions = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = String(object.email);
-    } else {
-      message.email = "";
-    }
     if (object.bio !== undefined && object.bio !== null) {
       message.bio = String(object.bio);
     } else {
@@ -278,11 +257,6 @@ export const User = {
       message.updatedAt = Number(object.updatedAt);
     } else {
       message.updatedAt = 0;
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = String(object.extensions);
-    } else {
-      message.extensions = "";
     }
     return message;
   },
@@ -327,11 +301,9 @@ export const User = {
     }
     message.subscriptions !== undefined &&
       (obj.subscriptions = message.subscriptions);
-    message.email !== undefined && (obj.email = message.email);
     message.bio !== undefined && (obj.bio = message.bio);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.extensions !== undefined && (obj.extensions = message.extensions);
     return obj;
   },
 
@@ -402,11 +374,6 @@ export const User = {
     } else {
       message.subscriptions = "";
     }
-    if (object.email !== undefined && object.email !== null) {
-      message.email = object.email;
-    } else {
-      message.email = "";
-    }
     if (object.bio !== undefined && object.bio !== null) {
       message.bio = object.bio;
     } else {
@@ -421,11 +388,6 @@ export const User = {
       message.updatedAt = object.updatedAt;
     } else {
       message.updatedAt = 0;
-    }
-    if (object.extensions !== undefined && object.extensions !== null) {
-      message.extensions = object.extensions;
-    } else {
-      message.extensions = "";
     }
     return message;
   },

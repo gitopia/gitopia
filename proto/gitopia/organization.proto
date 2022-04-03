@@ -17,13 +17,11 @@ message Organization {
   repeated uint64 teams = 9; 
   repeated OrganizationMember members = 10; 
   string location = 11; 
-  string email = 12; 
-  string website = 13; 
-  bool verified = 14; 
-  string description = 15; 
-  int64 createdAt = 16; 
-  int64 updatedAt = 17; 
-  string extensions = 18; 
+  string website = 12; 
+  bool verified = 13; 
+  string description = 14; 
+  int64 createdAt = 15; 
+  int64 updatedAt = 16; 
 }
 
 message OrganizationRepository {

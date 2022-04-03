@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	v012 "github.com/gitopia/gitopia/x/gitopia/migrations/v012"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -20,11 +21,11 @@ func migrateUser(store sdk.KVStore, cdc codec.BinaryCodec) {
 		userKey := userStoreIter.Key()
 		cdc.MustUnmarshal(userStore.Get(userKey), &oldUser)
 
-		var repositories []*types.UserRepository
-		var organizations []*types.UserOrganization
+		var repositories []*v012.UserRepository
+		var organizations []*v012.UserOrganization
 
 		for _, old := range oldUser.Repositories {
-			repository := types.UserRepository{
+			repository := v012.UserRepository{
 				Name: old.Name,
 				Id:   old.Id,
 			}
@@ -32,14 +33,14 @@ func migrateUser(store sdk.KVStore, cdc codec.BinaryCodec) {
 		}
 
 		for _, old := range oldUser.Organizations {
-			organization := types.UserOrganization{
+			organization := v012.UserOrganization{
 				Name: old.Name,
 				Id:   old.Id,
 			}
 			organizations = append(organizations, &organization)
 		}
 
-		user := types.User{
+		user := v012.User{
 			Creator:        oldUser.Creator,
 			Id:             oldUser.Id,
 			Name:           "",
