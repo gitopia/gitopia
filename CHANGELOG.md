@@ -2,6 +2,28 @@
 
 All notable changes will be documented here.
 
+## [v0.13.0] - 2022-04-04
+
+### Fixes
+
+- Fix various audit issues
+
+### Features
+
+- Upgraded Cosmos SDK to v0.45.1
+- Upgraded Starport to v0.19.2
+- Enabled authz module
+- Transaction to authorize git-server
+- Query to check git-server authorization
+- Input validations for various transactions
+- Multi set and delete transaction for branches and tags
+- Improved permissions for various transactions
+- Add amino support
+
+### Breaking Changes
+
+- state migration: removed extension, email fields
+
 ## [v0.12.0] - 2022-02-03
 
 ### Fixes
