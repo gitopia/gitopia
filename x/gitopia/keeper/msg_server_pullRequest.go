@@ -25,8 +25,15 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("headRepositoryId id (%d) doesn't exist", msg.HeadRepoId))
 	}
 
-	if headRepo.Owner.Id != msg.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	var organization types.Organization
+	if headRepo.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, headRepo.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", headRepo.Owner.Id))
+		}
+	}
+	if !utils.HavePermission(headRepo, msg.Creator, utils.PullRequestCreatePermission, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	if _, exists := utils.RepositoryBranchExists(headRepo.Branches, msg.HeadBranch); !exists {
