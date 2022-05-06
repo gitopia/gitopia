@@ -608,6 +608,13 @@ export interface MsgUpdateUser {
 
 export interface MsgUpdateUserResponse {}
 
+export interface MsgUpdateUserBio {
+  creator: string;
+  bio: string;
+}
+
+export interface MsgUpdateUserBioResponse {}
+
 export interface MsgDeleteUser {
   creator: string;
   id: string;
@@ -11567,6 +11574,130 @@ export const MsgUpdateUserResponse = {
   },
 };
 
+const baseMsgUpdateUserBio: object = { creator: "", bio: "" };
+
+export const MsgUpdateUserBio = {
+  encode(message: MsgUpdateUserBio, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.bio !== "") {
+      writer.uint32(18).string(message.bio);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserBio {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgUpdateUserBio } as MsgUpdateUserBio;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.bio = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateUserBio {
+    const message = { ...baseMsgUpdateUserBio } as MsgUpdateUserBio;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.bio !== undefined && object.bio !== null) {
+      message.bio = String(object.bio);
+    } else {
+      message.bio = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateUserBio): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.bio !== undefined && (obj.bio = message.bio);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgUpdateUserBio>): MsgUpdateUserBio {
+    const message = { ...baseMsgUpdateUserBio } as MsgUpdateUserBio;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.bio !== undefined && object.bio !== null) {
+      message.bio = object.bio;
+    } else {
+      message.bio = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateUserBioResponse: object = {};
+
+export const MsgUpdateUserBioResponse = {
+  encode(
+    _: MsgUpdateUserBioResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateUserBioResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateUserBioResponse,
+    } as MsgUpdateUserBioResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateUserBioResponse {
+    const message = {
+      ...baseMsgUpdateUserBioResponse,
+    } as MsgUpdateUserBioResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateUserBioResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdateUserBioResponse>
+  ): MsgUpdateUserBioResponse {
+    const message = {
+      ...baseMsgUpdateUserBioResponse,
+    } as MsgUpdateUserBioResponse;
+    return message;
+  },
+};
+
 const baseMsgDeleteUser: object = { creator: "", id: "" };
 
 export const MsgDeleteUser = {
@@ -12317,6 +12448,7 @@ export interface Msg {
   ): Promise<MsgDeleteRepositoryResponse>;
   CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
   UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
+  UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
   DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
   TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
   SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
@@ -13174,6 +13306,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdateUserResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse> {
+    const data = MsgUpdateUserBio.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdateUserBio",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateUserBioResponse.decode(new Reader(data))
     );
   }
 

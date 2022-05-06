@@ -518,6 +518,12 @@ export interface MsgUpdateUser {
 }
 export interface MsgUpdateUserResponse {
 }
+export interface MsgUpdateUserBio {
+    creator: string;
+    bio: string;
+}
+export interface MsgUpdateUserBioResponse {
+}
 export interface MsgDeleteUser {
     creator: string;
     id: string;
@@ -1446,6 +1452,20 @@ export declare const MsgUpdateUserResponse: {
     toJSON(_: MsgUpdateUserResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateUserResponse>): MsgUpdateUserResponse;
 };
+export declare const MsgUpdateUserBio: {
+    encode(message: MsgUpdateUserBio, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserBio;
+    fromJSON(object: any): MsgUpdateUserBio;
+    toJSON(message: MsgUpdateUserBio): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateUserBio>): MsgUpdateUserBio;
+};
+export declare const MsgUpdateUserBioResponse: {
+    encode(_: MsgUpdateUserBioResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserBioResponse;
+    fromJSON(_: any): MsgUpdateUserBioResponse;
+    toJSON(_: MsgUpdateUserBioResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateUserBioResponse>): MsgUpdateUserBioResponse;
+};
 export declare const MsgDeleteUser: {
     encode(message: MsgDeleteUser, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteUser;
@@ -1582,6 +1602,7 @@ export interface Msg {
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
+    UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
@@ -1654,6 +1675,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
+    UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;

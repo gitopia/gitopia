@@ -200,6 +200,7 @@ export declare type GitopiaMsgUpdateReleaseResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
 export declare type GitopiaMsgUpdateTaskResponse = object;
+export declare type GitopiaMsgUpdateUserBioResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
 export interface GitopiaOrganization {

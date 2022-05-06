@@ -9943,6 +9943,114 @@ export const MsgUpdateUserResponse = {
         return message;
     },
 };
+const baseMsgUpdateUserBio = { creator: "", bio: "" };
+export const MsgUpdateUserBio = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.bio !== "") {
+            writer.uint32(18).string(message.bio);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgUpdateUserBio };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.bio = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgUpdateUserBio };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.bio !== undefined && object.bio !== null) {
+            message.bio = String(object.bio);
+        }
+        else {
+            message.bio = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.bio !== undefined && (obj.bio = message.bio);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgUpdateUserBio };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.bio !== undefined && object.bio !== null) {
+            message.bio = object.bio;
+        }
+        else {
+            message.bio = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdateUserBioResponse = {};
+export const MsgUpdateUserBioResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateUserBioResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdateUserBioResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdateUserBioResponse,
+        };
+        return message;
+    },
+};
 const baseMsgDeleteUser = { creator: "", id: "" };
 export const MsgDeleteUser = {
     encode(message, writer = Writer.create()) {
@@ -10815,6 +10923,11 @@ export class MsgClientImpl {
         const data = MsgUpdateUser.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateUser", data);
         return promise.then((data) => MsgUpdateUserResponse.decode(new Reader(data)));
+    }
+    UpdateUserBio(request) {
+        const data = MsgUpdateUserBio.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateUserBio", data);
+        return promise.then((data) => MsgUpdateUserBioResponse.decode(new Reader(data)));
     }
     DeleteUser(request) {
         const data = MsgDeleteUser.encode(request).finish();
