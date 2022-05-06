@@ -24620,6 +24620,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateIssueTitleResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgUpdateOrganizationAvatarResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateOrganizationDescriptionResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateOrganizationMemberResponse:

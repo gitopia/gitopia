@@ -258,6 +258,14 @@ export interface MsgUpdateOrganizationDescription {
 
 export interface MsgUpdateOrganizationDescriptionResponse {}
 
+export interface MsgUpdateOrganizationAvatar {
+  creator: string;
+  id: string;
+  url: string;
+}
+
+export interface MsgUpdateOrganizationAvatarResponse {}
+
 export interface MsgDeleteOrganization {
   creator: string;
   id: string;
@@ -5241,6 +5249,165 @@ export const MsgUpdateOrganizationDescriptionResponse = {
     const message = {
       ...baseMsgUpdateOrganizationDescriptionResponse,
     } as MsgUpdateOrganizationDescriptionResponse;
+    return message;
+  },
+};
+
+const baseMsgUpdateOrganizationAvatar: object = {
+  creator: "",
+  id: "",
+  url: "",
+};
+
+export const MsgUpdateOrganizationAvatar = {
+  encode(
+    message: MsgUpdateOrganizationAvatar,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== "") {
+      writer.uint32(18).string(message.id);
+    }
+    if (message.url !== "") {
+      writer.uint32(26).string(message.url);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateOrganizationAvatar {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateOrganizationAvatar,
+    } as MsgUpdateOrganizationAvatar;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = reader.string();
+          break;
+        case 3:
+          message.url = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateOrganizationAvatar {
+    const message = {
+      ...baseMsgUpdateOrganizationAvatar,
+    } as MsgUpdateOrganizationAvatar;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
+    } else {
+      message.id = "";
+    }
+    if (object.url !== undefined && object.url !== null) {
+      message.url = String(object.url);
+    } else {
+      message.url = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateOrganizationAvatar): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.url !== undefined && (obj.url = message.url);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgUpdateOrganizationAvatar>
+  ): MsgUpdateOrganizationAvatar {
+    const message = {
+      ...baseMsgUpdateOrganizationAvatar,
+    } as MsgUpdateOrganizationAvatar;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = "";
+    }
+    if (object.url !== undefined && object.url !== null) {
+      message.url = object.url;
+    } else {
+      message.url = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateOrganizationAvatarResponse: object = {};
+
+export const MsgUpdateOrganizationAvatarResponse = {
+  encode(
+    _: MsgUpdateOrganizationAvatarResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateOrganizationAvatarResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateOrganizationAvatarResponse,
+    } as MsgUpdateOrganizationAvatarResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateOrganizationAvatarResponse {
+    const message = {
+      ...baseMsgUpdateOrganizationAvatarResponse,
+    } as MsgUpdateOrganizationAvatarResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateOrganizationAvatarResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdateOrganizationAvatarResponse>
+  ): MsgUpdateOrganizationAvatarResponse {
+    const message = {
+      ...baseMsgUpdateOrganizationAvatarResponse,
+    } as MsgUpdateOrganizationAvatarResponse;
     return message;
   },
 };
@@ -12661,6 +12828,9 @@ export interface Msg {
   UpdateOrganizationDescription(
     request: MsgUpdateOrganizationDescription
   ): Promise<MsgUpdateOrganizationDescriptionResponse>;
+  UpdateOrganizationAvatar(
+    request: MsgUpdateOrganizationAvatar
+  ): Promise<MsgUpdateOrganizationAvatarResponse>;
   DeleteOrganization(
     request: MsgDeleteOrganization
   ): Promise<MsgDeleteOrganizationResponse>;
@@ -13118,6 +13288,20 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgUpdateOrganizationDescriptionResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateOrganizationAvatar(
+    request: MsgUpdateOrganizationAvatar
+  ): Promise<MsgUpdateOrganizationAvatarResponse> {
+    const data = MsgUpdateOrganizationAvatar.encode(request).finish();
+    const promise = this.rpc.request(
+      "gitopia.gitopia.gitopia.Msg",
+      "UpdateOrganizationAvatar",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateOrganizationAvatarResponse.decode(new Reader(data))
     );
   }
 

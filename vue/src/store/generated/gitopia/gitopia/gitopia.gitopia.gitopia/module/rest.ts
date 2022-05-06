@@ -287,6 +287,8 @@ export type GitopiaMsgUpdateIssueResponse = object;
 
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
+export type GitopiaMsgUpdateOrganizationAvatarResponse = object;
+
 export type GitopiaMsgUpdateOrganizationDescriptionResponse = object;
 
 export type GitopiaMsgUpdateOrganizationMemberResponse = object;
