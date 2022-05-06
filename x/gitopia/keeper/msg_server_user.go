@@ -79,6 +79,7 @@ func (k msgServer) UpdateUserBio(goCtx context.Context, msg *types.MsgUpdateUser
 	}
 
 	user.Bio = msg.Bio
+	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
 
@@ -94,6 +95,7 @@ func (k msgServer) UpdateUserAvatar(goCtx context.Context, msg *types.MsgUpdateU
 	}
 
 	user.AvatarUrl = msg.Url
+	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
 

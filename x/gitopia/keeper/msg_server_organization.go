@@ -276,6 +276,7 @@ func (k msgServer) UpdateOrganizationDescription(goCtx context.Context, msg *typ
 	}
 
 	organization.Description = msg.Description
+	organization.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetOrganization(ctx, organization)
 
@@ -304,6 +305,7 @@ func (k msgServer) UpdateOrganizationAvatar(goCtx context.Context, msg *types.Ms
 	}
 
 	organization.AvatarUrl = msg.Url
+	organization.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetOrganization(ctx, organization)
 
