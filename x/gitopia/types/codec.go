@@ -77,6 +77,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
 	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserBio{}, "gitopia/UpdateUserBio", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
 	cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
@@ -166,6 +167,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateUser{},
 		&MsgUpdateUser{},
+		&MsgUpdateUserBio{},
 		&MsgDeleteUser{},
 		&MsgTransferUser{},
 	)

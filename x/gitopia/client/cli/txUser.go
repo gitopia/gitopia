@@ -69,6 +69,32 @@ func CmdUpdateUser() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateUserBio() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-user-bio [bio]",
+		Short: "Update user bio",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argsBio := string(args[0])
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateUserBio(clientCtx.GetFromAddress().String(), string(argsBio))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteUser() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-user [id] [username] [usernameGithub] [avatarUrl] [followers] [following] [repositories] [repositories_archived] [organizations] [starred_repos] [subscriptions] [email] [bio] [createdAt] [updatedAt] [extensions]",

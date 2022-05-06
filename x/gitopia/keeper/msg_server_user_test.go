@@ -64,6 +64,39 @@ func TestUserMsgServerUpdate(t *testing.T) {
 	}
 }
 
+func TestUserMsgServerUpdateBio(t *testing.T) {
+	creator := "A"
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgUpdateUserBio
+		err     error
+	}{
+		{
+			desc:    "Completed",
+			request: &types.MsgUpdateUserBio{Creator: creator, Bio: "bio"},
+		},
+		{
+			desc:    "KeyNotFound",
+			request: &types.MsgUpdateUserBio{Creator: "B"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			srv, ctx := setupMsgServer(t)
+			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
+			require.NoError(t, err)
+
+			_, err = srv.UpdateUserBio(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestUserMsgServerDelete(t *testing.T) {
 	creator := "A"
 
