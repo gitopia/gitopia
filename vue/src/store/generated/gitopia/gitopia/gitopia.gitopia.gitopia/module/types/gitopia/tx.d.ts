@@ -524,6 +524,12 @@ export interface MsgUpdateUserBio {
 }
 export interface MsgUpdateUserBioResponse {
 }
+export interface MsgUpdateUserAvatar {
+    creator: string;
+    url: string;
+}
+export interface MsgUpdateUserAvatarResponse {
+}
 export interface MsgDeleteUser {
     creator: string;
     id: string;
@@ -1466,6 +1472,20 @@ export declare const MsgUpdateUserBioResponse: {
     toJSON(_: MsgUpdateUserBioResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateUserBioResponse>): MsgUpdateUserBioResponse;
 };
+export declare const MsgUpdateUserAvatar: {
+    encode(message: MsgUpdateUserAvatar, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserAvatar;
+    fromJSON(object: any): MsgUpdateUserAvatar;
+    toJSON(message: MsgUpdateUserAvatar): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateUserAvatar>): MsgUpdateUserAvatar;
+};
+export declare const MsgUpdateUserAvatarResponse: {
+    encode(_: MsgUpdateUserAvatarResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserAvatarResponse;
+    fromJSON(_: any): MsgUpdateUserAvatarResponse;
+    toJSON(_: MsgUpdateUserAvatarResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateUserAvatarResponse>): MsgUpdateUserAvatarResponse;
+};
 export declare const MsgDeleteUser: {
     encode(message: MsgDeleteUser, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteUser;
@@ -1603,6 +1623,7 @@ export interface Msg {
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
+    UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
@@ -1676,6 +1697,7 @@ export declare class MsgClientImpl implements Msg {
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
     UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
+    UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;

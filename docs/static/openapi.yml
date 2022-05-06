@@ -24638,6 +24638,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateTaskResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgUpdateUserAvatarResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateUserBioResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateUserResponse:

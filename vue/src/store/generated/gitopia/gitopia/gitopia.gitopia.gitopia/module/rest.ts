@@ -305,6 +305,8 @@ export type GitopiaMsgUpdateRepositoryLabelResponse = object;
 
 export type GitopiaMsgUpdateTaskResponse = object;
 
+export type GitopiaMsgUpdateUserAvatarResponse = object;
+
 export type GitopiaMsgUpdateUserBioResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;

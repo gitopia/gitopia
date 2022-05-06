@@ -10051,6 +10051,114 @@ export const MsgUpdateUserBioResponse = {
         return message;
     },
 };
+const baseMsgUpdateUserAvatar = { creator: "", url: "" };
+export const MsgUpdateUserAvatar = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.url !== "") {
+            writer.uint32(18).string(message.url);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgUpdateUserAvatar };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.url = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgUpdateUserAvatar };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.url !== undefined && object.url !== null) {
+            message.url = String(object.url);
+        }
+        else {
+            message.url = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.url !== undefined && (obj.url = message.url);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgUpdateUserAvatar };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.url !== undefined && object.url !== null) {
+            message.url = object.url;
+        }
+        else {
+            message.url = "";
+        }
+        return message;
+    },
+};
+const baseMsgUpdateUserAvatarResponse = {};
+export const MsgUpdateUserAvatarResponse = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgUpdateUserAvatarResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseMsgUpdateUserAvatarResponse,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseMsgUpdateUserAvatarResponse,
+        };
+        return message;
+    },
+};
 const baseMsgDeleteUser = { creator: "", id: "" };
 export const MsgDeleteUser = {
     encode(message, writer = Writer.create()) {
@@ -10928,6 +11036,11 @@ export class MsgClientImpl {
         const data = MsgUpdateUserBio.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateUserBio", data);
         return promise.then((data) => MsgUpdateUserBioResponse.decode(new Reader(data)));
+    }
+    UpdateUserAvatar(request) {
+        const data = MsgUpdateUserAvatar.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateUserAvatar", data);
+        return promise.then((data) => MsgUpdateUserAvatarResponse.decode(new Reader(data)));
     }
     DeleteUser(request) {
         const data = MsgDeleteUser.encode(request).finish();
