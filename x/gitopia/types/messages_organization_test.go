@@ -343,6 +343,78 @@ func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateOrganizationAvatar
+		err  error
+	}{
+		{
+			name: "invalid creator address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: "invalid_address",
+				Id:      sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid dao address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "https://avatar.url",
+			},
+		}, {
+			name: "url exceeds limit",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     strings.Repeat("u", 2049),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "non https url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "http://avatar.url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgDeleteOrganization_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
