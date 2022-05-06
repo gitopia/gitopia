@@ -259,7 +259,7 @@ func (msg *MsgUpdateOrganization) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Website url exceeds limit: 2048")
 	}
 	if len(msg.Description) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Description exceeds limit: 255")
 	}
 	if len(msg.Location) > 30 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Location exceeds limit: 30")
