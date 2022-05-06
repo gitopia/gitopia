@@ -209,6 +209,13 @@ export interface MsgUpdateOrganization {
 }
 export interface MsgUpdateOrganizationResponse {
 }
+export interface MsgUpdateOrganizationDescription {
+    creator: string;
+    id: string;
+    description: string;
+}
+export interface MsgUpdateOrganizationDescriptionResponse {
+}
 export interface MsgDeleteOrganization {
     creator: string;
     id: string;
@@ -912,6 +919,20 @@ export declare const MsgUpdateOrganizationResponse: {
     toJSON(_: MsgUpdateOrganizationResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateOrganizationResponse>): MsgUpdateOrganizationResponse;
 };
+export declare const MsgUpdateOrganizationDescription: {
+    encode(message: MsgUpdateOrganizationDescription, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationDescription;
+    fromJSON(object: any): MsgUpdateOrganizationDescription;
+    toJSON(message: MsgUpdateOrganizationDescription): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateOrganizationDescription>): MsgUpdateOrganizationDescription;
+};
+export declare const MsgUpdateOrganizationDescriptionResponse: {
+    encode(_: MsgUpdateOrganizationDescriptionResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationDescriptionResponse;
+    fromJSON(_: any): MsgUpdateOrganizationDescriptionResponse;
+    toJSON(_: MsgUpdateOrganizationDescriptionResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateOrganizationDescriptionResponse>): MsgUpdateOrganizationDescriptionResponse;
+};
 export declare const MsgDeleteOrganization: {
     encode(message: MsgDeleteOrganization, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteOrganization;
@@ -1584,6 +1605,7 @@ export interface Msg {
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    UpdateOrganizationDescription(request: MsgUpdateOrganizationDescription): Promise<MsgUpdateOrganizationDescriptionResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
@@ -1658,6 +1680,7 @@ export declare class MsgClientImpl implements Msg {
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    UpdateOrganizationDescription(request: MsgUpdateOrganizationDescription): Promise<MsgUpdateOrganizationDescriptionResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
