@@ -156,6 +156,54 @@ func (msg *MsgUpdateUserBio) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateUserAvatar{}
+
+func NewMsgUpdateUserAvatar(creator string, url string) *MsgUpdateUserAvatar {
+	return &MsgUpdateUserAvatar{
+		Creator: creator,
+		Url:     url,
+	}
+}
+
+func (msg *MsgUpdateUserAvatar) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateUserAvatar) Type() string {
+	return "UpdateUserAvatar"
+}
+
+func (msg *MsgUpdateUserAvatar) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateUserAvatar) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateUserAvatar) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Url) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
+	}
+	url, err := url.ParseRequestURI(msg.Url)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Url)
+	}
+	if url.Scheme != "https" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteUser{}
 
 func NewMsgDeleteUser(creator string, id string) *MsgDeleteUser {

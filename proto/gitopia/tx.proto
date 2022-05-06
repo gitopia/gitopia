@@ -80,6 +80,7 @@ service Msg {
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
   rpc UpdateUserBio(MsgUpdateUserBio) returns (MsgUpdateUserBioResponse);
+  rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
@@ -687,6 +688,13 @@ message MsgUpdateUserBio {
 }
 
 message MsgUpdateUserBioResponse { }
+
+message MsgUpdateUserAvatar {
+  string creator = 1;
+  string url = 2;
+}
+
+message MsgUpdateUserAvatarResponse { }
 
 message MsgDeleteUser {
   string creator = 1;
