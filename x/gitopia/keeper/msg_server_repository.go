@@ -146,7 +146,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 
-		currentUser, found := k.GetUser(ctx, currentOwner.Id)
+		currentUser, found = k.GetUser(ctx, currentOwner.Id)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", currentOwner.Id))
 		}
@@ -174,7 +174,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	}
 
 	if newOwnerType == types.RepositoryOwner_USER.String() {
-		newUser, found := k.GetUser(ctx, newOwnerId)
+		newUser, found = k.GetUser(ctx, newOwnerId)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", newOwnerId))
 		}
