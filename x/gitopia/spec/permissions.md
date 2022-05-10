@@ -22,3 +22,4 @@
 | `RemoveIssueLabels()` | | **X** | **X** | **X** | **X** |
 | `CreateRelease()` | | | **X** | **X** | **X** |
 | `UpdateRelease()` | | | **X** | **X** | **X** |
+| `CreatePullRequest()` (Head) | | | **X** | **X** | **X** |

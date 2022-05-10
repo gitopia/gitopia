@@ -39,6 +39,7 @@ const (
 	DeleteIssuePermission                 = types.RepositoryCollaborator_ADMIN
 	DeleteRepositoryPermission            = types.RepositoryCollaborator_ADMIN
 	LabelPermission                       = types.RepositoryCollaborator_TRIAGE
+	PullRequestCreatePermission           = types.RepositoryCollaborator_WRITE
 	PullRequestMergePermission            = types.RepositoryCollaborator_WRITE
 	PushBranchPermission                  = types.RepositoryCollaborator_WRITE
 	PushProtectedBranchPermission         = types.RepositoryCollaborator_ADMIN
