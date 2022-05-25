@@ -98,6 +98,20 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.AddRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
+
+		case *types.MsgCreateBounty:
+			res, err := msgServer.CreateBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateBounty:
+			res, err := msgServer.UpdateBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteBounty:
+			res, err := msgServer.DeleteBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

@@ -193,6 +193,15 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		MemberCount: 2,
+		BountyList: []types.Bounty{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		BountyCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -247,5 +256,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 
+	require.ElementsMatch(t, genesisState.BountyList, got.BountyList)
+	require.Equal(t, genesisState.BountyCount, got.BountyCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

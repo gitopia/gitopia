@@ -190,6 +190,16 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				MemberCount: 1,
+
+				BountyList: []types.Bounty{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				BountyCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -590,6 +600,32 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				MemberCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated bounty",
+			genState: &types.GenesisState{
+				BountyList: []types.Bounty{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid bounty count",
+			genState: &types.GenesisState{
+				BountyList: []types.Bounty{
+					{
+						Id: 1,
+					},
+				},
+				BountyCount: 0,
 			},
 			valid: false,
 		},

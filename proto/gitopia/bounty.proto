@@ -1,0 +1,16 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+message Bounty {
+  uint64 id = 1;
+  string amount = 2; 
+  string state = 3; 
+  string deadline = 4; 
+  string parentId = 5; 
+  string parent = 6; 
+  string createdAt = 7; 
+  string updatedAt = 8; 
+  string creator = 9;
+}

@@ -5,6 +5,7 @@ import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
+import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # proto/tx/import
 import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
@@ -36,6 +37,9 @@ service Msg {
   rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
   rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
+  rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
+  rpc UpdateBounty(MsgUpdateBounty) returns (MsgUpdateBountyResponse);
+  rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
@@ -281,6 +285,42 @@ message MsgRemoveMember {
 }
 
 message MsgRemoveMemberResponse { }
+
+message MsgCreateBounty {
+  string creator = 1;
+  string amount = 2;
+  string state = 3;
+  string deadline = 4;
+  string parentId = 5;
+  string parent = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+}
+
+message MsgCreateBountyResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateBounty {
+  string creator = 1;
+  uint64 id = 2;
+  string amount = 3;
+  string state = 4;
+  string deadline = 5;
+  string parentId = 6;
+  string parent = 7;
+  string createdAt = 8;
+  string updatedAt = 9;
+}
+
+message MsgUpdateBountyResponse {}
+
+message MsgDeleteBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteBountyResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
