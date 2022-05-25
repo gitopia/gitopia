@@ -1,5 +1,6 @@
 package simulation
 
+/*
 import (
 	"math/rand"
 
@@ -132,3 +133,4 @@ func SimulateMsgDeleteBounty(
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
+*/

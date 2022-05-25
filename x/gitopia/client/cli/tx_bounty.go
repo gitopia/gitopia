@@ -1,35 +1,47 @@
 package cli
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cobra"
 )
 
 func CmdCreateBounty() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-bounty [amount] [state] [deadline] [parent-id] [parent] [created-at] [updated-at]",
+		Use:   "create-bounty [amount] [expiry] [parent-id] [parent]",
 		Short: "Create a new Bounty",
 		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAmount := args[0]
-			argState := args[1]
-			argDeadline := args[2]
-			argParentId := args[3]
-			argParent := args[4]
-			argCreatedAt := args[5]
-			argUpdatedAt := args[6]
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
+			if err != nil {
+				return err
+			}
+			argExpiry, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argParentId, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil {
+				return err
+			}
+			argParent := args[3]
+			parent, ok := types.BountyParent_value[argParent]
+			if !ok {
+				return errors.New("invalid bounty parent")
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateBounty(clientCtx.GetFromAddress().String(), argAmount, argState, argDeadline, argParentId, argParent, argCreatedAt, argUpdatedAt)
+			msg := types.NewMsgCreateBounty(clientCtx.GetFromAddress().String(), argAmount, argExpiry, argParentId, types.BountyParent(parent))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -44,7 +56,7 @@ func CmdCreateBounty() *cobra.Command {
 
 func CmdUpdateBounty() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-bounty [id] [amount] [state] [deadline] [parent-id] [parent] [created-at] [updated-at]",
+		Use:   "update-bounty [id] [amount] [expiry]",
 		Short: "Update a Bounty",
 		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -53,26 +65,21 @@ func CmdUpdateBounty() *cobra.Command {
 				return err
 			}
 
-			argAmount := args[1]
-
-			argState := args[2]
-
-			argDeadline := args[3]
-
-			argParentId := args[4]
-
-			argParent := args[5]
-
-			argCreatedAt := args[6]
-
-			argUpdatedAt := args[7]
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[1])
+			if err != nil {
+				return err
+			}
+			argExpiry, err := strconv.ParseInt(args[2], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateBounty(clientCtx.GetFromAddress().String(), id, argAmount, argState, argDeadline, argParentId, argParent, argCreatedAt, argUpdatedAt)
+			msg := types.NewMsgUpdateBounty(clientCtx.GetFromAddress().String(), id, argAmount, argExpiry)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

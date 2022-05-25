@@ -12,15 +12,17 @@ import (
 func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBounty) (*types.MsgCreateBountyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	blockTime := ctx.BlockTime().Unix()
+
 	var bounty = types.Bounty{
 		Creator:   msg.Creator,
 		Amount:    msg.Amount,
-		State:     msg.State,
-		Deadline:  msg.Deadline,
+		State:     types.BountyStateSRCDEBITTED,
 		ParentId:  msg.ParentId,
 		Parent:    msg.Parent,
-		CreatedAt: msg.CreatedAt,
-		UpdatedAt: msg.UpdatedAt,
+		ExpireAt:  msg.Expiry,
+		CreatedAt: blockTime,
+		UpdatedAt: blockTime,
 	}
 
 	id := k.AppendBounty(
@@ -36,28 +38,18 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 func (k msgServer) UpdateBounty(goCtx context.Context, msg *types.MsgUpdateBounty) (*types.MsgUpdateBountyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var bounty = types.Bounty{
-		Creator:   msg.Creator,
-		Id:        msg.Id,
-		Amount:    msg.Amount,
-		State:     msg.State,
-		Deadline:  msg.Deadline,
-		ParentId:  msg.ParentId,
-		Parent:    msg.Parent,
-		CreatedAt: msg.CreatedAt,
-		UpdatedAt: msg.UpdatedAt,
-	}
-
-	// Checks that the element exists
-	val, found := k.GetBounty(ctx, msg.Id)
+	bounty, found := k.GetBounty(ctx, msg.Id)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("bounty with key %d doesn't exist", msg.Id))
 	}
 
-	// Checks if the msg creator is the same as the current owner
-	if msg.Creator != val.Creator {
+	if msg.Creator != bounty.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
+
+	bounty.Amount = msg.Amount
+	bounty.ExpireAt = msg.Expiry
+	bounty.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetBounty(ctx, bounty)
 
@@ -68,13 +60,13 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Checks that the element exists
-	val, found := k.GetBounty(ctx, msg.Id)
+	bounty, found := k.GetBounty(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
 	// Checks if the msg creator is the same as the current owner
-	if msg.Creator != val.Creator {
+	if msg.Creator != bounty.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 

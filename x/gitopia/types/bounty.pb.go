@@ -5,6 +5,9 @@ package types
 
 import (
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
+	types "github.com/cosmos/cosmos-sdk/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -22,16 +25,66 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type BountyState int32
+
+const (
+	BountyStateSRCDEBITTED  BountyState = 0
+	BountyStateDESTCREDITED BountyState = 1
+	BountyStateREVERTEDBACK BountyState = 2
+)
+
+var BountyState_name = map[int32]string{
+	0: "BOUNTY_STATE_SRCDEBITTED",
+	1: "BOUNTY_STATE_DESTCREDITED",
+	2: "BOUNTY_STATE_REVERTEDBACK",
+}
+
+var BountyState_value = map[string]int32{
+	"BOUNTY_STATE_SRCDEBITTED":  0,
+	"BOUNTY_STATE_DESTCREDITED": 1,
+	"BOUNTY_STATE_REVERTEDBACK": 2,
+}
+
+func (x BountyState) String() string {
+	return proto.EnumName(BountyState_name, int32(x))
+}
+
+func (BountyState) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_67a698d5c16076fb, []int{0}
+}
+
+type BountyParent int32
+
+const (
+	BountyParentIssue BountyParent = 0
+)
+
+var BountyParent_name = map[int32]string{
+	0: "BOUNTY_PARENT_ISSUE",
+}
+
+var BountyParent_value = map[string]int32{
+	"BOUNTY_PARENT_ISSUE": 0,
+}
+
+func (x BountyParent) String() string {
+	return proto.EnumName(BountyParent_name, int32(x))
+}
+
+func (BountyParent) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_67a698d5c16076fb, []int{1}
+}
+
 type Bounty struct {
-	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Amount    string `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	State     string `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
-	Deadline  string `protobuf:"bytes,4,opt,name=deadline,proto3" json:"deadline,omitempty"`
-	ParentId  string `protobuf:"bytes,5,opt,name=parentId,proto3" json:"parentId,omitempty"`
-	Parent    string `protobuf:"bytes,6,opt,name=parent,proto3" json:"parent,omitempty"`
-	CreatedAt string `protobuf:"bytes,7,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt string `protobuf:"bytes,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	Creator   string `protobuf:"bytes,9,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id        uint64                                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Amount    github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=amount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"amount"`
+	State     BountyState                              `protobuf:"varint,3,opt,name=state,proto3,enum=gitopia.gitopia.gitopia.BountyState" json:"state,omitempty"`
+	ParentId  uint64                                   `protobuf:"varint,5,opt,name=parentId,proto3" json:"parentId,omitempty"`
+	Parent    BountyParent                             `protobuf:"varint,6,opt,name=parent,proto3,enum=gitopia.gitopia.gitopia.BountyParent" json:"parent,omitempty"`
+	ExpireAt  int64                                    `protobuf:"varint,4,opt,name=expireAt,proto3" json:"expireAt,omitempty"`
+	CreatedAt int64                                    `protobuf:"varint,7,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt int64                                    `protobuf:"varint,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Creator   string                                   `protobuf:"bytes,9,opt,name=creator,proto3" json:"creator,omitempty"`
 }
 
 func (m *Bounty) Reset()         { *m = Bounty{} }
@@ -74,53 +127,53 @@ func (m *Bounty) GetId() uint64 {
 	return 0
 }
 
-func (m *Bounty) GetAmount() string {
+func (m *Bounty) GetAmount() github_com_cosmos_cosmos_sdk_types.Coins {
 	if m != nil {
 		return m.Amount
 	}
-	return ""
+	return nil
 }
 
-func (m *Bounty) GetState() string {
+func (m *Bounty) GetState() BountyState {
 	if m != nil {
 		return m.State
 	}
-	return ""
+	return BountyStateSRCDEBITTED
 }
 
-func (m *Bounty) GetDeadline() string {
-	if m != nil {
-		return m.Deadline
-	}
-	return ""
-}
-
-func (m *Bounty) GetParentId() string {
+func (m *Bounty) GetParentId() uint64 {
 	if m != nil {
 		return m.ParentId
 	}
-	return ""
+	return 0
 }
 
-func (m *Bounty) GetParent() string {
+func (m *Bounty) GetParent() BountyParent {
 	if m != nil {
 		return m.Parent
 	}
-	return ""
+	return BountyParentIssue
 }
 
-func (m *Bounty) GetCreatedAt() string {
+func (m *Bounty) GetExpireAt() int64 {
+	if m != nil {
+		return m.ExpireAt
+	}
+	return 0
+}
+
+func (m *Bounty) GetCreatedAt() int64 {
 	if m != nil {
 		return m.CreatedAt
 	}
-	return ""
+	return 0
 }
 
-func (m *Bounty) GetUpdatedAt() string {
+func (m *Bounty) GetUpdatedAt() int64 {
 	if m != nil {
 		return m.UpdatedAt
 	}
-	return ""
+	return 0
 }
 
 func (m *Bounty) GetCreator() string {
@@ -131,29 +184,47 @@ func (m *Bounty) GetCreator() string {
 }
 
 func init() {
+	proto.RegisterEnum("gitopia.gitopia.gitopia.BountyState", BountyState_name, BountyState_value)
+	proto.RegisterEnum("gitopia.gitopia.gitopia.BountyParent", BountyParent_name, BountyParent_value)
 	proto.RegisterType((*Bounty)(nil), "gitopia.gitopia.gitopia.Bounty")
 }
 
 func init() { proto.RegisterFile("gitopia/bounty.proto", fileDescriptor_67a698d5c16076fb) }
 
 var fileDescriptor_67a698d5c16076fb = []byte{
-	// 251 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x90, 0xb1, 0x4e, 0xc3, 0x30,
-	0x10, 0x86, 0xe3, 0xd0, 0xa6, 0xcd, 0x0d, 0x0c, 0x56, 0x05, 0x27, 0x84, 0xac, 0x8a, 0xa9, 0x62,
-	0x48, 0x07, 0x9e, 0x80, 0x8a, 0x85, 0xb5, 0x23, 0x9b, 0x53, 0x5b, 0xc5, 0x12, 0x8d, 0xad, 0xf4,
-	0x22, 0xd1, 0xb7, 0xe0, 0xb1, 0x18, 0x3b, 0x32, 0xa2, 0x64, 0xe5, 0x21, 0x50, 0xec, 0x38, 0x48,
-	0x4c, 0x77, 0xdf, 0xff, 0x9d, 0x74, 0xd2, 0x0f, 0x8b, 0xbd, 0x21, 0xeb, 0x8c, 0x5c, 0x97, 0xb6,
-	0xa9, 0xe8, 0x54, 0xb8, 0xda, 0x92, 0xe5, 0xd7, 0x43, 0x5a, 0xfc, 0x9b, 0x77, 0x3f, 0x0c, 0xb2,
-	0x8d, 0xbf, 0xe4, 0x97, 0x90, 0x1a, 0x85, 0x6c, 0xc9, 0x56, 0x93, 0x6d, 0x6a, 0x14, 0xbf, 0x82,
-	0x4c, 0x1e, 0x7a, 0x85, 0xe9, 0x92, 0xad, 0xf2, 0xed, 0x40, 0x7c, 0x01, 0xd3, 0x23, 0x49, 0xd2,
-	0x78, 0xe1, 0xe3, 0x00, 0xfc, 0x06, 0xe6, 0x4a, 0x4b, 0xf5, 0x66, 0x2a, 0x8d, 0x13, 0x2f, 0x46,
-	0xee, 0x9d, 0x93, 0xb5, 0xae, 0xe8, 0x59, 0xe1, 0x34, 0xb8, 0xc8, 0xfd, 0x97, 0xb0, 0x63, 0x16,
-	0xbe, 0x04, 0xe2, 0xb7, 0x90, 0xef, 0x6a, 0x2d, 0x49, 0xab, 0x47, 0xc2, 0x99, 0x57, 0x7f, 0x41,
-	0x6f, 0x1b, 0xa7, 0x06, 0x3b, 0x0f, 0x76, 0x0c, 0x38, 0xc2, 0xcc, 0x9f, 0xda, 0x1a, 0x73, 0xef,
-	0x22, 0x6e, 0x9e, 0x3e, 0x5b, 0xc1, 0xce, 0xad, 0x60, 0xdf, 0xad, 0x60, 0x1f, 0x9d, 0x48, 0xce,
-	0x9d, 0x48, 0xbe, 0x3a, 0x91, 0xbc, 0xdc, 0xef, 0x0d, 0xbd, 0x36, 0x65, 0xb1, 0xb3, 0x87, 0x75,
-	0xac, 0x30, 0xce, 0xf7, 0x71, 0xa3, 0x93, 0xd3, 0xc7, 0x32, 0xf3, 0xa5, 0x3e, 0xfc, 0x06, 0x00,
-	0x00, 0xff, 0xff, 0x82, 0x3c, 0x7f, 0x05, 0x6c, 0x01, 0x00, 0x00,
+	// 502 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x93, 0xc1, 0x6e, 0xd3, 0x30,
+	0x18, 0xc7, 0xe3, 0xb6, 0xeb, 0x56, 0x0f, 0x4d, 0xc5, 0x0c, 0xe6, 0x05, 0x94, 0x45, 0x08, 0xa4,
+	0xa8, 0x12, 0x0e, 0x1b, 0x17, 0x34, 0x89, 0x43, 0xd3, 0xf8, 0x50, 0x21, 0x8d, 0xc9, 0xc9, 0x90,
+	0xe0, 0x52, 0xa5, 0x89, 0x55, 0x22, 0xd4, 0x3a, 0x4a, 0x5c, 0xb4, 0xbd, 0x00, 0x42, 0x3d, 0xf1,
+	0x02, 0x3d, 0x71, 0xe3, 0x3d, 0x90, 0x76, 0xdc, 0x91, 0x13, 0xa0, 0xf6, 0x45, 0x50, 0x9c, 0xb4,
+	0x04, 0x26, 0xb4, 0x93, 0xbf, 0xef, 0xfb, 0xff, 0xff, 0xbf, 0xda, 0xd5, 0x17, 0xb8, 0x3b, 0x8a,
+	0xa5, 0x48, 0xe2, 0xc0, 0x1e, 0x8a, 0xe9, 0x44, 0x5e, 0x90, 0x24, 0x15, 0x52, 0xa0, 0xbd, 0x72,
+	0x4a, 0xfe, 0x39, 0xf5, 0xdd, 0x91, 0x18, 0x09, 0xe5, 0xb1, 0xf3, 0xaa, 0xb0, 0xeb, 0x46, 0x28,
+	0xb2, 0xb1, 0xc8, 0xec, 0x61, 0x90, 0x71, 0xfb, 0xc3, 0xe1, 0x90, 0xcb, 0xe0, 0xd0, 0x0e, 0x45,
+	0x3c, 0x29, 0xf4, 0x87, 0x1f, 0xeb, 0xb0, 0xe9, 0x28, 0x3e, 0xda, 0x81, 0xb5, 0x38, 0xc2, 0xc0,
+	0x04, 0x56, 0x83, 0xd5, 0xe2, 0x08, 0x85, 0xb0, 0x19, 0x8c, 0x73, 0x09, 0xd7, 0xcc, 0xba, 0xb5,
+	0x7d, 0xb4, 0x4f, 0x0a, 0x16, 0xc9, 0x59, 0xa4, 0x64, 0x91, 0x9e, 0x88, 0x27, 0xce, 0xd3, 0xcb,
+	0x1f, 0x07, 0xda, 0xd7, 0x9f, 0x07, 0xd6, 0x28, 0x96, 0xef, 0xa6, 0x43, 0x12, 0x8a, 0xb1, 0x5d,
+	0xfe, 0x70, 0x71, 0x3c, 0xc9, 0xa2, 0xf7, 0xb6, 0xbc, 0x48, 0x78, 0xa6, 0x02, 0x19, 0x2b, 0xd1,
+	0xe8, 0x18, 0x6e, 0x64, 0x32, 0x90, 0x1c, 0xd7, 0x4d, 0x60, 0xed, 0x1c, 0x3d, 0x22, 0xff, 0x79,
+	0x1e, 0x29, 0x2e, 0xe9, 0xe5, 0x5e, 0x56, 0x44, 0x90, 0x0e, 0xb7, 0x92, 0x20, 0xe5, 0x13, 0xd9,
+	0x8f, 0xf0, 0x86, 0xba, 0xf6, 0xba, 0x47, 0x2f, 0x60, 0xb3, 0xa8, 0x71, 0x53, 0x81, 0x1f, 0xdf,
+	0x00, 0x3e, 0x55, 0x66, 0x56, 0x86, 0x72, 0x34, 0x3f, 0x4f, 0xe2, 0x94, 0x77, 0x25, 0x6e, 0x98,
+	0xc0, 0xaa, 0xb3, 0x75, 0x8f, 0x1e, 0xc0, 0x56, 0x98, 0xf2, 0x40, 0xf2, 0xa8, 0x2b, 0xf1, 0xa6,
+	0x12, 0xff, 0x0c, 0x72, 0x75, 0x9a, 0x44, 0xa5, 0xba, 0x55, 0xa8, 0xeb, 0x01, 0xc2, 0x70, 0x53,
+	0x59, 0x45, 0x8a, 0x5b, 0x26, 0xb0, 0x5a, 0x6c, 0xd5, 0x76, 0xbe, 0x01, 0xb8, 0x5d, 0x79, 0x23,
+	0x7a, 0x0e, 0xb1, 0xf3, 0xea, 0xec, 0xc4, 0x7f, 0x33, 0xf0, 0xfc, 0xae, 0x4f, 0x07, 0x1e, 0xeb,
+	0xb9, 0xd4, 0xe9, 0xfb, 0x3e, 0x75, 0xdb, 0x9a, 0xae, 0xcf, 0xe6, 0xe6, 0xbd, 0x8a, 0xbd, 0xa2,
+	0xa2, 0x63, 0xb8, 0xff, 0x57, 0xd2, 0xa5, 0x9e, 0xdf, 0x63, 0xd4, 0xed, 0xe7, 0x51, 0xa0, 0xdf,
+	0x9f, 0xcd, 0xcd, 0xbd, 0x4a, 0xb4, 0x2a, 0x5f, 0xcb, 0x32, 0xfa, 0x9a, 0x32, 0x9f, 0xba, 0x4e,
+	0xb7, 0xf7, 0xb2, 0x5d, 0xbb, 0x96, 0xad, 0xca, 0x7a, 0xe3, 0xd3, 0x17, 0x43, 0xeb, 0xb8, 0xf0,
+	0x56, 0xf5, 0x1f, 0x45, 0x04, 0xde, 0x29, 0x89, 0xa7, 0x5d, 0x46, 0x4f, 0xfc, 0x41, 0xdf, 0xf3,
+	0xce, 0x68, 0x5b, 0xd3, 0xef, 0xce, 0xe6, 0xe6, 0xed, 0xaa, 0xb5, 0x9f, 0x65, 0x53, 0x5e, 0x50,
+	0x1c, 0xf7, 0x72, 0x61, 0x80, 0xab, 0x85, 0x01, 0x7e, 0x2d, 0x0c, 0xf0, 0x79, 0x69, 0x68, 0x57,
+	0x4b, 0x43, 0xfb, 0xbe, 0x34, 0xb4, 0xb7, 0x9d, 0xca, 0x8a, 0xad, 0x3e, 0x90, 0xd5, 0x79, 0xbe,
+	0xae, 0xd4, 0xaa, 0x0d, 0x9b, 0x6a, 0xc7, 0x9f, 0xfd, 0x0e, 0x00, 0x00, 0xff, 0xff, 0xbf, 0x8b,
+	0x7b, 0x5f, 0x4a, 0x03, 0x00, 0x00,
 }
 
 func (m *Bounty) Marshal() (dAtA []byte, err error) {
@@ -183,54 +254,49 @@ func (m *Bounty) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x4a
 	}
-	if len(m.UpdatedAt) > 0 {
-		i -= len(m.UpdatedAt)
-		copy(dAtA[i:], m.UpdatedAt)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.UpdatedAt)))
+	if m.UpdatedAt != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x40
 	}
-	if len(m.CreatedAt) > 0 {
-		i -= len(m.CreatedAt)
-		copy(dAtA[i:], m.CreatedAt)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.CreatedAt)))
+	if m.CreatedAt != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x38
 	}
-	if len(m.Parent) > 0 {
-		i -= len(m.Parent)
-		copy(dAtA[i:], m.Parent)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.Parent)))
+	if m.Parent != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.Parent))
 		i--
-		dAtA[i] = 0x32
+		dAtA[i] = 0x30
 	}
-	if len(m.ParentId) > 0 {
-		i -= len(m.ParentId)
-		copy(dAtA[i:], m.ParentId)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.ParentId)))
+	if m.ParentId != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.ParentId))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x28
 	}
-	if len(m.Deadline) > 0 {
-		i -= len(m.Deadline)
-		copy(dAtA[i:], m.Deadline)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.Deadline)))
+	if m.ExpireAt != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.ExpireAt))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x20
 	}
-	if len(m.State) > 0 {
-		i -= len(m.State)
-		copy(dAtA[i:], m.State)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.State)))
+	if m.State != 0 {
+		i = encodeVarintBounty(dAtA, i, uint64(m.State))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x18
 	}
 	if len(m.Amount) > 0 {
-		i -= len(m.Amount)
-		copy(dAtA[i:], m.Amount)
-		i = encodeVarintBounty(dAtA, i, uint64(len(m.Amount)))
-		i--
-		dAtA[i] = 0x12
+		for iNdEx := len(m.Amount) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Amount[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintBounty(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
 	}
 	if m.Id != 0 {
 		i = encodeVarintBounty(dAtA, i, uint64(m.Id))
@@ -260,33 +326,29 @@ func (m *Bounty) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovBounty(uint64(m.Id))
 	}
-	l = len(m.Amount)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if len(m.Amount) > 0 {
+		for _, e := range m.Amount {
+			l = e.Size()
+			n += 1 + l + sovBounty(uint64(l))
+		}
 	}
-	l = len(m.State)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.State != 0 {
+		n += 1 + sovBounty(uint64(m.State))
 	}
-	l = len(m.Deadline)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.ExpireAt != 0 {
+		n += 1 + sovBounty(uint64(m.ExpireAt))
 	}
-	l = len(m.ParentId)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.ParentId != 0 {
+		n += 1 + sovBounty(uint64(m.ParentId))
 	}
-	l = len(m.Parent)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.Parent != 0 {
+		n += 1 + sovBounty(uint64(m.Parent))
 	}
-	l = len(m.CreatedAt)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.CreatedAt != 0 {
+		n += 1 + sovBounty(uint64(m.CreatedAt))
 	}
-	l = len(m.UpdatedAt)
-	if l > 0 {
-		n += 1 + l + sovBounty(uint64(l))
+	if m.UpdatedAt != 0 {
+		n += 1 + sovBounty(uint64(m.UpdatedAt))
 	}
 	l = len(m.Creator)
 	if l > 0 {
@@ -353,7 +415,7 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -363,29 +425,31 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthBounty
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthBounty
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Amount = string(dAtA[iNdEx:postIndex])
+			m.Amount = append(m.Amount, types.Coin{})
+			if err := m.Amount[len(m.Amount)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 3:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
 			}
-			var stringLen uint64
+			m.State = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -395,29 +459,16 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.State |= BountyState(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.State = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Deadline", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExpireAt", wireType)
 			}
-			var stringLen uint64
+			m.ExpireAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -427,29 +478,16 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.ExpireAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Deadline = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 5:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ParentId", wireType)
 			}
-			var stringLen uint64
+			m.ParentId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -459,29 +497,16 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.ParentId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ParentId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 6:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Parent", wireType)
 			}
-			var stringLen uint64
+			m.Parent = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -491,29 +516,16 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Parent |= BountyParent(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Parent = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 7:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
-			var stringLen uint64
+			m.CreatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -523,29 +535,16 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.CreatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CreatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 8:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
-			var stringLen uint64
+			m.UpdatedAt = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowBounty
@@ -555,24 +554,11 @@ func (m *Bounty) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.UpdatedAt |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBounty
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBounty
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UpdatedAt = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)

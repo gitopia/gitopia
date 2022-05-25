@@ -1,6 +1,7 @@
 package types
 
 import (
+	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -13,16 +14,13 @@ const (
 
 var _ sdk.Msg = &MsgCreateBounty{}
 
-func NewMsgCreateBounty(creator string, amount string, state string, deadline string, parentId string, parent string, createdAt string, updatedAt string) *MsgCreateBounty {
+func NewMsgCreateBounty(creator string, amount []cosmosTypes.Coin, expiry int64, parentId uint64, parent BountyParent) *MsgCreateBounty {
 	return &MsgCreateBounty{
-		Creator:   creator,
-		Amount:    amount,
-		State:     state,
-		Deadline:  deadline,
-		ParentId:  parentId,
-		Parent:    parent,
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
+		Creator:  creator,
+		Amount:   amount,
+		Expiry:   expiry,
+		ParentId: parentId,
+		Parent:   parent,
 	}
 }
 
@@ -57,17 +55,12 @@ func (msg *MsgCreateBounty) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateBounty{}
 
-func NewMsgUpdateBounty(creator string, id uint64, amount string, state string, deadline string, parentId string, parent string, createdAt string, updatedAt string) *MsgUpdateBounty {
+func NewMsgUpdateBounty(creator string, id uint64, amount []cosmosTypes.Coin, expiry int64) *MsgUpdateBounty {
 	return &MsgUpdateBounty{
-		Id:        id,
-		Creator:   creator,
-		Amount:    amount,
-		State:     state,
-		Deadline:  deadline,
-		ParentId:  parentId,
-		Parent:    parent,
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
+		Creator: creator,
+		Id:      id,
+		Amount:  amount,
+		Expiry:  expiry,
 	}
 }
 
