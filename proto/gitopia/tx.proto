@@ -41,6 +41,8 @@ service Msg {
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
   rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
+  rpc UpdateOrganizationDescription(MsgUpdateOrganizationDescription) returns (MsgUpdateOrganizationDescriptionResponse);
+  rpc UpdateOrganizationAvatar(MsgUpdateOrganizationAvatar) returns (MsgUpdateOrganizationAvatarResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
@@ -79,6 +81,8 @@ service Msg {
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
+  rpc UpdateUserBio(MsgUpdateUserBio) returns (MsgUpdateUserBioResponse);
+  rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
@@ -323,6 +327,22 @@ message MsgUpdateOrganization {
 }
 
 message MsgUpdateOrganizationResponse { }
+
+message MsgUpdateOrganizationDescription {
+  string creator = 1;
+  string id = 2;
+  string description = 3;
+}
+
+message MsgUpdateOrganizationDescriptionResponse { }
+
+message MsgUpdateOrganizationAvatar {
+  string creator = 1;
+  string id = 2;
+  string url = 3;
+}
+
+message MsgUpdateOrganizationAvatarResponse { }
 
 message MsgDeleteOrganization {
   string creator = 1;
@@ -679,6 +699,20 @@ message MsgUpdateUser {
 }
 
 message MsgUpdateUserResponse { }
+
+message MsgUpdateUserBio {
+  string creator = 1;
+  string bio = 2;
+}
+
+message MsgUpdateUserBioResponse { }
+
+message MsgUpdateUserAvatar {
+  string creator = 1;
+  string url = 2;
+}
+
+message MsgUpdateUserAvatarResponse { }
 
 message MsgDeleteUser {
   string creator = 1;

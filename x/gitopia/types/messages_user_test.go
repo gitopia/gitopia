@@ -113,6 +113,117 @@ func TestMsgUpdateUser_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateUserBio_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateUserBio
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgUpdateUserBio{
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateUserBio{
+				Creator: sample.AccAddress(),
+				Bio:     "bio",
+			},
+		}, {
+			name: "bio exceeds limit",
+			msg: MsgUpdateUserBio{
+				Creator: sample.AccAddress(),
+				Bio:     strings.Repeat("b", 256),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "bio minimum length",
+			msg: MsgUpdateUserBio{
+				Creator: sample.AccAddress(),
+				Bio:     "b",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty bio",
+			msg: MsgUpdateUserBio{
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
+func TestMsgUpdateUserAvatar_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateUserAvatar
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgUpdateUserAvatar{
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateUserAvatar{
+				Creator: sample.AccAddress(),
+				Url:     "https://avatar.url",
+			},
+		}, {
+			name: "url exceeds limit",
+			msg: MsgUpdateUserAvatar{
+				Creator: sample.AccAddress(),
+				Url:     strings.Repeat("u", 2049),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid url",
+			msg: MsgUpdateUserAvatar{
+				Creator: sample.AccAddress(),
+				Url:     "url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty url",
+			msg: MsgUpdateUserAvatar{
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "non https url",
+			msg: MsgUpdateUserAvatar{
+				Creator: sample.AccAddress(),
+				Url:     "http://avatar.url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgDeleteUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string

@@ -209,6 +209,20 @@ export interface MsgUpdateOrganization {
 }
 export interface MsgUpdateOrganizationResponse {
 }
+export interface MsgUpdateOrganizationDescription {
+    creator: string;
+    id: string;
+    description: string;
+}
+export interface MsgUpdateOrganizationDescriptionResponse {
+}
+export interface MsgUpdateOrganizationAvatar {
+    creator: string;
+    id: string;
+    url: string;
+}
+export interface MsgUpdateOrganizationAvatarResponse {
+}
 export interface MsgDeleteOrganization {
     creator: string;
     id: string;
@@ -517,6 +531,18 @@ export interface MsgUpdateUser {
     bio: string;
 }
 export interface MsgUpdateUserResponse {
+}
+export interface MsgUpdateUserBio {
+    creator: string;
+    bio: string;
+}
+export interface MsgUpdateUserBioResponse {
+}
+export interface MsgUpdateUserAvatar {
+    creator: string;
+    url: string;
+}
+export interface MsgUpdateUserAvatarResponse {
 }
 export interface MsgDeleteUser {
     creator: string;
@@ -899,6 +925,34 @@ export declare const MsgUpdateOrganizationResponse: {
     fromJSON(_: any): MsgUpdateOrganizationResponse;
     toJSON(_: MsgUpdateOrganizationResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateOrganizationResponse>): MsgUpdateOrganizationResponse;
+};
+export declare const MsgUpdateOrganizationDescription: {
+    encode(message: MsgUpdateOrganizationDescription, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationDescription;
+    fromJSON(object: any): MsgUpdateOrganizationDescription;
+    toJSON(message: MsgUpdateOrganizationDescription): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateOrganizationDescription>): MsgUpdateOrganizationDescription;
+};
+export declare const MsgUpdateOrganizationDescriptionResponse: {
+    encode(_: MsgUpdateOrganizationDescriptionResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationDescriptionResponse;
+    fromJSON(_: any): MsgUpdateOrganizationDescriptionResponse;
+    toJSON(_: MsgUpdateOrganizationDescriptionResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateOrganizationDescriptionResponse>): MsgUpdateOrganizationDescriptionResponse;
+};
+export declare const MsgUpdateOrganizationAvatar: {
+    encode(message: MsgUpdateOrganizationAvatar, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationAvatar;
+    fromJSON(object: any): MsgUpdateOrganizationAvatar;
+    toJSON(message: MsgUpdateOrganizationAvatar): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateOrganizationAvatar>): MsgUpdateOrganizationAvatar;
+};
+export declare const MsgUpdateOrganizationAvatarResponse: {
+    encode(_: MsgUpdateOrganizationAvatarResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateOrganizationAvatarResponse;
+    fromJSON(_: any): MsgUpdateOrganizationAvatarResponse;
+    toJSON(_: MsgUpdateOrganizationAvatarResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateOrganizationAvatarResponse>): MsgUpdateOrganizationAvatarResponse;
 };
 export declare const MsgDeleteOrganization: {
     encode(message: MsgDeleteOrganization, writer?: Writer): Writer;
@@ -1446,6 +1500,34 @@ export declare const MsgUpdateUserResponse: {
     toJSON(_: MsgUpdateUserResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateUserResponse>): MsgUpdateUserResponse;
 };
+export declare const MsgUpdateUserBio: {
+    encode(message: MsgUpdateUserBio, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserBio;
+    fromJSON(object: any): MsgUpdateUserBio;
+    toJSON(message: MsgUpdateUserBio): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateUserBio>): MsgUpdateUserBio;
+};
+export declare const MsgUpdateUserBioResponse: {
+    encode(_: MsgUpdateUserBioResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserBioResponse;
+    fromJSON(_: any): MsgUpdateUserBioResponse;
+    toJSON(_: MsgUpdateUserBioResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateUserBioResponse>): MsgUpdateUserBioResponse;
+};
+export declare const MsgUpdateUserAvatar: {
+    encode(message: MsgUpdateUserAvatar, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserAvatar;
+    fromJSON(object: any): MsgUpdateUserAvatar;
+    toJSON(message: MsgUpdateUserAvatar): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateUserAvatar>): MsgUpdateUserAvatar;
+};
+export declare const MsgUpdateUserAvatarResponse: {
+    encode(_: MsgUpdateUserAvatarResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateUserAvatarResponse;
+    fromJSON(_: any): MsgUpdateUserAvatarResponse;
+    toJSON(_: MsgUpdateUserAvatarResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateUserAvatarResponse>): MsgUpdateUserAvatarResponse;
+};
 export declare const MsgDeleteUser: {
     encode(message: MsgDeleteUser, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteUser;
@@ -1544,6 +1626,8 @@ export interface Msg {
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    UpdateOrganizationDescription(request: MsgUpdateOrganizationDescription): Promise<MsgUpdateOrganizationDescriptionResponse>;
+    UpdateOrganizationAvatar(request: MsgUpdateOrganizationAvatar): Promise<MsgUpdateOrganizationAvatarResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
@@ -1582,6 +1666,8 @@ export interface Msg {
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
+    UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
+    UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;
@@ -1616,6 +1702,8 @@ export declare class MsgClientImpl implements Msg {
     UpdateOrganizationMember(request: MsgUpdateOrganizationMember): Promise<MsgUpdateOrganizationMemberResponse>;
     RemoveOrganizationMember(request: MsgRemoveOrganizationMember): Promise<MsgRemoveOrganizationMemberResponse>;
     UpdateOrganization(request: MsgUpdateOrganization): Promise<MsgUpdateOrganizationResponse>;
+    UpdateOrganizationDescription(request: MsgUpdateOrganizationDescription): Promise<MsgUpdateOrganizationDescriptionResponse>;
+    UpdateOrganizationAvatar(request: MsgUpdateOrganizationAvatar): Promise<MsgUpdateOrganizationAvatarResponse>;
     DeleteOrganization(request: MsgDeleteOrganization): Promise<MsgDeleteOrganizationResponse>;
     CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
@@ -1654,6 +1742,8 @@ export declare class MsgClientImpl implements Msg {
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUser(request: MsgUpdateUser): Promise<MsgUpdateUserResponse>;
+    UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
+    UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     TransferUser(request: MsgTransferUser): Promise<MsgTransferUserResponse>;
     SetWhois(request: MsgSetWhois): Promise<MsgSetWhoisResponse>;

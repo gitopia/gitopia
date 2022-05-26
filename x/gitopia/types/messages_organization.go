@@ -259,7 +259,7 @@ func (msg *MsgUpdateOrganization) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Website url exceeds limit: 2048")
 	}
 	if len(msg.Description) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Description exceeds limit: 255")
 	}
 	if len(msg.Location) > 30 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Location exceeds limit: 30")
@@ -281,6 +281,108 @@ func (msg *MsgUpdateOrganization) ValidateBasic() error {
 		if url.Scheme != "https" {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed in Avatar URL")
 		}
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateOrganizationDescription{}
+
+func NewMsgUpdateOrganizationDescription(creator string, id string, description string) *MsgUpdateOrganizationDescription {
+	return &MsgUpdateOrganizationDescription{
+		Id:          id,
+		Creator:     creator,
+		Description: description,
+	}
+}
+
+func (msg *MsgUpdateOrganizationDescription) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateOrganizationDescription) Type() string {
+	return "UpdateOrganizationDescription"
+}
+
+func (msg *MsgUpdateOrganizationDescription) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateOrganizationDescription) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateOrganizationDescription) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	if len(msg.Description) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Minimum character required: 3")
+	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Description exceeds limit: 255")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateOrganizationAvatar{}
+
+func NewMsgUpdateOrganizationAvatar(creator string, id string, url string) *MsgUpdateOrganizationAvatar {
+	return &MsgUpdateOrganizationAvatar{
+		Id:      id,
+		Creator: creator,
+		Url:     url,
+	}
+}
+
+func (msg *MsgUpdateOrganizationAvatar) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateOrganizationAvatar) Type() string {
+	return "UpdateOrganizationAvatar"
+}
+
+func (msg *MsgUpdateOrganizationAvatar) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateOrganizationAvatar) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateOrganizationAvatar) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	if len(msg.Url) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
+	}
+	url, err := url.ParseRequestURI(msg.Url)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Url)
+	}
+	if url.Scheme != "https" {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
 	}
 	return nil
 }

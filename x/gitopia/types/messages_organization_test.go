@@ -279,6 +279,142 @@ func TestMsgUpdateOrganization_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateOrganizationDescription
+		err  error
+	}{
+		{
+			name: "invalid id",
+			msg: MsgUpdateOrganizationDescription{
+				Id:      "invalid_id",
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid creator address",
+			msg: MsgUpdateOrganizationDescription{
+				Id:      sample.AccAddress(),
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid MsgUpdateOrganization",
+			msg: MsgUpdateOrganizationDescription{
+				Id:          sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				Description: "description",
+			},
+		}, {
+			name: "description exceeds limit",
+			msg: MsgUpdateOrganizationDescription{
+				Id:          sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				Description: strings.Repeat("d", 256),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "description minimum length",
+			msg: MsgUpdateOrganizationDescription{
+				Id:          sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				Description: "d",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty description",
+			msg: MsgUpdateOrganizationDescription{
+				Id:      sample.AccAddress(),
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
+func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateOrganizationAvatar
+		err  error
+	}{
+		{
+			name: "invalid creator address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: "invalid_address",
+				Id:      sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid dao address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "https://avatar.url",
+			},
+		}, {
+			name: "url exceeds limit",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     strings.Repeat("u", 2049),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "non https url",
+			msg: MsgUpdateOrganizationAvatar{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+				Url:     "http://avatar.url",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgDeleteOrganization_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string

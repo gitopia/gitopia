@@ -70,6 +70,38 @@ func (k msgServer) UpdateUser(goCtx context.Context, msg *types.MsgUpdateUser) (
 	return &types.MsgUpdateUserResponse{}, nil
 }
 
+func (k msgServer) UpdateUserBio(goCtx context.Context, msg *types.MsgUpdateUserBio) (*types.MsgUpdateUserBioResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	user.Bio = msg.Bio
+	user.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetUser(ctx, user)
+
+	return &types.MsgUpdateUserBioResponse{}, nil
+}
+
+func (k msgServer) UpdateUserAvatar(goCtx context.Context, msg *types.MsgUpdateUserAvatar) (*types.MsgUpdateUserAvatarResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	user.AvatarUrl = msg.Url
+	user.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetUser(ctx, user)
+
+	return &types.MsgUpdateUserAvatarResponse{}, nil
+}
+
 func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (*types.MsgDeleteUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

@@ -118,6 +118,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateOrganization(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateOrganizationDescription:
+			res, err := msgServer.UpdateOrganizationDescription(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateOrganizationAvatar:
+			res, err := msgServer.UpdateOrganizationAvatar(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteOrganization:
 			res, err := msgServer.DeleteOrganization(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -268,6 +276,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdateUser:
 			res, err := msgServer.UpdateUser(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateUserBio:
+			res, err := msgServer.UpdateUserBio(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateUserAvatar:
+			res, err := msgServer.UpdateUserAvatar(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteUser:

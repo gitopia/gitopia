@@ -287,6 +287,10 @@ export type GitopiaMsgUpdateIssueResponse = object;
 
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
+export type GitopiaMsgUpdateOrganizationAvatarResponse = object;
+
+export type GitopiaMsgUpdateOrganizationDescriptionResponse = object;
+
 export type GitopiaMsgUpdateOrganizationMemberResponse = object;
 
 export type GitopiaMsgUpdateOrganizationResponse = object;
@@ -304,6 +308,10 @@ export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export type GitopiaMsgUpdateRepositoryLabelResponse = object;
 
 export type GitopiaMsgUpdateTaskResponse = object;
+
+export type GitopiaMsgUpdateUserAvatarResponse = object;
+
+export type GitopiaMsgUpdateUserBioResponse = object;
 
 export type GitopiaMsgUpdateUserResponse = object;
 

@@ -191,6 +191,8 @@ export declare type GitopiaMsgUpdateCommentResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
+export declare type GitopiaMsgUpdateOrganizationAvatarResponse = object;
+export declare type GitopiaMsgUpdateOrganizationDescriptionResponse = object;
 export declare type GitopiaMsgUpdateOrganizationMemberResponse = object;
 export declare type GitopiaMsgUpdateOrganizationResponse = object;
 export declare type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
@@ -200,6 +202,8 @@ export declare type GitopiaMsgUpdateReleaseResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
 export declare type GitopiaMsgUpdateTaskResponse = object;
+export declare type GitopiaMsgUpdateUserAvatarResponse = object;
+export declare type GitopiaMsgUpdateUserBioResponse = object;
 export declare type GitopiaMsgUpdateUserResponse = object;
 export declare type GitopiaMsgUpdateWhoisResponse = object;
 export interface GitopiaOrganization {

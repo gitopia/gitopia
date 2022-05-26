@@ -36,6 +36,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgRemoveOrganizationMember{}, "gitopia/RemoveOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganization{}, "gitopia/UpdateOrganization", nil)
+	cdc.RegisterConcrete(&MsgUpdateOrganizationDescription{}, "gitopia/UpdateOrganizationDescription", nil)
+	cdc.RegisterConcrete(&MsgUpdateOrganizationAvatar{}, "gitopia/UpdateOrganizationAvatar", nil)
 	cdc.RegisterConcrete(&MsgDeleteOrganization{}, "gitopia/DeleteOrganization", nil)
 
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
@@ -77,6 +79,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
 	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserBio{}, "gitopia/UpdateUserBio", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserAvatar{}, "gitopia/UpdateUserAvatar", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
 	cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
@@ -121,6 +125,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateOrganizationMember{},
 		&MsgRemoveOrganizationMember{},
 		&MsgUpdateOrganization{},
+		&MsgUpdateOrganizationDescription{},
+		&MsgUpdateOrganizationAvatar{},
 		&MsgDeleteOrganization{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -166,6 +172,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateUser{},
 		&MsgUpdateUser{},
+		&MsgUpdateUserBio{},
+		&MsgUpdateUserAvatar{},
 		&MsgDeleteUser{},
 		&MsgTransferUser{},
 	)
