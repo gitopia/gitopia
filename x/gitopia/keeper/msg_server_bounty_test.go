@@ -24,21 +24,21 @@ func TestBountyMsgServerUpdate(t *testing.T) {
 
 	for _, tc := range []struct {
 		desc    string
-		request *types.MsgUpdateBounty
+		request *types.MsgUpdateBountyExpiry
 		err     error
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdateBounty{Creator: creator},
+			request: &types.MsgUpdateBountyExpiry{Creator: creator},
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateBounty{Creator: "B"},
+			request: &types.MsgUpdateBountyExpiry{Creator: "B"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateBounty{Creator: creator, Id: 10},
+			request: &types.MsgUpdateBountyExpiry{Creator: creator, Id: 10},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
@@ -47,7 +47,7 @@ func TestBountyMsgServerUpdate(t *testing.T) {
 			_, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{Creator: creator})
 			require.NoError(t, err)
 
-			_, err = srv.UpdateBounty(ctx, tc.request)
+			_, err = srv.UpdateBountyExpiry(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

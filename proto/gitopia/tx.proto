@@ -40,7 +40,7 @@ service Msg {
   rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
   rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
-  rpc UpdateBounty(MsgUpdateBounty) returns (MsgUpdateBountyResponse);
+  rpc UpdateBountyExpiry(MsgUpdateBountyExpiry) returns (MsgUpdateBountyExpiryResponse);
   rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
@@ -301,15 +301,13 @@ message MsgCreateBountyResponse {
   uint64 id = 1;
 }
 
-message MsgUpdateBounty {
+message MsgUpdateBountyExpiry {
   string creator = 1;
   uint64 id = 2;
-  repeated cosmos.base.v1beta1.Coin amount = 3
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  int64 expiry = 4;
+  int64 expiry = 3;
 }
 
-message MsgUpdateBountyResponse {}
+message MsgUpdateBountyExpiryResponse {}
 
 message MsgDeleteBounty {
   string creator = 1;

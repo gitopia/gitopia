@@ -50,29 +50,34 @@ func (msg *MsgCreateBounty) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if err := msg.Amount.Validate(); err != nil {
+		return err
+	}
+	if msg.Expiry < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")
+	}
 	return nil
 }
 
-var _ sdk.Msg = &MsgUpdateBounty{}
+var _ sdk.Msg = &MsgUpdateBountyExpiry{}
 
-func NewMsgUpdateBounty(creator string, id uint64, amount []cosmosTypes.Coin, expiry int64) *MsgUpdateBounty {
-	return &MsgUpdateBounty{
+func NewMsgUpdateBountyExpiry(creator string, id uint64, expiry int64) *MsgUpdateBountyExpiry {
+	return &MsgUpdateBountyExpiry{
 		Creator: creator,
 		Id:      id,
-		Amount:  amount,
 		Expiry:  expiry,
 	}
 }
 
-func (msg *MsgUpdateBounty) Route() string {
+func (msg *MsgUpdateBountyExpiry) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgUpdateBounty) Type() string {
+func (msg *MsgUpdateBountyExpiry) Type() string {
 	return TypeMsgUpdateBounty
 }
 
-func (msg *MsgUpdateBounty) GetSigners() []sdk.AccAddress {
+func (msg *MsgUpdateBountyExpiry) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -80,15 +85,18 @@ func (msg *MsgUpdateBounty) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgUpdateBounty) GetSignBytes() []byte {
+func (msg *MsgUpdateBountyExpiry) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgUpdateBounty) ValidateBasic() error {
+func (msg *MsgUpdateBountyExpiry) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if msg.Expiry < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")
 	}
 	return nil
 }

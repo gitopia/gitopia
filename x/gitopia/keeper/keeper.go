@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	v010 "github.com/gitopia/gitopia/x/gitopia/migrations/v010"
 
 	"github.com/gitopia/gitopia/x/gitopia/types"
@@ -24,6 +25,7 @@ type (
 
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
+		bankKeeper    bankKeeper.Keeper
 
 		// this line is used by starport scaffolding # ibc/keeper/attribute
 	}

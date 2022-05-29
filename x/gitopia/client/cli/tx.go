@@ -53,7 +53,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAddRepositoryBackupRef())
 
 	cmd.AddCommand(CmdCreateBounty())
-	cmd.AddCommand(CmdUpdateBounty())
+	cmd.AddCommand(CmdUpdateBountyExpiry())
 	cmd.AddCommand(CmdDeleteBounty())
 	// this line is used by starport scaffolding # 1
 

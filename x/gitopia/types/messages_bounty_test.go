@@ -39,21 +39,21 @@ func TestMsgCreateBounty_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateBounty_ValidateBasic(t *testing.T) {
+func TestMsgUpdateBountyExpiry_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateBounty
+		msg  MsgUpdateBountyExpiry
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgUpdateBounty{
+			msg: MsgUpdateBountyExpiry{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgUpdateBounty{
+			msg: MsgUpdateBountyExpiry{
 				Creator: sample.AccAddress(),
 			},
 		},

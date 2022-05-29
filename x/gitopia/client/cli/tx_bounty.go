@@ -16,7 +16,7 @@ func CmdCreateBounty() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-bounty [amount] [expiry] [parent-id] [parent]",
 		Short: "Create a new Bounty",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
 			if err != nil {
@@ -54,22 +54,18 @@ func CmdCreateBounty() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateBounty() *cobra.Command {
+func CmdUpdateBountyExpiry() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-bounty [id] [amount] [expiry]",
-		Short: "Update a Bounty",
-		Args:  cobra.ExactArgs(8),
+		Use:   "update-bounty-expiry [id] [expiry]",
+		Short: "Update Bounty Expiry",
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[1])
-			if err != nil {
-				return err
-			}
-			argExpiry, err := strconv.ParseInt(args[2], 10, 64)
+			argExpiry, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -79,7 +75,7 @@ func CmdUpdateBounty() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateBounty(clientCtx.GetFromAddress().String(), id, argAmount, argExpiry)
+			msg := types.NewMsgUpdateBountyExpiry(clientCtx.GetFromAddress().String(), id, argExpiry)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

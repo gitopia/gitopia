@@ -97,7 +97,7 @@ func TestUpdateBounty(t *testing.T) {
 			args := []string{tc.id}
 			args = append(args, fields...)
 			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdUpdateBounty(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdUpdateBountyExpiry(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
