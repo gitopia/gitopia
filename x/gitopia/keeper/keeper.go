@@ -37,6 +37,7 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
+	bankKeeper bankKeeper.Keeper,
 	// this line is used by starport scaffolding # ibc/keeper/parameter
 ) *Keeper {
 	return &Keeper{
@@ -46,6 +47,7 @@ func NewKeeper(
 
 		accountKeeper: ak,
 		authzKeeper:   authzKeeper,
+		bankKeeper:    bankKeeper,
 
 		// this line is used by starport scaffolding # ibc/keeper/return
 	}
