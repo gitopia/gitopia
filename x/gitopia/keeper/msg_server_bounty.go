@@ -72,7 +72,26 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 	switch msg.Parent {
 	case types.BountyParentIssue:
 		issue.Bounties = append(issue.Bounties, id)
+		issue.CommentsCount += 1
 		issue.UpdatedAt = blockTime
+
+		var comment = types.Comment{
+			Creator:     "GITOPIA",
+			ParentId:    msg.ParentId,
+			CommentIid:  issue.CommentsCount,
+			Body:        utils.CreateBountyCommentBody(msg.Creator, msg.Amount),
+			System:      true,
+			CreatedAt:   blockTime,
+			UpdatedAt:   blockTime,
+			CommentType: types.Comment_ISSUE,
+		}
+
+		id := k.AppendComment(
+			ctx,
+			comment,
+		)
+
+		issue.Comments = append(issue.Comments, id)
 		k.SetIssue(ctx, issue)
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
@@ -104,6 +123,8 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "bounty already closed")
 	}
 
+	blockTime := ctx.BlockTime().Unix()
+
 	var issue types.Issue
 	switch bounty.Parent {
 	case types.BountyParentIssue:
@@ -111,23 +132,47 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
 		}
+		if len(issue.PullRequests) > 0 {
+			if msg.Expiry < bounty.ExpireAt {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "contains open PR")
+			}
+		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
 	}
 
-	if len(issue.PullRequests) > 0 {
-		if msg.Expiry < bounty.ExpireAt {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "contains open PR")
-		}
-	}
-
-	blockTime := ctx.BlockTime().Unix()
 	bounty.ExpireAt = msg.Expiry
 	bounty.UpdatedAt = blockTime
-	issue.UpdatedAt = blockTime
 
 	k.SetBounty(ctx, bounty)
-	k.SetIssue(ctx, issue)
+
+	/* can never be default */
+	switch bounty.Parent {
+	case types.BountyParentIssue:
+		issue.CommentsCount += 1
+		issue.UpdatedAt = blockTime
+
+		var comment = types.Comment{
+			Creator:     "GITOPIA",
+			ParentId:    bounty.ParentId,
+			CommentIid:  issue.CommentsCount,
+			Body:        utils.UpdateBountyExpiryCommentBody(msg.Creator),
+			System:      true,
+			CreatedAt:   blockTime,
+			UpdatedAt:   blockTime,
+			CommentType: types.Comment_ISSUE,
+		}
+
+		id := k.AppendComment(
+			ctx,
+			comment,
+		)
+
+		issue.Comments = append(issue.Comments, id)
+		k.SetIssue(ctx, issue)
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
+	}
 
 	return &types.MsgUpdateBountyExpiryResponse{}, nil
 }
@@ -160,12 +205,11 @@ func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
 		}
+		if len(issue.PullRequests) > 0 {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close bounty; contains open PR")
+		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
-	}
-
-	if len(issue.PullRequests) > 0 {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close bounty; contains open PR")
 	}
 
 	creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -192,10 +236,36 @@ func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty)
 	bounty.State = types.BountyStateREVERTEDBACK
 	bounty.ExpireAt = time.Time{}.Unix()
 	bounty.UpdatedAt = blockTime
-	issue.UpdatedAt = blockTime
 
 	k.SetBounty(ctx, bounty)
-	k.SetIssue(ctx, issue)
+
+	/* can never be default */
+	switch bounty.Parent {
+	case types.BountyParentIssue:
+		issue.CommentsCount += 1
+		issue.UpdatedAt = blockTime
+
+		var comment = types.Comment{
+			Creator:     "GITOPIA",
+			ParentId:    bounty.ParentId,
+			CommentIid:  issue.CommentsCount,
+			Body:        utils.CloseBountyCommentBody(msg.Creator),
+			System:      true,
+			CreatedAt:   blockTime,
+			UpdatedAt:   blockTime,
+			CommentType: types.Comment_ISSUE,
+		}
+
+		id := k.AppendComment(
+			ctx,
+			comment,
+		)
+
+		issue.Comments = append(issue.Comments, id)
+		k.SetIssue(ctx, issue)
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
+	}
 
 	return &types.MsgCloseBountyResponse{}, nil
 }
@@ -225,19 +295,17 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
 		}
 
+		if len(issue.PullRequests) > 0 {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't delete bounty; contains open PR")
+		}
+
 		if i, exists := utils.BountyIdExists(issue.Bounties, bounty.Id); exists {
 			issue.Bounties = append(issue.Bounties[:i], issue.Bounties[i+1:]...)
 		} else {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find bountyId (%d) under issue (%d)", bounty.Id, bounty.ParentId))
 		}
-
-		issue.UpdatedAt = ctx.BlockTime().Unix()
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
-	}
-
-	if len(issue.PullRequests) > 0 {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't delete bounty; contains open PR")
 	}
 
 	if bounty.State == types.BountyStateSRCDEBITTED {
@@ -263,7 +331,36 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 	}
 
 	k.RemoveBounty(ctx, msg.Id)
-	k.SetIssue(ctx, issue)
+
+	blockTime := ctx.BlockTime().Unix()
+
+	/* can never be default */
+	switch bounty.Parent {
+	case types.BountyParentIssue:
+		issue.CommentsCount += 1
+		issue.UpdatedAt = blockTime
+
+		var comment = types.Comment{
+			Creator:     "GITOPIA",
+			ParentId:    bounty.ParentId,
+			CommentIid:  issue.CommentsCount,
+			Body:        utils.DeleteBountyCommentBody(msg.Creator),
+			System:      true,
+			CreatedAt:   blockTime,
+			UpdatedAt:   blockTime,
+			CommentType: types.Comment_ISSUE,
+		}
+
+		id := k.AppendComment(
+			ctx,
+			comment,
+		)
+
+		issue.Comments = append(issue.Comments, id)
+		k.SetIssue(ctx, issue)
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
+	}
 
 	return &types.MsgDeleteBountyResponse{}, nil
 }
