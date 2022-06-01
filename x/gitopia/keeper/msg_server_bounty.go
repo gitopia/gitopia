@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -45,7 +46,7 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 		UpdatedAt: blockTime,
 	}
 
-	escrowAddress := ibcTypes.GetEscrowAddress("transfer", "gitopia-bounty-1")
+	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 
 	if err := k.bankKeeper.SendCoins(
 		ctx, sdk.AccAddress(msg.Creator), escrowAddress, msg.Amount,
@@ -114,18 +115,98 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 	return &types.MsgUpdateBountyExpiryResponse{}, nil
 }
 
-func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBounty) (*types.MsgDeleteBountyResponse, error) {
+func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty) (*types.MsgCloseBountyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Checks that the element exists
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
 	bounty, found := k.GetBounty(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
 
-	// Checks if the msg creator is the same as the current owner
 	if msg.Creator != bounty.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	if bounty.State != types.BountyStateSRCDEBITTED {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "bounty already closed")
+	}
+
+	var issue types.Issue
+	switch bounty.Parent {
+	case types.BountyParentIssue:
+		issue, found = k.GetIssue(ctx, bounty.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
+	}
+
+	if len(issue.PullRequests) > 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close bounty; contains open PR")
+	}
+
+	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+
+	if err := k.bankKeeper.SendCoins(
+		ctx, escrowAddress, sdk.AccAddress(bounty.Creator), bounty.Amount,
+	); err != nil {
+		return nil, err
+	}
+
+	bounty.State = types.BountyStateREVERTEDBACK
+	bounty.ExpireAt = time.Time{}.Unix()
+
+	k.RemoveBounty(ctx, msg.Id)
+
+	return &types.MsgCloseBountyResponse{}, nil
+}
+
+func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBounty) (*types.MsgDeleteBountyResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	bounty, found := k.GetBounty(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
+	}
+
+	if msg.Creator != bounty.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	var issue types.Issue
+	switch bounty.Parent {
+	case types.BountyParentIssue:
+		issue, found = k.GetIssue(ctx, bounty.ParentId)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
+	}
+
+	if len(issue.PullRequests) > 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't delete bounty; contains open PR")
+	}
+
+	if bounty.State == types.BountyStateSRCDEBITTED {
+		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+
+		if err := k.bankKeeper.SendCoins(
+			ctx, escrowAddress, sdk.AccAddress(bounty.Creator), bounty.Amount,
+		); err != nil {
+			return nil, err
+		}
 	}
 
 	k.RemoveBounty(ctx, msg.Id)

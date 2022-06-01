@@ -107,6 +107,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateBountyExpiry(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgCloseBounty:
+			res, err := msgServer.CloseBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteBounty:
 			res, err := msgServer.DeleteBounty(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

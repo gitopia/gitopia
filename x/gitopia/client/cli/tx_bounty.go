@@ -88,6 +88,35 @@ func CmdUpdateBountyExpiry() *cobra.Command {
 	return cmd
 }
 
+func CmdCloseBounty() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "close-bounty [id]",
+		Short: "Close a Bounty",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCloseBounty(clientCtx.GetFromAddress().String(), id)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteBounty() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-bounty [id]",

@@ -41,6 +41,7 @@ service Msg {
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
   rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
   rpc UpdateBountyExpiry(MsgUpdateBountyExpiry) returns (MsgUpdateBountyExpiryResponse);
+  rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
   rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
@@ -308,6 +309,13 @@ message MsgUpdateBountyExpiry {
 }
 
 message MsgUpdateBountyExpiryResponse {}
+
+message MsgCloseBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgCloseBountyResponse {}
 
 message MsgDeleteBounty {
   string creator = 1;

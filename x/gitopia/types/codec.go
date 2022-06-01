@@ -35,6 +35,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgCreateBounty{}, "gitopia/CreateBounty", nil)
 	cdc.RegisterConcrete(&MsgUpdateBountyExpiry{}, "gitopia/UpdateBountyExpiry", nil)
+	cdc.RegisterConcrete(&MsgCloseBounty{}, "gitopia/CloseBounty", nil)
 	cdc.RegisterConcrete(&MsgDeleteBounty{}, "gitopia/DeleteBounty", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
@@ -135,6 +136,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateBounty{},
 		&MsgUpdateBountyExpiry{},
+		&MsgCloseBounty{},
 		&MsgDeleteBounty{},
 	)
 	// this line is used by starport scaffolding # 3

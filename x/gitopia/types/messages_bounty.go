@@ -9,7 +9,11 @@ import (
 const (
 	TypeMsgCreateBounty = "create_bounty"
 	TypeMsgUpdateBounty = "update_bounty"
+	TypeMsgCloseBounty  = "close_bounty"
 	TypeMsgDeleteBounty = "delete_bounty"
+
+	BountyChannelId = "transfer"
+	BountyPortId    = "gitopia-bounty-1"
 )
 
 var _ sdk.Msg = &MsgCreateBounty{}
@@ -101,6 +105,44 @@ func (msg *MsgUpdateBountyExpiry) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgCloseBounty{}
+
+func NewMsgCloseBounty(creator string, id uint64) *MsgCloseBounty {
+	return &MsgCloseBounty{
+		Id:      id,
+		Creator: creator,
+	}
+}
+
+func (msg *MsgCloseBounty) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCloseBounty) Type() string {
+	return TypeMsgCloseBounty
+}
+
+func (msg *MsgCloseBounty) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCloseBounty) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCloseBounty) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteBounty{}
 
 func NewMsgDeleteBounty(creator string, id uint64) *MsgDeleteBounty {
@@ -109,6 +151,7 @@ func NewMsgDeleteBounty(creator string, id uint64) *MsgDeleteBounty {
 		Creator: creator,
 	}
 }
+
 func (msg *MsgDeleteBounty) Route() string {
 	return RouterKey
 }
