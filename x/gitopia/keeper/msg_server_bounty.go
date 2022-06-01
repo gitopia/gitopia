@@ -9,6 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBounty) (*types.MsgCreateBountyResponse, error) {
@@ -46,11 +47,19 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 		UpdatedAt: blockTime,
 	}
 
+	if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.Amount...); err != nil {
+		return nil, err
+	}
+
 	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 
-	if err := k.bankKeeper.SendCoins(
-		ctx, sdk.AccAddress(msg.Creator), escrowAddress, msg.Amount,
-	); err != nil {
+	creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, escrowAddress, msg.Amount)
+	if err != nil {
 		return nil, err
 	}
 
@@ -63,6 +72,7 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 	switch msg.Parent {
 	case types.BountyParentIssue:
 		issue.Bounties = append(issue.Bounties, id)
+		issue.UpdatedAt = blockTime
 		k.SetIssue(ctx, issue)
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
@@ -90,6 +100,10 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
+	if bounty.State != types.BountyStateSRCDEBITTED {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "bounty already closed")
+	}
+
 	var issue types.Issue
 	switch bounty.Parent {
 	case types.BountyParentIssue:
@@ -107,10 +121,13 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 		}
 	}
 
+	blockTime := ctx.BlockTime().Unix()
 	bounty.ExpireAt = msg.Expiry
-	bounty.UpdatedAt = ctx.BlockTime().Unix()
+	bounty.UpdatedAt = blockTime
+	issue.UpdatedAt = blockTime
 
 	k.SetBounty(ctx, bounty)
+	k.SetIssue(ctx, issue)
 
 	return &types.MsgUpdateBountyExpiryResponse{}, nil
 }
@@ -151,18 +168,34 @@ func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close bounty; contains open PR")
 	}
 
+	creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+		return nil, err
+	}
+	if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s is not allowed to receive funds", msg.Creator)
+	}
+
 	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 
 	if err := k.bankKeeper.SendCoins(
-		ctx, escrowAddress, sdk.AccAddress(bounty.Creator), bounty.Amount,
+		ctx, escrowAddress, creatorAccAddress, bounty.Amount,
 	); err != nil {
 		return nil, err
 	}
 
+	blockTime := ctx.BlockTime().Unix()
 	bounty.State = types.BountyStateREVERTEDBACK
 	bounty.ExpireAt = time.Time{}.Unix()
+	bounty.UpdatedAt = blockTime
+	issue.UpdatedAt = blockTime
 
-	k.RemoveBounty(ctx, msg.Id)
+	k.SetBounty(ctx, bounty)
+	k.SetIssue(ctx, issue)
 
 	return &types.MsgCloseBountyResponse{}, nil
 }
@@ -191,6 +224,14 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", bounty.ParentId))
 		}
+
+		if i, exists := utils.BountyIdExists(issue.Bounties, bounty.Id); exists {
+			issue.Bounties = append(issue.Bounties[:i], issue.Bounties[i+1:]...)
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't find bountyId (%d) under issue (%d)", bounty.Id, bounty.ParentId))
+		}
+
+		issue.UpdatedAt = ctx.BlockTime().Unix()
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
 	}
@@ -200,16 +241,29 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 	}
 
 	if bounty.State == types.BountyStateSRCDEBITTED {
+		creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+			return nil, err
+		}
+		if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s is not allowed to receive funds", msg.Creator)
+		}
+
 		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 
 		if err := k.bankKeeper.SendCoins(
-			ctx, escrowAddress, sdk.AccAddress(bounty.Creator), bounty.Amount,
+			ctx, escrowAddress, creatorAccAddress, bounty.Amount,
 		); err != nil {
 			return nil, err
 		}
 	}
 
 	k.RemoveBounty(ctx, msg.Id)
+	k.SetIssue(ctx, issue)
 
 	return &types.MsgDeleteBountyResponse{}, nil
 }
