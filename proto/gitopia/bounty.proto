@@ -25,10 +25,11 @@ message Bounty {
   repeated cosmos.base.v1beta1.Coin amount = 2 
       [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
   BountyState state = 3;
-  uint64 parentId = 5;
-  BountyParent parent = 6;
-  int64 expireAt = 4;
-  int64 createdAt = 7;
-	int64 updatedAt = 8;
-  string creator = 9;
+  uint64 parentId = 4;
+  BountyParent parent = 5;
+  int64 expireAt = 6;
+  string rewardedTo = 7;
+  int64 createdAt = 8;
+	int64 updatedAt = 9;
+  string creator = 10;
 }
