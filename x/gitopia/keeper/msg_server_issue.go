@@ -334,7 +334,13 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if len(issue.Assignees)+len(msg.Assignees) > 10 {
+	totalAssignees := len(issue.Assignees) + len(msg.Assignees)
+
+	if len(issue.Bounties) > 0 && totalAssignees > 1 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue with bounty can't have more then 1 assignee")
+	}
+
+	if totalAssignees > 10 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 10 assignees")
 	}
 
