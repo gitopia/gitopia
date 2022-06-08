@@ -38,11 +38,16 @@ func CmdCreateIssue() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argLabels := strings.Split(args[4], ",")
-			labelIds, err := utils.SliceAtoi(argLabels)
-			if err != nil {
-				return err
+
+			var labelIds []uint64
+			if args[4] != "" {
+				argsLabels := strings.Split(args[4], ",")
+				labelIds, err = utils.SliceAtoi(argsLabels)
+				if err != nil {
+					return err
+				}
 			}
+
 			argWeight, err := strconv.ParseUint(args[5], 10, 64)
 			if err != nil {
 				return err
