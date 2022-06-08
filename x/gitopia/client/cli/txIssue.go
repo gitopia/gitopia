@@ -11,15 +11,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [id] [repository-name] [title] [description] [labels] [weight] [assignees]",
+		Use:   "create-issue [id] [repository-name] [title] [description] [labels] [weight] [assignees] [bounty-amount] [bounty-expiry]",
 		Short: "Create a new issue",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argId, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -50,6 +51,14 @@ func CmdCreateIssue() *cobra.Command {
 			if len(argAssignees) == 1 && argAssignees[0] == "" {
 				argAssignees = nil
 			}
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[7])
+			if err != nil {
+				return err
+			}
+			argExpiry, err := strconv.ParseInt(args[8], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -64,6 +73,8 @@ func CmdCreateIssue() *cobra.Command {
 				labelIds,
 				argWeight,
 				argAssignees,
+				argAmount,
+				argExpiry,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

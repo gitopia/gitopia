@@ -573,6 +573,9 @@ message MsgCreateIssue {
   repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
+  repeated cosmos.base.v1beta1.Coin bountyAmount = 8
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  int64 bountyExpiry = 9;
 }
 
 message MsgCreateIssueResponse {

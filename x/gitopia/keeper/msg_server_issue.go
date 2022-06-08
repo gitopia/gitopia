@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -66,14 +67,56 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		}
 	}
 
-	id := k.AppendIssue(
+	var bountyId uint64
+	if len(msg.BountyAmount) > 0 {
+		var bounty = types.Bounty{
+			Creator:   msg.Creator,
+			Amount:    msg.BountyAmount,
+			State:     types.BountyStateSRCDEBITTED,
+			Parent:    types.BountyParentIssue,
+			ExpireAt:  msg.BountyExpiry,
+			CreatedAt: blockTime,
+			UpdatedAt: blockTime,
+		}
+
+		if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.BountyAmount...); err != nil {
+			return nil, err
+		}
+
+		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+
+		creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+		if err != nil {
+			return nil, err
+		}
+
+		err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, escrowAddress, msg.BountyAmount)
+		if err != nil {
+			return nil, err
+		}
+
+		bountyId = k.AppendBounty(
+			ctx,
+			bounty,
+		)
+
+		issue.Bounties = append(issue.Bounties, bountyId)
+	}
+
+	issueId := k.AppendIssue(
 		ctx,
 		issue,
 	)
 
+	if len(msg.BountyAmount) > 0 {
+		bounty, _ := k.GetBounty(ctx, bountyId)
+		bounty.ParentId = issueId
+		k.SetBounty(ctx, bounty)
+	}
+
 	var repositoryIssue = types.RepositoryIssue{
 		Iid: repository.IssuesCount,
-		Id:  id,
+		Id:  issueId,
 	}
 
 	repository.Issues = append(repository.Issues, &repositoryIssue)
@@ -104,7 +147,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	)
 
 	return &types.MsgCreateIssueResponse{
-		Id:  id,
+		Id:  issueId,
 		Iid: issue.Iid,
 	}, nil
 }
