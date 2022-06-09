@@ -22,7 +22,7 @@ func RepositoryIssueExists(r []*types.RepositoryIssue, val uint64) (int, bool) {
 	return 0, false
 }
 
-func RepositoryPullRequestExists(r []*types.RepositoryPullRequest, val uint64) (int, bool) {
+func PullRequestIidExists(r []*types.PullRequestIid, val uint64) (int, bool) {
 	for i, v := range r {
 		if v.Iid == val {
 			return i, true

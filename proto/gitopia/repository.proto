@@ -15,8 +15,8 @@ message Repository {
   repeated uint64 forks = 6; 
   string subscribers = 7; 
   string commits = 8;
-  repeated RepositoryIssue issues = 9;
-  repeated RepositoryPullRequest pullRequests = 10;
+  repeated IssueIid issues = 9;
+  repeated PullRequestIid pullRequests = 10;
   uint64 issuesCount = 11;
   uint64 pullsCount = 12;
   repeated RepositoryLabel labels = 13;
@@ -53,12 +53,12 @@ message RepositoryOwner {
   OwnerType type = 2;
 }
 
-message RepositoryIssue {
+message IssueIid {
   uint64 iid = 1;
   uint64 id = 2;
 }
 
-message RepositoryPullRequest {
+message PullRequestIid {
   uint64 iid = 1;
   uint64 id = 2;
 } 

@@ -132,11 +132,11 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		pullRequest,
 	)
 
-	var repositoryPullRequest = types.RepositoryPullRequest{
+	var pullRequestIid = types.PullRequestIid{
 		Iid: baseRepository.PullsCount,
 		Id:  id,
 	}
-	baseRepository.PullRequests = append(baseRepository.PullRequests, &repositoryPullRequest)
+	baseRepository.PullRequests = append(baseRepository.PullRequests, &pullRequestIid)
 
 	k.SetRepository(ctx, baseRepository)
 
@@ -1019,7 +1019,7 @@ func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullReq
 		k.RemoveComment(ctx, commentId)
 	}
 
-	if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, pullRequest.Iid); exists {
+	if i, exists := utils.PullRequestIidExists(repository.PullRequests, pullRequest.Iid); exists {
 		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
 	}
 

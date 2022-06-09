@@ -114,12 +114,12 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		k.SetBounty(ctx, bounty)
 	}
 
-	var repositoryIssue = types.RepositoryIssue{
+	var issueIid = types.IssueIid{
 		Iid: repository.IssuesCount,
 		Id:  issueId,
 	}
 
-	repository.Issues = append(repository.Issues, &repositoryIssue)
+	repository.Issues = append(repository.Issues, &issueIid)
 
 	k.SetRepository(ctx, repository)
 
@@ -754,7 +754,7 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		k.RemoveComment(ctx, commentId)
 	}
 
-	if i, exists := utils.RepositoryIssueExists(repository.Issues, issue.Iid); exists {
+	if i, exists := utils.IssueIidExists(repository.Issues, issue.Iid); exists {
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
 	}
 

@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
+import "gitopia/repository.proto";
 
 message Issue {
   string creator = 1;
@@ -18,7 +19,7 @@ message Issue {
   string description = 6;
   repeated uint64 comments = 7;
   uint64 commentsCount = 8;
-  repeated uint64 pullRequests = 9;
+  repeated PullRequestIid pullRequests = 9;
   uint64 repositoryId = 10;
   repeated uint64 labels = 11;
   uint64 weight = 12;
