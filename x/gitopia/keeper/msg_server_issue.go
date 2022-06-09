@@ -299,21 +299,53 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		}
 	}
 
-	if issue.State == types.Issue_OPEN {
+	blockTime := ctx.BlockTime().Unix()
+	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+
+	switch issue.State {
+	case types.Issue_OPEN:
 		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
-		issue.ClosedAt = ctx.BlockTime().Unix()
-	} else if issue.State == types.Issue_CLOSED {
+		issue.ClosedAt = blockTime
+		for _, bountyId := range issue.Bounties {
+			bounty, found := k.GetBounty(ctx, bountyId)
+			if !found {
+				continue
+			}
+			if bounty.State != types.BountyStateSRCDEBITTED {
+				continue
+			}
+			creatorAccAddress, err := sdk.AccAddressFromBech32(bounty.Creator)
+			if err != nil {
+				continue
+			}
+
+			if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+				continue
+			}
+			if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+				continue
+			}
+			if err := k.bankKeeper.SendCoins(
+				ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+			); err != nil {
+				continue
+			}
+
+			bounty.State = types.BountyStateREVERTEDBACK
+			bounty.ExpireAt = time.Time{}.Unix()
+			bounty.UpdatedAt = blockTime
+
+			k.SetBounty(ctx, bounty)
+		}
+	case types.Issue_CLOSED:
 		issue.State = types.Issue_OPEN
 		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
-	} else {
-		/* TODO: specify error */
-		return nil, sdkerrors.Error{}
 	}
 
 	issue.CommentsCount += 1
-	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.UpdatedAt = blockTime
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
