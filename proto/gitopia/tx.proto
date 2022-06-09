@@ -14,11 +14,16 @@ import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
+import "gitopia/storage_provider.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // this line is used by starport scaffolding # proto/tx/rpc
+  rpc RevokeStorageProviderPermissions(MsgRevokeStorageProviderPermissions) returns (MsgRevokeStorageProviderPermissionsResponse);
+  rpc AuthorizeStorageProvider(MsgAuthorizeStorageProvider) returns (MsgAuthorizeStorageProviderResponse);
+  rpc RevokeGitServerPermissions(MsgRevokeGitServerPermissions) returns (MsgRevokeGitServerPermissionsResponse);
   rpc AuthorizeGitServer(MsgAuthorizeGitServer) returns (MsgAuthorizeGitServerResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
   rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
@@ -93,7 +98,33 @@ service Msg {
   rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
+  rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
+  rpc CreateStorageProvider(MsgCreateStorageProvider) returns (MsgCreateStorageProviderResponse);
+  rpc UpdateStorageProvider(MsgUpdateStorageProvider) returns (MsgUpdateStorageProviderResponse);
+  rpc DeleteStorageProvider(MsgDeleteStorageProvider) returns (MsgDeleteStorageProviderResponse);
+  rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
+
+message MsgRevokeStorageProviderPermissions {
+  string creator = 1;
+  string provider = 2;
+}
+
+message MsgRevokeStorageProviderPermissionsResponse {}
+
+message MsgAuthorizeStorageProvider {
+  string creator = 1;
+  string provider = 2;
+}
+
+message MsgAuthorizeStorageProviderResponse {}
+
+message MsgRevokeGitServerPermissions {
+  string creator = 1;
+  string provider = 2;
+}
+
+message MsgRevokeGitServerPermissionsResponse {}
 
 message MsgAuthorizeGitServer {
   string creator = 1;
@@ -126,7 +157,50 @@ message MsgDeleteTask {
   uint64 id = 2;
 }
 
+message MsgUpdateRepositoryBackupRef {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  gitopia.Store store = 3;
+  string ref = 4;
+}
+
+message MsgUpdateRepositoryBackupRefResponse {
+}
+
+message MsgAddRepositoryBackupRef {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  gitopia.Store store = 3;
+  string ref = 4;
+}
+
+message MsgAddRepositoryBackupRefResponse {
+}
+
+message MsgCreateStorageProvider {
+  string creator = 1;
+  gitopia.Store store = 2;
+}
+
+message MsgCreateStorageProviderResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateStorageProvider {
+  string creator = 1;
+  uint64 id = 2;
+  gitopia.Store store = 3;
+}
+
+message MsgUpdateStorageProviderResponse {}
+
+message MsgDeleteStorageProvider {
+  string creator = 1;
+  uint64 id = 2;
+}
+
 message MsgDeleteTaskResponse {}
+message MsgDeleteStorageProviderResponse {}
 
 message MsgSetBranch {
   string creator = 1;

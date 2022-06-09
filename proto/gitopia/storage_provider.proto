@@ -1,0 +1,16 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+enum Store {
+    NONE = 0;
+    IPFS = 1;
+    ARWEAVE = 2;
+}
+
+message StorageProvider {
+  uint64 id = 1;
+  Store store = 2; 
+  string creator = 3;
+}

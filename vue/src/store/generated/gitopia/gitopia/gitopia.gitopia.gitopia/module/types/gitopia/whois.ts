@@ -3,43 +3,43 @@ import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
+export enum OwnerType {
+  USER = 0,
+  DAO = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function ownerTypeFromJSON(object: any): OwnerType {
+  switch (object) {
+    case 0:
+    case "USER":
+      return OwnerType.USER;
+    case 1:
+    case "DAO":
+      return OwnerType.DAO;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return OwnerType.UNRECOGNIZED;
+  }
+}
+
+export function ownerTypeToJSON(object: OwnerType): string {
+  switch (object) {
+    case OwnerType.USER:
+      return "USER";
+    case OwnerType.DAO:
+      return "DAO";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 export interface Whois {
   creator: string;
   name: string;
   address: string;
-  ownerType: Whois_OwnerType;
-}
-
-export enum Whois_OwnerType {
-  USER = 0,
-  ORGANIZATION = 1,
-  UNRECOGNIZED = -1,
-}
-
-export function whois_OwnerTypeFromJSON(object: any): Whois_OwnerType {
-  switch (object) {
-    case 0:
-    case "USER":
-      return Whois_OwnerType.USER;
-    case 1:
-    case "ORGANIZATION":
-      return Whois_OwnerType.ORGANIZATION;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return Whois_OwnerType.UNRECOGNIZED;
-  }
-}
-
-export function whois_OwnerTypeToJSON(object: Whois_OwnerType): string {
-  switch (object) {
-    case Whois_OwnerType.USER:
-      return "USER";
-    case Whois_OwnerType.ORGANIZATION:
-      return "ORGANIZATION";
-    default:
-      return "UNKNOWN";
-  }
+  ownerType: OwnerType;
 }
 
 const baseWhois: object = { creator: "", name: "", address: "", ownerType: 0 };
@@ -106,7 +106,7 @@ export const Whois = {
       message.address = "";
     }
     if (object.ownerType !== undefined && object.ownerType !== null) {
-      message.ownerType = whois_OwnerTypeFromJSON(object.ownerType);
+      message.ownerType = ownerTypeFromJSON(object.ownerType);
     } else {
       message.ownerType = 0;
     }
@@ -119,7 +119,7 @@ export const Whois = {
     message.name !== undefined && (obj.name = message.name);
     message.address !== undefined && (obj.address = message.address);
     message.ownerType !== undefined &&
-      (obj.ownerType = whois_OwnerTypeToJSON(message.ownerType));
+      (obj.ownerType = ownerTypeToJSON(message.ownerType));
     return obj;
   },
 

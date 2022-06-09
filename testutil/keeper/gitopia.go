@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"

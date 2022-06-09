@@ -33,6 +33,7 @@ message Repository {
   bool fork = 24;
   repeated RepositoryCollaborator collaborators = 25;
   bool allowForking = 26;
+  repeated RepositoryBackup backups = 27;
 }
 
 message RepositoryId {
@@ -91,3 +92,8 @@ message Attachment {
   string sha = 3;
   string uploader = 4;
 } 
+
+message RepositoryBackup {
+  uint64 providerId = 1;
+  repeated string refs = 2;
+}

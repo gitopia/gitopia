@@ -1,3 +1,4 @@
+import { OwnerType } from "../gitopia/whois";
 import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 export interface Repository {
@@ -7,8 +8,6 @@ export interface Repository {
     owner: RepositoryOwner | undefined;
     description: string;
     forks: number[];
-    branches: RepositoryBranch[];
-    tags: RepositoryTag[];
     subscribers: string;
     commits: string;
     issues: RepositoryIssue[];
@@ -29,27 +28,20 @@ export interface Repository {
     fork: boolean;
     collaborators: RepositoryCollaborator[];
     allowForking: boolean;
+    backups: RepositoryBackup[];
+}
+export interface RepositoryId {
+    id: string;
+    name: string;
+}
+export interface BaseRepositoryKey {
+    id: number;
+    address: string;
+    name: string;
 }
 export interface RepositoryOwner {
     id: string;
-    type: RepositoryOwner_Type;
-}
-export declare enum RepositoryOwner_Type {
-    USER = 0,
-    ORGANIZATION = 1,
-    UNRECOGNIZED = -1
-}
-export declare function repositoryOwner_TypeFromJSON(object: any): RepositoryOwner_Type;
-export declare function repositoryOwner_TypeToJSON(object: RepositoryOwner_Type): string;
-export interface RepositoryBranch {
-    name: string;
-    sha: string;
-    lastUpdatedAt: number;
-}
-export interface RepositoryTag {
-    name: string;
-    sha: string;
-    lastUpdatedAt: number;
+    type: OwnerType;
 }
 export interface RepositoryIssue {
     iid: number;
@@ -89,6 +81,10 @@ export interface Attachment {
     sha: string;
     uploader: string;
 }
+export interface RepositoryBackup {
+    providerId: number;
+    refs: string[];
+}
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;
@@ -96,26 +92,26 @@ export declare const Repository: {
     toJSON(message: Repository): unknown;
     fromPartial(object: DeepPartial<Repository>): Repository;
 };
+export declare const RepositoryId: {
+    encode(message: RepositoryId, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryId;
+    fromJSON(object: any): RepositoryId;
+    toJSON(message: RepositoryId): unknown;
+    fromPartial(object: DeepPartial<RepositoryId>): RepositoryId;
+};
+export declare const BaseRepositoryKey: {
+    encode(message: BaseRepositoryKey, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): BaseRepositoryKey;
+    fromJSON(object: any): BaseRepositoryKey;
+    toJSON(message: BaseRepositoryKey): unknown;
+    fromPartial(object: DeepPartial<BaseRepositoryKey>): BaseRepositoryKey;
+};
 export declare const RepositoryOwner: {
     encode(message: RepositoryOwner, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): RepositoryOwner;
     fromJSON(object: any): RepositoryOwner;
     toJSON(message: RepositoryOwner): unknown;
     fromPartial(object: DeepPartial<RepositoryOwner>): RepositoryOwner;
-};
-export declare const RepositoryBranch: {
-    encode(message: RepositoryBranch, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): RepositoryBranch;
-    fromJSON(object: any): RepositoryBranch;
-    toJSON(message: RepositoryBranch): unknown;
-    fromPartial(object: DeepPartial<RepositoryBranch>): RepositoryBranch;
-};
-export declare const RepositoryTag: {
-    encode(message: RepositoryTag, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): RepositoryTag;
-    fromJSON(object: any): RepositoryTag;
-    toJSON(message: RepositoryTag): unknown;
-    fromPartial(object: DeepPartial<RepositoryTag>): RepositoryTag;
 };
 export declare const RepositoryIssue: {
     encode(message: RepositoryIssue, writer?: Writer): Writer;
@@ -158,6 +154,13 @@ export declare const Attachment: {
     fromJSON(object: any): Attachment;
     toJSON(message: Attachment): unknown;
     fromPartial(object: DeepPartial<Attachment>): Attachment;
+};
+export declare const RepositoryBackup: {
+    encode(message: RepositoryBackup, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): RepositoryBackup;
+    fromJSON(object: any): RepositoryBackup;
+    toJSON(message: RepositoryBackup): unknown;
+    fromPartial(object: DeepPartial<RepositoryBackup>): RepositoryBackup;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

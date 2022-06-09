@@ -1,29 +1,43 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { StorageProvider } from "../gitopia/storage_provider";
+import { BaseRepositoryKey, Repository } from "../gitopia/repository";
+import { UserDao, User } from "../gitopia/user";
 import { Task } from "../gitopia/task";
+import { Branch } from "../gitopia/branch";
+import { Tag } from "../gitopia/tag";
+import { Member } from "../gitopia/member";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
-import { Organization } from "../gitopia/organization";
+import { Dao } from "../gitopia/dao";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository } from "../gitopia/repository";
-import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
+  storageProviderList: StorageProvider[];
+  storageProviderCount: number;
+  baseRepositoryKeyList: BaseRepositoryKey[];
+  userDaoList: UserDao[];
   taskList: Task[];
   taskCount: number;
+  branchList: Branch[];
+  branchCount: number;
+  tagList: Tag[];
+  tagCount: number;
+  memberList: Member[];
+  memberCount: number;
   /** this line is used by starport scaffolding # genesis/proto/state */
   releaseList: Release[];
   releaseCount: number;
   pullRequestList: PullRequest[];
   pullRequestCount: number;
-  organizationList: Organization[];
-  organizationCount: number;
+  daoList: Dao[];
+  daoCount: number;
   commentList: Comment[];
   commentCount: number;
   issueList: Issue[];
@@ -38,10 +52,14 @@ export interface GenesisState {
 }
 
 const baseGenesisState: object = {
+  storageProviderCount: 0,
   taskCount: 0,
+  branchCount: 0,
+  tagCount: 0,
+  memberCount: 0,
   releaseCount: 0,
   pullRequestCount: 0,
-  organizationCount: 0,
+  daoCount: 0,
   commentCount: 0,
   issueCount: 0,
   repositoryCount: 0,
@@ -51,11 +69,41 @@ const baseGenesisState: object = {
 
 export const GenesisState = {
   encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
+    for (const v of message.storageProviderList) {
+      StorageProvider.encode(v!, writer.uint32(218).fork()).ldelim();
+    }
+    if (message.storageProviderCount !== 0) {
+      writer.uint32(224).uint64(message.storageProviderCount);
+    }
+    for (const v of message.baseRepositoryKeyList) {
+      BaseRepositoryKey.encode(v!, writer.uint32(210).fork()).ldelim();
+    }
+    for (const v of message.userDaoList) {
+      UserDao.encode(v!, writer.uint32(202).fork()).ldelim();
+    }
     for (const v of message.taskList) {
       Task.encode(v!, writer.uint32(138).fork()).ldelim();
     }
     if (message.taskCount !== 0) {
       writer.uint32(144).uint64(message.taskCount);
+    }
+    for (const v of message.branchList) {
+      Branch.encode(v!, writer.uint32(154).fork()).ldelim();
+    }
+    if (message.branchCount !== 0) {
+      writer.uint32(160).uint64(message.branchCount);
+    }
+    for (const v of message.tagList) {
+      Tag.encode(v!, writer.uint32(170).fork()).ldelim();
+    }
+    if (message.tagCount !== 0) {
+      writer.uint32(176).uint64(message.tagCount);
+    }
+    for (const v of message.memberList) {
+      Member.encode(v!, writer.uint32(186).fork()).ldelim();
+    }
+    if (message.memberCount !== 0) {
+      writer.uint32(192).uint64(message.memberCount);
     }
     for (const v of message.releaseList) {
       Release.encode(v!, writer.uint32(122).fork()).ldelim();
@@ -69,11 +117,11 @@ export const GenesisState = {
     if (message.pullRequestCount !== 0) {
       writer.uint32(112).uint64(message.pullRequestCount);
     }
-    for (const v of message.organizationList) {
-      Organization.encode(v!, writer.uint32(90).fork()).ldelim();
+    for (const v of message.daoList) {
+      Dao.encode(v!, writer.uint32(90).fork()).ldelim();
     }
-    if (message.organizationCount !== 0) {
-      writer.uint32(96).uint64(message.organizationCount);
+    if (message.daoCount !== 0) {
+      writer.uint32(96).uint64(message.daoCount);
     }
     for (const v of message.commentList) {
       Comment.encode(v!, writer.uint32(74).fork()).ldelim();
@@ -112,10 +160,16 @@ export const GenesisState = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
+    message.storageProviderList = [];
+    message.baseRepositoryKeyList = [];
+    message.userDaoList = [];
     message.taskList = [];
+    message.branchList = [];
+    message.tagList = [];
+    message.memberList = [];
     message.releaseList = [];
     message.pullRequestList = [];
-    message.organizationList = [];
+    message.daoList = [];
     message.commentList = [];
     message.issueList = [];
     message.repositoryList = [];
@@ -124,11 +178,45 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 27:
+          message.storageProviderList.push(
+            StorageProvider.decode(reader, reader.uint32())
+          );
+          break;
+        case 28:
+          message.storageProviderCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 26:
+          message.baseRepositoryKeyList.push(
+            BaseRepositoryKey.decode(reader, reader.uint32())
+          );
+          break;
+        case 25:
+          message.userDaoList.push(UserDao.decode(reader, reader.uint32()));
+          break;
         case 17:
           message.taskList.push(Task.decode(reader, reader.uint32()));
           break;
         case 18:
           message.taskCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 19:
+          message.branchList.push(Branch.decode(reader, reader.uint32()));
+          break;
+        case 20:
+          message.branchCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 21:
+          message.tagList.push(Tag.decode(reader, reader.uint32()));
+          break;
+        case 22:
+          message.tagCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 23:
+          message.memberList.push(Member.decode(reader, reader.uint32()));
+          break;
+        case 24:
+          message.memberCount = longToNumber(reader.uint64() as Long);
           break;
         case 15:
           message.releaseList.push(Release.decode(reader, reader.uint32()));
@@ -145,12 +233,10 @@ export const GenesisState = {
           message.pullRequestCount = longToNumber(reader.uint64() as Long);
           break;
         case 11:
-          message.organizationList.push(
-            Organization.decode(reader, reader.uint32())
-          );
+          message.daoList.push(Dao.decode(reader, reader.uint32()));
           break;
         case 12:
-          message.organizationCount = longToNumber(reader.uint64() as Long);
+          message.daoCount = longToNumber(reader.uint64() as Long);
           break;
         case 9:
           message.commentList.push(Comment.decode(reader, reader.uint32()));
@@ -194,15 +280,50 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.storageProviderList = [];
+    message.baseRepositoryKeyList = [];
+    message.userDaoList = [];
     message.taskList = [];
+    message.branchList = [];
+    message.tagList = [];
+    message.memberList = [];
     message.releaseList = [];
     message.pullRequestList = [];
-    message.organizationList = [];
+    message.daoList = [];
     message.commentList = [];
     message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (
+      object.storageProviderList !== undefined &&
+      object.storageProviderList !== null
+    ) {
+      for (const e of object.storageProviderList) {
+        message.storageProviderList.push(StorageProvider.fromJSON(e));
+      }
+    }
+    if (
+      object.storageProviderCount !== undefined &&
+      object.storageProviderCount !== null
+    ) {
+      message.storageProviderCount = Number(object.storageProviderCount);
+    } else {
+      message.storageProviderCount = 0;
+    }
+    if (
+      object.baseRepositoryKeyList !== undefined &&
+      object.baseRepositoryKeyList !== null
+    ) {
+      for (const e of object.baseRepositoryKeyList) {
+        message.baseRepositoryKeyList.push(BaseRepositoryKey.fromJSON(e));
+      }
+    }
+    if (object.userDaoList !== undefined && object.userDaoList !== null) {
+      for (const e of object.userDaoList) {
+        message.userDaoList.push(UserDao.fromJSON(e));
+      }
+    }
     if (object.taskList !== undefined && object.taskList !== null) {
       for (const e of object.taskList) {
         message.taskList.push(Task.fromJSON(e));
@@ -212,6 +333,36 @@ export const GenesisState = {
       message.taskCount = Number(object.taskCount);
     } else {
       message.taskCount = 0;
+    }
+    if (object.branchList !== undefined && object.branchList !== null) {
+      for (const e of object.branchList) {
+        message.branchList.push(Branch.fromJSON(e));
+      }
+    }
+    if (object.branchCount !== undefined && object.branchCount !== null) {
+      message.branchCount = Number(object.branchCount);
+    } else {
+      message.branchCount = 0;
+    }
+    if (object.tagList !== undefined && object.tagList !== null) {
+      for (const e of object.tagList) {
+        message.tagList.push(Tag.fromJSON(e));
+      }
+    }
+    if (object.tagCount !== undefined && object.tagCount !== null) {
+      message.tagCount = Number(object.tagCount);
+    } else {
+      message.tagCount = 0;
+    }
+    if (object.memberList !== undefined && object.memberList !== null) {
+      for (const e of object.memberList) {
+        message.memberList.push(Member.fromJSON(e));
+      }
+    }
+    if (object.memberCount !== undefined && object.memberCount !== null) {
+      message.memberCount = Number(object.memberCount);
+    } else {
+      message.memberCount = 0;
     }
     if (object.releaseList !== undefined && object.releaseList !== null) {
       for (const e of object.releaseList) {
@@ -239,21 +390,15 @@ export const GenesisState = {
     } else {
       message.pullRequestCount = 0;
     }
-    if (
-      object.organizationList !== undefined &&
-      object.organizationList !== null
-    ) {
-      for (const e of object.organizationList) {
-        message.organizationList.push(Organization.fromJSON(e));
+    if (object.daoList !== undefined && object.daoList !== null) {
+      for (const e of object.daoList) {
+        message.daoList.push(Dao.fromJSON(e));
       }
     }
-    if (
-      object.organizationCount !== undefined &&
-      object.organizationCount !== null
-    ) {
-      message.organizationCount = Number(object.organizationCount);
+    if (object.daoCount !== undefined && object.daoCount !== null) {
+      message.daoCount = Number(object.daoCount);
     } else {
-      message.organizationCount = 0;
+      message.daoCount = 0;
     }
     if (object.commentList !== undefined && object.commentList !== null) {
       for (const e of object.commentList) {
@@ -313,6 +458,29 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.storageProviderList) {
+      obj.storageProviderList = message.storageProviderList.map((e) =>
+        e ? StorageProvider.toJSON(e) : undefined
+      );
+    } else {
+      obj.storageProviderList = [];
+    }
+    message.storageProviderCount !== undefined &&
+      (obj.storageProviderCount = message.storageProviderCount);
+    if (message.baseRepositoryKeyList) {
+      obj.baseRepositoryKeyList = message.baseRepositoryKeyList.map((e) =>
+        e ? BaseRepositoryKey.toJSON(e) : undefined
+      );
+    } else {
+      obj.baseRepositoryKeyList = [];
+    }
+    if (message.userDaoList) {
+      obj.userDaoList = message.userDaoList.map((e) =>
+        e ? UserDao.toJSON(e) : undefined
+      );
+    } else {
+      obj.userDaoList = [];
+    }
     if (message.taskList) {
       obj.taskList = message.taskList.map((e) =>
         e ? Task.toJSON(e) : undefined
@@ -321,6 +489,30 @@ export const GenesisState = {
       obj.taskList = [];
     }
     message.taskCount !== undefined && (obj.taskCount = message.taskCount);
+    if (message.branchList) {
+      obj.branchList = message.branchList.map((e) =>
+        e ? Branch.toJSON(e) : undefined
+      );
+    } else {
+      obj.branchList = [];
+    }
+    message.branchCount !== undefined &&
+      (obj.branchCount = message.branchCount);
+    if (message.tagList) {
+      obj.tagList = message.tagList.map((e) => (e ? Tag.toJSON(e) : undefined));
+    } else {
+      obj.tagList = [];
+    }
+    message.tagCount !== undefined && (obj.tagCount = message.tagCount);
+    if (message.memberList) {
+      obj.memberList = message.memberList.map((e) =>
+        e ? Member.toJSON(e) : undefined
+      );
+    } else {
+      obj.memberList = [];
+    }
+    message.memberCount !== undefined &&
+      (obj.memberCount = message.memberCount);
     if (message.releaseList) {
       obj.releaseList = message.releaseList.map((e) =>
         e ? Release.toJSON(e) : undefined
@@ -339,15 +531,12 @@ export const GenesisState = {
     }
     message.pullRequestCount !== undefined &&
       (obj.pullRequestCount = message.pullRequestCount);
-    if (message.organizationList) {
-      obj.organizationList = message.organizationList.map((e) =>
-        e ? Organization.toJSON(e) : undefined
-      );
+    if (message.daoList) {
+      obj.daoList = message.daoList.map((e) => (e ? Dao.toJSON(e) : undefined));
     } else {
-      obj.organizationList = [];
+      obj.daoList = [];
     }
-    message.organizationCount !== undefined &&
-      (obj.organizationCount = message.organizationCount);
+    message.daoCount !== undefined && (obj.daoCount = message.daoCount);
     if (message.commentList) {
       obj.commentList = message.commentList.map((e) =>
         e ? Comment.toJSON(e) : undefined
@@ -395,15 +584,50 @@ export const GenesisState = {
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
+    message.storageProviderList = [];
+    message.baseRepositoryKeyList = [];
+    message.userDaoList = [];
     message.taskList = [];
+    message.branchList = [];
+    message.tagList = [];
+    message.memberList = [];
     message.releaseList = [];
     message.pullRequestList = [];
-    message.organizationList = [];
+    message.daoList = [];
     message.commentList = [];
     message.issueList = [];
     message.repositoryList = [];
     message.userList = [];
     message.whoisList = [];
+    if (
+      object.storageProviderList !== undefined &&
+      object.storageProviderList !== null
+    ) {
+      for (const e of object.storageProviderList) {
+        message.storageProviderList.push(StorageProvider.fromPartial(e));
+      }
+    }
+    if (
+      object.storageProviderCount !== undefined &&
+      object.storageProviderCount !== null
+    ) {
+      message.storageProviderCount = object.storageProviderCount;
+    } else {
+      message.storageProviderCount = 0;
+    }
+    if (
+      object.baseRepositoryKeyList !== undefined &&
+      object.baseRepositoryKeyList !== null
+    ) {
+      for (const e of object.baseRepositoryKeyList) {
+        message.baseRepositoryKeyList.push(BaseRepositoryKey.fromPartial(e));
+      }
+    }
+    if (object.userDaoList !== undefined && object.userDaoList !== null) {
+      for (const e of object.userDaoList) {
+        message.userDaoList.push(UserDao.fromPartial(e));
+      }
+    }
     if (object.taskList !== undefined && object.taskList !== null) {
       for (const e of object.taskList) {
         message.taskList.push(Task.fromPartial(e));
@@ -413,6 +637,36 @@ export const GenesisState = {
       message.taskCount = object.taskCount;
     } else {
       message.taskCount = 0;
+    }
+    if (object.branchList !== undefined && object.branchList !== null) {
+      for (const e of object.branchList) {
+        message.branchList.push(Branch.fromPartial(e));
+      }
+    }
+    if (object.branchCount !== undefined && object.branchCount !== null) {
+      message.branchCount = object.branchCount;
+    } else {
+      message.branchCount = 0;
+    }
+    if (object.tagList !== undefined && object.tagList !== null) {
+      for (const e of object.tagList) {
+        message.tagList.push(Tag.fromPartial(e));
+      }
+    }
+    if (object.tagCount !== undefined && object.tagCount !== null) {
+      message.tagCount = object.tagCount;
+    } else {
+      message.tagCount = 0;
+    }
+    if (object.memberList !== undefined && object.memberList !== null) {
+      for (const e of object.memberList) {
+        message.memberList.push(Member.fromPartial(e));
+      }
+    }
+    if (object.memberCount !== undefined && object.memberCount !== null) {
+      message.memberCount = object.memberCount;
+    } else {
+      message.memberCount = 0;
     }
     if (object.releaseList !== undefined && object.releaseList !== null) {
       for (const e of object.releaseList) {
@@ -440,21 +694,15 @@ export const GenesisState = {
     } else {
       message.pullRequestCount = 0;
     }
-    if (
-      object.organizationList !== undefined &&
-      object.organizationList !== null
-    ) {
-      for (const e of object.organizationList) {
-        message.organizationList.push(Organization.fromPartial(e));
+    if (object.daoList !== undefined && object.daoList !== null) {
+      for (const e of object.daoList) {
+        message.daoList.push(Dao.fromPartial(e));
       }
     }
-    if (
-      object.organizationCount !== undefined &&
-      object.organizationCount !== null
-    ) {
-      message.organizationCount = object.organizationCount;
+    if (object.daoCount !== undefined && object.daoCount !== null) {
+      message.daoCount = object.daoCount;
     } else {
-      message.organizationCount = 0;
+      message.daoCount = 0;
     }
     if (object.commentList !== undefined && object.commentList !== null) {
       for (const e of object.commentList) {

@@ -361,6 +361,7 @@ func New(
 		app.AccountKeeper,
 		app.AuthzKeeper,
 	)
+
 	gitopiaModule := gitopia.NewAppModule(appCodec, app.GitopiaKeeper)
 
 	app.GovKeeper = govkeeper.NewKeeper(

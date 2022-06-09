@@ -8,6 +8,6 @@ import (
 
 // x/gitopia module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrInvalidBackupStore = sdkerrors.Register(ModuleName, 1100, "invalid backup store")
 	// this line is used by starport scaffolding # ibc/errors
 )

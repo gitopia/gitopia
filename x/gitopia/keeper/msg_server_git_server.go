@@ -48,3 +48,22 @@ func (k msgServer) AuthorizeGitServer(goCtx context.Context, msg *types.MsgAutho
 
 	return &types.MsgAuthorizeGitServerResponse{}, nil
 }
+
+func (k msgServer) RevokeGitServerPermissions(goCtx context.Context, msg *types.MsgRevokeGitServerPermissions) (*types.MsgRevokeGitServerPermissionsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
+	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
+
+	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepository{}))
+	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
+	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
+	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateTask{}))
+
+	return &types.MsgRevokeGitServerPermissionsResponse{}, nil
+}

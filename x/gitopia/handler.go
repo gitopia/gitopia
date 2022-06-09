@@ -17,6 +17,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
+		case *types.MsgRevokeStorageProviderPermissions:
+			res, err := msgServer.RevokeStorageProviderPermissions(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgAuthorizeStorageProvider:
+			res, err := msgServer.AuthorizeStorageProvider(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRevokeGitServerPermissions:
+			res, err := msgServer.RevokeGitServerPermissions(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgAuthorizeGitServer:
 			res, err := msgServer.AuthorizeGitServer(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -81,6 +93,25 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RemoveMember(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+			// this line is used by starport scaffolding # 1
+		case *types.MsgUpdateRepositoryBackupRef:
+			res, err := msgServer.UpdateRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgCreateStorageProvider:
+			res, err := msgServer.CreateStorageProvider(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateStorageProvider:
+			res, err := msgServer.UpdateStorageProvider(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteStorageProvider:
+			res, err := msgServer.DeleteStorageProvider(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgAddRepositoryBackupRef:
+			res, err := msgServer.AddRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)

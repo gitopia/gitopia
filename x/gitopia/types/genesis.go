@@ -13,6 +13,7 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
 		// this line is used by starport scaffolding # genesis/types/default
+		StorageProviderList:   []StorageProvider{},
 		TaskList:              []Task{},
 		BranchList:            []Branch{},
 		TagList:               []Tag{},
@@ -47,6 +48,20 @@ func (gs GenesisState) Validate() error {
 		}
 		taskIdMap[elem.Id] = true
 	}
+
+	// Check for duplicated ID in storageProvider
+	storageProviderIdMap := make(map[uint64]bool)
+	storageProviderCount := gs.GetStorageProviderCount()
+	for _, elem := range gs.StorageProviderList {
+		if _, ok := storageProviderIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for storageProvider")
+		}
+		if elem.Id >= storageProviderCount {
+			return fmt.Errorf("storageProvider id should be lower or equal than the last id")
+		}
+		storageProviderIdMap[elem.Id] = true
+	}
+
 	// Check for duplicated ID in branch
 	branchIdMap := make(map[uint64]bool)
 	branchCount := gs.GetBranchCount()

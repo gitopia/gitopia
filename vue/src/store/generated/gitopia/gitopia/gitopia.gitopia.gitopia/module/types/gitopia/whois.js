@@ -1,7 +1,37 @@
 /* eslint-disable */
 import { Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
-const baseWhois = { creator: "", name: "", address: "" };
+export var OwnerType;
+(function (OwnerType) {
+    OwnerType[OwnerType["USER"] = 0] = "USER";
+    OwnerType[OwnerType["DAO"] = 1] = "DAO";
+    OwnerType[OwnerType["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(OwnerType || (OwnerType = {}));
+export function ownerTypeFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "USER":
+            return OwnerType.USER;
+        case 1:
+        case "DAO":
+            return OwnerType.DAO;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return OwnerType.UNRECOGNIZED;
+    }
+}
+export function ownerTypeToJSON(object) {
+    switch (object) {
+        case OwnerType.USER:
+            return "USER";
+        case OwnerType.DAO:
+            return "DAO";
+        default:
+            return "UNKNOWN";
+    }
+}
+const baseWhois = { creator: "", name: "", address: "", ownerType: 0 };
 export const Whois = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
@@ -12,6 +42,9 @@ export const Whois = {
         }
         if (message.address !== "") {
             writer.uint32(26).string(message.address);
+        }
+        if (message.ownerType !== 0) {
+            writer.uint32(32).int32(message.ownerType);
         }
         return writer;
     },
@@ -30,6 +63,9 @@ export const Whois = {
                     break;
                 case 3:
                     message.address = reader.string();
+                    break;
+                case 4:
+                    message.ownerType = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -58,6 +94,12 @@ export const Whois = {
         else {
             message.address = "";
         }
+        if (object.ownerType !== undefined && object.ownerType !== null) {
+            message.ownerType = ownerTypeFromJSON(object.ownerType);
+        }
+        else {
+            message.ownerType = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -65,6 +107,8 @@ export const Whois = {
         message.creator !== undefined && (obj.creator = message.creator);
         message.name !== undefined && (obj.name = message.name);
         message.address !== undefined && (obj.address = message.address);
+        message.ownerType !== undefined &&
+            (obj.ownerType = ownerTypeToJSON(message.ownerType));
         return obj;
     },
     fromPartial(object) {
@@ -86,6 +130,12 @@ export const Whois = {
         }
         else {
             message.address = "";
+        }
+        if (object.ownerType !== undefined && object.ownerType !== null) {
+            message.ownerType = object.ownerType;
+        }
+        else {
+            message.ownerType = 0;
         }
         return message;
     },

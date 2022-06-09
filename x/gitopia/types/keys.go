@@ -90,8 +90,18 @@ const (
 )
 
 const (
-	TaskKey      = "Task-value-"
-	TaskCountKey = "Task-count-"
+	TaskKey                          = "Task-value-"
+	TaskCountKey                     = "Task-count-"
+	SetRepositoryBranchEventKey      = "SetRepositoryBranch"
+	SetRepositoryTagEventKey         = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey    = "MultiSetRepositoryTag"
+	EventAttributeIsGitRefUpdatedKey = "GitRefUpdated"
+)
+
+const (
+	StorageProviderKey      = "StorageProvider-value-"
+	StorageProviderCountKey = "StorageProvider-count-"
 )
 
 const (

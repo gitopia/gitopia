@@ -9,21 +9,15 @@ export interface User {
     avatarUrl: string;
     followers: string[];
     following: string[];
-    repositories: UserRepository[];
-    organizations: UserOrganization[];
     starredRepos: number[];
     subscriptions: string;
     bio: string;
     createdAt: number;
     updatedAt: number;
 }
-export interface UserRepository {
-    name: string;
-    id: number;
-}
-export interface UserOrganization {
-    name: string;
-    id: string;
+export interface UserDao {
+    userAddress: string;
+    daoAddress: string;
 }
 export declare const User: {
     encode(message: User, writer?: Writer): Writer;
@@ -32,19 +26,12 @@ export declare const User: {
     toJSON(message: User): unknown;
     fromPartial(object: DeepPartial<User>): User;
 };
-export declare const UserRepository: {
-    encode(message: UserRepository, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): UserRepository;
-    fromJSON(object: any): UserRepository;
-    toJSON(message: UserRepository): unknown;
-    fromPartial(object: DeepPartial<UserRepository>): UserRepository;
-};
-export declare const UserOrganization: {
-    encode(message: UserOrganization, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): UserOrganization;
-    fromJSON(object: any): UserOrganization;
-    toJSON(message: UserOrganization): unknown;
-    fromPartial(object: DeepPartial<UserOrganization>): UserOrganization;
+export declare const UserDao: {
+    encode(message: UserDao, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): UserDao;
+    fromJSON(object: any): UserDao;
+    toJSON(message: UserDao): unknown;
+    fromPartial(object: DeepPartial<UserDao>): UserDao;
 };
 declare type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export declare type DeepPartial<T> = T extends Builtin ? T : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>> : T extends {} ? {

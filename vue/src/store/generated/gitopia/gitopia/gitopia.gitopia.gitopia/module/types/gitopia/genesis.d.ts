@@ -1,25 +1,39 @@
 import { Writer, Reader } from "protobufjs/minimal";
+import { StorageProvider } from "../gitopia/storage_provider";
+import { BaseRepositoryKey, Repository } from "../gitopia/repository";
+import { UserDao, User } from "../gitopia/user";
 import { Task } from "../gitopia/task";
+import { Branch } from "../gitopia/branch";
+import { Tag } from "../gitopia/tag";
+import { Member } from "../gitopia/member";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
-import { Organization } from "../gitopia/organization";
+import { Dao } from "../gitopia/dao";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
-import { Repository } from "../gitopia/repository";
-import { User } from "../gitopia/user";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
+    storageProviderList: StorageProvider[];
+    storageProviderCount: number;
+    baseRepositoryKeyList: BaseRepositoryKey[];
+    userDaoList: UserDao[];
     taskList: Task[];
     taskCount: number;
+    branchList: Branch[];
+    branchCount: number;
+    tagList: Tag[];
+    tagCount: number;
+    memberList: Member[];
+    memberCount: number;
     /** this line is used by starport scaffolding # genesis/proto/state */
     releaseList: Release[];
     releaseCount: number;
     pullRequestList: PullRequest[];
     pullRequestCount: number;
-    organizationList: Organization[];
-    organizationCount: number;
+    daoList: Dao[];
+    daoCount: number;
     commentList: Comment[];
     commentCount: number;
     issueList: Issue[];
