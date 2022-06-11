@@ -73,3 +73,19 @@ func CloseBountyCommentBody(creator string) string {
 func DeleteBountyCommentBody(creator string) string {
 	return fmt.Sprintf("@%v deleted bounty", creator)
 }
+
+func LinkIssueCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v linked issue %v", creator, iid)
+}
+
+func UnlinkIssueCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v unlinked issue %v", creator, iid)
+}
+
+func LinkPullRequestCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v linked pull request %v", creator, iid)
+}
+
+func UnlinkPullRequestCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v unlinked pull request %v", creator, iid)
+}

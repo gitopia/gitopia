@@ -56,6 +56,8 @@ service Msg {
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
   rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
   rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
+  rpc LinkPullRequestIssueByIid(MsgLinkPullRequestIssueByIid) returns (MsgLinkPullRequestIssueByIidResponse);
+  rpc UnlinkPullRequestIssueByIid(MsgUnlinkPullRequestIssueByIid) returns (MsgUnlinkPullRequestIssueByIidResponse);
   rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
   rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
@@ -449,6 +451,22 @@ message MsgRemovePullRequestAssignees {
 }
 
 message MsgRemovePullRequestAssigneesResponse { }
+
+message MsgLinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 issueIid = 3;
+}
+
+message MsgLinkPullRequestIssueByIidResponse { }
+
+message MsgUnlinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 issueIid = 3;
+}
+
+message MsgUnlinkPullRequestIssueByIidResponse { }
 
 message MsgAddPullRequestLabels {
   string creator = 1;

@@ -48,6 +48,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestReviewers{}, "gitopia/AddPullRequestReviewers", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestReviewers{}, "gitopia/RemovePullRequestReviewers", nil)
+	cdc.RegisterConcrete(&MsgLinkPullRequestIssueByIid{}, "gitopia/LinkPullRequestIssueByIid", nil)
+	cdc.RegisterConcrete(&MsgUnlinkPullRequestIssueByIid{}, "gitopia/UnlinkPullRequestIssueByIid", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestAssignees{}, "gitopia/AddPullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestAssignees{}, "gitopia/RemovePullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestLabels{}, "gitopia/AddPullRequestLabels", nil)
@@ -154,6 +156,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRemovePullRequestReviewers{},
 		&MsgAddPullRequestAssignees{},
 		&MsgRemovePullRequestAssignees{},
+		&MsgLinkPullRequestIssueByIid{},
+		&MsgUnlinkPullRequestIssueByIid{},
 		&MsgAddPullRequestLabels{},
 		&MsgRemovePullRequestLabels{},
 		&MsgDeletePullRequest{},

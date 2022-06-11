@@ -164,6 +164,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RemovePullRequestAssignees(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgLinkPullRequestIssueByIid:
+			res, err := msgServer.LinkPullRequestIssueByIid(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUnlinkPullRequestIssueByIid:
+			res, err := msgServer.UnlinkPullRequestIssueByIid(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgAddPullRequestLabels:
 			res, err := msgServer.AddPullRequestLabels(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

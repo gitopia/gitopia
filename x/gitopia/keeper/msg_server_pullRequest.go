@@ -821,6 +821,212 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
 }
 
+func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.MsgLinkPullRequestIssueByIid) (*types.MsgLinkPullRequestIssueByIidResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+	}
+
+	headRepository, found := k.GetRepository(ctx, pullRequest.Head.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
+	}
+
+	if msg.Creator != pullRequest.Creator {
+		var organization types.Organization
+		if headRepository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+			organization, found = k.GetOrganization(ctx, headRepository.Owner.Id)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", headRepository.Owner.Id))
+			}
+		}
+
+		if !utils.HavePermission(headRepository, msg.Creator, utils.LinkPullRequestIssuePermission, organization) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	}
+
+	if len(pullRequest.Issues)+1 > 10 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 linked issues")
+	}
+
+	var issueIid *types.IssueIid
+	if i, exists := utils.IssueIidExists(headRepository.Issues, msg.IssueIid); exists {
+		issueIid = headRepository.Issues[i]
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue iid (%v) does not exists", msg.IssueIid))
+	}
+
+	if _, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", msg.IssueIid))
+	}
+
+	issue, found := k.GetIssue(ctx, issueIid.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Id))
+	}
+
+	pullRequest.Issues = append(pullRequest.Issues, issueIid)
+
+	blockTime := ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = blockTime
+
+	if _, exists := utils.PullRequestIidExists(issue.PullRequests, pullRequest.Iid); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pullRequest (%v) already linked in issue (%v)", pullRequest.Iid, issueIid.Iid))
+	}
+
+	issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
+		Id:  pullRequest.Id,
+		Iid: pullRequest.Iid,
+	})
+	issue.UpdatedAt = blockTime
+
+	var pullRequestComment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:      true,
+		CreatedAt:   blockTime,
+		UpdatedAt:   blockTime,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+	pullRequestCommentId := k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+
+	var issueComment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:      true,
+		CreatedAt:   blockTime,
+		UpdatedAt:   blockTime,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+	issueCommentId := k.AppendComment(
+		ctx,
+		issueComment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, pullRequestCommentId)
+	issue.Comments = append(issue.Comments, issueCommentId)
+
+	k.SetPullRequest(ctx, pullRequest)
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgLinkPullRequestIssueByIidResponse{}, nil
+}
+
+func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types.MsgUnlinkPullRequestIssueByIid) (*types.MsgUnlinkPullRequestIssueByIidResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+	}
+
+	headRepository, found := k.GetRepository(ctx, pullRequest.Head.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
+	}
+
+	if msg.Creator != pullRequest.Creator {
+		var organization types.Organization
+		if headRepository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+			organization, found = k.GetOrganization(ctx, headRepository.Owner.Id)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", headRepository.Owner.Id))
+			}
+		}
+
+		if !utils.HavePermission(headRepository, msg.Creator, utils.LinkPullRequestIssuePermission, organization) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	}
+
+	if len(pullRequest.Issues) == 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest does not have any linked issues")
+	}
+
+	var issueIid *types.IssueIid
+	if i, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
+		issueIid = pullRequest.Issues[i]
+		pullRequest.Issues = append(pullRequest.Issues[:i], pullRequest.Issues[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue with iid (%v) isn't linked", msg.IssueIid))
+	}
+
+	issue, found := k.GetIssue(ctx, issueIid.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Id))
+	}
+
+	blockTime := ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = blockTime
+
+	if i, exists := utils.PullRequestIidExists(issue.PullRequests, pullRequest.Iid); exists {
+		issue.PullRequests = append(issue.PullRequests[:i], issue.PullRequests[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pullRequest (%v) isn't linked in issue (%v)", pullRequest.Iid, issueIid.Iid))
+	}
+	issue.UpdatedAt = blockTime
+
+	var pullRequestComment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:      true,
+		CreatedAt:   blockTime,
+		UpdatedAt:   blockTime,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+	id := k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+
+	var issueComment = types.Comment{
+		Creator:     "GITOPIA",
+		ParentId:    msg.Id,
+		CommentIid:  pullRequest.CommentsCount,
+		Body:        utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:      true,
+		CreatedAt:   blockTime,
+		UpdatedAt:   blockTime,
+		CommentType: types.Comment_PULLREQUEST,
+	}
+	issueCommentId := k.AppendComment(
+		ctx,
+		issueComment,
+	)
+
+	pullRequest.Comments = append(pullRequest.Comments, id)
+	issue.Comments = append(issue.Comments, issueCommentId)
+
+	k.SetPullRequest(ctx, pullRequest)
+	k.SetIssue(ctx, issue)
+
+	return &types.MsgUnlinkPullRequestIssueByIidResponse{}, nil
+}
+
 func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAddPullRequestLabels) (*types.MsgAddPullRequestLabelsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

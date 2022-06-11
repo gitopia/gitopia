@@ -582,6 +582,86 @@ func (msg *MsgRemovePullRequestAssignees) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgLinkPullRequestIssueByIid{}
+
+func NewMsgLinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgLinkPullRequestIssueByIid {
+	return &MsgLinkPullRequestIssueByIid{
+		Id:       id,
+		Creator:  creator,
+		IssueIid: issueIid,
+	}
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) Type() string {
+	return "LinkPullRequestIssueByIid"
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUnlinkPullRequestIssueByIid{}
+
+func NewMsgUnlinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgUnlinkPullRequestIssueByIid {
+	return &MsgUnlinkPullRequestIssueByIid{
+		Id:       id,
+		Creator:  creator,
+		IssueIid: issueIid,
+	}
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) Type() string {
+	return "LinkPullRequestIssueByIid"
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
 var _ sdk.Msg = &MsgAddPullRequestLabels{}
 
 func NewMsgAddPullRequestLabels(creator string, pullRequestId uint64, labelIds []uint64) *MsgAddPullRequestLabels {
