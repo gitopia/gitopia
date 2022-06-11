@@ -68,6 +68,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdInvokeMergePullRequest())
 	cmd.AddCommand(CmdSetPullRequestState())
 	cmd.AddCommand(CmdAddPullRequestAssignees())
+	cmd.AddCommand(CmdLinkPullRequestIssueByIid())
+	cmd.AddCommand(CmdUnlinkPullRequestIssueByIid())
 	cmd.AddCommand(CmdRemovePullRequestAssignees())
 	cmd.AddCommand(CmdAddPullRequestReviewers())
 	cmd.AddCommand(CmdRemovePullRequestReviewers())
