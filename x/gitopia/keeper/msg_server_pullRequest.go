@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -353,7 +354,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	task, _ = k.GetTask(ctx, msg.TaskId)
 
-	currentTime := ctx.BlockTime().Unix()
+	blockTime := ctx.BlockTime().Unix()
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
@@ -404,7 +405,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		if pullRequest.State == types.PullRequest_CLOSED || pullRequest.State == types.PullRequest_MERGED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State.String()))
 		}
-		pullRequest.ClosedAt = currentTime
+		pullRequest.ClosedAt = blockTime
 		pullRequest.ClosedBy = msg.Creator
 	case types.PullRequest_MERGED.String():
 		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
@@ -416,11 +417,10 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		baseBranch, found = k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
-
 		}
 		pullRequest.Base.CommitSha = baseBranch.Sha
 		baseBranch.Sha = msg.MergeCommitSha
-		baseBranch.UpdatedAt = currentTime
+		baseBranch.UpdatedAt = blockTime
 
 		headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
 		if !found {
@@ -433,7 +433,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", pullRequest.Head.Branch))
 		}
 
-		pullRequest.MergedAt = currentTime
+		pullRequest.MergedAt = blockTime
 		pullRequest.MergedBy = msg.Creator
 		pullRequest.MergeCommitSha = msg.MergeCommitSha
 
@@ -445,12 +445,62 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		task.State = types.StateSuccess
 		k.SetTask(ctx, task)
 		k.SetRepositoryBranch(ctx, baseBranch)
+
+		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+
+		for _, issueIid := range pullRequest.Issues {
+			issue, found := k.GetIssue(ctx, issueIid.Id)
+			if !found {
+				continue
+			}
+			if issue.State != types.Issue_OPEN {
+				continue
+			}
+			if len(issue.Assignees) != 1 {
+				continue
+			}
+			for _, bountyId := range issue.Bounties {
+				bounty, found := k.GetBounty(ctx, bountyId)
+				if !found {
+					continue
+				}
+				if bounty.State != types.BountyStateSRCDEBITTED {
+					continue
+				}
+				if pullRequest.Creator != issue.Assignees[0] {
+					continue
+				}
+				rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
+				if err != nil {
+					continue
+				}
+
+				if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+					continue
+				}
+				if k.bankKeeper.BlockedAddr(rewardAccAddress) {
+					continue
+				}
+				if err := k.bankKeeper.SendCoins(
+					ctx, escrowAddress, rewardAccAddress, bounty.Amount,
+				); err != nil {
+					continue
+				}
+
+				bounty.State = types.BountyStateDESTCREDITED
+				bounty.RewardedTo = pullRequest.Creator
+				bounty.ExpireAt = time.Time{}.Unix()
+				bounty.UpdatedAt = blockTime
+
+				k.SetBounty(ctx, bounty)
+			}
+		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
 
 	pullRequest.State = types.PullRequest_State(types.PullRequest_State_value[msg.State])
-	pullRequest.UpdatedAt = currentTime
+	pullRequest.UpdatedAt = blockTime
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
@@ -471,7 +521,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	pullRequest.Comments = append(pullRequest.Comments, id)
 
-	baseRepository.UpdatedAt = currentTime
+	baseRepository.UpdatedAt = blockTime
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
 
