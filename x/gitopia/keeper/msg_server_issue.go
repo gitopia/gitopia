@@ -733,6 +733,16 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	for _, pullRequestIid := range issue.PullRequests {
+		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		if !found {
+			continue
+		}
+		if pullRequest.State == types.PullRequest_OPEN {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't delete issue having OPEN linked pull request")
+		}
+	}
+
 	DoRemoveIssue(ctx, k, issue, repository)
 
 	ctx.EventManager().EmitEvent(
@@ -756,6 +766,19 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 
 	if i, exists := utils.IssueIidExists(repository.Issues, issue.Iid); exists {
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
+	}
+
+	for _, pullRequestIid := range issue.PullRequests {
+		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		if !found {
+			continue
+		}
+		if i, exists := utils.IssueIidExists(pullRequest.Issues, issue.Iid); exists {
+			pullRequest.Issues = append(pullRequest.Issues[:i], pullRequest.Issues[i+1:]...)
+		} else {
+			continue
+		}
+		k.SetPullRequest(ctx, pullRequest)
 	}
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
