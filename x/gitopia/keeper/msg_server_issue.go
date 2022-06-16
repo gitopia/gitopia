@@ -760,12 +760,16 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 }
 
 func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
+	blockTime := ctx.BlockTime().Unix()
 	for _, commentId := range issue.Comments {
 		k.RemoveComment(ctx, commentId)
 	}
 
 	if i, exists := utils.IssueIidExists(repository.Issues, issue.Iid); exists {
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
+		repository.UpdatedAt = blockTime
+
+		k.SetRepository(ctx, repository)
 	}
 
 	for _, pullRequestIid := range issue.PullRequests {
@@ -778,11 +782,43 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		} else {
 			continue
 		}
+		pullRequest.UpdatedAt = blockTime
+
 		k.SetPullRequest(ctx, pullRequest)
 	}
 
-	repository.UpdatedAt = ctx.BlockTime().Unix()
+	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
+	for _, bountyId := range issue.Bounties {
+		bounty, found := k.GetBounty(ctx, bountyId)
+		if !found {
+			continue
+		}
+		if bounty.State != types.BountyStateSRCDEBITTED {
+			continue
+		}
+		creatorAccAddress, err := sdk.AccAddressFromBech32(bounty.Creator)
+		if err != nil {
+			continue
+		}
 
-	k.SetRepository(ctx, repository)
+		if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+			continue
+		}
+		if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+			continue
+		}
+		if err := k.bankKeeper.SendCoins(
+			ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+		); err != nil {
+			continue
+		}
+
+		bounty.State = types.BountyStateREVERTEDBACK
+		bounty.ExpireAt = time.Time{}.Unix()
+		bounty.UpdatedAt = blockTime
+
+		k.SetBounty(ctx, bounty)
+	}
+
 	k.RemoveIssue(ctx, issue.Id)
 }
