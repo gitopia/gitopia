@@ -304,6 +304,15 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 	switch issue.State {
 	case types.Issue_OPEN:
+		for _, pullRequestIid := range issue.PullRequests {
+			pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+			if !found {
+				continue
+			}
+			if pullRequest.State == types.PullRequest_OPEN {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close issue with OPEN linked pull request")
+			}
+		}
 		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = blockTime
