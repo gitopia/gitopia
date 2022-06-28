@@ -40,7 +40,6 @@ service Msg {
   rpc RenameOrganization(MsgRenameOrganization) returns (MsgRenameOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
-  rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
   rpc UpdateOrganizationDescription(MsgUpdateOrganizationDescription) returns (MsgUpdateOrganizationDescriptionResponse);
   rpc UpdateOrganizationAvatar(MsgUpdateOrganizationAvatar) returns (MsgUpdateOrganizationAvatarResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
@@ -316,18 +315,6 @@ message MsgRemoveOrganizationMember {
 }
 
 message MsgRemoveOrganizationMemberResponse { }
-
-message MsgUpdateOrganization {
-  string creator = 1;
-  string id = 2;
-  string name = 3;
-  string avatarUrl = 4;
-  string location = 5;
-  string website = 7;
-  string description = 8;
-}
-
-message MsgUpdateOrganizationResponse { }
 
 message MsgUpdateOrganizationDescription {
   string creator = 1;
