@@ -202,6 +202,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RenameRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateRepositoryDescription:
+			res, err := msgServer.UpdateRepositoryDescription(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgChangeOwner:
 			res, err := msgServer.ChangeOwner(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

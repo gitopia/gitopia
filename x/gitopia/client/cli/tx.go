@@ -82,6 +82,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAuthorizeGitServer())
 	cmd.AddCommand(CmdForkRepository())
 	cmd.AddCommand(CmdRenameRepository())
+	cmd.AddCommand(CmdUpdateRepositoryDescription())
 	cmd.AddCommand(CmdChangeOwner())
 	cmd.AddCommand(CmdUpdateRepositoryCollaborator())
 	cmd.AddCommand(CmdRemoveRepositoryCollaborator())

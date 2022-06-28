@@ -540,6 +540,43 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	return &types.MsgRenameRepositoryResponse{}, nil
 }
 
+func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types.MsgUpdateRepositoryDescription) (*types.MsgUpdateRepositoryDescriptionResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	repository, found := k.GetRepository(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
+	}
+
+	if msg.Description == repository.Description {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("description not modified"))
+	}
+
+	var organization types.Organization
+	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
+		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", repository.Owner.Id))
+		}
+	}
+
+	if !utils.HavePermission(repository, msg.Creator, utils.RepositoryUpdateDescriptionPermission, organization) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	repository.Description = msg.Description
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgUpdateRepositoryDescriptionResponse{}, nil
+}
+
 func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateRepositoryCollaborator) (*types.MsgUpdateRepositoryCollaboratorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

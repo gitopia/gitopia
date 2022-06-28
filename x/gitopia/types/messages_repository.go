@@ -84,6 +84,9 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	} else if len(msg.Name) > 100 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
+	}
 	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
@@ -682,6 +685,48 @@ func (msg *MsgRenameRepository) ValidateBasic() error {
 	sanitized := IsNameSanitized(msg.Name)
 	if !sanitized {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateRepositoryDescription{}
+
+func NewMsgUpdateRepositoryDescription(creator string, id uint64, description string) *MsgUpdateRepositoryDescription {
+	return &MsgUpdateRepositoryDescription{
+		Id:          id,
+		Creator:     creator,
+		Description: description,
+	}
+}
+
+func (msg *MsgUpdateRepositoryDescription) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateRepositoryDescription) Type() string {
+	return "UpdateRepositoryDescription"
+}
+
+func (msg *MsgUpdateRepositoryDescription) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateRepositoryDescription) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateRepositoryDescription) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Description) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
 	}
 	return nil
 }

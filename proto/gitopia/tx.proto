@@ -62,6 +62,7 @@ service Msg {
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
   rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
+  rpc UpdateRepositoryDescription(MsgUpdateRepositoryDescription) returns (MsgUpdateRepositoryDescriptionResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
@@ -525,6 +526,15 @@ message MsgRenameRepository {
 }
 
 message MsgRenameRepositoryResponse { }
+
+message MsgUpdateRepositoryDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdateRepositoryDescriptionResponse { }
+
 
 message MsgChangeOwner {
   string creator = 1;
