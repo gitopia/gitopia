@@ -41,6 +41,7 @@ service Msg {
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
   rpc UpdateOrganizationDescription(MsgUpdateOrganizationDescription) returns (MsgUpdateOrganizationDescriptionResponse);
+  rpc UpdateOrganizationWebsite(MsgUpdateOrganizationWebsite) returns (MsgUpdateOrganizationWebsiteResponse);
   rpc UpdateOrganizationLocation(MsgUpdateOrganizationLocation) returns (MsgUpdateOrganizationLocationResponse);
   rpc UpdateOrganizationAvatar(MsgUpdateOrganizationAvatar) returns (MsgUpdateOrganizationAvatarResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
@@ -325,6 +326,13 @@ message MsgUpdateOrganizationDescription {
 
 message MsgUpdateOrganizationDescriptionResponse { }
 
+message MsgUpdateOrganizationWebsite {
+  string creator = 1;
+  string id = 2;
+  string url = 3;
+}
+
+message MsgUpdateOrganizationWebsiteResponse { }
 
 message MsgUpdateOrganizationLocation {
   string creator = 1;

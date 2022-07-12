@@ -255,6 +255,35 @@ func (k msgServer) UpdateOrganizationDescription(goCtx context.Context, msg *typ
 	return &types.MsgUpdateOrganizationDescriptionResponse{}, nil
 }
 
+func (k msgServer) UpdateOrganizationWebsite(goCtx context.Context, msg *types.MsgUpdateOrganizationWebsite) (*types.MsgUpdateOrganizationWebsiteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	organization, found := k.GetOrganization(ctx, msg.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
+	}
+
+	if i, exists := utils.OrganizationMemberExists(organization.Members, msg.Creator); exists {
+		if organization.Members[i].Role != types.OrganizationMember_OWNER {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of organization", msg.Creator))
+	}
+
+	organization.Website = msg.Url
+	organization.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetOrganization(ctx, organization)
+
+	return &types.MsgUpdateOrganizationWebsiteResponse{}, nil
+}
+
 func (k msgServer) UpdateOrganizationLocation(goCtx context.Context, msg *types.MsgUpdateOrganizationLocation) (*types.MsgUpdateOrganizationLocationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

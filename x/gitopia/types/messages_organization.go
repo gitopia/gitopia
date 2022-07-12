@@ -254,6 +254,58 @@ func (msg *MsgUpdateOrganizationDescription) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateOrganizationWebsite{}
+
+func NewMsgUpdateOrganizationWebsite(creator string, id string, url string) *MsgUpdateOrganizationWebsite {
+	return &MsgUpdateOrganizationWebsite{
+		Id:      id,
+		Creator: creator,
+		Url:     url,
+	}
+}
+
+func (msg *MsgUpdateOrganizationWebsite) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateOrganizationWebsite) Type() string {
+	return "UpdateOrganizationWebsite"
+}
+
+func (msg *MsgUpdateOrganizationWebsite) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateOrganizationWebsite) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateOrganizationWebsite) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	if msg.Url != "" {
+		url, err := url.ParseRequestURI(msg.Url)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Url)
+		}
+		if url.Scheme != "https" && url.Scheme != "http" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https and http URL scheme is allowed in Website")
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateOrganizationLocation{}
 
 func NewMsgUpdateOrganizationLocation(creator string, id string, location string) *MsgUpdateOrganizationLocation {
