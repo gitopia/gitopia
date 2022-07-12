@@ -185,6 +185,40 @@ func CmdUpdateOrganizationDescription() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateOrganizationLocation() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-organization-location [id] [location]",
+		Short: "Update organization location",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argsLocation, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateOrganizationLocation(clientCtx.GetFromAddress().String(), id, argsLocation)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateOrganizationAvatar() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-organization-avatar [id] [url]",

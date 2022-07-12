@@ -254,6 +254,52 @@ func (msg *MsgUpdateOrganizationDescription) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateOrganizationLocation{}
+
+func NewMsgUpdateOrganizationLocation(creator string, id string, location string) *MsgUpdateOrganizationLocation {
+	return &MsgUpdateOrganizationLocation{
+		Id:       id,
+		Creator:  creator,
+		Location: location,
+	}
+}
+
+func (msg *MsgUpdateOrganizationLocation) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateOrganizationLocation) Type() string {
+	return "UpdateOrganizationLocation"
+}
+
+func (msg *MsgUpdateOrganizationLocation) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateOrganizationLocation) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateOrganizationLocation) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid organization address (%s)", err)
+	}
+	if len(msg.Location) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Location exceeds limit: 255")
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgUpdateOrganizationAvatar{}
 
 func NewMsgUpdateOrganizationAvatar(creator string, id string, url string) *MsgUpdateOrganizationAvatar {

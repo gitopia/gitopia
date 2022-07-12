@@ -118,6 +118,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateOrganizationDescription(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateOrganizationLocation:
+			res, err := msgServer.UpdateOrganizationLocation(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgUpdateOrganizationAvatar:
 			res, err := msgServer.UpdateOrganizationAvatar(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
