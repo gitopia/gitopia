@@ -395,12 +395,14 @@ func (msg *MsgUpdateOrganizationAvatar) ValidateBasic() error {
 	if len(msg.Url) > 2048 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
 	}
-	url, err := url.ParseRequestURI(msg.Url)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Url)
-	}
-	if url.Scheme != "https" {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
+	if msg.Url != "" {
+		url, err := url.ParseRequestURI(msg.Url)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Url)
+		}
+		if url.Scheme != "https" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
+		}
 	}
 	return nil
 }
