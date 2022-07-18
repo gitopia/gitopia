@@ -158,13 +158,13 @@ service Query {
 	}
 
 	// Queries a list of user repositories.
-	rpc AddressRepositoryAll(QueryAllAddressRepositoryRequest) returns (QueryAllAddressRepositoryResponse) {
+	rpc AnyRepositoryAll(QueryAllAnyRepositoryRequest) returns (QueryAllAnyRepositoryResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repositories";
 	}
 
 	// Queries a repository by user id and repository name
-	rpc AddressRepository(QueryGetAddressRepositoryRequest) returns (QueryGetAddressRepositoryResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}/{repositoryName}";
+	rpc AnyRepository(QueryGetAnyRepositoryRequest) returns (QueryGetAnyRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repository/{repositoryName}";
 	}
 
 	// Queries a list of user Organizations.
@@ -499,22 +499,22 @@ message QueryAllUserResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryAllAddressRepositoryRequest {
+message QueryAllAnyRepositoryRequest {
 	string id = 1;
 	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-message QueryAllAddressRepositoryResponse {
+message QueryAllAnyRepositoryResponse {
 	repeated Repository Repository = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetAddressRepositoryRequest {
+message QueryGetAnyRepositoryRequest {
 	string id = 1;
 	string repositoryName = 2;
 }
 
-message QueryGetAddressRepositoryResponse {
+message QueryGetAnyRepositoryResponse {
 	Repository Repository = 1;
 }
 

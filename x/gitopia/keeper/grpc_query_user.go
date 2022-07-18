@@ -58,18 +58,24 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 	return &types.QueryGetUserResponse{User: &user}, nil
 }
 
-func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddressRepositoryRequest) (*types.QueryAllAddressRepositoryResponse, error) {
+func (k Keeper) AnyRepositoryAll(c context.Context, req *types.QueryAllAnyRepositoryRequest) (*types.QueryAllAnyRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repositories []*types.Repository
-	var pageRes *query.PageResponse
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repositories []*types.Repository
+	var pageRes *query.PageResponse
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
 		var err error
@@ -80,7 +86,8 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
 		var err error
@@ -91,43 +98,49 @@ func (k Keeper) AddressRepositoryAll(c context.Context, req *types.QueryAllAddre
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
-
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
-	return &types.QueryAllAddressRepositoryResponse{Repository: repositories, Pagination: pageRes}, nil
+	return &types.QueryAllAnyRepositoryResponse{Repository: repositories, Pagination: pageRes}, nil
 }
 
-func (k Keeper) AddressRepository(c context.Context, req *types.QueryGetAddressRepositoryRequest) (*types.QueryGetAddressRepositoryResponse, error) {
+func (k Keeper) AnyRepository(c context.Context, req *types.QueryGetAnyRepositoryRequest) (*types.QueryGetAnyRepositoryResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repository types.Repository
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator == "" {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	return &types.QueryGetAddressRepositoryResponse{Repository: &repository}, nil
+	return &types.QueryGetAnyRepositoryResponse{Repository: &repository}, nil
 }
 
 func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOrganizationRequest) (*types.QueryAllUserOrganizationResponse, error) {

@@ -2,11 +2,17 @@ package keeper
 
 import (
 	"encoding/binary"
+	"errors"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
+
+type WhoisAddress struct {
+	address   string
+	ownerType types.Whois_OwnerType
+}
 
 // GetWhoisCount get the total number of whois
 func (k Keeper) GetWhoisCount(ctx sdk.Context) uint64 {
@@ -72,4 +78,24 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 	}
 
 	return
+}
+
+// Checks if username or address is valid and exists. Also identify its type (USER/ORGANIZATION).
+func (k Keeper) ResolveAddress(ctx sdk.Context, id string) (address *WhoisAddress, err error) {
+	if _, err := sdk.AccAddressFromBech32(id); err != nil {
+		whois, found := k.GetWhois(ctx, id)
+		if !found {
+			return nil, errors.New("username or address not exists")
+		}
+		return &WhoisAddress{address: whois.Address, ownerType: whois.OwnerType}, nil
+	}
+
+	if _, found := k.GetUser(ctx, id); found {
+		return &WhoisAddress{address: id, ownerType: types.Whois_USER}, nil
+	}
+	if _, found := k.GetOrganization(ctx, id); found {
+		return &WhoisAddress{address: id, ownerType: types.Whois_ORGANIZATION}, nil
+	}
+
+	return nil, errors.New("username or address not exists")
 }
