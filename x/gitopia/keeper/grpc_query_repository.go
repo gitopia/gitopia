@@ -374,27 +374,33 @@ func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var pageRes *query.PageResponse
-	var repositoryId uint64
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.UserId)
-	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
 
-	if userFound {
+	var pageRes *query.PageResponse
+	var repositoryId uint64
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryId = user.Repositories[i].Id
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryId = organization.Repositories[i].Id
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	repository, found := k.GetRepository(ctx, repositoryId)
@@ -406,7 +412,6 @@ func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*
 
 	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
-	var err error
 	pageRes, err = PaginateAllForkRepository(k, ctx, repositoryStore, repository, req.Pagination, func(repositoryFork types.RepositoryFork) error {
 		forks = append(forks, &repositoryFork)
 		return nil

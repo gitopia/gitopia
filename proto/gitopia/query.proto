@@ -127,7 +127,7 @@ service Query {
 
 	// Queries a repository forks by id.
 	rpc ForkAll(QueryGetAllForkRequest) returns (QueryGetAllForkResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/forks";
 	}
 
 	// Queries a repository by id.
@@ -430,7 +430,7 @@ message RepositoryFork {
 }
 
 message QueryGetAllForkRequest {
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
