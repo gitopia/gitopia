@@ -69,27 +69,34 @@ func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLa
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.UserId)
-	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repository types.Repository
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	totalReleaseCount := len(repository.Releases)
@@ -111,27 +118,34 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.UserId)
-	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repository types.Repository
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if i, exists := utils.RepositoryReleaseTagExists(repository.Releases, req.TagName); exists {
@@ -151,30 +165,36 @@ func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepos
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
+	ctx := sdk.UnwrapSDKContext(c)
+
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
 	var repository types.Repository
 	var releases []*types.Release
 	var pageRes *query.PageResponse
-	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.UserId)
-
-	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
-	if userFound {
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator != "" {
@@ -198,29 +218,36 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
+	ctx := sdk.UnwrapSDKContext(c)
+
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
 	var repository types.Repository
 	var issues []*types.Issue
 	var pageRes *query.PageResponse
-	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-	if userFound {
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator != "" {
@@ -244,28 +271,35 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
-	var issue types.Issue
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repository types.Repository
+	var issue types.Issue
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator != "" {
@@ -285,30 +319,36 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
+	ctx := sdk.UnwrapSDKContext(c)
+
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
 	var repository types.Repository
 	var pullRequests []*types.PullRequest
 	var pageRes *query.PageResponse
-	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-
-	if userFound {
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator != "" {
@@ -333,28 +373,35 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var repository types.Repository
-	var pullRequest types.PullRequest
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.Id)
-	organization, organizationFound := k.GetOrganization(ctx, req.Id)
-	if userFound {
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	var repository types.Repository
+	var pullRequest types.PullRequest
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	if repository.Creator != "" {
@@ -374,27 +421,33 @@ func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var pageRes *query.PageResponse
-	var repositoryId uint64
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, userFound := k.GetUser(ctx, req.UserId)
-	organization, organizationFound := k.GetOrganization(ctx, req.UserId)
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
 
-	if userFound {
+	var pageRes *query.PageResponse
+	var repositoryId uint64
+
+	switch address.ownerType {
+	case types.Whois_USER:
+		user, _ := k.GetUser(ctx, address.address)
 		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
 			repositoryId = user.Repositories[i].Id
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else if organizationFound {
+	case types.Whois_ORGANIZATION:
+		organization, _ := k.GetOrganization(ctx, address.address)
 		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
 			repositoryId = organization.Repositories[i].Id
 		} else {
 			return nil, sdkerrors.ErrKeyNotFound
 		}
-	} else {
-		return nil, sdkerrors.ErrKeyNotFound
+	default:
+		return nil, sdkerrors.ErrLogic
 	}
 
 	repository, found := k.GetRepository(ctx, repositoryId)
@@ -406,7 +459,6 @@ func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*
 
 	repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
 
-	var err error
 	pageRes, err = PaginateAllForkRepository(k, ctx, repositoryStore, repository, req.Pagination, func(repositoryFork types.RepositoryFork) error {
 		forks = append(forks, &repositoryFork)
 		return nil
