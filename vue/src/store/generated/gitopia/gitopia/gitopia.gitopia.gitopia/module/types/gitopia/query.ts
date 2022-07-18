@@ -145,7 +145,7 @@ export interface QueryAllIssueResponse {
 }
 
 export interface QueryGetLatestRepositoryReleaseRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
 }
 
@@ -154,7 +154,7 @@ export interface QueryGetLatestRepositoryReleaseResponse {
 }
 
 export interface QueryGetRepositoryReleaseRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   tagName: string;
 }
@@ -164,7 +164,7 @@ export interface QueryGetRepositoryReleaseResponse {
 }
 
 export interface QueryAllRepositoryReleaseRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   pagination: PageRequest | undefined;
 }
@@ -185,7 +185,7 @@ export interface QueryGetRepositoryIssueResponse {
 }
 
 export interface QueryGetRepositoryPullRequestRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   pullIid: number;
 }
@@ -219,7 +219,7 @@ export interface QueryAllRepositoryIssueResponse {
 }
 
 export interface QueryAllRepositoryPullRequestRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   option: PullRequestOptions | undefined;
   pagination: PageRequest | undefined;
@@ -264,7 +264,7 @@ export interface RepositoryFork {
 }
 
 export interface QueryGetAllForkRequest {
-  userId: string;
+  id: string;
   repositoryName: string;
   pagination: PageRequest | undefined;
 }
@@ -334,22 +334,22 @@ export interface QueryAllUserResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryAllAddressRepositoryRequest {
+export interface QueryAllAnyRepositoryRequest {
   id: string;
   pagination: PageRequest | undefined;
 }
 
-export interface QueryAllAddressRepositoryResponse {
+export interface QueryAllAnyRepositoryResponse {
   Repository: Repository[];
   pagination: PageResponse | undefined;
 }
 
-export interface QueryGetAddressRepositoryRequest {
+export interface QueryGetAnyRepositoryRequest {
   id: string;
   repositoryName: string;
 }
 
-export interface QueryGetAddressRepositoryResponse {
+export interface QueryGetAnyRepositoryResponse {
   Repository: Repository | undefined;
 }
 
@@ -2468,7 +2468,7 @@ export const QueryAllIssueResponse = {
 };
 
 const baseQueryGetLatestRepositoryReleaseRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
 };
 
@@ -2477,8 +2477,8 @@ export const QueryGetLatestRepositoryReleaseRequest = {
     message: QueryGetLatestRepositoryReleaseRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -2499,7 +2499,7 @@ export const QueryGetLatestRepositoryReleaseRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -2516,10 +2516,10 @@ export const QueryGetLatestRepositoryReleaseRequest = {
     const message = {
       ...baseQueryGetLatestRepositoryReleaseRequest,
     } as QueryGetLatestRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -2531,7 +2531,7 @@ export const QueryGetLatestRepositoryReleaseRequest = {
 
   toJSON(message: QueryGetLatestRepositoryReleaseRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     return obj;
@@ -2543,10 +2543,10 @@ export const QueryGetLatestRepositoryReleaseRequest = {
     const message = {
       ...baseQueryGetLatestRepositoryReleaseRequest,
     } as QueryGetLatestRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -2630,7 +2630,7 @@ export const QueryGetLatestRepositoryReleaseResponse = {
 };
 
 const baseQueryGetRepositoryReleaseRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
   tagName: "",
 };
@@ -2640,8 +2640,8 @@ export const QueryGetRepositoryReleaseRequest = {
     message: QueryGetRepositoryReleaseRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -2665,7 +2665,7 @@ export const QueryGetRepositoryReleaseRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -2685,10 +2685,10 @@ export const QueryGetRepositoryReleaseRequest = {
     const message = {
       ...baseQueryGetRepositoryReleaseRequest,
     } as QueryGetRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -2705,7 +2705,7 @@ export const QueryGetRepositoryReleaseRequest = {
 
   toJSON(message: QueryGetRepositoryReleaseRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.tagName !== undefined && (obj.tagName = message.tagName);
@@ -2718,10 +2718,10 @@ export const QueryGetRepositoryReleaseRequest = {
     const message = {
       ...baseQueryGetRepositoryReleaseRequest,
     } as QueryGetRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -2810,7 +2810,7 @@ export const QueryGetRepositoryReleaseResponse = {
 };
 
 const baseQueryAllRepositoryReleaseRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
 };
 
@@ -2819,8 +2819,8 @@ export const QueryAllRepositoryReleaseRequest = {
     message: QueryAllRepositoryReleaseRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -2844,7 +2844,7 @@ export const QueryAllRepositoryReleaseRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -2864,10 +2864,10 @@ export const QueryAllRepositoryReleaseRequest = {
     const message = {
       ...baseQueryAllRepositoryReleaseRequest,
     } as QueryAllRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -2884,7 +2884,7 @@ export const QueryAllRepositoryReleaseRequest = {
 
   toJSON(message: QueryAllRepositoryReleaseRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.pagination !== undefined &&
@@ -2900,10 +2900,10 @@ export const QueryAllRepositoryReleaseRequest = {
     const message = {
       ...baseQueryAllRepositoryReleaseRequest,
     } as QueryAllRepositoryReleaseRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -3199,7 +3199,7 @@ export const QueryGetRepositoryIssueResponse = {
 };
 
 const baseQueryGetRepositoryPullRequestRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
   pullIid: 0,
 };
@@ -3209,8 +3209,8 @@ export const QueryGetRepositoryPullRequestRequest = {
     message: QueryGetRepositoryPullRequestRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -3234,7 +3234,7 @@ export const QueryGetRepositoryPullRequestRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -3254,10 +3254,10 @@ export const QueryGetRepositoryPullRequestRequest = {
     const message = {
       ...baseQueryGetRepositoryPullRequestRequest,
     } as QueryGetRepositoryPullRequestRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -3274,7 +3274,7 @@ export const QueryGetRepositoryPullRequestRequest = {
 
   toJSON(message: QueryGetRepositoryPullRequestRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.pullIid !== undefined && (obj.pullIid = message.pullIid);
@@ -3287,10 +3287,10 @@ export const QueryGetRepositoryPullRequestRequest = {
     const message = {
       ...baseQueryGetRepositoryPullRequestRequest,
     } as QueryGetRepositoryPullRequestRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -3830,7 +3830,7 @@ export const QueryAllRepositoryIssueResponse = {
 };
 
 const baseQueryAllRepositoryPullRequestRequest: object = {
-  userId: "",
+  id: "",
   repositoryName: "",
 };
 
@@ -3839,8 +3839,8 @@ export const QueryAllRepositoryPullRequestRequest = {
     message: QueryAllRepositoryPullRequestRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -3870,7 +3870,7 @@ export const QueryAllRepositoryPullRequestRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -3893,10 +3893,10 @@ export const QueryAllRepositoryPullRequestRequest = {
     const message = {
       ...baseQueryAllRepositoryPullRequestRequest,
     } as QueryAllRepositoryPullRequestRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -3918,7 +3918,7 @@ export const QueryAllRepositoryPullRequestRequest = {
 
   toJSON(message: QueryAllRepositoryPullRequestRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.option !== undefined &&
@@ -3938,10 +3938,10 @@ export const QueryAllRepositoryPullRequestRequest = {
     const message = {
       ...baseQueryAllRepositoryPullRequestRequest,
     } as QueryAllRepositoryPullRequestRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -4649,15 +4649,15 @@ export const RepositoryFork = {
   },
 };
 
-const baseQueryGetAllForkRequest: object = { userId: "", repositoryName: "" };
+const baseQueryGetAllForkRequest: object = { id: "", repositoryName: "" };
 
 export const QueryGetAllForkRequest = {
   encode(
     message: QueryGetAllForkRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.repositoryName !== "") {
       writer.uint32(18).string(message.repositoryName);
@@ -4676,7 +4676,7 @@ export const QueryGetAllForkRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.userId = reader.string();
+          message.id = reader.string();
           break;
         case 2:
           message.repositoryName = reader.string();
@@ -4694,10 +4694,10 @@ export const QueryGetAllForkRequest = {
 
   fromJSON(object: any): QueryGetAllForkRequest {
     const message = { ...baseQueryGetAllForkRequest } as QueryGetAllForkRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = String(object.userId);
+    if (object.id !== undefined && object.id !== null) {
+      message.id = String(object.id);
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = String(object.repositoryName);
@@ -4714,7 +4714,7 @@ export const QueryGetAllForkRequest = {
 
   toJSON(message: QueryGetAllForkRequest): unknown {
     const obj: any = {};
-    message.userId !== undefined && (obj.userId = message.userId);
+    message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
       (obj.repositoryName = message.repositoryName);
     message.pagination !== undefined &&
@@ -4728,10 +4728,10 @@ export const QueryGetAllForkRequest = {
     object: DeepPartial<QueryGetAllForkRequest>
   ): QueryGetAllForkRequest {
     const message = { ...baseQueryGetAllForkRequest } as QueryGetAllForkRequest;
-    if (object.userId !== undefined && object.userId !== null) {
-      message.userId = object.userId;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
     } else {
-      message.userId = "";
+      message.id = "";
     }
     if (object.repositoryName !== undefined && object.repositoryName !== null) {
       message.repositoryName = object.repositoryName;
@@ -5861,11 +5861,11 @@ export const QueryAllUserResponse = {
   },
 };
 
-const baseQueryAllAddressRepositoryRequest: object = { id: "" };
+const baseQueryAllAnyRepositoryRequest: object = { id: "" };
 
-export const QueryAllAddressRepositoryRequest = {
+export const QueryAllAnyRepositoryRequest = {
   encode(
-    message: QueryAllAddressRepositoryRequest,
+    message: QueryAllAnyRepositoryRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.id !== "") {
@@ -5880,12 +5880,12 @@ export const QueryAllAddressRepositoryRequest = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryAllAddressRepositoryRequest {
+  ): QueryAllAnyRepositoryRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryAllAddressRepositoryRequest,
-    } as QueryAllAddressRepositoryRequest;
+      ...baseQueryAllAnyRepositoryRequest,
+    } as QueryAllAnyRepositoryRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -5903,10 +5903,10 @@ export const QueryAllAddressRepositoryRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllAddressRepositoryRequest {
+  fromJSON(object: any): QueryAllAnyRepositoryRequest {
     const message = {
-      ...baseQueryAllAddressRepositoryRequest,
-    } as QueryAllAddressRepositoryRequest;
+      ...baseQueryAllAnyRepositoryRequest,
+    } as QueryAllAnyRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = String(object.id);
     } else {
@@ -5920,7 +5920,7 @@ export const QueryAllAddressRepositoryRequest = {
     return message;
   },
 
-  toJSON(message: QueryAllAddressRepositoryRequest): unknown {
+  toJSON(message: QueryAllAnyRepositoryRequest): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     message.pagination !== undefined &&
@@ -5931,11 +5931,11 @@ export const QueryAllAddressRepositoryRequest = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryAllAddressRepositoryRequest>
-  ): QueryAllAddressRepositoryRequest {
+    object: DeepPartial<QueryAllAnyRepositoryRequest>
+  ): QueryAllAnyRepositoryRequest {
     const message = {
-      ...baseQueryAllAddressRepositoryRequest,
-    } as QueryAllAddressRepositoryRequest;
+      ...baseQueryAllAnyRepositoryRequest,
+    } as QueryAllAnyRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
@@ -5950,11 +5950,11 @@ export const QueryAllAddressRepositoryRequest = {
   },
 };
 
-const baseQueryAllAddressRepositoryResponse: object = {};
+const baseQueryAllAnyRepositoryResponse: object = {};
 
-export const QueryAllAddressRepositoryResponse = {
+export const QueryAllAnyRepositoryResponse = {
   encode(
-    message: QueryAllAddressRepositoryResponse,
+    message: QueryAllAnyRepositoryResponse,
     writer: Writer = Writer.create()
   ): Writer {
     for (const v of message.Repository) {
@@ -5972,12 +5972,12 @@ export const QueryAllAddressRepositoryResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryAllAddressRepositoryResponse {
+  ): QueryAllAnyRepositoryResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryAllAddressRepositoryResponse,
-    } as QueryAllAddressRepositoryResponse;
+      ...baseQueryAllAnyRepositoryResponse,
+    } as QueryAllAnyRepositoryResponse;
     message.Repository = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
@@ -5996,10 +5996,10 @@ export const QueryAllAddressRepositoryResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryAllAddressRepositoryResponse {
+  fromJSON(object: any): QueryAllAnyRepositoryResponse {
     const message = {
-      ...baseQueryAllAddressRepositoryResponse,
-    } as QueryAllAddressRepositoryResponse;
+      ...baseQueryAllAnyRepositoryResponse,
+    } as QueryAllAnyRepositoryResponse;
     message.Repository = [];
     if (object.Repository !== undefined && object.Repository !== null) {
       for (const e of object.Repository) {
@@ -6014,7 +6014,7 @@ export const QueryAllAddressRepositoryResponse = {
     return message;
   },
 
-  toJSON(message: QueryAllAddressRepositoryResponse): unknown {
+  toJSON(message: QueryAllAnyRepositoryResponse): unknown {
     const obj: any = {};
     if (message.Repository) {
       obj.Repository = message.Repository.map((e) =>
@@ -6031,11 +6031,11 @@ export const QueryAllAddressRepositoryResponse = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryAllAddressRepositoryResponse>
-  ): QueryAllAddressRepositoryResponse {
+    object: DeepPartial<QueryAllAnyRepositoryResponse>
+  ): QueryAllAnyRepositoryResponse {
     const message = {
-      ...baseQueryAllAddressRepositoryResponse,
-    } as QueryAllAddressRepositoryResponse;
+      ...baseQueryAllAnyRepositoryResponse,
+    } as QueryAllAnyRepositoryResponse;
     message.Repository = [];
     if (object.Repository !== undefined && object.Repository !== null) {
       for (const e of object.Repository) {
@@ -6051,14 +6051,11 @@ export const QueryAllAddressRepositoryResponse = {
   },
 };
 
-const baseQueryGetAddressRepositoryRequest: object = {
-  id: "",
-  repositoryName: "",
-};
+const baseQueryGetAnyRepositoryRequest: object = { id: "", repositoryName: "" };
 
-export const QueryGetAddressRepositoryRequest = {
+export const QueryGetAnyRepositoryRequest = {
   encode(
-    message: QueryGetAddressRepositoryRequest,
+    message: QueryGetAnyRepositoryRequest,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.id !== "") {
@@ -6073,12 +6070,12 @@ export const QueryGetAddressRepositoryRequest = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryGetAddressRepositoryRequest {
+  ): QueryGetAnyRepositoryRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetAddressRepositoryRequest,
-    } as QueryGetAddressRepositoryRequest;
+      ...baseQueryGetAnyRepositoryRequest,
+    } as QueryGetAnyRepositoryRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -6096,10 +6093,10 @@ export const QueryGetAddressRepositoryRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetAddressRepositoryRequest {
+  fromJSON(object: any): QueryGetAnyRepositoryRequest {
     const message = {
-      ...baseQueryGetAddressRepositoryRequest,
-    } as QueryGetAddressRepositoryRequest;
+      ...baseQueryGetAnyRepositoryRequest,
+    } as QueryGetAnyRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = String(object.id);
     } else {
@@ -6113,7 +6110,7 @@ export const QueryGetAddressRepositoryRequest = {
     return message;
   },
 
-  toJSON(message: QueryGetAddressRepositoryRequest): unknown {
+  toJSON(message: QueryGetAnyRepositoryRequest): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     message.repositoryName !== undefined &&
@@ -6122,11 +6119,11 @@ export const QueryGetAddressRepositoryRequest = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryGetAddressRepositoryRequest>
-  ): QueryGetAddressRepositoryRequest {
+    object: DeepPartial<QueryGetAnyRepositoryRequest>
+  ): QueryGetAnyRepositoryRequest {
     const message = {
-      ...baseQueryGetAddressRepositoryRequest,
-    } as QueryGetAddressRepositoryRequest;
+      ...baseQueryGetAnyRepositoryRequest,
+    } as QueryGetAnyRepositoryRequest;
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
@@ -6141,11 +6138,11 @@ export const QueryGetAddressRepositoryRequest = {
   },
 };
 
-const baseQueryGetAddressRepositoryResponse: object = {};
+const baseQueryGetAnyRepositoryResponse: object = {};
 
-export const QueryGetAddressRepositoryResponse = {
+export const QueryGetAnyRepositoryResponse = {
   encode(
-    message: QueryGetAddressRepositoryResponse,
+    message: QueryGetAnyRepositoryResponse,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.Repository !== undefined) {
@@ -6157,12 +6154,12 @@ export const QueryGetAddressRepositoryResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryGetAddressRepositoryResponse {
+  ): QueryGetAnyRepositoryResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetAddressRepositoryResponse,
-    } as QueryGetAddressRepositoryResponse;
+      ...baseQueryGetAnyRepositoryResponse,
+    } as QueryGetAnyRepositoryResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -6177,10 +6174,10 @@ export const QueryGetAddressRepositoryResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetAddressRepositoryResponse {
+  fromJSON(object: any): QueryGetAnyRepositoryResponse {
     const message = {
-      ...baseQueryGetAddressRepositoryResponse,
-    } as QueryGetAddressRepositoryResponse;
+      ...baseQueryGetAnyRepositoryResponse,
+    } as QueryGetAnyRepositoryResponse;
     if (object.Repository !== undefined && object.Repository !== null) {
       message.Repository = Repository.fromJSON(object.Repository);
     } else {
@@ -6189,7 +6186,7 @@ export const QueryGetAddressRepositoryResponse = {
     return message;
   },
 
-  toJSON(message: QueryGetAddressRepositoryResponse): unknown {
+  toJSON(message: QueryGetAnyRepositoryResponse): unknown {
     const obj: any = {};
     message.Repository !== undefined &&
       (obj.Repository = message.Repository
@@ -6199,11 +6196,11 @@ export const QueryGetAddressRepositoryResponse = {
   },
 
   fromPartial(
-    object: DeepPartial<QueryGetAddressRepositoryResponse>
-  ): QueryGetAddressRepositoryResponse {
+    object: DeepPartial<QueryGetAnyRepositoryResponse>
+  ): QueryGetAnyRepositoryResponse {
     const message = {
-      ...baseQueryGetAddressRepositoryResponse,
-    } as QueryGetAddressRepositoryResponse;
+      ...baseQueryGetAnyRepositoryResponse,
+    } as QueryGetAnyRepositoryResponse;
     if (object.Repository !== undefined && object.Repository !== null) {
       message.Repository = Repository.fromPartial(object.Repository);
     } else {
@@ -6714,13 +6711,13 @@ export interface Query {
   /** Queries a list of user items. */
   UserAll(request: QueryAllUserRequest): Promise<QueryAllUserResponse>;
   /** Queries a list of user repositories. */
-  AddressRepositoryAll(
-    request: QueryAllAddressRepositoryRequest
-  ): Promise<QueryAllAddressRepositoryResponse>;
+  AnyRepositoryAll(
+    request: QueryAllAnyRepositoryRequest
+  ): Promise<QueryAllAnyRepositoryResponse>;
   /** Queries a repository by user id and repository name */
-  AddressRepository(
-    request: QueryGetAddressRepositoryRequest
-  ): Promise<QueryGetAddressRepositoryResponse>;
+  AnyRepository(
+    request: QueryGetAnyRepositoryRequest
+  ): Promise<QueryGetAnyRepositoryResponse>;
   /** Queries a list of user Organizations. */
   UserOrganizationAll(
     request: QueryAllUserOrganizationRequest
@@ -7114,31 +7111,31 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  AddressRepositoryAll(
-    request: QueryAllAddressRepositoryRequest
-  ): Promise<QueryAllAddressRepositoryResponse> {
-    const data = QueryAllAddressRepositoryRequest.encode(request).finish();
+  AnyRepositoryAll(
+    request: QueryAllAnyRepositoryRequest
+  ): Promise<QueryAllAnyRepositoryResponse> {
+    const data = QueryAllAnyRepositoryRequest.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Query",
-      "AddressRepositoryAll",
+      "AnyRepositoryAll",
       data
     );
     return promise.then((data) =>
-      QueryAllAddressRepositoryResponse.decode(new Reader(data))
+      QueryAllAnyRepositoryResponse.decode(new Reader(data))
     );
   }
 
-  AddressRepository(
-    request: QueryGetAddressRepositoryRequest
-  ): Promise<QueryGetAddressRepositoryResponse> {
-    const data = QueryGetAddressRepositoryRequest.encode(request).finish();
+  AnyRepository(
+    request: QueryGetAnyRepositoryRequest
+  ): Promise<QueryGetAnyRepositoryResponse> {
+    const data = QueryGetAnyRepositoryRequest.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Query",
-      "AddressRepository",
+      "AnyRepository",
       data
     );
     return promise.then((data) =>
-      QueryGetAddressRepositoryResponse.decode(new Reader(data))
+      QueryGetAnyRepositoryResponse.decode(new Reader(data))
     );
   }
 

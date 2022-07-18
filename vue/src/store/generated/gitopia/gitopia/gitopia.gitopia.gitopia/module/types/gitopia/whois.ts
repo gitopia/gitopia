@@ -7,9 +7,42 @@ export interface Whois {
   creator: string;
   name: string;
   address: string;
+  ownerType: Whois_OwnerType;
 }
 
-const baseWhois: object = { creator: "", name: "", address: "" };
+export enum Whois_OwnerType {
+  USER = 0,
+  ORGANIZATION = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function whois_OwnerTypeFromJSON(object: any): Whois_OwnerType {
+  switch (object) {
+    case 0:
+    case "USER":
+      return Whois_OwnerType.USER;
+    case 1:
+    case "ORGANIZATION":
+      return Whois_OwnerType.ORGANIZATION;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Whois_OwnerType.UNRECOGNIZED;
+  }
+}
+
+export function whois_OwnerTypeToJSON(object: Whois_OwnerType): string {
+  switch (object) {
+    case Whois_OwnerType.USER:
+      return "USER";
+    case Whois_OwnerType.ORGANIZATION:
+      return "ORGANIZATION";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+const baseWhois: object = { creator: "", name: "", address: "", ownerType: 0 };
 
 export const Whois = {
   encode(message: Whois, writer: Writer = Writer.create()): Writer {
@@ -21,6 +54,9 @@ export const Whois = {
     }
     if (message.address !== "") {
       writer.uint32(26).string(message.address);
+    }
+    if (message.ownerType !== 0) {
+      writer.uint32(32).int32(message.ownerType);
     }
     return writer;
   },
@@ -40,6 +76,9 @@ export const Whois = {
           break;
         case 3:
           message.address = reader.string();
+          break;
+        case 4:
+          message.ownerType = reader.int32() as any;
           break;
         default:
           reader.skipType(tag & 7);
@@ -66,6 +105,11 @@ export const Whois = {
     } else {
       message.address = "";
     }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = whois_OwnerTypeFromJSON(object.ownerType);
+    } else {
+      message.ownerType = 0;
+    }
     return message;
   },
 
@@ -74,6 +118,8 @@ export const Whois = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.name !== undefined && (obj.name = message.name);
     message.address !== undefined && (obj.address = message.address);
+    message.ownerType !== undefined &&
+      (obj.ownerType = whois_OwnerTypeToJSON(message.ownerType));
     return obj;
   },
 
@@ -93,6 +139,11 @@ export const Whois = {
       message.address = object.address;
     } else {
       message.address = "";
+    }
+    if (object.ownerType !== undefined && object.ownerType !== null) {
+      message.ownerType = object.ownerType;
+    } else {
+      message.ownerType = 0;
     }
     return message;
   },

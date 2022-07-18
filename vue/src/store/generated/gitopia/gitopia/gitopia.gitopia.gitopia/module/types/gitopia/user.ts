@@ -15,7 +15,7 @@ export interface User {
   following: string[];
   repositories: UserRepository[];
   organizations: UserOrganization[];
-  starredRepos: number[];
+  starred_repos: number[];
   subscriptions: string;
   bio: string;
   createdAt: number;
@@ -41,7 +41,7 @@ const baseUser: object = {
   avatarUrl: "",
   followers: "",
   following: "",
-  starredRepos: 0,
+  starred_repos: 0,
   subscriptions: "",
   bio: "",
   createdAt: 0,
@@ -81,7 +81,7 @@ export const User = {
       UserOrganization.encode(v!, writer.uint32(82).fork()).ldelim();
     }
     writer.uint32(90).fork();
-    for (const v of message.starredRepos) {
+    for (const v of message.starred_repos) {
       writer.uint64(v);
     }
     writer.ldelim();
@@ -108,7 +108,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.organizations = [];
-    message.starredRepos = [];
+    message.starred_repos = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -150,10 +150,10 @@ export const User = {
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.starredRepos.push(longToNumber(reader.uint64() as Long));
+              message.starred_repos.push(longToNumber(reader.uint64() as Long));
             }
           } else {
-            message.starredRepos.push(longToNumber(reader.uint64() as Long));
+            message.starred_repos.push(longToNumber(reader.uint64() as Long));
           }
           break;
         case 12:
@@ -182,7 +182,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.organizations = [];
-    message.starredRepos = [];
+    message.starred_repos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -233,9 +233,9 @@ export const User = {
         message.organizations.push(UserOrganization.fromJSON(e));
       }
     }
-    if (object.starredRepos !== undefined && object.starredRepos !== null) {
-      for (const e of object.starredRepos) {
-        message.starredRepos.push(Number(e));
+    if (object.starred_repos !== undefined && object.starred_repos !== null) {
+      for (const e of object.starred_repos) {
+        message.starred_repos.push(Number(e));
       }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {
@@ -294,10 +294,10 @@ export const User = {
     } else {
       obj.organizations = [];
     }
-    if (message.starredRepos) {
-      obj.starredRepos = message.starredRepos.map((e) => e);
+    if (message.starred_repos) {
+      obj.starred_repos = message.starred_repos.map((e) => e);
     } else {
-      obj.starredRepos = [];
+      obj.starred_repos = [];
     }
     message.subscriptions !== undefined &&
       (obj.subscriptions = message.subscriptions);
@@ -313,7 +313,7 @@ export const User = {
     message.following = [];
     message.repositories = [];
     message.organizations = [];
-    message.starredRepos = [];
+    message.starred_repos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -364,9 +364,9 @@ export const User = {
         message.organizations.push(UserOrganization.fromPartial(e));
       }
     }
-    if (object.starredRepos !== undefined && object.starredRepos !== null) {
-      for (const e of object.starredRepos) {
-        message.starredRepos.push(e);
+    if (object.starred_repos !== undefined && object.starred_repos !== null) {
+      for (const e of object.starred_repos) {
+        message.starred_repos.push(e);
       }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {

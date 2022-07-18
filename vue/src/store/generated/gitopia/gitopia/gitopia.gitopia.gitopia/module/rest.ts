@@ -32,6 +32,11 @@ export enum RepositoryCollaboratorPermission {
   ADMIN = "ADMIN",
 }
 
+export enum WhoisOwnerType {
+  USER = "USER",
+  ORGANIZATION = "ORGANIZATION",
+}
+
 export interface GitopiaAttachment {
   name?: string;
 
@@ -432,7 +437,7 @@ export enum GitopiaPullRequestState {
   MERGED = "MERGED",
 }
 
-export interface GitopiaQueryAllAddressRepositoryResponse {
+export interface GitopiaQueryAllAnyRepositoryResponse {
   Repository?: GitopiaRepository[];
 
   /**
@@ -635,10 +640,6 @@ export interface GitopiaQueryCheckGitServerAuthorizationResponse {
   haveAuthorization?: boolean;
 }
 
-export interface GitopiaQueryGetAddressRepositoryResponse {
-  Repository?: GitopiaRepository;
-}
-
 export interface GitopiaQueryGetAllBranchResponse {
   Branches?: GitopiaRepositoryBranch[];
 }
@@ -660,6 +661,10 @@ export interface GitopiaQueryGetAllForkResponse {
 
 export interface GitopiaQueryGetAllTagResponse {
   Tags?: GitopiaRepositoryTag[];
+}
+
+export interface GitopiaQueryGetAnyRepositoryResponse {
+  Repository?: GitopiaRepository;
 }
 
 export interface GitopiaQueryGetBranchShaResponse {
@@ -917,7 +922,7 @@ export interface GitopiaUser {
   following?: string[];
   repositories?: GitopiaUserRepository[];
   organizations?: GitopiaUserOrganization[];
-  starredRepos?: string[];
+  starred_repos?: string[];
   subscriptions?: string;
   bio?: string;
 
@@ -944,6 +949,7 @@ export interface GitopiaWhois {
   creator?: string;
   name?: string;
   address?: string;
+  ownerType?: WhoisOwnerType;
 }
 
 export interface ProtobufAny {
@@ -993,7 +999,7 @@ export interface V1Beta1PageRequest {
    * count_total is only respected when offset is used. It is ignored when key
    * is set.
    */
-  countTotal?: boolean;
+  count_total?: boolean;
 
   /**
    * reverse is set to true if results are to be returned in the descending order.
@@ -1014,7 +1020,7 @@ corresponding request message has used PageRequest.
 */
 export interface V1Beta1PageResponse {
   /** @format byte */
-  nextKey?: string;
+  next_key?: string;
 
   /** @format uint64 */
   total?: string;
@@ -1244,7 +1250,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1286,7 +1292,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1328,7 +1334,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1385,7 +1391,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1427,7 +1433,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1469,7 +1475,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1493,22 +1499,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRepository = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/repository/${id}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryAddressRepository
-   * @summary Queries a repository by user id and repository name
-   * @request GET:/gitopia/gitopia/gitopia/repository/{id}/{repositoryName}
-   */
-  queryAddressRepository = (id: string, repositoryName: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetAddressRepositoryResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/repository/${id}/${repositoryName}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1588,7 +1578,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1630,7 +1620,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1679,25 +1669,41 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryAddressRepositoryAll
+   * @name QueryAnyRepositoryAll
    * @summary Queries a list of user repositories.
    * @request GET:/gitopia/gitopia/gitopia/user/{id}/repositories
    */
-  queryAddressRepositoryAll = (
+  queryAnyRepositoryAll = (
     id: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
-    this.request<GitopiaQueryAllAddressRepositoryResponse, RpcStatus>({
+    this.request<GitopiaQueryAllAnyRepositoryResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/user/${id}/repositories`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAnyRepository
+   * @summary Queries a repository by user id and repository name
+   * @request GET:/gitopia/gitopia/gitopia/user/{id}/repository/{repositoryName}
+   */
+  queryAnyRepository = (id: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetAnyRepositoryResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/user/${id}/repository/${repositoryName}`,
+      method: "GET",
       format: "json",
       ...params,
     });
@@ -1715,7 +1721,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1748,6 +1754,91 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryForkAll
+   * @summary Queries a repository forks by id.
+   * @request GET:/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/forks
+   */
+  queryForkAll = (
+    id: string,
+    repositoryName: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryGetAllForkResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${id}/repository/${repositoryName}/forks`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryReleaseAll
+   * @request GET:/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases
+   */
+  queryRepositoryReleaseAll = (
+    id: string,
+    repositoryName: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllRepositoryReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${id}/repository/${repositoryName}/releases`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryReleaseLatest
+   * @request GET:/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/latest
+   */
+  queryRepositoryReleaseLatest = (id: string, repositoryName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetLatestRepositoryReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${id}/repository/${repositoryName}/releases/latest`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRepositoryRelease
+   * @request GET:/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/tag/{tagName}
+   */
+  queryRepositoryRelease = (id: string, repositoryName: string, tagName: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetRepositoryReleaseResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/${id}/repository/${repositoryName}/releases/tag/${tagName}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryRepositoryIssueAll
    * @summary Queries a list of repository items.
    * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
@@ -1768,7 +1859,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
@@ -1801,39 +1892,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryForkAll
-   * @summary Queries a repository forks by id.
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/forks
-   */
-  queryForkAll = (
-    userId: string,
-    repositoryName: string,
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<GitopiaQueryGetAllForkResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/forks`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryRepositoryPullRequestAll
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull
+   * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull
    */
   queryRepositoryPullRequestAll = (
-    userId: string,
+    id: string,
     repositoryName: string,
     query?: {
       "option.createdBy"?: string;
@@ -1849,13 +1912,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.key"?: string;
       "pagination.offset"?: string;
       "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
+      "pagination.count_total"?: boolean;
       "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
     this.request<GitopiaQueryAllRepositoryPullRequestResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/pull`,
+      path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/pull`,
       method: "GET",
       query: query,
       format: "json",
@@ -1868,68 +1931,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRepositoryPullRequest
    * @summary Queries a repository pullRequest by id.
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}
+   * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}
    */
-  queryRepositoryPullRequest = (userId: string, repositoryName: string, pullIid: string, params: RequestParams = {}) =>
+  queryRepositoryPullRequest = (id: string, repositoryName: string, pullIid: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryPullRequestResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/pull/${pullIid}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryRepositoryReleaseAll
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases
-   */
-  queryRepositoryReleaseAll = (
-    userId: string,
-    repositoryName: string,
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<GitopiaQueryAllRepositoryReleaseResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryRepositoryReleaseLatest
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest
-   */
-  queryRepositoryReleaseLatest = (userId: string, repositoryName: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetLatestRepositoryReleaseResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/latest`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryRepositoryRelease
-   * @request GET:/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}
-   */
-  queryRepositoryRelease = (userId: string, repositoryName: string, tagName: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetRepositoryReleaseResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/${userId}/${repositoryName}/releases/tag/${tagName}`,
+      path: `/gitopia/gitopia/gitopia/${id}/${repositoryName}/pull/${pullIid}`,
       method: "GET",
       format: "json",
       ...params,
