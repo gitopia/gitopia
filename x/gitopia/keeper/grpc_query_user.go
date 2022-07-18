@@ -148,14 +148,19 @@ func (k Keeper) UserOrganizationAll(c context.Context, req *types.QueryAllUserOr
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var organizations []*types.Organization
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, found := k.GetUser(ctx, req.Id)
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	user, found := k.GetUser(ctx, address.address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
+	var organizations []*types.Organization
 	organizationStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OrganizationKey))
 
 	for _, userOrganization := range user.Organizations {
