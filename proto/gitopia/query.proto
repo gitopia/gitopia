@@ -108,11 +108,11 @@ service Query {
 
 	// Queries a repository pullRequest by id.
 	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull/{pullIid}";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}";
 	}
 
 	rpc RepositoryPullRequestAll(QueryAllRepositoryPullRequestRequest) returns (QueryAllRepositoryPullRequestResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/pull";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull";
 	}
 
 	// Queries a repository by id.
@@ -351,7 +351,7 @@ message QueryGetRepositoryIssueResponse {
 }
 
 message QueryGetRepositoryPullRequestRequest {
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	uint64 pullIid = 3;
 }
@@ -385,7 +385,7 @@ message QueryAllRepositoryIssueResponse {
 }
 
 message QueryAllRepositoryPullRequestRequest {
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	PullRequestOptions option = 3;
 	cosmos.base.query.v1beta1.PageRequest pagination = 4;

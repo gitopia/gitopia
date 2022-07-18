@@ -287,20 +287,35 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 
 	var repository types.Repository
 	var pullRequests []*types.PullRequest
+	var pageRes *query.PageResponse
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, found := k.GetUser(ctx, req.UserId)
-	if !found {
+	user, userFound := k.GetUser(ctx, req.Id)
+	organization, organizationFound := k.GetOrganization(ctx, req.Id)
+
+	if userFound {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if organizationFound {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
+	if repository.Creator != "" {
 		pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 
-		pageRes, err := PaginateAllRepositoryPullRequest(k, ctx, pullRequestStore, repository, req.Pagination, req.Option, func(pullRequest types.PullRequest) error {
+		var err error
+		pageRes, err = PaginateAllRepositoryPullRequest(k, ctx, pullRequestStore, repository, req.Pagination, req.Option, func(pullRequest types.PullRequest) error {
 			pullRequests = append(pullRequests, &pullRequest)
 			return nil
 		})
@@ -308,11 +323,9 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
-
-		return &types.QueryAllRepositoryPullRequestResponse{PullRequest: pullRequests, Pagination: pageRes}, nil
 	}
 
-	return nil, sdkerrors.ErrKeyNotFound
+	return &types.QueryAllRepositoryPullRequestResponse{PullRequest: pullRequests, Pagination: pageRes}, nil
 }
 
 func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepositoryPullRequestRequest) (*types.QueryGetRepositoryPullRequestResponse, error) {
@@ -324,15 +337,27 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 	var pullRequest types.PullRequest
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, found := k.GetUser(ctx, req.UserId)
-	if !found {
+	user, userFound := k.GetUser(ctx, req.Id)
+	organization, organizationFound := k.GetOrganization(ctx, req.Id)
+	if userFound {
+		if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else if organizationFound {
+		if i, exists := utils.OrganizationRepositoryExists(organization.Repositories, req.RepositoryName); exists {
+			repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
+			k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(organization.Repositories[i].Id)), &repository)
+		} else {
+			return nil, sdkerrors.ErrKeyNotFound
+		}
+	} else {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if i, exists := utils.UserRepositoryExists(user.Repositories, req.RepositoryName); exists {
-		repositoryStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryKey))
-		k.cdc.MustUnmarshal(repositoryStore.Get(GetRepositoryIDBytes(user.Repositories[i].Id)), &repository)
-
+	if repository.Creator != "" {
 		if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, req.PullIid); exists {
 			pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetPullRequestIDBytes(repository.PullRequests[i].Id)), &pullRequest)
