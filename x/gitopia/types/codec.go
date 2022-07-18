@@ -35,8 +35,9 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRenameOrganization{}, "gitopia/RenameOrganization", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
 	cdc.RegisterConcrete(&MsgRemoveOrganizationMember{}, "gitopia/RemoveOrganizationMember", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganization{}, "gitopia/UpdateOrganization", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganizationDescription{}, "gitopia/UpdateOrganizationDescription", nil)
+	cdc.RegisterConcrete(&MsgUpdateOrganizationWebsite{}, "gitopia/UpdateOrganizationWebsite", nil)
+	cdc.RegisterConcrete(&MsgUpdateOrganizationLocation{}, "gitopia/UpdateOrganizationLocation", nil)
 	cdc.RegisterConcrete(&MsgUpdateOrganizationAvatar{}, "gitopia/UpdateOrganizationAvatar", nil)
 	cdc.RegisterConcrete(&MsgDeleteOrganization{}, "gitopia/DeleteOrganization", nil)
 
@@ -59,6 +60,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgForkRepository{}, "gitopia/ForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepositoryDescription{}, "gitopia/UpdateRepositoryDescription", nil)
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
@@ -124,8 +126,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRenameOrganization{},
 		&MsgUpdateOrganizationMember{},
 		&MsgRemoveOrganizationMember{},
-		&MsgUpdateOrganization{},
 		&MsgUpdateOrganizationDescription{},
+		&MsgUpdateOrganizationWebsite{},
+		&MsgUpdateOrganizationLocation{},
 		&MsgUpdateOrganizationAvatar{},
 		&MsgDeleteOrganization{},
 	)
@@ -151,6 +154,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgForkRepository{},
 		&MsgForkRepositorySuccess{},
 		&MsgRenameRepository{},
+		&MsgUpdateRepositoryDescription{},
 		&MsgChangeOwner{},
 		&MsgUpdateRepositoryCollaborator{},
 		&MsgRemoveRepositoryCollaborator{},

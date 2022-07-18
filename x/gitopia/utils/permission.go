@@ -49,6 +49,7 @@ const (
 	RepositoryLabelPermission             = types.RepositoryCollaborator_WRITE
 	RepositoryRenamePermission            = types.RepositoryCollaborator_ADMIN
 	RepositoryTransferOwnershipPermission = types.RepositoryCollaborator_ADMIN
+	RepositoryUpdateDescriptionPermission = types.RepositoryCollaborator_MAINTAIN
 	ToggleRepositoryForkingPermission     = types.RepositoryCollaborator_ADMIN
 	ToggleIssueStatePermission            = types.RepositoryCollaborator_TRIAGE
 )

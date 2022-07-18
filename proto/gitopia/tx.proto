@@ -40,8 +40,9 @@ service Msg {
   rpc RenameOrganization(MsgRenameOrganization) returns (MsgRenameOrganizationResponse);
   rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
   rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
-  rpc UpdateOrganization(MsgUpdateOrganization) returns (MsgUpdateOrganizationResponse);
   rpc UpdateOrganizationDescription(MsgUpdateOrganizationDescription) returns (MsgUpdateOrganizationDescriptionResponse);
+  rpc UpdateOrganizationWebsite(MsgUpdateOrganizationWebsite) returns (MsgUpdateOrganizationWebsiteResponse);
+  rpc UpdateOrganizationLocation(MsgUpdateOrganizationLocation) returns (MsgUpdateOrganizationLocationResponse);
   rpc UpdateOrganizationAvatar(MsgUpdateOrganizationAvatar) returns (MsgUpdateOrganizationAvatarResponse);
   rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
@@ -62,6 +63,7 @@ service Msg {
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
   rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
+  rpc UpdateRepositoryDescription(MsgUpdateRepositoryDescription) returns (MsgUpdateRepositoryDescriptionResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
@@ -316,18 +318,6 @@ message MsgRemoveOrganizationMember {
 
 message MsgRemoveOrganizationMemberResponse { }
 
-message MsgUpdateOrganization {
-  string creator = 1;
-  string id = 2;
-  string name = 3;
-  string avatarUrl = 4;
-  string location = 5;
-  string website = 7;
-  string description = 8;
-}
-
-message MsgUpdateOrganizationResponse { }
-
 message MsgUpdateOrganizationDescription {
   string creator = 1;
   string id = 2;
@@ -335,6 +325,22 @@ message MsgUpdateOrganizationDescription {
 }
 
 message MsgUpdateOrganizationDescriptionResponse { }
+
+message MsgUpdateOrganizationWebsite {
+  string creator = 1;
+  string id = 2;
+  string url = 3;
+}
+
+message MsgUpdateOrganizationWebsiteResponse { }
+
+message MsgUpdateOrganizationLocation {
+  string creator = 1;
+  string id = 2;
+  string location = 3;
+}
+
+message MsgUpdateOrganizationLocationResponse { }
 
 message MsgUpdateOrganizationAvatar {
   string creator = 1;
@@ -525,6 +531,15 @@ message MsgRenameRepository {
 }
 
 message MsgRenameRepositoryResponse { }
+
+message MsgUpdateRepositoryDescription {
+  string creator = 1;
+  uint64 id = 2;
+  string description = 3;
+}
+
+message MsgUpdateRepositoryDescriptionResponse { }
+
 
 message MsgChangeOwner {
   string creator = 1;

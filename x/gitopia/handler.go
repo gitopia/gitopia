@@ -114,12 +114,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RemoveOrganizationMember(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateOrganization:
-			res, err := msgServer.UpdateOrganization(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		case *types.MsgUpdateOrganizationDescription:
 			res, err := msgServer.UpdateOrganizationDescription(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateOrganizationWebsite:
+			res, err := msgServer.UpdateOrganizationWebsite(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateOrganizationLocation:
+			res, err := msgServer.UpdateOrganizationLocation(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateOrganizationAvatar:
@@ -200,6 +204,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgRenameRepository:
 			res, err := msgServer.RenameRepository(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateRepositoryDescription:
+			res, err := msgServer.UpdateRepositoryDescription(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgChangeOwner:

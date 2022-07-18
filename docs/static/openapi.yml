@@ -48443,9 +48443,11 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateOrganizationDescriptionResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgUpdateOrganizationLocationResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateOrganizationMemberResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationResponse:
+  gitopia.gitopia.gitopia.MsgUpdateOrganizationWebsiteResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdatePullRequestDescriptionResponse:
     type: object
@@ -48456,6 +48458,8 @@ definitions:
   gitopia.gitopia.gitopia.MsgUpdateReleaseResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaboratorResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateRepositoryDescriptionResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryLabelResponse:
     type: object

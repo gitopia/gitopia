@@ -151,60 +151,6 @@ func CmdRemoveOrganizationMember() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateOrganization() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-organization [id] [name] [avatarUrl] [location] [website] [description]",
-		Short: "Update a organization",
-		Args:  cobra.ExactArgs(6),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := cast.ToStringE(args[0])
-			if err != nil {
-				return err
-			}
-
-			argsName, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-
-			argsAvatarUrl, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-
-			argsLocation, err := cast.ToStringE(args[3])
-			if err != nil {
-				return err
-			}
-
-			argsWebsite, err := cast.ToStringE(args[4])
-			if err != nil {
-				return err
-			}
-
-			argsDescription, err := cast.ToStringE(args[5])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgUpdateOrganization(clientCtx.GetFromAddress().String(), id, argsName, argsAvatarUrl, argsLocation, argsWebsite, argsDescription)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdUpdateOrganizationDescription() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-organization-description [id] [description]",
@@ -227,6 +173,74 @@ func CmdUpdateOrganizationDescription() *cobra.Command {
 			}
 
 			msg := types.NewMsgUpdateOrganizationDescription(clientCtx.GetFromAddress().String(), id, argsDescription)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdateOrganizationWebsite() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-organization-website [id] [url]",
+		Short: "Update organization website",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argsUrl, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateOrganizationWebsite(clientCtx.GetFromAddress().String(), id, argsUrl)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdateOrganizationLocation() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-organization-location [id] [location]",
+		Short: "Update organization location",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argsLocation, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateOrganizationLocation(clientCtx.GetFromAddress().String(), id, argsLocation)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
