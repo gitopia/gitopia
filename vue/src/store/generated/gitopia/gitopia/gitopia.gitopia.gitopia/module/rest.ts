@@ -296,9 +296,11 @@ export type GitopiaMsgUpdateOrganizationAvatarResponse = object;
 
 export type GitopiaMsgUpdateOrganizationDescriptionResponse = object;
 
+export type GitopiaMsgUpdateOrganizationLocationResponse = object;
+
 export type GitopiaMsgUpdateOrganizationMemberResponse = object;
 
-export type GitopiaMsgUpdateOrganizationResponse = object;
+export type GitopiaMsgUpdateOrganizationWebsiteResponse = object;
 
 export type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 
@@ -309,6 +311,8 @@ export type GitopiaMsgUpdatePullRequestTitleResponse = object;
 export type GitopiaMsgUpdateReleaseResponse = object;
 
 export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
+
+export type GitopiaMsgUpdateRepositoryDescriptionResponse = object;
 
 export type GitopiaMsgUpdateRepositoryLabelResponse = object;
 
