@@ -85,15 +85,15 @@ service Query {
 	}
 
 	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/latest";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/latest";
 	}
 
 	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases/tag/{tagName}";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/tag/{tagName}";
 	}
 
 	rpc RepositoryReleaseAll(QueryAllRepositoryReleaseRequest) returns (QueryAllRepositoryReleaseResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/{userId}/{repositoryName}/releases";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases";
 	}
 
 	// Queries a repository by id.
@@ -311,7 +311,7 @@ message QueryAllIssueResponse {
 }
 
 message QueryGetLatestRepositoryReleaseRequest { 
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 }
 
@@ -320,7 +320,7 @@ message QueryGetLatestRepositoryReleaseResponse {
 }
 
 message QueryGetRepositoryReleaseRequest { 
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	string tagName = 3;
 }
@@ -330,7 +330,7 @@ message QueryGetRepositoryReleaseResponse {
 }
 
 message QueryAllRepositoryReleaseRequest { 
-	string userId = 1;
+	string id = 1;
 	string repositoryName = 2;
 	cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
