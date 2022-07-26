@@ -87,10 +87,10 @@ $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
 
-all: windows darwin linux
+all: $(BUILDDIR) windows darwin linux
 
 ##### LINUX BUILDS #####
-linux: build/$(APPNAME)_$(VERSION)_linux_arm.tar.gz build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz build/$(APPNAME)_$(VERSION)_linux_386.tar.gz build/$(APPNAME)_$(VERSION)_linux_amd64.tar.gz
+linux: $(BUILDDIR) build/$(APPNAME)_$(VERSION)_linux_arm.tar.gz build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz build/$(APPNAME)_$(VERSION)_linux_386.tar.gz build/$(APPNAME)_$(VERSION)_linux_amd64.tar.gz
 
 build/$(APPNAME)_$(VERSION)_linux_386.tar.gz:
 	$(call build,linux,386,)
@@ -109,7 +109,7 @@ build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz:
 	$(call tar,linux,arm64)
 
 ##### DARWIN (MAC) BUILDS #####
-darwin: build/$(APPNAME)_$(VERSION)_darwin_amd64.tar.gz build/$(APPNAME)_$(VERSION)_darwin_arm64.tar.gz
+darwin: $(BUILDDIR) build/$(APPNAME)_$(VERSION)_darwin_amd64.tar.gz build/$(APPNAME)_$(VERSION)_darwin_arm64.tar.gz
 
 build/$(APPNAME)_$(VERSION)_darwin_arm64.tar.gz:
 	$(call build,darwin,arm64,)
@@ -120,7 +120,7 @@ build/$(APPNAME)_$(VERSION)_darwin_amd64.tar.gz:
 	$(call tar,darwin,amd64)
 
 ##### WINDOWS BUILDS #####
-windows: build/$(APPNAME)_$(VERSION)_windows_386.zip build/$(APPNAME)_$(VERSION)_windows_amd64.zip
+windows: $(BUILDDIR) build/$(APPNAME)_$(VERSION)_windows_386.zip build/$(APPNAME)_$(VERSION)_windows_amd64.zip
 
 build/$(APPNAME)_$(VERSION)_windows_386.zip:
 	$(call build,windows,386,.exe)
