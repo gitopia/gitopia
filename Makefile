@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+APPNAME := gitopiad
 PACKAGES=$(shell go list ./... | grep -v '/simulation')
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
@@ -68,9 +69,13 @@ ifeq (,$(findstring nostrip,$(GITOPIA_BUILD_OPTIONS)))
   BUILD_FLAGS += -trimpath
 endif
 
-.PHONY: build
+build = GOOS=$(1) GOARCH=$(2) go build -mod=readonly $(BUILD_FLAGS) -o $(BUILDDIR) ./...
+tar = cd build && tar -cvzf $(APPNAME)_$(version)_$(1)_$(2).tar.gz $(APPNAME)$(3) && \
+    rm $(BUILDDIR)/$(APPNAME)$(3)
+zip = cd build && zip $(APPNAME)_$(version)_$(1)_$(2).zip $(APPNAME)$(3) && \
+    rm $(BUILDDIR)/$(APPNAME)$(3)
 
-all: install
+.PHONY: build
 
 BUILD_TARGETS := build install
 
@@ -81,6 +86,49 @@ $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
+
+all: windows darwin linux
+
+##### LINUX BUILDS #####
+linux: build/$(APPNAME)_$(VERSION)_linux_arm.tar.gz build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz build/$(APPNAME)_$(VERSION)_linux_386.tar.gz build/$(APPNAME)_$(VERSION)_linux_amd64.tar.gz
+
+build/$(APPNAME)_$(VERSION)_linux_386.tar.gz:
+	$(call build,linux,386,)
+	$(call tar,linux,386)
+
+build/$(APPNAME)_$(VERSION)_linux_amd64.tar.gz:
+	$(call build,linux,amd64,)
+	$(call tar,linux,amd64)
+
+build/$(APPNAME)_$(VERSION)_linux_arm.tar.gz:
+	$(call build,linux,arm,)
+	$(call tar,linux,arm)
+
+build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz:
+	$(call build,linux,arm64,)
+	$(call tar,linux,arm64)
+
+##### DARWIN (MAC) BUILDS #####
+darwin: build/$(APPNAME)_$(VERSION)_darwin_amd64.tar.gz build/$(APPNAME)_$(VERSION)_darwin_arm64.tar.gz
+
+build/$(APPNAME)_$(VERSION)_darwin_arm64.tar.gz:
+	$(call build,darwin,arm64,)
+	$(call tar,darwin,arm64)
+
+build/$(APPNAME)_$(VERSION)_darwin_amd64.tar.gz:
+	$(call build,darwin,amd64,)
+	$(call tar,darwin,amd64)
+
+##### WINDOWS BUILDS #####
+windows: build/$(APPNAME)_$(VERSION)_windows_386.zip build/$(APPNAME)_$(VERSION)_windows_amd64.zip
+
+build/$(APPNAME)_$(VERSION)_windows_386.zip:
+	$(call build,windows,386,.exe)
+	$(call zip,windows,386,.exe)
+
+build/$(APPNAME)_$(VERSION)_windows_amd64.zip:
+	$(call build,windows,amd64,.exe)
+	$(call zip,windows,amd64,.exe)
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
