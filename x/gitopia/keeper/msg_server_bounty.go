@@ -14,10 +14,15 @@ import (
 
 func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBounty) (*types.MsgCreateBountyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	blockTime := ctx.BlockTime().Unix()
 
 	_, found := k.GetUser(ctx, msg.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	if msg.Expiry < blockTime {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "expire time can't be less then current time")
 	}
 
 	var issue types.Issue
@@ -33,8 +38,6 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid bounty parent")
 	}
-
-	blockTime := ctx.BlockTime().Unix()
 
 	var bounty = types.Bounty{
 		Creator:   msg.Creator,
@@ -104,6 +107,7 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 
 func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdateBountyExpiry) (*types.MsgUpdateBountyExpiryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	blockTime := ctx.BlockTime().Unix()
 
 	_, found := k.GetUser(ctx, msg.Creator)
 	if !found {
@@ -119,11 +123,13 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
+	if msg.Expiry < blockTime {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "expire time can't be less then current time")
+	}
+
 	if bounty.State != types.BountyStateSRCDEBITTED {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "bounty already closed")
 	}
-
-	blockTime := ctx.BlockTime().Unix()
 
 	var issue types.Issue
 	switch bounty.Parent {
