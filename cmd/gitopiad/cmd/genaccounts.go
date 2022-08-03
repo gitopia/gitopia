@@ -44,6 +44,7 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 
 			config.SetRoot(clientCtx.HomeDir)
 
+			var kr keyring.Keyring
 			addr, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -52,18 +53,25 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 					return err
 				}
 
-				// attempt to lookup address from Keybase if no address was provided
-				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf)
-				if err != nil {
-					return err
+				if keyringBackend != "" && clientCtx.Keyring == nil {
+					var err error
+					kr, err = keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, clientCtx.Codec)
+					if err != nil {
+						return err
+					}
+				} else {
+					kr = clientCtx.Keyring
 				}
 
-				info, err := kb.Key(args[0])
+				info, err := kr.Key(args[0])
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keybase: %w", err)
 				}
 
-				addr = info.GetAddress()
+				addr, err = info.GetAddress()
+				if err != nil {
+					return err
+				}
 			}
 
 			coins, err := sdk.ParseCoinsNormalized(args[1])

@@ -17,10 +17,11 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibctypes "github.com/cosmos/ibc-go/v2/modules/core/types"
+	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypesv013 "github.com/gitopia/gitopia/x/gitopia/migrations/v013"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
@@ -483,7 +484,7 @@ func MigrateCmd() *cobra.Command {
 				authGenesis        authtypes.GenesisState
 				bankGenesis        banktypes.GenesisState
 				crisisGenesis      crisistypes.GenesisState
-				govGenesis         govtypes.GenesisState
+				govGenesis         govv1beta1.GenesisState
 				mintGenesis        minttypes.GenesisState
 				ibcGenesis         ibctypes.GenesisState
 				gitopiaGenesis     gitopiatypes.GenesisState

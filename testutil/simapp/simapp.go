@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
+	gitopiaappparams "github.com/gitopia/gitopia/app/params"
+
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -15,13 +16,13 @@ import (
 )
 
 // New creates application instance with in-memory database and disabled logging.
-func New(dir string) cosmoscmd.App {
+func New(dir string) app.GitopiaApp {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
-	encoding := cosmoscmd.EncodingConfig(app.MakeEncodingConfig())
+	encoding := gitopiaappparams.EncodingConfig(app.MakeEncodingConfig())
 
-	a := app.New(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
 		simapp.EmptyAppOptions{})
 	// InitChain updates deliverState which is required when app.NewContext is called
@@ -29,7 +30,7 @@ func New(dir string) cosmoscmd.App {
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   []byte("{}"),
 	})
-	return a
+	return *a
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{
