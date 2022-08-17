@@ -12,49 +12,40 @@ message Repository {
   RepositoryOwner owner = 4; 
   string description = 5; 
   repeated uint64 forks = 6; 
-  repeated RepositoryBranch branches = 7;
-  repeated RepositoryTag tags = 8; 
-  string subscribers = 9; 
-  string commits = 10;
-  repeated RepositoryIssue issues = 11;
-  repeated RepositoryPullRequest pullRequests = 12;
-  uint64 issuesCount = 13;
-  uint64 pullsCount = 14;
-  repeated RepositoryLabel labels = 15;
-  uint64 labelsCount = 16;
-  repeated RepositoryRelease releases = 17;
-  int64 createdAt = 18;
-  int64 updatedAt = 19;
-  int64 pushedAt = 20;
-  repeated uint64 stargazers = 21;
-  bool archived = 22;
-  string license = 23;
-  string defaultBranch = 24;
-  uint64 parent = 25;
-  bool fork = 26;
-  repeated RepositoryCollaborator collaborators = 27;
-  bool allowForking = 28;
+  string subscribers = 7; 
+  string commits = 8;
+  repeated RepositoryIssue issues = 9;
+  repeated RepositoryPullRequest pullRequests = 10;
+  uint64 issuesCount = 11;
+  uint64 pullsCount = 12;
+  repeated RepositoryLabel labels = 13;
+  uint64 labelsCount = 14;
+  repeated RepositoryRelease releases = 15;
+  int64 createdAt = 16;
+  int64 updatedAt = 17;
+  int64 pushedAt = 18;
+  repeated uint64 stargazers = 19;
+  bool archived = 20;
+  string license = 21;
+  string defaultBranch = 22;
+  uint64 parent = 23;
+  bool fork = 24;
+  repeated RepositoryCollaborator collaborators = 25;
+  bool allowForking = 26;
+}
+
+message RepositoryId {
+  string id = 1;
+  string name = 2;
 }
 
 message RepositoryOwner {
   string id = 1;
   enum Type {
     USER = 0;
-	  ORGANIZATION = 1;
+	  DAO = 1;
   }
   Type type = 2;
-}
-
-message RepositoryBranch {
-  string name = 1;
-  string sha = 2;
-  int64 lastUpdatedAt = 3;
-}
-
-message RepositoryTag {
-  string name = 1;
-  string sha = 2;
-  int64 lastUpdatedAt = 3;
 }
 
 message RepositoryIssue {

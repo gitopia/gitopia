@@ -11,7 +11,7 @@ message Whois {
   string address = 3; 
   enum OwnerType {
     USER = 0;
-	  ORGANIZATION = 1;
+	  DAO = 1;
   }
   OwnerType ownerType = 4;
 }

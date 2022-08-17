@@ -1,0 +1,23 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+import "gogoproto/gogo.proto";
+
+message Dao {
+  string creator = 1;
+  uint64 id = 2;
+  string address = 3;
+  string name = 4; 
+  string avatarUrl = 5; 
+  repeated string followers = 6; 
+  repeated string following = 7; 
+  repeated uint64 teams = 8; 
+  string location = 10; 
+  string website = 11; 
+  bool verified = 12; 
+  string description = 13; 
+  int64 createdAt = 14; 
+  int64 updatedAt = 15; 
+}

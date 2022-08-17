@@ -1,0 +1,15 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+message Member {
+  uint64 id = 1;
+  string address = 2; 
+  string daoAddress = 3; 
+  enum Role {
+    MEMBER = 0;
+	  OWNER = 1;
+  }
+  Role role = 4; 
+}
