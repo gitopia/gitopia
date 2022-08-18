@@ -39,6 +39,11 @@ message RepositoryId {
   string name = 2;
 }
 
+message BaseRepositoryKey {
+  string address = 1;
+  string name = 2;
+}
+
 message RepositoryOwner {
   string id = 1;
   enum Type {

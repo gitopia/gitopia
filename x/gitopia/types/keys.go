@@ -39,9 +39,9 @@ const (
 )
 
 const (
-	RepositoryIdKey    = "Repository-id-value-"
-	RepositoryKey      = "Repository-value-"
-	RepositoryCountKey = "Repository-count-"
+	BaseRepositoryKeyKey = "Base-repository-key-value-"
+	RepositoryKey        = "Repository-value-"
+	RepositoryCountKey   = "Repository-count-"
 )
 
 const (

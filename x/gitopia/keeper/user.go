@@ -109,6 +109,22 @@ func (k Keeper) GetAllUser(ctx sdk.Context) (list []types.User) {
 	return
 }
 
+// GetAllUserDaoEntry returns all UserDao
+func (k Keeper) GetAllUserDaoEntry(ctx sdk.Context) (list []types.UserDao) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UserDaoKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.UserDao
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
 // GetUserIDBytes returns the byte representation of the ID
 func GetUserIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)
