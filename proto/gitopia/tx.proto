@@ -222,7 +222,7 @@ message MsgAddMember {
   string creator = 1;
   string daoId = 2;
   string userId = 3;
-  string role = 4;
+  MemberRole role = 4;
 }
 
 message MsgAddMemberResponse { }
@@ -231,7 +231,7 @@ message MsgUpdateMemberRole {
   string creator = 1;
   string daoId = 2;
   string userId = 3;
-  string role = 4;
+  MemberRole role = 4;
 }
 
 message MsgUpdateMemberRoleResponse {}
