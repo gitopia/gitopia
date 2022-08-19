@@ -41,8 +41,9 @@ message RepositoryId {
 }
 
 message BaseRepositoryKey {
-  string address = 1;
-  string name = 2;
+  uint64 id = 1;
+  string address = 2;
+  string name = 3;
 }
 
 message RepositoryOwner {

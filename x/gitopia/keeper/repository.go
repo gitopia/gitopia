@@ -46,10 +46,9 @@ func (k Keeper) AppendRepository(
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetRepositoryKeyForAddress(repository.Owner.Id)))
 	appendedValue := k.cdc.MustMarshal(&repository)
 	store.Set([]byte(repository.Name), appendedValue)
-	k.mapRepositoryId(
+	k.SetBaseRepositoryKey(
 		ctx,
-		repository.Id,
-		types.BaseRepositoryKey{Address: repository.Owner.Id, Name: repository.Name},
+		types.BaseRepositoryKey{Id: repository.Id, Address: repository.Owner.Id, Name: repository.Name},
 	)
 
 	// Update repository count
@@ -58,14 +57,13 @@ func (k Keeper) AppendRepository(
 	return count
 }
 
-func (k Keeper) mapRepositoryId(
+func (k Keeper) SetBaseRepositoryKey(
 	ctx sdk.Context,
-	repositoryId uint64,
 	repositoryKey types.BaseRepositoryKey,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
 	appendedValue := k.cdc.MustMarshal(&repositoryKey)
-	store.Set(GetRepositoryIDBytes(repositoryId), appendedValue)
+	store.Set(GetRepositoryIDBytes(repositoryKey.Id), appendedValue)
 }
 
 func (k Keeper) GetRepositoryKeyBytesFromId(

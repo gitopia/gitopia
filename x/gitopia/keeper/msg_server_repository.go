@@ -112,7 +112,8 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 
 	k.RemoveAddressRepository(ctx, address.address, repository.Name)
 	k.SetRepository(ctx, repository)
-	k.mapRepositoryId(ctx, repository.Id, types.BaseRepositoryKey{
+	k.SetBaseRepositoryKey(ctx, types.BaseRepositoryKey{
+		Id:      repository.Id,
 		Address: repository.Owner.Id,
 		Name:    repository.Name,
 	})
@@ -325,7 +326,8 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	repository.Name = msg.Name
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
-	k.mapRepositoryId(ctx, repository.Id, types.BaseRepositoryKey{
+	k.SetBaseRepositoryKey(ctx, types.BaseRepositoryKey{
+		Id:      repository.Id,
 		Address: repository.Owner.Id,
 		Name:    repository.Name,
 	})
