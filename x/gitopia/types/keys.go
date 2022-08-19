@@ -130,6 +130,6 @@ func GetMemberKeyForDaoAddress(daoAddress string) string {
 }
 
 // GetDaoKeyForUserAddress returns Key from dao-address
-func GetDaoKeyForUserAddress(userAddress string) string {
+func GetUserDaoKeyForUserAddress(userAddress string) string {
 	return UserDaoKey + userAddress + "-"
 }

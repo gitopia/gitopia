@@ -55,6 +55,15 @@ func (k Keeper) AppendDao(
 	return dao.Address
 }
 
+func (k Keeper) SetUserDao(
+	ctx sdk.Context,
+	userDao types.UserDao,
+) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetUserDaoKeyForUserAddress(userDao.UserAddress)))
+	appendedValue := k.cdc.MustMarshal(&userDao)
+	store.Set([]byte(userDao.DaoAddress), appendedValue)
+}
+
 // SetDao set a specific Dao in the store
 func (k Keeper) SetDao(ctx sdk.Context, dao types.Dao) {
 	store := prefix.NewStore(
@@ -108,7 +117,7 @@ func (k Keeper) GetAllDao(ctx sdk.Context) (list []types.Dao) {
 func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) (list []types.Dao) {
 	store := prefix.NewStore(
 		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetDaoKeyForUserAddress(userAddress)),
+		types.KeyPrefix(types.GetUserDaoKeyForUserAddress(userAddress)),
 	)
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 

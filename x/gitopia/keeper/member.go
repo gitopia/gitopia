@@ -50,11 +50,10 @@ func (k Keeper) AppendMember(
 	appendedValue := k.cdc.MustMarshal(&member)
 	daoStore.Set([]byte(member.Address), appendedValue)
 
-	userDaoStore := prefix.NewStore(
-		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetDaoKeyForUserAddress(member.Address)),
-	)
-	userDaoStore.Set([]byte(member.DaoAddress), []byte(member.DaoAddress))
+	k.SetUserDao(ctx, types.UserDao{
+		UserAddress: member.Address,
+		DaoAddress:  member.DaoAddress,
+	})
 
 	// Update member count
 	k.SetMemberCount(ctx, count+1)
@@ -95,7 +94,7 @@ func (k Keeper) RemoveDaoMember(ctx sdk.Context, daoAddress string, memberAddres
 
 	userDaoStore := prefix.NewStore(
 		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetDaoKeyForUserAddress(memberAddress)),
+		types.KeyPrefix(types.GetUserDaoKeyForUserAddress(memberAddress)),
 	)
 
 	store.Delete([]byte(memberAddress))

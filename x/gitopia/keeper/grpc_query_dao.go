@@ -59,15 +59,16 @@ func (k Keeper) UserDaoAll(c context.Context, req *types.QueryAllUserDaoRequest)
 
 	var daos []*types.Dao
 	store := ctx.KVStore(k.storeKey)
-	userDaoStore := prefix.NewStore(store, types.KeyPrefix(types.GetDaoKeyForUserAddress(user.Creator)))
+	userDaoStore := prefix.NewStore(store, types.KeyPrefix(types.GetUserDaoKeyForUserAddress(user.Creator)))
 
 	pageRes, err := query.Paginate(userDaoStore, req.Pagination, func(key []byte, value []byte) error {
-		var dao types.Dao
-		if err := k.cdc.Unmarshal(value, &dao); err != nil {
+		var userDao types.UserDao
+		if err := k.cdc.Unmarshal(value, &userDao); err != nil {
 			return err
 		}
-
-		daos = append(daos, &dao)
+		if dao, _ := k.GetDao(ctx, userDao.DaoAddress); found {
+			daos = append(daos, &dao)
+		}
 		return nil
 	})
 
