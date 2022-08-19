@@ -406,6 +406,9 @@ message MsgCreateDao {
   string creator = 1;
   string name = 2;
   string description = 3;
+  string avatarUrl = 4; 
+  string location = 5; 
+  string website = 6; 
 }
 
 message MsgCreateDaoResponse {
