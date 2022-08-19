@@ -120,6 +120,33 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		TaskCount: 2,
+		BranchList: []types.Branch{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		BranchCount: 2,
+		TagList: []types.Tag{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		TagCount: 2,
+		MemberList: []types.Member{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		MemberCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -161,5 +188,14 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.ReleaseCount, got.ReleaseCount)
 	require.ElementsMatch(t, genesisState.TaskList, got.TaskList)
 	require.Equal(t, genesisState.TaskCount, got.TaskCount)
+
+	require.ElementsMatch(t, genesisState.BranchList, got.BranchList)
+	require.Equal(t, genesisState.BranchCount, got.BranchCount)
+
+	require.ElementsMatch(t, genesisState.TagList, got.TagList)
+	require.Equal(t, genesisState.TagCount, got.TagCount)
+
+	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
+	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
