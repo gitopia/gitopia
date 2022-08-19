@@ -24,6 +24,8 @@ All notable changes will be documented here.
 - pullRequest.proto: PullRequestHead.RepositoryId `uint64` -> `RepositoryId`
 - pullRequest.proto: PullRequestBase.RepositoryId `uint64` -> `RepositoryId`
 - For repository id, using type `RepositoryId` instead of `uint64` in transactions
+- SetRepositoryBranch() -> SetBranch()
+- SetRepositoryTag() -> SetTag()
 
 ## [v0.13.0] - 2022-04-04
 
