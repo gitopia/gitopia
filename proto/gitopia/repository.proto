@@ -4,6 +4,7 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
+import "gitopia/whois.proto";
 
 message Repository {
   string creator = 1;
@@ -46,11 +47,7 @@ message BaseRepositoryKey {
 
 message RepositoryOwner {
   string id = 1;
-  enum Type {
-    USER = 0;
-	  DAO = 1;
-  }
-  Type type = 2;
+  OwnerType type = 2;
 }
 
 message RepositoryIssue {
