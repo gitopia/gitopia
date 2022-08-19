@@ -8,11 +8,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-type Owner struct {
-	Type string
-	ID   string
-}
-
 // GetRepositoryCount get the total number of repository
 func (k Keeper) GetRepositoryCount(ctx sdk.Context) uint64 {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryCountKey))
@@ -51,7 +46,11 @@ func (k Keeper) AppendRepository(
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetRepositoryKeyForAddress(repository.Owner.Id)))
 	appendedValue := k.cdc.MustMarshal(&repository)
 	store.Set([]byte(repository.Name), appendedValue)
-	k.mapRepositoryId(ctx, repository.Id, []byte(repository.Owner.Id+"-"+repository.Name))
+	k.mapRepositoryId(
+		ctx,
+		repository.Id,
+		types.BaseRepositoryKey{Address: repository.Owner.Id, Name: repository.Name},
+	)
 
 	// Update repository count
 	k.SetRepositoryCount(ctx, count+1)
@@ -62,22 +61,25 @@ func (k Keeper) AppendRepository(
 func (k Keeper) mapRepositoryId(
 	ctx sdk.Context,
 	repositoryId uint64,
-	repositoryKey []byte,
+	repositoryKey types.BaseRepositoryKey,
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryIdKey))
-	store.Set(GetRepositoryIDBytes(repositoryId), repositoryKey)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
+	appendedValue := k.cdc.MustMarshal(&repositoryKey)
+	store.Set(GetRepositoryIDBytes(repositoryId), appendedValue)
 }
 
-func (k Keeper) GetRepositoryKeyFromId(
+func (k Keeper) GetRepositoryKeyBytesFromId(
 	ctx sdk.Context,
 	repositoryId uint64,
-) (repositoryKey []byte, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RepositoryIdKey))
+) ([]byte, bool) {
+	var repositoryKey types.BaseRepositoryKey
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
 	b := store.Get(GetRepositoryIDBytes(repositoryId))
 	if b == nil {
-		return repositoryKey, false
+		return []byte(""), false
 	}
-	return b, true
+	k.cdc.MustUnmarshal(b, &repositoryKey)
+	return []byte(repositoryKey.Address + "-" + repositoryKey.Name), true
 }
 
 // SetRepository set a specific repository in the store
@@ -120,7 +122,7 @@ func (k Keeper) GetRepositoryFromKey(ctx sdk.Context, repositoryKey []byte) (val
 
 // GetRepositoryFromKey returns a repository by key
 func (k Keeper) GetRepositoryById(ctx sdk.Context, repositoryId uint64) (types.Repository, bool) {
-	repositoryKey, found := k.GetRepositoryKeyFromId(ctx, repositoryId)
+	repositoryKey, found := k.GetRepositoryKeyBytesFromId(ctx, repositoryId)
 	if !found {
 		return types.Repository{}, false
 	}
@@ -149,6 +151,22 @@ func (k Keeper) GetAllRepository(ctx sdk.Context) (list []types.Repository) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Repository
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetAllBaseRepositoryKey returns all repository
+func (k Keeper) GetAllBaseRepositoryKey(ctx sdk.Context) (list []types.BaseRepositoryKey) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.BaseRepositoryKey
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
@@ -185,4 +203,8 @@ func GetRepositoryIDBytes(id uint64) []byte {
 // GetRepositoryIDFromBytes returns ID in uint64 format from a byte array
 func GetRepositoryIDFromBytes(bz []byte) uint64 {
 	return binary.BigEndian.Uint64(bz)
+}
+
+func GetRepositoryKeyBytesFromBaseKey(repositoryId types.BaseRepositoryKey) []byte {
+	return []byte(repositoryId.Address + "-" + repositoryId.Name)
 }
