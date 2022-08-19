@@ -70,7 +70,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 	}, nil
 }
 
-func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenameDao) (*types.MsgRenameDaoResponse, error) {
+func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*types.MsgRenameDaoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -264,7 +264,7 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 	return &types.MsgUpdateDaoAvatarResponse{}, nil
 }
 
-func (k msgServer) DeleteOrganization(goCtx context.Context, msg *types.MsgDeleteDao) (*types.MsgDeleteDaoResponse, error) {
+func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*types.MsgDeleteDaoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	user, found := k.GetUser(ctx, msg.Creator)
