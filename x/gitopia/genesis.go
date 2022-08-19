@@ -64,6 +64,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set dao count
 	k.SetDaoCount(ctx, genState.DaoCount)
 
+	// Set all the userDao
+	for _, elem := range genState.UserDaoList {
+		k.SetUserDao(ctx, elem)
+	}
+
 	// Set all the comment
 	for _, elem := range genState.CommentList {
 		k.SetComment(ctx, elem)
@@ -87,6 +92,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Set repository count
 	k.SetRepositoryCount(ctx, genState.RepositoryCount)
+
+	// Set all the baseRepository
+	for _, elem := range genState.BaseRepositoryKeyList {
+		k.SetBaseRepositoryKey(ctx, elem)
+	}
 
 	// Set all the user
 	for _, elem := range genState.UserList {

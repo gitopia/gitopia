@@ -169,6 +169,9 @@ func (gs GenesisState) Validate() error {
 		if _, ok := baseRepositoryKeyMap[k]; ok {
 			return fmt.Errorf("duplicated baseRepositoryKey")
 		}
+		if elem.Id >= repositoryCount {
+			return fmt.Errorf("repository id should be lower or equal than the last id")
+		}
 		baseRepositoryKeyMap[k] = true
 	}
 
