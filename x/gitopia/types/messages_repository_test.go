@@ -475,71 +475,6 @@ func TestMsgDeleteRepositoryLabel_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgSetRepositoryBranch_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgSetRepositoryBranch
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgSetRepositoryBranch{
-				Creator:   "invalid_address",
-				Name:      "branch",
-				CommitSHA: "commit_sha",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgSetRepositoryBranch",
-			msg: MsgSetRepositoryBranch{
-				Creator:   sample.AccAddress(),
-				Name:      "branch",
-				CommitSHA: "56e05fced214c44a37759efa2dfc25a65d8ae98d",
-			},
-		}, {
-			name: "empty branch name",
-			msg: MsgSetRepositoryBranch{
-				Creator:   sample.AccAddress(),
-				CommitSHA: "commit_sha",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "branch nameexceeds limit",
-			msg: MsgSetRepositoryBranch{
-				Creator:   sample.AccAddress(),
-				Name:      strings.Repeat("b", 256),
-				CommitSHA: "commit_sha",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "empty commitSha",
-			msg: MsgSetRepositoryBranch{
-				Creator: sample.AccAddress(),
-				Name:    "branch",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "invalid commitSha",
-			msg: MsgSetRepositoryBranch{
-				Creator:   sample.AccAddress(),
-				Name:      "branch",
-				CommitSHA: "commit_sha",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
 func TestMsgSetDefaultBranch_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
@@ -586,83 +521,37 @@ func TestMsgSetDefaultBranch_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgDeleteBranch_ValidateBasic(t *testing.T) {
+func TestMsgSetTag_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgDeleteBranch
+		msg  MsgSetTag
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgDeleteBranch{
-				Creator: "invalid_address",
-				Name:    "branch",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgDeleteBranch",
-			msg: MsgDeleteBranch{
-				Creator: sample.AccAddress(),
-				Name:    "branch",
-			},
-		}, {
-			name: "empty branch name",
-			msg: MsgDeleteBranch{
-				Creator: sample.AccAddress(),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "branch nameexceeds limit",
-			msg: MsgDeleteBranch{
-				Creator: sample.AccAddress(),
-				Name:    strings.Repeat("b", 256),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
-func TestMsgSetRepositoryTag_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgSetRepositoryTag
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgSetRepositoryTag{
+			msg: MsgSetTag{
 				Creator: "invalid_address",
 				Name:    "tag",
 				Sha:     "commit_sha",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgSetRepositoryTag",
-			msg: MsgSetRepositoryTag{
+			name: "valid MsgSetTag",
+			msg: MsgSetTag{
 				Creator: sample.AccAddress(),
 				Name:    "tag",
 				Sha:     "56e05fced214c44a37759efa2dfc25a65d8ae98d",
 			},
 		}, {
 			name: "empty tag name",
-			msg: MsgSetRepositoryTag{
+			msg: MsgSetTag{
 				Creator: sample.AccAddress(),
 				Sha:     "Sha",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "tag name exceeds limit",
-			msg: MsgSetRepositoryTag{
+			msg: MsgSetTag{
 				Creator: sample.AccAddress(),
 				Name:    strings.Repeat("b", 256),
 				Sha:     "Sha",
@@ -670,14 +559,14 @@ func TestMsgSetRepositoryTag_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "empty Sha",
-			msg: MsgSetRepositoryTag{
+			msg: MsgSetTag{
 				Creator: sample.AccAddress(),
 				Name:    "tag",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid Sha",
-			msg: MsgSetRepositoryTag{
+			msg: MsgSetTag{
 				Creator: sample.AccAddress(),
 				Name:    "tag",
 				Sha:     "sha",
