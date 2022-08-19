@@ -190,11 +190,6 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
 	}
 
-	// Queries a User Dao by daoId.
-	rpc UserDao(QueryGetUserDaoRequest) returns (QueryGetUserDaoResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{userId}/dao/{daoId}";
-	}
-
 	// Queries a list of User Dao.
 	rpc UserDaoAll(QueryAllUserDaoRequest) returns (QueryAllUserDaoResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{userId}/dao";
@@ -606,15 +601,6 @@ message QueryGetUserRequest {
 
 message QueryGetUserResponse {
 	User User = 1;
-}
-
-message QueryGetUserDaoRequest {
-	string userId = 1;
-	string daoId = 2;
-}
-
-message QueryGetUserDaoResponse {
-	Dao dao = 1;
 }
 
 message QueryAllUserDaoRequest {
