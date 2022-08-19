@@ -50,7 +50,7 @@ func TestGenesis(t *testing.T) {
 		},
 		RepositoryCount: 2,
 
-		OrganizationList: []types.Organization{
+		DaoList: []types.Dao{
 			{
 				Creator: sample.AccAddress(),
 				Id:      0,
@@ -62,7 +62,7 @@ func TestGenesis(t *testing.T) {
 				Address: sample.AccAddress(),
 			},
 		},
-		OrganizationCount: 2,
+		DaoCount: 2,
 
 		IssueList: []types.Issue{
 			{
@@ -140,9 +140,9 @@ func TestGenesis(t *testing.T) {
 	require.Subset(t, genesisState.RepositoryList, got.RepositoryList)
 	require.Equal(t, genesisState.RepositoryCount, got.RepositoryCount)
 
-	require.Len(t, got.OrganizationList, len(genesisState.OrganizationList))
-	require.Subset(t, genesisState.OrganizationList, got.OrganizationList)
-	require.Equal(t, genesisState.OrganizationCount, got.OrganizationCount)
+	require.Len(t, got.DaoList, len(genesisState.DaoList))
+	require.Subset(t, genesisState.DaoList, got.DaoList)
+	require.Equal(t, genesisState.DaoCount, got.DaoCount)
 
 	require.Len(t, got.IssueList, len(genesisState.IssueList))
 	require.Subset(t, genesisState.IssueList, got.IssueList)

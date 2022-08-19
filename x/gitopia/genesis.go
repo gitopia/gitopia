@@ -56,12 +56,12 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set pullRequest count
 	k.SetPullRequestCount(ctx, genState.PullRequestCount)
 
-	// Set all the organization
+	// Set all the dao
 	for _, elem := range genState.DaoList {
 		k.SetDao(ctx, elem)
 	}
 
-	// Set organization count
+	// Set dao count
 	k.SetDaoCount(ctx, genState.DaoCount)
 
 	// Set all the comment
@@ -130,7 +130,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.PullRequestList = k.GetAllPullRequest(ctx)
 	genesis.PullRequestCount = k.GetPullRequestCount(ctx)
 
-	// Get all organization
+	// Get all dao
 	genesis.DaoList = k.GetAllDao(ctx)
 	genesis.DaoCount = k.GetDaoCount(ctx)
 
