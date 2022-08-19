@@ -19,40 +19,24 @@ func CmdCreatePullRequest() *cobra.Command {
 		Short: "Create a new pullRequest",
 		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsTitle, err := cast.ToStringE(args[0])
-			if err != nil {
-				return err
+			argTitle := args[0]
+			argDescription := args[1]
+			argHeadBranch := args[2]
+			argHeadId := args[3]
+			argHeadRepositoryName := args[4]
+			argBaseBranch := args[5]
+			argBaseId := args[6]
+			argBaseRepositoryName := args[7]
+			argReviewers := strings.Split(args[6], ",")
+			if len(argReviewers) == 1 && argReviewers[0] == "" {
+				argReviewers = nil
 			}
-			argsDescription, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
+			argAssignees := strings.Split(args[7], ",")
+			if len(argAssignees) == 1 && argAssignees[0] == "" {
+				argAssignees = nil
 			}
-			argsHeadBranch, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsHeadRepoId, err := strconv.ParseUint(args[3], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsBaseBranch, err := cast.ToStringE(args[4])
-			if err != nil {
-				return err
-			}
-			argsBaseRepoId, err := strconv.ParseUint(args[5], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsReviewers := strings.Split(args[6], ",")
-			if len(argsReviewers) == 1 && argsReviewers[0] == "" {
-				argsReviewers = nil
-			}
-			argsAssignees := strings.Split(args[7], ",")
-			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
-				argsAssignees = nil
-			}
-			argsLabels := strings.Split(args[8], ",")
-			labelIds, err := utils.SliceAtoi(argsLabels)
+			argLabels := strings.Split(args[8], ",")
+			labelIds, err := utils.SliceAtoi(argLabels)
 			if err != nil {
 				return err
 			}
@@ -62,7 +46,18 @@ func CmdCreatePullRequest() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreatePullRequest(clientCtx.GetFromAddress().String(), argsTitle, argsDescription, argsHeadBranch, argsHeadRepoId, argsBaseBranch, argsBaseRepoId, argsReviewers, argsAssignees, labelIds)
+			msg := types.NewMsgCreatePullRequest(
+				clientCtx.GetFromAddress().String(),
+				argTitle,
+				argDescription,
+				argHeadBranch,
+				types.RepositoryId{Id: argHeadId, Name: argHeadRepositoryName},
+				argBaseBranch,
+				types.RepositoryId{Id: argBaseId, Name: argBaseRepositoryName},
+				argReviewers,
+				argAssignees,
+				labelIds,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
