@@ -85,7 +85,12 @@ func (k Keeper) Dao(c context.Context, req *types.QueryGetDaoRequest) (*types.Qu
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	dao, found := k.GetDao(ctx, req.Id)
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, address.address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
