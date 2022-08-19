@@ -585,7 +585,7 @@ message MsgDeleteIssueResponse { }
 message MsgCreateRepository {
   string creator = 1;
   string name = 2;
-  RepositoryOwner owner = 3 [(gogoproto.nullable) = false];
+  string owner = 3;
   string description = 4;
 }
 
@@ -596,7 +596,7 @@ message MsgCreateRepositoryResponse {
 message MsgInvokeForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  RepositoryOwner owner = 3 [(gogoproto.nullable) = false];
+  string owner = 3;
   string provider = 4;
 }
 
@@ -605,7 +605,7 @@ message MsgInvokeForkRepositoryResponse {}
 message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  RepositoryOwner owner = 3 [(gogoproto.nullable) = false];
+  string owner = 3;
   uint64 taskId = 4;
 }
 
@@ -643,7 +643,7 @@ message MsgUpdateRepositoryDescriptionResponse { }
 message MsgChangeOwner {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  RepositoryOwner owner = 3 [(gogoproto.nullable) = false];
+  string owner = 3;
 }
 
 message MsgChangeOwnerResponse { }
