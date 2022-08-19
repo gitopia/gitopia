@@ -1,32 +1,11 @@
 package utils
 
-import (
-	"github.com/gitopia/gitopia/x/gitopia/types"
-)
+import "regexp"
 
-func UserRepositoryExists(r []*types.UserRepository, val string) (int, bool) {
-	for i, v := range r {
-		if v.Name == val {
-			return i, true
-		}
+func ValidateUsername(username string) (bool, error) {
+	match, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[_.-]?[a-zA-Z0-9])*$", username)
+	if err != nil {
+		return match, err
 	}
-	return 0, false
-}
-
-func UserOrganizationExists(r []*types.UserOrganization, val string) (int, bool) {
-	for i, v := range r {
-		if v.Name == val {
-			return i, true
-		}
-	}
-	return 0, false
-}
-
-func UserOrganizationIdExists(r []*types.UserOrganization, val string) (int, bool) {
-	for i, v := range r {
-		if v.Id == val {
-			return i, true
-		}
-	}
-	return 0, false
+	return match, nil
 }

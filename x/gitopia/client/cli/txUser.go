@@ -13,11 +13,23 @@ import (
 
 func CmdCreateUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-user [username]",
+		Use:   "create-user [username] [name] [avatar-url] [bio]",
 		Short: "Create a new user",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsUsername, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+			argsName, err := cast.ToStringE(args[1])
+			if err != nil {
+				return err
+			}
+			argsAvatarUrl, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsBio, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
@@ -27,7 +39,7 @@ func CmdCreateUser() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateUser(clientCtx.GetFromAddress().String(), string(argsUsername))
+			msg := types.NewMsgCreateUser(clientCtx.GetFromAddress().String(), string(argsUsername), argsName, argsAvatarUrl, argsBio)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -40,23 +52,46 @@ func CmdCreateUser() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateUser() *cobra.Command {
+func CmdUpdateUserUsername() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-user [name] [usernameGithub] [avatarUrl] [bio]",
-		Short: "Update a user",
-		Args:  cobra.ExactArgs(4),
+		Use:   "update-user-username [username]",
+		Short: "Update user username",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsName := string(args[0])
-			argsUsernameGithub := string(args[1])
-			argsAvatarUrl := string(args[2])
-			argsBio := string(args[3])
+			argsUsername := string(args[0])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateUser(clientCtx.GetFromAddress().String(), string(argsName), string(argsUsernameGithub), string(argsAvatarUrl), string(argsBio))
+			msg := types.NewMsgUpdateUserUsername(clientCtx.GetFromAddress().String(), string(argsUsername))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdateUserName() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-user-name [name]",
+		Short: "Update user name",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argsName := string(args[0])
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateUserName(clientCtx.GetFromAddress().String(), string(argsName))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -123,7 +158,7 @@ func CmdUpdateUserAvatar() *cobra.Command {
 
 func CmdDeleteUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-user [id] [username] [usernameGithub] [avatarUrl] [followers] [following] [repositories] [repositories_archived] [organizations] [starred_repos] [subscriptions] [email] [bio] [createdAt] [updatedAt] [extensions]",
+		Use:   "delete-user [id]",
 		Short: "Delete a user by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -147,28 +182,28 @@ func CmdDeleteUser() *cobra.Command {
 	return cmd
 }
 
-func CmdTransferUser() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "transfer-user [address]",
-		Short: "Transfer the user to new address",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			address := string(args[0])
+// func CmdTransferUser() *cobra.Command {
+// 	cmd := &cobra.Command{
+// 		Use:   "transfer-user [address]",
+// 		Short: "Transfer the user to new address",
+// 		Args:  cobra.ExactArgs(1),
+// 		RunE: func(cmd *cobra.Command, args []string) error {
+// 			address := string(args[0])
 
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
+// 			clientCtx, err := client.GetClientTxContext(cmd)
+// 			if err != nil {
+// 				return err
+// 			}
 
-			msg := types.NewMsgTransferUser(clientCtx.GetFromAddress().String(), address)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
+// 			msg := types.NewMsgTransferUser(clientCtx.GetFromAddress().String(), address)
+// 			if err := msg.ValidateBasic(); err != nil {
+// 				return err
+// 			}
+// 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+// 		},
+// 	}
 
-	flags.AddTxFlagsToCmd(cmd)
+// 	flags.AddTxFlagsToCmd(cmd)
 
-	return cmd
-}
+// 	return cmd
+// }

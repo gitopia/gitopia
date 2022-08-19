@@ -85,15 +85,12 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteRepository{}, "gitopia/DeleteRepository", nil)
 
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
-	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserUsername{}, "gitopia/UpdateUserUsername", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserName{}, "gitopia/UpdateUserName", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserBio{}, "gitopia/UpdateUserBio", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserAvatar{}, "gitopia/UpdateUserAvatar", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
-	cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
-
-	cdc.RegisterConcrete(&MsgSetWhois{}, "gitopia/SetWhois", nil)
-	cdc.RegisterConcrete(&MsgUpdateWhois{}, "gitopia/UpdateWhois", nil)
-	cdc.RegisterConcrete(&MsgDeleteWhois{}, "gitopia/DeleteWhois", nil)
+	// cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
 }
 
@@ -187,16 +184,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateUser{},
-		&MsgUpdateUser{},
+		&MsgUpdateUserUsername{},
+		&MsgUpdateUserName{},
 		&MsgUpdateUserBio{},
 		&MsgUpdateUserAvatar{},
 		&MsgDeleteUser{},
-		&MsgTransferUser{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgSetWhois{},
-		&MsgUpdateWhois{},
-		&MsgDeleteWhois{},
+		// &MsgTransferUser{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

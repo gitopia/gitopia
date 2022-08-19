@@ -87,14 +87,12 @@ service Msg {
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
-  rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
+  rpc UpdateUserUsername(MsgUpdateUserUsername) returns (MsgUpdateUserUsernameResponse);
+  rpc UpdateUserName(MsgUpdateUserName) returns (MsgUpdateUserNameResponse);
   rpc UpdateUserBio(MsgUpdateUserBio) returns (MsgUpdateUserBioResponse);
   rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
-  rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
-  rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
-  rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
-  rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
+  // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
 }
 
 message MsgAuthorizeGitServer {
@@ -717,21 +715,28 @@ message MsgDeleteRepositoryResponse { }
 message MsgCreateUser {
   string creator = 1;
   string username = 2;
+  string name = 3;
+  string avatarUrl = 4; 
+  string bio = 5;
 }
 
 message MsgCreateUserResponse {
   string id = 1;
 }
 
-message MsgUpdateUser {
+message MsgUpdateUserUsername {
   string creator = 1;
-  string name = 2;
-  string usernameGithub = 3;
-  string avatarUrl = 4;
-  string bio = 5;
+  string username = 2;
 }
 
-message MsgUpdateUserResponse { }
+message MsgUpdateUserUsernameResponse { }
+
+message MsgUpdateUserName {
+  string creator = 1;
+  string name = 2;
+}
+
+message MsgUpdateUserNameResponse { }
 
 message MsgUpdateUserBio {
   string creator = 1;
@@ -754,32 +759,9 @@ message MsgDeleteUser {
 
 message MsgDeleteUserResponse { }
 
-message MsgTransferUser {
-  string creator = 1;
-  string address = 2;
-}
+// message MsgTransferUser {
+//   string creator = 1;
+//   string address = 2;
+// }
 
-message MsgTransferUserResponse { }
-
-message MsgSetWhois {
-  string creator = 1;
-  string name = 2;
-  string address = 3;
-}
-
-message MsgSetWhoisResponse { }
-
-message MsgUpdateWhois {
-  string creator = 1;
-  string name = 2;
-  string address = 3;
-}
-
-message MsgUpdateWhoisResponse { }
-
-message MsgDeleteWhois {
-  string creator = 1;
-  string name = 2;
-}
-
-message MsgDeleteWhoisResponse { }
+// message MsgTransferUserResponse { }

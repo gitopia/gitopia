@@ -103,15 +103,12 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdDeleteRepository())
 
 	cmd.AddCommand(CmdCreateUser())
-	cmd.AddCommand(CmdUpdateUser())
+	cmd.AddCommand(CmdUpdateUserUsername())
+	cmd.AddCommand(CmdUpdateUserName())
 	cmd.AddCommand(CmdUpdateUserBio())
 	cmd.AddCommand(CmdUpdateUserAvatar())
 	cmd.AddCommand(CmdDeleteUser())
-	cmd.AddCommand(CmdTransferUser())
-
-	cmd.AddCommand(CmdCreateWhois())
-	cmd.AddCommand(CmdUpdateWhois())
-	cmd.AddCommand(CmdDeleteWhois())
+	// cmd.AddCommand(CmdTransferUser())
 
 	return cmd
 }

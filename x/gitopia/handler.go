@@ -286,8 +286,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateUser:
-			res, err := msgServer.UpdateUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateUserUsername:
+			res, err := msgServer.UpdateUserUsername(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateUserName:
+			res, err := msgServer.UpdateUserName(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateUserBio:
@@ -302,21 +306,9 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgTransferUser:
-			res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgSetWhois:
-			res, err := msgServer.SetWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateWhois:
-			res, err := msgServer.UpdateWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteWhois:
-			res, err := msgServer.DeleteWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
+		// case *types.MsgTransferUser:
+		// 	res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
+		// 	return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)

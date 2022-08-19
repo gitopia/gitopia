@@ -2,6 +2,7 @@ package types
 
 import (
 	"net/url"
+	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -9,10 +10,13 @@ import (
 
 var _ sdk.Msg = &MsgCreateUser{}
 
-func NewMsgCreateUser(creator string, username string) *MsgCreateUser {
+func NewMsgCreateUser(creator string, username string, name string, avatarUrl string, bio string) *MsgCreateUser {
 	return &MsgCreateUser{
-		Creator:  creator,
-		Username: username,
+		Creator:   creator,
+		Username:  username,
+		Name:      name,
+		AvatarUrl: avatarUrl,
+		Bio:       bio,
 	}
 }
 
@@ -42,63 +46,21 @@ func (msg *MsgCreateUser) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	/*
-		if len(msg.Username) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Name must be at least 3 characters long")
-		}
-	*/
-	return nil
-}
 
-var _ sdk.Msg = &MsgUpdateUser{}
-
-func NewMsgUpdateUser(creator string, name string, usernameGithub string, avatarUrl string, bio string) *MsgUpdateUser {
-	return &MsgUpdateUser{
-		Creator:        creator,
-		Name:           name,
-		UsernameGithub: usernameGithub,
-		AvatarUrl:      avatarUrl,
-		Bio:            bio,
-	}
-}
-
-func (msg *MsgUpdateUser) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgUpdateUser) Type() string {
-	return "UpdateUser"
-}
-
-func (msg *MsgUpdateUser) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgUpdateUser) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgUpdateUser) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	if len(msg.Username) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "username must consist minimum 3 chars")
+	} else if len(msg.Username) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "username limit exceed: 39")
 	}
 	if len(msg.Name) > 73 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 73")
-	}
-	if len(msg.UsernameGithub) > 39 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "GitHub username exceeds limit: 39")
-	}
-	if len(msg.AvatarUrl) > 2048 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "User Avatar url exceeds limit: 2048")
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "name exceeds limit: 73")
 	}
 	if len(msg.Bio) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
+	}
+
+	if len(msg.AvatarUrl) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
 	}
 	if msg.AvatarUrl != "" {
 		url, err := url.ParseRequestURI(msg.AvatarUrl)
@@ -108,6 +70,106 @@ func (msg *MsgUpdateUser) ValidateBasic() error {
 		if url.Scheme != "https" {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
 		}
+	}
+
+	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Username)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	if !valid {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid username")
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateUserName{}
+
+func NewMsgUpdateUserUsername(creator string, username string) *MsgUpdateUserUsername {
+	return &MsgUpdateUserUsername{
+		Creator:  creator,
+		Username: username,
+	}
+}
+
+func (msg *MsgUpdateUserUsername) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateUserUsername) Type() string {
+	return "UpdateUserUsername"
+}
+
+func (msg *MsgUpdateUserUsername) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateUserUsername) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateUserUsername) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Username) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "username must consist minimum 3 chars")
+	} else if len(msg.Username) > 39 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "username limit exceed: 39")
+	}
+	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Username)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	if !valid {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid username")
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateUserName{}
+
+func NewMsgUpdateUserName(creator string, name string) *MsgUpdateUserName {
+	return &MsgUpdateUserName{
+		Creator: creator,
+		Name:    name,
+	}
+}
+
+func (msg *MsgUpdateUserName) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateUserName) Type() string {
+	return "UpdateUserName"
+}
+
+func (msg *MsgUpdateUserName) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateUserName) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateUserName) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Name) > 73 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Name exceeds limit: 73")
 	}
 	return nil
 }
@@ -146,9 +208,6 @@ func (msg *MsgUpdateUserBio) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Bio) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Minimum character required: 3")
 	}
 	if len(msg.Bio) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Bio exceeds limit: 255")
@@ -243,43 +302,43 @@ func (msg *MsgDeleteUser) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgTransferUser{}
+// var _ sdk.Msg = &MsgTransferUser{}
 
-func NewMsgTransferUser(creator string, address string) *MsgTransferUser {
-	return &MsgTransferUser{
-		Creator: creator,
-		Address: address,
-	}
-}
-func (msg *MsgTransferUser) Route() string {
-	return RouterKey
-}
+// func NewMsgTransferUser(creator string, address string) *MsgTransferUser {
+// 	return &MsgTransferUser{
+// 		Creator: creator,
+// 		Address: address,
+// 	}
+// }
+// func (msg *MsgTransferUser) Route() string {
+// 	return RouterKey
+// }
 
-func (msg *MsgTransferUser) Type() string {
-	return "TransferUser"
-}
+// func (msg *MsgTransferUser) Type() string {
+// 	return "TransferUser"
+// }
 
-func (msg *MsgTransferUser) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
+// func (msg *MsgTransferUser) GetSigners() []sdk.AccAddress {
+// 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	return []sdk.AccAddress{creator}
+// }
 
-func (msg *MsgTransferUser) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
+// func (msg *MsgTransferUser) GetSignBytes() []byte {
+// 	bz := ModuleCdc.MustMarshalJSON(msg)
+// 	return sdk.MustSortJSON(bz)
+// }
 
-func (msg *MsgTransferUser) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	_, err = sdk.AccAddressFromBech32(msg.Address)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid transfer address (%s)", err)
-	}
-	return nil
-}
+// func (msg *MsgTransferUser) ValidateBasic() error {
+// 	_, err := sdk.AccAddressFromBech32(msg.Creator)
+// 	if err != nil {
+// 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+// 	}
+// 	_, err = sdk.AccAddressFromBech32(msg.Address)
+// 	if err != nil {
+// 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid transfer address (%s)", err)
+// 	}
+// 	return nil
+// }
