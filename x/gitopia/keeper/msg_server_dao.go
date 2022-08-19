@@ -56,7 +56,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		Creator:   msg.Creator,
 		Name:      daoName,
 		Address:   id,
-		OwnerType: types.Whois_DAO,
+		OwnerType: types.OwnerType_DAO,
 	}
 
 	k.Keeper.SetWhois(
@@ -118,7 +118,7 @@ func (k msgServer) RenameOrganization(goCtx context.Context, msg *types.MsgRenam
 		Creator:   msg.Creator,
 		Name:      newDaoName,
 		Address:   dao.Address,
-		OwnerType: types.Whois_DAO,
+		OwnerType: types.OwnerType_DAO,
 	}
 	k.Keeper.SetWhois(
 		ctx,
@@ -289,7 +289,7 @@ func (k msgServer) DeleteOrganization(goCtx context.Context, msg *types.MsgDelet
 func DoRemoveDao(ctx sdk.Context, k msgServer, user types.User, dao types.Dao) {
 	repositories := k.GetAllAddressRepository(ctx, dao.Address)
 	for _, repository := range repositories {
-		DoRemoveRepository(ctx, k, nil, &dao, repository)
+		DoRemoveRepository(ctx, k, repository)
 	}
 
 	members := k.GetAllDaoMember(ctx, dao.Address)

@@ -7,11 +7,11 @@ import (
 )
 
 func (k Keeper) HavePermission(ctx sdk.Context, creator string, repository types.Repository, minAllowedPermission types.RepositoryCollaborator_Permission) (havePermission bool) {
-	if repository.Owner.Type == types.RepositoryOwner_USER {
+	if repository.Owner.Type == types.OwnerType_USER {
 		if creator == repository.Owner.Id {
 			havePermission = true
 		}
-	} else if repository.Owner.Type == types.RepositoryOwner_DAO {
+	} else if repository.Owner.Type == types.OwnerType_DAO {
 		member, found := k.GetDaoMember(ctx, repository.Owner.Id, creator)
 		if found && member.Role == types.MemberRole_OWNER {
 			havePermission = true

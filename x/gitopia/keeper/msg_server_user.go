@@ -46,7 +46,7 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		Creator:   msg.Creator,
 		Name:      username,
 		Address:   msg.Creator,
-		OwnerType: types.Whois_USER,
+		OwnerType: types.OwnerType_USER,
 	}
 
 	id := k.AppendUser(
@@ -93,7 +93,7 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 		Creator:   msg.Creator,
 		Name:      newUsername,
 		Address:   msg.Creator,
-		OwnerType: types.Whois_USER,
+		OwnerType: types.OwnerType_USER,
 	}
 	user.UpdatedAt = ctx.BlockTime().Unix()
 
@@ -176,7 +176,7 @@ func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
 
 	repositories := k.GetAllAddressRepository(ctx, user.Creator)
 	for _, repository := range repositories {
-		DoRemoveRepository(ctx, k, &user, nil, repository)
+		DoRemoveRepository(ctx, k, repository)
 	}
 
 	k.RemoveUser(ctx, user.Creator)

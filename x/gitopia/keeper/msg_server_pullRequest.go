@@ -324,11 +324,11 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	var havePermission bool = false
 
-	if baseRepository.Owner.Type == types.RepositoryOwner_USER {
+	if baseRepository.Owner.Type == types.OwnerType_USER {
 		if ((msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator) || msg.Creator == baseRepository.Owner.Id {
 			havePermission = true
 		}
-	} else if baseRepository.Owner.Type == types.RepositoryOwner_DAO {
+	} else if baseRepository.Owner.Type == types.OwnerType_DAO {
 		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
 			havePermission = true
 		}
