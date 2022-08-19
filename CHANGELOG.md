@@ -2,6 +2,29 @@
 
 All notable changes will be documented here.
 
+## [Unreleased] - 20XX-XX-XX
+
+### Fixes
+
+- 
+
+### Features
+
+- 
+
+### Breaking Changes
+
+- Decoupled Branch from Repository
+- Decoupled Tag from Repository
+- Decoupled Repository from User and Organization
+- Rename Organization to Dao
+- UpdateOrganizationMember() -> AddMember() and UpdateMemberRole()
+- RemoveOrganizationMember() -> RemoveMember()
+- repository.proto: parent uint64 -> RepositoryId
+- pullRequest.proto: PullRequestHead.RepositoryId `uint64` -> `RepositoryId`
+- pullRequest.proto: PullRequestBase.RepositoryId `uint64` -> `RepositoryId`
+- For repository id, using type `RepositoryId` instead of `uint64` in transactions
+
 ## [v0.13.0] - 2022-04-04
 
 ### Fixes
