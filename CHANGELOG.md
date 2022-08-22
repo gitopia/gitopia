@@ -20,12 +20,10 @@ All notable changes will be documented here.
 - Rename Organization to Dao
 - UpdateOrganizationMember() -> AddMember() and UpdateMemberRole()
 - RemoveOrganizationMember() -> RemoveMember()
-- repository.proto: parent uint64 -> RepositoryId
-- pullRequest.proto: PullRequestHead.RepositoryId `uint64` -> `RepositoryId`
-- pullRequest.proto: PullRequestBase.RepositoryId `uint64` -> `RepositoryId`
 - For repository id, using type `RepositoryId` instead of `uint64` in transactions
 - SetRepositoryBranch() -> SetBranch()
 - SetRepositoryTag() -> SetTag()
+- RepositoryOwnerType and WhoisOwnerType -> OwnerType
 
 ## [v0.13.0] - 2022-04-04
 
