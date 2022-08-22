@@ -3,6 +3,7 @@ package keeper
 import (
 	"encoding/binary"
 	"errors"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -83,7 +84,7 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 // Checks if username or address is valid and exists. Also identify its type (USER/DAO).
 func (k Keeper) ResolveAddress(ctx sdk.Context, id string) (address *WhoisAddress, err error) {
 	if _, err := sdk.AccAddressFromBech32(id); err != nil {
-		whois, found := k.GetWhois(ctx, id)
+		whois, found := k.GetWhois(ctx, strings.ToLower(id))
 		if !found {
 			return nil, errors.New("username or address not exists")
 		}
