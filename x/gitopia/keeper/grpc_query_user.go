@@ -47,7 +47,12 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	user, found := k.GetUser(ctx, req.Id)
+	address, err := k.ResolveAddress(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	user, found := k.GetUser(ctx, address.address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
