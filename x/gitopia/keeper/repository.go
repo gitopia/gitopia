@@ -87,7 +87,7 @@ func (k Keeper) SetRepository(ctx sdk.Context, repository types.Repository) {
 		types.KeyPrefix(types.GetRepositoryKeyForAddress(repository.Owner.Id)),
 	)
 	b := k.cdc.MustMarshal(&repository)
-	store.Set(GetRepositoryIDBytes(repository.Id), b)
+	store.Set([]byte(repository.Name), b)
 }
 
 // GetAddressRepository returns a repository by address
