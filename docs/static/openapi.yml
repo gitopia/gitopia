@@ -16273,6 +16273,9 @@ paths:
                         }
       parameters:
         - name: body
+          description: |-
+            SimulateRequest is the request type for the Service.Simulate
+            RPC method.
           in: body
           required: true
           schema:
@@ -17072,6 +17075,11 @@ paths:
                         }
       parameters:
         - name: body
+          description: >-
+            BroadcastTxRequest is the request type for the
+            Service.BroadcastTxRequest
+
+            RPC method.
           in: body
           required: true
           schema:
@@ -18446,6 +18454,143 @@ paths:
           type: string
       tags:
         - Query
+  /gitopia/gitopia/gitopia/branch:
+    get:
+      summary: Queries a list of Branch items.
+      operationId: GitopiaGitopiaGitopiaBranchAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Branch:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    repositoryId:
+                      type: string
+                      format: uint64
+                    name:
+                      type: string
+                    sha:
+                      type: string
+                    allowForcePush:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/comment:
     get:
       summary: Queries a list of comment items.
@@ -18676,6 +18821,430 @@ paths:
           required: true
           type: string
           format: uint64
+      tags:
+        - Query
+  /gitopia/gitopia/gitopia/dao:
+    get:
+      summary: Queries a list of Dao items.
+      operationId: GitopiaGitopiaGitopiaDaoAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              dao:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    creator:
+                      type: string
+                    id:
+                      type: string
+                      format: uint64
+                    address:
+                      type: string
+                    name:
+                      type: string
+                    avatarUrl:
+                      type: string
+                    followers:
+                      type: array
+                      items:
+                        type: string
+                    following:
+                      type: array
+                      items:
+                        type: string
+                    teams:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                    location:
+                      type: string
+                    website:
+                      type: string
+                    verified:
+                      type: boolean
+                    description:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/dao/{daoId}/member':
+    get:
+      summary: Queries a list of Dao Member.
+      operationId: GitopiaGitopiaGitopiaDaoMemberAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Member:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    address:
+                      type: string
+                    daoAddress:
+                      type: string
+                    role:
+                      type: string
+                      enum:
+                        - MEMBER
+                        - OWNER
+                      default: MEMBER
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: daoId
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/dao/{daoId}/member/{userId}':
+    get:
+      summary: Queries a Member by id.
+      operationId: GitopiaGitopiaGitopiaDaoMember
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Member:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  address:
+                    type: string
+                  daoAddress:
+                    type: string
+                  role:
+                    type: string
+                    enum:
+                      - MEMBER
+                      - OWNER
+                    default: MEMBER
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: daoId
+          in: path
+          required: true
+          type: string
+        - name: userId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/dao/{id}':
+    get:
+      summary: Queries a Dao by id.
+      operationId: GitopiaGitopiaGitopiaDao
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              dao:
+                type: object
+                properties:
+                  creator:
+                    type: string
+                  id:
+                    type: string
+                    format: uint64
+                  address:
+                    type: string
+                  name:
+                    type: string
+                  avatarUrl:
+                    type: string
+                  followers:
+                    type: array
+                    items:
+                      type: string
+                  following:
+                    type: array
+                    items:
+                      type: string
+                  teams:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+                  location:
+                    type: string
+                  website:
+                    type: string
+                  verified:
+                    type: boolean
+                  description:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: int64
+                  updatedAt:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
       tags:
         - Query
   /gitopia/gitopia/gitopia/issue:
@@ -18950,82 +19519,34 @@ paths:
           format: uint64
       tags:
         - Query
-  /gitopia/gitopia/gitopia/organization:
+  /gitopia/gitopia/gitopia/member:
     get:
-      summary: Queries a list of organization items.
-      operationId: GitopiaGitopiaGitopiaOrganizationAll
+      summary: Queries a list of Member items.
+      operationId: GitopiaGitopiaGitopiaMemberAll
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              Organization:
+              Member:
                 type: array
                 items:
                   type: object
                   properties:
-                    creator:
-                      type: string
                     id:
                       type: string
                       format: uint64
                     address:
                       type: string
-                    name:
+                    daoAddress:
                       type: string
-                    avatarUrl:
+                    role:
                       type: string
-                    followers:
-                      type: array
-                      items:
-                        type: string
-                    following:
-                      type: array
-                      items:
-                        type: string
-                    repositories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          id:
-                            type: string
-                            format: uint64
-                    teams:
-                      type: array
-                      items:
-                        type: string
-                        format: uint64
-                    members:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          role:
-                            type: string
-                            enum:
-                              - MEMBER
-                              - OWNER
-                            default: MEMBER
-                    location:
-                      type: string
-                    website:
-                      type: string
-                    verified:
-                      type: boolean
-                    description:
-                      type: string
-                    createdAt:
-                      type: string
-                      format: int64
-                    updatedAt:
-                      type: string
-                      format: int64
+                      enum:
+                        - MEMBER
+                        - OWNER
+                      default: MEMBER
               pagination:
                 type: object
                 properties:
@@ -19130,106 +19651,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/gitopia/gitopia/gitopia/organization/{id}':
-    get:
-      summary: Queries a organization by id.
-      operationId: GitopiaGitopiaGitopiaOrganization
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              Organization:
-                type: object
-                properties:
-                  creator:
-                    type: string
-                  id:
-                    type: string
-                    format: uint64
-                  address:
-                    type: string
-                  name:
-                    type: string
-                  avatarUrl:
-                    type: string
-                  followers:
-                    type: array
-                    items:
-                      type: string
-                  following:
-                    type: array
-                    items:
-                      type: string
-                  repositories:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        id:
-                          type: string
-                          format: uint64
-                  teams:
-                    type: array
-                    items:
-                      type: string
-                      format: uint64
-                  members:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        role:
-                          type: string
-                          enum:
-                            - MEMBER
-                            - OWNER
-                          default: MEMBER
-                  location:
-                    type: string
-                  website:
-                    type: string
-                  verified:
-                    type: boolean
-                  description:
-                    type: string
-                  createdAt:
-                    type: string
-                    format: int64
-                  updatedAt:
-                    type: string
-                    format: int64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/permissions/{userAddress}/pull/{pullId}/merge':
+  '/gitopia/gitopia/gitopia/permissions/{userId}/pull/{pullId}/merge':
     get:
       operationId: GitopiaGitopiaGitopiaPullRequestMergePermission
       responses:
@@ -19259,7 +19681,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: userAddress
+        - name: userId
           in: path
           required: true
           type: string
@@ -19885,7 +20307,7 @@ paths:
                           type: string
                           enum:
                             - USER
-                            - ORGANIZATION
+                            - DAO
                           default: USER
                     description:
                       type: string
@@ -19894,30 +20316,6 @@ paths:
                       items:
                         type: string
                         format: uint64
-                    branches:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          sha:
-                            type: string
-                          lastUpdatedAt:
-                            type: string
-                            format: int64
-                    tags:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          sha:
-                            type: string
-                          lastUpdatedAt:
-                            type: string
-                            format: int64
                     subscribers:
                       type: string
                     commits:
@@ -20153,7 +20551,7 @@ paths:
                         type: string
                         enum:
                           - USER
-                          - ORGANIZATION
+                          - DAO
                         default: USER
                   description:
                     type: string
@@ -20162,30 +20560,6 @@ paths:
                     items:
                       type: string
                       format: uint64
-                  branches:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        sha:
-                          type: string
-                        lastUpdatedAt:
-                          type: string
-                          format: int64
-                  tags:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        sha:
-                          type: string
-                        lastUpdatedAt:
-                          type: string
-                          format: int64
                   subscribers:
                     type: string
                   commits:
@@ -20314,97 +20688,9 @@ paths:
           format: uint64
       tags:
         - Query
-  '/gitopia/gitopia/gitopia/repository/{repositoryId}/branches':
+  /gitopia/gitopia/gitopia/tag:
     get:
-      summary: Queries a repository by id.
-      operationId: GitopiaGitopiaGitopiaBranchAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              Branches:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    sha:
-                      type: string
-                    lastUpdatedAt:
-                      type: string
-                      format: int64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: repositoryId
-          in: path
-          required: true
-          type: string
-          format: uint64
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/repository/{repositoryId}/branches/{branchName}':
-    get:
-      operationId: GitopiaGitopiaGitopiaBranchSha
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              sha:
-                type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: repositoryId
-          in: path
-          required: true
-          type: string
-          format: uint64
-        - name: branchName
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/repository/{repositoryId}/tags':
-    get:
+      summary: Queries a list of Tag items.
       operationId: GitopiaGitopiaGitopiaTagAll
       responses:
         '200':
@@ -20412,18 +20698,54 @@ paths:
           schema:
             type: object
             properties:
-              Tags:
+              Tag:
                 type: array
                 items:
                   type: object
                   properties:
+                    id:
+                      type: string
+                      format: uint64
+                    repositoryId:
+                      type: string
+                      format: uint64
                     name:
                       type: string
                     sha:
                       type: string
-                    lastUpdatedAt:
+                    createdAt:
                       type: string
                       format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
         default:
           description: An unexpected error response.
           schema:
@@ -20443,52 +20765,62 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: repositoryId
-          in: path
-          required: true
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
           type: string
           format: uint64
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/repository/{repositoryId}/tags/{tagName}':
-    get:
-      operationId: GitopiaGitopiaGitopiaTagSha
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              sha:
-                type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: repositoryId
-          in: path
-          required: true
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
           type: string
           format: uint64
-        - name: tagName
-          in: path
-          required: true
-          type: string
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /gitopia/gitopia/gitopia/task:
@@ -20729,25 +21061,6 @@ paths:
                       type: array
                       items:
                         type: string
-                    repositories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          id:
-                            type: string
-                            format: uint64
-                    organizations:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          id:
-                            type: string
                     starred_repos:
                       type: array
                       items:
@@ -20901,25 +21214,6 @@ paths:
                     type: array
                     items:
                       type: string
-                  repositories:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        id:
-                          type: string
-                          format: uint64
-                  organizations:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        id:
-                          type: string
                   starred_repos:
                     type: array
                     items:
@@ -20960,108 +21254,7 @@ paths:
           type: string
       tags:
         - Query
-  '/gitopia/gitopia/gitopia/user/{id}/organizations':
-    get:
-      summary: Queries a list of user Organizations.
-      operationId: GitopiaGitopiaGitopiaUserOrganizationAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              organization:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    creator:
-                      type: string
-                    id:
-                      type: string
-                      format: uint64
-                    address:
-                      type: string
-                    name:
-                      type: string
-                    avatarUrl:
-                      type: string
-                    followers:
-                      type: array
-                      items:
-                        type: string
-                    following:
-                      type: array
-                      items:
-                        type: string
-                    repositories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          id:
-                            type: string
-                            format: uint64
-                    teams:
-                      type: array
-                      items:
-                        type: string
-                        format: uint64
-                    members:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          role:
-                            type: string
-                            enum:
-                              - MEMBER
-                              - OWNER
-                            default: MEMBER
-                    location:
-                      type: string
-                    website:
-                      type: string
-                    verified:
-                      type: boolean
-                    description:
-                      type: string
-                    createdAt:
-                      type: string
-                      format: int64
-                    updatedAt:
-                      type: string
-                      format: int64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/user/{id}/repositories':
+  '/gitopia/gitopia/gitopia/user/{id}/repository':
     get:
       summary: Queries a list of user repositories.
       operationId: GitopiaGitopiaGitopiaAnyRepositoryAll
@@ -21092,7 +21285,7 @@ paths:
                           type: string
                           enum:
                             - USER
-                            - ORGANIZATION
+                            - DAO
                           default: USER
                     description:
                       type: string
@@ -21101,30 +21294,6 @@ paths:
                       items:
                         type: string
                         format: uint64
-                    branches:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          sha:
-                            type: string
-                          lastUpdatedAt:
-                            type: string
-                            format: int64
-                    tags:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          sha:
-                            type: string
-                          lastUpdatedAt:
-                            type: string
-                            format: int64
                     subscribers:
                       type: string
                     commits:
@@ -21364,7 +21533,7 @@ paths:
                         type: string
                         enum:
                           - USER
-                          - ORGANIZATION
+                          - DAO
                         default: USER
                   description:
                     type: string
@@ -21373,30 +21542,6 @@ paths:
                     items:
                       type: string
                       format: uint64
-                  branches:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        sha:
-                          type: string
-                        lastUpdatedAt:
-                          type: string
-                          format: int64
-                  tags:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        sha:
-                          type: string
-                        lastUpdatedAt:
-                          type: string
-                          format: int64
                   subscribers:
                     type: string
                   commits:
@@ -21528,6 +21673,167 @@ paths:
           type: string
       tags:
         - Query
+  '/gitopia/gitopia/gitopia/user/{userId}/dao':
+    get:
+      summary: Queries a list of User Dao.
+      operationId: GitopiaGitopiaGitopiaUserDaoAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              dao:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    creator:
+                      type: string
+                    id:
+                      type: string
+                      format: uint64
+                    address:
+                      type: string
+                    name:
+                      type: string
+                    avatarUrl:
+                      type: string
+                    followers:
+                      type: array
+                      items:
+                        type: string
+                    following:
+                      type: array
+                      items:
+                        type: string
+                    teams:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                    location:
+                      type: string
+                    website:
+                      type: string
+                    verified:
+                      type: boolean
+                    description:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/whois:
     get:
       summary: Queries a list of whois items.
@@ -21553,7 +21859,7 @@ paths:
                       type: string
                       enum:
                         - USER
-                        - ORGANIZATION
+                        - DAO
                       default: USER
               pagination:
                 type: object
@@ -21682,7 +21988,7 @@ paths:
                     type: string
                     enum:
                       - USER
-                      - ORGANIZATION
+                      - DAO
                     default: USER
         default:
           description: An unexpected error response.
@@ -21704,6 +22010,259 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch':
+    get:
+      summary: Queries a list of Repository Branch.
+      operationId: GitopiaGitopiaGitopiaRepositoryBranchAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Branch:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    repositoryId:
+                      type: string
+                      format: uint64
+                    name:
+                      type: string
+                    sha:
+                      type: string
+                    allowForcePush:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch/{branchName}':
+    get:
+      summary: Queries Repository Branch by name.
+      operationId: GitopiaGitopiaGitopiaRepositoryBranch
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Branch:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  repositoryId:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  sha:
+                    type: string
+                  allowForcePush:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: int64
+                  updatedAt:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: branchName
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch/{branchName}/sha':
+    get:
+      operationId: GitopiaGitopiaGitopiaRepositoryBranchSha
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              sha:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: branchName
           in: path
           required: true
           type: string
@@ -21740,7 +22299,7 @@ paths:
                           type: string
                           enum:
                             - USER
-                            - ORGANIZATION
+                            - DAO
                           default: USER
                     description:
                       type: string
@@ -22182,6 +22741,255 @@ paths:
                   publishedAt:
                     type: string
                     format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: tagName
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag':
+    get:
+      summary: Queries a list of Repository Tag.
+      operationId: GitopiaGitopiaGitopiaRepositoryTagAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Tag:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    repositoryId:
+                      type: string
+                      format: uint64
+                    name:
+                      type: string
+                    sha:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: int64
+                    updatedAt:
+                      type: string
+                      format: int64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag/{tagName}':
+    get:
+      summary: Queries a Repository Tag by id.
+      operationId: GitopiaGitopiaGitopiaRepositoryTag
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Tag:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  repositoryId:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  sha:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: int64
+                  updatedAt:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: repositoryName
+          in: path
+          required: true
+          type: string
+        - name: tagName
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag/{tagName}/sha':
+    get:
+      operationId: GitopiaGitopiaGitopiaRepositoryTagSha
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              sha:
+                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -48114,6 +48922,27 @@ definitions:
         type: string
       uploader:
         type: string
+  gitopia.gitopia.gitopia.Branch:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      repositoryId:
+        type: string
+        format: uint64
+      name:
+        type: string
+      sha:
+        type: string
+      allowForcePush:
+        type: boolean
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
   gitopia.gitopia.gitopia.Comment:
     type: object
     properties:
@@ -48160,6 +48989,47 @@ definitions:
       - ISSUE
       - PULLREQUEST
     default: ISSUE
+  gitopia.gitopia.gitopia.Dao:
+    type: object
+    properties:
+      creator:
+        type: string
+      id:
+        type: string
+        format: uint64
+      address:
+        type: string
+      name:
+        type: string
+      avatarUrl:
+        type: string
+      followers:
+        type: array
+        items:
+          type: string
+      following:
+        type: array
+        items:
+          type: string
+      teams:
+        type: array
+        items:
+          type: string
+          format: uint64
+      location:
+        type: string
+      website:
+        type: string
+      verified:
+        type: boolean
+      description:
+        type: string
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
   gitopia.gitopia.gitopia.Issue:
     type: object
     properties:
@@ -48252,9 +49122,33 @@ definitions:
       updatedBefore:
         type: string
         format: int64
+  gitopia.gitopia.gitopia.Member:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      address:
+        type: string
+      daoAddress:
+        type: string
+      role:
+        type: string
+        enum:
+          - MEMBER
+          - OWNER
+        default: MEMBER
+  gitopia.gitopia.gitopia.MemberRole:
+    type: string
+    enum:
+      - MEMBER
+      - OWNER
+    default: MEMBER
   gitopia.gitopia.gitopia.MsgAddIssueAssigneesResponse:
     type: object
   gitopia.gitopia.gitopia.MsgAddIssueLabelsResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgAddMemberResponse:
     type: object
   gitopia.gitopia.gitopia.MsgAddPullRequestAssigneesResponse:
     type: object
@@ -48272,6 +49166,11 @@ definitions:
       id:
         type: string
         format: uint64
+  gitopia.gitopia.gitopia.MsgCreateDaoResponse:
+    type: object
+    properties:
+      id:
+        type: string
   gitopia.gitopia.gitopia.MsgCreateIssueResponse:
     type: object
     properties:
@@ -48281,11 +49180,6 @@ definitions:
       iid:
         type: string
         format: uint64
-  gitopia.gitopia.gitopia.MsgCreateOrganizationResponse:
-    type: object
-    properties:
-      id:
-        type: string
   gitopia.gitopia.gitopia.MsgCreatePullRequestResponse:
     type: object
     properties:
@@ -48310,11 +49204,13 @@ definitions:
   gitopia.gitopia.gitopia.MsgCreateRepositoryResponse:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
-      name:
-        type: string
+      repositoryId:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
   gitopia.gitopia.gitopia.MsgCreateTaskResponse:
     type: object
     properties:
@@ -48330,9 +49226,9 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteCommentResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgDeleteIssueResponse:
+  gitopia.gitopia.gitopia.MsgDeleteDaoResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgDeleteOrganizationResponse:
+  gitopia.gitopia.gitopia.MsgDeleteIssueResponse:
     type: object
   gitopia.gitopia.gitopia.MsgDeletePullRequestResponse:
     type: object
@@ -48347,8 +49243,6 @@ definitions:
   gitopia.gitopia.gitopia.MsgDeleteTaskResponse:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteUserResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgDeleteWhoisResponse:
     type: object
   gitopia.gitopia.gitopia.MsgForkRepositoryResponse:
     type: object
@@ -48370,29 +49264,29 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgMultiDeleteTagResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranch.Branch:
+  gitopia.gitopia.gitopia.MsgMultiSetBranch.Branch:
     type: object
     properties:
       name:
         type: string
-      commitSHA:
+      sha:
         type: string
-  gitopia.gitopia.gitopia.MsgMultiSetRepositoryBranchResponse:
+  gitopia.gitopia.gitopia.MsgMultiSetBranchResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgMultiSetRepositoryTag.Tag:
+  gitopia.gitopia.gitopia.MsgMultiSetTag.Tag:
     type: object
     properties:
       name:
         type: string
-      commitSHA:
+      sha:
         type: string
-  gitopia.gitopia.gitopia.MsgMultiSetRepositoryTagResponse:
+  gitopia.gitopia.gitopia.MsgMultiSetTagResponse:
     type: object
   gitopia.gitopia.gitopia.MsgRemoveIssueAssigneesResponse:
     type: object
   gitopia.gitopia.gitopia.MsgRemoveIssueLabelsResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgRemoveOrganizationMemberResponse:
+  gitopia.gitopia.gitopia.MsgRemoveMemberResponse:
     type: object
   gitopia.gitopia.gitopia.MsgRemovePullRequestAssigneesResponse:
     type: object
@@ -48402,9 +49296,18 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgRemoveRepositoryCollaboratorResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgRenameOrganizationResponse:
+  gitopia.gitopia.gitopia.MsgRenameDaoResponse:
     type: object
   gitopia.gitopia.gitopia.MsgRenameRepositoryResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgSetBranch.Branch:
+    type: object
+    properties:
+      name:
+        type: string
+      sha:
+        type: string
+  gitopia.gitopia.gitopia.MsgSetBranchResponse:
     type: object
   gitopia.gitopia.gitopia.MsgSetDefaultBranchResponse:
     type: object
@@ -48413,11 +49316,14 @@ definitions:
     properties:
       state:
         type: string
-  gitopia.gitopia.gitopia.MsgSetRepositoryBranchResponse:
+  gitopia.gitopia.gitopia.MsgSetTag.Tag:
     type: object
-  gitopia.gitopia.gitopia.MsgSetRepositoryTagResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgSetWhoisResponse:
+    properties:
+      name:
+        type: string
+      sha:
+        type: string
+  gitopia.gitopia.gitopia.MsgSetTagResponse:
     type: object
   gitopia.gitopia.gitopia.MsgToggleIssueStateResponse:
     type: object
@@ -48429,9 +49335,15 @@ definitions:
     properties:
       allowForking:
         type: boolean
-  gitopia.gitopia.gitopia.MsgTransferUserResponse:
-    type: object
   gitopia.gitopia.gitopia.MsgUpdateCommentResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateDaoAvatarResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateDaoDescriptionResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateDaoLocationResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateDaoWebsiteResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateIssueDescriptionResponse:
     type: object
@@ -48439,15 +49351,7 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateIssueTitleResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationAvatarResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationDescriptionResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationLocationResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationMemberResponse:
-    type: object
-  gitopia.gitopia.gitopia.MsgUpdateOrganizationWebsiteResponse:
+  gitopia.gitopia.gitopia.MsgUpdateMemberRoleResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdatePullRequestDescriptionResponse:
     type: object
@@ -48469,99 +49373,16 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateUserBioResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgUpdateUserResponse:
+  gitopia.gitopia.gitopia.MsgUpdateUserNameResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgUpdateWhoisResponse:
+  gitopia.gitopia.gitopia.MsgUpdateUserUsernameResponse:
     type: object
-  gitopia.gitopia.gitopia.Organization:
-    type: object
-    properties:
-      creator:
-        type: string
-      id:
-        type: string
-        format: uint64
-      address:
-        type: string
-      name:
-        type: string
-      avatarUrl:
-        type: string
-      followers:
-        type: array
-        items:
-          type: string
-      following:
-        type: array
-        items:
-          type: string
-      repositories:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            id:
-              type: string
-              format: uint64
-      teams:
-        type: array
-        items:
-          type: string
-          format: uint64
-      members:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-            role:
-              type: string
-              enum:
-                - MEMBER
-                - OWNER
-              default: MEMBER
-      location:
-        type: string
-      website:
-        type: string
-      verified:
-        type: boolean
-      description:
-        type: string
-      createdAt:
-        type: string
-        format: int64
-      updatedAt:
-        type: string
-        format: int64
-  gitopia.gitopia.gitopia.OrganizationMember:
-    type: object
-    properties:
-      id:
-        type: string
-      role:
-        type: string
-        enum:
-          - MEMBER
-          - OWNER
-        default: MEMBER
-  gitopia.gitopia.gitopia.OrganizationMember.Role:
+  gitopia.gitopia.gitopia.OwnerType:
     type: string
     enum:
-      - MEMBER
-      - OWNER
-    default: MEMBER
-  gitopia.gitopia.gitopia.OrganizationRepository:
-    type: object
-    properties:
-      name:
-        type: string
-      id:
-        type: string
-        format: uint64
+      - USER
+      - DAO
+    default: USER
   gitopia.gitopia.gitopia.PullRequest:
     type: object
     properties:
@@ -48733,7 +49554,7 @@ definitions:
                   type: string
                   enum:
                     - USER
-                    - ORGANIZATION
+                    - DAO
                   default: USER
             description:
               type: string
@@ -48742,30 +49563,6 @@ definitions:
               items:
                 type: string
                 format: uint64
-            branches:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  sha:
-                    type: string
-                  lastUpdatedAt:
-                    type: string
-                    format: int64
-            tags:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  sha:
-                    type: string
-                  lastUpdatedAt:
-                    type: string
-                    format: int64
             subscribers:
               type: string
             commits:
@@ -48893,6 +49690,57 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  gitopia.gitopia.gitopia.QueryAllBranchResponse:
+    type: object
+    properties:
+      Branch:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            repositoryId:
+              type: string
+              format: uint64
+            name:
+              type: string
+            sha:
+              type: string
+            allowForcePush:
+              type: boolean
+            createdAt:
+              type: string
+              format: int64
+            updatedAt:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   gitopia.gitopia.gitopia.QueryAllCommentResponse:
     type: object
     properties:
@@ -48938,6 +49786,123 @@ definitions:
                 - ISSUE
                 - PULLREQUEST
               default: ISSUE
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllDaoMemberResponse:
+    type: object
+    properties:
+      Member:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            address:
+              type: string
+            daoAddress:
+              type: string
+            role:
+              type: string
+              enum:
+                - MEMBER
+                - OWNER
+              default: MEMBER
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllDaoResponse:
+    type: object
+    properties:
+      dao:
+        type: array
+        items:
+          type: object
+          properties:
+            creator:
+              type: string
+            id:
+              type: string
+              format: uint64
+            address:
+              type: string
+            name:
+              type: string
+            avatarUrl:
+              type: string
+            followers:
+              type: array
+              items:
+                type: string
+            following:
+              type: array
+              items:
+                type: string
+            teams:
+              type: array
+              items:
+                type: string
+                format: uint64
+            location:
+              type: string
+            website:
+              type: string
+            verified:
+              type: boolean
+            description:
+              type: string
+            createdAt:
+              type: string
+              format: int64
+            updatedAt:
+              type: string
+              format: int64
       pagination:
         type: object
         properties:
@@ -49053,75 +50018,27 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  gitopia.gitopia.gitopia.QueryAllOrganizationResponse:
+  gitopia.gitopia.gitopia.QueryAllMemberResponse:
     type: object
     properties:
-      Organization:
+      Member:
         type: array
         items:
           type: object
           properties:
-            creator:
-              type: string
             id:
               type: string
               format: uint64
             address:
               type: string
-            name:
+            daoAddress:
               type: string
-            avatarUrl:
+            role:
               type: string
-            followers:
-              type: array
-              items:
-                type: string
-            following:
-              type: array
-              items:
-                type: string
-            repositories:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  id:
-                    type: string
-                    format: uint64
-            teams:
-              type: array
-              items:
-                type: string
-                format: uint64
-            members:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  role:
-                    type: string
-                    enum:
-                      - MEMBER
-                      - OWNER
-                    default: MEMBER
-            location:
-              type: string
-            website:
-              type: string
-            verified:
-              type: boolean
-            description:
-              type: string
-            createdAt:
-              type: string
-              format: int64
-            updatedAt:
-              type: string
-              format: int64
+              enum:
+                - MEMBER
+                - OWNER
+              default: MEMBER
       pagination:
         type: object
         properties:
@@ -49320,6 +50237,57 @@ definitions:
               type: string
               format: int64
             publishedAt:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllRepositoryBranchResponse:
+    type: object
+    properties:
+      Branch:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            repositoryId:
+              type: string
+              format: uint64
+            name:
+              type: string
+            sha:
+              type: string
+            allowForcePush:
+              type: boolean
+            createdAt:
+              type: string
+              format: int64
+            updatedAt:
               type: string
               format: int64
       pagination:
@@ -49661,7 +50629,7 @@ definitions:
                   type: string
                   enum:
                     - USER
-                    - ORGANIZATION
+                    - DAO
                   default: USER
             description:
               type: string
@@ -49670,30 +50638,6 @@ definitions:
               items:
                 type: string
                 format: uint64
-            branches:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  sha:
-                    type: string
-                  lastUpdatedAt:
-                    type: string
-                    format: int64
-            tags:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  sha:
-                    type: string
-                  lastUpdatedAt:
-                    type: string
-                    format: int64
             subscribers:
               type: string
             commits:
@@ -49821,6 +50765,104 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  gitopia.gitopia.gitopia.QueryAllRepositoryTagResponse:
+    type: object
+    properties:
+      Tag:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            repositoryId:
+              type: string
+              format: uint64
+            name:
+              type: string
+            sha:
+              type: string
+            createdAt:
+              type: string
+              format: int64
+            updatedAt:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.gitopia.QueryAllTagResponse:
+    type: object
+    properties:
+      Tag:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            repositoryId:
+              type: string
+              format: uint64
+            name:
+              type: string
+            sha:
+              type: string
+            createdAt:
+              type: string
+              format: int64
+            updatedAt:
+              type: string
+              format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   gitopia.gitopia.gitopia.QueryAllTaskResponse:
     type: object
     properties:
@@ -49876,10 +50918,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  gitopia.gitopia.gitopia.QueryAllUserOrganizationResponse:
+  gitopia.gitopia.gitopia.QueryAllUserDaoResponse:
     type: object
     properties:
-      organization:
+      dao:
         type: array
         items:
           type: object
@@ -49903,34 +50945,11 @@ definitions:
               type: array
               items:
                 type: string
-            repositories:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  id:
-                    type: string
-                    format: uint64
             teams:
               type: array
               items:
                 type: string
                 format: uint64
-            members:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  role:
-                    type: string
-                    enum:
-                      - MEMBER
-                      - OWNER
-                    default: MEMBER
             location:
               type: string
             website:
@@ -49945,6 +50964,31 @@ definitions:
             updatedAt:
               type: string
               format: int64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
   gitopia.gitopia.gitopia.QueryAllUserResponse:
     type: object
     properties:
@@ -49974,25 +51018,6 @@ definitions:
               type: array
               items:
                 type: string
-            repositories:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  id:
-                    type: string
-                    format: uint64
-            organizations:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  id:
-                    type: string
             starred_repos:
               type: array
               items:
@@ -50051,7 +51076,7 @@ definitions:
               type: string
               enum:
                 - USER
-                - ORGANIZATION
+                - DAO
               default: USER
       pagination:
         type: object
@@ -50083,21 +51108,6 @@ definitions:
     properties:
       haveAuthorization:
         type: boolean
-  gitopia.gitopia.gitopia.QueryGetAllBranchResponse:
-    type: object
-    properties:
-      Branches:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            sha:
-              type: string
-            lastUpdatedAt:
-              type: string
-              format: int64
   gitopia.gitopia.gitopia.QueryGetAllForkResponse:
     type: object
     properties:
@@ -50122,7 +51132,7 @@ definitions:
                   type: string
                   enum:
                     - USER
-                    - ORGANIZATION
+                    - DAO
                   default: USER
             description:
               type: string
@@ -50163,21 +51173,6 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  gitopia.gitopia.gitopia.QueryGetAllTagResponse:
-    type: object
-    properties:
-      Tags:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            sha:
-              type: string
-            lastUpdatedAt:
-              type: string
-              format: int64
   gitopia.gitopia.gitopia.QueryGetAnyRepositoryResponse:
     type: object
     properties:
@@ -50200,7 +51195,7 @@ definitions:
                 type: string
                 enum:
                   - USER
-                  - ORGANIZATION
+                  - DAO
                 default: USER
           description:
             type: string
@@ -50209,30 +51204,6 @@ definitions:
             items:
               type: string
               format: uint64
-          branches:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                sha:
-                  type: string
-                lastUpdatedAt:
-                  type: string
-                  format: int64
-          tags:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                sha:
-                  type: string
-                lastUpdatedAt:
-                  type: string
-                  format: int64
           subscribers:
             type: string
           commits:
@@ -50335,11 +51306,6 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-  gitopia.gitopia.gitopia.QueryGetBranchShaResponse:
-    type: object
-    properties:
-      sha:
-        type: string
   gitopia.gitopia.gitopia.QueryGetCommentResponse:
     type: object
     properties:
@@ -50383,6 +51349,69 @@ definitions:
               - ISSUE
               - PULLREQUEST
             default: ISSUE
+  gitopia.gitopia.gitopia.QueryGetDaoMemberResponse:
+    type: object
+    properties:
+      Member:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          address:
+            type: string
+          daoAddress:
+            type: string
+          role:
+            type: string
+            enum:
+              - MEMBER
+              - OWNER
+            default: MEMBER
+  gitopia.gitopia.gitopia.QueryGetDaoResponse:
+    type: object
+    properties:
+      dao:
+        type: object
+        properties:
+          creator:
+            type: string
+          id:
+            type: string
+            format: uint64
+          address:
+            type: string
+          name:
+            type: string
+          avatarUrl:
+            type: string
+          followers:
+            type: array
+            items:
+              type: string
+          following:
+            type: array
+            items:
+              type: string
+          teams:
+            type: array
+            items:
+              type: string
+              format: uint64
+          location:
+            type: string
+          website:
+            type: string
+          verified:
+            type: boolean
+          description:
+            type: string
+          createdAt:
+            type: string
+            format: int64
+          updatedAt:
+            type: string
+            format: int64
   gitopia.gitopia.gitopia.QueryGetIssueResponse:
     type: object
     properties:
@@ -50495,73 +51524,6 @@ definitions:
             type: string
             format: int64
           publishedAt:
-            type: string
-            format: int64
-  gitopia.gitopia.gitopia.QueryGetOrganizationResponse:
-    type: object
-    properties:
-      Organization:
-        type: object
-        properties:
-          creator:
-            type: string
-          id:
-            type: string
-            format: uint64
-          address:
-            type: string
-          name:
-            type: string
-          avatarUrl:
-            type: string
-          followers:
-            type: array
-            items:
-              type: string
-          following:
-            type: array
-            items:
-              type: string
-          repositories:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                id:
-                  type: string
-                  format: uint64
-          teams:
-            type: array
-            items:
-              type: string
-              format: uint64
-          members:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                role:
-                  type: string
-                  enum:
-                    - MEMBER
-                    - OWNER
-                  default: MEMBER
-          location:
-            type: string
-          website:
-            type: string
-          verified:
-            type: boolean
-          description:
-            type: string
-          createdAt:
-            type: string
-            format: int64
-          updatedAt:
             type: string
             format: int64
   gitopia.gitopia.gitopia.QueryGetPullRequestMergePermissionResponse:
@@ -50715,6 +51677,35 @@ definitions:
           publishedAt:
             type: string
             format: int64
+  gitopia.gitopia.gitopia.QueryGetRepositoryBranchResponse:
+    type: object
+    properties:
+      Branch:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          repositoryId:
+            type: string
+            format: uint64
+          name:
+            type: string
+          sha:
+            type: string
+          allowForcePush:
+            type: boolean
+          createdAt:
+            type: string
+            format: int64
+          updatedAt:
+            type: string
+            format: int64
+  gitopia.gitopia.gitopia.QueryGetRepositoryBranchShaResponse:
+    type: object
+    properties:
+      sha:
+        type: string
   gitopia.gitopia.gitopia.QueryGetRepositoryIssueResponse:
     type: object
     properties:
@@ -50946,7 +51937,7 @@ definitions:
                 type: string
                 enum:
                   - USER
-                  - ORGANIZATION
+                  - DAO
                 default: USER
           description:
             type: string
@@ -50955,30 +51946,6 @@ definitions:
             items:
               type: string
               format: uint64
-          branches:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                sha:
-                  type: string
-                lastUpdatedAt:
-                  type: string
-                  format: int64
-          tags:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                sha:
-                  type: string
-                lastUpdatedAt:
-                  type: string
-                  format: int64
           subscribers:
             type: string
           commits:
@@ -51081,7 +52048,29 @@ definitions:
                   default: READ
           allowForking:
             type: boolean
-  gitopia.gitopia.gitopia.QueryGetTagShaResponse:
+  gitopia.gitopia.gitopia.QueryGetRepositoryTagResponse:
+    type: object
+    properties:
+      Tag:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          repositoryId:
+            type: string
+            format: uint64
+          name:
+            type: string
+          sha:
+            type: string
+          createdAt:
+            type: string
+            format: int64
+          updatedAt:
+            type: string
+            format: int64
+  gitopia.gitopia.gitopia.QueryGetRepositoryTagShaResponse:
     type: object
     properties:
       sha:
@@ -51141,25 +52130,6 @@ definitions:
             type: array
             items:
               type: string
-          repositories:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                id:
-                  type: string
-                  format: uint64
-          organizations:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                id:
-                  type: string
           starred_repos:
             type: array
             items:
@@ -51191,7 +52161,7 @@ definitions:
             type: string
             enum:
               - USER
-              - ORGANIZATION
+              - DAO
             default: USER
   gitopia.gitopia.gitopia.Release:
     type: object
@@ -51260,7 +52230,7 @@ definitions:
             type: string
             enum:
               - USER
-              - ORGANIZATION
+              - DAO
             default: USER
       description:
         type: string
@@ -51269,30 +52239,6 @@ definitions:
         items:
           type: string
           format: uint64
-      branches:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            sha:
-              type: string
-            lastUpdatedAt:
-              type: string
-              format: int64
-      tags:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            sha:
-              type: string
-            lastUpdatedAt:
-              type: string
-              format: int64
       subscribers:
         type: string
       commits:
@@ -51395,16 +52341,6 @@ definitions:
               default: READ
       allowForking:
         type: boolean
-  gitopia.gitopia.gitopia.RepositoryBranch:
-    type: object
-    properties:
-      name:
-        type: string
-      sha:
-        type: string
-      lastUpdatedAt:
-        type: string
-        format: int64
   gitopia.gitopia.gitopia.RepositoryCollaborator:
     type: object
     properties:
@@ -51447,7 +52383,7 @@ definitions:
             type: string
             enum:
               - USER
-              - ORGANIZATION
+              - DAO
             default: USER
       description:
         type: string
@@ -51463,6 +52399,13 @@ definitions:
       pullsCount:
         type: string
         format: uint64
+  gitopia.gitopia.gitopia.RepositoryId:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
   gitopia.gitopia.gitopia.RepositoryIssue:
     type: object
     properties:
@@ -51493,14 +52436,8 @@ definitions:
         type: string
         enum:
           - USER
-          - ORGANIZATION
+          - DAO
         default: USER
-  gitopia.gitopia.gitopia.RepositoryOwner.Type:
-    type: string
-    enum:
-      - USER
-      - ORGANIZATION
-    default: USER
   gitopia.gitopia.gitopia.RepositoryPullRequest:
     type: object
     properties:
@@ -51518,14 +52455,23 @@ definitions:
         format: uint64
       tagName:
         type: string
-  gitopia.gitopia.gitopia.RepositoryTag:
+  gitopia.gitopia.gitopia.Tag:
     type: object
     properties:
+      id:
+        type: string
+        format: uint64
+      repositoryId:
+        type: string
+        format: uint64
       name:
         type: string
       sha:
         type: string
-      lastUpdatedAt:
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
         type: string
         format: int64
   gitopia.gitopia.gitopia.Task:
@@ -51590,25 +52536,6 @@ definitions:
         type: array
         items:
           type: string
-      repositories:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            id:
-              type: string
-              format: uint64
-      organizations:
-        type: array
-        items:
-          type: object
-          properties:
-            name:
-              type: string
-            id:
-              type: string
       starred_repos:
         type: array
         items:
@@ -51624,21 +52551,6 @@ definitions:
       updatedAt:
         type: string
         format: int64
-  gitopia.gitopia.gitopia.UserOrganization:
-    type: object
-    properties:
-      name:
-        type: string
-      id:
-        type: string
-  gitopia.gitopia.gitopia.UserRepository:
-    type: object
-    properties:
-      name:
-        type: string
-      id:
-        type: string
-        format: uint64
   gitopia.gitopia.gitopia.Whois:
     type: object
     properties:
@@ -51652,14 +52564,8 @@ definitions:
         type: string
         enum:
           - USER
-          - ORGANIZATION
+          - DAO
         default: USER
-  gitopia.gitopia.gitopia.Whois.OwnerType:
-    type: string
-    enum:
-      - USER
-      - ORGANIZATION
-    default: USER
   ibc.applications.transfer.v1.DenomTrace:
     type: object
     properties:
