@@ -43,6 +43,7 @@ func contains(s []string, str string) bool {
 	return false
 }
 
+/*
 func migrateGitopiaGenesisTov013(gitopiaGenesisv012 gitopiatypesv012.GenesisState, gitopiaGenesis *gitopiatypes.GenesisState) {
 	for i := range gitopiaGenesisv012.UserList {
 		var repositories []*gitopiatypes.UserRepository
@@ -380,6 +381,7 @@ func migrateGitopiaGenesisTov013(gitopiaGenesisv012 gitopiatypesv012.GenesisStat
 	gitopiaGenesis.UserCount = gitopiaGenesisv012.UserCount
 	gitopiaGenesis.WhoisCount = gitopiaGenesisv012.WhoisCount
 }
+*/
 
 func MigrateCmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -438,7 +440,7 @@ func MigrateCmd() *cobra.Command {
 			ctx.Codec.MustUnmarshalJSON(state["ibc"], &ibcGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaGenesisv012)
 
-			migrateGitopiaGenesisTov013(gitopiaGenesisv012, &gitopiaGenesis)
+			//	migrateGitopiaGenesisTov013(gitopiaGenesisv012, &gitopiaGenesis)
 
 			var baseAccounts []*codectypes.Any
 			var moduleAccounts []string
