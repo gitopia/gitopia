@@ -82,11 +82,12 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 			k.SetRepositoryBranch(ctx, b)
 		} else {
 			b := types.Branch{
-				RepositoryId: repository.Id,
-				Name:         branch.Name,
-				Sha:          branch.Sha,
-				CreatedAt:    ctx.BlockTime().Unix(),
-				UpdatedAt:    ctx.BlockTime().Unix(),
+				RepositoryId:   repository.Id,
+				Name:           branch.Name,
+				Sha:            branch.Sha,
+				AllowForcePush: true,
+				CreatedAt:      ctx.BlockTime().Unix(),
+				UpdatedAt:      ctx.BlockTime().Unix(),
 			}
 			k.AppendBranch(ctx, b)
 		}
