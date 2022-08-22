@@ -94,7 +94,7 @@ func (msg *MsgSetTag) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMultiSetTag{}
 
-func NewMsgMultiSetRepositoryTag(creator string, repositoryId RepositoryId, tags []MsgMultiSetTag_Tag) *MsgMultiSetTag {
+func NewMsgMultiSetTag(creator string, repositoryId RepositoryId, tags []MsgMultiSetTag_Tag) *MsgMultiSetTag {
 	return &MsgMultiSetTag{
 		Creator:      creator,
 		RepositoryId: repositoryId,

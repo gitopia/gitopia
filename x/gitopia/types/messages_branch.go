@@ -169,7 +169,7 @@ func (msg *MsgSetDefaultBranch) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMultiSetBranch{}
 
-func NewMsgMultiSetRepositoryBranch(creator string, repositoryId RepositoryId, branches []MsgMultiSetBranch_Branch) *MsgMultiSetBranch {
+func NewMsgMultiSetBranch(creator string, repositoryId RepositoryId, branches []MsgMultiSetBranch_Branch) *MsgMultiSetBranch {
 	return &MsgMultiSetBranch{
 		Creator:      creator,
 		RepositoryId: repositoryId,
