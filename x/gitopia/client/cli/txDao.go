@@ -13,9 +13,9 @@ import (
 
 func CmdCreateDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-dao [name] [description]",
+		Use:   "create-dao [name] [description] [avatar-url] [location] [website]",
 		Short: "Create a new Dao",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -25,13 +25,25 @@ func CmdCreateDao() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsAvatarUrl, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsLocation, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+			argsWebsite, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription)
+			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

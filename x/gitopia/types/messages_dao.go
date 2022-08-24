@@ -10,11 +10,14 @@ import (
 
 var _ sdk.Msg = &MsgCreateDao{}
 
-func NewMsgCreateDao(creator string, name string, description string) *MsgCreateDao {
+func NewMsgCreateDao(creator string, name string, description string, avatarUrl string, location string, website string) *MsgCreateDao {
 	return &MsgCreateDao{
 		Creator:     creator,
 		Name:        name,
 		Description: description,
+		AvatarUrl:   avatarUrl,
+		Location:    location,
+		Website:     website,
 	}
 }
 
@@ -61,6 +64,37 @@ func (msg *MsgCreateDao) ValidateBasic() error {
 	if len(msg.Description) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
 	}
+
+	if len(msg.Location) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "location exceeds limit: 255")
+	}
+
+	if len(msg.AvatarUrl) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
+	}
+	if msg.AvatarUrl != "" {
+		url, err := url.ParseRequestURI(msg.AvatarUrl)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.AvatarUrl)
+		}
+		if url.Scheme != "https" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
+		}
+	}
+
+	if len(msg.Website) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "website url exceeds limit: 2048")
+	}
+	if msg.Website != "" {
+		url, err := url.ParseRequestURI(msg.Website)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid url (%s)", msg.Website)
+		}
+		if url.Scheme != "https" && url.Scheme != "http" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https and http URL scheme is allowed in Website")
+		}
+	}
+
 	return nil
 }
 
