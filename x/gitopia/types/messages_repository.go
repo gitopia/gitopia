@@ -492,7 +492,18 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+		if len(msg.User) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.User) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.User)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.User)
+		}
 	}
 	_, exists := RepositoryCollaborator_Permission_value[msg.Role]
 	if !exists {
@@ -566,7 +577,18 @@ func (msg *MsgRemoveRepositoryCollaborator) ValidateBasic() error {
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+		if len(msg.User) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.User) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.User)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.User)
+		}
 	}
 	return nil
 }
