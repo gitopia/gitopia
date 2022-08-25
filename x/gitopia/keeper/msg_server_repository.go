@@ -377,15 +377,6 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	_, found = k.GetUser(ctx, msg.User)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
-	}
-
-	if msg.Creator == msg.User {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
-	}
-
 	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
 	if err != nil {
 		return nil, err
@@ -394,6 +385,20 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	userAddress, err := k.ResolveAddress(ctx, msg.User)
+	if err != nil {
+		return nil, err
+	}
+
+	_, found = k.GetUser(ctx, userAddress.address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
+	}
+
+	if msg.Creator == userAddress.address {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryCollaboratorPermission) {
@@ -405,7 +410,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission arg (%v)", msg.Role))
 	}
 
-	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.User); exists {
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.address); exists {
 		repository.Collaborators[i].Permission = types.RepositoryCollaborator_Permission(permission)
 		k.SetRepository(ctx, repository)
 
@@ -413,7 +418,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 	}
 
 	var repositoryCollaborator = types.RepositoryCollaborator{
-		Id:         msg.User,
+		Id:         userAddress.address,
 		Permission: types.RepositoryCollaborator_Permission(permission),
 	}
 
@@ -443,11 +448,16 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
 
+	userAddress, err := k.ResolveAddress(ctx, msg.User)
+	if err != nil {
+		return nil, err
+	}
+
 	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryCollaboratorPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, msg.User); exists {
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.address); exists {
 		repository.Collaborators = append(repository.Collaborators[:i], repository.Collaborators[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("collaborators with id (%v) doesn't exists", msg.User))
