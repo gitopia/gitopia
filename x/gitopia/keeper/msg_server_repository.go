@@ -81,32 +81,66 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		return nil, err
 	}
 
+	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
 	ownerAddress, err := k.ResolveAddress(ctx, msg.Owner)
 	if err != nil {
 		return nil, err
 	}
 
-	_, found = k.GetUser(ctx, ownerAddress.address)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
+	if address.address == ownerAddress.address {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "self transfer not allowed")
 	}
 
 	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.RepositoryId.Name); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	switch address.ownerType {
+	case types.OwnerType_USER:
+		if msg.Creator != repository.Owner.Id {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
+		}
+	case types.OwnerType_DAO:
+		if m, found := k.GetDaoMember(ctx, repository.Owner.Id, msg.Creator); found {
+			if m.Role != types.MemberRole_OWNER {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
+			}
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao (%v)", msg.Creator, msg.RepositoryId.Id))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, types.Repository{}, types.RepositoryCollaborator_ADMIN) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	switch ownerAddress.ownerType {
+	case types.OwnerType_USER:
+		_, found = k.GetUser(ctx, ownerAddress.address)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
+		}
+	case types.OwnerType_DAO:
+		dao, found := k.GetDao(ctx, ownerAddress.address)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
+		}
+		if m, found := k.GetDaoMember(ctx, dao.Address, msg.Creator); found {
+			if m.Role != types.MemberRole_OWNER {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
+			}
+		} else {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
 
 	repository.Owner = &types.RepositoryOwner{
 		Id:   ownerAddress.address,
-		Type: address.ownerType,
+		Type: ownerAddress.ownerType,
 	}
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 
