@@ -56,7 +56,6 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 
 	k.Keeper.SetWhois(
 		ctx,
-		username,
 		whois,
 	)
 
@@ -98,7 +97,7 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
-	k.Keeper.SetWhois(ctx, newUsername, whois)
+	k.Keeper.SetWhois(ctx, whois)
 
 	return &types.MsgUpdateUserUsernameResponse{}, nil
 }

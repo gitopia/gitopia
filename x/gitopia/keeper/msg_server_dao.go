@@ -61,7 +61,6 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 
 	k.Keeper.SetWhois(
 		ctx,
-		daoName,
 		whois,
 	)
 
@@ -122,7 +121,6 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 	}
 	k.Keeper.SetWhois(
 		ctx,
-		newDaoName,
 		whois,
 	)
 

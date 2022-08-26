@@ -40,18 +40,16 @@ func (k Keeper) SetWhoisCount(ctx sdk.Context, count uint64) {
 }
 
 // SetWhois set a specific whois in the store
-func (k Keeper) SetWhois(ctx sdk.Context, name string, whois types.Whois) {
+func (k Keeper) SetWhois(ctx sdk.Context, whois types.Whois) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	b := k.cdc.MustMarshal(&whois)
-	key := []byte(types.WhoisKey + name)
-	store.Set(key, b)
+	store.Set([]byte(whois.Name), b)
 }
 
 // GetWhois returns the whois information
-func (k Keeper) GetWhois(ctx sdk.Context, key string) (val types.Whois, found bool) {
+func (k Keeper) GetWhois(ctx sdk.Context, username string) (val types.Whois, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	byteKey := []byte(types.WhoisKey + key)
-	b := store.Get(byteKey)
+	b := store.Get([]byte(username))
 	if b == nil {
 		return val, false
 	}
@@ -60,9 +58,9 @@ func (k Keeper) GetWhois(ctx sdk.Context, key string) (val types.Whois, found bo
 }
 
 // RemoveWhois removes a whois from the store
-func (k Keeper) RemoveWhois(ctx sdk.Context, key string) {
+func (k Keeper) RemoveWhois(ctx sdk.Context, username string) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	store.Delete([]byte(types.WhoisKey + key))
+	store.Delete([]byte(username))
 }
 
 // GetAllWhois returns all whois
