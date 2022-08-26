@@ -153,16 +153,16 @@ func (k msgServer) UpdateUserAvatar(goCtx context.Context, msg *types.MsgUpdateU
 func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (*types.MsgDeleteUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	user, found := k.GetUser(ctx, msg.Id)
+	user, found := k.GetUser(ctx, msg.Creator)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Id))
-	}
-
-	if msg.Creator != user.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
 	DoRemoveUser(ctx, k, user)
+	k.Keeper.RemoveWhois(
+		ctx,
+		strings.ToLower(user.Username),
+	)
 
 	return &types.MsgDeleteUserResponse{}, nil
 }
@@ -171,6 +171,10 @@ func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
 	daos := k.GetAllUserDao(ctx, user.Creator)
 	for _, dao := range daos {
 		DoRemoveDao(ctx, k, user, dao)
+		k.Keeper.RemoveWhois(
+			ctx,
+			strings.ToLower(dao.Name),
+		)
 	}
 
 	repositories := k.GetAllAddressRepository(ctx, user.Creator)

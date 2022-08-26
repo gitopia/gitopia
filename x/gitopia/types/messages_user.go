@@ -267,9 +267,8 @@ func (msg *MsgUpdateUserAvatar) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteUser{}
 
-func NewMsgDeleteUser(creator string, id string) *MsgDeleteUser {
+func NewMsgDeleteUser(creator string) *MsgDeleteUser {
 	return &MsgDeleteUser{
-		Id:      id,
 		Creator: creator,
 	}
 }

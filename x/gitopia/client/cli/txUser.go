@@ -158,18 +158,16 @@ func CmdUpdateUserAvatar() *cobra.Command {
 
 func CmdDeleteUser() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-user [id]",
-		Short: "Delete a user by id",
+		Use:   "delete-user",
+		Short: "Delete a user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id := string(args[0])
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgDeleteUser(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeleteUser(clientCtx.GetFromAddress().String())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
