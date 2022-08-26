@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,6 +14,11 @@ import (
 func createNRepository(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Repository {
 	items := make([]types.Repository, n)
 	for i := range items {
+		items[i].Name = fmt.Sprintf("repository-%d", i)
+		items[i].Owner = &types.RepositoryOwner{
+			Id:   "A",
+			Type: types.OwnerType_USER,
+		}
 		items[i].Id = keeper.AppendRepository(ctx, items[i])
 	}
 	return items
@@ -22,18 +28,20 @@ func TestAddressRepositoryGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNRepository(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetAddressRepository(ctx, item.Creator, item.Name)
+		got, found := keeper.GetAddressRepository(ctx, item.Owner.Id, item.Name)
 		require.True(t, found)
 		require.Equal(t, item, got)
 	}
+	baseRepositoryKeyCount := len(keeper.GetAllBaseRepositoryKey(ctx))
+	require.Equal(t, 10, baseRepositoryKeyCount)
 }
 
 func TestAddressRepositoryRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNRepository(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveAddressRepository(ctx, item.Creator, item.Name)
-		_, found := keeper.GetAddressRepository(ctx, item.Creator, item.Name)
+		keeper.RemoveAddressRepository(ctx, item.Owner.Id, item.Name)
+		_, found := keeper.GetAddressRepository(ctx, item.Owner.Id, item.Name)
 		require.False(t, found)
 	}
 }
@@ -47,7 +55,7 @@ func TestRepositoryGetAll(t *testing.T) {
 func TestAddressRepositoryGetAll(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNRepository(keeper, ctx, 10)
-	require.ElementsMatch(t, items, keeper.GetAllAddressRepository(ctx, items[0].Creator))
+	require.ElementsMatch(t, items, keeper.GetAllAddressRepository(ctx, items[0].Owner.Id))
 }
 
 func TestRepositoryCount(t *testing.T) {
