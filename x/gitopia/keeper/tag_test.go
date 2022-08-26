@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,6 +15,8 @@ import (
 func createNTag(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Tag {
 	items := make([]types.Tag, n)
 	for i := range items {
+		items[i].RepositoryId = 0
+		items[i].Name = fmt.Sprintf("tag-%d", i)
 		items[i].Id = keeper.AppendTag(ctx, items[i])
 	}
 	return items
@@ -23,7 +26,7 @@ func TestTagGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNTag(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetTag(ctx, item.Id)
+		got, found := keeper.GetRepositoryTag(ctx, item.RepositoryId, item.Name)
 		require.True(t, found)
 		require.Equal(t,
 			nullify.Fill(&item),
@@ -36,8 +39,8 @@ func TestTagRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNTag(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveTag(ctx, item.Id)
-		_, found := keeper.GetTag(ctx, item.Id)
+		keeper.RemoveRepositoryTag(ctx, item.RepositoryId, item.Name)
+		_, found := keeper.GetRepositoryTag(ctx, item.RepositoryId, item.Name)
 		require.False(t, found)
 	}
 }
@@ -48,6 +51,15 @@ func TestTagGetAll(t *testing.T) {
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllTag(ctx)),
+	)
+}
+
+func TestRepositoryTagGetAll(t *testing.T) {
+	keeper, ctx := keepertest.GitopiaKeeper(t)
+	items := createNTag(keeper, ctx, 10)
+	require.ElementsMatch(t,
+		nullify.Fill(items),
+		nullify.Fill(keeper.GetAllRepositoryTag(ctx, 0)),
 	)
 }
 
