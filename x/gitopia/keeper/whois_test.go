@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,7 +17,8 @@ func createNWhois(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Whois {
 	for i := range items {
 		items[i].Creator = sample.AccAddress()
 		items[i].Address = items[i].Creator
-		keeper.SetWhois(ctx, items[i].Address, items[i])
+		items[i].Name = fmt.Sprintf("creator-%d", i)
+		keeper.SetWhois(ctx, items[i])
 	}
 	return items
 }
@@ -25,7 +27,7 @@ func TestWhoisGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNWhois(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetWhois(ctx, item.Creator)
+		got, found := keeper.GetWhois(ctx, item.Name)
 		require.True(t, found)
 		require.Equal(t, item, got)
 	}
@@ -35,8 +37,8 @@ func TestWhoisRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNWhois(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveWhois(ctx, item.Creator)
-		_, found := keeper.GetWhois(ctx, item.Creator)
+		keeper.RemoveWhois(ctx, item.Name)
+		_, found := keeper.GetWhois(ctx, item.Name)
 		require.False(t, found)
 	}
 }
