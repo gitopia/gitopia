@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,16 +15,18 @@ import (
 func createNBranch(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Branch {
 	items := make([]types.Branch, n)
 	for i := range items {
+		items[i].RepositoryId = 0
+		items[i].Name = fmt.Sprintf("branch-%d", i)
 		items[i].Id = keeper.AppendBranch(ctx, items[i])
 	}
 	return items
 }
 
-func TestRepositoryBranchGet(t *testing.T) {
+func TestBranchGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNBranch(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetRepositoryBranch(ctx, item.Id)
+		got, found := keeper.GetRepositoryBranch(ctx, item.RepositoryId, item.Name)
 		require.True(t, found)
 		require.Equal(t,
 			nullify.Fill(&item),
@@ -36,8 +39,8 @@ func TestBranchRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNBranch(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveBranch(ctx, item.Id)
-		_, found := keeper.GetBranch(ctx, item.Id)
+		keeper.RemoveRepositoryBranch(ctx, item.RepositoryId, item.Name)
+		_, found := keeper.GetRepositoryBranch(ctx, item.RepositoryId, item.Name)
 		require.False(t, found)
 	}
 }
@@ -48,6 +51,15 @@ func TestBranchGetAll(t *testing.T) {
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllBranch(ctx)),
+	)
+}
+
+func TestRepositoryBranchGetAll(t *testing.T) {
+	keeper, ctx := keepertest.GitopiaKeeper(t)
+	items := createNBranch(keeper, ctx, 10)
+	require.ElementsMatch(t,
+		nullify.Fill(items),
+		nullify.Fill(keeper.GetAllRepositoryBranch(ctx, 0)),
 	)
 }
 
