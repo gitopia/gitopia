@@ -1,45 +1,144 @@
 package keeper_test
 
-/*
-func TestBranchMsgServerCreate(t *testing.T) {
+import (
+	"fmt"
+	"testing"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/require"
+
+	"github.com/gitopia/gitopia/x/gitopia/types"
+)
+
+func TestBranchMsgServerSet(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	creator := "A"
-	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateBranch(ctx, &types.MsgCreateBranch{Creator: creator})
-		require.NoError(t, err)
-		require.Equal(t, i, int(resp.Id))
-	}
-}
 
-func TestBranchMsgServerUpdate(t *testing.T) {
-	creator := "A"
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
-		request *types.MsgUpdateBranch
+		request *types.MsgSetBranch
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgUpdateBranch{Creator: creator},
+			desc: "Completed",
+			request: &types.MsgSetBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branch: types.MsgSetBranch_Branch{
+					Name: fmt.Sprintf("branch"),
+				},
+			},
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdateBranch{Creator: "B"},
-			err:     sdkerrors.ErrUnauthorized,
+			desc: "Unauthorized",
+			request: &types.MsgSetBranch{
+				Creator: "B",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+			},
+			err: sdkerrors.ErrUnauthorized,
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdateBranch{Creator: creator, Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
+			desc: "CreatorNotFound",
+			request: &types.MsgSetBranch{
+				Creator: "Z",
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "RepositoryNotFound",
+			request: &types.MsgSetBranch{
+				Creator: "A",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "notexists",
+				},
+			},
+			err: sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateBranch(ctx, &types.MsgCreateBranch{Creator: creator})
-			require.NoError(t, err)
+			_, err = srv.SetBranch(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
 
-			_, err = srv.UpdateBranch(ctx, tc.request)
+func TestBranchMsgServerMultiSet(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
+	creator := "A"
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgMultiSetBranch
+		err     error
+	}{
+		{
+			desc: "Completed",
+			request: &types.MsgMultiSetBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branches: []types.MsgMultiSetBranch_Branch{{Name: "branch-1"}, {Name: "branch-2"}},
+			},
+		},
+		{
+			desc: "Unauthorized",
+			request: &types.MsgMultiSetBranch{
+				Creator: "B",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+			},
+			err: sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc: "CreatorNotFound",
+			request: &types.MsgMultiSetBranch{
+				Creator: "Z",
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "RepositoryNotFound",
+			request: &types.MsgMultiSetBranch{
+				Creator: "A",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "notexists",
+				},
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err = srv.MultiSetBranch(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -50,7 +149,26 @@ func TestBranchMsgServerUpdate(t *testing.T) {
 }
 
 func TestBranchMsgServerDelete(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
 	creator := "A"
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+	_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		Creator: creator,
+		RepositoryId: types.RepositoryId{
+			Id:   creator,
+			Name: "repository",
+		},
+		Branch: types.MsgSetBranch_Branch{
+			Name: fmt.Sprintf("branch"),
+		},
+	})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -58,25 +176,59 @@ func TestBranchMsgServerDelete(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgDeleteBranch{Creator: creator},
+			desc: "Completed",
+			request: &types.MsgDeleteBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branch: "branch",
+			},
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgDeleteBranch{Creator: "B"},
-			err:     sdkerrors.ErrUnauthorized,
+			desc: "Unauthorized",
+			request: &types.MsgDeleteBranch{
+				Creator: "B",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+			},
+			err: sdkerrors.ErrUnauthorized,
 		},
 		{
-			desc:    "KeyNotFound",
-			request: &types.MsgDeleteBranch{Creator: creator, Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
+			desc: "CreatorNotFound",
+			request: &types.MsgDeleteBranch{
+				Creator: "Z",
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "RepositoryNotFound",
+			request: &types.MsgDeleteBranch{
+				Creator: "A",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "notexists",
+				},
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "BranchNotFound",
+			request: &types.MsgDeleteBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branch: "branch",
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-
-			_, err := srv.CreateBranch(ctx, &types.MsgCreateBranch{Creator: creator})
-			require.NoError(t, err)
 			_, err = srv.DeleteBranch(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
@@ -86,4 +238,104 @@ func TestBranchMsgServerDelete(t *testing.T) {
 		})
 	}
 }
-*/
+
+func TestBranchMsgServerMultiDelete(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
+	creator := "A"
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+	_, err = srv.MultiSetBranch(ctx, &types.MsgMultiSetBranch{
+		Creator: creator,
+		RepositoryId: types.RepositoryId{
+			Id:   creator,
+			Name: "repository",
+		},
+		Branches: []types.MsgMultiSetBranch_Branch{{Name: "branch-1"}, {Name: "branch-2"}},
+	})
+	require.NoError(t, err)
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgMultiDeleteBranch
+		err     error
+	}{
+		{
+			desc: "SomeBranchsNotFound",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branches: []string{"branch", "branch-1", "branch-2"},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc: "Completed",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branches: []string{"branch-1", "branch-2"},
+			},
+		},
+		{
+			desc: "Unauthorized",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: "B",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+			},
+			err: sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc: "CreatorNotFound",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: "Z",
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "RepositoryNotFound",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: "A",
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "notexists",
+				},
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "BranchNotFound",
+			request: &types.MsgMultiDeleteBranch{
+				Creator: creator,
+				RepositoryId: types.RepositoryId{
+					Id:   creator,
+					Name: "repository",
+				},
+				Branches: []string{"branch"},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err = srv.MultiDeleteBranch(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
