@@ -275,6 +275,10 @@ func (msg *MsgUpdateDaoWebsite) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
 		}
 	}
+
+	if len(msg.Url) > 2048 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "website url exceeds limit: 2048")
+	}
 	if msg.Url != "" {
 		url, err := url.ParseRequestURI(msg.Url)
 		if err != nil {
