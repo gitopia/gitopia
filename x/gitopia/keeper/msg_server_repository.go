@@ -181,7 +181,14 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, types.Repository{}, types.RepositoryCollaborator_ADMIN) {
+	if !k.HavePermission(
+		ctx, msg.Creator,
+		types.Repository{Owner: &types.RepositoryOwner{
+			Id:   ownerAddress.address,
+			Type: ownerAddress.ownerType,
+		}},
+		types.RepositoryCollaborator_ADMIN,
+	) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
 	}
 
