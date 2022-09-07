@@ -859,12 +859,12 @@ func (m *Attachment) GetUploader() string {
 }
 
 func init() {
-	// proto.RegisterEnum("gitopia.gitopia.gitopia.RepositoryOwner_Type", RepositoryOwner_Type_name, RepositoryOwner_Type_value)
+	proto.RegisterEnum("gitopia.gitopia.gitopia.RepositoryOwner_Type", RepositoryOwner_Type_name, RepositoryOwner_Type_value)
 	// proto.RegisterEnum("gitopia.gitopia.gitopia.RepositoryCollaborator_Permission", RepositoryCollaborator_Permission_name, RepositoryCollaborator_Permission_value)
 	// proto.RegisterType((*Repository)(nil), "gitopia.gitopia.gitopia.Repository")
 	// proto.RegisterType((*RepositoryOwner)(nil), "gitopia.gitopia.gitopia.RepositoryOwner")
-	// proto.RegisterType((*RepositoryBranch)(nil), "gitopia.gitopia.gitopia.RepositoryBranch")
-	// proto.RegisterType((*RepositoryTag)(nil), "gitopia.gitopia.gitopia.RepositoryTag")
+	proto.RegisterType((*RepositoryBranch)(nil), "gitopia.gitopia.gitopia.RepositoryBranch")
+	proto.RegisterType((*RepositoryTag)(nil), "gitopia.gitopia.gitopia.RepositoryTag")
 	// proto.RegisterType((*RepositoryIssue)(nil), "gitopia.gitopia.gitopia.RepositoryIssue")
 	// proto.RegisterType((*RepositoryPullRequest)(nil), "gitopia.gitopia.gitopia.RepositoryPullRequest")
 	// proto.RegisterType((*RepositoryCollaborator)(nil), "gitopia.gitopia.gitopia.RepositoryCollaborator")

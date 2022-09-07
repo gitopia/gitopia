@@ -317,10 +317,10 @@ func (m *OrganizationMember) GetRole() OrganizationMember_Role {
 }
 
 func init() {
-	// proto.RegisterEnum("gitopia.gitopia.gitopia.OrganizationMember_Role", OrganizationMember_Role_name, OrganizationMember_Role_value)
-	// proto.RegisterType((*Organization)(nil), "gitopia.gitopia.gitopia.Organization")
-	// proto.RegisterType((*OrganizationRepository)(nil), "gitopia.gitopia.gitopia.OrganizationRepository")
-	// proto.RegisterType((*OrganizationMember)(nil), "gitopia.gitopia.gitopia.OrganizationMember")
+	proto.RegisterEnum("gitopia.gitopia.gitopia.OrganizationMember_Role", OrganizationMember_Role_name, OrganizationMember_Role_value)
+	proto.RegisterType((*Organization)(nil), "gitopia.gitopia.gitopia.Organization")
+	proto.RegisterType((*OrganizationRepository)(nil), "gitopia.gitopia.gitopia.OrganizationRepository")
+	proto.RegisterType((*OrganizationMember)(nil), "gitopia.gitopia.gitopia.OrganizationMember")
 }
 
 func init() { proto.RegisterFile("gitopia/organization.proto", fileDescriptor_2866e48a11710e51) }

@@ -285,8 +285,8 @@ func (m *UserOrganization) GetId() string {
 
 func init() {
 	// proto.RegisterType((*User)(nil), "gitopia.gitopia.gitopia.User")
-	// proto.RegisterType((*UserRepository)(nil), "gitopia.gitopia.gitopia.UserRepository")
-	// proto.RegisterType((*UserOrganization)(nil), "gitopia.gitopia.gitopia.UserOrganization")
+	proto.RegisterType((*UserRepository)(nil), "gitopia.gitopia.gitopia.UserRepository")
+	proto.RegisterType((*UserOrganization)(nil), "gitopia.gitopia.gitopia.UserOrganization")
 }
 
 func init() { proto.RegisterFile("gitopia/user.proto", fileDescriptor_bf7f4b301dc3d162) }

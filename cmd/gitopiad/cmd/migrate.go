@@ -91,7 +91,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			gitopiaGenesis.MemberList = append(gitopiaGenesis.MemberList,
 				gitopiatypes.Member{
 					Id:         memberCount,
-					Address:    "",
+					Address:    v013.Id,
 					DaoAddress: gitopiaGenesisv013.OrganizationList[i].Address,
 					Role:       role,
 				},
@@ -406,7 +406,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 
 func MigrateCmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "migrate-denom [genesis-file]",
+		Use:   "migrate-kv-store [genesis-file]",
 		Short: "Migrate Genesis file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
