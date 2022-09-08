@@ -128,6 +128,12 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		var collaborators []*gitopiatypes.RepositoryCollaborator
 
 		// Migrate BaseRepositoryKey
+
+		// Fix wrong ownership
+		if gitopiaGenesisv013.RepositoryList[i].Id == 30677 {
+			gitopiaGenesisv013.RepositoryList[i].Owner.Id = "gitopia1hv6xd7mzz7r8vkpvy47khc89qzrrup7w6mxurk"
+		}
+
 		gitopiaGenesis.BaseRepositoryKeyList = append(gitopiaGenesis.BaseRepositoryKeyList,
 			gitopiatypes.BaseRepositoryKey{
 				Id:      gitopiaGenesisv013.RepositoryList[i].Id,
@@ -505,9 +511,7 @@ func MigrateCmd() *cobra.Command {
 					continue
 				}
 				for j := range balance.Coins {
-					if balance.Coins[j].Denom == "tlore" {
-						balance.Coins[j].Denom = "utlore"
-						// bankGenesis.Balances[i].Coins[j].Amount = bankGenesis.Balances[i].Coins[j].Amount.Mul(sdk.NewInt(1000000))
+					if balance.Coins[j].Denom == "utlore" {
 						totalBalance = totalBalance.Add(balance.Coins[j].Amount)
 					}
 				}
