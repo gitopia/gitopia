@@ -26,6 +26,18 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 	cmd.AddCommand(CmdListTask())
 	cmd.AddCommand(CmdShowTask())
+
+	cmd.AddCommand(CmdListBranch())
+	cmd.AddCommand(CmdListRepositoryBranch())
+	cmd.AddCommand(CmdShowRepositoryBranch())
+
+	cmd.AddCommand(CmdListTag())
+	cmd.AddCommand(CmdListRepositoryTag())
+	cmd.AddCommand(CmdShowRepositoryTag())
+
+	cmd.AddCommand(CmdListMember())
+	cmd.AddCommand(CmdListDaoMember())
+	cmd.AddCommand(CmdShowDaoMember())
 	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdListRelease())
@@ -34,8 +46,8 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdListPullRequest())
 	cmd.AddCommand(CmdShowPullRequest())
 
-	cmd.AddCommand(CmdListOrganization())
-	cmd.AddCommand(CmdShowOrganization())
+	cmd.AddCommand(CmdListDao())
+	cmd.AddCommand(CmdShowDao())
 
 	cmd.AddCommand(CmdListComment())
 	cmd.AddCommand(CmdShowComment())
@@ -45,8 +57,6 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 	cmd.AddCommand(CmdListRepository())
 	cmd.AddCommand(CmdShowRepository())
-
-	cmd.AddCommand(CmdListBranch())
 
 	cmd.AddCommand(CmdListUser())
 	cmd.AddCommand(CmdShowUser())

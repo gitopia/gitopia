@@ -12,16 +12,21 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
-		TaskList: []Task{},
 		// this line is used by starport scaffolding # genesis/types/default
-		ReleaseList:      []Release{},
-		PullRequestList:  []PullRequest{},
-		OrganizationList: []Organization{},
-		CommentList:      []Comment{},
-		IssueList:        []Issue{},
-		RepositoryList:   []Repository{},
-		UserList:         []User{},
-		WhoisList:        []Whois{},
+		TaskList:              []Task{},
+		BranchList:            []Branch{},
+		TagList:               []Tag{},
+		MemberList:            []Member{},
+		ReleaseList:           []Release{},
+		PullRequestList:       []PullRequest{},
+		DaoList:               []Dao{},
+		CommentList:           []Comment{},
+		IssueList:             []Issue{},
+		RepositoryList:        []Repository{},
+		BaseRepositoryKeyList: []BaseRepositoryKey{},
+		UserList:              []User{},
+		UserDaoList:           []UserDao{},
+		WhoisList:             []Whois{},
 	}
 }
 
@@ -41,6 +46,42 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("task id should be lower or equal than the last id")
 		}
 		taskIdMap[elem.Id] = true
+	}
+	// Check for duplicated ID in branch
+	branchIdMap := make(map[uint64]bool)
+	branchCount := gs.GetBranchCount()
+	for _, elem := range gs.BranchList {
+		if _, ok := branchIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for branch")
+		}
+		if elem.Id >= branchCount {
+			return fmt.Errorf("branch id should be lower or equal than the last id")
+		}
+		branchIdMap[elem.Id] = true
+	}
+	// Check for duplicated ID in tag
+	tagIdMap := make(map[uint64]bool)
+	tagCount := gs.GetTagCount()
+	for _, elem := range gs.TagList {
+		if _, ok := tagIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for tag")
+		}
+		if elem.Id >= tagCount {
+			return fmt.Errorf("tag id should be lower or equal than the last id")
+		}
+		tagIdMap[elem.Id] = true
+	}
+	// Check for duplicated ID in member
+	memberIdMap := make(map[uint64]bool)
+	memberCount := gs.GetMemberCount()
+	for _, elem := range gs.MemberList {
+		if _, ok := memberIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for member")
+		}
+		if elem.Id >= memberCount {
+			return fmt.Errorf("member id should be lower or equal than the last id")
+		}
+		memberIdMap[elem.Id] = true
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 	// Check for duplicated ID in release
@@ -69,18 +110,18 @@ func (gs GenesisState) Validate() error {
 		}
 		pullRequestIdMap[elem.Id] = true
 	}
-	// Check for duplicated ID in organization
-	organizationIdMap := make(map[uint64]bool)
-	organizationCount := gs.GetOrganizationCount()
+	// Check for duplicated ID in dao
+	daoIdMap := make(map[uint64]bool)
+	daoCount := gs.GetDaoCount()
 
-	for _, elem := range gs.OrganizationList {
-		if _, ok := organizationIdMap[elem.Id]; ok {
-			return fmt.Errorf("duplicated id for organization")
+	for _, elem := range gs.DaoList {
+		if _, ok := daoIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for dao")
 		}
-		if elem.Id >= organizationCount {
-			return fmt.Errorf("organizaton id should be lower or equal than the last id")
+		if elem.Id >= daoCount {
+			return fmt.Errorf("dao id should be lower or equal than the last id")
 		}
-		organizationIdMap[elem.Id] = true
+		daoIdMap[elem.Id] = true
 	}
 	// Check for duplicated ID in comment
 	commentIdMap := make(map[uint64]bool)
@@ -121,6 +162,28 @@ func (gs GenesisState) Validate() error {
 		}
 		repositoryIdMap[elem.Id] = true
 	}
+
+	baseRepositoryKeyMap := make(map[string]bool)
+	for _, elem := range gs.BaseRepositoryKeyList {
+		k := elem.Address + elem.Name
+		if _, ok := baseRepositoryKeyMap[k]; ok {
+			return fmt.Errorf("duplicated baseRepositoryKey")
+		}
+		if elem.Id >= repositoryCount {
+			return fmt.Errorf("repository id should be lower or equal than the last id")
+		}
+		baseRepositoryKeyMap[k] = true
+	}
+
+	userDaoMap := make(map[string]bool)
+	for _, elem := range gs.UserDaoList {
+		k := elem.UserAddress + elem.DaoAddress
+		if _, ok := userDaoMap[k]; ok {
+			return fmt.Errorf("duplicated userDao entry")
+		}
+		userDaoMap[k] = true
+	}
+
 	// Check for duplicated ID in user
 	userIdMap := make(map[string]bool)
 	userCount := gs.GetUserCount()

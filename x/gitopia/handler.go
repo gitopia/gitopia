@@ -33,7 +33,55 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		// 	res, err := msgServer.DeleteTask(sdk.WrapSDKContext(ctx), msg)
 		// 	return sdk.WrapServiceResult(ctx, res, err)
 
-		// this line is used by starport scaffolding # 1
+		case *types.MsgSetBranch:
+			res, err := msgServer.SetBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgMultiSetBranch:
+			res, err := msgServer.MultiSetBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgSetDefaultBranch:
+			res, err := msgServer.SetDefaultBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteBranch:
+			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgMultiDeleteBranch:
+			res, err := msgServer.MultiDeleteBranch(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgSetTag:
+			res, err := msgServer.SetTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgMultiSetTag:
+			res, err := msgServer.MultiSetTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteTag:
+			res, err := msgServer.DeleteTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgMultiDeleteTag:
+			res, err := msgServer.MultiDeleteTag(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgAddMember:
+			res, err := msgServer.AddMember(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateMemberRole:
+			res, err := msgServer.UpdateMemberRole(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveMember:
+			res, err := msgServer.RemoveMember(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -98,40 +146,32 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeletePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgCreateOrganization:
-			res, err := msgServer.CreateOrganization(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreateDao:
+			res, err := msgServer.CreateDao(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRenameOrganization:
-			res, err := msgServer.RenameOrganization(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRenameDao:
+			res, err := msgServer.RenameDao(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateOrganizationMember:
-			res, err := msgServer.UpdateOrganizationMember(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateDaoDescription:
+			res, err := msgServer.UpdateDaoDescription(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRemoveOrganizationMember:
-			res, err := msgServer.RemoveOrganizationMember(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateDaoWebsite:
+			res, err := msgServer.UpdateDaoWebsite(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateOrganizationDescription:
-			res, err := msgServer.UpdateOrganizationDescription(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateDaoLocation:
+			res, err := msgServer.UpdateDaoLocation(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateOrganizationWebsite:
-			res, err := msgServer.UpdateOrganizationWebsite(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateDaoAvatar:
+			res, err := msgServer.UpdateDaoAvatar(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateOrganizationLocation:
-			res, err := msgServer.UpdateOrganizationLocation(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateOrganizationAvatar:
-			res, err := msgServer.UpdateOrganizationAvatar(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteOrganization:
-			res, err := msgServer.DeleteOrganization(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgDeleteDao:
+			res, err := msgServer.DeleteDao(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateComment:
@@ -234,42 +274,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteRepositoryLabel(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgSetRepositoryBranch:
-			res, err := msgServer.SetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgMultiSetRepositoryBranch:
-			res, err := msgServer.MultiSetRepositoryBranch(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgSetDefaultBranch:
-			res, err := msgServer.SetDefaultBranch(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteBranch:
-			res, err := msgServer.DeleteBranch(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgMultiDeleteBranch:
-			res, err := msgServer.MultiDeleteBranch(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgSetRepositoryTag:
-			res, err := msgServer.SetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgMultiSetRepositoryTag:
-			res, err := msgServer.MultiSetRepositoryTag(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteTag:
-			res, err := msgServer.DeleteTag(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgMultiDeleteTag:
-			res, err := msgServer.MultiDeleteTag(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		case *types.MsgToggleRepositoryForking:
 			res, err := msgServer.ToggleRepositoryForking(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -282,8 +286,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateUser:
-			res, err := msgServer.UpdateUser(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateUserUsername:
+			res, err := msgServer.UpdateUserUsername(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateUserName:
+			res, err := msgServer.UpdateUserName(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateUserBio:
@@ -298,21 +306,9 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteUser(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgTransferUser:
-			res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgSetWhois:
-			res, err := msgServer.SetWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateWhois:
-			res, err := msgServer.UpdateWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteWhois:
-			res, err := msgServer.DeleteWhois(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
+		// case *types.MsgTransferUser:
+		// 	res, err := msgServer.TransferUser(sdk.WrapSDKContext(ctx), msg)
+		// 	return sdk.WrapServiceResult(ctx, res, err)
 
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)

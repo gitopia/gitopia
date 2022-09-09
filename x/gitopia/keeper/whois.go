@@ -3,6 +3,7 @@ package keeper
 import (
 	"encoding/binary"
 	"errors"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,7 +12,7 @@ import (
 
 type WhoisAddress struct {
 	address   string
-	ownerType types.Whois_OwnerType
+	ownerType types.OwnerType
 }
 
 // GetWhoisCount get the total number of whois
@@ -39,18 +40,16 @@ func (k Keeper) SetWhoisCount(ctx sdk.Context, count uint64) {
 }
 
 // SetWhois set a specific whois in the store
-func (k Keeper) SetWhois(ctx sdk.Context, name string, whois types.Whois) {
+func (k Keeper) SetWhois(ctx sdk.Context, whois types.Whois) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	b := k.cdc.MustMarshal(&whois)
-	key := []byte(types.WhoisKey + name)
-	store.Set(key, b)
+	store.Set([]byte(whois.Name), b)
 }
 
 // GetWhois returns the whois information
-func (k Keeper) GetWhois(ctx sdk.Context, key string) (val types.Whois, found bool) {
+func (k Keeper) GetWhois(ctx sdk.Context, username string) (val types.Whois, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	byteKey := []byte(types.WhoisKey + key)
-	b := store.Get(byteKey)
+	b := store.Get([]byte(username))
 	if b == nil {
 		return val, false
 	}
@@ -59,9 +58,9 @@ func (k Keeper) GetWhois(ctx sdk.Context, key string) (val types.Whois, found bo
 }
 
 // RemoveWhois removes a whois from the store
-func (k Keeper) RemoveWhois(ctx sdk.Context, key string) {
+func (k Keeper) RemoveWhois(ctx sdk.Context, username string) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	store.Delete([]byte(types.WhoisKey + key))
+	store.Delete([]byte(username))
 }
 
 // GetAllWhois returns all whois
@@ -80,10 +79,10 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 	return
 }
 
-// Checks if username or address is valid and exists. Also identify its type (USER/ORGANIZATION).
+// Checks if username or address is valid and exists. Also identify its type (USER/DAO).
 func (k Keeper) ResolveAddress(ctx sdk.Context, id string) (address *WhoisAddress, err error) {
 	if _, err := sdk.AccAddressFromBech32(id); err != nil {
-		whois, found := k.GetWhois(ctx, id)
+		whois, found := k.GetWhois(ctx, strings.ToLower(id))
 		if !found {
 			return nil, errors.New("username or address not exists")
 		}
@@ -91,10 +90,11 @@ func (k Keeper) ResolveAddress(ctx sdk.Context, id string) (address *WhoisAddres
 	}
 
 	if _, found := k.GetUser(ctx, id); found {
-		return &WhoisAddress{address: id, ownerType: types.Whois_USER}, nil
+		return &WhoisAddress{address: id, ownerType: types.OwnerType_USER}, nil
 	}
-	if _, found := k.GetOrganization(ctx, id); found {
-		return &WhoisAddress{address: id, ownerType: types.Whois_ORGANIZATION}, nil
+
+	if _, found := k.GetDao(ctx, id); found {
+		return &WhoisAddress{address: id, ownerType: types.OwnerType_DAO}, nil
 	}
 
 	return nil, errors.New("username or address not exists")

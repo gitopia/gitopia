@@ -39,12 +39,11 @@ func IsValidRefname(refName string) (isValid bool, err error) {
 
 var _ sdk.Msg = &MsgCreateRepository{}
 
-func NewMsgCreateRepository(creator string, name string, ownerId string, ownerType string, description string) *MsgCreateRepository {
+func NewMsgCreateRepository(creator string, name string, owner string, description string) *MsgCreateRepository {
 	return &MsgCreateRepository{
 		Creator:     creator,
 		Name:        name,
-		OwnerId:     ownerId,
-		OwnerType:   ownerType,
+		Owner:       owner,
 		Description: description,
 	}
 }
@@ -75,24 +74,35 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	sanitized := IsNameSanitized(msg.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
-	}
+
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
 	} else if len(msg.Name) > 100 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
+	sanitized := IsNameSanitized(msg.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		if len(msg.Owner) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id must consist minimum 3 chars")
+		} else if len(msg.Owner) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
+		}
+	}
+
 	if len(msg.Description) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
-	}
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-	}
-	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
 	}
 
 	return nil
@@ -100,12 +110,11 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeForkRepository{}
 
-func NewMsgInvokeForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string, provider string) *MsgInvokeForkRepository {
+func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, owner string, provider string) *MsgInvokeForkRepository {
 	return &MsgInvokeForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		OwnerId:      ownerId,
-		OwnerType:    ownerType,
+		Owner:        owner,
 		Provider:     provider,
 	}
 }
@@ -136,13 +145,49 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
 	}
-	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		if len(msg.Owner) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id must consist minimum 3 chars")
+		} else if len(msg.Owner) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
+		}
+	}
+
 	_, err = sdk.AccAddressFromBech32(msg.Provider)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
@@ -153,12 +198,11 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId uint64, ownerId string, ownerType string, taskId uint64) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId RepositoryId, owner string, taskId uint64) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		OwnerId:      ownerId,
-		OwnerType:    ownerType,
+		Owner:        owner,
 		TaskId:       taskId,
 	}
 }
@@ -189,12 +233,47 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
 	}
-	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		if len(msg.Owner) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id must consist minimum 3 chars")
+		} else if len(msg.Owner) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
+		}
 	}
 
 	return nil
@@ -202,7 +281,7 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgForkRepositorySuccess{}
 
-func NewMsgForkRepositorySuccess(creator string, repositoryId uint64, taskId uint64) *MsgForkRepositorySuccess {
+func NewMsgForkRepositorySuccess(creator string, repositoryId RepositoryId, taskId uint64) *MsgForkRepositorySuccess {
 	return &MsgForkRepositorySuccess{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -237,17 +316,42 @@ func (msg *MsgForkRepositorySuccess) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgChangeOwner{}
 
-func NewMsgChangeOwner(creator string, repositoryId uint64, ownerId string, ownerType string) *MsgChangeOwner {
+func NewMsgChangeOwner(creator string, repositoryId RepositoryId, owner string) *MsgChangeOwner {
 	return &MsgChangeOwner{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		OwnerId:      ownerId,
-		OwnerType:    ownerType,
+		Owner:        owner,
 	}
 }
 
@@ -277,12 +381,47 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
 	}
-	if msg.OwnerType != RepositoryOwner_USER.String() && msg.OwnerType != RepositoryOwner_ORGANIZATION.String() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner type (%v)", msg.OwnerType)
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		if len(msg.Owner) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id must consist minimum 3 chars")
+		} else if len(msg.Owner) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
+		}
 	}
 
 	return nil
@@ -290,12 +429,12 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateRepositoryCollaborator{}
 
-func NewMsgUpdateRepositoryCollaborator(creator string, id uint64, user string, role string) *MsgUpdateRepositoryCollaborator {
+func NewMsgUpdateRepositoryCollaborator(creator string, repositoryId RepositoryId, user string, role string) *MsgUpdateRepositoryCollaborator {
 	return &MsgUpdateRepositoryCollaborator{
-		Id:      id,
-		Creator: creator,
-		User:    user,
-		Role:    role,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		User:         user,
+		Role:         role,
 	}
 }
 
@@ -325,9 +464,46 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+		if len(msg.User) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.User) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.User)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.User)
+		}
 	}
 	_, exists := RepositoryCollaborator_Permission_value[msg.Role]
 	if !exists {
@@ -338,11 +514,11 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemoveRepositoryCollaborator{}
 
-func NewMsgRemoveRepositoryCollaborator(creator string, id uint64, user string) *MsgRemoveRepositoryCollaborator {
+func NewMsgRemoveRepositoryCollaborator(creator string, repositoryId RepositoryId, user string) *MsgRemoveRepositoryCollaborator {
 	return &MsgRemoveRepositoryCollaborator{
-		Id:      id,
-		Creator: creator,
-		User:    user,
+		RepositoryId: repositoryId,
+		Creator:      creator,
+		User:         user,
 	}
 }
 
@@ -372,22 +548,60 @@ func (msg *MsgRemoveRepositoryCollaborator) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+		if len(msg.User) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.User) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.User)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.User)
+		}
 	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgCreateRepositoryLabel{}
 
-func NewMsgCreateRepositoryLabel(creator string, id uint64, name string, color string, description string) *MsgCreateRepositoryLabel {
+func NewMsgCreateRepositoryLabel(creator string, repositoryId RepositoryId, name string, color string, description string) *MsgCreateRepositoryLabel {
 	return &MsgCreateRepositoryLabel{
-		Id:          id,
-		Creator:     creator,
-		Name:        name,
-		Color:       color,
-		Description: description,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Name:         name,
+		Color:        color,
+		Description:  description,
 	}
 }
 
@@ -417,6 +631,33 @@ func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	if len(msg.Name) > 63 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "label length exceeds limit: 63")
 	} else if len(msg.Name) < 3 {
@@ -435,7 +676,7 @@ func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateRepositoryLabel{}
 
-func NewMsgUpdateRepositoryLabel(creator string, repositoryId uint64, labelId uint64, name string, color string, description string) *MsgUpdateRepositoryLabel {
+func NewMsgUpdateRepositoryLabel(creator string, repositoryId RepositoryId, labelId uint64, name string, color string, description string) *MsgUpdateRepositoryLabel {
 	return &MsgUpdateRepositoryLabel{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -472,9 +713,33 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	if msg.RepositoryId < 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "repositoryId can't be negative")
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
 	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	if msg.LabelId < 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "labelId can't be negative")
 	}
@@ -496,7 +761,7 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteRepositoryLabel{}
 
-func NewMsgDeleteRepositoryLabel(creator string, repositoryId uint64, labelId uint64) *MsgDeleteRepositoryLabel {
+func NewMsgDeleteRepositoryLabel(creator string, repositoryId RepositoryId, labelId uint64) *MsgDeleteRepositoryLabel {
 	return &MsgDeleteRepositoryLabel{
 		RepositoryId: repositoryId,
 		Creator:      creator,
@@ -530,124 +795,46 @@ func (msg *MsgDeleteRepositoryLabel) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	if msg.LabelId < 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid label id (%v)", msg.LabelId)
 	}
 	return nil
 }
 
-var _ sdk.Msg = &MsgSetRepositoryBranch{}
-
-func NewMsgSetRepositoryBranch(creator string, id uint64, name string, commitSHA string) *MsgSetRepositoryBranch {
-	return &MsgSetRepositoryBranch{
-		Id:        id,
-		Creator:   creator,
-		Name:      name,
-		CommitSHA: commitSHA,
-	}
-}
-
-func (msg *MsgSetRepositoryBranch) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgSetRepositoryBranch) Type() string {
-	return "SetRepositoryBranch"
-}
-
-func (msg *MsgSetRepositoryBranch) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgSetRepositoryBranch) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgSetRepositoryBranch) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-	}
-	if valid, err := IsValidRefname(msg.Name); !valid {
-		return err
-	}
-	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.CommitSHA)
-	if !isShaValid {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgMultiSetRepositoryBranch{}
-
-func NewMsgMultiSetRepositoryBranch(creator string, id uint64, branches []*MsgMultiSetRepositoryBranch_Branch) *MsgMultiSetRepositoryBranch {
-	return &MsgMultiSetRepositoryBranch{
-		Id:       id,
-		Creator:  creator,
-		Branches: branches,
-	}
-}
-
-func (msg *MsgMultiSetRepositoryBranch) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgMultiSetRepositoryBranch) Type() string {
-	return "MultiSetRepositoryBranch"
-}
-
-func (msg *MsgMultiSetRepositoryBranch) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgMultiSetRepositoryBranch) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgMultiSetRepositoryBranch) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	for _, branch := range msg.Branches {
-		if len(branch.Name) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-		} else if len(branch.Name) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-		}
-		if valid, err := IsValidRefname(branch.Name); !valid {
-			return err
-		}
-		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", branch.CommitSHA)
-		if !isShaValid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
-		}
-	}
-	return nil
-}
-
 var _ sdk.Msg = &MsgRenameRepository{}
 
-func NewMsgRenameRepository(creator string, id uint64, name string) *MsgRenameRepository {
+func NewMsgRenameRepository(creator string, repositoryId RepositoryId, name string) *MsgRenameRepository {
 	return &MsgRenameRepository{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Name:         name,
 	}
 }
 
@@ -677,12 +864,39 @@ func (msg *MsgRenameRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	if len(msg.Name) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
 	} else if len(msg.Name) > 100 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
 	}
-	sanitized := IsNameSanitized(msg.Name)
+	sanitized = IsNameSanitized(msg.Name)
 	if !sanitized {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
 	}
@@ -691,11 +905,11 @@ func (msg *MsgRenameRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateRepositoryDescription{}
 
-func NewMsgUpdateRepositoryDescription(creator string, id uint64, description string) *MsgUpdateRepositoryDescription {
+func NewMsgUpdateRepositoryDescription(creator string, repositoryId RepositoryId, description string) *MsgUpdateRepositoryDescription {
 	return &MsgUpdateRepositoryDescription{
-		Id:          id,
-		Creator:     creator,
-		Description: description,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Description:  description,
 	}
 }
 
@@ -725,362 +939,45 @@ func (msg *MsgUpdateRepositoryDescription) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	if len(msg.Description) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
 	}
 	return nil
 }
 
-var _ sdk.Msg = &MsgSetDefaultBranch{}
-
-func NewMsgSetDefaultBranch(creator string, id uint64, name string) *MsgSetDefaultBranch {
-	return &MsgSetDefaultBranch{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
-	}
-}
-
-func (msg *MsgSetDefaultBranch) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgSetDefaultBranch) Type() string {
-	return "SetDefaultBranch"
-}
-
-func (msg *MsgSetDefaultBranch) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgSetDefaultBranch) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgSetDefaultBranch) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-	}
-	if valid, err := IsValidRefname(msg.Name); !valid {
-		return err
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgDeleteBranch{}
-
-func NewMsgDeleteBranch(creator string, id uint64, name string) *MsgDeleteBranch {
-	return &MsgDeleteBranch{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
-	}
-}
-
-func (msg *MsgDeleteBranch) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgDeleteBranch) Type() string {
-	return "DeleteBranch"
-}
-
-func (msg *MsgDeleteBranch) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgDeleteBranch) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgDeleteBranch) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-	}
-	if valid, err := IsValidRefname(msg.Name); !valid {
-		return err
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgMultiDeleteBranch{}
-
-func NewMsgMultiDeleteBranch(creator string, id uint64, branches []string) *MsgMultiDeleteBranch {
-	return &MsgMultiDeleteBranch{
-		Id:       id,
-		Creator:  creator,
-		Branches: branches,
-	}
-}
-
-func (msg *MsgMultiDeleteBranch) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgMultiDeleteBranch) Type() string {
-	return "MultiDeleteBranch"
-}
-
-func (msg *MsgMultiDeleteBranch) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgMultiDeleteBranch) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	for _, branch := range msg.Branches {
-		if len(branch) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-		} else if len(branch) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-		}
-		if valid, err := IsValidRefname(branch); !valid {
-			return err
-		}
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgSetRepositoryTag{}
-
-func NewMsgSetRepositoryTag(creator string, id uint64, name string, sha string) *MsgSetRepositoryTag {
-	return &MsgSetRepositoryTag{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
-		Sha:     sha,
-	}
-}
-
-func (msg *MsgSetRepositoryTag) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgSetRepositoryTag) Type() string {
-	return "SetRepositoryTag"
-}
-
-func (msg *MsgSetRepositoryTag) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgSetRepositoryTag) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgSetRepositoryTag) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
-	} else if len(msg.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
-	}
-	if valid, err := IsValidRefname(msg.Name); !valid {
-		return err
-	}
-	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.Sha)
-	if !isShaValid {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgMultiSetRepositoryTag{}
-
-func NewMsgMultiSetRepositoryTag(creator string, id uint64, tags []*MsgMultiSetRepositoryTag_Tag) *MsgMultiSetRepositoryTag {
-	return &MsgMultiSetRepositoryTag{
-		Id:      id,
-		Creator: creator,
-		Tags:    tags,
-	}
-}
-
-func (msg *MsgMultiSetRepositoryTag) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgMultiSetRepositoryTag) Type() string {
-	return "MultiSetRepositoryTag"
-}
-
-func (msg *MsgMultiSetRepositoryTag) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgMultiSetRepositoryTag) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgMultiSetRepositoryTag) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	for _, tag := range msg.Tags {
-		if len(tag.Name) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
-		} else if len(tag.Name) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
-		}
-		if valid, err := IsValidRefname(tag.Name); !valid {
-			return err
-		}
-		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", tag.CommitSHA)
-		if !isShaValid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
-		}
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgDeleteTag{}
-
-func NewMsgDeleteTag(creator string, id uint64, name string) *MsgDeleteTag {
-	return &MsgDeleteTag{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
-	}
-}
-
-func (msg *MsgDeleteTag) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgDeleteTag) Type() string {
-	return "DeleteTag"
-}
-
-func (msg *MsgDeleteTag) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgDeleteTag) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgDeleteTag) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	if len(msg.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
-	} else if len(msg.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
-	}
-	if valid, err := IsValidRefname(msg.Name); !valid {
-		return err
-	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgMultiDeleteTag{}
-
-func NewMsgMultiDeleteTag(creator string, id uint64, tags []string) *MsgMultiDeleteTag {
-	return &MsgMultiDeleteTag{
-		Id:      id,
-		Creator: creator,
-		Tags:    tags,
-	}
-}
-
-func (msg *MsgMultiDeleteTag) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgMultiDeleteTag) Type() string {
-	return "MultiDeleteTag"
-}
-
-func (msg *MsgMultiDeleteTag) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgMultiDeleteTag) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgMultiDeleteTag) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	for _, tag := range msg.Tags {
-		if len(tag) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
-		} else if len(tag) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag name can't be empty")
-		}
-		if valid, err := IsValidRefname(tag); !valid {
-			return err
-		}
-	}
-	return nil
-}
-
 var _ sdk.Msg = &MsgToggleRepositoryForking{}
 
-func NewMsgToggleRepositoryForking(creator string, id uint64) *MsgToggleRepositoryForking {
+func NewMsgToggleRepositoryForking(creator string, repositoryId RepositoryId) *MsgToggleRepositoryForking {
 	return &MsgToggleRepositoryForking{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryId,
 	}
 }
 
@@ -1110,15 +1007,42 @@ func (msg *MsgToggleRepositoryForking) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgDeleteRepository{}
 
-func NewMsgDeleteRepository(creator string, id uint64) *MsgDeleteRepository {
+func NewMsgDeleteRepository(creator string, repositoryId RepositoryId) *MsgDeleteRepository {
 	return &MsgDeleteRepository{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryId,
 	}
 }
 func (msg *MsgDeleteRepository) Route() string {
@@ -1147,5 +1071,32 @@ func (msg *MsgDeleteRepository) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.RepositoryId.Id)
+	if err != nil {
+		if len(msg.RepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id must consist minimum 3 chars")
+		} else if len(msg.RepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.RepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid id (%v)", msg.RepositoryId.Id)
+		}
+	}
+
+	if len(msg.RepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
+	} else if len(msg.RepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.RepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	}
+
 	return nil
 }

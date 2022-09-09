@@ -16,6 +16,29 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Set task count
 	k.SetTaskCount(ctx, genState.TaskCount)
+
+	// Set all the branch
+	for _, elem := range genState.BranchList {
+		k.SetRepositoryBranch(ctx, elem)
+	}
+
+	// Set branch count
+	k.SetBranchCount(ctx, genState.BranchCount)
+
+	// Set all the tag
+	for _, elem := range genState.TagList {
+		k.SetRepositoryTag(ctx, elem)
+	}
+
+	// Set tag count
+	k.SetTagCount(ctx, genState.TagCount)
+	// Set all the member
+	for _, elem := range genState.MemberList {
+		k.SetMember(ctx, elem)
+	}
+
+	// Set member count
+	k.SetMemberCount(ctx, genState.MemberCount)
 	// this line is used by starport scaffolding # genesis/module/init
 	// Set all the release
 	for _, elem := range genState.ReleaseList {
@@ -33,13 +56,18 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set pullRequest count
 	k.SetPullRequestCount(ctx, genState.PullRequestCount)
 
-	// Set all the organization
-	for _, elem := range genState.OrganizationList {
-		k.SetOrganization(ctx, elem)
+	// Set all the dao
+	for _, elem := range genState.DaoList {
+		k.SetDao(ctx, elem)
 	}
 
-	// Set organization count
-	k.SetOrganizationCount(ctx, genState.OrganizationCount)
+	// Set dao count
+	k.SetDaoCount(ctx, genState.DaoCount)
+
+	// Set all the userDao
+	for _, elem := range genState.UserDaoList {
+		k.SetUserDao(ctx, elem)
+	}
 
 	// Set all the comment
 	for _, elem := range genState.CommentList {
@@ -65,6 +93,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set repository count
 	k.SetRepositoryCount(ctx, genState.RepositoryCount)
 
+	// Set all the baseRepository
+	for _, elem := range genState.BaseRepositoryKeyList {
+		k.SetBaseRepositoryKey(ctx, elem)
+	}
+
 	// Set all the user
 	for _, elem := range genState.UserList {
 		k.SetUser(ctx, elem)
@@ -75,7 +108,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Set all the whois
 	for _, elem := range genState.WhoisList {
-		k.SetWhois(ctx, elem.Name, elem)
+		k.SetWhois(ctx, elem)
 	}
 
 	// Set whois count
@@ -89,6 +122,15 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 
 	genesis.TaskList = k.GetAllTask(ctx)
 	genesis.TaskCount = k.GetTaskCount(ctx)
+
+	genesis.BranchList = k.GetAllBranch(ctx)
+	genesis.BranchCount = k.GetBranchCount(ctx)
+
+	genesis.TagList = k.GetAllTag(ctx)
+	genesis.TagCount = k.GetTagCount(ctx)
+
+	genesis.MemberList = k.GetAllMember(ctx)
+	genesis.MemberCount = k.GetMemberCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 	// Get all release
 	genesis.ReleaseList = k.GetAllRelease(ctx)
@@ -98,9 +140,9 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.PullRequestList = k.GetAllPullRequest(ctx)
 	genesis.PullRequestCount = k.GetPullRequestCount(ctx)
 
-	// Get all organization
-	genesis.OrganizationList = k.GetAllOrganization(ctx)
-	genesis.OrganizationCount = k.GetOrganizationCount(ctx)
+	// Get all dao
+	genesis.DaoList = k.GetAllDao(ctx)
+	genesis.DaoCount = k.GetDaoCount(ctx)
 
 	// Get all comment
 	genesis.CommentList = k.GetAllComment(ctx)
@@ -113,10 +155,12 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	// Get all repository
 	genesis.RepositoryList = k.GetAllRepository(ctx)
 	genesis.RepositoryCount = k.GetRepositoryCount(ctx)
+	genesis.BaseRepositoryKeyList = k.GetAllBaseRepositoryKey(ctx)
 
 	// Get all user
 	genesis.UserList = k.GetAllUser(ctx)
 	genesis.UserCount = k.GetUserCount(ctx)
+	genesis.UserDaoList = k.GetAllUserDaoEntry(ctx)
 
 	// Get all whois
 	genesis.WhoisList = k.GetAllWhois(ctx)

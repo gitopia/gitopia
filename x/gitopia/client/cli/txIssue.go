@@ -17,34 +17,38 @@ import (
 
 func CmdCreateIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-issue [title] [description] [repositoryId] [labels] [weight] [assignees]",
+		Use:   "create-issue [id] [repository-name] [title] [description] [labels] [weight] [assignees]",
 		Short: "Create a new issue",
-		Args:  cobra.ExactArgs(6),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsTitle, err := cast.ToStringE(args[0])
+			argId, err := cast.ToStringE(args[0])
 			if err != nil {
 				return err
 			}
-			argsDescription, err := cast.ToStringE(args[1])
+			argRepositoryName, err := cast.ToStringE(args[1])
 			if err != nil {
 				return err
 			}
-			argsRepositoryId, err := strconv.ParseUint(args[2], 10, 64)
+			argTitle, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
-			argsLabels := strings.Split(args[3], ",")
-			labelIds, err := utils.SliceAtoi(argsLabels)
+			argDescription, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
-			argsWeight, err := strconv.ParseUint(args[4], 10, 64)
+			argLabels := strings.Split(args[4], ",")
+			labelIds, err := utils.SliceAtoi(argLabels)
 			if err != nil {
 				return err
 			}
-			argsAssignees := strings.Split(args[5], ",")
-			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
-				argsAssignees = nil
+			argWeight, err := strconv.ParseUint(args[5], 10, 64)
+			if err != nil {
+				return err
+			}
+			argAssignees := strings.Split(args[6], ",")
+			if len(argAssignees) == 1 && argAssignees[0] == "" {
+				argAssignees = nil
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -52,7 +56,15 @@ func CmdCreateIssue() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateIssue(clientCtx.GetFromAddress().String(), string(argsTitle), string(argsDescription), argsRepositoryId, labelIds, argsWeight, argsAssignees)
+			msg := types.NewMsgCreateIssue(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argId, Name: argRepositoryName},
+				string(argTitle),
+				string(argDescription),
+				labelIds,
+				argWeight,
+				argAssignees,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

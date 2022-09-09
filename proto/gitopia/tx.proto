@@ -2,10 +2,14 @@ syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
 import "gitopia/task.proto";
+import "gitopia/branch.proto";
+import "gitopia/tag.proto";
+import "gitopia/member.proto";
 // this line is used by starport scaffolding # proto/tx/import
+import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
-import "gitopia/organization.proto";
+import "gitopia/dao.proto";
 import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
@@ -19,6 +23,17 @@ service Msg {
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
   rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
   rpc DeleteTask(MsgDeleteTask) returns (MsgDeleteTaskResponse);
+  rpc SetBranch(MsgSetBranch) returns (MsgSetBranchResponse);
+  rpc MultiSetBranch(MsgMultiSetBranch) returns (MsgMultiSetBranchResponse);
+  rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
+  rpc MultiDeleteBranch(MsgMultiDeleteBranch) returns (MsgMultiDeleteBranchResponse);
+  rpc SetTag(MsgSetTag) returns (MsgSetTagResponse);
+  rpc MultiSetTag(MsgMultiSetTag) returns (MsgMultiSetTagResponse);
+  rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
+  rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
+  rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
+  rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
+  rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
@@ -36,15 +51,13 @@ service Msg {
   rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
   rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
-  rpc CreateOrganization(MsgCreateOrganization) returns (MsgCreateOrganizationResponse);
-  rpc RenameOrganization(MsgRenameOrganization) returns (MsgRenameOrganizationResponse);
-  rpc UpdateOrganizationMember(MsgUpdateOrganizationMember) returns (MsgUpdateOrganizationMemberResponse);
-  rpc RemoveOrganizationMember(MsgRemoveOrganizationMember) returns (MsgRemoveOrganizationMemberResponse);
-  rpc UpdateOrganizationDescription(MsgUpdateOrganizationDescription) returns (MsgUpdateOrganizationDescriptionResponse);
-  rpc UpdateOrganizationWebsite(MsgUpdateOrganizationWebsite) returns (MsgUpdateOrganizationWebsiteResponse);
-  rpc UpdateOrganizationLocation(MsgUpdateOrganizationLocation) returns (MsgUpdateOrganizationLocationResponse);
-  rpc UpdateOrganizationAvatar(MsgUpdateOrganizationAvatar) returns (MsgUpdateOrganizationAvatarResponse);
-  rpc DeleteOrganization(MsgDeleteOrganization) returns (MsgDeleteOrganizationResponse);
+  rpc CreateDao(MsgCreateDao) returns (MsgCreateDaoResponse);
+  rpc RenameDao(MsgRenameDao) returns (MsgRenameDaoResponse);
+  rpc UpdateDaoDescription(MsgUpdateDaoDescription) returns (MsgUpdateDaoDescriptionResponse);
+  rpc UpdateDaoWebsite(MsgUpdateDaoWebsite) returns (MsgUpdateDaoWebsiteResponse);
+  rpc UpdateDaoLocation(MsgUpdateDaoLocation) returns (MsgUpdateDaoLocationResponse);
+  rpc UpdateDaoAvatar(MsgUpdateDaoAvatar) returns (MsgUpdateDaoAvatarResponse);
+  rpc DeleteDao(MsgDeleteDao) returns (MsgDeleteDaoResponse);
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
@@ -70,26 +83,16 @@ service Msg {
   rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
   rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
   rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
-  rpc SetRepositoryBranch(MsgSetRepositoryBranch) returns (MsgSetRepositoryBranchResponse);
-  rpc MultiSetRepositoryBranch(MsgMultiSetRepositoryBranch) returns (MsgMultiSetRepositoryBranchResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
-  rpc DeleteBranch(MsgDeleteBranch) returns (MsgDeleteBranchResponse);
-  rpc MultiDeleteBranch(MsgMultiDeleteBranch) returns (MsgMultiDeleteBranchResponse);
-  rpc SetRepositoryTag(MsgSetRepositoryTag) returns (MsgSetRepositoryTagResponse);
-  rpc MultiSetRepositoryTag(MsgMultiSetRepositoryTag) returns (MsgMultiSetRepositoryTagResponse);
-  rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
-  rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
-  rpc UpdateUser(MsgUpdateUser) returns (MsgUpdateUserResponse);
+  rpc UpdateUserUsername(MsgUpdateUserUsername) returns (MsgUpdateUserUsernameResponse);
+  rpc UpdateUserName(MsgUpdateUserName) returns (MsgUpdateUserNameResponse);
   rpc UpdateUserBio(MsgUpdateUserBio) returns (MsgUpdateUserBioResponse);
   rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
-  rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
-  rpc SetWhois(MsgSetWhois) returns (MsgSetWhoisResponse);
-  rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
-  rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
+  // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
 }
 
 message MsgAuthorizeGitServer {
@@ -125,10 +128,124 @@ message MsgDeleteTask {
 
 message MsgDeleteTaskResponse {}
 
+message MsgSetBranch {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  Branch branch = 3 [(gogoproto.nullable) = false];
+  message Branch { 
+    string name = 1;
+    string sha = 2;
+  }
+}
+
+message MsgSetBranchResponse {}
+
+message MsgSetDefaultBranch {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string branch = 3;
+}
+
+message MsgSetDefaultBranchResponse { }
+
+message MsgMultiSetBranch {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  repeated Branch branches = 3 [(gogoproto.nullable) = false];
+  message Branch { 
+    string name = 1;
+    string sha = 2;
+  }
+}
+
+message MsgMultiSetBranchResponse { }
+
+message MsgDeleteBranch {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string branch = 3;
+}
+
+message MsgDeleteBranchResponse { }
+
+message MsgMultiDeleteBranch {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  repeated string branches = 3;
+}
+
+message MsgMultiDeleteBranchResponse { }
+
+message MsgSetTag {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  Tag tag = 3 [(gogoproto.nullable) = false];
+  message Tag { 
+    string name = 1;
+    string sha = 2;
+  }
+}
+
+message MsgSetTagResponse { }
+
+message MsgMultiSetTag {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  repeated Tag tags = 3 [(gogoproto.nullable) = false];
+  message Tag { 
+    string name = 1;
+    string sha = 2;
+  }
+}
+
+message MsgMultiSetTagResponse { }
+
+message MsgDeleteTag {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string tag = 3;
+}
+
+message MsgDeleteTagResponse { }
+
+message MsgMultiDeleteTag {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  repeated string tags = 3;
+}
+
+message MsgMultiDeleteTagResponse { }
+
+message MsgAddMember {
+  string creator = 1;
+  string daoId = 2;
+  string userId = 3;
+  MemberRole role = 4;
+}
+
+message MsgAddMemberResponse { }
+
+message MsgUpdateMemberRole {
+  string creator = 1;
+  string daoId = 2;
+  string userId = 3;
+  MemberRole role = 4;
+}
+
+message MsgUpdateMemberRoleResponse {}
+
+message MsgRemoveMember {
+  string creator = 1;
+  string daoId = 2;
+  string userId = 3;
+}
+
+message MsgRemoveMemberResponse { }
+
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string tagName = 3;
   string target = 4;
   string name = 5;
@@ -170,9 +287,9 @@ message MsgCreatePullRequest {
   string title = 2;
   string description = 3;
   string headBranch = 4;
-  uint64 headRepoId = 5; 
+  RepositoryId headRepositoryId = 5 [(gogoproto.nullable) = false];
   string baseBranch = 6;
-  uint64 baseRepoId = 7; 
+  RepositoryId baseRepositoryId = 7 [(gogoproto.nullable) = false];
   repeated string reviewers = 8;
   repeated string assignees = 9;
   repeated uint64 labelIds = 10;
@@ -283,79 +400,65 @@ message MsgDeletePullRequest {
 
 message MsgDeletePullRequestResponse { }
 
-message MsgCreateOrganization {
+message MsgCreateDao {
   string creator = 1;
   string name = 2;
   string description = 3;
+  string avatarUrl = 4; 
+  string location = 5; 
+  string website = 6; 
 }
 
-message MsgCreateOrganizationResponse {
+message MsgCreateDaoResponse {
   string id = 1;
 }
 
-message MsgRenameOrganization {
+message MsgRenameDao {
   string creator = 1;
   string id = 2;
   string name = 3;
 }
 
-message MsgRenameOrganizationResponse { }
+message MsgRenameDaoResponse { }
 
-message MsgUpdateOrganizationMember {
-  string creator = 1;
-  string id = 2;
-  string user = 3;
-  string role = 4;
-}
-
-message MsgUpdateOrganizationMemberResponse { }
-
-message MsgRemoveOrganizationMember {
-  string creator = 1;
-  string id = 2;
-  string user = 3;
-}
-
-message MsgRemoveOrganizationMemberResponse { }
-
-message MsgUpdateOrganizationDescription {
+message MsgUpdateDaoDescription {
   string creator = 1;
   string id = 2;
   string description = 3;
 }
 
-message MsgUpdateOrganizationDescriptionResponse { }
+message MsgUpdateDaoDescriptionResponse { }
 
-message MsgUpdateOrganizationWebsite {
+message MsgUpdateDaoWebsite {
   string creator = 1;
   string id = 2;
   string url = 3;
 }
 
-message MsgUpdateOrganizationWebsiteResponse { }
+message MsgUpdateDaoWebsiteResponse { }
 
-message MsgUpdateOrganizationLocation {
+message MsgUpdateDaoLocation {
   string creator = 1;
   string id = 2;
   string location = 3;
 }
 
-message MsgUpdateOrganizationLocationResponse { }
+message MsgUpdateDaoLocationResponse { }
 
-message MsgUpdateOrganizationAvatar {
+message MsgUpdateDaoAvatar {
   string creator = 1;
   string id = 2;
   string url = 3;
 }
 
-message MsgUpdateOrganizationAvatarResponse { }
+message MsgUpdateDaoAvatarResponse { }
 
-message MsgDeleteOrganization {
+message MsgDeleteDao {
   string creator = 1;
   string id = 2;
 }
 
-message MsgDeleteOrganizationResponse { }
+message MsgDeleteDaoResponse { }
 
 message MsgCreateComment {
   string creator = 1;
@@ -391,9 +494,9 @@ message MsgDeleteCommentResponse { }
 
 message MsgCreateIssue {
   string creator = 1;
-  string title = 2;
-  string description = 3;
-  uint64 repositoryId = 4;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string title = 3;
+  string description = 4;
   repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
@@ -482,32 +585,28 @@ message MsgDeleteIssueResponse { }
 message MsgCreateRepository {
   string creator = 1;
   string name = 2;
-  string ownerId = 3;
-  string ownerType = 4;
-  string description = 5;
+  string owner = 3;
+  string description = 4;
 }
 
 message MsgCreateRepositoryResponse {
-  uint64 id = 1;
-  string name = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
 }
 
 message MsgInvokeForkRepository {
   string creator = 1;
-  uint64 repositoryId = 2;
-  string ownerId = 3;
-  string ownerType = 4;
-  string provider = 5;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string owner = 3;
+  string provider = 4;
 }
 
 message MsgInvokeForkRepositoryResponse {}
 
 message MsgForkRepository {
   string creator = 1;
-  uint64 repositoryId = 2;
-  string ownerId = 3;
-  string ownerType = 4;
-  uint64 taskId = 5;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string owner = 3;
+  uint64 taskId = 4;
 }
 
 message MsgForkRepositoryResponse {
@@ -516,7 +615,7 @@ message MsgForkRepositoryResponse {
 
 message MsgForkRepositorySuccess {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   uint64 taskId = 3;
 }
 
@@ -526,7 +625,7 @@ message MsgForkRepositorySuccessResponse {
 
 message MsgRenameRepository {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string name = 3;
 }
 
@@ -534,7 +633,7 @@ message MsgRenameRepositoryResponse { }
 
 message MsgUpdateRepositoryDescription {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string description = 3;
 }
 
@@ -543,16 +642,15 @@ message MsgUpdateRepositoryDescriptionResponse { }
 
 message MsgChangeOwner {
   string creator = 1;
-  uint64 repositoryId = 2;
-  string ownerId = 3;
-  string ownerType = 4;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string owner = 3;
 }
 
 message MsgChangeOwnerResponse { }
 
 message MsgUpdateRepositoryCollaborator {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string user = 3;
   string role = 4;
 }
@@ -561,7 +659,7 @@ message MsgUpdateRepositoryCollaboratorResponse { }
 
 message MsgRemoveRepositoryCollaborator {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string user = 3;
 }
 
@@ -569,7 +667,7 @@ message MsgRemoveRepositoryCollaboratorResponse { }
 
 message MsgCreateRepositoryLabel {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string name = 3;
   string color = 4;
   string description = 5;
@@ -581,7 +679,7 @@ message MsgCreateRepositoryLabelResponse {
 
 message MsgUpdateRepositoryLabel {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   uint64 labelId = 3;
   string name = 4;
   string color = 5;
@@ -592,97 +690,15 @@ message MsgUpdateRepositoryLabelResponse { }
 
 message MsgDeleteRepositoryLabel {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   uint64 labelId = 3;
 }
 
 message MsgDeleteRepositoryLabelResponse { }
 
-message MsgSetRepositoryBranch {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-  string commitSHA = 4;
-}
-
-message MsgSetRepositoryBranchResponse { }
-
-message MsgMultiSetRepositoryBranch {
-  string creator = 1;
-  uint64 id = 2;
-  repeated Branch branches=3;
-  message Branch { 
-    string name = 1;
-    string commitSHA = 2;
-  }
-}
-
-message MsgMultiSetRepositoryBranchResponse { }
-
-message MsgSetDefaultBranch {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-}
-
-message MsgSetDefaultBranchResponse { }
-
-message MsgDeleteBranch {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-}
-
-message MsgDeleteBranchResponse { }
-
-message MsgMultiDeleteBranch {
-  string creator = 1;
-  uint64 id = 2;
-  repeated string branches = 3;
-}
-
-message MsgMultiDeleteBranchResponse { }
-
-message MsgSetRepositoryTag {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-  string sha = 4;
-}
-
-message MsgSetRepositoryTagResponse { }
-
-message MsgMultiSetRepositoryTag {
-  string creator = 1;
-  uint64 id = 2;
-  repeated Tag tags=3;
-  message Tag { 
-    string name = 1;
-    string commitSHA = 2;
-  }
-}
-
-message MsgMultiSetRepositoryTagResponse { }
-
-message MsgDeleteTag {
-  string creator = 1;
-  uint64 id = 2;
-  string name = 3;
-}
-
-message MsgDeleteTagResponse { }
-
-message MsgMultiDeleteTag {
-  string creator = 1;
-  uint64 id = 2;
-  repeated string tags = 3;
-}
-
-message MsgMultiDeleteTagResponse { }
-
 message MsgToggleRepositoryForking {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
 }
 
 message MsgToggleRepositoryForkingResponse { 
@@ -691,7 +707,7 @@ message MsgToggleRepositoryForkingResponse {
 
 message MsgDeleteRepository {
   string creator = 1;
-  uint64 id = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
 }
 
 message MsgDeleteRepositoryResponse { }
@@ -699,21 +715,28 @@ message MsgDeleteRepositoryResponse { }
 message MsgCreateUser {
   string creator = 1;
   string username = 2;
+  string name = 3;
+  string avatarUrl = 4; 
+  string bio = 5;
 }
 
 message MsgCreateUserResponse {
   string id = 1;
 }
 
-message MsgUpdateUser {
+message MsgUpdateUserUsername {
   string creator = 1;
-  string name = 2;
-  string usernameGithub = 3;
-  string avatarUrl = 4;
-  string bio = 5;
+  string username = 2;
 }
 
-message MsgUpdateUserResponse { }
+message MsgUpdateUserUsernameResponse { }
+
+message MsgUpdateUserName {
+  string creator = 1;
+  string name = 2;
+}
+
+message MsgUpdateUserNameResponse { }
 
 message MsgUpdateUserBio {
   string creator = 1;
@@ -736,32 +759,9 @@ message MsgDeleteUser {
 
 message MsgDeleteUserResponse { }
 
-message MsgTransferUser {
-  string creator = 1;
-  string address = 2;
-}
+// message MsgTransferUser {
+//   string creator = 1;
+//   string address = 2;
+// }
 
-message MsgTransferUserResponse { }
-
-message MsgSetWhois {
-  string creator = 1;
-  string name = 2;
-  string address = 3;
-}
-
-message MsgSetWhoisResponse { }
-
-message MsgUpdateWhois {
-  string creator = 1;
-  string name = 2;
-  string address = 3;
-}
-
-message MsgUpdateWhoisResponse { }
-
-message MsgDeleteWhois {
-  string creator = 1;
-  string name = 2;
-}
-
-message MsgDeleteWhoisResponse { }
+// message MsgTransferUserResponse { }

@@ -11,11 +11,11 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-func CmdCreateOrganization() *cobra.Command {
+func CmdCreateDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-organization [name] [description]",
-		Short: "Create a new organization",
-		Args:  cobra.ExactArgs(2),
+		Use:   "create-dao [name] [description] [avatar-url] [location] [website]",
+		Short: "Create a new Dao",
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -25,13 +25,25 @@ func CmdCreateOrganization() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsAvatarUrl, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsLocation, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+			argsWebsite, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateOrganization(clientCtx.GetFromAddress().String(), argsName, argsDescription)
+			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -44,10 +56,10 @@ func CmdCreateOrganization() *cobra.Command {
 	return cmd
 }
 
-func CmdRenameOrganization() *cobra.Command {
+func CmdRenameDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "rename-organization [id] [name]",
-		Short: "Rename organization",
+		Use:   "rename-dao [id] [name]",
+		Short: "Rename dao",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -65,7 +77,7 @@ func CmdRenameOrganization() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRenameOrganization(clientCtx.GetFromAddress().String(), id, string(argsName))
+			msg := types.NewMsgRenameDao(clientCtx.GetFromAddress().String(), id, string(argsName))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -78,83 +90,10 @@ func CmdRenameOrganization() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateOrganizationMember() *cobra.Command {
+func CmdUpdateDaoDescription() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization-member [id] [user] [role]",
-		Short: "Add organization member",
-		Args:  cobra.ExactArgs(3),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := cast.ToStringE(args[0])
-			if err != nil {
-				return err
-			}
-
-			argsUser, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-
-			argsRole, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgUpdateOrganizationMember(clientCtx.GetFromAddress().String(), id, argsUser, argsRole)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
-func CmdRemoveOrganizationMember() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "remove-organization-member [id] [user]",
-		Short: "Remove organization member",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := cast.ToStringE(args[0])
-			if err != nil {
-				return err
-			}
-
-			argsUser, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgRemoveOrganizationMember(clientCtx.GetFromAddress().String(), id, argsUser)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
-func CmdUpdateOrganizationDescription() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-organization-description [id] [description]",
-		Short: "Update organization description",
+		Use:   "update-dao-description [id] [description]",
+		Short: "Update dao description",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -172,7 +111,7 @@ func CmdUpdateOrganizationDescription() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganizationDescription(clientCtx.GetFromAddress().String(), id, argsDescription)
+			msg := types.NewMsgUpdateDaoDescription(clientCtx.GetFromAddress().String(), id, argsDescription)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -185,10 +124,10 @@ func CmdUpdateOrganizationDescription() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateOrganizationWebsite() *cobra.Command {
+func CmdUpdateDaoWebsite() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization-website [id] [url]",
-		Short: "Update organization website",
+		Use:   "update-dao-website [id] [url]",
+		Short: "Update dao website",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -206,7 +145,7 @@ func CmdUpdateOrganizationWebsite() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganizationWebsite(clientCtx.GetFromAddress().String(), id, argsUrl)
+			msg := types.NewMsgUpdateDaoWebsite(clientCtx.GetFromAddress().String(), id, argsUrl)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -219,10 +158,10 @@ func CmdUpdateOrganizationWebsite() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateOrganizationLocation() *cobra.Command {
+func CmdUpdateDaoLocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization-location [id] [location]",
-		Short: "Update organization location",
+		Use:   "update-dao-location [id] [location]",
+		Short: "Update dao location",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -240,7 +179,7 @@ func CmdUpdateOrganizationLocation() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganizationLocation(clientCtx.GetFromAddress().String(), id, argsLocation)
+			msg := types.NewMsgUpdateDaoLocation(clientCtx.GetFromAddress().String(), id, argsLocation)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -253,10 +192,10 @@ func CmdUpdateOrganizationLocation() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateOrganizationAvatar() *cobra.Command {
+func CmdUpdateDaoAvatar() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-organization-avatar [id] [url]",
-		Short: "Update organization avatar",
+		Use:   "update-dao-avatar [id] [url]",
+		Short: "Update dao avatar",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -274,7 +213,7 @@ func CmdUpdateOrganizationAvatar() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateOrganizationAvatar(clientCtx.GetFromAddress().String(), id, argsUrl)
+			msg := types.NewMsgUpdateDaoAvatar(clientCtx.GetFromAddress().String(), id, argsUrl)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -287,10 +226,10 @@ func CmdUpdateOrganizationAvatar() *cobra.Command {
 	return cmd
 }
 
-func CmdDeleteOrganization() *cobra.Command {
+func CmdDeleteDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-organization [id]",
-		Short: "Delete a organization by id",
+		Use:   "delete-dao [id]",
+		Short: "Delete a dao by id",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := cast.ToStringE(args[0])
@@ -303,7 +242,7 @@ func CmdDeleteOrganization() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteOrganization(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeleteDao(clientCtx.GetFromAddress().String(), id)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

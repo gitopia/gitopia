@@ -21,7 +21,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctypes "github.com/cosmos/ibc-go/v2/modules/core/types"
-	gitopiatypesv012 "github.com/gitopia/gitopia/x/gitopia/migrations/v012"
+	gitopiatypesv013 "github.com/gitopia/gitopia/x/gitopia/migrations/v013"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cobra"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -43,347 +43,376 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func migrateGitopiaGenesisTov013(gitopiaGenesisv012 gitopiatypesv012.GenesisState, gitopiaGenesis *gitopiatypes.GenesisState) {
-	for i := range gitopiaGenesisv012.UserList {
-		var repositories []*gitopiatypes.UserRepository
-		var organizations []*gitopiatypes.UserOrganization
+func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisState, gitopiaGenesis *gitopiatypes.GenesisState) {
+	var memberCount uint64
+	var branchCount uint64
+	var tagCount uint64
 
-		for _, v012 := range gitopiaGenesisv012.UserList[i].Repositories {
-			repositories = append(repositories,
-				&gitopiatypes.UserRepository{
-					Name: v012.Name,
-					Id:   v012.Id,
+	// Migrate User
+	for i := range gitopiaGenesisv013.UserList {
+		// Migrate UserDao
+		for _, v013 := range gitopiaGenesisv013.UserList[i].Organizations {
+			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
+				gitopiatypes.UserDao{
+					UserAddress: gitopiaGenesisv013.UserList[i].Creator,
+					DaoAddress:  v013.Id,
 				},
 			)
 		}
-
-		for _, v012 := range gitopiaGenesisv012.UserList[i].Organizations {
-			organizations = append(organizations,
-				&gitopiatypes.UserOrganization{
-					Name: v012.Name,
-					Id:   v012.Id,
-				},
-			)
-		}
-
 		gitopiaGenesis.UserList = append(gitopiaGenesis.UserList,
 			gitopiatypes.User{
-				Creator:        gitopiaGenesisv012.UserList[i].Creator,
-				Id:             gitopiaGenesisv012.UserList[i].Id,
-				Name:           gitopiaGenesisv012.UserList[i].Name,
-				Username:       gitopiaGenesisv012.UserList[i].Username,
-				UsernameGithub: gitopiaGenesisv012.UserList[i].UsernameGithub,
-				AvatarUrl:      gitopiaGenesisv012.UserList[i].AvatarUrl,
-				Followers:      gitopiaGenesisv012.UserList[i].Followers,
-				Following:      gitopiaGenesisv012.UserList[i].Following,
-				Repositories:   repositories,
-				Organizations:  organizations,
-				StarredRepos:   gitopiaGenesisv012.UserList[i].StarredRepos,
-				Subscriptions:  gitopiaGenesisv012.UserList[i].Subscriptions,
-				Bio:            gitopiaGenesisv012.UserList[i].Bio,
-				CreatedAt:      gitopiaGenesisv012.UserList[i].CreatedAt,
-				UpdatedAt:      gitopiaGenesisv012.UserList[i].UpdatedAt,
+				Creator:        gitopiaGenesisv013.UserList[i].Creator,
+				Id:             gitopiaGenesisv013.UserList[i].Id,
+				Name:           gitopiaGenesisv013.UserList[i].Name,
+				Username:       gitopiaGenesisv013.UserList[i].Username,
+				UsernameGithub: gitopiaGenesisv013.UserList[i].UsernameGithub,
+				AvatarUrl:      gitopiaGenesisv013.UserList[i].AvatarUrl,
+				Followers:      gitopiaGenesisv013.UserList[i].Followers,
+				Following:      gitopiaGenesisv013.UserList[i].Following,
+				StarredRepos:   gitopiaGenesisv013.UserList[i].StarredRepos,
+				Subscriptions:  gitopiaGenesisv013.UserList[i].Subscriptions,
+				Bio:            gitopiaGenesisv013.UserList[i].Bio,
+				CreatedAt:      gitopiaGenesisv013.UserList[i].CreatedAt,
+				UpdatedAt:      gitopiaGenesisv013.UserList[i].UpdatedAt,
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.OrganizationList {
-		var repositories []*gitopiatypes.OrganizationRepository
-		var members []*gitopiatypes.OrganizationMember
-
-		for _, v012 := range gitopiaGenesisv012.OrganizationList[i].Repositories {
-			repositories = append(repositories,
-				&gitopiatypes.OrganizationRepository{
-					Name: v012.Name,
-					Id:   v012.Id,
+	// Migrate Dao
+	for i := range gitopiaGenesisv013.OrganizationList {
+		// Migrate Member
+		for _, v013 := range gitopiaGenesisv013.OrganizationList[i].Members {
+			var role gitopiatypes.MemberRole
+			if v013.Role == gitopiatypesv013.OrganizationMember_OWNER {
+				role = gitopiatypes.MemberRole_OWNER
+			} else {
+				role = gitopiatypes.MemberRole_MEMBER
+			}
+			gitopiaGenesis.MemberList = append(gitopiaGenesis.MemberList,
+				gitopiatypes.Member{
+					Id:         memberCount,
+					Address:    v013.Id,
+					DaoAddress: gitopiaGenesisv013.OrganizationList[i].Address,
+					Role:       role,
 				},
 			)
+			memberCount += 1
 		}
 
-		for _, v012 := range gitopiaGenesisv012.OrganizationList[i].Members {
-			members = append(members,
-				&gitopiatypes.OrganizationMember{
-					Id:   v012.Id,
-					Role: gitopiatypes.OrganizationMember_Role(v012.Role),
-				},
-			)
-		}
-
-		gitopiaGenesis.OrganizationList = append(gitopiaGenesis.OrganizationList,
-			gitopiatypes.Organization{
-				Creator:      gitopiaGenesisv012.OrganizationList[i].Creator,
-				Id:           gitopiaGenesisv012.OrganizationList[i].Id,
-				Address:      gitopiaGenesisv012.OrganizationList[i].Address,
-				Name:         gitopiaGenesisv012.OrganizationList[i].Name,
-				AvatarUrl:    gitopiaGenesisv012.OrganizationList[i].AvatarUrl,
-				Followers:    gitopiaGenesisv012.OrganizationList[i].Followers,
-				Following:    gitopiaGenesisv012.OrganizationList[i].Following,
-				Repositories: repositories,
-				Teams:        gitopiaGenesisv012.OrganizationList[i].Teams,
-				Members:      members,
-				Location:     gitopiaGenesisv012.OrganizationList[i].Location,
-				Website:      gitopiaGenesisv012.OrganizationList[i].Website,
-				Verified:     gitopiaGenesisv012.OrganizationList[i].Verified,
-				Description:  gitopiaGenesisv012.OrganizationList[i].Description,
-				CreatedAt:    gitopiaGenesisv012.OrganizationList[i].CreatedAt,
-				UpdatedAt:    gitopiaGenesisv012.OrganizationList[i].UpdatedAt,
+		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
+			gitopiatypes.Dao{
+				Creator:     gitopiaGenesisv013.OrganizationList[i].Creator,
+				Id:          gitopiaGenesisv013.OrganizationList[i].Id,
+				Address:     gitopiaGenesisv013.OrganizationList[i].Address,
+				Name:        gitopiaGenesisv013.OrganizationList[i].Name,
+				AvatarUrl:   gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
+				Followers:   gitopiaGenesisv013.OrganizationList[i].Followers,
+				Following:   gitopiaGenesisv013.OrganizationList[i].Following,
+				Teams:       gitopiaGenesisv013.OrganizationList[i].Teams,
+				Location:    gitopiaGenesisv013.OrganizationList[i].Location,
+				Website:     gitopiaGenesisv013.OrganizationList[i].Website,
+				Verified:    gitopiaGenesisv013.OrganizationList[i].Verified,
+				Description: gitopiaGenesisv013.OrganizationList[i].Description,
+				CreatedAt:   gitopiaGenesisv013.OrganizationList[i].CreatedAt,
+				UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.RepositoryList {
-		var branches []*gitopiatypes.RepositoryBranch
-		var tags []*gitopiatypes.RepositoryTag
+	// Migrate Repository
+	for i := range gitopiaGenesisv013.RepositoryList {
 		var issues []*gitopiatypes.RepositoryIssue
 		var pullRequests []*gitopiatypes.RepositoryPullRequest
 		var labels []*gitopiatypes.RepositoryLabel
 		var releases []*gitopiatypes.RepositoryRelease
 		var collaborators []*gitopiatypes.RepositoryCollaborator
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Branches {
-			branches = append(branches,
-				&gitopiatypes.RepositoryBranch{
-					Name:          v012.Name,
-					Sha:           v012.Sha,
-					LastUpdatedAt: v012.LastUpdatedAt,
-				},
-			)
+		// Migrate BaseRepositoryKey
+
+		// Fix wrong ownership
+		if gitopiaGenesisv013.RepositoryList[i].Id == 30677 {
+			gitopiaGenesisv013.RepositoryList[i].Owner.Id = "gitopia1hv6xd7mzz7r8vkpvy47khc89qzrrup7w6mxurk"
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Tags {
-			tags = append(tags,
-				&gitopiatypes.RepositoryTag{
-					Name:          v012.Name,
-					Sha:           v012.Sha,
-					LastUpdatedAt: v012.LastUpdatedAt,
+		gitopiaGenesis.BaseRepositoryKeyList = append(gitopiaGenesis.BaseRepositoryKeyList,
+			gitopiatypes.BaseRepositoryKey{
+				Id:      gitopiaGenesisv013.RepositoryList[i].Id,
+				Address: gitopiaGenesisv013.RepositoryList[i].Owner.Id,
+				Name:    gitopiaGenesisv013.RepositoryList[i].Name,
+			},
+		)
+
+		// Migrate Branch
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Branches {
+			gitopiaGenesis.BranchList = append(gitopiaGenesis.BranchList,
+				gitopiatypes.Branch{
+					Id:             branchCount,
+					RepositoryId:   gitopiaGenesisv013.RepositoryList[i].Id,
+					Name:           v013.Name,
+					Sha:            v013.Sha,
+					AllowForcePush: true,
+					CreatedAt:      0,
+					UpdatedAt:      0,
 				},
 			)
+			branchCount += 1
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Issues {
+		// Migrate Tag
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Tags {
+			gitopiaGenesis.TagList = append(gitopiaGenesis.TagList,
+				gitopiatypes.Tag{
+					Id:           tagCount,
+					RepositoryId: gitopiaGenesisv013.RepositoryList[i].Id,
+					Name:         v013.Name,
+					Sha:          v013.Sha,
+					CreatedAt:    0,
+					UpdatedAt:    0,
+				},
+			)
+			tagCount += 1
+		}
+
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Issues {
 			issues = append(issues,
 				&gitopiatypes.RepositoryIssue{
-					Iid: v012.Iid,
-					Id:  v012.Id,
+					Iid: v013.Iid,
+					Id:  v013.Id,
 				},
 			)
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].PullRequests {
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].PullRequests {
 			pullRequests = append(pullRequests,
 				&gitopiatypes.RepositoryPullRequest{
-					Iid: v012.Iid,
-					Id:  v012.Id,
+					Iid: v013.Iid,
+					Id:  v013.Id,
 				},
 			)
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Labels {
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Labels {
 			labels = append(labels,
 				&gitopiatypes.RepositoryLabel{
-					Id:          v012.Id,
-					Name:        v012.Name,
-					Color:       v012.Color,
-					Description: v012.Description,
+					Id:          v013.Id,
+					Name:        v013.Name,
+					Color:       v013.Color,
+					Description: v013.Description,
 				},
 			)
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Releases {
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Releases {
 			releases = append(releases,
 				&gitopiatypes.RepositoryRelease{
-					Id:      v012.Id,
-					TagName: v012.TagName,
+					Id:      v013.Id,
+					TagName: v013.TagName,
 				},
 			)
 		}
 
-		for _, v012 := range gitopiaGenesisv012.RepositoryList[i].Collaborators {
+		for _, v013 := range gitopiaGenesisv013.RepositoryList[i].Collaborators {
 			collaborators = append(collaborators,
 				&gitopiatypes.RepositoryCollaborator{
-					Id:         v012.Id,
-					Permission: gitopiatypes.RepositoryCollaborator_Permission(v012.Permission),
+					Id:         v013.Id,
+					Permission: gitopiatypes.RepositoryCollaborator_Permission(v013.Permission),
 				},
 			)
 		}
 
+		var ownerType gitopiatypes.OwnerType
+		if gitopiaGenesisv013.RepositoryList[i].Owner.Type == gitopiatypesv013.RepositoryOwner_ORGANIZATION {
+			ownerType = gitopiatypes.OwnerType_DAO
+		} else {
+			ownerType = gitopiatypes.OwnerType_USER
+		}
 		gitopiaGenesis.RepositoryList = append(gitopiaGenesis.RepositoryList,
 			gitopiatypes.Repository{
-				Creator: gitopiaGenesisv012.RepositoryList[i].Creator,
-				Id:      gitopiaGenesisv012.RepositoryList[i].Id,
-				Name:    gitopiaGenesisv012.RepositoryList[i].Name,
+				Creator: gitopiaGenesisv013.RepositoryList[i].Creator,
+				Id:      gitopiaGenesisv013.RepositoryList[i].Id,
+				Name:    gitopiaGenesisv013.RepositoryList[i].Name,
 				Owner: &gitopiatypes.RepositoryOwner{
-					Id:   gitopiaGenesisv012.RepositoryList[i].Owner.Id,
-					Type: gitopiatypes.RepositoryOwner_Type(gitopiaGenesisv012.RepositoryList[i].Owner.Type),
+					Id:   gitopiaGenesisv013.RepositoryList[i].Owner.Id,
+					Type: ownerType,
 				},
-				Description:   gitopiaGenesisv012.RepositoryList[i].Description,
-				Forks:         gitopiaGenesisv012.RepositoryList[i].Forks,
-				Branches:      branches,
-				Tags:          tags,
-				Subscribers:   gitopiaGenesisv012.RepositoryList[i].Subscribers,
-				Commits:       gitopiaGenesisv012.RepositoryList[i].Commits,
+				Description:   gitopiaGenesisv013.RepositoryList[i].Description,
+				Forks:         gitopiaGenesisv013.RepositoryList[i].Forks,
+				Subscribers:   gitopiaGenesisv013.RepositoryList[i].Subscribers,
+				Commits:       gitopiaGenesisv013.RepositoryList[i].Commits,
 				Issues:        issues,
 				PullRequests:  pullRequests,
-				IssuesCount:   gitopiaGenesisv012.RepositoryList[i].IssuesCount,
-				PullsCount:    gitopiaGenesisv012.RepositoryList[i].PullsCount,
+				IssuesCount:   gitopiaGenesisv013.RepositoryList[i].IssuesCount,
+				PullsCount:    gitopiaGenesisv013.RepositoryList[i].PullsCount,
 				Labels:        labels,
-				LabelsCount:   gitopiaGenesisv012.RepositoryList[i].LabelsCount,
+				LabelsCount:   gitopiaGenesisv013.RepositoryList[i].LabelsCount,
 				Releases:      releases,
-				CreatedAt:     gitopiaGenesisv012.RepositoryList[i].CreatedAt,
-				UpdatedAt:     gitopiaGenesisv012.RepositoryList[i].UpdatedAt,
-				PushedAt:      gitopiaGenesisv012.RepositoryList[i].PushedAt,
-				Stargazers:    gitopiaGenesisv012.RepositoryList[i].Stargazers,
-				Archived:      gitopiaGenesisv012.RepositoryList[i].Archived,
-				License:       gitopiaGenesisv012.RepositoryList[i].License,
-				DefaultBranch: gitopiaGenesisv012.RepositoryList[i].DefaultBranch,
-				Parent:        gitopiaGenesisv012.RepositoryList[i].Parent,
-				Fork:          gitopiaGenesisv012.RepositoryList[i].Fork,
+				CreatedAt:     gitopiaGenesisv013.RepositoryList[i].CreatedAt,
+				UpdatedAt:     gitopiaGenesisv013.RepositoryList[i].UpdatedAt,
+				PushedAt:      gitopiaGenesisv013.RepositoryList[i].PushedAt,
+				Stargazers:    gitopiaGenesisv013.RepositoryList[i].Stargazers,
+				Archived:      gitopiaGenesisv013.RepositoryList[i].Archived,
+				License:       gitopiaGenesisv013.RepositoryList[i].License,
+				DefaultBranch: gitopiaGenesisv013.RepositoryList[i].DefaultBranch,
+				Parent:        gitopiaGenesisv013.RepositoryList[i].Parent,
+				Fork:          gitopiaGenesisv013.RepositoryList[i].Fork,
 				Collaborators: collaborators,
-				AllowForking:  gitopiaGenesisv012.RepositoryList[i].AllowForking,
+				AllowForking:  gitopiaGenesisv013.RepositoryList[i].AllowForking,
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.IssueList {
+	// Migrate Issue
+	for i := range gitopiaGenesisv013.IssueList {
 		gitopiaGenesis.IssueList = append(gitopiaGenesis.IssueList,
 			gitopiatypes.Issue{
-				Creator:       gitopiaGenesisv012.IssueList[i].Creator,
-				Id:            gitopiaGenesisv012.IssueList[i].Id,
-				Iid:           gitopiaGenesisv012.IssueList[i].Iid,
-				Title:         gitopiaGenesisv012.IssueList[i].Title,
-				State:         gitopiatypes.Issue_State(gitopiaGenesisv012.IssueList[i].State),
-				Description:   gitopiaGenesisv012.IssueList[i].Description,
-				Comments:      gitopiaGenesisv012.IssueList[i].Comments,
-				CommentsCount: gitopiaGenesisv012.IssueList[i].CommentsCount,
-				PullRequests:  gitopiaGenesisv012.IssueList[i].PullRequests,
-				RepositoryId:  gitopiaGenesisv012.IssueList[i].RepositoryId,
-				Labels:        gitopiaGenesisv012.IssueList[i].Labels,
-				Weight:        gitopiaGenesisv012.IssueList[i].Weight,
-				Assignees:     gitopiaGenesisv012.IssueList[i].Assignees,
-				CreatedAt:     gitopiaGenesisv012.IssueList[i].CreatedAt,
-				UpdatedAt:     gitopiaGenesisv012.IssueList[i].UpdatedAt,
-				ClosedAt:      gitopiaGenesisv012.IssueList[i].ClosedAt,
-				ClosedBy:      gitopiaGenesisv012.IssueList[i].ClosedBy,
+				Creator:       gitopiaGenesisv013.IssueList[i].Creator,
+				Id:            gitopiaGenesisv013.IssueList[i].Id,
+				Iid:           gitopiaGenesisv013.IssueList[i].Iid,
+				Title:         gitopiaGenesisv013.IssueList[i].Title,
+				State:         gitopiatypes.Issue_State(gitopiaGenesisv013.IssueList[i].State),
+				Description:   gitopiaGenesisv013.IssueList[i].Description,
+				Comments:      gitopiaGenesisv013.IssueList[i].Comments,
+				CommentsCount: gitopiaGenesisv013.IssueList[i].CommentsCount,
+				PullRequests:  gitopiaGenesisv013.IssueList[i].PullRequests,
+				RepositoryId:  gitopiaGenesisv013.IssueList[i].RepositoryId,
+				Labels:        gitopiaGenesisv013.IssueList[i].Labels,
+				Weight:        gitopiaGenesisv013.IssueList[i].Weight,
+				Assignees:     gitopiaGenesisv013.IssueList[i].Assignees,
+				CreatedAt:     gitopiaGenesisv013.IssueList[i].CreatedAt,
+				UpdatedAt:     gitopiaGenesisv013.IssueList[i].UpdatedAt,
+				ClosedAt:      gitopiaGenesisv013.IssueList[i].ClosedAt,
+				ClosedBy:      gitopiaGenesisv013.IssueList[i].ClosedBy,
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.PullRequestList {
+	// Migrate PullRequest
+	for i := range gitopiaGenesisv013.PullRequestList {
 		gitopiaGenesis.PullRequestList = append(gitopiaGenesis.PullRequestList,
 			gitopiatypes.PullRequest{
-				Creator:             gitopiaGenesisv012.PullRequestList[i].Creator,
-				Id:                  gitopiaGenesisv012.PullRequestList[i].Id,
-				Iid:                 gitopiaGenesisv012.PullRequestList[i].Iid,
-				Title:               gitopiaGenesisv012.PullRequestList[i].Title,
-				State:               gitopiatypes.PullRequest_State(gitopiaGenesisv012.PullRequestList[i].State),
-				Description:         gitopiaGenesisv012.PullRequestList[i].Description,
-				Locked:              gitopiaGenesisv012.PullRequestList[i].Locked,
-				Comments:            gitopiaGenesisv012.PullRequestList[i].Comments,
-				CommentsCount:       gitopiaGenesisv012.PullRequestList[i].CommentsCount,
-				Issues:              gitopiaGenesisv012.PullRequestList[i].Issues,
-				Labels:              gitopiaGenesisv012.PullRequestList[i].Labels,
-				Assignees:           gitopiaGenesisv012.PullRequestList[i].Assignees,
-				Reviewers:           gitopiaGenesisv012.PullRequestList[i].Reviewers,
-				Draft:               gitopiaGenesisv012.PullRequestList[i].Draft,
-				CreatedAt:           gitopiaGenesisv012.PullRequestList[i].CreatedAt,
-				UpdatedAt:           gitopiaGenesisv012.PullRequestList[i].UpdatedAt,
-				ClosedAt:            gitopiaGenesisv012.PullRequestList[i].ClosedAt,
-				ClosedBy:            gitopiaGenesisv012.PullRequestList[i].ClosedBy,
-				MergedAt:            gitopiaGenesisv012.PullRequestList[i].MergedAt,
-				MergedBy:            gitopiaGenesisv012.PullRequestList[i].MergedBy,
-				MergeCommitSha:      gitopiaGenesisv012.PullRequestList[i].MergeCommitSha,
-				MaintainerCanModify: gitopiaGenesisv012.PullRequestList[i].MaintainerCanModify,
+				Creator:             gitopiaGenesisv013.PullRequestList[i].Creator,
+				Id:                  gitopiaGenesisv013.PullRequestList[i].Id,
+				Iid:                 gitopiaGenesisv013.PullRequestList[i].Iid,
+				Title:               gitopiaGenesisv013.PullRequestList[i].Title,
+				State:               gitopiatypes.PullRequest_State(gitopiaGenesisv013.PullRequestList[i].State),
+				Description:         gitopiaGenesisv013.PullRequestList[i].Description,
+				Locked:              gitopiaGenesisv013.PullRequestList[i].Locked,
+				Comments:            gitopiaGenesisv013.PullRequestList[i].Comments,
+				CommentsCount:       gitopiaGenesisv013.PullRequestList[i].CommentsCount,
+				Issues:              gitopiaGenesisv013.PullRequestList[i].Issues,
+				Labels:              gitopiaGenesisv013.PullRequestList[i].Labels,
+				Assignees:           gitopiaGenesisv013.PullRequestList[i].Assignees,
+				Reviewers:           gitopiaGenesisv013.PullRequestList[i].Reviewers,
+				Draft:               gitopiaGenesisv013.PullRequestList[i].Draft,
+				CreatedAt:           gitopiaGenesisv013.PullRequestList[i].CreatedAt,
+				UpdatedAt:           gitopiaGenesisv013.PullRequestList[i].UpdatedAt,
+				ClosedAt:            gitopiaGenesisv013.PullRequestList[i].ClosedAt,
+				ClosedBy:            gitopiaGenesisv013.PullRequestList[i].ClosedBy,
+				MergedAt:            gitopiaGenesisv013.PullRequestList[i].MergedAt,
+				MergedBy:            gitopiaGenesisv013.PullRequestList[i].MergedBy,
+				MergeCommitSha:      gitopiaGenesisv013.PullRequestList[i].MergeCommitSha,
+				MaintainerCanModify: gitopiaGenesisv013.PullRequestList[i].MaintainerCanModify,
 				Head: &gitopiatypes.PullRequestHead{
-					RepositoryId: gitopiaGenesisv012.PullRequestList[i].Head.RepositoryId,
-					Branch:       gitopiaGenesisv012.PullRequestList[i].Head.Branch,
-					CommitSha:    gitopiaGenesisv012.PullRequestList[i].Head.CommitSha,
+					RepositoryId: gitopiaGenesisv013.PullRequestList[i].Head.RepositoryId,
+					Branch:       gitopiaGenesisv013.PullRequestList[i].Head.Branch,
+					CommitSha:    gitopiaGenesisv013.PullRequestList[i].Head.CommitSha,
 				},
 				Base: &gitopiatypes.PullRequestBase{
-					RepositoryId: gitopiaGenesisv012.PullRequestList[i].Base.RepositoryId,
-					Branch:       gitopiaGenesisv012.PullRequestList[i].Base.Branch,
-					CommitSha:    gitopiaGenesisv012.PullRequestList[i].Base.CommitSha,
+					RepositoryId: gitopiaGenesisv013.PullRequestList[i].Base.RepositoryId,
+					Branch:       gitopiaGenesisv013.PullRequestList[i].Base.Branch,
+					CommitSha:    gitopiaGenesisv013.PullRequestList[i].Base.CommitSha,
 				},
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.CommentList {
+	// Migrate CommentList
+	for i := range gitopiaGenesisv013.CommentList {
 		gitopiaGenesis.CommentList = append(gitopiaGenesis.CommentList,
 			gitopiatypes.Comment{
-				Creator:           gitopiaGenesisv012.CommentList[i].Creator,
-				Id:                gitopiaGenesisv012.CommentList[i].Id,
-				ParentId:          gitopiaGenesisv012.CommentList[i].ParentId,
-				CommentIid:        gitopiaGenesisv012.CommentList[i].CommentIid,
-				Body:              gitopiaGenesisv012.CommentList[i].Body,
-				Attachments:       gitopiaGenesisv012.CommentList[i].Attachments,
-				DiffHunk:          gitopiaGenesisv012.CommentList[i].DiffHunk,
-				Path:              gitopiaGenesisv012.CommentList[i].Path,
-				System:            gitopiaGenesisv012.CommentList[i].System,
-				AuthorAssociation: gitopiaGenesisv012.CommentList[i].AuthorAssociation,
-				CreatedAt:         gitopiaGenesisv012.CommentList[i].CreatedAt,
-				UpdatedAt:         gitopiaGenesisv012.CommentList[i].UpdatedAt,
-				CommentType:       gitopiatypes.Comment_Type(gitopiaGenesisv012.CommentList[i].CommentType),
+				Creator:           gitopiaGenesisv013.CommentList[i].Creator,
+				Id:                gitopiaGenesisv013.CommentList[i].Id,
+				ParentId:          gitopiaGenesisv013.CommentList[i].ParentId,
+				CommentIid:        gitopiaGenesisv013.CommentList[i].CommentIid,
+				Body:              gitopiaGenesisv013.CommentList[i].Body,
+				Attachments:       gitopiaGenesisv013.CommentList[i].Attachments,
+				DiffHunk:          gitopiaGenesisv013.CommentList[i].DiffHunk,
+				Path:              gitopiaGenesisv013.CommentList[i].Path,
+				System:            gitopiaGenesisv013.CommentList[i].System,
+				AuthorAssociation: gitopiaGenesisv013.CommentList[i].AuthorAssociation,
+				CreatedAt:         gitopiaGenesisv013.CommentList[i].CreatedAt,
+				UpdatedAt:         gitopiaGenesisv013.CommentList[i].UpdatedAt,
+				CommentType:       gitopiatypes.Comment_Type(gitopiaGenesisv013.CommentList[i].CommentType),
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.ReleaseList {
+	// Migrate Release
+	for i := range gitopiaGenesisv013.ReleaseList {
 		var attachments []*gitopiatypes.Attachment
 
-		for _, v012 := range gitopiaGenesisv012.ReleaseList[i].Attachments {
+		for _, v013 := range gitopiaGenesisv013.ReleaseList[i].Attachments {
 			attachments = append(attachments,
 				&gitopiatypes.Attachment{
-					Name:     v012.Name,
-					Size_:    v012.Size_,
-					Sha:      v012.Sha,
-					Uploader: v012.Uploader,
+					Name:     v013.Name,
+					Size_:    v013.Size_,
+					Sha:      v013.Sha,
+					Uploader: v013.Uploader,
 				},
 			)
 		}
 
 		gitopiaGenesis.ReleaseList = append(gitopiaGenesis.ReleaseList,
 			gitopiatypes.Release{
-				Creator:      gitopiaGenesisv012.ReleaseList[i].Creator,
-				Id:           gitopiaGenesisv012.ReleaseList[i].Id,
-				RepositoryId: gitopiaGenesisv012.ReleaseList[i].RepositoryId,
-				TagName:      gitopiaGenesisv012.ReleaseList[i].TagName,
-				Target:       gitopiaGenesisv012.ReleaseList[i].Target,
-				Name:         gitopiaGenesisv012.ReleaseList[i].Name,
-				Description:  gitopiaGenesisv012.ReleaseList[i].Description,
+				Creator:      gitopiaGenesisv013.ReleaseList[i].Creator,
+				Id:           gitopiaGenesisv013.ReleaseList[i].Id,
+				RepositoryId: gitopiaGenesisv013.ReleaseList[i].RepositoryId,
+				TagName:      gitopiaGenesisv013.ReleaseList[i].TagName,
+				Target:       gitopiaGenesisv013.ReleaseList[i].Target,
+				Name:         gitopiaGenesisv013.ReleaseList[i].Name,
+				Description:  gitopiaGenesisv013.ReleaseList[i].Description,
 				Attachments:  attachments,
-				Draft:        gitopiaGenesisv012.ReleaseList[i].Draft,
-				PreRelease:   gitopiaGenesisv012.ReleaseList[i].PreRelease,
-				IsTag:        gitopiaGenesisv012.ReleaseList[i].IsTag,
-				CreatedAt:    gitopiaGenesisv012.ReleaseList[i].CreatedAt,
-				UpdatedAt:    gitopiaGenesisv012.ReleaseList[i].UpdatedAt,
-				PublishedAt:  gitopiaGenesisv012.ReleaseList[i].PublishedAt,
+				Draft:        gitopiaGenesisv013.ReleaseList[i].Draft,
+				PreRelease:   gitopiaGenesisv013.ReleaseList[i].PreRelease,
+				IsTag:        gitopiaGenesisv013.ReleaseList[i].IsTag,
+				CreatedAt:    gitopiaGenesisv013.ReleaseList[i].CreatedAt,
+				UpdatedAt:    gitopiaGenesisv013.ReleaseList[i].UpdatedAt,
+				PublishedAt:  gitopiaGenesisv013.ReleaseList[i].PublishedAt,
 			},
 		)
 	}
 
-	for i := range gitopiaGenesisv012.WhoisList {
-		gitopiaGenesis.WhoisList = append(gitopiaGenesis.WhoisList,
-			gitopiatypes.Whois{
-				Creator: gitopiaGenesisv012.WhoisList[i].Creator,
-				Name:    gitopiaGenesisv012.WhoisList[i].Name,
-				Address: gitopiaGenesisv012.WhoisList[i].Address,
+	// Migrate Task
+	for i := range gitopiaGenesisv013.TaskList {
+		gitopiaGenesis.TaskList = append(gitopiaGenesis.TaskList,
+			gitopiatypes.Task{
+				Id:       gitopiaGenesisv013.TaskList[i].Id,
+				Type:     gitopiatypes.TaskType(gitopiaGenesisv013.TaskList[i].Type),
+				State:    gitopiatypes.TaskState(gitopiaGenesisv013.TaskList[i].State),
+				Message:  gitopiaGenesisv013.TaskList[i].Message,
+				Creator:  gitopiaGenesisv013.TaskList[i].Creator,
+				Provider: gitopiaGenesisv013.TaskList[i].Provider,
 			},
 		)
 	}
 
-	gitopiaGenesis.ReleaseCount = gitopiaGenesisv012.ReleaseCount
-	gitopiaGenesis.PullRequestCount = gitopiaGenesisv012.PullRequestCount
-	gitopiaGenesis.OrganizationCount = gitopiaGenesisv012.OrganizationCount
-	gitopiaGenesis.CommentCount = gitopiaGenesisv012.CommentCount
-	gitopiaGenesis.IssueCount = gitopiaGenesisv012.IssueCount
-	gitopiaGenesis.RepositoryCount = gitopiaGenesisv012.RepositoryCount
-	gitopiaGenesis.UserCount = gitopiaGenesisv012.UserCount
-	gitopiaGenesis.WhoisCount = gitopiaGenesisv012.WhoisCount
+	// Set Count
+	gitopiaGenesis.UserCount = gitopiaGenesisv013.UserCount
+	gitopiaGenesis.DaoCount = gitopiaGenesisv013.OrganizationCount
+	gitopiaGenesis.MemberCount = memberCount
+	gitopiaGenesis.RepositoryCount = gitopiaGenesisv013.RepositoryCount
+	gitopiaGenesis.BranchCount = branchCount
+	gitopiaGenesis.TagCount = tagCount
+	gitopiaGenesis.IssueCount = gitopiaGenesisv013.IssueCount
+	gitopiaGenesis.PullRequestCount = gitopiaGenesisv013.PullRequestCount
+	gitopiaGenesis.CommentCount = gitopiaGenesisv013.CommentCount
+	gitopiaGenesis.ReleaseCount = gitopiaGenesisv013.ReleaseCount
+	gitopiaGenesis.TaskCount = gitopiaGenesisv013.TaskCount
 }
 
 func MigrateCmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "migrate-denom [genesis-file]",
+		Use:   "migrate-kv-store [genesis-file]",
 		Short: "Migrate Genesis file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -427,7 +456,7 @@ func MigrateCmd() *cobra.Command {
 				mintGenesis        minttypes.GenesisState
 				ibcGenesis         ibctypes.GenesisState
 				gitopiaGenesis     gitopiatypes.GenesisState
-				gitopiaGenesisv012 gitopiatypesv012.GenesisState
+				gitopiaGenesisv013 gitopiatypesv013.GenesisState
 			)
 
 			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
@@ -436,9 +465,9 @@ func MigrateCmd() *cobra.Command {
 			ctx.Codec.MustUnmarshalJSON(state[govtypes.ModuleName], &govGenesis)
 			ctx.Codec.MustUnmarshalJSON(state[minttypes.ModuleName], &mintGenesis)
 			ctx.Codec.MustUnmarshalJSON(state["ibc"], &ibcGenesis)
-			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaGenesisv012)
+			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaGenesisv013)
 
-			migrateGitopiaGenesisTov013(gitopiaGenesisv012, &gitopiaGenesis)
+			migrateGitopiaGenesisTov014(gitopiaGenesisv013, &gitopiaGenesis)
 
 			var baseAccounts []*codectypes.Any
 			var moduleAccounts []string
@@ -482,9 +511,7 @@ func MigrateCmd() *cobra.Command {
 					continue
 				}
 				for j := range balance.Coins {
-					if balance.Coins[j].Denom == "tlore" {
-						balance.Coins[j].Denom = "utlore"
-						// bankGenesis.Balances[i].Coins[j].Amount = bankGenesis.Balances[i].Coins[j].Amount.Mul(sdk.NewInt(1000000))
+					if balance.Coins[j].Denom == "utlore" {
 						totalBalance = totalBalance.Add(balance.Coins[j].Amount)
 					}
 				}

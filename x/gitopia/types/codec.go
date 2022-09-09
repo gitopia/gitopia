@@ -13,6 +13,22 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
 	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
+
+	cdc.RegisterConcrete(&MsgSetBranch{}, "gitopia/SetBranch", nil)
+	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
+	cdc.RegisterConcrete(&MsgMultiSetBranch{}, "gitopia/MultiSetBranch", nil)
+	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
+	cdc.RegisterConcrete(&MsgMultiDeleteBranch{}, "gitopia/MultiDeleteBranch", nil)
+
+	cdc.RegisterConcrete(&MsgSetTag{}, "gitopia/SetTag", nil)
+	cdc.RegisterConcrete(&MsgMultiSetTag{}, "gitopia/MultiSetTag", nil)
+	cdc.RegisterConcrete(&MsgDeleteTag{}, "gitopia/DeleteTag", nil)
+	cdc.RegisterConcrete(&MsgMultiDeleteTag{}, "gitopia/MultiDeleteTag", nil)
+
+	cdc.RegisterConcrete(&MsgAddMember{}, "gitopia/AddMember", nil)
+	cdc.RegisterConcrete(&MsgUpdateMemberRole{}, "gitopia/UpdateMemberRole", nil)
+	cdc.RegisterConcrete(&MsgRemoveMember{}, "gitopia/RemoveMember", nil)
+
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
 	cdc.RegisterConcrete(&MsgUpdateRelease{}, "gitopia/UpdateRelease", nil)
@@ -31,15 +47,13 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRemovePullRequestLabels{}, "gitopia/RemovePullRequestLabels", nil)
 	cdc.RegisterConcrete(&MsgDeletePullRequest{}, "gitopia/DeletePullRequest", nil)
 
-	cdc.RegisterConcrete(&MsgCreateOrganization{}, "gitopia/CreateOrganization", nil)
-	cdc.RegisterConcrete(&MsgRenameOrganization{}, "gitopia/RenameOrganization", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganizationMember{}, "gitopia/UpdateOrganizationMember", nil)
-	cdc.RegisterConcrete(&MsgRemoveOrganizationMember{}, "gitopia/RemoveOrganizationMember", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganizationDescription{}, "gitopia/UpdateOrganizationDescription", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganizationWebsite{}, "gitopia/UpdateOrganizationWebsite", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganizationLocation{}, "gitopia/UpdateOrganizationLocation", nil)
-	cdc.RegisterConcrete(&MsgUpdateOrganizationAvatar{}, "gitopia/UpdateOrganizationAvatar", nil)
-	cdc.RegisterConcrete(&MsgDeleteOrganization{}, "gitopia/DeleteOrganization", nil)
+	cdc.RegisterConcrete(&MsgCreateDao{}, "gitopia/CreateDao", nil)
+	cdc.RegisterConcrete(&MsgRenameDao{}, "gitopia/RenameDao", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoDescription{}, "gitopia/UpdateDaoDescription", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoWebsite{}, "gitopia/UpdateDaoWebsite", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoLocation{}, "gitopia/UpdateDaoLocation", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoAvatar{}, "gitopia/UpdateDaoAvatar", nil)
+	cdc.RegisterConcrete(&MsgDeleteDao{}, "gitopia/DeleteDao", nil)
 
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
 	cdc.RegisterConcrete(&MsgUpdateComment{}, "gitopia/UpdateComment", nil)
@@ -67,28 +81,16 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateRepositoryLabel{}, "gitopia/CreateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryLabel{}, "gitopia/UpdateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepositoryLabel{}, "gitopia/DeleteRepositoryLabel", nil)
-	cdc.RegisterConcrete(&MsgSetRepositoryBranch{}, "gitopia/SetRepositoryBranch", nil)
-	cdc.RegisterConcrete(&MsgMultiSetRepositoryBranch{}, "gitopia/MultiSetRepositoryBranch", nil)
-	cdc.RegisterConcrete(&MsgSetDefaultBranch{}, "gitopia/SetDefaultBranch", nil)
-	cdc.RegisterConcrete(&MsgDeleteBranch{}, "gitopia/DeleteBranch", nil)
-	cdc.RegisterConcrete(&MsgMultiDeleteBranch{}, "gitopia/MultiDeleteBranch", nil)
-	cdc.RegisterConcrete(&MsgSetRepositoryTag{}, "gitopia/SetRepositoryTag", nil)
-	cdc.RegisterConcrete(&MsgMultiSetRepositoryTag{}, "gitopia/MultiSetRepositoryTag", nil)
-	cdc.RegisterConcrete(&MsgDeleteTag{}, "gitopia/DeleteTag", nil)
-	cdc.RegisterConcrete(&MsgMultiDeleteTag{}, "gitopia/MultiDeleteTag", nil)
 	cdc.RegisterConcrete(&MsgToggleRepositoryForking{}, "gitopia/ToggleRepositoryForking", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepository{}, "gitopia/DeleteRepository", nil)
 
 	cdc.RegisterConcrete(&MsgCreateUser{}, "gitopia/CreateUser", nil)
-	cdc.RegisterConcrete(&MsgUpdateUser{}, "gitopia/UpdateUser", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserUsername{}, "gitopia/UpdateUserUsername", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserName{}, "gitopia/UpdateUserName", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserBio{}, "gitopia/UpdateUserBio", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserAvatar{}, "gitopia/UpdateUserAvatar", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
-	cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
-
-	cdc.RegisterConcrete(&MsgSetWhois{}, "gitopia/SetWhois", nil)
-	cdc.RegisterConcrete(&MsgUpdateWhois{}, "gitopia/UpdateWhois", nil)
-	cdc.RegisterConcrete(&MsgDeleteWhois{}, "gitopia/DeleteWhois", nil)
+	// cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
 }
 
@@ -100,6 +102,24 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		// &MsgCreateTask{},
 		&MsgUpdateTask{},
 		// &MsgDeleteTask{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgSetBranch{},
+		&MsgSetDefaultBranch{},
+		&MsgMultiSetBranch{},
+		&MsgDeleteBranch{},
+		&MsgMultiDeleteBranch{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgSetTag{},
+		&MsgMultiSetTag{},
+		&MsgDeleteTag{},
+		&MsgMultiDeleteTag{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgAddMember{},
+		&MsgUpdateMemberRole{},
+		&MsgRemoveMember{},
 	)
 	// this line is used by starport scaffolding # 3
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -122,15 +142,13 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDeletePullRequest{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreateOrganization{},
-		&MsgRenameOrganization{},
-		&MsgUpdateOrganizationMember{},
-		&MsgRemoveOrganizationMember{},
-		&MsgUpdateOrganizationDescription{},
-		&MsgUpdateOrganizationWebsite{},
-		&MsgUpdateOrganizationLocation{},
-		&MsgUpdateOrganizationAvatar{},
-		&MsgDeleteOrganization{},
+		&MsgCreateDao{},
+		&MsgRenameDao{},
+		&MsgUpdateDaoDescription{},
+		&MsgUpdateDaoWebsite{},
+		&MsgUpdateDaoLocation{},
+		&MsgUpdateDaoAvatar{},
+		&MsgDeleteDao{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateComment{},
@@ -161,30 +179,17 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateRepositoryLabel{},
 		&MsgUpdateRepositoryLabel{},
 		&MsgDeleteRepositoryLabel{},
-		&MsgSetRepositoryBranch{},
-		&MsgMultiSetRepositoryBranch{},
-		&MsgSetDefaultBranch{},
-		&MsgDeleteBranch{},
-		&MsgMultiDeleteBranch{},
-		&MsgSetRepositoryTag{},
-		&MsgMultiSetRepositoryTag{},
-		&MsgDeleteTag{},
-		&MsgMultiDeleteTag{},
 		&MsgToggleRepositoryForking{},
 		&MsgDeleteRepository{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateUser{},
-		&MsgUpdateUser{},
+		&MsgUpdateUserUsername{},
+		&MsgUpdateUserName{},
 		&MsgUpdateUserBio{},
 		&MsgUpdateUserAvatar{},
 		&MsgDeleteUser{},
-		&MsgTransferUser{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgSetWhois{},
-		&MsgUpdateWhois{},
-		&MsgDeleteWhois{},
+		// &MsgTransferUser{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

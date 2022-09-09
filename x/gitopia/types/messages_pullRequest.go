@@ -1,6 +1,8 @@
 package types
 
 import (
+	"regexp"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -13,18 +15,18 @@ func (r RepositoryPullRequestSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepoId uint64, baseBranch string, baseRepoId uint64, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepositoryId RepositoryId, baseBranch string, baseRepositoryId RepositoryId, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
-		Creator:     creator,
-		Title:       title,
-		Description: description,
-		HeadBranch:  headBranch,
-		HeadRepoId:  headRepoId,
-		BaseBranch:  baseBranch,
-		BaseRepoId:  baseRepoId,
-		Reviewers:   reviewers,
-		Assignees:   assignees,
-		LabelIds:    labelIds,
+		Creator:          creator,
+		Title:            title,
+		Description:      description,
+		HeadBranch:       headBranch,
+		HeadRepositoryId: headRepositoryId,
+		BaseBranch:       baseBranch,
+		BaseRepositoryId: baseRepositoryId,
+		Reviewers:        reviewers,
+		Assignees:        assignees,
+		LabelIds:         labelIds,
 	}
 }
 
@@ -54,6 +56,59 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.HeadRepositoryId.Id)
+	if err != nil {
+		if len(msg.HeadRepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id must consist minimum 3 chars")
+		} else if len(msg.HeadRepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.HeadRepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid head id (%v)", msg.HeadRepositoryId.Id)
+		}
+	}
+
+	if len(msg.HeadRepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name must be at least 3 characters long")
+	} else if len(msg.HeadRepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(msg.HeadRepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "head repository name is not sanitized")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.BaseRepositoryId.Id)
+	if err != nil {
+		if len(msg.BaseRepositoryId.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id must consist minimum 3 chars")
+		} else if len(msg.BaseRepositoryId.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.BaseRepositoryId.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid base id (%v)", msg.BaseRepositoryId.Id)
+		}
+	}
+
+	if len(msg.BaseRepositoryId.Name) < 3 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name must be at least 3 characters long")
+	} else if len(msg.BaseRepositoryId.Name) > 100 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name exceeds limit: 100")
+	}
+	sanitized = IsNameSanitized(msg.BaseRepositoryId.Name)
+	if !sanitized {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base repository name is not sanitized")
+	}
+
 	if len(msg.Title) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "title length exceeds limit: 255")
 	} else if len(msg.Title) < 1 {

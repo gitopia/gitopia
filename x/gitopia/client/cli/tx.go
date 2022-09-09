@@ -33,6 +33,17 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCreateTask())
 	cmd.AddCommand(CmdUpdateTask())
 	cmd.AddCommand(CmdDeleteTask())
+
+	cmd.AddCommand(CmdSetBranch())
+	cmd.AddCommand(CmdSetDefaultBranch())
+	cmd.AddCommand(CmdDeleteBranch())
+
+	cmd.AddCommand(CmdSetTag())
+	cmd.AddCommand(CmdDeleteTag())
+
+	cmd.AddCommand(CmdAddMember())
+	cmd.AddCommand(CmdUpdateMemberRole())
+	cmd.AddCommand(CmdRemoveMember())
 	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())
@@ -53,15 +64,13 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdRemovePullRequestLabels())
 	cmd.AddCommand(CmdDeletePullRequest())
 
-	cmd.AddCommand(CmdCreateOrganization())
-	cmd.AddCommand(CmdRenameOrganization())
-	cmd.AddCommand(CmdUpdateOrganizationMember())
-	cmd.AddCommand(CmdRemoveOrganizationMember())
-	cmd.AddCommand(CmdUpdateOrganizationDescription())
-	cmd.AddCommand(CmdUpdateOrganizationWebsite())
-	cmd.AddCommand(CmdUpdateOrganizationLocation())
-	cmd.AddCommand(CmdUpdateOrganizationAvatar())
-	cmd.AddCommand(CmdDeleteOrganization())
+	cmd.AddCommand(CmdCreateDao())
+	cmd.AddCommand(CmdRenameDao())
+	cmd.AddCommand(CmdUpdateDaoDescription())
+	cmd.AddCommand(CmdUpdateDaoWebsite())
+	cmd.AddCommand(CmdUpdateDaoLocation())
+	cmd.AddCommand(CmdUpdateDaoAvatar())
+	cmd.AddCommand(CmdDeleteDao())
 
 	cmd.AddCommand(CmdCreateComment())
 	cmd.AddCommand(CmdUpdateComment())
@@ -90,24 +99,16 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdCreateRepositoryLabel())
 	cmd.AddCommand(CmdUpdateRepositoryLabel())
 	cmd.AddCommand(CmdDeleteRepositoryLabel())
-	cmd.AddCommand(CmdSetRepositoryBranch())
-	cmd.AddCommand(CmdSetDefaultBranch())
-	cmd.AddCommand(CmdDeleteBranch())
-	cmd.AddCommand(CmdSetRepositoryTag())
-	cmd.AddCommand(CmdDeleteTag())
 	cmd.AddCommand(CmdToggleRepositoryForking())
 	cmd.AddCommand(CmdDeleteRepository())
 
 	cmd.AddCommand(CmdCreateUser())
-	cmd.AddCommand(CmdUpdateUser())
+	cmd.AddCommand(CmdUpdateUserUsername())
+	cmd.AddCommand(CmdUpdateUserName())
 	cmd.AddCommand(CmdUpdateUserBio())
 	cmd.AddCommand(CmdUpdateUserAvatar())
 	cmd.AddCommand(CmdDeleteUser())
-	cmd.AddCommand(CmdTransferUser())
-
-	cmd.AddCommand(CmdCreateWhois())
-	cmd.AddCommand(CmdUpdateWhois())
-	cmd.AddCommand(CmdDeleteWhois())
+	// cmd.AddCommand(CmdTransferUser())
 
 	return cmd
 }

@@ -8,7 +8,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/gitopia/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -62,29 +61,24 @@ func (k Keeper) PullRequestMergePermission(c context.Context, req *types.QueryGe
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	//var pullRequest types.PullRequest
 	ctx := sdk.UnwrapSDKContext(c)
+
+	address, err := k.ResolveAddress(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
 
 	pullRequest, found := k.GetPullRequest(ctx, req.PullId)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	repository, found := k.GetRepository(ctx, pullRequest.Base.RepositoryId)
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
-		return nil, sdkerrors.ErrLogic
+		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	var organization types.Organization
-
-	if repository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-		organization, found = k.GetOrganization(ctx, repository.Owner.Id)
-		if !found {
-			return nil, sdkerrors.ErrLogic
-		}
-	}
-
-	if utils.HavePermission(repository, req.UserAddress, utils.PullRequestMergePermission, organization) {
+	if k.HavePermission(ctx, address.address, repository, types.PullRequestMergePermission) {
 		return &types.QueryGetPullRequestMergePermissionResponse{HavePermission: true}, nil
 	}
 

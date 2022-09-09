@@ -13,12 +13,12 @@ func (r RepositoryIssueSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, title string, description string, repositoryId uint64, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, description string, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
+		RepositoryId: repositoryId,
 		Title:        title,
 		Description:  description,
-		RepositoryId: repositoryId,
 		LabelIds:     labelIds,
 		Weight:       weight,
 		Assignees:    assignees,

@@ -19,39 +19,22 @@ func CmdCreateRelease() *cobra.Command {
 		Short: "Create a new release",
 		Args:  cobra.ExactArgs(9),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			argOwnerid := args[0]
+			argRepositoryName := args[1]
+			argTagName := args[2]
+			argTarget := args[3]
+			argName := args[4]
+			argDescription := args[5]
+			argAttachments := args[6]
+			argDraft, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
-			argsTagName, err := cast.ToStringE(args[1])
+			argPreRelease, err := strconv.ParseBool(args[8])
 			if err != nil {
 				return err
 			}
-			argsTarget, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsName, err := cast.ToStringE(args[3])
-			if err != nil {
-				return err
-			}
-			argsDescription, err := cast.ToStringE(args[4])
-			if err != nil {
-				return err
-			}
-			argsAttachments, err := cast.ToStringE(args[5])
-			if err != nil {
-				return err
-			}
-			argsDraft, err := strconv.ParseBool(args[6])
-			if err != nil {
-				return err
-			}
-			argsPreRelease, err := strconv.ParseBool(args[7])
-			if err != nil {
-				return err
-			}
-			argsIsTag, err := strconv.ParseBool(args[8])
+			argIsTag, err := strconv.ParseBool(args[9])
 			if err != nil {
 				return err
 			}
@@ -61,7 +44,18 @@ func CmdCreateRelease() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateRelease(clientCtx.GetFromAddress().String(), argsRepositoryId, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag)
+			msg := types.NewMsgCreateRelease(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argOwnerid, Name: argRepositoryName},
+				argTagName,
+				argTarget,
+				argName,
+				argDescription,
+				argAttachments,
+				argDraft,
+				argPreRelease,
+				argIsTag,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

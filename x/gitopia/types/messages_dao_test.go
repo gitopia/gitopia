@@ -9,49 +9,49 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgCreateOrganization_ValidateBasic(t *testing.T) {
+func TestMsgCreateDao_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgCreateOrganization
+		msg  MsgCreateDao
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: "invalid_address",
 				Name:    "name",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: sample.AccAddress(),
 				Name:    "name",
 			},
 		}, {
 			name: "too short name",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: sample.AccAddress(),
 				Name:    "n",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "name exceeds limit",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: sample.AccAddress(),
 				Name:    strings.Repeat("n", 40),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid name",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: sample.AccAddress(),
 				Name:    "!nva1id",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "description exceeds limit",
-			msg: MsgCreateOrganization{
+			msg: MsgCreateDao{
 				Creator: sample.AccAddress(),
 				Name:    strings.Repeat("d", 256),
 			},
@@ -70,42 +70,42 @@ func TestMsgCreateOrganization_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRenameOrganization_ValidateBasic(t *testing.T) {
+func TestMsgRenameDao_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgRenameOrganization
+		msg  MsgRenameDao
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgRenameOrganization{
+			msg: MsgRenameDao{
 				Creator: "invalid_address",
 				Name:    "name",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgRenameOrganization{
+			msg: MsgRenameDao{
 				Creator: sample.AccAddress(),
 				Name:    "name",
 			},
 		}, {
 			name: "too short name",
-			msg: MsgRenameOrganization{
+			msg: MsgRenameDao{
 				Creator: sample.AccAddress(),
 				Name:    "n",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "name exceeds limit",
-			msg: MsgRenameOrganization{
+			msg: MsgRenameDao{
 				Creator: sample.AccAddress(),
 				Name:    strings.Repeat("n", 40),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid name",
-			msg: MsgRenameOrganization{
+			msg: MsgRenameDao{
 				Creator: sample.AccAddress(),
 				Name:    "!nva1id",
 			},
@@ -124,151 +124,36 @@ func TestMsgRenameOrganization_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateOrganizationMember_ValidateBasic(t *testing.T) {
+func TestMsgUpdateDaoDescription_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateOrganizationMember
+		msg  MsgUpdateDaoDescription
 		err  error
 	}{
 		{
 			name: "invalid id",
-			msg: MsgUpdateOrganizationMember{
-				Id:      "invalid_id",
-				Creator: sample.AccAddress(),
-				User:    sample.AccAddress(),
-				Role:    "MEMBER",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "invalid creator address",
-			msg: MsgUpdateOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: "invalid_address",
-				User:    sample.AccAddress(),
-				Role:    "MEMBER",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgUpdateOrganizationMember",
-			msg: MsgUpdateOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
-				User:    sample.AccAddress(),
-				Role:    "MEMBER",
-			},
-		}, {
-			name: "invalid user address",
-			msg: MsgUpdateOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
-				User:    "invalid_user",
-				Role:    "MEMBER",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "invalid role",
-			msg: MsgUpdateOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
-				User:    sample.AccAddress(),
-				Role:    "invalid_role",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
-func TestMsgRemoveOrganizationMember_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgRemoveOrganizationMember
-		err  error
-	}{
-		{
-			name: "invalid id",
-			msg: MsgRemoveOrganizationMember{
-				Id:      "invalid_id",
-				Creator: sample.AccAddress(),
-				User:    sample.AccAddress(),
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "invalid creator address",
-			msg: MsgRemoveOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: "invalid_address",
-				User:    sample.AccAddress(),
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgRemoveOrganizationMember",
-			msg: MsgRemoveOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
-				User:    sample.AccAddress(),
-			},
-		}, {
-			name: "invalid user address",
-			msg: MsgRemoveOrganizationMember{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
-				User:    "invalid_user",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
-func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgUpdateOrganizationDescription
-		err  error
-	}{
-		{
-			name: "invalid id",
-			msg: MsgUpdateOrganizationDescription{
+			msg: MsgUpdateDaoDescription{
 				Id:      "invalid_id",
 				Creator: sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid creator address",
-			msg: MsgUpdateOrganizationDescription{
+			msg: MsgUpdateDaoDescription{
 				Id:      sample.AccAddress(),
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgUpdateOrganization",
-			msg: MsgUpdateOrganizationDescription{
+			name: "valid MsgUpdateDao",
+			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
 				Creator:     sample.AccAddress(),
 				Description: "description",
 			},
 		}, {
 			name: "description exceeds limit",
-			msg: MsgUpdateOrganizationDescription{
+			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
 				Creator:     sample.AccAddress(),
 				Description: strings.Repeat("d", 256),
@@ -276,7 +161,7 @@ func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "description minimum length",
-			msg: MsgUpdateOrganizationDescription{
+			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
 				Creator:     sample.AccAddress(),
 				Description: "d",
@@ -284,7 +169,7 @@ func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "empty description",
-			msg: MsgUpdateOrganizationDescription{
+			msg: MsgUpdateDaoDescription{
 				Id:      sample.AccAddress(),
 				Creator: sample.AccAddress(),
 			},
@@ -303,36 +188,36 @@ func TestMsgUpdateOrganizationDescription_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
+func TestMsgUpdateDaoAvatar_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateOrganizationAvatar
+		msg  MsgUpdateDaoAvatar
 		err  error
 	}{
 		{
 			name: "invalid creator address",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: "invalid_address",
 				Id:      sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid dao address",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      sample.AccAddress(),
 				Url:     "https://avatar.url",
 			},
 		}, {
 			name: "url exceeds limit",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      sample.AccAddress(),
 				Url:     strings.Repeat("u", 2049),
@@ -340,7 +225,7 @@ func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid url",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      sample.AccAddress(),
 				Url:     "url",
@@ -348,14 +233,14 @@ func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "empty url",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "non https url",
-			msg: MsgUpdateOrganizationAvatar{
+			msg: MsgUpdateDaoAvatar{
 				Creator: sample.AccAddress(),
 				Id:      sample.AccAddress(),
 				Url:     "http://avatar.url",
@@ -375,29 +260,29 @@ func TestMsgUpdateOrganizationAvatar_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgDeleteOrganization_ValidateBasic(t *testing.T) {
+func TestMsgDeleteDao_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgDeleteOrganization
+		msg  MsgDeleteDao
 		err  error
 	}{
 		{
 			name: "invalid id",
-			msg: MsgDeleteOrganization{
+			msg: MsgDeleteDao{
 				Id:      "invalid_id",
 				Creator: sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid creator address",
-			msg: MsgDeleteOrganization{
+			msg: MsgDeleteDao{
 				Id:      sample.AccAddress(),
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgDeleteOrganization",
-			msg: MsgDeleteOrganization{
+			name: "valid MsgDeleteDao",
+			msg: MsgDeleteDao{
 				Id:      sample.AccAddress(),
 				Creator: sample.AccAddress(),
 			},

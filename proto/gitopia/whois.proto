@@ -9,9 +9,10 @@ message Whois {
   string creator = 1;
   string name = 2;
   string address = 3; 
-  enum OwnerType {
-    USER = 0;
-	  ORGANIZATION = 1;
-  }
   OwnerType ownerType = 4;
+}
+
+enum OwnerType {
+  USER = 0;
+  DAO = 1;
 }

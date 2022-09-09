@@ -13,22 +13,15 @@ message User {
   string usernameGithub = 5; 
   string avatarUrl = 6; 
   repeated string followers = 7; 
-  repeated string following = 8; 
-  repeated UserRepository repositories = 9;
-  repeated UserOrganization organizations = 10; 
-  repeated uint64 starred_repos = 11; 
-  string subscriptions = 12; 
-  string bio = 13; 
-  int64 createdAt = 14; 
-  int64 updatedAt = 15; 
+  repeated string following = 8;
+  repeated uint64 starred_repos = 9; 
+  string subscriptions = 10; 
+  string bio = 11; 
+  int64 createdAt = 12; 
+  int64 updatedAt = 13; 
 }
 
-message UserRepository {
-  string name = 1;
-  uint64 id = 2;
-}
-
-message UserOrganization {
-  string name = 1;
-  string id = 2;
+message UserDao {
+  string userAddress = 1;
+  string daoAddress = 2;
 }

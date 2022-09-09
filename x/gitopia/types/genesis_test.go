@@ -61,7 +61,7 @@ func TestGenesisState_Validate(t *testing.T) {
 				},
 				RepositoryCount: 2,
 
-				OrganizationList: []types.Organization{
+				DaoList: []types.Dao{
 					{
 						Creator: sample.AccAddress(),
 						Id:      0,
@@ -73,7 +73,7 @@ func TestGenesisState_Validate(t *testing.T) {
 						Address: sample.AccAddress(),
 					},
 				},
-				OrganizationCount: 2,
+				DaoCount: 2,
 
 				IssueList: []types.Issue{
 					{
@@ -131,6 +131,33 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 2,
+				BranchList: []types.Branch{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				BranchCount: 2,
+				TagList: []types.Tag{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				TagCount: 2,
+				MemberList: []types.Member{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				MemberCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -238,9 +265,9 @@ func TestGenesisState_Validate(t *testing.T) {
 		},
 
 		{
-			desc: "duplicated organization",
+			desc: "duplicated Dao",
 			genState: &types.GenesisState{
-				OrganizationList: []types.Organization{
+				DaoList: []types.Dao{
 					{
 						Id: 0,
 					},
@@ -248,19 +275,19 @@ func TestGenesisState_Validate(t *testing.T) {
 						Id: 0,
 					},
 				},
-				OrganizationCount: 2,
+				DaoCount: 2,
 			},
 			valid: false,
 		},
 		{
-			desc: "invalid organization count",
+			desc: "invalid Dao count",
 			genState: &types.GenesisState{
-				OrganizationList: []types.Organization{
+				DaoList: []types.Dao{
 					{
 						Id: 0,
 					},
 				},
-				OrganizationCount: 0,
+				DaoCount: 0,
 			},
 			valid: false,
 		},
@@ -343,6 +370,84 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated branch",
+			genState: &types.GenesisState{
+				BranchList: []types.Branch{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid branch count",
+			genState: &types.GenesisState{
+				BranchList: []types.Branch{
+					{
+						Id: 1,
+					},
+				},
+				BranchCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated tag",
+			genState: &types.GenesisState{
+				TagList: []types.Tag{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid tag count",
+			genState: &types.GenesisState{
+				TagList: []types.Tag{
+					{
+						Id: 1,
+					},
+				},
+				TagCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated member",
+			genState: &types.GenesisState{
+				MemberList: []types.Member{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid member count",
+			genState: &types.GenesisState{
+				MemberList: []types.Member{
+					{
+						Id: 1,
+					},
+				},
+				MemberCount: 0,
 			},
 			valid: false,
 		},

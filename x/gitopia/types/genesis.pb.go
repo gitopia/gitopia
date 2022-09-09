@@ -25,25 +25,33 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the gitopia module's genesis state.
 type GenesisState struct {
-	TaskList  []Task `protobuf:"bytes,17,rep,name=taskList,proto3" json:"taskList"`
-	TaskCount uint64 `protobuf:"varint,18,opt,name=taskCount,proto3" json:"taskCount,omitempty"`
+	BaseRepositoryKeyList []BaseRepositoryKey `protobuf:"bytes,26,rep,name=baseRepositoryKeyList,proto3" json:"baseRepositoryKeyList"`
+	UserDaoList           []UserDao           `protobuf:"bytes,25,rep,name=userDaoList,proto3" json:"userDaoList"`
+	TaskList              []Task              `protobuf:"bytes,17,rep,name=taskList,proto3" json:"taskList"`
+	TaskCount             uint64              `protobuf:"varint,18,opt,name=taskCount,proto3" json:"taskCount,omitempty"`
+	BranchList            []Branch            `protobuf:"bytes,19,rep,name=branchList,proto3" json:"branchList"`
+	BranchCount           uint64              `protobuf:"varint,20,opt,name=branchCount,proto3" json:"branchCount,omitempty"`
+	TagList               []Tag               `protobuf:"bytes,21,rep,name=tagList,proto3" json:"tagList"`
+	TagCount              uint64              `protobuf:"varint,22,opt,name=tagCount,proto3" json:"tagCount,omitempty"`
+	MemberList            []Member            `protobuf:"bytes,23,rep,name=memberList,proto3" json:"memberList"`
+	MemberCount           uint64              `protobuf:"varint,24,opt,name=memberCount,proto3" json:"memberCount,omitempty"`
 	// this line is used by starport scaffolding # genesis/proto/state
-	ReleaseList       []Release      `protobuf:"bytes,15,rep,name=releaseList,proto3" json:"releaseList"`
-	ReleaseCount      uint64         `protobuf:"varint,16,opt,name=releaseCount,proto3" json:"releaseCount,omitempty"`
-	PullRequestList   []PullRequest  `protobuf:"bytes,13,rep,name=pullRequestList,proto3" json:"pullRequestList"`
-	PullRequestCount  uint64         `protobuf:"varint,14,opt,name=pullRequestCount,proto3" json:"pullRequestCount,omitempty"`
-	OrganizationList  []Organization `protobuf:"bytes,11,rep,name=organizationList,proto3" json:"organizationList"`
-	OrganizationCount uint64         `protobuf:"varint,12,opt,name=organizationCount,proto3" json:"organizationCount,omitempty"`
-	CommentList       []Comment      `protobuf:"bytes,9,rep,name=commentList,proto3" json:"commentList"`
-	CommentCount      uint64         `protobuf:"varint,10,opt,name=commentCount,proto3" json:"commentCount,omitempty"`
-	IssueList         []Issue        `protobuf:"bytes,7,rep,name=issueList,proto3" json:"issueList"`
-	IssueCount        uint64         `protobuf:"varint,8,opt,name=issueCount,proto3" json:"issueCount,omitempty"`
-	RepositoryList    []Repository   `protobuf:"bytes,5,rep,name=repositoryList,proto3" json:"repositoryList"`
-	RepositoryCount   uint64         `protobuf:"varint,6,opt,name=repositoryCount,proto3" json:"repositoryCount,omitempty"`
-	UserList          []User         `protobuf:"bytes,3,rep,name=userList,proto3" json:"userList"`
-	UserCount         uint64         `protobuf:"varint,4,opt,name=userCount,proto3" json:"userCount,omitempty"`
-	WhoisList         []Whois        `protobuf:"bytes,1,rep,name=whoisList,proto3" json:"whoisList"`
-	WhoisCount        uint64         `protobuf:"varint,2,opt,name=whoisCount,proto3" json:"whoisCount,omitempty"`
+	ReleaseList      []Release     `protobuf:"bytes,15,rep,name=releaseList,proto3" json:"releaseList"`
+	ReleaseCount     uint64        `protobuf:"varint,16,opt,name=releaseCount,proto3" json:"releaseCount,omitempty"`
+	PullRequestList  []PullRequest `protobuf:"bytes,13,rep,name=pullRequestList,proto3" json:"pullRequestList"`
+	PullRequestCount uint64        `protobuf:"varint,14,opt,name=pullRequestCount,proto3" json:"pullRequestCount,omitempty"`
+	DaoList          []Dao         `protobuf:"bytes,11,rep,name=daoList,proto3" json:"daoList"`
+	DaoCount         uint64        `protobuf:"varint,12,opt,name=daoCount,proto3" json:"daoCount,omitempty"`
+	CommentList      []Comment     `protobuf:"bytes,9,rep,name=commentList,proto3" json:"commentList"`
+	CommentCount     uint64        `protobuf:"varint,10,opt,name=commentCount,proto3" json:"commentCount,omitempty"`
+	IssueList        []Issue       `protobuf:"bytes,7,rep,name=issueList,proto3" json:"issueList"`
+	IssueCount       uint64        `protobuf:"varint,8,opt,name=issueCount,proto3" json:"issueCount,omitempty"`
+	RepositoryList   []Repository  `protobuf:"bytes,5,rep,name=repositoryList,proto3" json:"repositoryList"`
+	RepositoryCount  uint64        `protobuf:"varint,6,opt,name=repositoryCount,proto3" json:"repositoryCount,omitempty"`
+	UserList         []User        `protobuf:"bytes,3,rep,name=userList,proto3" json:"userList"`
+	UserCount        uint64        `protobuf:"varint,4,opt,name=userCount,proto3" json:"userCount,omitempty"`
+	WhoisList        []Whois       `protobuf:"bytes,1,rep,name=whoisList,proto3" json:"whoisList"`
+	WhoisCount       uint64        `protobuf:"varint,2,opt,name=whoisCount,proto3" json:"whoisCount,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -79,6 +87,20 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
+func (m *GenesisState) GetBaseRepositoryKeyList() []BaseRepositoryKey {
+	if m != nil {
+		return m.BaseRepositoryKeyList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetUserDaoList() []UserDao {
+	if m != nil {
+		return m.UserDaoList
+	}
+	return nil
+}
+
 func (m *GenesisState) GetTaskList() []Task {
 	if m != nil {
 		return m.TaskList
@@ -89,6 +111,48 @@ func (m *GenesisState) GetTaskList() []Task {
 func (m *GenesisState) GetTaskCount() uint64 {
 	if m != nil {
 		return m.TaskCount
+	}
+	return 0
+}
+
+func (m *GenesisState) GetBranchList() []Branch {
+	if m != nil {
+		return m.BranchList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetBranchCount() uint64 {
+	if m != nil {
+		return m.BranchCount
+	}
+	return 0
+}
+
+func (m *GenesisState) GetTagList() []Tag {
+	if m != nil {
+		return m.TagList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetTagCount() uint64 {
+	if m != nil {
+		return m.TagCount
+	}
+	return 0
+}
+
+func (m *GenesisState) GetMemberList() []Member {
+	if m != nil {
+		return m.MemberList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetMemberCount() uint64 {
+	if m != nil {
+		return m.MemberCount
 	}
 	return 0
 }
@@ -121,16 +185,16 @@ func (m *GenesisState) GetPullRequestCount() uint64 {
 	return 0
 }
 
-func (m *GenesisState) GetOrganizationList() []Organization {
+func (m *GenesisState) GetDaoList() []Dao {
 	if m != nil {
-		return m.OrganizationList
+		return m.DaoList
 	}
 	return nil
 }
 
-func (m *GenesisState) GetOrganizationCount() uint64 {
+func (m *GenesisState) GetDaoCount() uint64 {
 	if m != nil {
-		return m.OrganizationCount
+		return m.DaoCount
 	}
 	return 0
 }
@@ -212,41 +276,48 @@ func init() {
 func init() { proto.RegisterFile("gitopia/genesis.proto", fileDescriptor_fe28ed7a80acf9ab) }
 
 var fileDescriptor_fe28ed7a80acf9ab = []byte{
-	// 529 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0x51, 0x6f, 0xd3, 0x30,
-	0x10, 0xc7, 0x1b, 0x56, 0xb6, 0xf5, 0x5a, 0xd6, 0xce, 0x80, 0x28, 0x15, 0x98, 0x6a, 0x80, 0x54,
-	0x4d, 0x28, 0x95, 0xe0, 0x03, 0x20, 0x75, 0x48, 0x80, 0x84, 0x04, 0x94, 0xa1, 0x49, 0xbc, 0x65,
-	0x93, 0x95, 0x59, 0x6b, 0xe3, 0x10, 0x3b, 0x82, 0xf1, 0x29, 0xf8, 0x58, 0x7b, 0xec, 0x23, 0x4f,
-	0x08, 0xb5, 0xdf, 0x81, 0x67, 0xe4, 0xb3, 0x9d, 0x98, 0x54, 0x59, 0x9f, 0x62, 0xff, 0x7d, 0x77,
-	0xbf, 0xcb, 0x3f, 0xbe, 0xc0, 0xdd, 0x98, 0x2b, 0x91, 0xf2, 0x68, 0x1c, 0xb3, 0x84, 0x49, 0x2e,
-	0xc3, 0x34, 0x13, 0x4a, 0x90, 0x7b, 0x56, 0x0e, 0x2b, 0xcf, 0x01, 0x71, 0xf1, 0x2a, 0x92, 0x17,
-	0x26, 0x78, 0x70, 0x27, 0x16, 0xb1, 0xc0, 0xe5, 0x58, 0xaf, 0xac, 0x5a, 0x54, 0xce, 0xd8, 0x8c,
-	0x45, 0x92, 0x59, 0xf9, 0xbe, 0x93, 0xd3, 0x7c, 0x36, 0x9b, 0xb2, 0xaf, 0x39, 0x93, 0xca, 0x1e,
-	0x0d, 0xdc, 0x91, 0xc8, 0xe2, 0x28, 0xe1, 0x3f, 0x22, 0xc5, 0x45, 0x52, 0xad, 0x76, 0x26, 0xe6,
-	0x73, 0x96, 0xb8, 0x94, 0xdb, 0x4e, 0xe6, 0x52, 0xe6, 0x0e, 0xd1, 0x2f, 0xc9, 0xa9, 0x90, 0x5c,
-	0x89, 0xec, 0xd2, 0x9e, 0x14, 0xdd, 0xe7, 0x92, 0x65, 0xd5, 0x12, 0xdf, 0xce, 0x85, 0x7b, 0xff,
-	0x83, 0xbf, 0x3b, 0xd0, 0x79, 0x6d, 0x1c, 0xf9, 0xa4, 0x22, 0xc5, 0xc8, 0x4b, 0xd8, 0xd5, 0x6f,
-	0xfc, 0x8e, 0x4b, 0xd5, 0xdf, 0x1f, 0x6e, 0x8d, 0xda, 0xcf, 0x1f, 0x86, 0x35, 0x1e, 0x85, 0xc7,
-	0x91, 0xbc, 0x98, 0x34, 0xaf, 0x7e, 0x3f, 0x6a, 0x4c, 0x8b, 0x24, 0xf2, 0x00, 0x5a, 0x7a, 0x7d,
-	0x24, 0xf2, 0x44, 0xf5, 0xc9, 0x30, 0x18, 0x35, 0xa7, 0xa5, 0x40, 0xde, 0x40, 0xdb, 0xda, 0x84,
-	0x84, 0x2e, 0x12, 0x86, 0xb5, 0x84, 0xa9, 0x89, 0xb5, 0x10, 0x3f, 0x95, 0x1c, 0x40, 0xc7, 0x6e,
-	0x0d, 0xaa, 0x87, 0xa8, 0xff, 0x34, 0x72, 0x0c, 0x5d, 0xcf, 0x7d, 0x24, 0xde, 0x42, 0xe2, 0x93,
-	0x5a, 0xe2, 0x87, 0x32, 0xde, 0x52, 0xab, 0x25, 0xc8, 0x21, 0xf4, 0x3c, 0xc9, 0xd0, 0xf7, 0x90,
-	0xbe, 0xa6, 0x93, 0x13, 0xe8, 0xf9, 0x1f, 0x19, 0x5b, 0x68, 0x63, 0x0b, 0x4f, 0x6b, 0x5b, 0x78,
-	0xef, 0x25, 0xd8, 0x1e, 0xd6, 0x8a, 0x90, 0x67, 0xb0, 0xef, 0x6b, 0xa6, 0x8b, 0x0e, 0x76, 0xb1,
-	0x7e, 0xa0, 0x6d, 0xb7, 0xf7, 0x09, 0x3b, 0x68, 0x6d, 0xb0, 0xfd, 0xc8, 0xc4, 0x3a, 0xdb, 0xbd,
-	0x54, 0x6d, 0xbb, 0xdd, 0x1a, 0x24, 0x18, 0xdb, 0x7d, 0x8d, 0x4c, 0xa0, 0x85, 0xd7, 0x14, 0x59,
-	0x3b, 0xc8, 0xa2, 0xb5, 0xac, 0xb7, 0x3a, 0xd2, 0x92, 0xca, 0x34, 0x42, 0x01, 0x70, 0x63, 0x28,
-	0xbb, 0x48, 0xf1, 0x14, 0xf2, 0x11, 0xf6, 0xca, 0x5b, 0x8f, 0xa0, 0x9b, 0x08, 0x7a, 0x7c, 0xcd,
-	0x5d, 0x72, 0xe1, 0x96, 0x56, 0x29, 0x40, 0x46, 0xd0, 0x2d, 0x15, 0xc3, 0xdd, 0x46, 0x6e, 0x55,
-	0xd6, 0x43, 0xa2, 0x07, 0x0b, 0xb1, 0x5b, 0x1b, 0x86, 0xe4, 0xb3, 0x64, 0x99, 0x1b, 0x12, 0x97,
-	0xa4, 0x87, 0x44, 0xaf, 0x0d, 0xa4, 0x69, 0x86, 0xa4, 0x10, 0xb4, 0x7f, 0x38, 0xa3, 0x58, 0x3f,
-	0xd8, 0xe0, 0xdf, 0x89, 0x8e, 0x74, 0xfe, 0x15, 0x69, 0xda, 0x3f, 0xdc, 0x18, 0xc4, 0x0d, 0xe3,
-	0x5f, 0xa9, 0x4c, 0x5e, 0x5d, 0x2d, 0x69, 0xb0, 0x58, 0xd2, 0xe0, 0xcf, 0x92, 0x06, 0x3f, 0x57,
-	0xb4, 0xb1, 0x58, 0xd1, 0xc6, 0xaf, 0x15, 0x6d, 0x7c, 0x39, 0x8c, 0xb9, 0x3a, 0xcf, 0x4f, 0xc3,
-	0x33, 0x31, 0x1f, 0x17, 0x3f, 0x4d, 0xfb, 0xfc, 0x5e, 0xac, 0xd4, 0x65, 0xca, 0xe4, 0xe9, 0x36,
-	0xfe, 0x45, 0x5e, 0xfc, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xa8, 0x06, 0x57, 0xa6, 0x5e, 0x05, 0x00,
-	0x00,
+	// 654 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x95, 0x41, 0x6f, 0x12, 0x41,
+	0x14, 0xc7, 0xc1, 0x62, 0x5b, 0x06, 0x2c, 0xed, 0xb4, 0x58, 0x4a, 0xea, 0x96, 0x54, 0x0f, 0x84,
+	0x03, 0x24, 0x7a, 0x35, 0x31, 0xa1, 0x35, 0x6a, 0xd4, 0x44, 0xb1, 0xc6, 0xc4, 0xdb, 0x00, 0xe3,
+	0xb2, 0x29, 0x30, 0xb8, 0x33, 0x1b, 0xe5, 0x5b, 0xf8, 0x2d, 0xfc, 0x2a, 0x3d, 0xf6, 0xe8, 0xc9,
+	0x18, 0xf8, 0x22, 0x66, 0xde, 0x9b, 0x99, 0x5d, 0xb7, 0x6e, 0xf7, 0xc4, 0xbc, 0xbf, 0xef, 0xfd,
+	0x7f, 0x3b, 0xef, 0x8d, 0xaf, 0xa4, 0xee, 0x07, 0x4a, 0x2c, 0x02, 0xd6, 0xf3, 0xf9, 0x9c, 0xcb,
+	0x40, 0x76, 0x17, 0xa1, 0x50, 0x82, 0x1e, 0x1a, 0xb9, 0x9b, 0xfa, 0x6d, 0x52, 0x9b, 0xaf, 0x98,
+	0xbc, 0xc4, 0xe4, 0xe6, 0x81, 0xd5, 0x86, 0x21, 0x9b, 0x8f, 0x26, 0x46, 0xdd, 0x8b, 0x33, 0xfd,
+	0x74, 0xe2, 0x8c, 0xcf, 0x86, 0x3c, 0x74, 0xaa, 0xf0, 0x05, 0x1c, 0x7b, 0xfa, 0x64, 0x54, 0xf7,
+	0x61, 0x21, 0x9f, 0x72, 0x26, 0xb9, 0x91, 0x8f, 0xac, 0xbc, 0x88, 0xa6, 0xd3, 0x01, 0xff, 0x1a,
+	0x71, 0xa9, 0xd2, 0xc0, 0x31, 0xbb, 0x61, 0x32, 0x12, 0xb3, 0x19, 0x9f, 0xdb, 0xcc, 0x7d, 0x2b,
+	0x07, 0x52, 0x46, 0xd6, 0xb9, 0x11, 0x03, 0x17, 0x42, 0x06, 0x4a, 0x84, 0x4b, 0xf3, 0x2f, 0xee,
+	0xce, 0x91, 0x74, 0x1f, 0xed, 0x2c, 0xbe, 0x4d, 0x84, 0xed, 0xda, 0xe9, 0xcf, 0x0a, 0xa9, 0xbe,
+	0xc0, 0x3e, 0x7e, 0x50, 0x4c, 0x71, 0xfa, 0x85, 0xd4, 0x87, 0x4c, 0xf2, 0x81, 0x73, 0x7c, 0xcd,
+	0x97, 0x6f, 0x02, 0xa9, 0x1a, 0xcd, 0xd6, 0x46, 0xbb, 0xf2, 0xb8, 0xd3, 0xcd, 0x68, 0x73, 0xb7,
+	0x9f, 0xae, 0xea, 0x97, 0xae, 0x7e, 0x9f, 0x14, 0x06, 0xff, 0xb7, 0xa3, 0x2f, 0x49, 0x45, 0x7f,
+	0xdb, 0x39, 0x13, 0xe0, 0x7e, 0x04, 0xee, 0xad, 0x4c, 0xf7, 0x8f, 0x98, 0x6b, 0x3c, 0x93, 0xa5,
+	0xf4, 0x19, 0xd9, 0xd6, 0x93, 0x05, 0x9b, 0x3d, 0xb0, 0x79, 0x90, 0x69, 0x73, 0xc1, 0xe4, 0xa5,
+	0xf1, 0x70, 0x45, 0xf4, 0x98, 0x94, 0xf5, 0xf9, 0x4c, 0x44, 0x73, 0xd5, 0xa0, 0xad, 0x62, 0xbb,
+	0x34, 0x88, 0x05, 0xfa, 0x9c, 0x10, 0x7c, 0x24, 0x00, 0xd8, 0x07, 0xc0, 0x49, 0x76, 0x17, 0x20,
+	0xd5, 0x20, 0x12, 0x85, 0xb4, 0x45, 0x2a, 0x18, 0x21, 0xe6, 0x00, 0x30, 0x49, 0x89, 0x3e, 0x25,
+	0x5b, 0x8a, 0xf9, 0x40, 0xa9, 0x03, 0xe5, 0xf8, 0x96, 0x6b, 0xf8, 0x06, 0x61, 0x4b, 0x68, 0x53,
+	0x77, 0xc1, 0x47, 0xf3, 0xfb, 0x60, 0xee, 0x62, 0x7d, 0x05, 0x7c, 0xbe, 0x60, 0x7e, 0x98, 0x73,
+	0x85, 0xb7, 0x90, 0x6a, 0xaf, 0x10, 0x17, 0xea, 0x2b, 0x60, 0x84, 0x94, 0x06, 0x5e, 0x21, 0x21,
+	0xe9, 0xa1, 0x9a, 0xb7, 0x0f, 0xa4, 0x5a, 0xce, 0x50, 0x07, 0x98, 0x6b, 0x87, 0x9a, 0x28, 0xa5,
+	0xa7, 0xa4, 0x6a, 0x42, 0x84, 0xed, 0x02, 0xec, 0x1f, 0x8d, 0x5e, 0x90, 0x5a, 0xe2, 0xbf, 0x14,
+	0x10, 0xef, 0x01, 0xf1, 0x51, 0x26, 0xf1, 0x5d, 0x9c, 0x6f, 0xa8, 0x69, 0x0b, 0xda, 0x21, 0xbb,
+	0x09, 0x09, 0xe9, 0x3b, 0x40, 0xbf, 0xa1, 0xeb, 0x91, 0x8d, 0xcd, 0x03, 0xae, 0xe4, 0x8c, 0x2c,
+	0x7e, 0xbc, 0xb6, 0x44, 0x8f, 0x6c, 0xcc, 0x04, 0x12, 0xaa, 0x38, 0x32, 0x1b, 0xeb, 0x4e, 0x9a,
+	0x05, 0x00, 0xee, 0xe5, 0x9c, 0x4e, 0x9e, 0x61, 0xae, 0xed, 0x64, 0xa2, 0x54, 0x77, 0xd2, 0x84,
+	0x48, 0x22, 0xd8, 0xc9, 0xa4, 0x46, 0xfb, 0xa4, 0x0c, 0x7b, 0x05, 0x58, 0x5b, 0xc0, 0xf2, 0x32,
+	0x59, 0xaf, 0x74, 0xa6, 0x21, 0xc5, 0x65, 0xd4, 0x23, 0x04, 0x02, 0xa4, 0x6c, 0x03, 0x25, 0xa1,
+	0xd0, 0xf7, 0x64, 0x27, 0x5e, 0x53, 0x00, 0xba, 0x0b, 0xa0, 0x87, 0xb7, 0x3c, 0x0f, 0x9b, 0x6e,
+	0x68, 0x29, 0x03, 0xda, 0x26, 0xb5, 0x58, 0x41, 0xee, 0x26, 0x70, 0xd3, 0xb2, 0xde, 0x11, 0x7a,
+	0x65, 0x00, 0x76, 0x23, 0x67, 0x47, 0xe8, 0x55, 0x63, 0x77, 0x84, 0x2d, 0xd2, 0x3b, 0x42, 0x9f,
+	0x11, 0x52, 0xc2, 0x1d, 0xe1, 0x04, 0xdd, 0x3f, 0x58, 0xaa, 0xe0, 0x5f, 0xcc, 0xe9, 0xdf, 0x27,
+	0x9d, 0x69, 0xfb, 0xe7, 0xca, 0x74, 0xff, 0x20, 0x40, 0xc4, 0x1d, 0xec, 0x5f, 0xac, 0xf4, 0xcf,
+	0xaf, 0x56, 0x5e, 0xf1, 0x7a, 0xe5, 0x15, 0xff, 0xac, 0xbc, 0xe2, 0x8f, 0xb5, 0x57, 0xb8, 0x5e,
+	0x7b, 0x85, 0x5f, 0x6b, 0xaf, 0xf0, 0xb9, 0xe3, 0x07, 0x6a, 0x12, 0x0d, 0xbb, 0x23, 0x31, 0xeb,
+	0xb9, 0xbf, 0x8d, 0xe6, 0xf7, 0xbb, 0x3b, 0xa9, 0xe5, 0x82, 0xcb, 0xe1, 0x26, 0xac, 0xfd, 0x27,
+	0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x19, 0x1d, 0xee, 0x63, 0x45, 0x07, 0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -269,6 +340,107 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.BaseRepositoryKeyList) > 0 {
+		for iNdEx := len(m.BaseRepositoryKeyList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.BaseRepositoryKeyList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0xd2
+		}
+	}
+	if len(m.UserDaoList) > 0 {
+		for iNdEx := len(m.UserDaoList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.UserDaoList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0xca
+		}
+	}
+	if m.MemberCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.MemberCount))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xc0
+	}
+	if len(m.MemberList) > 0 {
+		for iNdEx := len(m.MemberList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.MemberList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0xba
+		}
+	}
+	if m.TagCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.TagCount))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb0
+	}
+	if len(m.TagList) > 0 {
+		for iNdEx := len(m.TagList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.TagList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0xaa
+		}
+	}
+	if m.BranchCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.BranchCount))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xa0
+	}
+	if len(m.BranchList) > 0 {
+		for iNdEx := len(m.BranchList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.BranchList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0x9a
+		}
+	}
 	if m.TaskCount != 0 {
 		i = encodeVarintGenesis(dAtA, i, uint64(m.TaskCount))
 		i--
@@ -332,15 +504,15 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x6a
 		}
 	}
-	if m.OrganizationCount != 0 {
-		i = encodeVarintGenesis(dAtA, i, uint64(m.OrganizationCount))
+	if m.DaoCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.DaoCount))
 		i--
 		dAtA[i] = 0x60
 	}
-	if len(m.OrganizationList) > 0 {
-		for iNdEx := len(m.OrganizationList) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.DaoList) > 0 {
+		for iNdEx := len(m.DaoList) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.OrganizationList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.DaoList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -511,14 +683,14 @@ func (m *GenesisState) Size() (n int) {
 	if m.CommentCount != 0 {
 		n += 1 + sovGenesis(uint64(m.CommentCount))
 	}
-	if len(m.OrganizationList) > 0 {
-		for _, e := range m.OrganizationList {
+	if len(m.DaoList) > 0 {
+		for _, e := range m.DaoList {
 			l = e.Size()
 			n += 1 + l + sovGenesis(uint64(l))
 		}
 	}
-	if m.OrganizationCount != 0 {
-		n += 1 + sovGenesis(uint64(m.OrganizationCount))
+	if m.DaoCount != 0 {
+		n += 1 + sovGenesis(uint64(m.DaoCount))
 	}
 	if len(m.PullRequestList) > 0 {
 		for _, e := range m.PullRequestList {
@@ -546,6 +718,45 @@ func (m *GenesisState) Size() (n int) {
 	}
 	if m.TaskCount != 0 {
 		n += 2 + sovGenesis(uint64(m.TaskCount))
+	}
+	if len(m.BranchList) > 0 {
+		for _, e := range m.BranchList {
+			l = e.Size()
+			n += 2 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.BranchCount != 0 {
+		n += 2 + sovGenesis(uint64(m.BranchCount))
+	}
+	if len(m.TagList) > 0 {
+		for _, e := range m.TagList {
+			l = e.Size()
+			n += 2 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.TagCount != 0 {
+		n += 2 + sovGenesis(uint64(m.TagCount))
+	}
+	if len(m.MemberList) > 0 {
+		for _, e := range m.MemberList {
+			l = e.Size()
+			n += 2 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.MemberCount != 0 {
+		n += 2 + sovGenesis(uint64(m.MemberCount))
+	}
+	if len(m.UserDaoList) > 0 {
+		for _, e := range m.UserDaoList {
+			l = e.Size()
+			n += 2 + l + sovGenesis(uint64(l))
+		}
+	}
+	if len(m.BaseRepositoryKeyList) > 0 {
+		for _, e := range m.BaseRepositoryKeyList {
+			l = e.Size()
+			n += 2 + l + sovGenesis(uint64(l))
+		}
 	}
 	return n
 }
@@ -852,7 +1063,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			}
 		case 11:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrganizationList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DaoList", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -879,16 +1090,16 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.OrganizationList = append(m.OrganizationList, Organization{})
-			if err := m.OrganizationList[len(m.OrganizationList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.DaoList = append(m.DaoList, Dao{})
+			if err := m.DaoList[len(m.DaoList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 12:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrganizationCount", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DaoCount", wireType)
 			}
-			m.OrganizationCount = 0
+			m.DaoCount = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -898,7 +1109,7 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OrganizationCount |= uint64(b&0x7F) << shift
+				m.DaoCount |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1062,6 +1273,233 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 19:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BranchList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BranchList = append(m.BranchList, Branch{})
+			if err := m.BranchList[len(m.BranchList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 20:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BranchCount", wireType)
+			}
+			m.BranchCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.BranchCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 21:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TagList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TagList = append(m.TagList, Tag{})
+			if err := m.TagList[len(m.TagList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 22:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TagCount", wireType)
+			}
+			m.TagCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TagCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 23:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MemberList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MemberList = append(m.MemberList, Member{})
+			if err := m.MemberList[len(m.MemberList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 24:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MemberCount", wireType)
+			}
+			m.MemberCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MemberCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 25:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserDaoList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserDaoList = append(m.UserDaoList, UserDao{})
+			if err := m.UserDaoList[len(m.UserDaoList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 26:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BaseRepositoryKeyList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.BaseRepositoryKeyList = append(m.BaseRepositoryKeyList, BaseRepositoryKey{})
+			if err := m.BaseRepositoryKeyList[len(m.BaseRepositoryKeyList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenesis(dAtA[iNdEx:])

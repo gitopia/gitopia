@@ -10,10 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CmdListOrganization() *cobra.Command {
+func CmdListDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-organization",
-		Short: "list all organization",
+		Use:   "list-dao",
+		Short: "list all Dao",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -24,11 +24,11 @@ func CmdListOrganization() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllOrganizationRequest{
+			params := &types.QueryAllDaoRequest{
 				Pagination: pageReq,
 			}
 
-			res, err := queryClient.OrganizationAll(context.Background(), params)
+			res, err := queryClient.DaoAll(context.Background(), params)
 			if err != nil {
 				return err
 			}
@@ -43,10 +43,10 @@ func CmdListOrganization() *cobra.Command {
 	return cmd
 }
 
-func CmdShowOrganization() *cobra.Command {
+func CmdShowDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-organization [id]",
-		Short: "shows a organization",
+		Use:   "show-dao [id]",
+		Short: "shows a Dao",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -58,11 +58,11 @@ func CmdShowOrganization() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryGetOrganizationRequest{
+			params := &types.QueryGetDaoRequest{
 				Id: id,
 			}
 
-			res, err := queryClient.Organization(context.Background(), params)
+			res, err := queryClient.Dao(context.Background(), params)
 			if err != nil {
 				return err
 			}

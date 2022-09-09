@@ -14,26 +14,35 @@ func TestReleaseMsgServerCreate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	creator := "A"
 
-	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
+	repositoryId := types.RepositoryId{
+		Id:   creator,
+		Name: "repository",
+	}
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
 	require.NoError(t, err)
-	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
 	require.NoError(t, err)
-	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-	require.NoError(t, err)
-	_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch"})
-	require.NoError(t, err)
-	_, err = srv.SetRepositoryTag(ctx, &types.MsgSetRepositoryTag{Id: 0, Creator: creator, Name: "tag"})
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
 	require.NoError(t, err)
 
-	/* Test multiple Release create */
-	for i := 0; i < 5; i++ {
-		tag := fmt.Sprintf("tag-%d", i)
-		_, err = srv.SetRepositoryTag(ctx, &types.MsgSetRepositoryTag{Id: 0, Creator: creator, Name: tag})
-		require.NoError(t, err)
-		resp, err := srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: tag, Target: "branch"})
-		require.NoError(t, err)
-		require.Equal(t, uint64(i), resp.Id)
-	}
+	_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Branch: types.MsgSetBranch_Branch{
+			Name: fmt.Sprintf("branch"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.SetTag(ctx, &types.MsgSetTag{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag: types.MsgSetTag_Tag{
+			Name: fmt.Sprintf("tag"),
+		},
+	})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -42,36 +51,36 @@ func TestReleaseMsgServerCreate(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "tag", Target: "branch"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "tag", Target: "branch"},
 		},
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: "C", Name: "release"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: "C", Name: "release"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Repository Not Exists",
-			request: &types.MsgCreateRelease{RepositoryId: 10, Creator: creator, Name: "release"},
+			request: &types.MsgCreateRelease{RepositoryId: types.RepositoryId{Id: creator, Name: "repoooo"}, Creator: creator, Name: "release"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Tag Not Exists",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "unknown-tag", Target: "branch"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "unknown-tag", Target: "branch"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Target Branch Not Exists",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "tag", Target: "unknown-branch"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "tag", Target: "unknown-branch"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: "B", Name: "release", TagName: "tag", Target: "branch"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: "B", Name: "release", TagName: "tag", Target: "branch"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Release Already Exists",
-			request: &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "tag", Target: "branch"},
+			request: &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "tag", Target: "branch"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -88,6 +97,51 @@ func TestReleaseMsgServerCreate(t *testing.T) {
 
 func TestReleaseMsgServerUpdate(t *testing.T) {
 	creator := "A"
+	srv, ctx := setupMsgServer(t)
+
+	repositoryId := types.RepositoryId{
+		Id:   creator,
+		Name: "repository",
+	}
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+
+	_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Branch: types.MsgSetBranch_Branch{
+			Name: fmt.Sprintf("branch"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.SetTag(ctx, &types.MsgSetTag{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag: types.MsgSetTag_Tag{
+			Name: fmt.Sprintf("tag"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.SetTag(ctx, &types.MsgSetTag{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag: types.MsgSetTag_Tag{
+			Name: fmt.Sprintf("tag-0"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "tag", Target: "branch"})
+	require.NoError(t, err)
+	_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release-0", TagName: "tag-0", Target: "branch"})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -130,24 +184,6 @@ func TestReleaseMsgServerUpdate(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-			require.NoError(t, err)
-			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
-			require.NoError(t, err)
-			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-			require.NoError(t, err)
-			_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch"})
-			require.NoError(t, err)
-			_, err = srv.SetRepositoryTag(ctx, &types.MsgSetRepositoryTag{Id: 0, Creator: creator, Name: "tag"})
-			require.NoError(t, err)
-			_, err = srv.SetRepositoryTag(ctx, &types.MsgSetRepositoryTag{Id: 0, Creator: creator, Name: "tag-0"})
-			require.NoError(t, err)
-			_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "tag", Target: "branch"})
-			require.NoError(t, err)
-			_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release-0", TagName: "tag-0", Target: "branch"})
-			require.NoError(t, err)
-
 			_, err = srv.UpdateRelease(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
@@ -160,6 +196,40 @@ func TestReleaseMsgServerUpdate(t *testing.T) {
 
 func TestReleaseMsgServerDelete(t *testing.T) {
 	creator := "A"
+	srv, ctx := setupMsgServer(t)
+
+	repositoryId := types.RepositoryId{
+		Id:   creator,
+		Name: "repository",
+	}
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+
+	_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Branch: types.MsgSetBranch_Branch{
+			Name: fmt.Sprintf("branch"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.SetTag(ctx, &types.MsgSetTag{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag: types.MsgSetTag_Tag{
+			Name: fmt.Sprintf("tag"),
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: repositoryId, Creator: creator, Name: "release", TagName: "tag", Target: "branch"})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -167,35 +237,21 @@ func TestReleaseMsgServerDelete(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgDeleteRelease{Creator: creator, Id: 0},
-		},
-		{
 			desc:    "Unauthorized",
 			request: &types.MsgDeleteRelease{Creator: "B", Id: 0},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
+			desc:    "Completed",
+			request: &types.MsgDeleteRelease{Creator: creator, Id: 0},
+		},
+		{
 			desc:    "KeyNotFound",
-			request: &types.MsgDeleteRelease{Creator: creator, Id: 10},
+			request: &types.MsgDeleteRelease{Creator: creator, Id: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-			require.NoError(t, err)
-			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
-			require.NoError(t, err)
-			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-			require.NoError(t, err)
-			_, err = srv.SetRepositoryBranch(ctx, &types.MsgSetRepositoryBranch{Id: 0, Creator: creator, Name: "branch"})
-			require.NoError(t, err)
-			_, err = srv.SetRepositoryTag(ctx, &types.MsgSetRepositoryTag{Id: 0, Creator: creator, Name: "tag"})
-			require.NoError(t, err)
-			_, err = srv.CreateRelease(ctx, &types.MsgCreateRelease{RepositoryId: 0, Creator: creator, Name: "release", TagName: "tag", Target: "branch"})
-			require.NoError(t, err)
-
 			_, err = srv.DeleteRelease(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
