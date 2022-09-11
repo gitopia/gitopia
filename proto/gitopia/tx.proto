@@ -159,7 +159,7 @@ message MsgDeleteTask {
 
 message MsgUpdateRepositoryBackupRef {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   gitopia.Store store = 3;
   string ref = 4;
 }
@@ -169,7 +169,7 @@ message MsgUpdateRepositoryBackupRefResponse {
 
 message MsgAddRepositoryBackupRef {
   string creator = 1;
-  uint64 repositoryId = 2;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   gitopia.Store store = 3;
   string ref = 4;
 }

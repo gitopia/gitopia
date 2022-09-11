@@ -12,6 +12,25 @@ import (
 func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryBackupPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
 	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
 		creator: msg.Creator,
 		store:   msg.Store,
@@ -21,12 +40,7 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
 	}
 
-	repository, found := k.GetRepository(ctx, msg.RepositoryId)
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "repository (%d) doesn't exist", msg.RepositoryId)
-	}
-
-	if !k.isAuthorized(ctx, repository.Creator, msg.Creator, msg){
+	if !k.isAuthorized(ctx, repository.Creator, msg.Creator, msg) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 

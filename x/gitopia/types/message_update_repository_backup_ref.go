@@ -9,7 +9,7 @@ const TypeMsgUpdateRepositoryBackupRef = "update_repository_backup_ref"
 
 var _ sdk.Msg = &MsgUpdateRepositoryBackupRef{}
 
-func NewMsgUpdateRepositoryBackupRef(creator string, repositoryId uint64, store Store, ref string) *MsgUpdateRepositoryBackupRef {
+func NewMsgUpdateRepositoryBackupRef(creator string, repositoryId RepositoryId, store Store, ref string) *MsgUpdateRepositoryBackupRef {
 	return &MsgUpdateRepositoryBackupRef{
 		Creator:      creator,
 		RepositoryId: repositoryId,

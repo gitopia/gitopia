@@ -14,16 +14,14 @@ var _ = strconv.Itoa(0)
 
 func CmdUpdateRepositoryBackupRef() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-repository-backup-ref [repository-id] [store] [ref]",
+		Use:   "update-repository-backup-ref [id] [repository-name] [store] [ref]",
 		Short: "update repository backup reference",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-			argStore := (types.Store)(types.Store_value[args[1]])
-			argRef := args[2]
+			argId := args[0]
+			argRepositoryName := args[1]
+			argStore := (types.Store)(types.Store_value[args[2]])
+			argRef := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -32,7 +30,7 @@ func CmdUpdateRepositoryBackupRef() *cobra.Command {
 
 			msg := types.NewMsgUpdateRepositoryBackupRef(
 				clientCtx.GetFromAddress().String(),
-				argRepositoryId,
+				types.RepositoryId{Id: argId, Name: argRepositoryName},
 				argStore,
 				argRef,
 			)
