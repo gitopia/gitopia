@@ -50,7 +50,7 @@ export interface MsgDeleteTask {
 }
 export interface MsgUpdateRepositoryBackupRef {
     creator: string;
-    repositoryId: number;
+    repositoryId: RepositoryId | undefined;
     store: Store;
     ref: string;
 }
@@ -58,7 +58,7 @@ export interface MsgUpdateRepositoryBackupRefResponse {
 }
 export interface MsgAddRepositoryBackupRef {
     creator: string;
-    repositoryId: number;
+    repositoryId: RepositoryId | undefined;
     store: Store;
     ref: string;
 }

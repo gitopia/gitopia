@@ -812,7 +812,6 @@ export const MsgDeleteTask = {
 };
 const baseMsgUpdateRepositoryBackupRef = {
     creator: "",
-    repositoryId: 0,
     store: 0,
     ref: "",
 };
@@ -821,8 +820,8 @@ export const MsgUpdateRepositoryBackupRef = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.repositoryId !== 0) {
-            writer.uint32(16).uint64(message.repositoryId);
+        if (message.repositoryId !== undefined) {
+            RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
         }
         if (message.store !== 0) {
             writer.uint32(24).int32(message.store);
@@ -845,7 +844,7 @@ export const MsgUpdateRepositoryBackupRef = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.repositoryId = longToNumber(reader.uint64());
+                    message.repositoryId = RepositoryId.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.store = reader.int32();
@@ -871,10 +870,10 @@ export const MsgUpdateRepositoryBackupRef = {
             message.creator = "";
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = Number(object.repositoryId);
+            message.repositoryId = RepositoryId.fromJSON(object.repositoryId);
         }
         else {
-            message.repositoryId = 0;
+            message.repositoryId = undefined;
         }
         if (object.store !== undefined && object.store !== null) {
             message.store = storeFromJSON(object.store);
@@ -894,7 +893,9 @@ export const MsgUpdateRepositoryBackupRef = {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.repositoryId !== undefined &&
-            (obj.repositoryId = message.repositoryId);
+            (obj.repositoryId = message.repositoryId
+                ? RepositoryId.toJSON(message.repositoryId)
+                : undefined);
         message.store !== undefined && (obj.store = storeToJSON(message.store));
         message.ref !== undefined && (obj.ref = message.ref);
         return obj;
@@ -910,10 +911,10 @@ export const MsgUpdateRepositoryBackupRef = {
             message.creator = "";
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = object.repositoryId;
+            message.repositoryId = RepositoryId.fromPartial(object.repositoryId);
         }
         else {
-            message.repositoryId = 0;
+            message.repositoryId = undefined;
         }
         if (object.store !== undefined && object.store !== null) {
             message.store = object.store;
@@ -970,7 +971,6 @@ export const MsgUpdateRepositoryBackupRefResponse = {
 };
 const baseMsgAddRepositoryBackupRef = {
     creator: "",
-    repositoryId: 0,
     store: 0,
     ref: "",
 };
@@ -979,8 +979,8 @@ export const MsgAddRepositoryBackupRef = {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
-        if (message.repositoryId !== 0) {
-            writer.uint32(16).uint64(message.repositoryId);
+        if (message.repositoryId !== undefined) {
+            RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
         }
         if (message.store !== 0) {
             writer.uint32(24).int32(message.store);
@@ -1003,7 +1003,7 @@ export const MsgAddRepositoryBackupRef = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.repositoryId = longToNumber(reader.uint64());
+                    message.repositoryId = RepositoryId.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.store = reader.int32();
@@ -1029,10 +1029,10 @@ export const MsgAddRepositoryBackupRef = {
             message.creator = "";
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = Number(object.repositoryId);
+            message.repositoryId = RepositoryId.fromJSON(object.repositoryId);
         }
         else {
-            message.repositoryId = 0;
+            message.repositoryId = undefined;
         }
         if (object.store !== undefined && object.store !== null) {
             message.store = storeFromJSON(object.store);
@@ -1052,7 +1052,9 @@ export const MsgAddRepositoryBackupRef = {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.repositoryId !== undefined &&
-            (obj.repositoryId = message.repositoryId);
+            (obj.repositoryId = message.repositoryId
+                ? RepositoryId.toJSON(message.repositoryId)
+                : undefined);
         message.store !== undefined && (obj.store = storeToJSON(message.store));
         message.ref !== undefined && (obj.ref = message.ref);
         return obj;
@@ -1068,10 +1070,10 @@ export const MsgAddRepositoryBackupRef = {
             message.creator = "";
         }
         if (object.repositoryId !== undefined && object.repositoryId !== null) {
-            message.repositoryId = object.repositoryId;
+            message.repositoryId = RepositoryId.fromPartial(object.repositoryId);
         }
         else {
-            message.repositoryId = 0;
+            message.repositoryId = undefined;
         }
         if (object.store !== undefined && object.store !== null) {
             message.store = object.store;
