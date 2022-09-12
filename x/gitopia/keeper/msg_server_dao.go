@@ -30,7 +30,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 
 	var dao = types.Dao{
 		Creator:     msg.Creator,
-		Address:     k.GetDaoAddress(ctx, msg.Creator),
+		Address:     NewDaoAddress(k.GetDaoCount(ctx)).String(),
 		Name:        msg.Name,
 		Description: msg.Description,
 		CreatedAt:   ctx.BlockTime().Unix(),
