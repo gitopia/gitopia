@@ -90,6 +90,7 @@ service Msg {
   rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
   rpc SetDefaultBranch(MsgSetDefaultBranch) returns (MsgSetDefaultBranchResponse);
   rpc ToggleRepositoryForking(MsgToggleRepositoryForking) returns (MsgToggleRepositoryForkingResponse);
+  rpc ToggleArweaveBackup(MsgToggleArweaveBackup) returns (MsgToggleArweaveBackupResponse);
   rpc DeleteRepository(MsgDeleteRepository) returns (MsgDeleteRepositoryResponse);
   rpc CreateUser(MsgCreateUser) returns (MsgCreateUserResponse);
   rpc UpdateUserUsername(MsgUpdateUserUsername) returns (MsgUpdateUserUsernameResponse);
@@ -777,6 +778,15 @@ message MsgToggleRepositoryForking {
 
 message MsgToggleRepositoryForkingResponse { 
   bool allowForking = 1;
+}
+
+message MsgToggleArweaveBackup {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgToggleArweaveBackupResponse { 
+  bool enableArweaveBackup = 1;
 }
 
 message MsgDeleteRepository {

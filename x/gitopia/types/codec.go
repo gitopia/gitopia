@@ -9,6 +9,8 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgToggleArweaveBackup{}, "gitopia/ToggleArweaveBackup", nil)
+
 	cdc.RegisterConcrete(&MsgRevokeStorageProviderPermissions{}, "gitopia/RevokeStorageProviderPermissions", nil)
 	cdc.RegisterConcrete(&MsgAuthorizeStorageProvider{}, "gitopia/AuthorizeStorageProvider", nil)
 	cdc.RegisterConcrete(&MsgRevokeGitServerPermissions{}, "gitopia/RevokeGitServerPermissions", nil)
@@ -103,6 +105,10 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgToggleArweaveBackup{},
+	)
+
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgAuthorizeStorageProvider{},
 		&MsgRevokeStorageProviderPermissions{},

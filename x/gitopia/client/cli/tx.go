@@ -30,6 +30,12 @@ func GetTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
+	cmd.AddCommand(CmdToggleArweaveBackup())
+
+	cmd.AddCommand(CmdAuthorizeStorageProvider())
+	cmd.AddCommand(CmdRevokeStorageProviderPermissions())
+	cmd.AddCommand(CmdRevokeGitServerPermissions())
+
 	cmd.AddCommand(CmdCreateTask())
 	cmd.AddCommand(CmdUpdateTask())
 	cmd.AddCommand(CmdDeleteTask())

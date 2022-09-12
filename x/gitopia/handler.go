@@ -17,6 +17,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
+		case *types.MsgToggleArweaveBackup:
+			res, err := msgServer.ToggleArweaveBackup(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgRevokeStorageProviderPermissions:
 			res, err := msgServer.RevokeStorageProviderPermissions(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)

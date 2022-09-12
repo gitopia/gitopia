@@ -34,6 +34,7 @@ message Repository {
   repeated RepositoryCollaborator collaborators = 25;
   bool allowForking = 26;
   repeated RepositoryBackup backups = 27;
+  bool enableArweaveBackup = 28;
 }
 
 message RepositoryId {

@@ -426,6 +426,36 @@ func CmdToggleRepositoryForking() *cobra.Command {
 	return cmd
 }
 
+func CmdToggleArweaveBackup() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "toggle-arweave-backup [id] [repository-name]",
+		Short: "Toggle arweave backup",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argId := args[0]
+			argRepositoryName := args[1]
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgToggleArweaveBackup(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argId, Name: argRepositoryName},
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdDeleteRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-repository [id] [repository-name]",

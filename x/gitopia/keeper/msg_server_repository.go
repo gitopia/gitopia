@@ -659,6 +659,58 @@ func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.Msg
 	return &types.MsgToggleRepositoryForkingResponse{AllowForking: repository.AllowForking}, nil
 }
 
+func (k msgServer) ToggleArweaveBackup(goCtx context.Context, msg *types.MsgToggleArweaveBackup) (*types.MsgToggleArweaveBackupResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryBackupPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	switch repository.Owner.Type {
+	case types.OwnerType_USER:
+		user, found := k.GetUser(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		if !user.Verified {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not verified", repository.Owner.Id))
+		}
+	case types.OwnerType_DAO:
+		dao, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		if !dao.Verified {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("dao (%v) is not verified", repository.Owner.Id))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid owner type: %v", repository.Owner.Type))
+	}
+
+	repository.EnableArweaveBackup = !repository.EnableArweaveBackup
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
+
+	return &types.MsgToggleArweaveBackupResponse{EnableArweaveBackup: repository.EnableArweaveBackup}, nil
+}
+
 func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteRepository) (*types.MsgDeleteRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
