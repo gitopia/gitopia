@@ -11,10 +11,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
-const (
-	CreateRepositoryGas = 10
-)
-
 func ElementExists(s []uint64, val uint64) (int, bool) {
 	for i, v := range s {
 		if v == val {
@@ -57,8 +53,6 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		ctx,
 		repository,
 	)
-
-	ctx.GasMeter().ConsumeGas(CreateRepositoryGas, "Create repository")
 
 	return &types.MsgCreateRepositoryResponse{
 		RepositoryId: types.RepositoryId{
