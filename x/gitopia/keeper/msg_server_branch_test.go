@@ -148,6 +148,73 @@ func TestBranchMsgServerMultiSet(t *testing.T) {
 	}
 }
 
+func TestRepositoryMsgServerSetDefaultBranch(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
+	creator := "A"
+
+	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+	require.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B", Username: "B"})
+	require.NoError(t, err)
+	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
+	require.NoError(t, err)
+	_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		Creator: creator,
+		RepositoryId: types.RepositoryId{
+			Id:   creator,
+			Name: "repository",
+		},
+		Branch: types.MsgSetBranch_Branch{
+			Name: fmt.Sprintf("branch"),
+		},
+	})
+	require.NoError(t, err)
+	repositoryId := types.RepositoryId{
+		Id:   creator,
+		Name: "repository",
+	}
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgSetDefaultBranch
+		err     error
+	}{
+		{
+			desc:    "Completed",
+			request: &types.MsgSetDefaultBranch{Creator: creator, RepositoryId: repositoryId, Branch: "branch"},
+		},
+		{
+			desc:    "Repository Not Exists",
+			request: &types.MsgSetDefaultBranch{Creator: creator, RepositoryId: types.RepositoryId{Id: "A", Name: "name"}},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Creator Not Exists",
+			request: &types.MsgSetDefaultBranch{Creator: "C"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Branch Not Exists",
+			request: &types.MsgSetDefaultBranch{Creator: "A", RepositoryId: repositoryId, Branch: "unknown-branch"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc:    "Unauthorized",
+			request: &types.MsgSetDefaultBranch{Creator: "B", RepositoryId: repositoryId, Branch: "branch"},
+			err:     sdkerrors.ErrUnauthorized,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err = srv.SetDefaultBranch(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestBranchMsgServerDelete(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	creator := "A"
