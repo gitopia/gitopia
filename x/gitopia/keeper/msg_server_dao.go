@@ -44,6 +44,10 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		dao,
 	)
 
+	if id == "" {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "dao address already exists")
+	}
+
 	member := types.Member{
 		Address:    msg.Creator,
 		DaoAddress: id,

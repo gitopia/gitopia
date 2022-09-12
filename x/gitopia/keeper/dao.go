@@ -45,6 +45,12 @@ func (k Keeper) AppendDao(
 	dao.Id = count
 	dao.Address = k.GetDaoAddress(ctx, dao.Creator)
 
+	// Check if there is a dao with the same address already
+	_, found := k.GetDao(ctx, dao.Address)
+	if found {
+		return ""
+	}
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DaoKey))
 	appendedValue := k.cdc.MustMarshal(&dao)
 	store.Set([]byte(dao.Address), appendedValue)
