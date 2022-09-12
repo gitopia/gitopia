@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"context"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -11,23 +12,7 @@ import (
 
 func TestCommentMsgServerCreate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
-	creator := "A"
-
-	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-	require.NoError(t, err)
-	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
-	require.NoError(t, err)
-	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-	require.NoError(t, err)
-	_, err = srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: creator, RepositoryId: 0})
-	require.NoError(t, err)
-
-	/* Test multiple Comment create */
-	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: creator, ParentId: 0, CommentType: "ISSUE"})
-		require.NoError(t, err)
-		require.Equal(t, uint64(i), resp.Id)
-	}
+	users, _, issueId, pullRequestId := setupPreComment(ctx, t, srv)
 
 	for _, tc := range []struct {
 		desc    string
@@ -35,17 +20,31 @@ func TestCommentMsgServerCreate(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgCreateComment{Creator: creator, ParentId: 0, CommentType: "ISSUE"},
-		},
-		{
 			desc:    "Creator Not Exists",
 			request: &types.MsgCreateComment{Creator: "C", ParentId: 0, CommentType: "ISSUE"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
+		{
+			desc:    "Issue Not Exists",
+			request: &types.MsgCreateComment{Creator: users[0], ParentId: 10, CommentType: "ISSUE"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "PullRequest Not Exists",
+			request: &types.MsgCreateComment{Creator: users[0], ParentId: 10, CommentType: "PULLREQUEST"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Issue Comment Completed",
+			request: &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"},
+		},
+		{
+			desc:    "Pull Request Comment Completed",
+			request: &types.MsgCreateComment{Creator: users[0], ParentId: pullRequestId, CommentType: "PULLREQUEST"},
+		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			_, err = srv.CreateComment(ctx, tc.request)
+			_, err := srv.CreateComment(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -56,7 +55,10 @@ func TestCommentMsgServerCreate(t *testing.T) {
 }
 
 func TestCommentMsgServerUpdate(t *testing.T) {
-	creator := "A"
+	srv, ctx := setupMsgServer(t)
+	users, _, issueId, _ := setupPreComment(ctx, t, srv)
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -64,38 +66,26 @@ func TestCommentMsgServerUpdate(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgUpdateComment{Id: 0, Creator: creator},
-		},
-		{
 			desc:    "Creator Not Exists",
 			request: &types.MsgUpdateComment{Id: 0, Creator: "C"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Comment Not Exists",
-			request: &types.MsgUpdateComment{Id: 10, Creator: creator},
+			request: &types.MsgUpdateComment{Id: 10, Creator: users[0]},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateComment{Id: 0, Creator: "B"},
+			request: &types.MsgUpdateComment{Id: 0, Creator: users[1]},
 			err:     sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc:    "Completed",
+			request: &types.MsgUpdateComment{Id: 0, Creator: users[0]},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-			require.NoError(t, err)
-			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
-			require.NoError(t, err)
-			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-			require.NoError(t, err)
-			_, err = srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: creator, RepositoryId: 0})
-			require.NoError(t, err)
-			_, err = srv.CreateComment(ctx, &types.MsgCreateComment{Creator: creator, ParentId: 0, CommentType: "ISSUE"})
-			require.NoError(t, err)
-
 			_, err = srv.UpdateComment(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
@@ -107,7 +97,10 @@ func TestCommentMsgServerUpdate(t *testing.T) {
 }
 
 func TestCommentMsgServerDelete(t *testing.T) {
-	creator := "A"
+	srv, ctx := setupMsgServer(t)
+	users, _, issueId, _ := setupPreComment(ctx, t, srv)
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"})
+	require.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -115,33 +108,21 @@ func TestCommentMsgServerDelete(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgDeleteComment{Creator: creator, Id: 0},
-		},
-		{
 			desc:    "Unauthorized",
-			request: &types.MsgDeleteComment{Creator: "B", Id: 0},
+			request: &types.MsgDeleteComment{Creator: users[1], Id: 0},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
+			desc:    "Completed",
+			request: &types.MsgDeleteComment{Creator: users[0], Id: 0},
+		},
+		{
 			desc:    "KeyNotFound",
-			request: &types.MsgDeleteComment{Creator: creator, Id: 10},
+			request: &types.MsgDeleteComment{Creator: users[0], Id: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator})
-			require.NoError(t, err)
-			_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "B"})
-			require.NoError(t, err)
-			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", OwnerId: creator, OwnerType: "USER"})
-			require.NoError(t, err)
-			_, err = srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: creator, RepositoryId: 0})
-			require.NoError(t, err)
-			_, err = srv.CreateComment(ctx, &types.MsgCreateComment{Creator: creator, ParentId: 0, CommentType: "ISSUE"})
-			require.NoError(t, err)
-
 			_, err = srv.DeleteComment(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
@@ -150,4 +131,41 @@ func TestCommentMsgServerDelete(t *testing.T) {
 			}
 		})
 	}
+}
+
+func setupPreComment(ctx context.Context, t *testing.T, srv types.MsgServer) (users []string, repositoryId types.RepositoryId, issueId uint64, pullRequestId uint64) {
+	users = append(users, "A", "B")
+	repositoryId = types.RepositoryId{
+		Id:   users[0],
+		Name: "repository",
+	}
+	branches := []string{"branch-X", "branch-Y"}
+
+	for _, user := range users {
+		_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
+		require.NoError(t, err)
+
+	}
+
+	_, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: users[0], Name: "repository", Owner: users[0]})
+	require.NoError(t, err)
+
+	for _, branch := range branches {
+		_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+			Creator:      users[0],
+			RepositoryId: repositoryId,
+			Branch: types.MsgSetBranch_Branch{
+				Name: branch,
+			},
+		})
+		require.NoError(t, err)
+	}
+
+	issue, err := srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: users[0], RepositoryId: repositoryId})
+	require.NoError(t, err)
+
+	pullRequest, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
+	require.NoError(t, err)
+
+	return users, repositoryId, issue.Id, pullRequest.Id
 }
