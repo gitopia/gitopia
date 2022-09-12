@@ -9,6 +9,14 @@ import (
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+	// Set all the legacyDaoAddress
+	for _, elem := range genState.LegacyDaoAddressList {
+		k.SetLegacyDaoAddress(ctx, elem)
+	}
+
+	// Set legacyDaoAddress count
+	k.SetLegacyDaoAddressCount(ctx, genState.LegacyDaoAddressCount)
+
 	// Set all the task
 	for _, elem := range genState.TaskList {
 		k.SetTask(ctx, elem)
@@ -127,6 +135,9 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 // ExportGenesis returns the capability module's exported genesis.
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
+
+	genesis.LegacyDaoAddressList = k.GetAllLegacyDaoAddress(ctx)
+	genesis.LegacyDaoAddressCount = k.GetLegacyDaoAddressCount(ctx)
 
 	genesis.TaskList = k.GetAllTask(ctx)
 	genesis.TaskCount = k.GetTaskCount(ctx)

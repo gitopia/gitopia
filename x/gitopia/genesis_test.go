@@ -156,6 +156,19 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		StorageProviderCount: 2,
+		LegacyDaoAddressList: []types.LegacyDaoAddress{
+			{
+				LegacyAddress: sample.AccAddress(),
+				Id:            0,
+				Address:       sample.AccAddress(),
+			},
+			{
+				LegacyAddress: sample.AccAddress(),
+				Id:            1,
+				Address:       sample.AccAddress(),
+			},
+		},
+		LegacyDaoAddressCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -208,5 +221,8 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 	require.ElementsMatch(t, genesisState.StorageProviderList, got.StorageProviderList)
 	require.Equal(t, genesisState.StorageProviderCount, got.StorageProviderCount)
+
+	require.ElementsMatch(t, genesisState.LegacyDaoAddressList, got.LegacyDaoAddressList)
+	require.ElementsMatch(t, genesisState.LegacyDaoAddressCount, got.LegacyDaoAddressCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

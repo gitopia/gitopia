@@ -24,20 +24,21 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Dao struct {
-	Creator     string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id          uint64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Address     string   `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	Name        string   `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	AvatarUrl   string   `protobuf:"bytes,5,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
-	Followers   []string `protobuf:"bytes,6,rep,name=followers,proto3" json:"followers,omitempty"`
-	Following   []string `protobuf:"bytes,7,rep,name=following,proto3" json:"following,omitempty"`
-	Teams       []uint64 `protobuf:"varint,8,rep,packed,name=teams,proto3" json:"teams,omitempty"`
-	Location    string   `protobuf:"bytes,9,opt,name=location,proto3" json:"location,omitempty"`
-	Website     string   `protobuf:"bytes,10,opt,name=website,proto3" json:"website,omitempty"`
-	Verified    bool     `protobuf:"varint,11,opt,name=verified,proto3" json:"verified,omitempty"`
-	Description string   `protobuf:"bytes,12,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedAt   int64    `protobuf:"varint,13,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt   int64    `protobuf:"varint,14,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Creator       string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id            uint64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Address       string   `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+	Name          string   `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	AvatarUrl     string   `protobuf:"bytes,5,opt,name=avatarUrl,proto3" json:"avatarUrl,omitempty"`
+	Followers     []string `protobuf:"bytes,6,rep,name=followers,proto3" json:"followers,omitempty"`
+	Following     []string `protobuf:"bytes,7,rep,name=following,proto3" json:"following,omitempty"`
+	Teams         []uint64 `protobuf:"varint,8,rep,packed,name=teams,proto3" json:"teams,omitempty"`
+	Location      string   `protobuf:"bytes,9,opt,name=location,proto3" json:"location,omitempty"`
+	Website       string   `protobuf:"bytes,10,opt,name=website,proto3" json:"website,omitempty"`
+	Verified      bool     `protobuf:"varint,11,opt,name=verified,proto3" json:"verified,omitempty"`
+	Description   string   `protobuf:"bytes,12,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt     int64    `protobuf:"varint,13,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt     int64    `protobuf:"varint,14,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	LegacyAddress string   `protobuf:"bytes,15,opt,name=legacyAddress,proto3" json:"legacyAddress,omitempty"`
 }
 
 func (m *Dao) Reset()         { *m = Dao{} }
@@ -171,35 +172,106 @@ func (m *Dao) GetUpdatedAt() int64 {
 	return 0
 }
 
+func (m *Dao) GetLegacyAddress() string {
+	if m != nil {
+		return m.LegacyAddress
+	}
+	return ""
+}
+
+type LegacyDaoAddress struct {
+	Id            uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	LegacyAddress string `protobuf:"bytes,2,opt,name=legacyAddress,proto3" json:"legacyAddress,omitempty"`
+	Address       string `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *LegacyDaoAddress) Reset()         { *m = LegacyDaoAddress{} }
+func (m *LegacyDaoAddress) String() string { return proto.CompactTextString(m) }
+func (*LegacyDaoAddress) ProtoMessage()    {}
+func (*LegacyDaoAddress) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bbacb5867cc9ed90, []int{1}
+}
+func (m *LegacyDaoAddress) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LegacyDaoAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LegacyDaoAddress.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LegacyDaoAddress) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LegacyDaoAddress.Merge(m, src)
+}
+func (m *LegacyDaoAddress) XXX_Size() int {
+	return m.Size()
+}
+func (m *LegacyDaoAddress) XXX_DiscardUnknown() {
+	xxx_messageInfo_LegacyDaoAddress.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LegacyDaoAddress proto.InternalMessageInfo
+
+func (m *LegacyDaoAddress) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *LegacyDaoAddress) GetLegacyAddress() string {
+	if m != nil {
+		return m.LegacyAddress
+	}
+	return ""
+}
+
+func (m *LegacyDaoAddress) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Dao)(nil), "gitopia.gitopia.gitopia.Dao")
+	proto.RegisterType((*LegacyDaoAddress)(nil), "gitopia.gitopia.gitopia.LegacyDaoAddress")
 }
 
 func init() { proto.RegisterFile("gitopia/dao.proto", fileDescriptor_bbacb5867cc9ed90) }
 
 var fileDescriptor_bbacb5867cc9ed90 = []byte{
-	// 335 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x91, 0x4d, 0x6a, 0xc3, 0x30,
-	0x10, 0x85, 0x23, 0xdb, 0xf9, 0x53, 0xda, 0x40, 0x45, 0xa0, 0x22, 0x14, 0x23, 0xba, 0x32, 0x5d,
-	0x24, 0x8b, 0x9e, 0xa0, 0x25, 0x27, 0x30, 0x74, 0xd3, 0x9d, 0x62, 0x29, 0xae, 0xc0, 0xf1, 0x18,
-	0x49, 0x49, 0xda, 0x5b, 0xf4, 0x58, 0x5d, 0x66, 0xd9, 0x65, 0x49, 0xce, 0x51, 0x28, 0x92, 0x1d,
-	0x27, 0x74, 0x35, 0xf3, 0xde, 0xf7, 0xc6, 0x1e, 0x34, 0xf8, 0x26, 0x57, 0x16, 0x2a, 0xc5, 0xe7,
-	0x82, 0xc3, 0xac, 0xd2, 0x60, 0x81, 0xdc, 0x36, 0xd6, 0xec, 0x5f, 0x9d, 0x4e, 0x72, 0xc8, 0xc1,
-	0x67, 0xe6, 0xae, 0xab, 0xe3, 0xf7, 0xbf, 0x01, 0x0e, 0x17, 0x1c, 0x08, 0xc5, 0xfd, 0x4c, 0x4b,
-	0x6e, 0x41, 0x53, 0xc4, 0x50, 0x32, 0x4c, 0x4f, 0x92, 0x8c, 0x71, 0xa0, 0x04, 0x0d, 0x18, 0x4a,
-	0xa2, 0x34, 0x50, 0xc2, 0x25, 0xb9, 0x10, 0x5a, 0x1a, 0x43, 0xc3, 0x3a, 0xd9, 0x48, 0x42, 0x70,
-	0x54, 0xf2, 0xb5, 0xa4, 0x91, 0xb7, 0x7d, 0x4f, 0xee, 0xf0, 0x90, 0x6f, 0xb9, 0xe5, 0xfa, 0x45,
-	0x17, 0xb4, 0xeb, 0xc1, 0xd9, 0x70, 0x74, 0x05, 0x45, 0x01, 0x3b, 0xa9, 0x0d, 0xed, 0xb1, 0xd0,
-	0xd1, 0xd6, 0x38, 0x53, 0x55, 0xe6, 0xb4, 0x7f, 0x49, 0x55, 0x99, 0x93, 0x09, 0xee, 0x5a, 0xc9,
-	0xd7, 0x86, 0x0e, 0x58, 0x98, 0x44, 0x69, 0x2d, 0xc8, 0x14, 0x0f, 0x0a, 0xc8, 0xb8, 0x55, 0x50,
-	0xd2, 0xa1, 0xff, 0x5d, 0xab, 0xdd, 0xe6, 0x3b, 0xb9, 0x34, 0xca, 0x4a, 0x8a, 0xeb, 0xcd, 0x1b,
-	0xe9, 0xa6, 0xb6, 0x52, 0xab, 0x95, 0x92, 0x82, 0x8e, 0x18, 0x4a, 0x06, 0x69, 0xab, 0x09, 0xc3,
-	0x23, 0x21, 0x4d, 0xa6, 0x55, 0xe5, 0x3f, 0x7a, 0xe5, 0x27, 0x2f, 0x2d, 0xb7, 0xa7, 0x7f, 0x2c,
-	0x29, 0x9e, 0x2c, 0xbd, 0x66, 0x28, 0x09, 0xd3, 0xb3, 0xe1, 0xe8, 0xa6, 0x12, 0x0d, 0x1d, 0xd7,
-	0xb4, 0x35, 0x9e, 0x17, 0x5f, 0x87, 0x18, 0xed, 0x0f, 0x31, 0xfa, 0x39, 0xc4, 0xe8, 0xf3, 0x18,
-	0x77, 0xf6, 0xc7, 0xb8, 0xf3, 0x7d, 0x8c, 0x3b, 0xaf, 0x0f, 0xb9, 0xb2, 0x6f, 0x9b, 0xe5, 0x2c,
-	0x83, 0xf5, 0xfc, 0x74, 0xe6, 0x53, 0x7d, 0x6f, 0x3b, 0xfb, 0x51, 0x49, 0xb3, 0xec, 0xf9, 0x63,
-	0x3e, 0xfe, 0x05, 0x00, 0x00, 0xff, 0xff, 0x40, 0x3b, 0x47, 0xeb, 0x10, 0x02, 0x00, 0x00,
+	// 380 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x92, 0xbd, 0x6e, 0xea, 0x30,
+	0x14, 0xc7, 0x71, 0x12, 0xbe, 0xcc, 0x85, 0x7b, 0xaf, 0x85, 0x54, 0x0b, 0x55, 0x51, 0x84, 0x3a,
+	0x44, 0x1d, 0x60, 0xe8, 0x13, 0x50, 0x31, 0x76, 0x8a, 0xd4, 0xa5, 0x9b, 0x13, 0x9b, 0xd4, 0x52,
+	0x88, 0x23, 0xc7, 0x40, 0x79, 0x8b, 0xbe, 0x43, 0x5f, 0xa6, 0x23, 0x63, 0xc7, 0x0a, 0x5e, 0xa4,
+	0xb2, 0x63, 0x02, 0xfd, 0x9a, 0x7c, 0xfe, 0xbf, 0xff, 0xf1, 0xf1, 0x91, 0xcf, 0x81, 0xff, 0x53,
+	0xae, 0x44, 0xc1, 0xc9, 0x94, 0x12, 0x31, 0x29, 0xa4, 0x50, 0x02, 0x5d, 0x58, 0x34, 0xf9, 0x72,
+	0x8e, 0x86, 0xa9, 0x48, 0x85, 0xc9, 0x99, 0xea, 0xa8, 0x4a, 0x1f, 0xbf, 0xb8, 0xd0, 0x9d, 0x13,
+	0x81, 0x30, 0x6c, 0x27, 0x92, 0x11, 0x25, 0x24, 0x06, 0x01, 0x08, 0xbb, 0xd1, 0x51, 0xa2, 0x01,
+	0x74, 0x38, 0xc5, 0x4e, 0x00, 0x42, 0x2f, 0x72, 0x38, 0xd5, 0x99, 0x84, 0x52, 0xc9, 0xca, 0x12,
+	0xbb, 0x55, 0xa6, 0x95, 0x08, 0x41, 0x2f, 0x27, 0x4b, 0x86, 0x3d, 0x83, 0x4d, 0x8c, 0x2e, 0x61,
+	0x97, 0xac, 0x89, 0x22, 0xf2, 0x5e, 0x66, 0xb8, 0x69, 0x8c, 0x13, 0xd0, 0xee, 0x42, 0x64, 0x99,
+	0xd8, 0x30, 0x59, 0xe2, 0x56, 0xe0, 0x6a, 0xb7, 0x06, 0x27, 0x97, 0xe7, 0x29, 0x6e, 0x9f, 0xbb,
+	0x3c, 0x4f, 0xd1, 0x10, 0x36, 0x15, 0x23, 0xcb, 0x12, 0x77, 0x02, 0x37, 0xf4, 0xa2, 0x4a, 0xa0,
+	0x11, 0xec, 0x64, 0x22, 0x21, 0x8a, 0x8b, 0x1c, 0x77, 0xcd, 0x73, 0xb5, 0xd6, 0x9d, 0x6f, 0x58,
+	0x5c, 0x72, 0xc5, 0x30, 0xac, 0x3a, 0xb7, 0x52, 0xdf, 0x5a, 0x33, 0xc9, 0x17, 0x9c, 0x51, 0xdc,
+	0x0b, 0x40, 0xd8, 0x89, 0x6a, 0x8d, 0x02, 0xd8, 0xa3, 0xac, 0x4c, 0x24, 0x2f, 0x4c, 0xd1, 0x3f,
+	0xe6, 0xe6, 0x39, 0xd2, 0x7d, 0x9a, 0xcf, 0x62, 0x74, 0xa6, 0x70, 0x3f, 0x00, 0xa1, 0x1b, 0x9d,
+	0x80, 0x76, 0x57, 0x05, 0xb5, 0xee, 0xa0, 0x72, 0x6b, 0x80, 0xae, 0x60, 0x3f, 0x63, 0x29, 0x49,
+	0xb6, 0x33, 0xfb, 0xa7, 0x7f, 0x4d, 0xfd, 0xcf, 0x70, 0x1c, 0xc3, 0x7f, 0x77, 0x06, 0xcc, 0x89,
+	0xb0, 0xcc, 0xce, 0x05, 0xd4, 0x73, 0xf9, 0x56, 0xc9, 0xf9, 0xa1, 0xd2, 0xef, 0xd3, 0xbb, 0x9d,
+	0xbf, 0xee, 0x7d, 0xb0, 0xdb, 0xfb, 0xe0, 0x7d, 0xef, 0x83, 0xe7, 0x83, 0xdf, 0xd8, 0x1d, 0xfc,
+	0xc6, 0xdb, 0xc1, 0x6f, 0x3c, 0x5c, 0xa7, 0x5c, 0x3d, 0xae, 0xe2, 0x49, 0x22, 0x96, 0xd3, 0xe3,
+	0xc2, 0x1d, 0xcf, 0xa7, 0x3a, 0x52, 0xdb, 0x82, 0x95, 0x71, 0xcb, 0xac, 0xd5, 0xcd, 0x47, 0x00,
+	0x00, 0x00, 0xff, 0xff, 0xaa, 0xaa, 0x45, 0x14, 0x9a, 0x02, 0x00, 0x00,
 }
 
 func (m *Dao) Marshal() (dAtA []byte, err error) {
@@ -222,6 +294,13 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.LegacyAddress) > 0 {
+		i -= len(m.LegacyAddress)
+		copy(dAtA[i:], m.LegacyAddress)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.LegacyAddress)))
+		i--
+		dAtA[i] = 0x7a
+	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintDao(dAtA, i, uint64(m.UpdatedAt))
 		i--
@@ -335,6 +414,48 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *LegacyDaoAddress) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LegacyDaoAddress) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LegacyDaoAddress) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.LegacyAddress) > 0 {
+		i -= len(m.LegacyAddress)
+		copy(dAtA[i:], m.LegacyAddress)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.LegacyAddress)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Id != 0 {
+		i = encodeVarintDao(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintDao(dAtA []byte, offset int, v uint64) int {
 	offset -= sovDao(v)
 	base := offset
@@ -410,6 +531,30 @@ func (m *Dao) Size() (n int) {
 	}
 	if m.UpdatedAt != 0 {
 		n += 1 + sovDao(uint64(m.UpdatedAt))
+	}
+	l = len(m.LegacyAddress)
+	if l > 0 {
+		n += 1 + l + sovDao(uint64(l))
+	}
+	return n
+}
+
+func (m *LegacyDaoAddress) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovDao(uint64(m.Id))
+	}
+	l = len(m.LegacyAddress)
+	if l > 0 {
+		n += 1 + l + sovDao(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovDao(uint64(l))
 	}
 	return n
 }
@@ -890,6 +1035,171 @@ func (m *Dao) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LegacyAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LegacyAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDao(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDao
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LegacyDaoAddress) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDao
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LegacyDaoAddress: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LegacyDaoAddress: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LegacyAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LegacyAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDao(dAtA[iNdEx:])
