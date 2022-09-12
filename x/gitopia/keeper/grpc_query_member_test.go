@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -15,6 +14,7 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
+/*
 func TestMemberQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
@@ -59,6 +59,7 @@ func TestMemberQuerySingle(t *testing.T) {
 		})
 	}
 }
+*/
 
 func TestMemberQueryPaginated(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
