@@ -1,5 +1,6 @@
 package cli_test
 
+/*
 import (
 	"fmt"
 	"testing"
@@ -151,3 +152,4 @@ func TestListTag(t *testing.T) {
 		)
 	})
 }
+*/
