@@ -29,6 +29,7 @@ export interface Repository {
     collaborators: RepositoryCollaborator[];
     allowForking: boolean;
     backups: RepositoryBackup[];
+    enableArweaveBackup: boolean;
 }
 export interface RepositoryId {
     id: string;

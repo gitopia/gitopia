@@ -37,6 +37,7 @@ export interface Repository {
   collaborators: RepositoryCollaborator[];
   allowForking: boolean;
   backups: RepositoryBackup[];
+  enableArweaveBackup: boolean;
 }
 
 export interface RepositoryId {
@@ -169,6 +170,7 @@ const baseRepository: object = {
   parent: 0,
   fork: false,
   allowForking: false,
+  enableArweaveBackup: false,
 };
 
 export const Repository = {
@@ -257,6 +259,9 @@ export const Repository = {
     }
     for (const v of message.backups) {
       RepositoryBackup.encode(v!, writer.uint32(218).fork()).ldelim();
+    }
+    if (message.enableArweaveBackup === true) {
+      writer.uint32(224).bool(message.enableArweaveBackup);
     }
     return writer;
   },
@@ -378,6 +383,9 @@ export const Repository = {
           message.backups.push(
             RepositoryBackup.decode(reader, reader.uint32())
           );
+          break;
+        case 28:
+          message.enableArweaveBackup = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -532,6 +540,14 @@ export const Repository = {
         message.backups.push(RepositoryBackup.fromJSON(e));
       }
     }
+    if (
+      object.enableArweaveBackup !== undefined &&
+      object.enableArweaveBackup !== null
+    ) {
+      message.enableArweaveBackup = Boolean(object.enableArweaveBackup);
+    } else {
+      message.enableArweaveBackup = false;
+    }
     return message;
   },
 
@@ -617,6 +633,8 @@ export const Repository = {
     } else {
       obj.backups = [];
     }
+    message.enableArweaveBackup !== undefined &&
+      (obj.enableArweaveBackup = message.enableArweaveBackup);
     return obj;
   },
 
@@ -764,6 +782,14 @@ export const Repository = {
       for (const e of object.backups) {
         message.backups.push(RepositoryBackup.fromPartial(e));
       }
+    }
+    if (
+      object.enableArweaveBackup !== undefined &&
+      object.enableArweaveBackup !== null
+    ) {
+      message.enableArweaveBackup = object.enableArweaveBackup;
+    } else {
+      message.enableArweaveBackup = false;
     }
     return message;
   },

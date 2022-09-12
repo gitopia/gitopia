@@ -589,6 +589,13 @@ export interface MsgToggleRepositoryForking {
 export interface MsgToggleRepositoryForkingResponse {
     allowForking: boolean;
 }
+export interface MsgToggleArweaveBackup {
+    creator: string;
+    repositoryId: RepositoryId | undefined;
+}
+export interface MsgToggleArweaveBackupResponse {
+    enableArweaveBackup: boolean;
+}
 export interface MsgDeleteRepository {
     creator: string;
     repositoryId: RepositoryId | undefined;
@@ -1685,6 +1692,20 @@ export declare const MsgToggleRepositoryForkingResponse: {
     toJSON(message: MsgToggleRepositoryForkingResponse): unknown;
     fromPartial(object: DeepPartial<MsgToggleRepositoryForkingResponse>): MsgToggleRepositoryForkingResponse;
 };
+export declare const MsgToggleArweaveBackup: {
+    encode(message: MsgToggleArweaveBackup, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleArweaveBackup;
+    fromJSON(object: any): MsgToggleArweaveBackup;
+    toJSON(message: MsgToggleArweaveBackup): unknown;
+    fromPartial(object: DeepPartial<MsgToggleArweaveBackup>): MsgToggleArweaveBackup;
+};
+export declare const MsgToggleArweaveBackupResponse: {
+    encode(message: MsgToggleArweaveBackupResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgToggleArweaveBackupResponse;
+    fromJSON(object: any): MsgToggleArweaveBackupResponse;
+    toJSON(message: MsgToggleArweaveBackupResponse): unknown;
+    fromPartial(object: DeepPartial<MsgToggleArweaveBackupResponse>): MsgToggleArweaveBackupResponse;
+};
 export declare const MsgDeleteRepository: {
     encode(message: MsgDeleteRepository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgDeleteRepository;
@@ -1855,6 +1876,7 @@ export interface Msg {
     DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
+    ToggleArweaveBackup(request: MsgToggleArweaveBackup): Promise<MsgToggleArweaveBackupResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUserUsername(request: MsgUpdateUserUsername): Promise<MsgUpdateUserUsernameResponse>;
@@ -1940,6 +1962,7 @@ export declare class MsgClientImpl implements Msg {
     DeleteRepositoryLabel(request: MsgDeleteRepositoryLabel): Promise<MsgDeleteRepositoryLabelResponse>;
     SetDefaultBranch(request: MsgSetDefaultBranch): Promise<MsgSetDefaultBranchResponse>;
     ToggleRepositoryForking(request: MsgToggleRepositoryForking): Promise<MsgToggleRepositoryForkingResponse>;
+    ToggleArweaveBackup(request: MsgToggleArweaveBackup): Promise<MsgToggleArweaveBackupResponse>;
     DeleteRepository(request: MsgDeleteRepository): Promise<MsgDeleteRepositoryResponse>;
     CreateUser(request: MsgCreateUser): Promise<MsgCreateUserResponse>;
     UpdateUserUsername(request: MsgUpdateUserUsername): Promise<MsgUpdateUserUsernameResponse>;

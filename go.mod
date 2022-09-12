@@ -119,12 +119,7 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
-require (
-	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/golang/glog v1.0.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
-)
+require github.com/stretchr/objx v0.2.0 // indirect
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76

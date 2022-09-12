@@ -13898,6 +13898,8 @@ paths:
                             type: array
                             items:
                               type: string
+                    enableArweaveBackup:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -14154,6 +14156,8 @@ paths:
                           type: array
                           items:
                             type: string
+                  enableArweaveBackup:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -14750,6 +14754,8 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
+                    verified:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -14903,6 +14909,8 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
+                  verified:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -15082,6 +15090,8 @@ paths:
                             type: array
                             items:
                               type: string
+                    enableArweaveBackup:
+                      type: boolean
               pagination:
                 type: object
                 properties:
@@ -15342,6 +15352,8 @@ paths:
                           type: array
                           items:
                             type: string
+                  enableArweaveBackup:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -25796,6 +25808,11 @@ definitions:
         type: string
   gitopia.gitopia.gitopia.MsgSetTagResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgToggleArweaveBackupResponse:
+    type: object
+    properties:
+      enableArweaveBackup:
+        type: boolean
   gitopia.gitopia.gitopia.MsgToggleIssueStateResponse:
     type: object
     properties:
@@ -26152,6 +26169,8 @@ definitions:
                     type: array
                     items:
                       type: string
+            enableArweaveBackup:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -27239,6 +27258,8 @@ definitions:
                     type: array
                     items:
                       type: string
+            enableArweaveBackup:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -27577,6 +27598,8 @@ definitions:
             updatedAt:
               type: string
               format: int64
+            verified:
+              type: boolean
       pagination:
         type: object
         properties:
@@ -27867,6 +27890,8 @@ definitions:
                   type: array
                   items:
                     type: string
+          enableArweaveBackup:
+            type: boolean
   gitopia.gitopia.gitopia.QueryGetCommentResponse:
     type: object
     properties:
@@ -28621,6 +28646,8 @@ definitions:
                   type: array
                   items:
                     type: string
+          enableArweaveBackup:
+            type: boolean
   gitopia.gitopia.gitopia.QueryGetRepositoryTagResponse:
     type: object
     properties:
@@ -28736,6 +28763,8 @@ definitions:
           updatedAt:
             type: string
             format: int64
+          verified:
+            type: boolean
   gitopia.gitopia.gitopia.QueryGetWhoisResponse:
     type: object
     properties:
@@ -28944,6 +28973,8 @@ definitions:
               type: array
               items:
                 type: string
+      enableArweaveBackup:
+        type: boolean
   gitopia.gitopia.gitopia.RepositoryBackup:
     type: object
     properties:
@@ -29186,6 +29217,8 @@ definitions:
       updatedAt:
         type: string
         format: int64
+      verified:
+        type: boolean
   gitopia.gitopia.gitopia.Whois:
     type: object
     properties:

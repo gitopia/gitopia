@@ -220,6 +220,9 @@ export interface GitopiaMsgSetTagTag {
     name?: string;
     sha?: string;
 }
+export interface GitopiaMsgToggleArweaveBackupResponse {
+    enableArweaveBackup?: boolean;
+}
 export interface GitopiaMsgToggleIssueStateResponse {
     state?: string;
 }
@@ -729,6 +732,7 @@ export interface GitopiaRepository {
     collaborators?: GitopiaRepositoryCollaborator[];
     allowForking?: boolean;
     backups?: GitopiaRepositoryBackup[];
+    enableArweaveBackup?: boolean;
 }
 export interface GitopiaRepositoryBackup {
     /** @format uint64 */
@@ -833,6 +837,7 @@ export interface GitopiaUser {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
+    verified?: boolean;
 }
 export interface GitopiaWhois {
     creator?: string;

@@ -14,6 +14,7 @@ export interface User {
     bio: string;
     createdAt: number;
     updatedAt: number;
+    verified: boolean;
 }
 export interface UserDao {
     userAddress: string;

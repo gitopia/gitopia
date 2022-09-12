@@ -16,6 +16,7 @@ const baseUser = {
     bio: "",
     createdAt: 0,
     updatedAt: 0,
+    verified: false,
 };
 export const User = {
     encode(message, writer = Writer.create()) {
@@ -59,6 +60,9 @@ export const User = {
         }
         if (message.updatedAt !== 0) {
             writer.uint32(104).int64(message.updatedAt);
+        }
+        if (message.verified === true) {
+            writer.uint32(112).bool(message.verified);
         }
         return writer;
     },
@@ -118,6 +122,9 @@ export const User = {
                     break;
                 case 13:
                     message.updatedAt = longToNumber(reader.int64());
+                    break;
+                case 14:
+                    message.verified = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -206,6 +213,12 @@ export const User = {
         else {
             message.updatedAt = 0;
         }
+        if (object.verified !== undefined && object.verified !== null) {
+            message.verified = Boolean(object.verified);
+        }
+        else {
+            message.verified = false;
+        }
         return message;
     },
     toJSON(message) {
@@ -240,6 +253,7 @@ export const User = {
         message.bio !== undefined && (obj.bio = message.bio);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+        message.verified !== undefined && (obj.verified = message.verified);
         return obj;
     },
     fromPartial(object) {
@@ -321,6 +335,12 @@ export const User = {
         }
         else {
             message.updatedAt = 0;
+        }
+        if (object.verified !== undefined && object.verified !== null) {
+            message.verified = object.verified;
+        }
+        else {
+            message.verified = false;
         }
         return message;
     },

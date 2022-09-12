@@ -11212,6 +11212,141 @@ export const MsgToggleRepositoryForkingResponse = {
         return message;
     },
 };
+const baseMsgToggleArweaveBackup = { creator: "" };
+export const MsgToggleArweaveBackup = {
+    encode(message, writer = Writer.create()) {
+        if (message.creator !== "") {
+            writer.uint32(10).string(message.creator);
+        }
+        if (message.repositoryId !== undefined) {
+            RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseMsgToggleArweaveBackup };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.creator = reader.string();
+                    break;
+                case 2:
+                    message.repositoryId = RepositoryId.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseMsgToggleArweaveBackup };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = String(object.creator);
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = RepositoryId.fromJSON(object.repositoryId);
+        }
+        else {
+            message.repositoryId = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.creator !== undefined && (obj.creator = message.creator);
+        message.repositoryId !== undefined &&
+            (obj.repositoryId = message.repositoryId
+                ? RepositoryId.toJSON(message.repositoryId)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseMsgToggleArweaveBackup };
+        if (object.creator !== undefined && object.creator !== null) {
+            message.creator = object.creator;
+        }
+        else {
+            message.creator = "";
+        }
+        if (object.repositoryId !== undefined && object.repositoryId !== null) {
+            message.repositoryId = RepositoryId.fromPartial(object.repositoryId);
+        }
+        else {
+            message.repositoryId = undefined;
+        }
+        return message;
+    },
+};
+const baseMsgToggleArweaveBackupResponse = {
+    enableArweaveBackup: false,
+};
+export const MsgToggleArweaveBackupResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.enableArweaveBackup === true) {
+            writer.uint32(8).bool(message.enableArweaveBackup);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseMsgToggleArweaveBackupResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.enableArweaveBackup = reader.bool();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseMsgToggleArweaveBackupResponse,
+        };
+        if (object.enableArweaveBackup !== undefined &&
+            object.enableArweaveBackup !== null) {
+            message.enableArweaveBackup = Boolean(object.enableArweaveBackup);
+        }
+        else {
+            message.enableArweaveBackup = false;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.enableArweaveBackup !== undefined &&
+            (obj.enableArweaveBackup = message.enableArweaveBackup);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseMsgToggleArweaveBackupResponse,
+        };
+        if (object.enableArweaveBackup !== undefined &&
+            object.enableArweaveBackup !== null) {
+            message.enableArweaveBackup = object.enableArweaveBackup;
+        }
+        else {
+            message.enableArweaveBackup = false;
+        }
+        return message;
+    },
+};
 const baseMsgDeleteRepository = { creator: "" };
 export const MsgDeleteRepository = {
     encode(message, writer = Writer.create()) {
@@ -12384,6 +12519,11 @@ export class MsgClientImpl {
         const data = MsgToggleRepositoryForking.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleRepositoryForking", data);
         return promise.then((data) => MsgToggleRepositoryForkingResponse.decode(new Reader(data)));
+    }
+    ToggleArweaveBackup(request) {
+        const data = MsgToggleArweaveBackup.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleArweaveBackup", data);
+        return promise.then((data) => MsgToggleArweaveBackupResponse.decode(new Reader(data)));
     }
     DeleteRepository(request) {
         const data = MsgDeleteRepository.encode(request).finish();
