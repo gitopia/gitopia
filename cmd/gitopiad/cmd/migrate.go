@@ -34,6 +34,9 @@ const (
 	flagInitialHeight = "initial-height"
 )
 
+// Map used to translate legacy dao address to new dao address
+var newDaoAddressMap map[string]string
+
 func contains(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
@@ -49,9 +52,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	var branchCount uint64
 	var tagCount uint64
 	var legacyDaoAddressCount uint64
-
-	// Map used to translate legacy dao address to new dao address
-	newDaoAddressMap := make(map[string]string)
+	newDaoAddressMap = make(map[string]string)
 
 	// Migrate User
 	for i := range gitopiaGenesisv013.UserList {
@@ -536,6 +537,29 @@ func MigrateCmd() *cobra.Command {
 				},
 			}
 
+			// Transfer dao address balance
+			for i := range bankGenesis.Balances {
+				if _, found := newDaoAddressMap[bankGenesis.Balances[i].Address]; found {
+					for j := range bankGenesis.Balances[i].Coins {
+						if bankGenesis.Balances[i].Coins[j].Denom == "utlore" {
+							for k := range bankGenesis.Balances {
+								if bankGenesis.Balances[k].Address == newDaoAddressMap[bankGenesis.Balances[i].Address] {
+									for l := range bankGenesis.Balances[k].Coins {
+										if bankGenesis.Balances[k].Coins[l].Denom == "utlore" {
+											bankGenesis.Balances[k].Coins[l].Amount = bankGenesis.Balances[i].Coins[j].Amount
+											bankGenesis.Balances[i].Coins[j].Amount = sdk.NewInt(0)
+											break
+										}
+									}
+									break
+								}
+							}
+							break
+						}
+					}
+				}
+			}
+
 			totalBalance := sdk.NewInt(0)
 
 			var balances []banktypes.Balance
@@ -546,6 +570,7 @@ func MigrateCmd() *cobra.Command {
 				for j := range balance.Coins {
 					if balance.Coins[j].Denom == "utlore" {
 						totalBalance = totalBalance.Add(balance.Coins[j].Amount)
+						break
 					}
 				}
 				balances = append(balances, balance)
