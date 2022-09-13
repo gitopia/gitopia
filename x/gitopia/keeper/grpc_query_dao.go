@@ -97,3 +97,22 @@ func (k Keeper) Dao(c context.Context, req *types.QueryGetDaoRequest) (*types.Qu
 
 	return &types.QueryGetDaoResponse{Dao: &dao}, nil
 }
+
+func (k Keeper) LegacyDao(c context.Context, req *types.QueryGetLegacyDaoRequest) (*types.QueryGetLegacyDaoResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	legacyDao, found := k.GetLegacyDaoAddress(ctx, req.LegacyAddress)
+	if !found {
+		return nil, status.Error(codes.NotFound, "legacy address not found")
+	}
+
+	dao, found := k.GetDao(ctx, legacyDao.Address)
+	if !found {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	return &types.QueryGetLegacyDaoResponse{Dao: &dao}, nil
+}
