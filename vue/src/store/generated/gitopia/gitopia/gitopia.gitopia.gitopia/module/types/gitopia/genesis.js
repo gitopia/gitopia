@@ -1,6 +1,7 @@
 /* eslint-disable */
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import { LegacyDaoAddress, Dao } from "../gitopia/dao";
 import { StorageProvider } from "../gitopia/storage_provider";
 import { BaseRepositoryKey, Repository } from "../gitopia/repository";
 import { UserDao, User } from "../gitopia/user";
@@ -10,12 +11,12 @@ import { Tag } from "../gitopia/tag";
 import { Member } from "../gitopia/member";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
-import { Dao } from "../gitopia/dao";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Whois } from "../gitopia/whois";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 const baseGenesisState = {
+    legacyDaoAddressCount: 0,
     storageProviderCount: 0,
     taskCount: 0,
     branchCount: 0,
@@ -32,6 +33,12 @@ const baseGenesisState = {
 };
 export const GenesisState = {
     encode(message, writer = Writer.create()) {
+        for (const v of message.legacyDaoAddressList) {
+            LegacyDaoAddress.encode(v, writer.uint32(234).fork()).ldelim();
+        }
+        if (message.legacyDaoAddressCount !== 0) {
+            writer.uint32(240).uint64(message.legacyDaoAddressCount);
+        }
         for (const v of message.storageProviderList) {
             StorageProvider.encode(v, writer.uint32(218).fork()).ldelim();
         }
@@ -122,6 +129,7 @@ export const GenesisState = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseGenesisState };
+        message.legacyDaoAddressList = [];
         message.storageProviderList = [];
         message.baseRepositoryKeyList = [];
         message.userDaoList = [];
@@ -140,6 +148,12 @@ export const GenesisState = {
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
+                case 29:
+                    message.legacyDaoAddressList.push(LegacyDaoAddress.decode(reader, reader.uint32()));
+                    break;
+                case 30:
+                    message.legacyDaoAddressCount = longToNumber(reader.uint64());
+                    break;
                 case 27:
                     message.storageProviderList.push(StorageProvider.decode(reader, reader.uint32()));
                     break;
@@ -233,6 +247,7 @@ export const GenesisState = {
     },
     fromJSON(object) {
         const message = { ...baseGenesisState };
+        message.legacyDaoAddressList = [];
         message.storageProviderList = [];
         message.baseRepositoryKeyList = [];
         message.userDaoList = [];
@@ -248,6 +263,19 @@ export const GenesisState = {
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.legacyDaoAddressList !== undefined &&
+            object.legacyDaoAddressList !== null) {
+            for (const e of object.legacyDaoAddressList) {
+                message.legacyDaoAddressList.push(LegacyDaoAddress.fromJSON(e));
+            }
+        }
+        if (object.legacyDaoAddressCount !== undefined &&
+            object.legacyDaoAddressCount !== null) {
+            message.legacyDaoAddressCount = Number(object.legacyDaoAddressCount);
+        }
+        else {
+            message.legacyDaoAddressCount = 0;
+        }
         if (object.storageProviderList !== undefined &&
             object.storageProviderList !== null) {
             for (const e of object.storageProviderList) {
@@ -411,6 +439,14 @@ export const GenesisState = {
     },
     toJSON(message) {
         const obj = {};
+        if (message.legacyDaoAddressList) {
+            obj.legacyDaoAddressList = message.legacyDaoAddressList.map((e) => e ? LegacyDaoAddress.toJSON(e) : undefined);
+        }
+        else {
+            obj.legacyDaoAddressList = [];
+        }
+        message.legacyDaoAddressCount !== undefined &&
+            (obj.legacyDaoAddressCount = message.legacyDaoAddressCount);
         if (message.storageProviderList) {
             obj.storageProviderList = message.storageProviderList.map((e) => e ? StorageProvider.toJSON(e) : undefined);
         }
@@ -525,6 +561,7 @@ export const GenesisState = {
     },
     fromPartial(object) {
         const message = { ...baseGenesisState };
+        message.legacyDaoAddressList = [];
         message.storageProviderList = [];
         message.baseRepositoryKeyList = [];
         message.userDaoList = [];
@@ -540,6 +577,19 @@ export const GenesisState = {
         message.repositoryList = [];
         message.userList = [];
         message.whoisList = [];
+        if (object.legacyDaoAddressList !== undefined &&
+            object.legacyDaoAddressList !== null) {
+            for (const e of object.legacyDaoAddressList) {
+                message.legacyDaoAddressList.push(LegacyDaoAddress.fromPartial(e));
+            }
+        }
+        if (object.legacyDaoAddressCount !== undefined &&
+            object.legacyDaoAddressCount !== null) {
+            message.legacyDaoAddressCount = object.legacyDaoAddressCount;
+        }
+        else {
+            message.legacyDaoAddressCount = 0;
+        }
         if (object.storageProviderList !== undefined &&
             object.storageProviderList !== null) {
             for (const e of object.storageProviderList) {

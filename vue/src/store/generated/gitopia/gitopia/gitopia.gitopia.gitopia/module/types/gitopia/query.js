@@ -3393,6 +3393,122 @@ export const QueryAllDaoResponse = {
         return message;
     },
 };
+const baseQueryGetLegacyDaoRequest = { legacyAddress: "" };
+export const QueryGetLegacyDaoRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.legacyAddress !== "") {
+            writer.uint32(10).string(message.legacyAddress);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLegacyDaoRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.legacyAddress = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLegacyDaoRequest,
+        };
+        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
+            message.legacyAddress = String(object.legacyAddress);
+        }
+        else {
+            message.legacyAddress = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.legacyAddress !== undefined &&
+            (obj.legacyAddress = message.legacyAddress);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLegacyDaoRequest,
+        };
+        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
+            message.legacyAddress = object.legacyAddress;
+        }
+        else {
+            message.legacyAddress = "";
+        }
+        return message;
+    },
+};
+const baseQueryGetLegacyDaoResponse = {};
+export const QueryGetLegacyDaoResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.dao !== undefined) {
+            Dao.encode(message.dao, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryGetLegacyDaoResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.dao = Dao.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryGetLegacyDaoResponse,
+        };
+        if (object.dao !== undefined && object.dao !== null) {
+            message.dao = Dao.fromJSON(object.dao);
+        }
+        else {
+            message.dao = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.dao !== undefined &&
+            (obj.dao = message.dao ? Dao.toJSON(message.dao) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryGetLegacyDaoResponse,
+        };
+        if (object.dao !== undefined && object.dao !== null) {
+            message.dao = Dao.fromPartial(object.dao);
+        }
+        else {
+            message.dao = undefined;
+        }
+        return message;
+    },
+};
 const baseQueryGetCommentRequest = { id: 0 };
 export const QueryGetCommentRequest = {
     encode(message, writer = Writer.create()) {
@@ -7280,6 +7396,11 @@ export class QueryClientImpl {
         const data = QueryAllDaoRequest.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "DaoAll", data);
         return promise.then((data) => QueryAllDaoResponse.decode(new Reader(data)));
+    }
+    LegacyDao(request) {
+        const data = QueryGetLegacyDaoRequest.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Query", "LegacyDao", data);
+        return promise.then((data) => QueryGetLegacyDaoResponse.decode(new Reader(data)));
     }
     Comment(request) {
         const data = QueryGetCommentRequest.encode(request).finish();

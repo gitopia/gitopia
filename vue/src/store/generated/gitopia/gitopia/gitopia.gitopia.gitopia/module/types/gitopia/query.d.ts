@@ -188,6 +188,12 @@ export interface QueryAllDaoResponse {
     dao: Dao[];
     pagination: PageResponse | undefined;
 }
+export interface QueryGetLegacyDaoRequest {
+    legacyAddress: string;
+}
+export interface QueryGetLegacyDaoResponse {
+    dao: Dao | undefined;
+}
 export interface QueryGetCommentRequest {
     id: number;
 }
@@ -715,6 +721,20 @@ export declare const QueryAllDaoResponse: {
     toJSON(message: QueryAllDaoResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllDaoResponse>): QueryAllDaoResponse;
 };
+export declare const QueryGetLegacyDaoRequest: {
+    encode(message: QueryGetLegacyDaoRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLegacyDaoRequest;
+    fromJSON(object: any): QueryGetLegacyDaoRequest;
+    toJSON(message: QueryGetLegacyDaoRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetLegacyDaoRequest>): QueryGetLegacyDaoRequest;
+};
+export declare const QueryGetLegacyDaoResponse: {
+    encode(message: QueryGetLegacyDaoResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetLegacyDaoResponse;
+    fromJSON(object: any): QueryGetLegacyDaoResponse;
+    toJSON(message: QueryGetLegacyDaoResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetLegacyDaoResponse>): QueryGetLegacyDaoResponse;
+};
 export declare const QueryGetCommentRequest: {
     encode(message: QueryGetCommentRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetCommentRequest;
@@ -1072,6 +1092,8 @@ export interface Query {
     Dao(request: QueryGetDaoRequest): Promise<QueryGetDaoResponse>;
     /** Queries a list of Dao items. */
     DaoAll(request: QueryAllDaoRequest): Promise<QueryAllDaoResponse>;
+    /** Queries a Dao by legacy address */
+    LegacyDao(request: QueryGetLegacyDaoRequest): Promise<QueryGetLegacyDaoResponse>;
     /** Queries a comment by id. */
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
     /** Queries a list of comment items. */
@@ -1138,6 +1160,7 @@ export declare class QueryClientImpl implements Query {
     PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     Dao(request: QueryGetDaoRequest): Promise<QueryGetDaoResponse>;
     DaoAll(request: QueryAllDaoRequest): Promise<QueryAllDaoResponse>;
+    LegacyDao(request: QueryGetLegacyDaoRequest): Promise<QueryGetLegacyDaoResponse>;
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;

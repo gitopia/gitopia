@@ -1,6 +1,7 @@
 import { Branch } from "./module/types/gitopia/branch";
 import { Comment } from "./module/types/gitopia/comment";
 import { Dao } from "./module/types/gitopia/dao";
+import { LegacyDaoAddress } from "./module/types/gitopia/dao";
 import { Issue } from "./module/types/gitopia/issue";
 import { Member } from "./module/types/gitopia/member";
 import { PullRequest } from "./module/types/gitopia/pullRequest";
@@ -31,6 +32,6 @@ import { MsgMultiSetTag_Tag } from "./module/types/gitopia/tx";
 import { User } from "./module/types/gitopia/user";
 import { UserDao } from "./module/types/gitopia/user";
 import { Whois } from "./module/types/gitopia/whois";
-export { Branch, Comment, Dao, Issue, Member, PullRequest, PullRequestHead, PullRequestBase, IssueOptions, PullRequestOptions, RepositoryFork, Release, Repository, RepositoryId, BaseRepositoryKey, RepositoryOwner, RepositoryIssue, RepositoryPullRequest, RepositoryCollaborator, RepositoryLabel, RepositoryRelease, Attachment, RepositoryBackup, StorageProvider, Tag, Task, MsgSetBranch_Branch, MsgMultiSetBranch_Branch, MsgSetTag_Tag, MsgMultiSetTag_Tag, User, UserDao, Whois };
+export { Branch, Comment, Dao, LegacyDaoAddress, Issue, Member, PullRequest, PullRequestHead, PullRequestBase, IssueOptions, PullRequestOptions, RepositoryFork, Release, Repository, RepositoryId, BaseRepositoryKey, RepositoryOwner, RepositoryIssue, RepositoryPullRequest, RepositoryCollaborator, RepositoryLabel, RepositoryRelease, Attachment, RepositoryBackup, StorageProvider, Tag, Task, MsgSetBranch_Branch, MsgMultiSetBranch_Branch, MsgSetTag_Tag, MsgMultiSetTag_Tag, User, UserDao, Whois };
 declare const _default;
 export default _default;
