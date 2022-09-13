@@ -36,19 +36,6 @@ func DefaultGenesis() *GenesisState {
 func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # ibc/genesistype/validate
 
-	// Check for duplicated ID in legacyDaoAddress
-	legacyDaoAddressIdMap := make(map[uint64]bool)
-	legacyDaoAddressCount := gs.GetLegacyDaoAddressCount()
-	for _, elem := range gs.LegacyDaoAddressList {
-		if _, ok := legacyDaoAddressIdMap[elem.Id]; ok {
-			return fmt.Errorf("duplicated id for legacyDaoAddress")
-		}
-		if elem.Id >= legacyDaoAddressCount {
-			return fmt.Errorf("legacyDaoAddress id should be lower or equal than the last id")
-		}
-		legacyDaoAddressIdMap[elem.Id] = true
-	}
-
 	// Check for duplicated ID in task
 	taskIdMap := make(map[uint64]bool)
 	taskCount := gs.GetTaskCount()

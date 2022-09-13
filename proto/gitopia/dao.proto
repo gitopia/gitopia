@@ -20,11 +20,4 @@ message Dao {
   string description = 12; 
   int64 createdAt = 13; 
   int64 updatedAt = 14; 
-  string legacyAddress = 15;
-}
-
-message LegacyDaoAddress {
-  uint64 id = 1;
-  string legacyAddress = 2;
-  string address = 3;
 }

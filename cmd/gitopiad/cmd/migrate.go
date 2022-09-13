@@ -51,38 +51,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	var memberCount uint64
 	var branchCount uint64
 	var tagCount uint64
-	var legacyDaoAddressCount uint64
 	newDaoAddressMap = make(map[string]string)
-
-	// Migrate User
-	for i := range gitopiaGenesisv013.UserList {
-		// Migrate UserDao
-		for _, v013 := range gitopiaGenesisv013.UserList[i].Organizations {
-			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
-				gitopiatypes.UserDao{
-					UserAddress: gitopiaGenesisv013.UserList[i].Creator,
-					DaoAddress:  v013.Id,
-				},
-			)
-		}
-		gitopiaGenesis.UserList = append(gitopiaGenesis.UserList,
-			gitopiatypes.User{
-				Creator:        gitopiaGenesisv013.UserList[i].Creator,
-				Id:             gitopiaGenesisv013.UserList[i].Id,
-				Name:           gitopiaGenesisv013.UserList[i].Name,
-				Username:       gitopiaGenesisv013.UserList[i].Username,
-				UsernameGithub: gitopiaGenesisv013.UserList[i].UsernameGithub,
-				AvatarUrl:      gitopiaGenesisv013.UserList[i].AvatarUrl,
-				Followers:      gitopiaGenesisv013.UserList[i].Followers,
-				Following:      gitopiaGenesisv013.UserList[i].Following,
-				StarredRepos:   gitopiaGenesisv013.UserList[i].StarredRepos,
-				Subscriptions:  gitopiaGenesisv013.UserList[i].Subscriptions,
-				Bio:            gitopiaGenesisv013.UserList[i].Bio,
-				CreatedAt:      gitopiaGenesisv013.UserList[i].CreatedAt,
-				UpdatedAt:      gitopiaGenesisv013.UserList[i].UpdatedAt,
-			},
-		)
-	}
 
 	// Migrate Dao
 	for i := range gitopiaGenesisv013.OrganizationList {
@@ -90,34 +59,25 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		newDaoAddress := keeper.NewDaoAddress(gitopiaGenesisv013.OrganizationList[i].Id)
 		newDaoAddressMap[legacyDaoAddress] = newDaoAddress.String()
 
-		gitopiaGenesis.LegacyDaoAddressList = append(gitopiaGenesis.LegacyDaoAddressList,
-			gitopiatypes.LegacyDaoAddress{
-				Id:            legacyDaoAddressCount,
-				LegacyAddress: legacyDaoAddress,
-				Address:       newDaoAddress.String(),
-			})
-		legacyDaoAddressCount += 1
-
 		dao := gitopiatypes.Dao{
-			Creator:       gitopiaGenesisv013.OrganizationList[i].Creator,
-			Id:            gitopiaGenesisv013.OrganizationList[i].Id,
-			Address:       newDaoAddress.String(),
-			LegacyAddress: legacyDaoAddress,
-			Name:          gitopiaGenesisv013.OrganizationList[i].Name,
-			AvatarUrl:     gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
-			Followers:     gitopiaGenesisv013.OrganizationList[i].Followers,
-			Following:     gitopiaGenesisv013.OrganizationList[i].Following,
-			Teams:         gitopiaGenesisv013.OrganizationList[i].Teams,
-			Location:      gitopiaGenesisv013.OrganizationList[i].Location,
-			Website:       gitopiaGenesisv013.OrganizationList[i].Website,
-			Verified:      gitopiaGenesisv013.OrganizationList[i].Verified,
-			Description:   gitopiaGenesisv013.OrganizationList[i].Description,
-			CreatedAt:     gitopiaGenesisv013.OrganizationList[i].CreatedAt,
-			UpdatedAt:     gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
+			Creator:     gitopiaGenesisv013.OrganizationList[i].Creator,
+			Id:          gitopiaGenesisv013.OrganizationList[i].Id,
+			Address:     newDaoAddress.String(),
+			Name:        gitopiaGenesisv013.OrganizationList[i].Name,
+			AvatarUrl:   gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
+			Followers:   gitopiaGenesisv013.OrganizationList[i].Followers,
+			Following:   gitopiaGenesisv013.OrganizationList[i].Following,
+			Teams:       gitopiaGenesisv013.OrganizationList[i].Teams,
+			Location:    gitopiaGenesisv013.OrganizationList[i].Location,
+			Website:     gitopiaGenesisv013.OrganizationList[i].Website,
+			Verified:    gitopiaGenesisv013.OrganizationList[i].Verified,
+			Description: gitopiaGenesisv013.OrganizationList[i].Description,
+			CreatedAt:   gitopiaGenesisv013.OrganizationList[i].CreatedAt,
+			UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
 		}
 
 		// Set gitopia dao as verified
-		if dao.LegacyAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
+		if legacyDaoAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
 			dao.Verified = true
 		}
 
@@ -145,6 +105,36 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			)
 			memberCount += 1
 		}
+	}
+
+	// Migrate User
+	for i := range gitopiaGenesisv013.UserList {
+		// Migrate UserDao
+		for _, v013 := range gitopiaGenesisv013.UserList[i].Organizations {
+			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
+				gitopiatypes.UserDao{
+					UserAddress: gitopiaGenesisv013.UserList[i].Creator,
+					DaoAddress:  newDaoAddressMap[v013.Id],
+				},
+			)
+		}
+		gitopiaGenesis.UserList = append(gitopiaGenesis.UserList,
+			gitopiatypes.User{
+				Creator:        gitopiaGenesisv013.UserList[i].Creator,
+				Id:             gitopiaGenesisv013.UserList[i].Id,
+				Name:           gitopiaGenesisv013.UserList[i].Name,
+				Username:       gitopiaGenesisv013.UserList[i].Username,
+				UsernameGithub: gitopiaGenesisv013.UserList[i].UsernameGithub,
+				AvatarUrl:      gitopiaGenesisv013.UserList[i].AvatarUrl,
+				Followers:      gitopiaGenesisv013.UserList[i].Followers,
+				Following:      gitopiaGenesisv013.UserList[i].Following,
+				StarredRepos:   gitopiaGenesisv013.UserList[i].StarredRepos,
+				Subscriptions:  gitopiaGenesisv013.UserList[i].Subscriptions,
+				Bio:            gitopiaGenesisv013.UserList[i].Bio,
+				CreatedAt:      gitopiaGenesisv013.UserList[i].CreatedAt,
+				UpdatedAt:      gitopiaGenesisv013.UserList[i].UpdatedAt,
+			},
+		)
 	}
 
 	// Migrate Repository

@@ -130,11 +130,6 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao";
 	}
 
-	// Queries a Dao by legacy address
-	rpc LegacyDao(QueryGetLegacyDaoRequest) returns (QueryGetLegacyDaoResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}";
-	}
-
 	// Queries a comment by id.
 	rpc Comment(QueryGetCommentRequest) returns (QueryGetCommentResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment/{id}";
@@ -468,14 +463,6 @@ message QueryAllDaoRequest {
 message QueryAllDaoResponse {
 	repeated Dao dao = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetLegacyDaoRequest {
-	string legacyAddress = 1;
-}
-
-message QueryGetLegacyDaoResponse {
-	Dao dao = 1;
 }
 
 message QueryGetCommentRequest {
