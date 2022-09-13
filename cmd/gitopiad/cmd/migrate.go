@@ -98,24 +98,31 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			})
 		legacyDaoAddressCount += 1
 
+		dao := gitopiatypes.Dao{
+			Creator:       gitopiaGenesisv013.OrganizationList[i].Creator,
+			Id:            gitopiaGenesisv013.OrganizationList[i].Id,
+			Address:       newDaoAddress.String(),
+			LegacyAddress: legacyDaoAddress,
+			Name:          gitopiaGenesisv013.OrganizationList[i].Name,
+			AvatarUrl:     gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
+			Followers:     gitopiaGenesisv013.OrganizationList[i].Followers,
+			Following:     gitopiaGenesisv013.OrganizationList[i].Following,
+			Teams:         gitopiaGenesisv013.OrganizationList[i].Teams,
+			Location:      gitopiaGenesisv013.OrganizationList[i].Location,
+			Website:       gitopiaGenesisv013.OrganizationList[i].Website,
+			Verified:      gitopiaGenesisv013.OrganizationList[i].Verified,
+			Description:   gitopiaGenesisv013.OrganizationList[i].Description,
+			CreatedAt:     gitopiaGenesisv013.OrganizationList[i].CreatedAt,
+			UpdatedAt:     gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
+		}
+
+		// Set gitopia dao as verified
+		if dao.LegacyAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
+			dao.Verified = true
+		}
+
 		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
-			gitopiatypes.Dao{
-				Creator:       gitopiaGenesisv013.OrganizationList[i].Creator,
-				Id:            gitopiaGenesisv013.OrganizationList[i].Id,
-				Address:       newDaoAddress.String(),
-				LegacyAddress: legacyDaoAddress,
-				Name:          gitopiaGenesisv013.OrganizationList[i].Name,
-				AvatarUrl:     gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
-				Followers:     gitopiaGenesisv013.OrganizationList[i].Followers,
-				Following:     gitopiaGenesisv013.OrganizationList[i].Following,
-				Teams:         gitopiaGenesisv013.OrganizationList[i].Teams,
-				Location:      gitopiaGenesisv013.OrganizationList[i].Location,
-				Website:       gitopiaGenesisv013.OrganizationList[i].Website,
-				Verified:      gitopiaGenesisv013.OrganizationList[i].Verified,
-				Description:   gitopiaGenesisv013.OrganizationList[i].Description,
-				CreatedAt:     gitopiaGenesisv013.OrganizationList[i].CreatedAt,
-				UpdatedAt:     gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
-			},
+			dao,
 		)
 
 		// Migrate Member
