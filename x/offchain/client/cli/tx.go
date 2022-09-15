@@ -56,7 +56,7 @@ func CmdVerifyMsg() *cobra.Command {
 			}
 
 			if len(args) == 0 {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you must provide the file containing the signed transacation")
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "you must provide the file containing the signed transaction")
 			}
 
 			file := args[0]
