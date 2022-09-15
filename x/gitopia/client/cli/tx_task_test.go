@@ -1,5 +1,6 @@
 package cli_test
 
+/*
 import (
 	"fmt"
 	"testing"
@@ -55,7 +56,6 @@ func TestCreateTask(t *testing.T) {
 	}
 }
 
-/*
 func TestUpdateTask(t *testing.T) {
 	net := network.New(t)
 

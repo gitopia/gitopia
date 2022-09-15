@@ -11,6 +11,11 @@ import (
 )
 
 func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
+	repositoryId := RepositoryId{
+		Id:   sample.AccAddress(),
+		Name: "repository",
+	}
+
 	tests := []struct {
 		name string
 		msg  MsgCreateRelease
@@ -19,98 +24,109 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgCreateRelease{
-				Creator: "invalid_address",
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      "invalid_address",
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 			},
 		}, {
 			name: "too short name",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "name exceeds limit",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    strings.Repeat("t", 256),
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         strings.Repeat("t", 256),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "too short tag name",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Target:       "target",
+				Name:         "name",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "tag name exceeds limit",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: strings.Repeat("t", 64),
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      strings.Repeat("t", 64),
+				Target:       "target",
+				Name:         "name",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "too short target",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Name:         "name",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "target exceeds limit",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  strings.Repeat("t", 64),
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       strings.Repeat("t", 64),
+				Name:         "name",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "description exceeds limit",
 			msg: MsgCreateRelease{
-				Creator:     sample.AccAddress(),
-				TagName:     "tag_name",
-				Target:      "target",
-				Name:        "name",
-				Description: strings.Repeat("t", 20001),
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
+				Description:  strings.Repeat("t", 20001),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid attachments",
 			msg: MsgCreateRelease{
-				Creator:     sample.AccAddress(),
-				TagName:     "tag_name",
-				Target:      "target",
-				Name:        "name",
-				Attachments: "invalid_attachments",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
+				Attachments:  "invalid_attachments",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "valid attachments",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "filename1", "size": 256, "sha": "sha","uploader":"%s"},
 					 {"name": "filename2", "size": 256, "sha": "sha","uploader":"%s"}]`,
@@ -120,10 +136,11 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid attachment name",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "", "size": 256, "sha": "sha","uploader":"%s"}]`,
 					sample.AccAddress(),
@@ -133,10 +150,11 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid attachment size",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "filename", "size": 0, "sha": "sha","uploader":"%s"}]`,
 					sample.AccAddress(),
@@ -146,10 +164,11 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid attachment sha",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "filename", "size": 256, "sha": "","uploader":"%s"}]`,
 					sample.AccAddress(),
@@ -159,10 +178,11 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		}, {
 			name: "invalid attachment uploader",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "filename", "size": 256, "sha": "","uploader":"invalid_uploader"}]`,
 				),
@@ -171,10 +191,11 @@ func TestMsgCreateRelease_ValidateBasic(t *testing.T) {
 		}, {
 			name: "duplicate attachment name",
 			msg: MsgCreateRelease{
-				Creator: sample.AccAddress(),
-				TagName: "tag_name",
-				Target:  "target",
-				Name:    "name",
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				TagName:      "tag_name",
+				Target:       "target",
+				Name:         "name",
 				Attachments: fmt.Sprintf(
 					`[{"name": "filename", "size": 256, "sha": "sha","uploader":"%s"},
 					 {"name": "filename", "size": 256, "sha": "sha","uploader":"%s"}]`,

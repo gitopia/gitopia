@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,6 +15,8 @@ import (
 func createNMember(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Member {
 	items := make([]types.Member, n)
 	for i := range items {
+		items[i].DaoAddress = fmt.Sprintf("dao-%v", i)
+		items[i].Address = fmt.Sprintf("user-%v", i)
 		items[i].Id = keeper.AppendMember(ctx, items[i])
 	}
 	return items
@@ -23,7 +26,7 @@ func TestMemberGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetMember(ctx, item.Id)
+		got, found := keeper.GetDaoMember(ctx, item.DaoAddress, item.Address)
 		require.True(t, found)
 		require.Equal(t,
 			nullify.Fill(&item),
@@ -36,8 +39,8 @@ func TestMemberRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveMember(ctx, item.Id)
-		_, found := keeper.GetMember(ctx, item.Id)
+		keeper.RemoveDaoMember(ctx, item.DaoAddress, item.Address)
+		_, found := keeper.GetDaoMember(ctx, item.DaoAddress, item.Address)
 		require.False(t, found)
 	}
 }

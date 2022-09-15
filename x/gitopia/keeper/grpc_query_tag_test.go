@@ -4,6 +4,20 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	keepertest "github.com/gitopia/gitopia/testutil/keeper"
+	"github.com/gitopia/gitopia/testutil/nullify"
+	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+/*
+import (
+	"testing"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
@@ -59,6 +73,7 @@ func TestTagQuerySingle(t *testing.T) {
 		})
 	}
 }
+*/
 
 func TestTagQueryPaginated(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)

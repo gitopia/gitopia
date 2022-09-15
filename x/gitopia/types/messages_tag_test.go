@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strings"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -8,54 +9,76 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgCreateTag_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgCreateTag
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgCreateTag{
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
-			msg: MsgCreateTag{
-				Creator: sample.AccAddress(),
-			},
-		},
+func TestMsgSetTag_ValidateBasic(t *testing.T) {
+	repositoryId := RepositoryId{
+		Id:   sample.AccAddress(),
+		Name: "repository",
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
 
-func TestMsgUpdateTag_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateTag
+		msg  MsgSetTag
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgUpdateTag{
-				Creator: "invalid_address",
+			msg: MsgSetTag{
+				Creator:      "invalid_address",
+				RepositoryId: repositoryId,
+				Tag: MsgSetTag_Tag{
+					Name: "tag",
+					Sha:  "commit_sha",
+				},
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
-			msg: MsgUpdateTag{
-				Creator: sample.AccAddress(),
+			name: "valid MsgSetTag",
+			msg: MsgSetTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag: MsgSetTag_Tag{
+					Name: "tag",
+					Sha:  "56e05fced214c44a37759efa2dfc25a65d8ae98d",
+				},
 			},
+		}, {
+			name: "empty tag name",
+			msg: MsgSetTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag:          MsgSetTag_Tag{Sha: "Sha"},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "tag name exceeds limit",
+			msg: MsgSetTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag: MsgSetTag_Tag{
+					Name: strings.Repeat("b", 256),
+					Sha:  "Sha",
+				},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "empty Sha",
+			msg: MsgSetTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag:          MsgSetTag_Tag{Name: "tag"},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid Sha",
+			msg: MsgSetTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag: MsgSetTag_Tag{
+					Name: "tag",
+					Sha:  "sha",
+				},
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
@@ -71,6 +94,11 @@ func TestMsgUpdateTag_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgDeleteTag_ValidateBasic(t *testing.T) {
+	repositoryId := RepositoryId{
+		Id:   sample.AccAddress(),
+		Name: "repository",
+	}
+
 	tests := []struct {
 		name string
 		msg  MsgDeleteTag
@@ -79,14 +107,33 @@ func TestMsgDeleteTag_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgDeleteTag{
-				Creator: "invalid_address",
+				Creator:      "invalid_address",
+				RepositoryId: repositoryId,
+				Tag:          "tag",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "valid MsgDeleteTag",
 			msg: MsgDeleteTag{
-				Creator: sample.AccAddress(),
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag:          "tag",
 			},
+		}, {
+			name: "empty tag name",
+			msg: MsgDeleteTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "tag name exceeds limit",
+			msg: MsgDeleteTag{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Tag:          strings.Repeat("b", 256),
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
