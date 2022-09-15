@@ -62,7 +62,6 @@ service Msg {
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
-  rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
   rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
   rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
@@ -506,17 +505,6 @@ message MsgCreateIssueResponse {
   uint64 id = 1;
   uint64 iid = 2;
 }
-
-message MsgUpdateIssue {
-  string creator = 1;
-  uint64 id = 2;
-  string title = 3;
-  string description = 4;
-  uint64 weight = 5;
-  repeated string assignees = 6;
-}
-
-message MsgUpdateIssueResponse { }
 
 message MsgUpdateIssueTitle {
   string creator = 1;
