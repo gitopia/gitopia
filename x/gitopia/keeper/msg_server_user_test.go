@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -12,29 +11,42 @@ import (
 
 func TestUserMsgServerCreate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
+	creator := "A"
 
-	// Test user create
-	for i := 0; i < 5; i++ {
-		creator := fmt.Sprintf("creator-%d", i)
-		username := fmt.Sprintf("username-%d", i)
-		resp, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: username})
-		require.NoError(t, err)
-		require.Equal(t, creator, string(resp.Id))
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgCreateUser
+		err     error
+	}{
+		{
+			desc:    "Completed",
+			request: &types.MsgCreateUser{Creator: creator, Username: "AaaA"},
+		},
+		{
+			desc:    "Username Already Taken",
+			request: &types.MsgCreateUser{Creator: "B", Username: "AaaA"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc:    "Username Already Taken With Different Case",
+			request: &types.MsgCreateUser{Creator: "B", Username: "aaaa"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc:    "Username Is Reserved Name",
+			request: &types.MsgCreateUser{Creator: creator, Username: "bank"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err := srv.CreateUser(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
 	}
-
-	// Test user already exists
-	_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "creator-0", Username: "A"})
-	require.Error(t, err)
-
-	// Test username already taken
-	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "A", Username: "username-0"})
-	require.Error(t, err)
-
-	// Test username already taken with different case
-	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "A", Username: "UsErNaMe-0"})
-	require.Error(t, err)
-
-	/* TODO: Test reserved names */
 }
 
 func TestUserMsgServerUpdateUsername(t *testing.T) {
@@ -70,6 +82,11 @@ func TestUserMsgServerUpdateUsername(t *testing.T) {
 			request: &types.MsgUpdateUserUsername{Creator: creator, Username: "z"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
+		{
+			desc:    "Username Is Reserved Name",
+			request: &types.MsgUpdateUserUsername{Creator: creator, Username: "bank"},
+			err:     sdkerrors.ErrInvalidRequest,
+		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			_, err = srv.UpdateUserUsername(ctx, tc.request)
@@ -81,7 +98,7 @@ func TestUserMsgServerUpdateUsername(t *testing.T) {
 		})
 	}
 
-	// Test if old username is available to be taken
+	/* Test if old username is available to be taken */
 	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: "C", Username: creator})
 	require.NoError(t, err)
 }
