@@ -28,8 +28,8 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("username is already taken: (%v)", msg.Username))
 	}
 
-	if msg, reserved := types.ReservedUsernames[username]; reserved {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
+	if _, reserved := types.ReservedUsernames[username]; reserved {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Username))
 	}
 
 	user := types.User{
@@ -79,8 +79,8 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("username is already taken: (%v)", msg.Username))
 	}
 
-	if msg, reserved := types.ReservedUsernames[newUsername]; reserved {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
+	if _, reserved := types.ReservedUsernames[newUsername]; reserved {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Username))
 	}
 
 	if _, found := k.GetWhois(ctx, currentUsername); found {
