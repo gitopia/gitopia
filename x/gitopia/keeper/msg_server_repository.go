@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -193,14 +194,18 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		Provider: msg.Provider,
 	})
 
+	repoIdJson, err := json.Marshal(msg.RepositoryId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
+	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, string(repoIdJson)),
 			sdk.NewAttribute(types.EventAttributeOwnerIdKey, ownerAddress.address),
-			sdk.NewAttribute(types.EventAttributeOwnerTypeKey, ownerAddress.ownerType.String()),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
