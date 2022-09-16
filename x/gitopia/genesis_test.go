@@ -145,6 +145,7 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		ReleaseCount: 2,
+
 		TaskList: []types.Task{
 			{
 				Id: 0,
@@ -154,6 +155,7 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		TaskCount: 2,
+
 		BranchList: []types.Branch{
 			{
 				Id:   0,
@@ -165,6 +167,7 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		BranchCount: 2,
+
 		TagList: []types.Tag{
 			{
 				Id:   0,
@@ -176,6 +179,7 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		TagCount: 2,
+
 		MemberList: []types.Member{
 			{
 				Id:         0,

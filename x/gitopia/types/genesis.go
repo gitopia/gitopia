@@ -49,6 +49,7 @@ func (gs GenesisState) Validate() error {
 	}
 	// Check for duplicated ID in branch
 	branchIdMap := make(map[uint64]bool)
+	branchMap := make(map[string]bool)
 	branchCount := gs.GetBranchCount()
 	for _, elem := range gs.BranchList {
 		if _, ok := branchIdMap[elem.Id]; ok {
@@ -57,10 +58,16 @@ func (gs GenesisState) Validate() error {
 		if elem.Id >= branchCount {
 			return fmt.Errorf("branch id should be lower or equal than the last id")
 		}
+		k := fmt.Sprintf("%v", elem.RepositoryId) + elem.Name
+		if _, ok := branchMap[k]; ok {
+			return fmt.Errorf("duplicated branch")
+		}
+		branchMap[k] = true
 		branchIdMap[elem.Id] = true
 	}
 	// Check for duplicated ID in tag
 	tagIdMap := make(map[uint64]bool)
+	tagMap := make(map[string]bool)
 	tagCount := gs.GetTagCount()
 	for _, elem := range gs.TagList {
 		if _, ok := tagIdMap[elem.Id]; ok {
@@ -69,6 +76,11 @@ func (gs GenesisState) Validate() error {
 		if elem.Id >= tagCount {
 			return fmt.Errorf("tag id should be lower or equal than the last id")
 		}
+		k := fmt.Sprintf("%v", elem.RepositoryId) + elem.Name
+		if _, ok := tagMap[k]; ok {
+			return fmt.Errorf("duplicated tag")
+		}
+		tagMap[k] = true
 		tagIdMap[elem.Id] = true
 	}
 	// Check for duplicated ID in member
@@ -171,6 +183,7 @@ func (gs GenesisState) Validate() error {
 		if elem.Id >= repositoryCount {
 			return fmt.Errorf("repository id should be lower or equal than the last id")
 		}
+		repositoryMap[k] = elem.Id
 		repositoryIdMap[elem.Id] = true
 	}
 
