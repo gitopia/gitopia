@@ -622,18 +622,12 @@ func TestMsgDeleteRepository_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgDeleteRepository{
-				Creator:      "invalid_address",
-				RepositoryId: repositoryId,
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+			name: "WIP",
 			msg: MsgDeleteRepository{
 				Creator:      sample.AccAddress(),
 				RepositoryId: repositoryId,
 			},
+			err: sdkerrors.ErrNotSupported,
 		},
 	}
 	for _, tt := range tests {
