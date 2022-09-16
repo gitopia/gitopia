@@ -10,6 +10,7 @@ import (
 
 func TestGenesisState_Validate(t *testing.T) {
 	userId := sample.AccAddress()
+	daoId := sample.AccAddress()
 	for _, tc := range []struct {
 		desc     string
 		genState *types.GenesisState
@@ -51,15 +52,38 @@ func TestGenesisState_Validate(t *testing.T) {
 
 				RepositoryList: []types.Repository{
 					{
-						Creator: sample.AccAddress(),
-						Id:      0,
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository-0",
+						Id:   0,
 					},
 					{
-						Creator: sample.AccAddress(),
-						Id:      1,
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository-1",
+						Id:   1,
 					},
 				},
 				RepositoryCount: 2,
+
+				BaseRepositoryKeyList: []types.BaseRepositoryKey{
+					{
+						Id:      0,
+						Address: userId,
+						Name:    "repository-0",
+					},
+					{
+						Id:      1,
+						Address: userId,
+						Name:    "repository-1",
+					},
+				},
 
 				DaoList: []types.Dao{
 					{
@@ -67,13 +91,15 @@ func TestGenesisState_Validate(t *testing.T) {
 						Id:      0,
 						Address: sample.AccAddress(),
 					},
+				},
+				DaoCount: 1,
+
+				UserDaoList: []types.UserDao{
 					{
-						Creator: sample.AccAddress(),
-						Id:      1,
-						Address: sample.AccAddress(),
+						DaoAddress:  daoId,
+						UserAddress: userId,
 					},
 				},
-				DaoCount: 2,
 
 				IssueList: []types.Issue{
 					{
@@ -122,6 +148,7 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				ReleaseCount: 2,
+
 				TaskList: []types.Task{
 					{
 						Id: 0,
@@ -131,33 +158,39 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 2,
+
 				BranchList: []types.Branch{
 					{
-						Id: 0,
+						Id:   0,
+						Name: "branch-0",
 					},
 					{
-						Id: 1,
+						Id:   1,
+						Name: "branch-1",
 					},
 				},
 				BranchCount: 2,
+
 				TagList: []types.Tag{
 					{
-						Id: 0,
+						Id:   0,
+						Name: "tag-0",
 					},
 					{
-						Id: 1,
+						Id:   1,
+						Name: "tag-1",
 					},
 				},
 				TagCount: 2,
+
 				MemberList: []types.Member{
 					{
-						Id: 0,
-					},
-					{
-						Id: 1,
+						Id:         0,
+						Address:    userId,
+						DaoAddress: daoId,
 					},
 				},
-				MemberCount: 2,
+				MemberCount: 1,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -207,16 +240,54 @@ func TestGenesisState_Validate(t *testing.T) {
 			},
 			valid: false,
 		},
-
+		{
+			desc: "duplicated repository id",
+			genState: &types.GenesisState{
+				RepositoryList: []types.Repository{
+					{
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository-0",
+						Id:   0,
+					},
+					{
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository-1",
+						Id:   0,
+					},
+				},
+				RepositoryCount: 2,
+			},
+			valid: false,
+		},
 		{
 			desc: "duplicated repository",
 			genState: &types.GenesisState{
 				RepositoryList: []types.Repository{
 					{
-						Id: 0,
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository",
+						Id:   0,
 					},
 					{
-						Id: 0,
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository",
+						Id:   1,
 					},
 				},
 				RepositoryCount: 2,
@@ -228,7 +299,13 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				RepositoryList: []types.Repository{
 					{
-						Id: 0,
+						Creator: userId,
+						Owner: &types.RepositoryOwner{
+							Id:   userId,
+							Type: types.OwnerType_USER,
+						},
+						Name: "repository-0",
+						Id:   0,
 					},
 				},
 				RepositoryCount: 0,
@@ -374,14 +451,36 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: false,
 		},
 		{
+			desc: "duplicated branch id",
+			genState: &types.GenesisState{
+				BranchList: []types.Branch{
+					{
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "branch-0",
+					},
+					{
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "branch-1",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
 			desc: "duplicated branch",
 			genState: &types.GenesisState{
 				BranchList: []types.Branch{
 					{
-						Id: 0,
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "branch",
 					},
 					{
-						Id: 0,
+						Id:           1,
+						RepositoryId: 0,
+						Name:         "branch",
 					},
 				},
 			},
@@ -392,10 +491,30 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				BranchList: []types.Branch{
 					{
-						Id: 1,
+						Id:           1,
+						RepositoryId: 0,
+						Name:         "Branch",
 					},
 				},
 				BranchCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated tag id",
+			genState: &types.GenesisState{
+				TagList: []types.Tag{
+					{
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "tag-0",
+					},
+					{
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "tag-1",
+					},
+				},
 			},
 			valid: false,
 		},
@@ -404,10 +523,14 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				TagList: []types.Tag{
 					{
-						Id: 0,
+						Id:           0,
+						RepositoryId: 0,
+						Name:         "tag",
 					},
 					{
-						Id: 0,
+						Id:           1,
+						RepositoryId: 0,
+						Name:         "tag",
 					},
 				},
 			},
@@ -418,10 +541,26 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				TagList: []types.Tag{
 					{
-						Id: 1,
+						Id:           1,
+						RepositoryId: 0,
+						Name:         "tag",
 					},
 				},
 				TagCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated member id",
+			genState: &types.GenesisState{
+				MemberList: []types.Member{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
 			},
 			valid: false,
 		},
@@ -430,10 +569,14 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				MemberList: []types.Member{
 					{
-						Id: 0,
+						Id:         0,
+						Address:    userId,
+						DaoAddress: daoId,
 					},
 					{
-						Id: 0,
+						Id:         1,
+						Address:    userId,
+						DaoAddress: daoId,
 					},
 				},
 			},
