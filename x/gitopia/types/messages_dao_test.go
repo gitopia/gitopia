@@ -271,25 +271,12 @@ func TestMsgDeleteDao_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid id",
-			msg: MsgDeleteDao{
-				Id:      "invalid_id",
-				Creator: sample.AccAddress(),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "invalid creator address",
-			msg: MsgDeleteDao{
-				Id:      sample.AccAddress(),
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgDeleteDao",
+			name: "WIP",
 			msg: MsgDeleteDao{
 				Id:      sample.AccAddress(),
 				Creator: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrNotSupported,
 		},
 	}
 	for _, tt := range tests {

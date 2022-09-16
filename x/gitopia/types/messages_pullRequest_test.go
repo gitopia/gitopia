@@ -992,16 +992,11 @@ func TestMsgDeletePullRequest_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgDeletePullRequest{
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+			name: "WIP",
 			msg: MsgDeletePullRequest{
 				Creator: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrNotSupported,
 		},
 	}
 	for _, tt := range tests {
