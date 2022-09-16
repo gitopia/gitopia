@@ -84,34 +84,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	}, nil
 }
 
-func (k msgServer) UpdateIssue(goCtx context.Context, msg *types.MsgUpdateIssue) (*types.MsgUpdateIssueResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
-	issue, found := k.GetIssue(ctx, msg.Id)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
-	}
-
-	if msg.Creator != issue.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	issue.Title = msg.Title
-	issue.Description = msg.Description
-	issue.Weight = msg.Weight
-	issue.UpdatedAt = ctx.BlockTime().Unix()
-	issue.Assignees = msg.Assignees
-
-	k.SetIssue(ctx, issue)
-
-	return &types.MsgUpdateIssueResponse{}, nil
-}
-
 func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateIssueTitle) (*types.MsgUpdateIssueTitleResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

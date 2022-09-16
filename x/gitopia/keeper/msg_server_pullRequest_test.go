@@ -77,49 +77,6 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 	}
 }
 
-func TestPullRequestMsgServerUpdate(t *testing.T) {
-	srv, ctx := setupMsgServer(t)
-
-	users, repositoryId, branches := setupPrePullRequest(ctx, t, srv)
-	_, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
-	require.NoError(t, err)
-
-	for _, tc := range []struct {
-		desc    string
-		request *types.MsgUpdatePullRequest
-		err     error
-	}{
-		{
-			desc:    "Completed",
-			request: &types.MsgUpdatePullRequest{Id: 0, Creator: users[0]},
-		},
-		{
-			desc:    "Creator Not Exists",
-			request: &types.MsgUpdatePullRequest{Id: 0, Creator: "C"},
-			err:     sdkerrors.ErrKeyNotFound,
-		},
-		{
-			desc:    "PullRequest Not Exists",
-			request: &types.MsgUpdatePullRequest{Id: 10, Creator: users[0]},
-			err:     sdkerrors.ErrKeyNotFound,
-		},
-		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdatePullRequest{Id: 0, Creator: users[1]},
-			err:     sdkerrors.ErrUnauthorized,
-		},
-	} {
-		t.Run(tc.desc, func(t *testing.T) {
-			_, err := srv.UpdatePullRequest(ctx, tc.request)
-			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
-			} else {
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
 func TestPullRequestMsgServerUpdateTitle(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 

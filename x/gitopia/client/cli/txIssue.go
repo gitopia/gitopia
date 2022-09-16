@@ -77,49 +77,6 @@ func CmdCreateIssue() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateIssue() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-issue [id] [title] [description] [weight] [assignees]",
-		Short: "Update a issue",
-		Args:  cobra.ExactArgs(5),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			argsTitle, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-			argsDescription, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsWeight, err := strconv.ParseUint(args[3], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsAssignees := strings.Split(args[4], ",")
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgUpdateIssue(clientCtx.GetFromAddress().String(), id, string(argsTitle), string(argsDescription), argsWeight, argsAssignees)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdUpdateIssueTitle() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-issue-title [id] [title]",
