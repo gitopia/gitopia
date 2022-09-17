@@ -133,31 +133,6 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	}, nil
 }
 
-func (k msgServer) UpdatePullRequest(goCtx context.Context, msg *types.MsgUpdatePullRequest) (*types.MsgUpdatePullRequestResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
-	}
-
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	pullRequest.Title = msg.Title
-	pullRequest.Description = msg.Description
-
-	k.SetPullRequest(ctx, pullRequest)
-
-	return &types.MsgUpdatePullRequestResponse{}, nil
-}
-
 func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgUpdatePullRequestTitle) (*types.MsgUpdatePullRequestTitleResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -822,8 +797,6 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 }
 
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
-	return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "not allowed")
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	pullRequest, found := k.GetPullRequest(ctx, msg.Id)

@@ -24,8 +24,8 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name is already taken: (%v)", msg.Name))
 	}
 
-	if msg, reserved := types.ReservedUsernames[daoName]; reserved {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
+	if _, reserved := types.ReservedUsernames[daoName]; reserved {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
 	}
 
 	var dao = types.Dao{
@@ -105,8 +105,8 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 	if _, found := k.GetWhois(ctx, newDaoName); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name is already taken: (%v)", msg.Name))
 	}
-	if msg, reserved := types.ReservedUsernames[newDaoName]; reserved {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, msg)
+	if _, reserved := types.ReservedUsernames[newDaoName]; reserved {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
 	}
 
 	if _, found := k.GetWhois(ctx, currentDaoName); found {

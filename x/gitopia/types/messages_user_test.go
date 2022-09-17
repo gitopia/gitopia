@@ -18,86 +18,15 @@ func TestMsgCreateUser_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgCreateUser{
-				Creator: "invalid_address",
+				Creator:  "invalid_address",
+				Username: "user",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgCreateUser{
-				Creator: sample.AccAddress(),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
-func TestMsgUpdateUser_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgUpdateUser
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgUpdateUser{
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-			},
-		}, {
-			name: "name exceeds limit",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Name:    sample.String100,
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "github username exceeds limit",
-			msg: MsgUpdateUser{
-				Creator:        sample.AccAddress(),
-				UsernameGithub: sample.String100,
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "avatarUrl exceeds limit",
-			msg: MsgUpdateUser{
-				Creator:   sample.AccAddress(),
-				AvatarUrl: strings.Repeat(sample.String100, 25),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "bio exceeds limit",
-			msg: MsgUpdateUser{
-				Creator: sample.AccAddress(),
-				Bio:     strings.Repeat(sample.String100, 3),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "invalid avatarUrl",
-			msg: MsgUpdateUser{
-				Creator:   sample.AccAddress(),
-				AvatarUrl: "invalid URL",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		},
-		{
-			name: "valid avatarUrl",
-			msg: MsgUpdateUser{
-				Creator:   sample.AccAddress(),
-				AvatarUrl: "https://domain.com",
+				Creator:  sample.AccAddress(),
+				Username: "user",
 			},
 		},
 	}
@@ -139,18 +68,10 @@ func TestMsgUpdateUserBio_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "bio minimum length",
-			msg: MsgUpdateUserBio{
-				Creator: sample.AccAddress(),
-				Bio:     "b",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
 			name: "empty bio",
 			msg: MsgUpdateUserBio{
 				Creator: sample.AccAddress(),
 			},
-			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
@@ -202,7 +123,6 @@ func TestMsgUpdateUserAvatar_ValidateBasic(t *testing.T) {
 			msg: MsgUpdateUserAvatar{
 				Creator: sample.AccAddress(),
 			},
-			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "non https url",
 			msg: MsgUpdateUserAvatar{
@@ -231,16 +151,11 @@ func TestMsgDeleteUser_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgDeleteUser{
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+			name: "WIP",
 			msg: MsgDeleteUser{
 				Creator: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrNotSupported,
 		},
 	}
 	for _, tt := range tests {

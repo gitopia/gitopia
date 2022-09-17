@@ -444,24 +444,5 @@ func (msg *MsgDeleteDao) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteDao) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
-	}
-	return nil
+	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
 }

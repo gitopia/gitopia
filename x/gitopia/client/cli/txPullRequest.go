@@ -70,43 +70,6 @@ func CmdCreatePullRequest() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdatePullRequest() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-pullRequest [id] [title] [description]",
-		Short: "Update a pullRequest",
-		Args:  cobra.ExactArgs(3),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-			argsTitle, err := cast.ToStringE(args[1])
-			if err != nil {
-				return err
-			}
-			argsDescription, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgUpdatePullRequest(clientCtx.GetFromAddress().String(), id, argsTitle, argsDescription)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdUpdatePullRequestTitle() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-pullrequest-title [id] [title]",

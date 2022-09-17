@@ -294,11 +294,7 @@ func (msg *MsgDeleteUser) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteUser) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	return nil
+	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
 }
 
 // var _ sdk.Msg = &MsgTransferUser{}

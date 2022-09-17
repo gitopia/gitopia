@@ -152,132 +152,6 @@ func TestMsgCreateIssue_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateIssue_ValidateBasic(t *testing.T) {
-	sampleAddr := sample.AccAddress()
-	tests := []struct {
-		name string
-		msg  MsgUpdateIssue
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgUpdateIssue{
-				Creator:     "invalid_address",
-				Title:       "title",
-				Description: "description",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid MsgUpdateIssue",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-			},
-		}, {
-			name: "empty title",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Description: "description",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "title exceeds limit",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       strings.Repeat("t", 256),
-				Description: "description",
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "description exceeds limit",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: strings.Repeat("d", 20001),
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "assignees exceeds limit",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-				Assignees: []string{
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-					sample.AccAddress(),
-				},
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "valid assignees",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-				Assignees: []string{
-					sample.AccAddress(),
-					sample.AccAddress(),
-				},
-			},
-		}, {
-			name: "invalid assignees",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-				Assignees: []string{
-					"invalid_assignee",
-				},
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "one valid and one invalid assignee",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-				Assignees: []string{
-					sample.AccAddress(),
-					"invalid_assignees",
-				},
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "duplicate assignees",
-			msg: MsgUpdateIssue{
-				Creator:     sample.AccAddress(),
-				Title:       "title",
-				Description: "description",
-				Assignees: []string{
-					sampleAddr,
-					sampleAddr,
-				},
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
 func TestMsgUpdateIssueTitle_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
@@ -727,16 +601,11 @@ func TestMsgDeleteIssue_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgDeleteIssue{
-				Creator: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+			name: "WIP",
 			msg: MsgDeleteIssue{
 				Creator: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrNotSupported,
 		},
 	}
 	for _, tt := range tests {

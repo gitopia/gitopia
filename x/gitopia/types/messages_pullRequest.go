@@ -177,46 +177,6 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgUpdatePullRequest{}
-
-func NewMsgUpdatePullRequest(creator string, id uint64, title string, description string) *MsgUpdatePullRequest {
-	return &MsgUpdatePullRequest{
-		Id:          id,
-		Creator:     creator,
-		Title:       title,
-		Description: description,
-	}
-}
-
-func (msg *MsgUpdatePullRequest) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgUpdatePullRequest) Type() string {
-	return "UpdatePullRequest"
-}
-
-func (msg *MsgUpdatePullRequest) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgUpdatePullRequest) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgUpdatePullRequest) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	return nil
-}
-
 var _ sdk.Msg = &MsgUpdatePullRequestTitle{}
 
 func NewMsgUpdatePullRequestTitle(creator string, id uint64, title string) *MsgUpdatePullRequestTitle {
@@ -760,9 +720,5 @@ func (msg *MsgDeletePullRequest) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeletePullRequest) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	return nil
+	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
 }

@@ -41,14 +41,37 @@ func TestGenesis(t *testing.T) {
 		RepositoryList: []types.Repository{
 			{
 				Creator: sample.AccAddress(),
-				Id:      0,
+				Owner: &types.RepositoryOwner{
+					Id:   sample.AccAddress(),
+					Type: types.OwnerType_USER,
+				},
+				Name: "repository-0",
+				Id:   0,
 			},
 			{
 				Creator: sample.AccAddress(),
-				Id:      1,
+				Owner: &types.RepositoryOwner{
+					Id:   sample.AccAddress(),
+					Type: types.OwnerType_USER,
+				},
+				Name: "repository-1",
+				Id:   1,
 			},
 		},
 		RepositoryCount: 2,
+
+		BaseRepositoryKeyList: []types.BaseRepositoryKey{
+			{
+				Id:      0,
+				Address: sample.AccAddress(),
+				Name:    "repository-0",
+			},
+			{
+				Id:      1,
+				Address: sample.AccAddress(),
+				Name:    "repository-1",
+			},
+		},
 
 		DaoList: []types.Dao{
 			{
@@ -63,6 +86,17 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		DaoCount: 2,
+
+		UserDaoList: []types.UserDao{
+			{
+				DaoAddress:  sample.AccAddress(),
+				UserAddress: sample.AccAddress(),
+			},
+			{
+				DaoAddress:  sample.AccAddress(),
+				UserAddress: sample.AccAddress(),
+			},
+		},
 
 		IssueList: []types.Issue{
 			{
@@ -111,6 +145,7 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		ReleaseCount: 2,
+
 		TaskList: []types.Task{
 			{
 				Id: 0,
@@ -120,30 +155,41 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		TaskCount: 2,
+
 		BranchList: []types.Branch{
 			{
-				Id: 0,
+				Id:   0,
+				Name: "branch-0",
 			},
 			{
-				Id: 1,
+				Id:   1,
+				Name: "branch-1",
 			},
 		},
 		BranchCount: 2,
+
 		TagList: []types.Tag{
 			{
-				Id: 0,
+				Id:   0,
+				Name: "tag-0",
 			},
 			{
-				Id: 1,
+				Id:   1,
+				Name: "tag-1",
 			},
 		},
 		TagCount: 2,
+
 		MemberList: []types.Member{
 			{
-				Id: 0,
+				Id:         0,
+				Address:    sample.AccAddress(),
+				DaoAddress: sample.AccAddress(),
 			},
 			{
-				Id: 1,
+				Id:         1,
+				Address:    sample.AccAddress(),
+				DaoAddress: sample.AccAddress(),
 			},
 		},
 		MemberCount: 2,
@@ -176,6 +222,8 @@ func TestGenesis(t *testing.T) {
 	require.Subset(t, genesisState.RepositoryList, got.RepositoryList)
 	require.Equal(t, genesisState.RepositoryCount, got.RepositoryCount)
 
+	require.Len(t, got.BaseRepositoryKeyList, len(genesisState.BaseRepositoryKeyList))
+
 	require.Len(t, got.DaoList, len(genesisState.DaoList))
 	require.Subset(t, genesisState.DaoList, got.DaoList)
 	require.Equal(t, genesisState.DaoCount, got.DaoCount)
@@ -195,6 +243,7 @@ func TestGenesis(t *testing.T) {
 	require.Len(t, got.ReleaseList, len(genesisState.ReleaseList))
 	require.Subset(t, genesisState.ReleaseList, got.ReleaseList)
 	require.Equal(t, genesisState.ReleaseCount, got.ReleaseCount)
+
 	require.ElementsMatch(t, genesisState.TaskList, got.TaskList)
 	require.Equal(t, genesisState.TaskCount, got.TaskCount)
 

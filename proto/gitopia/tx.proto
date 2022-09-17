@@ -44,7 +44,6 @@ service Msg {
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
   rpc CreatePullRequest(MsgCreatePullRequest) returns (MsgCreatePullRequestResponse);
-  rpc UpdatePullRequest(MsgUpdatePullRequest) returns (MsgUpdatePullRequestResponse);
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc InvokeMergePullRequest(MsgInvokeMergePullRequest) returns (MsgInvokeMergePullRequestResponse);
@@ -67,7 +66,6 @@ service Msg {
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
-  rpc UpdateIssue(MsgUpdateIssue) returns (MsgUpdateIssueResponse);
   rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
   rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
   rpc ToggleIssueState(MsgToggleIssueState) returns (MsgToggleIssueStateResponse);
@@ -375,15 +373,6 @@ message MsgCreatePullRequestResponse {
   uint64 iid = 2;
 }
 
-message MsgUpdatePullRequest {
-  string creator = 1;
-  uint64 id = 2;
-  string title = 4;
-  string description = 6;
-}
-
-message MsgUpdatePullRequestResponse { }
-
 message MsgUpdatePullRequestTitle {
   string creator = 1;
   uint64 id = 2;
@@ -581,17 +570,6 @@ message MsgCreateIssueResponse {
   uint64 id = 1;
   uint64 iid = 2;
 }
-
-message MsgUpdateIssue {
-  string creator = 1;
-  uint64 id = 2;
-  string title = 3;
-  string description = 4;
-  uint64 weight = 5;
-  repeated string assignees = 6;
-}
-
-message MsgUpdateIssueResponse { }
 
 message MsgUpdateIssueTitle {
   string creator = 1;
