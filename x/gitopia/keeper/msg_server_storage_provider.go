@@ -117,8 +117,18 @@ func (k msgServer) RevokeStorageProviderPermissions(goCtx context.Context, msg *
 	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
 	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}))
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}))
+	typeUrls := map[string]struct{}{
+		sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}):    {},
+		sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}): {},
+	}
+
+	authorizations := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+
+	for i := range authorizations {
+		if _, found := typeUrls[authorizations[i].MsgTypeURL()]; found {
+			k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())
+		}
+	}
 
 	return &types.MsgRevokeStorageProviderPermissionsResponse{}, nil
 }

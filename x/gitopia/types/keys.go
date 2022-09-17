@@ -74,6 +74,11 @@ const (
 	ForkRepositoryEventKey                     = "ForkRepository"
 	InvokeMergePullRequestEventKey             = "InvokeMergePullRequest"
 	SetPullRequestStateEventKey                = "SetPullRequestState"
+	SetRepositoryBranchEventKey                = "SetRepositoryBranch"
+	SetRepositoryTagEventKey                   = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey           = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey              = "MultiSetRepositoryTag"
+	EventAttributeIsGitRefUpdatedKey           = "GitRefUpdated"
 	EventAttributeCreatorKey                   = "Creator"
 	EventAttributeRepoNameKey                  = "RepositoryName"
 	EventAttributeRepoIdKey                    = "RepositoryId"
@@ -88,13 +93,8 @@ const (
 )
 
 const (
-	TaskKey                          = "Task-value-"
-	TaskCountKey                     = "Task-count-"
-	SetRepositoryBranchEventKey      = "SetRepositoryBranch"
-	SetRepositoryTagEventKey         = "SetRepositoryTag"
-	MultiSetRepositoryBranchEventKey = "MultiSetRepositoryBranch"
-	MultiSetRepositoryTagEventKey    = "MultiSetRepositoryTag"
-	EventAttributeIsGitRefUpdatedKey = "GitRefUpdated"
+	TaskKey      = "Task-value-"
+	TaskCountKey = "Task-count-"
 )
 
 const (

@@ -15,7 +15,7 @@ const (
 
 var _ sdk.Msg = &MsgCreateStorageProvider{}
 
-func NewMsgCreateStorageProvider(creator string, store Store) *MsgCreateStorageProvider {
+func NewMsgCreateStorageProvider(creator string, store StorageProvider_Store) *MsgCreateStorageProvider {
 	return &MsgCreateStorageProvider{
 		Creator: creator,
 		Store:   store,
@@ -49,7 +49,7 @@ func (msg *MsgCreateStorageProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Store == Store_NONE {
+	if msg.Store == StorageProvider_NONE {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
 	}
 	return nil
@@ -57,7 +57,7 @@ func (msg *MsgCreateStorageProvider) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateStorageProvider{}
 
-func NewMsgUpdateStorageProvider(creator string, id uint64, store Store) *MsgUpdateStorageProvider {
+func NewMsgUpdateStorageProvider(creator string, id uint64, store StorageProvider_Store) *MsgUpdateStorageProvider {
 	return &MsgUpdateStorageProvider{
 		Id:      id,
 		Creator: creator,
@@ -92,7 +92,7 @@ func (msg *MsgUpdateStorageProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Store == Store_NONE {
+	if msg.Store == StorageProvider_NONE {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
 	}
 

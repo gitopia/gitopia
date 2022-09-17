@@ -19,7 +19,7 @@ func CmdCreateStorageProvider() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argStore := args[0]
-			store, ok := types.Store_value[argStore]
+			store, ok := types.StorageProvider_Store_value[argStore]
 			if !ok {
 				return errors.Newf("invalid store (%s)", argStore)
 			}
@@ -29,7 +29,7 @@ func CmdCreateStorageProvider() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateStorageProvider(clientCtx.GetFromAddress().String(), types.Store(store))
+			msg := types.NewMsgCreateStorageProvider(clientCtx.GetFromAddress().String(), types.StorageProvider_Store(store))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -54,7 +54,7 @@ func CmdUpdateStorageProvider() *cobra.Command {
 			}
 
 			argStore := args[1]
-			store, ok := types.Store_value[argStore]
+			store, ok := types.StorageProvider_Store_value[argStore]
 			if !ok {
 				return errors.Newf("invalid store (%s)", argStore)
 			}
@@ -64,7 +64,7 @@ func CmdUpdateStorageProvider() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateStorageProvider(clientCtx.GetFromAddress().String(), id, types.Store(store))
+			msg := types.NewMsgUpdateStorageProvider(clientCtx.GetFromAddress().String(), id, types.StorageProvider_Store(store))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

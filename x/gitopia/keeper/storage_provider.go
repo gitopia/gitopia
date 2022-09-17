@@ -73,7 +73,7 @@ func (k Keeper) GetStorageProvider(ctx sdk.Context, id uint64) (val types.Storag
 
 type storageProviderPKey struct {
 	creator string
-	store   types.Store
+	store   types.StorageProvider_Store
 }
 
 // GetStorageProvider returns a storageProvider from its key

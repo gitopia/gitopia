@@ -4975,9 +4975,9 @@ var (
 
 	pattern_Query_MemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "member"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_StorageProvider_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "storage_provider", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_StorageProvider_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "storage-provider", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_StorageProviderAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "storage_provider"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_StorageProviderAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "storage-provider"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_Release_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "release", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 

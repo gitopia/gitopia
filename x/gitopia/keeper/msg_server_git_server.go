@@ -60,10 +60,20 @@ func (k msgServer) RevokeGitServerPermissions(goCtx context.Context, msg *types.
 	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
 	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepository{}))
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}))
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgSetPullRequestState{}))
-	k.authzKeeper.DeleteGrant(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateTask{}))
+	typeUrls := map[string]struct{}{
+		sdk.MsgTypeURL(&types.MsgForkRepository{}):        {},
+		sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}): {},
+		sdk.MsgTypeURL(&types.MsgSetPullRequestState{}):   {},
+		sdk.MsgTypeURL(&types.MsgUpdateTask{}):            {},
+	}
+
+	authorizations := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+
+	for i := range authorizations {
+		if _, found := typeUrls[authorizations[i].MsgTypeURL()]; found {
+			k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())
+		}
+	}
 
 	return &types.MsgRevokeGitServerPermissionsResponse{}, nil
 }

@@ -88,12 +88,12 @@ service Query {
 
     // Queries a StorageProvider by id.
 	rpc StorageProvider(QueryGetStorageProviderRequest) returns (QueryGetStorageProviderResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage_provider/{id}";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage-provider/{id}";
 	}
 
 	// Queries a list of StorageProvider items.
 	rpc StorageProviderAll(QueryAllStorageProviderRequest) returns (QueryAllStorageProviderResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage_provider";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage-provider";
 	}
 
 // this line is used by starport scaffolding # 2

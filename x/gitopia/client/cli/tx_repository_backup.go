@@ -12,6 +12,40 @@ import (
 
 var _ = strconv.Itoa(0)
 
+func CmdAddRepositoryBackupRef() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-repository-backup-ref [id] [repository-name] [store] [ref]",
+		Short: "add repository backup reference",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			argId := args[0]
+			argRepositoryName := args[1]
+			argStore := (types.StorageProvider_Store)(types.StorageProvider_Store_value[args[2]])
+			argRef := args[3]
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddRepositoryBackupRef(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argId, Name: argRepositoryName},
+				argStore,
+				argRef,
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdUpdateRepositoryBackupRef() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-repository-backup-ref [id] [repository-name] [store] [ref]",
@@ -20,7 +54,7 @@ func CmdUpdateRepositoryBackupRef() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
-			argStore := (types.Store)(types.Store_value[args[2]])
+			argStore := (types.StorageProvider_Store)(types.StorageProvider_Store_value[args[2]])
 			argRef := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
