@@ -1635,36 +1635,6 @@ func (_m *MockMsgClient) UpdateComment(ctx context.Context, in *MsgUpdateComment
 	return r0, r1
 }
 
-// UpdateIssue provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateIssue(ctx context.Context, in *MsgUpdateIssue, opts ...grpc.CallOption) (*MsgUpdateIssueResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *MsgUpdateIssueResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateIssue, ...grpc.CallOption) *MsgUpdateIssueResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdateIssueResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateIssue, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // UpdateIssueDescription provides a mock function with given fields: ctx, in, opts
 func (_m *MockMsgClient) UpdateIssueDescription(ctx context.Context, in *MsgUpdateIssueDescription, opts ...grpc.CallOption) (*MsgUpdateIssueDescriptionResponse, error) {
 	_va := make([]interface{}, len(opts))
@@ -1867,36 +1837,6 @@ func (_m *MockMsgClient) UpdateDaoWebsite(ctx context.Context, in *MsgUpdateDaoW
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateDaoWebsite, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdatePullRequest provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdatePullRequest(ctx context.Context, in *MsgUpdatePullRequest, opts ...grpc.CallOption) (*MsgUpdatePullRequestResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *MsgUpdatePullRequestResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdatePullRequest, ...grpc.CallOption) *MsgUpdatePullRequestResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdatePullRequestResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdatePullRequest, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
