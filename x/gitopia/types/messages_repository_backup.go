@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/ipfs/go-cid"
 )
 
 const (
@@ -57,6 +58,13 @@ func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
 	}
 
+	if msg.Store == StorageProvider_IPFS {
+		_, err = cid.Decode(msg.Ref)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid IPFS cid (%s)", msg.Ref)
+		}
+	}
+
 	return nil
 }
 
@@ -105,6 +113,13 @@ func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
 
 	if msg.Store == StorageProvider_NONE {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
+	}
+
+	if msg.Store == StorageProvider_IPFS {
+		_, err = cid.Decode(msg.Ref)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid IPFS cid (%s)", msg.Ref)
+		}
 	}
 	return nil
 }
