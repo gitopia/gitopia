@@ -63,7 +63,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		OwnerType: types.OwnerType_DAO,
 	}
 
-	k.Keeper.SetWhois(
+	k.Keeper.AppendWhois(
 		ctx,
 		whois,
 	)
@@ -109,24 +109,27 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
 	}
 
-	if _, found := k.GetWhois(ctx, currentDaoName); found {
-		k.RemoveWhois(ctx, currentDaoName)
+	whois, found := k.GetWhois(ctx, currentDaoName)
+	if found {
+		whois.Name = newDaoName
+		k.SetWhois(
+			ctx,
+			whois,
+		)
+	} else {
+		whois = types.Whois{
+			Creator:   msg.Creator,
+			Name:      newDaoName,
+			Address:   dao.Address,
+			OwnerType: types.OwnerType_DAO,
+		}
+		k.AppendWhois(ctx, whois)
 	}
 
 	dao.Name = msg.Name
 	dao.UpdatedAt = ctx.BlockTime().Unix()
-	k.SetDao(ctx, dao)
 
-	whois := types.Whois{
-		Creator:   msg.Creator,
-		Name:      newDaoName,
-		Address:   dao.Address,
-		OwnerType: types.OwnerType_DAO,
-	}
-	k.Keeper.SetWhois(
-		ctx,
-		whois,
-	)
+	k.SetDao(ctx, dao)
 
 	return &types.MsgRenameDaoResponse{}, nil
 }

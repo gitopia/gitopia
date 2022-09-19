@@ -50,7 +50,7 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		user,
 	)
 
-	k.Keeper.SetWhois(
+	k.Keeper.AppendWhois(
 		ctx,
 		whois,
 	)
@@ -77,21 +77,24 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Username))
 	}
 
-	if _, found := k.GetWhois(ctx, currentUsername); found {
-		k.RemoveWhois(ctx, currentUsername)
+	whois, found := k.GetWhois(ctx, currentUsername)
+	if found {
+		whois.Name = newUsername
+		k.SetWhois(ctx, whois)
+	} else {
+		whois := types.Whois{
+			Creator:   msg.Creator,
+			Name:      newUsername,
+			Address:   msg.Creator,
+			OwnerType: types.OwnerType_USER,
+		}
+		k.AppendWhois(ctx, whois)
 	}
 
 	user.Username = msg.Username
-	whois := types.Whois{
-		Creator:   msg.Creator,
-		Name:      newUsername,
-		Address:   msg.Creator,
-		OwnerType: types.OwnerType_USER,
-	}
 	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
-	k.Keeper.SetWhois(ctx, whois)
 
 	return &types.MsgUpdateUserUsernameResponse{}, nil
 }

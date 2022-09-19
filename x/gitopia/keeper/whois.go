@@ -39,6 +39,27 @@ func (k Keeper) SetWhoisCount(ctx sdk.Context, count uint64) {
 	store.Set(byteKey, bz)
 }
 
+// AppendWhois appends a whois in the store with a new id and update the count
+func (k Keeper) AppendWhois(
+	ctx sdk.Context,
+	whois types.Whois,
+) uint64 {
+	// Create the whois
+	count := k.GetWhoisCount(ctx)
+
+	// Set the ID of the appended value
+	whois.Id = count
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
+	appendedValue := k.cdc.MustMarshal(&whois)
+	store.Set(GetWhoisIDBytes(whois.Id), appendedValue)
+
+	// Update whois count
+	k.SetWhoisCount(ctx, count+1)
+
+	return count
+}
+
 // SetWhois set a specific whois in the store
 func (k Keeper) SetWhois(ctx sdk.Context, whois types.Whois) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
@@ -77,6 +98,18 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 	}
 
 	return
+}
+
+// GetWhoisIDBytes returns the byte representation of the ID
+func GetWhoisIDBytes(id uint64) []byte {
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+	return bz
+}
+
+// GetWhoisIDFromBytes returns ID in uint64 format from a byte array
+func GetWhoisIDFromBytes(bz []byte) uint64 {
+	return binary.BigEndian.Uint64(bz)
 }
 
 // Checks if username or address is valid and exists. Also identify its type (USER/DAO).
