@@ -109,8 +109,7 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
 	}
 
-	whois, found := k.GetWhois(ctx, currentDaoName)
-	if found {
+	if whois, found := k.GetWhois(ctx, currentDaoName); found {
 		whois.Name = newDaoName
 		k.SetWhois(
 			ctx,

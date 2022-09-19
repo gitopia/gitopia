@@ -52,7 +52,7 @@ func (k Keeper) AppendWhois(
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	appendedValue := k.cdc.MustMarshal(&whois)
-	store.Set(GetWhoisIDBytes(whois.Id), appendedValue)
+	store.Set([]byte(whois.Name), appendedValue)
 
 	// Update whois count
 	k.SetWhoisCount(ctx, count+1)

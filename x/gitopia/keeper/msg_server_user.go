@@ -77,8 +77,7 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Username))
 	}
 
-	whois, found := k.GetWhois(ctx, currentUsername)
-	if found {
+	if whois, found := k.GetWhois(ctx, currentUsername); found {
 		whois.Name = newUsername
 		k.SetWhois(ctx, whois)
 	} else {
