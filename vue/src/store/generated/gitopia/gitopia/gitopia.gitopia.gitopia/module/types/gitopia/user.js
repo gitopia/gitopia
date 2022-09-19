@@ -16,6 +16,7 @@ const baseUser = {
     bio: "",
     createdAt: 0,
     updatedAt: 0,
+    verified: false,
 };
 export const User = {
     encode(message, writer = Writer.create()) {
@@ -43,28 +44,25 @@ export const User = {
         for (const v of message.following) {
             writer.uint32(66).string(v);
         }
-        for (const v of message.repositories) {
-            UserRepository.encode(v, writer.uint32(74).fork()).ldelim();
-        }
-        for (const v of message.organizations) {
-            UserOrganization.encode(v, writer.uint32(82).fork()).ldelim();
-        }
-        writer.uint32(90).fork();
+        writer.uint32(74).fork();
         for (const v of message.starredRepos) {
             writer.uint64(v);
         }
         writer.ldelim();
         if (message.subscriptions !== "") {
-            writer.uint32(98).string(message.subscriptions);
+            writer.uint32(82).string(message.subscriptions);
         }
         if (message.bio !== "") {
-            writer.uint32(106).string(message.bio);
+            writer.uint32(90).string(message.bio);
         }
         if (message.createdAt !== 0) {
-            writer.uint32(112).int64(message.createdAt);
+            writer.uint32(96).int64(message.createdAt);
         }
         if (message.updatedAt !== 0) {
-            writer.uint32(120).int64(message.updatedAt);
+            writer.uint32(104).int64(message.updatedAt);
+        }
+        if (message.verified === true) {
+            writer.uint32(112).bool(message.verified);
         }
         return writer;
     },
@@ -74,8 +72,6 @@ export const User = {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.organizations = [];
         message.starredRepos = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -105,12 +101,6 @@ export const User = {
                     message.following.push(reader.string());
                     break;
                 case 9:
-                    message.repositories.push(UserRepository.decode(reader, reader.uint32()));
-                    break;
-                case 10:
-                    message.organizations.push(UserOrganization.decode(reader, reader.uint32()));
-                    break;
-                case 11:
                     if ((tag & 7) === 2) {
                         const end2 = reader.uint32() + reader.pos;
                         while (reader.pos < end2) {
@@ -121,17 +111,20 @@ export const User = {
                         message.starredRepos.push(longToNumber(reader.uint64()));
                     }
                     break;
-                case 12:
+                case 10:
                     message.subscriptions = reader.string();
                     break;
-                case 13:
+                case 11:
                     message.bio = reader.string();
                     break;
-                case 14:
+                case 12:
                     message.createdAt = longToNumber(reader.int64());
                     break;
-                case 15:
+                case 13:
                     message.updatedAt = longToNumber(reader.int64());
+                    break;
+                case 14:
+                    message.verified = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -144,8 +137,6 @@ export const User = {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.organizations = [];
         message.starredRepos = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
@@ -193,16 +184,6 @@ export const User = {
                 message.following.push(String(e));
             }
         }
-        if (object.repositories !== undefined && object.repositories !== null) {
-            for (const e of object.repositories) {
-                message.repositories.push(UserRepository.fromJSON(e));
-            }
-        }
-        if (object.organizations !== undefined && object.organizations !== null) {
-            for (const e of object.organizations) {
-                message.organizations.push(UserOrganization.fromJSON(e));
-            }
-        }
         if (object.starredRepos !== undefined && object.starredRepos !== null) {
             for (const e of object.starredRepos) {
                 message.starredRepos.push(Number(e));
@@ -232,6 +213,12 @@ export const User = {
         else {
             message.updatedAt = 0;
         }
+        if (object.verified !== undefined && object.verified !== null) {
+            message.verified = Boolean(object.verified);
+        }
+        else {
+            message.verified = false;
+        }
         return message;
     },
     toJSON(message) {
@@ -255,18 +242,6 @@ export const User = {
         else {
             obj.following = [];
         }
-        if (message.repositories) {
-            obj.repositories = message.repositories.map((e) => e ? UserRepository.toJSON(e) : undefined);
-        }
-        else {
-            obj.repositories = [];
-        }
-        if (message.organizations) {
-            obj.organizations = message.organizations.map((e) => e ? UserOrganization.toJSON(e) : undefined);
-        }
-        else {
-            obj.organizations = [];
-        }
         if (message.starredRepos) {
             obj.starredRepos = message.starredRepos.map((e) => e);
         }
@@ -278,14 +253,13 @@ export const User = {
         message.bio !== undefined && (obj.bio = message.bio);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+        message.verified !== undefined && (obj.verified = message.verified);
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseUser };
         message.followers = [];
         message.following = [];
-        message.repositories = [];
-        message.organizations = [];
         message.starredRepos = [];
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
@@ -333,16 +307,6 @@ export const User = {
                 message.following.push(e);
             }
         }
-        if (object.repositories !== undefined && object.repositories !== null) {
-            for (const e of object.repositories) {
-                message.repositories.push(UserRepository.fromPartial(e));
-            }
-        }
-        if (object.organizations !== undefined && object.organizations !== null) {
-            for (const e of object.organizations) {
-                message.organizations.push(UserOrganization.fromPartial(e));
-            }
-        }
         if (object.starredRepos !== undefined && object.starredRepos !== null) {
             for (const e of object.starredRepos) {
                 message.starredRepos.push(e);
@@ -372,32 +336,38 @@ export const User = {
         else {
             message.updatedAt = 0;
         }
+        if (object.verified !== undefined && object.verified !== null) {
+            message.verified = object.verified;
+        }
+        else {
+            message.verified = false;
+        }
         return message;
     },
 };
-const baseUserRepository = { name: "", id: 0 };
-export const UserRepository = {
+const baseUserDao = { userAddress: "", daoAddress: "" };
+export const UserDao = {
     encode(message, writer = Writer.create()) {
-        if (message.name !== "") {
-            writer.uint32(10).string(message.name);
+        if (message.userAddress !== "") {
+            writer.uint32(10).string(message.userAddress);
         }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
+        if (message.daoAddress !== "") {
+            writer.uint32(18).string(message.daoAddress);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseUserRepository };
+        const message = { ...baseUserDao };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.name = reader.string();
+                    message.userAddress = reader.string();
                     break;
                 case 2:
-                    message.id = longToNumber(reader.uint64());
+                    message.daoAddress = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -407,110 +377,41 @@ export const UserRepository = {
         return message;
     },
     fromJSON(object) {
-        const message = { ...baseUserRepository };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = String(object.name);
+        const message = { ...baseUserDao };
+        if (object.userAddress !== undefined && object.userAddress !== null) {
+            message.userAddress = String(object.userAddress);
         }
         else {
-            message.name = "";
+            message.userAddress = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
+        if (object.daoAddress !== undefined && object.daoAddress !== null) {
+            message.daoAddress = String(object.daoAddress);
         }
         else {
-            message.id = 0;
+            message.daoAddress = "";
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
-        message.name !== undefined && (obj.name = message.name);
-        message.id !== undefined && (obj.id = message.id);
+        message.userAddress !== undefined &&
+            (obj.userAddress = message.userAddress);
+        message.daoAddress !== undefined && (obj.daoAddress = message.daoAddress);
         return obj;
     },
     fromPartial(object) {
-        const message = { ...baseUserRepository };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = object.name;
+        const message = { ...baseUserDao };
+        if (object.userAddress !== undefined && object.userAddress !== null) {
+            message.userAddress = object.userAddress;
         }
         else {
-            message.name = "";
+            message.userAddress = "";
         }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        return message;
-    },
-};
-const baseUserOrganization = { name: "", id: "" };
-export const UserOrganization = {
-    encode(message, writer = Writer.create()) {
-        if (message.name !== "") {
-            writer.uint32(10).string(message.name);
-        }
-        if (message.id !== "") {
-            writer.uint32(18).string(message.id);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseUserOrganization };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.name = reader.string();
-                    break;
-                case 2:
-                    message.id = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseUserOrganization };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = String(object.name);
+        if (object.daoAddress !== undefined && object.daoAddress !== null) {
+            message.daoAddress = object.daoAddress;
         }
         else {
-            message.name = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = String(object.id);
-        }
-        else {
-            message.id = "";
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.name !== undefined && (obj.name = message.name);
-        message.id !== undefined && (obj.id = message.id);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseUserOrganization };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = object.name;
-        }
-        else {
-            message.name = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = "";
+            message.daoAddress = "";
         }
         return message;
     },

@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -50,6 +52,24 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.MultiSetRepositoryBranchEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
+			sdk.NewAttribute(types.EventAttributeEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+		),
+	)
+
 	return &types.MsgSetBranchResponse{}, nil
 }
 
@@ -95,6 +115,24 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.MultiSetRepositoryBranchEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
+			sdk.NewAttribute(types.EventAttributeEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+		),
+	)
 
 	return &types.MsgMultiSetBranchResponse{}, nil
 }

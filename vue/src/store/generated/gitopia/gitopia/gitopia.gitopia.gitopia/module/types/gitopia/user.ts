@@ -13,23 +13,17 @@ export interface User {
   avatarUrl: string;
   followers: string[];
   following: string[];
-  repositories: UserRepository[];
-  organizations: UserOrganization[];
-  starred_repos: number[];
+  starredRepos: number[];
   subscriptions: string;
   bio: string;
   createdAt: number;
   updatedAt: number;
+  verified: boolean;
 }
 
-export interface UserRepository {
-  name: string;
-  id: number;
-}
-
-export interface UserOrganization {
-  name: string;
-  id: string;
+export interface UserDao {
+  userAddress: string;
+  daoAddress: string;
 }
 
 const baseUser: object = {
@@ -41,11 +35,12 @@ const baseUser: object = {
   avatarUrl: "",
   followers: "",
   following: "",
-  starred_repos: 0,
+  starredRepos: 0,
   subscriptions: "",
   bio: "",
   createdAt: 0,
   updatedAt: 0,
+  verified: false,
 };
 
 export const User = {
@@ -74,28 +69,25 @@ export const User = {
     for (const v of message.following) {
       writer.uint32(66).string(v!);
     }
-    for (const v of message.repositories) {
-      UserRepository.encode(v!, writer.uint32(74).fork()).ldelim();
-    }
-    for (const v of message.organizations) {
-      UserOrganization.encode(v!, writer.uint32(82).fork()).ldelim();
-    }
-    writer.uint32(90).fork();
-    for (const v of message.starred_repos) {
+    writer.uint32(74).fork();
+    for (const v of message.starredRepos) {
       writer.uint64(v);
     }
     writer.ldelim();
     if (message.subscriptions !== "") {
-      writer.uint32(98).string(message.subscriptions);
+      writer.uint32(82).string(message.subscriptions);
     }
     if (message.bio !== "") {
-      writer.uint32(106).string(message.bio);
+      writer.uint32(90).string(message.bio);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(112).int64(message.createdAt);
+      writer.uint32(96).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(120).int64(message.updatedAt);
+      writer.uint32(104).int64(message.updatedAt);
+    }
+    if (message.verified === true) {
+      writer.uint32(112).bool(message.verified);
     }
     return writer;
   },
@@ -106,9 +98,7 @@ export const User = {
     const message = { ...baseUser } as User;
     message.followers = [];
     message.following = [];
-    message.repositories = [];
-    message.organizations = [];
-    message.starred_repos = [];
+    message.starredRepos = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -137,36 +127,29 @@ export const User = {
           message.following.push(reader.string());
           break;
         case 9:
-          message.repositories.push(
-            UserRepository.decode(reader, reader.uint32())
-          );
-          break;
-        case 10:
-          message.organizations.push(
-            UserOrganization.decode(reader, reader.uint32())
-          );
-          break;
-        case 11:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.starred_repos.push(longToNumber(reader.uint64() as Long));
+              message.starredRepos.push(longToNumber(reader.uint64() as Long));
             }
           } else {
-            message.starred_repos.push(longToNumber(reader.uint64() as Long));
+            message.starredRepos.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 12:
+        case 10:
           message.subscriptions = reader.string();
           break;
-        case 13:
+        case 11:
           message.bio = reader.string();
           break;
-        case 14:
+        case 12:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 15:
+        case 13:
           message.updatedAt = longToNumber(reader.int64() as Long);
+          break;
+        case 14:
+          message.verified = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -180,9 +163,7 @@ export const User = {
     const message = { ...baseUser } as User;
     message.followers = [];
     message.following = [];
-    message.repositories = [];
-    message.organizations = [];
-    message.starred_repos = [];
+    message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -223,19 +204,9 @@ export const User = {
         message.following.push(String(e));
       }
     }
-    if (object.repositories !== undefined && object.repositories !== null) {
-      for (const e of object.repositories) {
-        message.repositories.push(UserRepository.fromJSON(e));
-      }
-    }
-    if (object.organizations !== undefined && object.organizations !== null) {
-      for (const e of object.organizations) {
-        message.organizations.push(UserOrganization.fromJSON(e));
-      }
-    }
-    if (object.starred_repos !== undefined && object.starred_repos !== null) {
-      for (const e of object.starred_repos) {
-        message.starred_repos.push(Number(e));
+    if (object.starredRepos !== undefined && object.starredRepos !== null) {
+      for (const e of object.starredRepos) {
+        message.starredRepos.push(Number(e));
       }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {
@@ -257,6 +228,11 @@ export const User = {
       message.updatedAt = Number(object.updatedAt);
     } else {
       message.updatedAt = 0;
+    }
+    if (object.verified !== undefined && object.verified !== null) {
+      message.verified = Boolean(object.verified);
+    } else {
+      message.verified = false;
     }
     return message;
   },
@@ -280,30 +256,17 @@ export const User = {
     } else {
       obj.following = [];
     }
-    if (message.repositories) {
-      obj.repositories = message.repositories.map((e) =>
-        e ? UserRepository.toJSON(e) : undefined
-      );
+    if (message.starredRepos) {
+      obj.starredRepos = message.starredRepos.map((e) => e);
     } else {
-      obj.repositories = [];
-    }
-    if (message.organizations) {
-      obj.organizations = message.organizations.map((e) =>
-        e ? UserOrganization.toJSON(e) : undefined
-      );
-    } else {
-      obj.organizations = [];
-    }
-    if (message.starred_repos) {
-      obj.starred_repos = message.starred_repos.map((e) => e);
-    } else {
-      obj.starred_repos = [];
+      obj.starredRepos = [];
     }
     message.subscriptions !== undefined &&
       (obj.subscriptions = message.subscriptions);
     message.bio !== undefined && (obj.bio = message.bio);
     message.createdAt !== undefined && (obj.createdAt = message.createdAt);
     message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+    message.verified !== undefined && (obj.verified = message.verified);
     return obj;
   },
 
@@ -311,9 +274,7 @@ export const User = {
     const message = { ...baseUser } as User;
     message.followers = [];
     message.following = [];
-    message.repositories = [];
-    message.organizations = [];
-    message.starred_repos = [];
+    message.starredRepos = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -354,19 +315,9 @@ export const User = {
         message.following.push(e);
       }
     }
-    if (object.repositories !== undefined && object.repositories !== null) {
-      for (const e of object.repositories) {
-        message.repositories.push(UserRepository.fromPartial(e));
-      }
-    }
-    if (object.organizations !== undefined && object.organizations !== null) {
-      for (const e of object.organizations) {
-        message.organizations.push(UserOrganization.fromPartial(e));
-      }
-    }
-    if (object.starred_repos !== undefined && object.starred_repos !== null) {
-      for (const e of object.starred_repos) {
-        message.starred_repos.push(e);
+    if (object.starredRepos !== undefined && object.starredRepos !== null) {
+      for (const e of object.starredRepos) {
+        message.starredRepos.push(e);
       }
     }
     if (object.subscriptions !== undefined && object.subscriptions !== null) {
@@ -389,35 +340,40 @@ export const User = {
     } else {
       message.updatedAt = 0;
     }
+    if (object.verified !== undefined && object.verified !== null) {
+      message.verified = object.verified;
+    } else {
+      message.verified = false;
+    }
     return message;
   },
 };
 
-const baseUserRepository: object = { name: "", id: 0 };
+const baseUserDao: object = { userAddress: "", daoAddress: "" };
 
-export const UserRepository = {
-  encode(message: UserRepository, writer: Writer = Writer.create()): Writer {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
+export const UserDao = {
+  encode(message: UserDao, writer: Writer = Writer.create()): Writer {
+    if (message.userAddress !== "") {
+      writer.uint32(10).string(message.userAddress);
     }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
+    if (message.daoAddress !== "") {
+      writer.uint32(18).string(message.daoAddress);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): UserRepository {
+  decode(input: Reader | Uint8Array, length?: number): UserDao {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseUserRepository } as UserRepository;
+    const message = { ...baseUserDao } as UserDao;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.name = reader.string();
+          message.userAddress = reader.string();
           break;
         case 2:
-          message.id = longToNumber(reader.uint64() as Long);
+          message.daoAddress = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -427,111 +383,40 @@ export const UserRepository = {
     return message;
   },
 
-  fromJSON(object: any): UserRepository {
-    const message = { ...baseUserRepository } as UserRepository;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
+  fromJSON(object: any): UserDao {
+    const message = { ...baseUserDao } as UserDao;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = String(object.userAddress);
     } else {
-      message.name = "";
+      message.userAddress = "";
     }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
+    if (object.daoAddress !== undefined && object.daoAddress !== null) {
+      message.daoAddress = String(object.daoAddress);
     } else {
-      message.id = 0;
+      message.daoAddress = "";
     }
     return message;
   },
 
-  toJSON(message: UserRepository): unknown {
+  toJSON(message: UserDao): unknown {
     const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    message.id !== undefined && (obj.id = message.id);
+    message.userAddress !== undefined &&
+      (obj.userAddress = message.userAddress);
+    message.daoAddress !== undefined && (obj.daoAddress = message.daoAddress);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<UserRepository>): UserRepository {
-    const message = { ...baseUserRepository } as UserRepository;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
+  fromPartial(object: DeepPartial<UserDao>): UserDao {
+    const message = { ...baseUserDao } as UserDao;
+    if (object.userAddress !== undefined && object.userAddress !== null) {
+      message.userAddress = object.userAddress;
     } else {
-      message.name = "";
+      message.userAddress = "";
     }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
+    if (object.daoAddress !== undefined && object.daoAddress !== null) {
+      message.daoAddress = object.daoAddress;
     } else {
-      message.id = 0;
-    }
-    return message;
-  },
-};
-
-const baseUserOrganization: object = { name: "", id: "" };
-
-export const UserOrganization = {
-  encode(message: UserOrganization, writer: Writer = Writer.create()): Writer {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
-    }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): UserOrganization {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseUserOrganization } as UserOrganization;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.name = reader.string();
-          break;
-        case 2:
-          message.id = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): UserOrganization {
-    const message = { ...baseUserOrganization } as UserOrganization;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
-    } else {
-      message.id = "";
-    }
-    return message;
-  },
-
-  toJSON(message: UserOrganization): unknown {
-    const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    message.id !== undefined && (obj.id = message.id);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<UserOrganization>): UserOrganization {
-    const message = { ...baseUserOrganization } as UserOrganization;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = "";
+      message.daoAddress = "";
     }
     return message;
   },

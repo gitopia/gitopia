@@ -1,9 +1,17 @@
 import { Writer, Reader } from "protobufjs/minimal";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
+export declare enum OwnerType {
+    USER = 0,
+    DAO = 1,
+    UNRECOGNIZED = -1
+}
+export declare function ownerTypeFromJSON(object: any): OwnerType;
+export declare function ownerTypeToJSON(object: OwnerType): string;
 export interface Whois {
     creator: string;
     name: string;
     address: string;
+    ownerType: OwnerType;
 }
 export declare const Whois: {
     encode(message: Whois, writer?: Writer): Writer;

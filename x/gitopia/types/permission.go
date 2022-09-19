@@ -20,4 +20,5 @@ const (
 	RepositoryUpdateDescriptionPermission = RepositoryCollaborator_MAINTAIN
 	ToggleRepositoryForkingPermission     = RepositoryCollaborator_ADMIN
 	ToggleIssueStatePermission            = RepositoryCollaborator_TRIAGE
+	RepositoryBackupPermission            = RepositoryCollaborator_ADMIN
 )

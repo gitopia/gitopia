@@ -54,6 +54,9 @@ export const TxResponse = {
         if (message.timestamp !== "") {
             writer.uint32(98).string(message.timestamp);
         }
+        for (const v of message.events) {
+            Event.encode(v, writer.uint32(106).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -61,6 +64,7 @@ export const TxResponse = {
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = { ...baseTxResponse };
         message.logs = [];
+        message.events = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -100,6 +104,9 @@ export const TxResponse = {
                 case 12:
                     message.timestamp = reader.string();
                     break;
+                case 13:
+                    message.events.push(Event.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -110,6 +117,7 @@ export const TxResponse = {
     fromJSON(object) {
         const message = { ...baseTxResponse };
         message.logs = [];
+        message.events = [];
         if (object.height !== undefined && object.height !== null) {
             message.height = Number(object.height);
         }
@@ -181,6 +189,11 @@ export const TxResponse = {
         else {
             message.timestamp = "";
         }
+        if (object.events !== undefined && object.events !== null) {
+            for (const e of object.events) {
+                message.events.push(Event.fromJSON(e));
+            }
+        }
         return message;
     },
     toJSON(message) {
@@ -203,11 +216,18 @@ export const TxResponse = {
         message.tx !== undefined &&
             (obj.tx = message.tx ? Any.toJSON(message.tx) : undefined);
         message.timestamp !== undefined && (obj.timestamp = message.timestamp);
+        if (message.events) {
+            obj.events = message.events.map((e) => (e ? Event.toJSON(e) : undefined));
+        }
+        else {
+            obj.events = [];
+        }
         return obj;
     },
     fromPartial(object) {
         const message = { ...baseTxResponse };
         message.logs = [];
+        message.events = [];
         if (object.height !== undefined && object.height !== null) {
             message.height = object.height;
         }
@@ -278,6 +298,11 @@ export const TxResponse = {
         }
         else {
             message.timestamp = "";
+        }
+        if (object.events !== undefined && object.events !== null) {
+            for (const e of object.events) {
+                message.events.push(Event.fromPartial(e));
+            }
         }
         return message;
     },

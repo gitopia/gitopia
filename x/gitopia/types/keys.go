@@ -74,12 +74,15 @@ const (
 	ForkRepositoryEventKey                     = "ForkRepository"
 	InvokeMergePullRequestEventKey             = "InvokeMergePullRequest"
 	SetPullRequestStateEventKey                = "SetPullRequestState"
+	SetRepositoryBranchEventKey                = "SetRepositoryBranch"
+	SetRepositoryTagEventKey                   = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey           = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey              = "MultiSetRepositoryTag"
+	EventAttributeIsGitRefUpdatedKey           = "GitRefUpdated"
 	EventAttributeCreatorKey                   = "Creator"
 	EventAttributeRepoNameKey                  = "RepositoryName"
 	EventAttributeRepoIdKey                    = "RepositoryId"
-	EventAttributeStorageProviderKey           = "StorageProvider"
 	EventAttributeOwnerIdKey                   = "OwnerId"
-	EventAttributeOwnerTypeKey                 = "OwnerType"
 	EventAttributePullRequestIdKey             = "PullRequestId"
 	EventAttributePullRequestStateKey          = "PullRequestState"
 	EventAttributePullRequestMergeCommitShaKey = "PullRequestMergeCommitSha"
@@ -87,11 +90,18 @@ const (
 	EventAttributeTaskStateKey                 = "TaskState"
 	EventAttributeMessageKey                   = "Message"
 	EventAttributeParentRepoId                 = "ParentRepositoryId"
+	EventAttributeBaseRepoKeyKey               = "BaseRepositoryKey"
+	EventAttributeEnableArweaveBackupKey       = "EnableArweaveBackup"
 )
 
 const (
 	TaskKey      = "Task-value-"
 	TaskCountKey = "Task-count-"
+)
+
+const (
+	StorageProviderKey      = "StorageProvider-value-"
+	StorageProviderCountKey = "StorageProvider-count-"
 )
 
 const (

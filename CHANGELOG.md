@@ -10,7 +10,11 @@ All notable changes will be documented here.
 
 ### Features
 
-- 
+- Transaction to revoke git server permissions
+- Transactions to authorize and revoke storage provider permissions
+- Query to check whether storage provider has authorization
+- Verified field in User
+- Transaction to toggle arweave backup flag
 
 ### Breaking Changes
 

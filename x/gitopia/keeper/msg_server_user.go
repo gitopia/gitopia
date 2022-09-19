@@ -10,10 +10,6 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-const (
-	CreateUserGas = 10
-)
-
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -54,12 +50,10 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		user,
 	)
 
-	k.Keeper.SetWhois(
+	k.Keeper.AppendWhois(
 		ctx,
 		whois,
 	)
-
-	ctx.GasMeter().ConsumeGas(CreateUserGas, "Create user")
 
 	return &types.MsgCreateUserResponse{Id: id}, nil
 }
@@ -83,21 +77,26 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Username))
 	}
 
-	if _, found := k.GetWhois(ctx, currentUsername); found {
-		k.RemoveWhois(ctx, currentUsername)
+	if whois, found := k.GetWhois(ctx, currentUsername); found {
+		// Remove existing key
+		k.RemoveWhois(ctx, whois.Name)
+
+		whois.Name = newUsername
+		k.SetWhois(ctx, whois)
+	} else {
+		whois := types.Whois{
+			Creator:   msg.Creator,
+			Name:      newUsername,
+			Address:   msg.Creator,
+			OwnerType: types.OwnerType_USER,
+		}
+		k.AppendWhois(ctx, whois)
 	}
 
 	user.Username = msg.Username
-	whois := types.Whois{
-		Creator:   msg.Creator,
-		Name:      newUsername,
-		Address:   msg.Creator,
-		OwnerType: types.OwnerType_USER,
-	}
 	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
-	k.Keeper.SetWhois(ctx, whois)
 
 	return &types.MsgUpdateUserUsernameResponse{}, nil
 }

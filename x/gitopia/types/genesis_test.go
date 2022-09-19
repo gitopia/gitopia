@@ -158,7 +158,15 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 2,
-
+				StorageProviderList: []types.StorageProvider{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				StorageProviderCount: 2,
 				BranchList: []types.Branch{
 					{
 						Id:   0,
@@ -447,6 +455,32 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TaskCount: 0,
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated storageProvider",
+			genState: &types.GenesisState{
+				StorageProviderList: []types.StorageProvider{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid storageProvider count",
+			genState: &types.GenesisState{
+				StorageProviderList: []types.StorageProvider{
+					{
+						Id: 1,
+					},
+				},
+				StorageProviderCount: 0,
 			},
 			valid: false,
 		},

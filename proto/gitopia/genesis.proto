@@ -5,6 +5,7 @@ import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
+import "gitopia/storage_provider.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
@@ -20,6 +21,8 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
+		repeated StorageProvider storageProviderList = 27 [(gogoproto.nullable) = false];
+		uint64 storageProviderCount = 28;
 		repeated BaseRepositoryKey baseRepositoryKeyList = 26 [(gogoproto.nullable) = false];
 		repeated UserDao userDaoList = 25 [(gogoproto.nullable) = false];
     	repeated Task taskList = 17 [(gogoproto.nullable) = false];
