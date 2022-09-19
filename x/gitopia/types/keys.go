@@ -90,6 +90,8 @@ const (
 	EventAttributeTaskStateKey                 = "TaskState"
 	EventAttributeMessageKey                   = "Message"
 	EventAttributeParentRepoId                 = "ParentRepositoryId"
+	EventAttributeBaseRepoKeyKey               = "BaseRepositoryKey"
+	EventAttributeEnableArweaveBackupKey       = "EnableArweaveBackup"
 )
 
 const (

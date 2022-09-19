@@ -194,7 +194,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		Provider: msg.Provider,
 	})
 
-	repoIdJson, err := json.Marshal(msg.RepositoryId)
+	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
 	}
@@ -204,7 +204,8 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, string(repoIdJson)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
 			sdk.NewAttribute(types.EventAttributeOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
@@ -315,12 +316,18 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 	task.State = types.StateSuccess
 	k.SetTask(ctx, task)
 
+	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
+	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(repository.Parent, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),

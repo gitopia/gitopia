@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -414,6 +415,15 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		isGitRefUpdated = true
 	}
 
+	repoId := types.RepositoryId{
+		Id:   baseRepository.Owner.Id,
+		Name: baseRepository.Name,
+	}
+	baseRepoKeyJson, err := json.Marshal(repoId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error encoding repository id to json")
+	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -426,7 +436,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
 			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(isGitRefUpdated)),
+			sdk.NewAttribute(types.EventAttributeEnableArweaveBackupKey, strconv.FormatBool(baseRepository.EnableArweaveBackup)),
 		),
 	)
 
