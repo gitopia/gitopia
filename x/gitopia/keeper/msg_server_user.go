@@ -78,6 +78,9 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 	}
 
 	if whois, found := k.GetWhois(ctx, currentUsername); found {
+		// Remove existing key
+		k.RemoveWhois(ctx, whois.Name)
+
 		whois.Name = newUsername
 		k.SetWhois(ctx, whois)
 	} else {

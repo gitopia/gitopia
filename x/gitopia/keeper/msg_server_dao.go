@@ -110,6 +110,9 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 	}
 
 	if whois, found := k.GetWhois(ctx, currentDaoName); found {
+		// Remove existing key
+		k.RemoveWhois(ctx, whois.Name)
+
 		whois.Name = newDaoName
 		k.SetWhois(
 			ctx,
