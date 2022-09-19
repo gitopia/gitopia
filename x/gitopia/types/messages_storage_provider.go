@@ -49,9 +49,11 @@ func (msg *MsgCreateStorageProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Store == StorageProvider_NONE {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
+	_, exists := StorageProvider_Store_value[msg.Store.String()]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
 	}
+
 	return nil
 }
 
@@ -92,8 +94,9 @@ func (msg *MsgUpdateStorageProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Store == StorageProvider_NONE {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
+	_, exists := StorageProvider_Store_value[msg.Store.String()]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
 	}
 
 	return nil

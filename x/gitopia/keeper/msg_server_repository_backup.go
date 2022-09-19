@@ -32,16 +32,12 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 	}
 
 	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.Creator,
+		creator: msg.StorageProviderAddress,
 		store:   msg.Store,
 	})
 
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	if !k.isAuthorized(ctx, repository.Creator, msg.Creator, msg) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)
@@ -81,16 +77,12 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 	}
 
 	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.Creator,
+		creator: msg.StorageProviderAddress,
 		store:   msg.Store,
 	})
 
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	if !k.isAuthorized(ctx, repository.Creator, msg.Creator, msg) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
 	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)

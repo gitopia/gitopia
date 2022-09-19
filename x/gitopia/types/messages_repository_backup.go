@@ -54,8 +54,14 @@ func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
-	if msg.Store == StorageProvider_NONE {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
+	_, err = sdk.AccAddressFromBech32(msg.StorageProviderAddress)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, exists := StorageProvider_Store_value[msg.Store.String()]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
 	}
 
 	if msg.Store == StorageProvider_IPFS {
@@ -111,8 +117,14 @@ func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
-	if msg.Store == StorageProvider_NONE {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%d)", msg.Store)
+	_, err = sdk.AccAddressFromBech32(msg.StorageProviderAddress)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, exists := StorageProvider_Store_value[msg.Store.String()]
+	if !exists {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
 	}
 
 	if msg.Store == StorageProvider_IPFS {
@@ -121,5 +133,6 @@ func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid IPFS cid (%s)", msg.Ref)
 		}
 	}
+
 	return nil
 }

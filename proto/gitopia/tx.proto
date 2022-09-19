@@ -159,8 +159,9 @@ message MsgDeleteTask {
 message MsgUpdateRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  gitopia.StorageProvider.Store store = 3;
-  string ref = 4;
+  string StorageProviderAddress = 3;
+  StorageProvider.Store store = 4;
+  string ref = 5;
 }
 
 message MsgUpdateRepositoryBackupRefResponse {
@@ -169,8 +170,9 @@ message MsgUpdateRepositoryBackupRefResponse {
 message MsgAddRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  gitopia.StorageProvider.Store store = 3;
-  string ref = 4;
+  string StorageProviderAddress = 3;
+  StorageProvider.Store store = 4;
+  string ref = 5;
 }
 
 message MsgAddRepositoryBackupRefResponse {
@@ -178,7 +180,7 @@ message MsgAddRepositoryBackupRefResponse {
 
 message MsgCreateStorageProvider {
   string creator = 1;
-  gitopia.StorageProvider.Store store = 2;
+  StorageProvider.Store store = 2;
 }
 
 message MsgCreateStorageProviderResponse {
@@ -188,7 +190,7 @@ message MsgCreateStorageProviderResponse {
 message MsgUpdateStorageProvider {
   string creator = 1;
   uint64 id = 2;
-  gitopia.StorageProvider.Store store = 3;
+  StorageProvider.Store store = 3;
 }
 
 message MsgUpdateStorageProviderResponse {}
