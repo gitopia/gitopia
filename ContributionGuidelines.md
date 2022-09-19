@@ -46,4 +46,4 @@ Make sure that you have tests for the bug you are fixing.
 
 ### Code must be well written
 
-See [Coding Guidelines](#)
+See [Coding Guidelines](CodingGuidelines.md).

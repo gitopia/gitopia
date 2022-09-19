@@ -15,4 +15,4 @@ The `gitopiad` binary will be created in the `build` directory.
 
 ## Contributing
 
-Gitopia is an open source project and contributions from community are always welcome. Discussion and development of Gitopia majorly take place on the Gitopia via issues and proposals -- everyone is welcome to post bugs, feature requests, comments and pull requests to Gitopia. (read [ContributionGuidelines](#) and [CodingGuidelines](#).
+Gitopia is an open source project and contributions from community are always welcome. Discussion and development of Gitopia majorly take place on the Gitopia via issues and proposals -- everyone is welcome to post bugs, feature requests, comments and pull requests to Gitopia. (read [Contribution Guidelines](ContributionGuidelines.md) and [Coding Guidelines](CodingGuidelines.md).
