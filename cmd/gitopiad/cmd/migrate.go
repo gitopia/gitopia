@@ -536,8 +536,8 @@ func MigrateCmd() *cobra.Command {
 
 			// Transfer dao address balance
 			for i := range bankGenesis.Balances {
-				if _, found := newDaoAddressMap[bankGenesis.Balances[i].Address]; found {
-					bankGenesis.Balances[i].Address = newDaoAddressMap[bankGenesis.Balances[i].Address]
+				if newAddress, found := newDaoAddressMap[bankGenesis.Balances[i].Address]; found {
+					bankGenesis.Balances[i].Address = newAddress
 				}
 			}
 
