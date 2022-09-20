@@ -537,23 +537,7 @@ func MigrateCmd() *cobra.Command {
 			// Transfer dao address balance
 			for i := range bankGenesis.Balances {
 				if _, found := newDaoAddressMap[bankGenesis.Balances[i].Address]; found {
-					for j := range bankGenesis.Balances[i].Coins {
-						if bankGenesis.Balances[i].Coins[j].Denom == "utlore" {
-							for k := range bankGenesis.Balances {
-								if bankGenesis.Balances[k].Address == newDaoAddressMap[bankGenesis.Balances[i].Address] {
-									for l := range bankGenesis.Balances[k].Coins {
-										if bankGenesis.Balances[k].Coins[l].Denom == "utlore" {
-											bankGenesis.Balances[k].Coins[l].Amount = bankGenesis.Balances[i].Coins[j].Amount
-											bankGenesis.Balances[i].Coins[j].Amount = sdk.NewInt(0)
-											break
-										}
-									}
-									break
-								}
-							}
-							break
-						}
-					}
+					bankGenesis.Balances[i].Address = newDaoAddressMap[bankGenesis.Balances[i].Address]
 				}
 			}
 
