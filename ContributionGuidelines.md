@@ -2,7 +2,7 @@
 
 ## Reporting Bug or Feature Request
 
-We recommend using Gitopia issues for bug report, feature request and feedback. However, you can ask quick questions on our official Gitopia Discord.
+We recommend using Gitopia issues for bug report, feature request and feedback. However, you can ask quick questions on our official [Gitopia Discord](https://discord.gg/mVpQVW3vKE).
 
 Before you open an issue, do a web search, and check for existing open and closed Issues to see if that bug has already been reported. If you find a relevant topic, you can comment on that issue.
 
