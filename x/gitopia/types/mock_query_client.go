@@ -795,66 +795,6 @@ func (_m *MockQueryClient) RepositoryReleaseLatest(ctx context.Context, in *Quer
 	return r0, r1
 }
 
-// StorageProvider provides a mock function with given fields: ctx, in, opts
-func (_m *MockQueryClient) StorageProvider(ctx context.Context, in *QueryGetStorageProviderRequest, opts ...grpc.CallOption) (*QueryGetStorageProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *QueryGetStorageProviderResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *QueryGetStorageProviderRequest, ...grpc.CallOption) *QueryGetStorageProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*QueryGetStorageProviderResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *QueryGetStorageProviderRequest, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// StorageProviderAll provides a mock function with given fields: ctx, in, opts
-func (_m *MockQueryClient) StorageProviderAll(ctx context.Context, in *QueryAllStorageProviderRequest, opts ...grpc.CallOption) (*QueryAllStorageProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *QueryAllStorageProviderResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *QueryAllStorageProviderRequest, ...grpc.CallOption) *QueryAllStorageProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*QueryAllStorageProviderResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *QueryAllStorageProviderRequest, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // TagAll provides a mock function with given fields: ctx, in, opts
 func (_m *MockQueryClient) TagAll(ctx context.Context, in *QueryAllTagRequest, opts ...grpc.CallOption) (*QueryAllTagResponse, error) {
 	_va := make([]interface{}, len(opts))

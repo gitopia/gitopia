@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {
@@ -31,22 +32,13 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.StorageProviderAddress,
-		store:   msg.Store,
-	})
-
+	i, found := utils.RepositoryBackupExists(repository.Backups, msg.Store)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)
-	if !found {
-		backup = new(types.RepositoryBackup)
-		backup.ProviderId = provider.Id
+		backup := new(types.RepositoryBackup)
+		backup.Store = msg.Store
 		repository.Backups = append(repository.Backups, backup)
 	}
-	backup.Refs = append(backup.Refs, msg.Ref)
+	repository.Backups[i].Refs = append(repository.Backups[i].Refs, msg.Ref)
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -76,25 +68,16 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.StorageProviderAddress,
-		store:   msg.Store,
-	})
-
+	i, found := utils.RepositoryBackupExists(repository.Backups, msg.Store)
 	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)
-	if !found {
-		backup = new(types.RepositoryBackup)
-		backup.ProviderId = provider.Id
+		backup := new(types.RepositoryBackup)
+		backup.Store = msg.Store
 		repository.Backups = append(repository.Backups, backup)
 	}
-	if len(backup.Refs) == 0 {
-		backup.Refs = []string{msg.Ref}
+	if len(repository.Backups[i].Refs) == 0 {
+		repository.Backups[i].Refs = []string{msg.Ref}
 	} else {
-		backup.Refs[0] = msg.Ref
+		repository.Backups[i].Refs[0] = msg.Ref
 	}
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()

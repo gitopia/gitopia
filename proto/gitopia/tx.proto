@@ -14,7 +14,6 @@ import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
-import "gitopia/storage_provider.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
@@ -98,9 +97,6 @@ service Msg {
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
-  rpc CreateStorageProvider(MsgCreateStorageProvider) returns (MsgCreateStorageProviderResponse);
-  rpc UpdateStorageProvider(MsgUpdateStorageProvider) returns (MsgUpdateStorageProviderResponse);
-  rpc DeleteStorageProvider(MsgDeleteStorageProvider) returns (MsgDeleteStorageProviderResponse);
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
 
@@ -159,9 +155,8 @@ message MsgDeleteTask {
 message MsgUpdateRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string StorageProviderAddress = 3;
-  StorageProvider.Store store = 4;
-  string ref = 5;
+  RepositoryBackupStore store = 3;
+  string ref = 4;
 }
 
 message MsgUpdateRepositoryBackupRefResponse {
@@ -170,34 +165,11 @@ message MsgUpdateRepositoryBackupRefResponse {
 message MsgAddRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string StorageProviderAddress = 3;
-  StorageProvider.Store store = 4;
-  string ref = 5;
+  RepositoryBackupStore store = 3;
+  string ref = 4;
 }
 
 message MsgAddRepositoryBackupRefResponse {
-}
-
-message MsgCreateStorageProvider {
-  string creator = 1;
-  StorageProvider.Store store = 2;
-}
-
-message MsgCreateStorageProviderResponse {
-  uint64 id = 1;
-}
-
-message MsgUpdateStorageProvider {
-  string creator = 1;
-  uint64 id = 2;
-  StorageProvider.Store store = 3;
-}
-
-message MsgUpdateStorageProviderResponse {}
-
-message MsgDeleteStorageProvider {
-  string creator = 1;
-  uint64 id = 2;
 }
 
 message MsgDeleteTaskResponse {}

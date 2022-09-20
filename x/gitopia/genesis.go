@@ -40,13 +40,6 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set member count
 	k.SetMemberCount(ctx, genState.MemberCount)
 
-	// Set all the storageProvider
-	for _, elem := range genState.StorageProviderList {
-		k.SetStorageProvider(ctx, elem)
-	}
-
-	// Set storageProvider count
-	k.SetStorageProviderCount(ctx, genState.StorageProviderCount)
 	// this line is used by starport scaffolding # genesis/module/init
 	// Set all the release
 	for _, elem := range genState.ReleaseList {
@@ -140,8 +133,6 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.MemberList = k.GetAllMember(ctx)
 	genesis.MemberCount = k.GetMemberCount(ctx)
 
-	genesis.StorageProviderList = k.GetAllStorageProvider(ctx)
-	genesis.StorageProviderCount = k.GetStorageProviderCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 	// Get all release
 	genesis.ReleaseList = k.GetAllRelease(ctx)

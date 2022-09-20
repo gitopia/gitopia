@@ -66,3 +66,12 @@ func RepositoryReleaseIdExists(r []*types.RepositoryRelease, val uint64) (int, b
 	}
 	return 0, false
 }
+
+func RepositoryBackupExists(r []*types.RepositoryBackup, val types.RepositoryBackupStore) (int, bool) {
+	for i, v := range r {
+		if v.Store == val {
+			return i, true
+		}
+	}
+	return 0, false
+}

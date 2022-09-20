@@ -26,30 +26,19 @@ func TestMsgAddRepositoryBackupRef_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "invalid storage provider address",
-			msg: MsgAddRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: "invalid_address",
-				Store:                  StorageProvider_IPFS,
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
 			name: "invalid store",
 			msg: MsgAddRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: sample.AccAddress(),
-				Store:                  9,
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Store:        9,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "valid message",
 			msg: MsgAddRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: sample.AccAddress(),
-				Store:                  StorageProvider_IPFS,
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Store:        RepositoryBackupStore_IPFS,
 			},
 		},
 	}
@@ -83,30 +72,19 @@ func TestMsgUpdateRepositoryBackupRef_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "invalid storage provider address",
-			msg: MsgUpdateRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: "invalid_address",
-				Store:                  StorageProvider_IPFS,
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
 			name: "invalid store",
 			msg: MsgUpdateRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: sample.AccAddress(),
-				Store:                  9,
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Store:        9,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "valid message",
 			msg: MsgUpdateRepositoryBackupRef{
-				Creator:                sample.AccAddress(),
-				RepositoryId:           repositoryId,
-				StorageProviderAddress: sample.AccAddress(),
-				Store:                  StorageProvider_IPFS,
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Store:        RepositoryBackupStore_IPFS,
 			},
 		},
 	}

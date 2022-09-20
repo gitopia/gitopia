@@ -51,9 +51,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdateMemberRole())
 	cmd.AddCommand(CmdRemoveMember())
 	cmd.AddCommand(CmdUpdateRepositoryBackupRef())
-	cmd.AddCommand(CmdCreateStorageProvider())
-	cmd.AddCommand(CmdUpdateStorageProvider())
-	cmd.AddCommand(CmdDeleteStorageProvider())
 	cmd.AddCommand(CmdAddRepositoryBackupRef())
 	// this line is used by starport scaffolding # 1
 

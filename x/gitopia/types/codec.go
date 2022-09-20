@@ -33,9 +33,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRemoveMember{}, "gitopia/RemoveMember", nil)
 
 	cdc.RegisterConcrete(&MsgUpdateRepositoryBackupRef{}, "gitopia/UpdateRepositoryBackupRef", nil)
-	cdc.RegisterConcrete(&MsgCreateStorageProvider{}, "gitopia/CreateStorageProvider", nil)
-	cdc.RegisterConcrete(&MsgUpdateStorageProvider{}, "gitopia/UpdateStorageProvider", nil)
-	cdc.RegisterConcrete(&MsgDeleteStorageProvider{}, "gitopia/DeleteStorageProvider", nil)
 	cdc.RegisterConcrete(&MsgAddRepositoryBackupRef{}, "gitopia/AddRepositoryBackupRef", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
@@ -132,11 +129,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgAddMember{},
 		&MsgUpdateMemberRole{},
 		&MsgRemoveMember{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreateStorageProvider{},
-		&MsgUpdateStorageProvider{},
-		&MsgDeleteStorageProvider{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgAddRepositoryBackupRef{},

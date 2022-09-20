@@ -101,17 +101,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgUpdateRepositoryBackupRef:
 			res, err := msgServer.UpdateRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgCreateStorageProvider:
-			res, err := msgServer.CreateStorageProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateStorageProvider:
-			res, err := msgServer.UpdateStorageProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgDeleteStorageProvider:
-			res, err := msgServer.DeleteStorageProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgAddRepositoryBackupRef:
 			res, err := msgServer.AddRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)

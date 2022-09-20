@@ -20,7 +20,7 @@ func CmdAddRepositoryBackupRef() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
-			argStore := (types.StorageProvider_Store)(types.StorageProvider_Store_value[args[2]])
+			argStore := (types.RepositoryBackupStore)(types.RepositoryBackupStore_value[args[2]])
 			argRef := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -54,7 +54,7 @@ func CmdUpdateRepositoryBackupRef() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
-			argStore := (types.StorageProvider_Store)(types.StorageProvider_Store_value[args[2]])
+			argStore := (types.RepositoryBackupStore)(types.RepositoryBackupStore_value[args[2]])
 			argRef := args[3]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
