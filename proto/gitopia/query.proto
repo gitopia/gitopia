@@ -464,6 +464,7 @@ message QueryAllDaoResponse {
 	repeated Dao dao = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+
 message QueryGetCommentRequest {
 	uint64 id = 1;
 }

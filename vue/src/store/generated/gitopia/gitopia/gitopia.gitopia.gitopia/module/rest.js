@@ -348,6 +348,20 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryLegacyDao
+         * @summary Queries a Dao by legacy address
+         * @request GET:/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}
+         */
+        this.queryLegacyDao = (legacyAddress, params = {}) => this.request({
+            path: `/gitopia/gitopia/gitopia/legacy-dao/${legacyAddress}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryMemberAll
          * @summary Queries a list of Member items.
          * @request GET:/gitopia/gitopia/gitopia/member

@@ -15,6 +15,7 @@ All notable changes will be documented here.
 - Query to check whether storage provider has authorization
 - Verified field in User
 - Transaction to toggle arweave backup flag
+- Query endpoint `/legacy-dao/{legacyAddress}` to query dao by their legacyAddress
 
 ### Breaking Changes
 

@@ -257,5 +257,6 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 	require.ElementsMatch(t, genesisState.StorageProviderList, got.StorageProviderList)
 	require.Equal(t, genesisState.StorageProviderCount, got.StorageProviderCount)
+
 	// this line is used by starport scaffolding # genesis/test/assert
 }

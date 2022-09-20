@@ -78,6 +78,7 @@ export interface GitopiaDao {
 
   /** @format int64 */
   updatedAt?: string;
+  legacyAddress?: string;
 }
 
 export interface GitopiaIssue {
@@ -822,6 +823,10 @@ export interface GitopiaQueryGetIssueResponse {
 
 export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
   Release?: GitopiaRelease;
+}
+
+export interface GitopiaQueryGetLegacyDaoResponse {
+  dao?: GitopiaDao;
 }
 
 export interface GitopiaQueryGetPullRequestMergePermissionResponse {
@@ -1618,6 +1623,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryIssue = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetIssueResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/issue/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryLegacyDao
+   * @summary Queries a Dao by legacy address
+   * @request GET:/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}
+   */
+  queryLegacyDao = (legacyAddress: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetLegacyDaoResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/legacy-dao/${legacyAddress}`,
       method: "GET",
       format: "json",
       ...params,

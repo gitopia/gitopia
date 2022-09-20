@@ -30,6 +30,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 
 	var dao = types.Dao{
 		Creator:     msg.Creator,
+		Address:     NewDaoAddress(k.GetDaoCount(ctx)).String(),
 		Name:        msg.Name,
 		Description: msg.Description,
 		CreatedAt:   ctx.BlockTime().Unix(),
@@ -39,14 +40,16 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		Website:     msg.Website,
 	}
 
+	// Check if there is a dao with the same address already
+	_, found = k.GetDao(ctx, dao.Address)
+	if found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "dao address already exists")
+	}
+
 	id := k.AppendDao(
 		ctx,
 		dao,
 	)
-
-	if id == "" {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "dao address already exists")
-	}
 
 	member := types.Member{
 		Address:    msg.Creator,

@@ -21,6 +21,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctypes "github.com/cosmos/ibc-go/v2/modules/core/types"
+	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypesv013 "github.com/gitopia/gitopia/x/gitopia/migrations/v013"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cobra"
@@ -32,6 +33,9 @@ const (
 	flagGenesisTime   = "genesis-time"
 	flagInitialHeight = "initial-height"
 )
+
+// Map used to translate legacy dao address to new dao address
+var newDaoAddressMap map[string]string
 
 func contains(s []string, str string) bool {
 	for _, v := range s {
@@ -47,6 +51,61 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	var memberCount uint64
 	var branchCount uint64
 	var tagCount uint64
+	newDaoAddressMap = make(map[string]string)
+
+	// Migrate Dao
+	for i := range gitopiaGenesisv013.OrganizationList {
+		legacyDaoAddress := gitopiaGenesisv013.OrganizationList[i].Address
+		newDaoAddress := keeper.NewDaoAddress(gitopiaGenesisv013.OrganizationList[i].Id)
+		newDaoAddressMap[legacyDaoAddress] = newDaoAddress.String()
+
+		dao := gitopiatypes.Dao{
+			Creator:     gitopiaGenesisv013.OrganizationList[i].Creator,
+			Id:          gitopiaGenesisv013.OrganizationList[i].Id,
+			Address:     newDaoAddress.String(),
+			Name:        fmt.Sprintf("temp-%s-%s", gitopiaGenesisv013.OrganizationList[i].Name, gitopiaGenesisv013.OrganizationList[i].Address),
+			AvatarUrl:   gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
+			Followers:   gitopiaGenesisv013.OrganizationList[i].Followers,
+			Following:   gitopiaGenesisv013.OrganizationList[i].Following,
+			Teams:       gitopiaGenesisv013.OrganizationList[i].Teams,
+			Location:    gitopiaGenesisv013.OrganizationList[i].Location,
+			Website:     gitopiaGenesisv013.OrganizationList[i].Website,
+			Verified:    gitopiaGenesisv013.OrganizationList[i].Verified,
+			Description: gitopiaGenesisv013.OrganizationList[i].Description,
+			CreatedAt:   gitopiaGenesisv013.OrganizationList[i].CreatedAt,
+			UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
+		}
+
+		// Set gitopia dao as verified
+		if legacyDaoAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
+			dao.Verified = true
+		}
+
+		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
+			dao,
+		)
+
+		// Migrate Member
+		for _, v013 := range gitopiaGenesisv013.OrganizationList[i].Members {
+			var role gitopiatypes.MemberRole
+
+			if v013.Role == gitopiatypesv013.OrganizationMember_OWNER {
+				role = gitopiatypes.MemberRole_OWNER
+			} else {
+				role = gitopiatypes.MemberRole_MEMBER
+			}
+
+			gitopiaGenesis.MemberList = append(gitopiaGenesis.MemberList,
+				gitopiatypes.Member{
+					Id:         memberCount,
+					Address:    v013.Id,
+					DaoAddress: newDaoAddress.String(),
+					Role:       role,
+				},
+			)
+			memberCount += 1
+		}
+	}
 
 	// Migrate User
 	for i := range gitopiaGenesisv013.UserList {
@@ -55,7 +114,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
 				gitopiatypes.UserDao{
 					UserAddress: gitopiaGenesisv013.UserList[i].Creator,
-					DaoAddress:  v013.Id,
+					DaoAddress:  newDaoAddressMap[v013.Id],
 				},
 			)
 		}
@@ -78,47 +137,6 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		)
 	}
 
-	// Migrate Dao
-	for i := range gitopiaGenesisv013.OrganizationList {
-		// Migrate Member
-		for _, v013 := range gitopiaGenesisv013.OrganizationList[i].Members {
-			var role gitopiatypes.MemberRole
-			if v013.Role == gitopiatypesv013.OrganizationMember_OWNER {
-				role = gitopiatypes.MemberRole_OWNER
-			} else {
-				role = gitopiatypes.MemberRole_MEMBER
-			}
-			gitopiaGenesis.MemberList = append(gitopiaGenesis.MemberList,
-				gitopiatypes.Member{
-					Id:         memberCount,
-					Address:    v013.Id,
-					DaoAddress: gitopiaGenesisv013.OrganizationList[i].Address,
-					Role:       role,
-				},
-			)
-			memberCount += 1
-		}
-
-		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
-			gitopiatypes.Dao{
-				Creator:     gitopiaGenesisv013.OrganizationList[i].Creator,
-				Id:          gitopiaGenesisv013.OrganizationList[i].Id,
-				Address:     gitopiaGenesisv013.OrganizationList[i].Address,
-				Name:        gitopiaGenesisv013.OrganizationList[i].Name,
-				AvatarUrl:   gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
-				Followers:   gitopiaGenesisv013.OrganizationList[i].Followers,
-				Following:   gitopiaGenesisv013.OrganizationList[i].Following,
-				Teams:       gitopiaGenesisv013.OrganizationList[i].Teams,
-				Location:    gitopiaGenesisv013.OrganizationList[i].Location,
-				Website:     gitopiaGenesisv013.OrganizationList[i].Website,
-				Verified:    gitopiaGenesisv013.OrganizationList[i].Verified,
-				Description: gitopiaGenesisv013.OrganizationList[i].Description,
-				CreatedAt:   gitopiaGenesisv013.OrganizationList[i].CreatedAt,
-				UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
-			},
-		)
-	}
-
 	// Migrate Repository
 	for i := range gitopiaGenesisv013.RepositoryList {
 		var issues []*gitopiatypes.RepositoryIssue
@@ -126,6 +144,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		var labels []*gitopiatypes.RepositoryLabel
 		var releases []*gitopiatypes.RepositoryRelease
 		var collaborators []*gitopiatypes.RepositoryCollaborator
+		var newDaoAddress string
 
 		// Migrate BaseRepositoryKey
 
@@ -134,12 +153,20 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			gitopiaGenesisv013.RepositoryList[i].Owner.Id = "gitopia1hv6xd7mzz7r8vkpvy47khc89qzrrup7w6mxurk"
 		}
 
+		baseRepositoryKey := gitopiatypes.BaseRepositoryKey{
+			Id:      gitopiaGenesisv013.RepositoryList[i].Id,
+			Address: gitopiaGenesisv013.RepositoryList[i].Owner.Id,
+			Name:    gitopiaGenesisv013.RepositoryList[i].Name,
+		}
+
+		// Change the address in case of dao
+		if gitopiaGenesisv013.RepositoryList[i].Owner.Type == gitopiatypesv013.RepositoryOwner_ORGANIZATION {
+			newDaoAddress = newDaoAddressMap[gitopiaGenesisv013.RepositoryList[i].Owner.Id]
+			baseRepositoryKey.Address = newDaoAddress
+		}
+
 		gitopiaGenesis.BaseRepositoryKeyList = append(gitopiaGenesis.BaseRepositoryKeyList,
-			gitopiatypes.BaseRepositoryKey{
-				Id:      gitopiaGenesisv013.RepositoryList[i].Id,
-				Address: gitopiaGenesisv013.RepositoryList[i].Owner.Id,
-				Name:    gitopiaGenesisv013.RepositoryList[i].Name,
-			},
+			baseRepositoryKey,
 		)
 
 		// Migrate Branch
@@ -220,44 +247,48 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			)
 		}
 
-		var ownerType gitopiatypes.OwnerType
-		if gitopiaGenesisv013.RepositoryList[i].Owner.Type == gitopiatypesv013.RepositoryOwner_ORGANIZATION {
-			ownerType = gitopiatypes.OwnerType_DAO
-		} else {
-			ownerType = gitopiatypes.OwnerType_USER
+		repository := gitopiatypes.Repository{
+			Creator:       gitopiaGenesisv013.RepositoryList[i].Creator,
+			Id:            gitopiaGenesisv013.RepositoryList[i].Id,
+			Name:          gitopiaGenesisv013.RepositoryList[i].Name,
+			Description:   gitopiaGenesisv013.RepositoryList[i].Description,
+			Forks:         gitopiaGenesisv013.RepositoryList[i].Forks,
+			Subscribers:   gitopiaGenesisv013.RepositoryList[i].Subscribers,
+			Commits:       gitopiaGenesisv013.RepositoryList[i].Commits,
+			Issues:        issues,
+			PullRequests:  pullRequests,
+			IssuesCount:   gitopiaGenesisv013.RepositoryList[i].IssuesCount,
+			PullsCount:    gitopiaGenesisv013.RepositoryList[i].PullsCount,
+			Labels:        labels,
+			LabelsCount:   gitopiaGenesisv013.RepositoryList[i].LabelsCount,
+			Releases:      releases,
+			CreatedAt:     gitopiaGenesisv013.RepositoryList[i].CreatedAt,
+			UpdatedAt:     gitopiaGenesisv013.RepositoryList[i].UpdatedAt,
+			PushedAt:      gitopiaGenesisv013.RepositoryList[i].PushedAt,
+			Stargazers:    gitopiaGenesisv013.RepositoryList[i].Stargazers,
+			Archived:      gitopiaGenesisv013.RepositoryList[i].Archived,
+			License:       gitopiaGenesisv013.RepositoryList[i].License,
+			DefaultBranch: gitopiaGenesisv013.RepositoryList[i].DefaultBranch,
+			Parent:        gitopiaGenesisv013.RepositoryList[i].Parent,
+			Fork:          gitopiaGenesisv013.RepositoryList[i].Fork,
+			Collaborators: collaborators,
+			AllowForking:  gitopiaGenesisv013.RepositoryList[i].AllowForking,
 		}
+
+		if gitopiaGenesisv013.RepositoryList[i].Owner.Type == gitopiatypesv013.RepositoryOwner_ORGANIZATION {
+			repository.Owner = &gitopiatypes.RepositoryOwner{
+				Type: gitopiatypes.OwnerType_DAO,
+				Id:   newDaoAddress,
+			}
+		} else {
+			repository.Owner = &gitopiatypes.RepositoryOwner{
+				Type: gitopiatypes.OwnerType_USER,
+				Id:   gitopiaGenesisv013.RepositoryList[i].Owner.Id,
+			}
+		}
+
 		gitopiaGenesis.RepositoryList = append(gitopiaGenesis.RepositoryList,
-			gitopiatypes.Repository{
-				Creator: gitopiaGenesisv013.RepositoryList[i].Creator,
-				Id:      gitopiaGenesisv013.RepositoryList[i].Id,
-				Name:    gitopiaGenesisv013.RepositoryList[i].Name,
-				Owner: &gitopiatypes.RepositoryOwner{
-					Id:   gitopiaGenesisv013.RepositoryList[i].Owner.Id,
-					Type: ownerType,
-				},
-				Description:   gitopiaGenesisv013.RepositoryList[i].Description,
-				Forks:         gitopiaGenesisv013.RepositoryList[i].Forks,
-				Subscribers:   gitopiaGenesisv013.RepositoryList[i].Subscribers,
-				Commits:       gitopiaGenesisv013.RepositoryList[i].Commits,
-				Issues:        issues,
-				PullRequests:  pullRequests,
-				IssuesCount:   gitopiaGenesisv013.RepositoryList[i].IssuesCount,
-				PullsCount:    gitopiaGenesisv013.RepositoryList[i].PullsCount,
-				Labels:        labels,
-				LabelsCount:   gitopiaGenesisv013.RepositoryList[i].LabelsCount,
-				Releases:      releases,
-				CreatedAt:     gitopiaGenesisv013.RepositoryList[i].CreatedAt,
-				UpdatedAt:     gitopiaGenesisv013.RepositoryList[i].UpdatedAt,
-				PushedAt:      gitopiaGenesisv013.RepositoryList[i].PushedAt,
-				Stargazers:    gitopiaGenesisv013.RepositoryList[i].Stargazers,
-				Archived:      gitopiaGenesisv013.RepositoryList[i].Archived,
-				License:       gitopiaGenesisv013.RepositoryList[i].License,
-				DefaultBranch: gitopiaGenesisv013.RepositoryList[i].DefaultBranch,
-				Parent:        gitopiaGenesisv013.RepositoryList[i].Parent,
-				Fork:          gitopiaGenesisv013.RepositoryList[i].Fork,
-				Collaborators: collaborators,
-				AllowForking:  gitopiaGenesisv013.RepositoryList[i].AllowForking,
-			},
+			repository,
 		)
 	}
 
@@ -503,6 +534,13 @@ func MigrateCmd() *cobra.Command {
 				},
 			}
 
+			// Transfer dao address balance
+			for i := range bankGenesis.Balances {
+				if newAddress, found := newDaoAddressMap[bankGenesis.Balances[i].Address]; found {
+					bankGenesis.Balances[i].Address = newAddress
+				}
+			}
+
 			totalBalance := sdk.NewInt(0)
 
 			var balances []banktypes.Balance
@@ -513,6 +551,7 @@ func MigrateCmd() *cobra.Command {
 				for j := range balance.Coins {
 					if balance.Coins[j].Denom == "utlore" {
 						totalBalance = totalBalance.Add(balance.Coins[j].Amount)
+						break
 					}
 				}
 				balances = append(balances, balance)

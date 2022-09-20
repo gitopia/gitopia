@@ -5,8 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // GetDaoCount get the total number of Dao
@@ -43,13 +43,6 @@ func (k Keeper) AppendDao(
 
 	// Set the ID of the appended value
 	dao.Id = count
-	dao.Address = k.GetDaoAddress(ctx, dao.Creator)
-
-	// Check if there is a dao with the same address already
-	_, found := k.GetDao(ctx, dao.Address)
-	if found {
-		return ""
-	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DaoKey))
 	appendedValue := k.cdc.MustMarshal(&dao)
@@ -139,16 +132,9 @@ func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) (list []types
 	return
 }
 
-// GetDaoAddress returns the address for a new Dao
-func (k Keeper) GetDaoAddress(ctx sdk.Context, creator string) string {
-	addr, _ := sdk.AccAddressFromBech32(creator)
-	account := k.accountKeeper.GetAccount(ctx, addr)
-	nonce := account.GetSequence()
-	bz := make([]byte, 8)
-	binary.BigEndian.PutUint64(bz, nonce)
-	bz = append(addr, bz...)
-	orgAddress := crypto.AddressHash(bz[8:])
-	return sdk.AccAddress(orgAddress).String()
+func NewDaoAddress(daoId uint64) sdk.AccAddress {
+	key := append([]byte("dao"), sdk.Uint64ToBigEndian(daoId)...)
+	return address.Module(types.ModuleName, key)
 }
 
 // GetDaoIDBytes returns the byte representation of the ID
