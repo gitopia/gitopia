@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -51,6 +52,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	var memberCount uint64
 	var branchCount uint64
 	var tagCount uint64
+	var whoisCount uint64
 	newDaoAddressMap = make(map[string]string)
 
 	// Migrate Dao
@@ -63,7 +65,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			Creator:     gitopiaGenesisv013.OrganizationList[i].Creator,
 			Id:          gitopiaGenesisv013.OrganizationList[i].Id,
 			Address:     newDaoAddress.String(),
-			Name:        gitopiaGenesisv013.OrganizationList[i].Name,
+			Name:        fmt.Sprintf("temp-%s-%s", gitopiaGenesisv013.OrganizationList[i].Name, gitopiaGenesisv013.OrganizationList[i].Address),
 			AvatarUrl:   gitopiaGenesisv013.OrganizationList[i].AvatarUrl,
 			Followers:   gitopiaGenesisv013.OrganizationList[i].Followers,
 			Following:   gitopiaGenesisv013.OrganizationList[i].Following,
@@ -84,6 +86,16 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
 			dao,
 		)
+
+		// Create a temp whois record for Dao
+		gitopiaGenesis.WhoisList = append(gitopiaGenesis.WhoisList, gitopiatypes.Whois{
+			Creator:   gitopiaGenesisv013.OrganizationList[i].Creator,
+			Name:      strings.ToLower(dao.Name),
+			Address:   dao.Address,
+			OwnerType: gitopiatypes.OwnerType_DAO,
+		})
+
+		whoisCount += 1
 
 		// Migrate Member
 		for _, v013 := range gitopiaGenesisv013.OrganizationList[i].Members {
