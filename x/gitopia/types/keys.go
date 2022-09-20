@@ -119,11 +119,6 @@ const (
 	MemberCountKey = "Member-count-"
 )
 
-const (
-	LegacyDaoAddressKey      = "LegacyDaoAddress-value-"
-	LegacyDaoAddressCountKey = "LegacyDaoAddress-count-"
-)
-
 // GetRepositoryKeyForAddress returns Key from address
 func GetRepositoryKeyForAddress(address string) string {
 	return RepositoryKey + address + "-"

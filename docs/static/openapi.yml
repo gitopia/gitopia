@@ -12344,8 +12344,6 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    legacyAddress:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -12692,8 +12690,6 @@ paths:
                   updatedAt:
                     type: string
                     format: int64
-                  legacyAddress:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12989,84 +12985,6 @@ paths:
           required: true
           type: string
           format: uint64
-      tags:
-        - Query
-  '/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}':
-    get:
-      summary: Queries a Dao by legacy address
-      operationId: GitopiaGitopiaGitopiaLegacyDao
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              dao:
-                type: object
-                properties:
-                  creator:
-                    type: string
-                  id:
-                    type: string
-                    format: uint64
-                  address:
-                    type: string
-                  name:
-                    type: string
-                  avatarUrl:
-                    type: string
-                  followers:
-                    type: array
-                    items:
-                      type: string
-                  following:
-                    type: array
-                    items:
-                      type: string
-                  teams:
-                    type: array
-                    items:
-                      type: string
-                      format: uint64
-                  location:
-                    type: string
-                  website:
-                    type: string
-                  verified:
-                    type: boolean
-                  description:
-                    type: string
-                  createdAt:
-                    type: string
-                    format: int64
-                  updatedAt:
-                    type: string
-                    format: int64
-                  legacyAddress:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: legacyAddress
-          in: path
-          required: true
-          type: string
       tags:
         - Query
   /gitopia/gitopia/gitopia/member:
@@ -15518,8 +15436,6 @@ paths:
                     updatedAt:
                       type: string
                       format: int64
-                    legacyAddress:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -25581,8 +25497,6 @@ definitions:
       updatedAt:
         type: string
         format: int64
-      legacyAddress:
-        type: string
   gitopia.gitopia.gitopia.Issue:
     type: object
     properties:
@@ -26495,8 +26409,6 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            legacyAddress:
-              type: string
       pagination:
         type: object
         properties:
@@ -27617,8 +27529,6 @@ definitions:
             updatedAt:
               type: string
               format: int64
-            legacyAddress:
-              type: string
       pagination:
         type: object
         properties:
@@ -28088,8 +27998,6 @@ definitions:
           updatedAt:
             type: string
             format: int64
-          legacyAddress:
-            type: string
   gitopia.gitopia.gitopia.QueryGetIssueResponse:
     type: object
     properties:
@@ -28204,52 +28112,6 @@ definitions:
           publishedAt:
             type: string
             format: int64
-  gitopia.gitopia.gitopia.QueryGetLegacyDaoResponse:
-    type: object
-    properties:
-      dao:
-        type: object
-        properties:
-          creator:
-            type: string
-          id:
-            type: string
-            format: uint64
-          address:
-            type: string
-          name:
-            type: string
-          avatarUrl:
-            type: string
-          followers:
-            type: array
-            items:
-              type: string
-          following:
-            type: array
-            items:
-              type: string
-          teams:
-            type: array
-            items:
-              type: string
-              format: uint64
-          location:
-            type: string
-          website:
-            type: string
-          verified:
-            type: boolean
-          description:
-            type: string
-          createdAt:
-            type: string
-            format: int64
-          updatedAt:
-            type: string
-            format: int64
-          legacyAddress:
-            type: string
   gitopia.gitopia.gitopia.QueryGetPullRequestMergePermissionResponse:
     type: object
     properties:
