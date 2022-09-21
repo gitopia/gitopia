@@ -1,3 +1,7 @@
+export declare enum RepositoryBackupStore {
+    IPFS = "IPFS",
+    ARWEAVE = "ARWEAVE"
+}
 export declare enum RepositoryCollaboratorPermission {
     READ = "READ",
     TRIAGE = "TRIAGE",
@@ -54,7 +58,6 @@ export interface GitopiaDao {
     createdAt?: string;
     /** @format int64 */
     updatedAt?: string;
-    legacyAddress?: string;
 }
 export interface GitopiaIssue {
     creator?: string;
@@ -111,13 +114,13 @@ export declare enum GitopiaMemberRole {
     MEMBER = "MEMBER",
     OWNER = "OWNER"
 }
+export declare type GitopiaMsgAddArweaveBackupRefResponse = object;
 export declare type GitopiaMsgAddIssueAssigneesResponse = object;
 export declare type GitopiaMsgAddIssueLabelsResponse = object;
 export declare type GitopiaMsgAddMemberResponse = object;
 export declare type GitopiaMsgAddPullRequestAssigneesResponse = object;
 export declare type GitopiaMsgAddPullRequestLabelsResponse = object;
 export declare type GitopiaMsgAddPullRequestReviewersResponse = object;
-export declare type GitopiaMsgAddRepositoryBackupRefResponse = object;
 export declare type GitopiaMsgAuthorizeGitServerResponse = object;
 export declare type GitopiaMsgAuthorizeStorageProviderResponse = object;
 export declare type GitopiaMsgChangeOwnerResponse = object;
@@ -151,10 +154,6 @@ export interface GitopiaMsgCreateRepositoryLabelResponse {
 export interface GitopiaMsgCreateRepositoryResponse {
     repositoryId?: GitopiaRepositoryId;
 }
-export interface GitopiaMsgCreateStorageProviderResponse {
-    /** @format uint64 */
-    id?: string;
-}
 export interface GitopiaMsgCreateTaskResponse {
     /** @format uint64 */
     id?: string;
@@ -170,7 +169,6 @@ export declare type GitopiaMsgDeletePullRequestResponse = object;
 export declare type GitopiaMsgDeleteReleaseResponse = object;
 export declare type GitopiaMsgDeleteRepositoryLabelResponse = object;
 export declare type GitopiaMsgDeleteRepositoryResponse = object;
-export declare type GitopiaMsgDeleteStorageProviderResponse = object;
 export declare type GitopiaMsgDeleteTagResponse = object;
 export declare type GitopiaMsgDeleteTaskResponse = object;
 export declare type GitopiaMsgDeleteUserResponse = object;
@@ -235,19 +233,16 @@ export declare type GitopiaMsgUpdateDaoAvatarResponse = object;
 export declare type GitopiaMsgUpdateDaoDescriptionResponse = object;
 export declare type GitopiaMsgUpdateDaoLocationResponse = object;
 export declare type GitopiaMsgUpdateDaoWebsiteResponse = object;
+export declare type GitopiaMsgUpdateIpfsBackupRefResponse = object;
 export declare type GitopiaMsgUpdateIssueDescriptionResponse = object;
-export declare type GitopiaMsgUpdateIssueResponse = object;
 export declare type GitopiaMsgUpdateIssueTitleResponse = object;
 export declare type GitopiaMsgUpdateMemberRoleResponse = object;
 export declare type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
-export declare type GitopiaMsgUpdatePullRequestResponse = object;
 export declare type GitopiaMsgUpdatePullRequestTitleResponse = object;
 export declare type GitopiaMsgUpdateReleaseResponse = object;
-export declare type GitopiaMsgUpdateRepositoryBackupRefResponse = object;
 export declare type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 export declare type GitopiaMsgUpdateRepositoryDescriptionResponse = object;
 export declare type GitopiaMsgUpdateRepositoryLabelResponse = object;
-export declare type GitopiaMsgUpdateStorageProviderResponse = object;
 export declare type GitopiaMsgUpdateTaskResponse = object;
 export declare type GitopiaMsgUpdateUserAvatarResponse = object;
 export declare type GitopiaMsgUpdateUserBioResponse = object;
@@ -516,19 +511,6 @@ export interface GitopiaQueryAllRepositoryTagResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
-export interface GitopiaQueryAllStorageProviderResponse {
-    StorageProvider?: GitopiaStorageProvider[];
-    /**
-     * PageResponse is to be embedded in gRPC response messages where the
-     * corresponding request message has used PageRequest.
-     *
-     *  message SomeResponse {
-     *          repeated Bar results = 1;
-     *          PageResponse page = 2;
-     *  }
-     */
-    pagination?: V1Beta1PageResponse;
-}
 export interface GitopiaQueryAllTagResponse {
     Tag?: GitopiagitopiaTag[];
     /**
@@ -631,9 +613,6 @@ export interface GitopiaQueryGetIssueResponse {
 export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
     Release?: GitopiaRelease;
 }
-export interface GitopiaQueryGetLegacyDaoResponse {
-    dao?: GitopiaDao;
-}
 export interface GitopiaQueryGetPullRequestMergePermissionResponse {
     havePermission?: boolean;
 }
@@ -666,9 +645,6 @@ export interface GitopiaQueryGetRepositoryTagResponse {
 }
 export interface GitopiaQueryGetRepositoryTagShaResponse {
     sha?: string;
-}
-export interface GitopiaQueryGetStorageProviderResponse {
-    StorageProvider?: GitopiaStorageProvider;
 }
 export interface GitopiaQueryGetTaskResponse {
     Task?: GitopiaTask;
@@ -739,8 +715,7 @@ export interface GitopiaRepository {
     enableArweaveBackup?: boolean;
 }
 export interface GitopiaRepositoryBackup {
-    /** @format uint64 */
-    providerId?: string;
+    store?: RepositoryBackupStore;
     refs?: string[];
 }
 export interface GitopiaRepositoryCollaborator {
@@ -795,17 +770,6 @@ export interface GitopiaRepositoryRelease {
     id?: string;
     tagName?: string;
 }
-export interface GitopiaStorageProvider {
-    /** @format uint64 */
-    id?: string;
-    store?: GitopiaStore;
-    creator?: string;
-}
-export declare enum GitopiaStore {
-    NONE = "NONE",
-    IPFS = "IPFS",
-    ARWEAVE = "ARWEAVE"
-}
 export interface GitopiaTask {
     /** @format uint64 */
     id?: string;
@@ -845,6 +809,8 @@ export interface GitopiaUser {
 }
 export interface GitopiaWhois {
     creator?: string;
+    /** @format uint64 */
+    id?: string;
     name?: string;
     address?: string;
     ownerType?: GitopiaOwnerType;
@@ -1128,15 +1094,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryLegacyDao
-     * @summary Queries a Dao by legacy address
-     * @request GET:/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}
-     */
-    queryLegacyDao: (legacyAddress: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetLegacyDaoResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryMemberAll
      * @summary Queries a list of Member items.
      * @request GET:/gitopia/gitopia/gitopia/member
@@ -1228,30 +1185,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/gitopia/gitopia/gitopia/repository/{id}
      */
     queryRepository: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetRepositoryResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryStorageProviderAll
-     * @summary Queries a list of StorageProvider items.
-     * @request GET:/gitopia/gitopia/gitopia/storage_provider
-     */
-    queryStorageProviderAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryAllStorageProviderResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryStorageProvider
-     * @summary Queries a StorageProvider by id.
-     * @request GET:/gitopia/gitopia/gitopia/storage_provider/{id}
-     */
-    queryStorageProvider: (id: string, params?: RequestParams) => Promise<HttpResponse<GitopiaQueryGetStorageProviderResponse, RpcStatus>>;
     /**
      * No description
      *

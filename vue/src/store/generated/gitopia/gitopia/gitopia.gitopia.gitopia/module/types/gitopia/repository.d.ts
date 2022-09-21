@@ -83,9 +83,16 @@ export interface Attachment {
     uploader: string;
 }
 export interface RepositoryBackup {
-    providerId: number;
+    store: RepositoryBackup_Store;
     refs: string[];
 }
+export declare enum RepositoryBackup_Store {
+    IPFS = 0,
+    ARWEAVE = 1,
+    UNRECOGNIZED = -1
+}
+export declare function repositoryBackup_StoreFromJSON(object: any): RepositoryBackup_Store;
+export declare function repositoryBackup_StoreToJSON(object: RepositoryBackup_Store): string;
 export declare const Repository: {
     encode(message: Repository, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): Repository;

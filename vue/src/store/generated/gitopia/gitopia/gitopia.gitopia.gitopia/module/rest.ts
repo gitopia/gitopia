@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export enum RepositoryBackupStore {
+  IPFS = "IPFS",
+  ARWEAVE = "ARWEAVE",
+}
+
 export enum RepositoryCollaboratorPermission {
   READ = "READ",
   TRIAGE = "TRIAGE",
@@ -78,7 +83,6 @@ export interface GitopiaDao {
 
   /** @format int64 */
   updatedAt?: string;
-  legacyAddress?: string;
 }
 
 export interface GitopiaIssue {
@@ -151,6 +155,8 @@ export enum GitopiaMemberRole {
   OWNER = "OWNER",
 }
 
+export type GitopiaMsgAddArweaveBackupRefResponse = object;
+
 export type GitopiaMsgAddIssueAssigneesResponse = object;
 
 export type GitopiaMsgAddIssueLabelsResponse = object;
@@ -162,8 +168,6 @@ export type GitopiaMsgAddPullRequestAssigneesResponse = object;
 export type GitopiaMsgAddPullRequestLabelsResponse = object;
 
 export type GitopiaMsgAddPullRequestReviewersResponse = object;
-
-export type GitopiaMsgAddRepositoryBackupRefResponse = object;
 
 export type GitopiaMsgAuthorizeGitServerResponse = object;
 
@@ -210,11 +214,6 @@ export interface GitopiaMsgCreateRepositoryResponse {
   repositoryId?: GitopiaRepositoryId;
 }
 
-export interface GitopiaMsgCreateStorageProviderResponse {
-  /** @format uint64 */
-  id?: string;
-}
-
 export interface GitopiaMsgCreateTaskResponse {
   /** @format uint64 */
   id?: string;
@@ -239,8 +238,6 @@ export type GitopiaMsgDeleteReleaseResponse = object;
 export type GitopiaMsgDeleteRepositoryLabelResponse = object;
 
 export type GitopiaMsgDeleteRepositoryResponse = object;
-
-export type GitopiaMsgDeleteStorageProviderResponse = object;
 
 export type GitopiaMsgDeleteTagResponse = object;
 
@@ -344,9 +341,9 @@ export type GitopiaMsgUpdateDaoLocationResponse = object;
 
 export type GitopiaMsgUpdateDaoWebsiteResponse = object;
 
-export type GitopiaMsgUpdateIssueDescriptionResponse = object;
+export type GitopiaMsgUpdateIpfsBackupRefResponse = object;
 
-export type GitopiaMsgUpdateIssueResponse = object;
+export type GitopiaMsgUpdateIssueDescriptionResponse = object;
 
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
@@ -354,21 +351,15 @@ export type GitopiaMsgUpdateMemberRoleResponse = object;
 
 export type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 
-export type GitopiaMsgUpdatePullRequestResponse = object;
-
 export type GitopiaMsgUpdatePullRequestTitleResponse = object;
 
 export type GitopiaMsgUpdateReleaseResponse = object;
-
-export type GitopiaMsgUpdateRepositoryBackupRefResponse = object;
 
 export type GitopiaMsgUpdateRepositoryCollaboratorResponse = object;
 
 export type GitopiaMsgUpdateRepositoryDescriptionResponse = object;
 
 export type GitopiaMsgUpdateRepositoryLabelResponse = object;
-
-export type GitopiaMsgUpdateStorageProviderResponse = object;
 
 export type GitopiaMsgUpdateTaskResponse = object;
 
@@ -688,21 +679,6 @@ export interface GitopiaQueryAllRepositoryTagResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface GitopiaQueryAllStorageProviderResponse {
-  StorageProvider?: GitopiaStorageProvider[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface GitopiaQueryAllTagResponse {
   Tag?: GitopiagitopiaTag[];
 
@@ -825,10 +801,6 @@ export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
   Release?: GitopiaRelease;
 }
 
-export interface GitopiaQueryGetLegacyDaoResponse {
-  dao?: GitopiaDao;
-}
-
 export interface GitopiaQueryGetPullRequestMergePermissionResponse {
   havePermission?: boolean;
 }
@@ -871,10 +843,6 @@ export interface GitopiaQueryGetRepositoryTagResponse {
 
 export interface GitopiaQueryGetRepositoryTagShaResponse {
   sha?: string;
-}
-
-export interface GitopiaQueryGetStorageProviderResponse {
-  StorageProvider?: GitopiaStorageProvider;
 }
 
 export interface GitopiaQueryGetTaskResponse {
@@ -964,8 +932,7 @@ export interface GitopiaRepository {
 }
 
 export interface GitopiaRepositoryBackup {
-  /** @format uint64 */
-  providerId?: string;
+  store?: RepositoryBackupStore;
   refs?: string[];
 }
 
@@ -1036,19 +1003,6 @@ export interface GitopiaRepositoryRelease {
   tagName?: string;
 }
 
-export interface GitopiaStorageProvider {
-  /** @format uint64 */
-  id?: string;
-  store?: GitopiaStore;
-  creator?: string;
-}
-
-export enum GitopiaStore {
-  NONE = "NONE",
-  IPFS = "IPFS",
-  ARWEAVE = "ARWEAVE",
-}
-
 export interface GitopiaTask {
   /** @format uint64 */
   id?: string;
@@ -1095,6 +1049,9 @@ export interface GitopiaUser {
 
 export interface GitopiaWhois {
   creator?: string;
+
+  /** @format uint64 */
+  id?: string;
   name?: string;
   address?: string;
   ownerType?: GitopiaOwnerType;
@@ -1632,22 +1589,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryLegacyDao
-   * @summary Queries a Dao by legacy address
-   * @request GET:/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}
-   */
-  queryLegacyDao = (legacyAddress: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetLegacyDaoResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/legacy-dao/${legacyAddress}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryMemberAll
    * @summary Queries a list of Member items.
    * @request GET:/gitopia/gitopia/gitopia/member
@@ -1806,48 +1747,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRepository = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/repository/${id}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryStorageProviderAll
-   * @summary Queries a list of StorageProvider items.
-   * @request GET:/gitopia/gitopia/gitopia/storage_provider
-   */
-  queryStorageProviderAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<GitopiaQueryAllStorageProviderResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/storage_provider`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryStorageProvider
-   * @summary Queries a StorageProvider by id.
-   * @request GET:/gitopia/gitopia/gitopia/storage_provider/{id}
-   */
-  queryStorageProvider = (id: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetStorageProviderResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/storage_provider/${id}`,
       method: "GET",
       format: "json",
       ...params,

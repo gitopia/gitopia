@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 export var OwnerType;
 (function (OwnerType) {
@@ -31,20 +32,29 @@ export function ownerTypeToJSON(object) {
             return "UNKNOWN";
     }
 }
-const baseWhois = { creator: "", name: "", address: "", ownerType: 0 };
+const baseWhois = {
+    creator: "",
+    id: 0,
+    name: "",
+    address: "",
+    ownerType: 0,
+};
 export const Whois = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
         }
+        if (message.id !== 0) {
+            writer.uint32(16).uint64(message.id);
+        }
         if (message.name !== "") {
-            writer.uint32(18).string(message.name);
+            writer.uint32(26).string(message.name);
         }
         if (message.address !== "") {
-            writer.uint32(26).string(message.address);
+            writer.uint32(34).string(message.address);
         }
         if (message.ownerType !== 0) {
-            writer.uint32(32).int32(message.ownerType);
+            writer.uint32(40).int32(message.ownerType);
         }
         return writer;
     },
@@ -59,12 +69,15 @@ export const Whois = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.name = reader.string();
+                    message.id = longToNumber(reader.uint64());
                     break;
                 case 3:
-                    message.address = reader.string();
+                    message.name = reader.string();
                     break;
                 case 4:
+                    message.address = reader.string();
+                    break;
+                case 5:
                     message.ownerType = reader.int32();
                     break;
                 default:
@@ -81,6 +94,12 @@ export const Whois = {
         }
         else {
             message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = Number(object.id);
+        }
+        else {
+            message.id = 0;
         }
         if (object.name !== undefined && object.name !== null) {
             message.name = String(object.name);
@@ -105,6 +124,7 @@ export const Whois = {
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
+        message.id !== undefined && (obj.id = message.id);
         message.name !== undefined && (obj.name = message.name);
         message.address !== undefined && (obj.address = message.address);
         message.ownerType !== undefined &&
@@ -118,6 +138,12 @@ export const Whois = {
         }
         else {
             message.creator = "";
+        }
+        if (object.id !== undefined && object.id !== null) {
+            message.id = object.id;
+        }
+        else {
+            message.id = 0;
         }
         if (object.name !== undefined && object.name !== null) {
             message.name = object.name;
@@ -140,3 +166,24 @@ export const Whois = {
         return message;
     },
 };
+var globalThis = (() => {
+    if (typeof globalThis !== "undefined")
+        return globalThis;
+    if (typeof self !== "undefined")
+        return self;
+    if (typeof window !== "undefined")
+        return window;
+    if (typeof global !== "undefined")
+        return global;
+    throw "Unable to locate global object";
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+    }
+    return long.toNumber();
+}
+if (util.Long !== Long) {
+    util.Long = Long;
+    configure();
+}

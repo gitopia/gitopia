@@ -9,6 +9,7 @@ export declare function ownerTypeFromJSON(object: any): OwnerType;
 export declare function ownerTypeToJSON(object: OwnerType): string;
 export interface Whois {
     creator: string;
+    id: number;
     name: string;
     address: string;
     ownerType: OwnerType;

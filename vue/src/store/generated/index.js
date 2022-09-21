@@ -12,6 +12,7 @@ import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vest
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1';
 import CosmosIbcGoIbcApplicationsTransferV2 from './cosmos/ibc-go/ibc.applications.transfer.v2';
 import GitopiaGitopiaGitopiaGitopiaGitopia from './gitopia/gitopia/gitopia.gitopia.gitopia';
+import GitopiaGitopiaGitopiaGitopiaOffchain from './gitopia/gitopia/gitopia.gitopia.offchain';
 export default {
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
     CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
@@ -26,6 +27,7 @@ export default {
     CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
     CosmosIbcGoIbcApplicationsTransferV2: load(CosmosIbcGoIbcApplicationsTransferV2, 'ibc.applications.transfer.v2'),
     GitopiaGitopiaGitopiaGitopiaGitopia: load(GitopiaGitopiaGitopiaGitopiaGitopia, 'gitopia.gitopia.gitopia'),
+    GitopiaGitopiaGitopiaGitopiaOffchain: load(GitopiaGitopiaGitopiaGitopiaOffchain, 'gitopia.gitopia.offchain'),
 };
 function load(mod, fullns) {
     return function init(store) {

@@ -1,6 +1,4 @@
 import { Writer, Reader } from "protobufjs/minimal";
-import { LegacyDaoAddress, Dao } from "../gitopia/dao";
-import { StorageProvider } from "../gitopia/storage_provider";
 import { BaseRepositoryKey, Repository } from "../gitopia/repository";
 import { UserDao, User } from "../gitopia/user";
 import { Task } from "../gitopia/task";
@@ -9,16 +7,13 @@ import { Tag } from "../gitopia/tag";
 import { Member } from "../gitopia/member";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
+import { Dao } from "../gitopia/dao";
 import { Comment } from "../gitopia/comment";
 import { Issue } from "../gitopia/issue";
 import { Whois } from "../gitopia/whois";
 export declare const protobufPackage = "gitopia.gitopia.gitopia";
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
-    legacyDaoAddressList: LegacyDaoAddress[];
-    legacyDaoAddressCount: number;
-    storageProviderList: StorageProvider[];
-    storageProviderCount: number;
     baseRepositoryKeyList: BaseRepositoryKey[];
     userDaoList: UserDao[];
     taskList: Task[];

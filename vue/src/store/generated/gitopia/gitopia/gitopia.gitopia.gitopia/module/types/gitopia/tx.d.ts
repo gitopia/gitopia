@@ -1,5 +1,4 @@
 import { TaskType, TaskState } from "../gitopia/task";
-import { Store } from "../gitopia/storage_provider";
 import { MemberRole } from "../gitopia/member";
 import { Reader, Writer } from "protobufjs/minimal";
 import { RepositoryId } from "../gitopia/repository";
@@ -48,39 +47,19 @@ export interface MsgDeleteTask {
     creator: string;
     id: number;
 }
-export interface MsgUpdateRepositoryBackupRef {
+export interface MsgUpdateIpfsBackupRef {
     creator: string;
     repositoryId: RepositoryId | undefined;
-    store: Store;
     ref: string;
 }
-export interface MsgUpdateRepositoryBackupRefResponse {
+export interface MsgUpdateIpfsBackupRefResponse {
 }
-export interface MsgAddRepositoryBackupRef {
+export interface MsgAddArweaveBackupRef {
     creator: string;
     repositoryId: RepositoryId | undefined;
-    store: Store;
     ref: string;
 }
-export interface MsgAddRepositoryBackupRefResponse {
-}
-export interface MsgCreateStorageProvider {
-    creator: string;
-    store: Store;
-}
-export interface MsgCreateStorageProviderResponse {
-    id: number;
-}
-export interface MsgUpdateStorageProvider {
-    creator: string;
-    id: number;
-    store: Store;
-}
-export interface MsgUpdateStorageProviderResponse {
-}
-export interface MsgDeleteStorageProvider {
-    creator: string;
-    id: number;
+export interface MsgAddArweaveBackupRefResponse {
 }
 export interface MsgDeleteTaskResponse {
 }
@@ -239,14 +218,6 @@ export interface MsgCreatePullRequest {
 export interface MsgCreatePullRequestResponse {
     id: number;
     iid: number;
-}
-export interface MsgUpdatePullRequest {
-    creator: string;
-    id: number;
-    title: string;
-    description: string;
-}
-export interface MsgUpdatePullRequestResponse {
 }
 export interface MsgUpdatePullRequestTitle {
     creator: string;
@@ -419,16 +390,6 @@ export interface MsgCreateIssue {
 export interface MsgCreateIssueResponse {
     id: number;
     iid: number;
-}
-export interface MsgUpdateIssue {
-    creator: string;
-    id: number;
-    title: string;
-    description: string;
-    weight: number;
-    assignees: string[];
-}
-export interface MsgUpdateIssueResponse {
 }
 export interface MsgUpdateIssueTitle {
     creator: string;
@@ -733,68 +694,33 @@ export declare const MsgDeleteTask: {
     toJSON(message: MsgDeleteTask): unknown;
     fromPartial(object: DeepPartial<MsgDeleteTask>): MsgDeleteTask;
 };
-export declare const MsgUpdateRepositoryBackupRef: {
-    encode(message: MsgUpdateRepositoryBackupRef, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryBackupRef;
-    fromJSON(object: any): MsgUpdateRepositoryBackupRef;
-    toJSON(message: MsgUpdateRepositoryBackupRef): unknown;
-    fromPartial(object: DeepPartial<MsgUpdateRepositoryBackupRef>): MsgUpdateRepositoryBackupRef;
+export declare const MsgUpdateIpfsBackupRef: {
+    encode(message: MsgUpdateIpfsBackupRef, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIpfsBackupRef;
+    fromJSON(object: any): MsgUpdateIpfsBackupRef;
+    toJSON(message: MsgUpdateIpfsBackupRef): unknown;
+    fromPartial(object: DeepPartial<MsgUpdateIpfsBackupRef>): MsgUpdateIpfsBackupRef;
 };
-export declare const MsgUpdateRepositoryBackupRefResponse: {
-    encode(_: MsgUpdateRepositoryBackupRefResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateRepositoryBackupRefResponse;
-    fromJSON(_: any): MsgUpdateRepositoryBackupRefResponse;
-    toJSON(_: MsgUpdateRepositoryBackupRefResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdateRepositoryBackupRefResponse>): MsgUpdateRepositoryBackupRefResponse;
+export declare const MsgUpdateIpfsBackupRefResponse: {
+    encode(_: MsgUpdateIpfsBackupRefResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIpfsBackupRefResponse;
+    fromJSON(_: any): MsgUpdateIpfsBackupRefResponse;
+    toJSON(_: MsgUpdateIpfsBackupRefResponse): unknown;
+    fromPartial(_: DeepPartial<MsgUpdateIpfsBackupRefResponse>): MsgUpdateIpfsBackupRefResponse;
 };
-export declare const MsgAddRepositoryBackupRef: {
-    encode(message: MsgAddRepositoryBackupRef, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgAddRepositoryBackupRef;
-    fromJSON(object: any): MsgAddRepositoryBackupRef;
-    toJSON(message: MsgAddRepositoryBackupRef): unknown;
-    fromPartial(object: DeepPartial<MsgAddRepositoryBackupRef>): MsgAddRepositoryBackupRef;
+export declare const MsgAddArweaveBackupRef: {
+    encode(message: MsgAddArweaveBackupRef, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddArweaveBackupRef;
+    fromJSON(object: any): MsgAddArweaveBackupRef;
+    toJSON(message: MsgAddArweaveBackupRef): unknown;
+    fromPartial(object: DeepPartial<MsgAddArweaveBackupRef>): MsgAddArweaveBackupRef;
 };
-export declare const MsgAddRepositoryBackupRefResponse: {
-    encode(_: MsgAddRepositoryBackupRefResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgAddRepositoryBackupRefResponse;
-    fromJSON(_: any): MsgAddRepositoryBackupRefResponse;
-    toJSON(_: MsgAddRepositoryBackupRefResponse): unknown;
-    fromPartial(_: DeepPartial<MsgAddRepositoryBackupRefResponse>): MsgAddRepositoryBackupRefResponse;
-};
-export declare const MsgCreateStorageProvider: {
-    encode(message: MsgCreateStorageProvider, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateStorageProvider;
-    fromJSON(object: any): MsgCreateStorageProvider;
-    toJSON(message: MsgCreateStorageProvider): unknown;
-    fromPartial(object: DeepPartial<MsgCreateStorageProvider>): MsgCreateStorageProvider;
-};
-export declare const MsgCreateStorageProviderResponse: {
-    encode(message: MsgCreateStorageProviderResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateStorageProviderResponse;
-    fromJSON(object: any): MsgCreateStorageProviderResponse;
-    toJSON(message: MsgCreateStorageProviderResponse): unknown;
-    fromPartial(object: DeepPartial<MsgCreateStorageProviderResponse>): MsgCreateStorageProviderResponse;
-};
-export declare const MsgUpdateStorageProvider: {
-    encode(message: MsgUpdateStorageProvider, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateStorageProvider;
-    fromJSON(object: any): MsgUpdateStorageProvider;
-    toJSON(message: MsgUpdateStorageProvider): unknown;
-    fromPartial(object: DeepPartial<MsgUpdateStorageProvider>): MsgUpdateStorageProvider;
-};
-export declare const MsgUpdateStorageProviderResponse: {
-    encode(_: MsgUpdateStorageProviderResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateStorageProviderResponse;
-    fromJSON(_: any): MsgUpdateStorageProviderResponse;
-    toJSON(_: MsgUpdateStorageProviderResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdateStorageProviderResponse>): MsgUpdateStorageProviderResponse;
-};
-export declare const MsgDeleteStorageProvider: {
-    encode(message: MsgDeleteStorageProvider, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteStorageProvider;
-    fromJSON(object: any): MsgDeleteStorageProvider;
-    toJSON(message: MsgDeleteStorageProvider): unknown;
-    fromPartial(object: DeepPartial<MsgDeleteStorageProvider>): MsgDeleteStorageProvider;
+export declare const MsgAddArweaveBackupRefResponse: {
+    encode(_: MsgAddArweaveBackupRefResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgAddArweaveBackupRefResponse;
+    fromJSON(_: any): MsgAddArweaveBackupRefResponse;
+    toJSON(_: MsgAddArweaveBackupRefResponse): unknown;
+    fromPartial(_: DeepPartial<MsgAddArweaveBackupRefResponse>): MsgAddArweaveBackupRefResponse;
 };
 export declare const MsgDeleteTaskResponse: {
     encode(_: MsgDeleteTaskResponse, writer?: Writer): Writer;
@@ -1061,20 +987,6 @@ export declare const MsgCreatePullRequestResponse: {
     fromJSON(object: any): MsgCreatePullRequestResponse;
     toJSON(message: MsgCreatePullRequestResponse): unknown;
     fromPartial(object: DeepPartial<MsgCreatePullRequestResponse>): MsgCreatePullRequestResponse;
-};
-export declare const MsgUpdatePullRequest: {
-    encode(message: MsgUpdatePullRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequest;
-    fromJSON(object: any): MsgUpdatePullRequest;
-    toJSON(message: MsgUpdatePullRequest): unknown;
-    fromPartial(object: DeepPartial<MsgUpdatePullRequest>): MsgUpdatePullRequest;
-};
-export declare const MsgUpdatePullRequestResponse: {
-    encode(_: MsgUpdatePullRequestResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequestResponse;
-    fromJSON(_: any): MsgUpdatePullRequestResponse;
-    toJSON(_: MsgUpdatePullRequestResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdatePullRequestResponse>): MsgUpdatePullRequestResponse;
 };
 export declare const MsgUpdatePullRequestTitle: {
     encode(message: MsgUpdatePullRequestTitle, writer?: Writer): Writer;
@@ -1383,20 +1295,6 @@ export declare const MsgCreateIssueResponse: {
     fromJSON(object: any): MsgCreateIssueResponse;
     toJSON(message: MsgCreateIssueResponse): unknown;
     fromPartial(object: DeepPartial<MsgCreateIssueResponse>): MsgCreateIssueResponse;
-};
-export declare const MsgUpdateIssue: {
-    encode(message: MsgUpdateIssue, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssue;
-    fromJSON(object: any): MsgUpdateIssue;
-    toJSON(message: MsgUpdateIssue): unknown;
-    fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue;
-};
-export declare const MsgUpdateIssueResponse: {
-    encode(_: MsgUpdateIssueResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueResponse;
-    fromJSON(_: any): MsgUpdateIssueResponse;
-    toJSON(_: MsgUpdateIssueResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse;
 };
 export declare const MsgUpdateIssueTitle: {
     encode(message: MsgUpdateIssueTitle, writer?: Writer): Writer;
@@ -1830,7 +1728,6 @@ export interface Msg {
     UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
     DeleteRelease(request: MsgDeleteRelease): Promise<MsgDeleteReleaseResponse>;
     CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
-    UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
     InvokeMergePullRequest(request: MsgInvokeMergePullRequest): Promise<MsgInvokeMergePullRequestResponse>;
@@ -1853,7 +1750,6 @@ export interface Msg {
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
-    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
@@ -1885,11 +1781,8 @@ export interface Msg {
     UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
     /** rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse); */
-    UpdateRepositoryBackupRef(request: MsgUpdateRepositoryBackupRef): Promise<MsgUpdateRepositoryBackupRefResponse>;
-    CreateStorageProvider(request: MsgCreateStorageProvider): Promise<MsgCreateStorageProviderResponse>;
-    UpdateStorageProvider(request: MsgUpdateStorageProvider): Promise<MsgUpdateStorageProviderResponse>;
-    DeleteStorageProvider(request: MsgDeleteStorageProvider): Promise<MsgDeleteStorageProviderResponse>;
-    AddRepositoryBackupRef(request: MsgAddRepositoryBackupRef): Promise<MsgAddRepositoryBackupRefResponse>;
+    UpdateIpfsBackupRef(request: MsgUpdateIpfsBackupRef): Promise<MsgUpdateIpfsBackupRefResponse>;
+    AddArweaveBackupRef(request: MsgAddArweaveBackupRef): Promise<MsgAddArweaveBackupRefResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -1916,7 +1809,6 @@ export declare class MsgClientImpl implements Msg {
     UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
     DeleteRelease(request: MsgDeleteRelease): Promise<MsgDeleteReleaseResponse>;
     CreatePullRequest(request: MsgCreatePullRequest): Promise<MsgCreatePullRequestResponse>;
-    UpdatePullRequest(request: MsgUpdatePullRequest): Promise<MsgUpdatePullRequestResponse>;
     UpdatePullRequestTitle(request: MsgUpdatePullRequestTitle): Promise<MsgUpdatePullRequestTitleResponse>;
     UpdatePullRequestDescription(request: MsgUpdatePullRequestDescription): Promise<MsgUpdatePullRequestDescriptionResponse>;
     InvokeMergePullRequest(request: MsgInvokeMergePullRequest): Promise<MsgInvokeMergePullRequestResponse>;
@@ -1939,7 +1831,6 @@ export declare class MsgClientImpl implements Msg {
     UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
     DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
     CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
-    UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
     UpdateIssueTitle(request: MsgUpdateIssueTitle): Promise<MsgUpdateIssueTitleResponse>;
     UpdateIssueDescription(request: MsgUpdateIssueDescription): Promise<MsgUpdateIssueDescriptionResponse>;
     ToggleIssueState(request: MsgToggleIssueState): Promise<MsgToggleIssueStateResponse>;
@@ -1970,11 +1861,8 @@ export declare class MsgClientImpl implements Msg {
     UpdateUserBio(request: MsgUpdateUserBio): Promise<MsgUpdateUserBioResponse>;
     UpdateUserAvatar(request: MsgUpdateUserAvatar): Promise<MsgUpdateUserAvatarResponse>;
     DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
-    UpdateRepositoryBackupRef(request: MsgUpdateRepositoryBackupRef): Promise<MsgUpdateRepositoryBackupRefResponse>;
-    CreateStorageProvider(request: MsgCreateStorageProvider): Promise<MsgCreateStorageProviderResponse>;
-    UpdateStorageProvider(request: MsgUpdateStorageProvider): Promise<MsgUpdateStorageProviderResponse>;
-    DeleteStorageProvider(request: MsgDeleteStorageProvider): Promise<MsgDeleteStorageProviderResponse>;
-    AddRepositoryBackupRef(request: MsgAddRepositoryBackupRef): Promise<MsgAddRepositoryBackupRefResponse>;
+    UpdateIpfsBackupRef(request: MsgUpdateIpfsBackupRef): Promise<MsgUpdateIpfsBackupRefResponse>;
+    AddArweaveBackupRef(request: MsgAddArweaveBackupRef): Promise<MsgAddArweaveBackupRefResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

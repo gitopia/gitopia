@@ -13,6 +13,7 @@ import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vest
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1'
 import CosmosIbcGoIbcApplicationsTransferV2 from './cosmos/ibc-go/ibc.applications.transfer.v2'
 import GitopiaGitopiaGitopiaGitopiaGitopia from './gitopia/gitopia/gitopia.gitopia.gitopia'
+import GitopiaGitopiaGitopiaGitopiaOffchain from './gitopia/gitopia/gitopia.gitopia.offchain'
 
 
 export default { 
@@ -29,6 +30,7 @@ export default {
   CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
   CosmosIbcGoIbcApplicationsTransferV2: load(CosmosIbcGoIbcApplicationsTransferV2, 'ibc.applications.transfer.v2'),
   GitopiaGitopiaGitopiaGitopiaGitopia: load(GitopiaGitopiaGitopiaGitopiaGitopia, 'gitopia.gitopia.gitopia'),
+  GitopiaGitopiaGitopiaGitopiaOffchain: load(GitopiaGitopiaGitopiaGitopiaOffchain, 'gitopia.gitopia.offchain'),
   
 }
 

@@ -4,7 +4,6 @@ import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/paginati
 import { Branch } from "../gitopia/branch";
 import { Tag } from "../gitopia/tag";
 import { Member } from "../gitopia/member";
-import { StorageProvider } from "../gitopia/storage_provider";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Dao } from "../gitopia/dao";
@@ -135,19 +134,6 @@ export interface QueryGetPullRequestMergePermissionRequest {
 export interface QueryGetPullRequestMergePermissionResponse {
     havePermission: boolean;
 }
-export interface QueryGetStorageProviderRequest {
-    id: number;
-}
-export interface QueryGetStorageProviderResponse {
-    StorageProvider: StorageProvider | undefined;
-}
-export interface QueryAllStorageProviderRequest {
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllStorageProviderResponse {
-    StorageProvider: StorageProvider[];
-    pagination: PageResponse | undefined;
-}
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
     id: number;
@@ -187,12 +173,6 @@ export interface QueryAllDaoRequest {
 export interface QueryAllDaoResponse {
     dao: Dao[];
     pagination: PageResponse | undefined;
-}
-export interface QueryGetLegacyDaoRequest {
-    legacyAddress: string;
-}
-export interface QueryGetLegacyDaoResponse {
-    dao: Dao | undefined;
 }
 export interface QueryGetCommentRequest {
     id: number;
@@ -609,34 +589,6 @@ export declare const QueryGetPullRequestMergePermissionResponse: {
     toJSON(message: QueryGetPullRequestMergePermissionResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetPullRequestMergePermissionResponse>): QueryGetPullRequestMergePermissionResponse;
 };
-export declare const QueryGetStorageProviderRequest: {
-    encode(message: QueryGetStorageProviderRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetStorageProviderRequest;
-    fromJSON(object: any): QueryGetStorageProviderRequest;
-    toJSON(message: QueryGetStorageProviderRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetStorageProviderRequest>): QueryGetStorageProviderRequest;
-};
-export declare const QueryGetStorageProviderResponse: {
-    encode(message: QueryGetStorageProviderResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetStorageProviderResponse;
-    fromJSON(object: any): QueryGetStorageProviderResponse;
-    toJSON(message: QueryGetStorageProviderResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetStorageProviderResponse>): QueryGetStorageProviderResponse;
-};
-export declare const QueryAllStorageProviderRequest: {
-    encode(message: QueryAllStorageProviderRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllStorageProviderRequest;
-    fromJSON(object: any): QueryAllStorageProviderRequest;
-    toJSON(message: QueryAllStorageProviderRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllStorageProviderRequest>): QueryAllStorageProviderRequest;
-};
-export declare const QueryAllStorageProviderResponse: {
-    encode(message: QueryAllStorageProviderResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllStorageProviderResponse;
-    fromJSON(object: any): QueryAllStorageProviderResponse;
-    toJSON(message: QueryAllStorageProviderResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllStorageProviderResponse>): QueryAllStorageProviderResponse;
-};
 export declare const QueryGetReleaseRequest: {
     encode(message: QueryGetReleaseRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetReleaseRequest;
@@ -720,20 +672,6 @@ export declare const QueryAllDaoResponse: {
     fromJSON(object: any): QueryAllDaoResponse;
     toJSON(message: QueryAllDaoResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllDaoResponse>): QueryAllDaoResponse;
-};
-export declare const QueryGetLegacyDaoRequest: {
-    encode(message: QueryGetLegacyDaoRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetLegacyDaoRequest;
-    fromJSON(object: any): QueryGetLegacyDaoRequest;
-    toJSON(message: QueryGetLegacyDaoRequest): unknown;
-    fromPartial(object: DeepPartial<QueryGetLegacyDaoRequest>): QueryGetLegacyDaoRequest;
-};
-export declare const QueryGetLegacyDaoResponse: {
-    encode(message: QueryGetLegacyDaoResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryGetLegacyDaoResponse;
-    fromJSON(object: any): QueryGetLegacyDaoResponse;
-    toJSON(message: QueryGetLegacyDaoResponse): unknown;
-    fromPartial(object: DeepPartial<QueryGetLegacyDaoResponse>): QueryGetLegacyDaoResponse;
 };
 export declare const QueryGetCommentRequest: {
     encode(message: QueryGetCommentRequest, writer?: Writer): Writer;
@@ -1076,10 +1014,6 @@ export interface Query {
     DaoMemberAll(request: QueryAllDaoMemberRequest): Promise<QueryAllDaoMemberResponse>;
     /** Queries a list of Member items. */
     MemberAll(request: QueryAllMemberRequest): Promise<QueryAllMemberResponse>;
-    /** Queries a StorageProvider by id. */
-    StorageProvider(request: QueryGetStorageProviderRequest): Promise<QueryGetStorageProviderResponse>;
-    /** Queries a list of StorageProvider items. */
-    StorageProviderAll(request: QueryAllStorageProviderRequest): Promise<QueryAllStorageProviderResponse>;
     /** Queries a release by id. */
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     /** Queries a list of release items. */
@@ -1092,8 +1026,6 @@ export interface Query {
     Dao(request: QueryGetDaoRequest): Promise<QueryGetDaoResponse>;
     /** Queries a list of Dao items. */
     DaoAll(request: QueryAllDaoRequest): Promise<QueryAllDaoResponse>;
-    /** Queries a Dao by legacy address */
-    LegacyDao(request: QueryGetLegacyDaoRequest): Promise<QueryGetLegacyDaoResponse>;
     /** Queries a comment by id. */
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
     /** Queries a list of comment items. */
@@ -1152,15 +1084,12 @@ export declare class QueryClientImpl implements Query {
     DaoMember(request: QueryGetDaoMemberRequest): Promise<QueryGetDaoMemberResponse>;
     DaoMemberAll(request: QueryAllDaoMemberRequest): Promise<QueryAllDaoMemberResponse>;
     MemberAll(request: QueryAllMemberRequest): Promise<QueryAllMemberResponse>;
-    StorageProvider(request: QueryGetStorageProviderRequest): Promise<QueryGetStorageProviderResponse>;
-    StorageProviderAll(request: QueryAllStorageProviderRequest): Promise<QueryAllStorageProviderResponse>;
     Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
     ReleaseAll(request: QueryAllReleaseRequest): Promise<QueryAllReleaseResponse>;
     PullRequest(request: QueryGetPullRequestRequest): Promise<QueryGetPullRequestResponse>;
     PullRequestAll(request: QueryAllPullRequestRequest): Promise<QueryAllPullRequestResponse>;
     Dao(request: QueryGetDaoRequest): Promise<QueryGetDaoResponse>;
     DaoAll(request: QueryAllDaoRequest): Promise<QueryAllDaoResponse>;
-    LegacyDao(request: QueryGetLegacyDaoRequest): Promise<QueryGetLegacyDaoResponse>;
     Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
     CommentAll(request: QueryAllCommentRequest): Promise<QueryAllCommentResponse>;
     Issue(request: QueryGetIssueRequest): Promise<QueryGetIssueResponse>;

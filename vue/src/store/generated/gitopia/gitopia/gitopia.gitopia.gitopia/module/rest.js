@@ -8,6 +8,11 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+export var RepositoryBackupStore;
+(function (RepositoryBackupStore) {
+    RepositoryBackupStore["IPFS"] = "IPFS";
+    RepositoryBackupStore["ARWEAVE"] = "ARWEAVE";
+})(RepositoryBackupStore || (RepositoryBackupStore = {}));
 export var RepositoryCollaboratorPermission;
 (function (RepositoryCollaboratorPermission) {
     RepositoryCollaboratorPermission["READ"] = "READ";
@@ -42,12 +47,6 @@ export var GitopiaPullRequestState;
     GitopiaPullRequestState["CLOSED"] = "CLOSED";
     GitopiaPullRequestState["MERGED"] = "MERGED";
 })(GitopiaPullRequestState || (GitopiaPullRequestState = {}));
-export var GitopiaStore;
-(function (GitopiaStore) {
-    GitopiaStore["NONE"] = "NONE";
-    GitopiaStore["IPFS"] = "IPFS";
-    GitopiaStore["ARWEAVE"] = "ARWEAVE";
-})(GitopiaStore || (GitopiaStore = {}));
 export var GitopiaTaskState;
 (function (GitopiaTaskState) {
     GitopiaTaskState["TASK_STATE_PENDING"] = "TASK_STATE_PENDING";
@@ -348,20 +347,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryLegacyDao
-         * @summary Queries a Dao by legacy address
-         * @request GET:/gitopia/gitopia/gitopia/legacy-dao/{legacyAddress}
-         */
-        this.queryLegacyDao = (legacyAddress, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/legacy-dao/${legacyAddress}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryMemberAll
          * @summary Queries a list of Member items.
          * @request GET:/gitopia/gitopia/gitopia/member
@@ -469,35 +454,6 @@ export class Api extends HttpClient {
          */
         this.queryRepository = (id, params = {}) => this.request({
             path: `/gitopia/gitopia/gitopia/repository/${id}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryStorageProviderAll
-         * @summary Queries a list of StorageProvider items.
-         * @request GET:/gitopia/gitopia/gitopia/storage_provider
-         */
-        this.queryStorageProviderAll = (query, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/storage_provider`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryStorageProvider
-         * @summary Queries a StorageProvider by id.
-         * @request GET:/gitopia/gitopia/gitopia/storage_provider/{id}
-         */
-        this.queryStorageProvider = (id, params = {}) => this.request({
-            path: `/gitopia/gitopia/gitopia/storage_provider/${id}`,
             method: "GET",
             format: "json",
             ...params,

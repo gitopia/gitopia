@@ -17,7 +17,6 @@ const baseDao = {
     description: "",
     createdAt: 0,
     updatedAt: 0,
-    legacyAddress: "",
 };
 export const Dao = {
     encode(message, writer = Writer.create()) {
@@ -64,9 +63,6 @@ export const Dao = {
         }
         if (message.updatedAt !== 0) {
             writer.uint32(112).int64(message.updatedAt);
-        }
-        if (message.legacyAddress !== "") {
-            writer.uint32(122).string(message.legacyAddress);
         }
         return writer;
     },
@@ -129,9 +125,6 @@ export const Dao = {
                     break;
                 case 14:
                     message.updatedAt = longToNumber(reader.int64());
-                    break;
-                case 15:
-                    message.legacyAddress = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -226,12 +219,6 @@ export const Dao = {
         else {
             message.updatedAt = 0;
         }
-        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-            message.legacyAddress = String(object.legacyAddress);
-        }
-        else {
-            message.legacyAddress = "";
-        }
         return message;
     },
     toJSON(message) {
@@ -266,8 +253,6 @@ export const Dao = {
             (obj.description = message.description);
         message.createdAt !== undefined && (obj.createdAt = message.createdAt);
         message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-        message.legacyAddress !== undefined &&
-            (obj.legacyAddress = message.legacyAddress);
         return obj;
     },
     fromPartial(object) {
@@ -355,102 +340,6 @@ export const Dao = {
         }
         else {
             message.updatedAt = 0;
-        }
-        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-            message.legacyAddress = object.legacyAddress;
-        }
-        else {
-            message.legacyAddress = "";
-        }
-        return message;
-    },
-};
-const baseLegacyDaoAddress = { id: 0, legacyAddress: "", address: "" };
-export const LegacyDaoAddress = {
-    encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
-        }
-        if (message.legacyAddress !== "") {
-            writer.uint32(18).string(message.legacyAddress);
-        }
-        if (message.address !== "") {
-            writer.uint32(26).string(message.address);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseLegacyDaoAddress };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                case 2:
-                    message.legacyAddress = reader.string();
-                    break;
-                case 3:
-                    message.address = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseLegacyDaoAddress };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-            message.legacyAddress = String(object.legacyAddress);
-        }
-        else {
-            message.legacyAddress = "";
-        }
-        if (object.address !== undefined && object.address !== null) {
-            message.address = String(object.address);
-        }
-        else {
-            message.address = "";
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.id !== undefined && (obj.id = message.id);
-        message.legacyAddress !== undefined &&
-            (obj.legacyAddress = message.legacyAddress);
-        message.address !== undefined && (obj.address = message.address);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseLegacyDaoAddress };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-            message.legacyAddress = object.legacyAddress;
-        }
-        else {
-            message.legacyAddress = "";
-        }
-        if (object.address !== undefined && object.address !== null) {
-            message.address = object.address;
-        }
-        else {
-            message.address = "";
         }
         return message;
     },

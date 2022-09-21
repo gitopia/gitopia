@@ -9,7 +9,6 @@ import {
 import { Branch } from "../gitopia/branch";
 import { Tag } from "../gitopia/tag";
 import { Member } from "../gitopia/member";
-import { StorageProvider } from "../gitopia/storage_provider";
 import { Release } from "../gitopia/release";
 import { PullRequest } from "../gitopia/pullRequest";
 import { Dao } from "../gitopia/dao";
@@ -174,23 +173,6 @@ export interface QueryGetPullRequestMergePermissionResponse {
   havePermission: boolean;
 }
 
-export interface QueryGetStorageProviderRequest {
-  id: number;
-}
-
-export interface QueryGetStorageProviderResponse {
-  StorageProvider: StorageProvider | undefined;
-}
-
-export interface QueryAllStorageProviderRequest {
-  pagination: PageRequest | undefined;
-}
-
-export interface QueryAllStorageProviderResponse {
-  StorageProvider: StorageProvider[];
-  pagination: PageResponse | undefined;
-}
-
 /** this line is used by starport scaffolding # 3 */
 export interface QueryGetReleaseRequest {
   id: number;
@@ -241,14 +223,6 @@ export interface QueryAllDaoRequest {
 export interface QueryAllDaoResponse {
   dao: Dao[];
   pagination: PageResponse | undefined;
-}
-
-export interface QueryGetLegacyDaoRequest {
-  legacyAddress: string;
-}
-
-export interface QueryGetLegacyDaoResponse {
-  dao: Dao | undefined;
 }
 
 export interface QueryGetCommentRequest {
@@ -3196,344 +3170,6 @@ export const QueryGetPullRequestMergePermissionResponse = {
   },
 };
 
-const baseQueryGetStorageProviderRequest: object = { id: 0 };
-
-export const QueryGetStorageProviderRequest = {
-  encode(
-    message: QueryGetStorageProviderRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetStorageProviderRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetStorageProviderRequest,
-    } as QueryGetStorageProviderRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetStorageProviderRequest {
-    const message = {
-      ...baseQueryGetStorageProviderRequest,
-    } as QueryGetStorageProviderRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetStorageProviderRequest): unknown {
-    const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetStorageProviderRequest>
-  ): QueryGetStorageProviderRequest {
-    const message = {
-      ...baseQueryGetStorageProviderRequest,
-    } as QueryGetStorageProviderRequest;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-};
-
-const baseQueryGetStorageProviderResponse: object = {};
-
-export const QueryGetStorageProviderResponse = {
-  encode(
-    message: QueryGetStorageProviderResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.StorageProvider !== undefined) {
-      StorageProvider.encode(
-        message.StorageProvider,
-        writer.uint32(10).fork()
-      ).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetStorageProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetStorageProviderResponse,
-    } as QueryGetStorageProviderResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.StorageProvider = StorageProvider.decode(
-            reader,
-            reader.uint32()
-          );
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetStorageProviderResponse {
-    const message = {
-      ...baseQueryGetStorageProviderResponse,
-    } as QueryGetStorageProviderResponse;
-    if (
-      object.StorageProvider !== undefined &&
-      object.StorageProvider !== null
-    ) {
-      message.StorageProvider = StorageProvider.fromJSON(
-        object.StorageProvider
-      );
-    } else {
-      message.StorageProvider = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetStorageProviderResponse): unknown {
-    const obj: any = {};
-    message.StorageProvider !== undefined &&
-      (obj.StorageProvider = message.StorageProvider
-        ? StorageProvider.toJSON(message.StorageProvider)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetStorageProviderResponse>
-  ): QueryGetStorageProviderResponse {
-    const message = {
-      ...baseQueryGetStorageProviderResponse,
-    } as QueryGetStorageProviderResponse;
-    if (
-      object.StorageProvider !== undefined &&
-      object.StorageProvider !== null
-    ) {
-      message.StorageProvider = StorageProvider.fromPartial(
-        object.StorageProvider
-      );
-    } else {
-      message.StorageProvider = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryAllStorageProviderRequest: object = {};
-
-export const QueryAllStorageProviderRequest = {
-  encode(
-    message: QueryAllStorageProviderRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryAllStorageProviderRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryAllStorageProviderRequest,
-    } as QueryAllStorageProviderRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllStorageProviderRequest {
-    const message = {
-      ...baseQueryAllStorageProviderRequest,
-    } as QueryAllStorageProviderRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllStorageProviderRequest): unknown {
-    const obj: any = {};
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageRequest.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryAllStorageProviderRequest>
-  ): QueryAllStorageProviderRequest {
-    const message = {
-      ...baseQueryAllStorageProviderRequest,
-    } as QueryAllStorageProviderRequest;
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryAllStorageProviderResponse: object = {};
-
-export const QueryAllStorageProviderResponse = {
-  encode(
-    message: QueryAllStorageProviderResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    for (const v of message.StorageProvider) {
-      StorageProvider.encode(v!, writer.uint32(10).fork()).ldelim();
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(
-        message.pagination,
-        writer.uint32(18).fork()
-      ).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryAllStorageProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryAllStorageProviderResponse,
-    } as QueryAllStorageProviderResponse;
-    message.StorageProvider = [];
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.StorageProvider.push(
-            StorageProvider.decode(reader, reader.uint32())
-          );
-          break;
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryAllStorageProviderResponse {
-    const message = {
-      ...baseQueryAllStorageProviderResponse,
-    } as QueryAllStorageProviderResponse;
-    message.StorageProvider = [];
-    if (
-      object.StorageProvider !== undefined &&
-      object.StorageProvider !== null
-    ) {
-      for (const e of object.StorageProvider) {
-        message.StorageProvider.push(StorageProvider.fromJSON(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryAllStorageProviderResponse): unknown {
-    const obj: any = {};
-    if (message.StorageProvider) {
-      obj.StorageProvider = message.StorageProvider.map((e) =>
-        e ? StorageProvider.toJSON(e) : undefined
-      );
-    } else {
-      obj.StorageProvider = [];
-    }
-    message.pagination !== undefined &&
-      (obj.pagination = message.pagination
-        ? PageResponse.toJSON(message.pagination)
-        : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryAllStorageProviderResponse>
-  ): QueryAllStorageProviderResponse {
-    const message = {
-      ...baseQueryAllStorageProviderResponse,
-    } as QueryAllStorageProviderResponse;
-    message.StorageProvider = [];
-    if (
-      object.StorageProvider !== undefined &&
-      object.StorageProvider !== null
-    ) {
-      for (const e of object.StorageProvider) {
-        message.StorageProvider.push(StorageProvider.fromPartial(e));
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination);
-    } else {
-      message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
 const baseQueryGetReleaseRequest: object = { id: 0 };
 
 export const QueryGetReleaseRequest = {
@@ -4402,146 +4038,6 @@ export const QueryAllDaoResponse = {
       message.pagination = PageResponse.fromPartial(object.pagination);
     } else {
       message.pagination = undefined;
-    }
-    return message;
-  },
-};
-
-const baseQueryGetLegacyDaoRequest: object = { legacyAddress: "" };
-
-export const QueryGetLegacyDaoRequest = {
-  encode(
-    message: QueryGetLegacyDaoRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.legacyAddress !== "") {
-      writer.uint32(10).string(message.legacyAddress);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetLegacyDaoRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetLegacyDaoRequest,
-    } as QueryGetLegacyDaoRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.legacyAddress = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetLegacyDaoRequest {
-    const message = {
-      ...baseQueryGetLegacyDaoRequest,
-    } as QueryGetLegacyDaoRequest;
-    if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-      message.legacyAddress = String(object.legacyAddress);
-    } else {
-      message.legacyAddress = "";
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetLegacyDaoRequest): unknown {
-    const obj: any = {};
-    message.legacyAddress !== undefined &&
-      (obj.legacyAddress = message.legacyAddress);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetLegacyDaoRequest>
-  ): QueryGetLegacyDaoRequest {
-    const message = {
-      ...baseQueryGetLegacyDaoRequest,
-    } as QueryGetLegacyDaoRequest;
-    if (object.legacyAddress !== undefined && object.legacyAddress !== null) {
-      message.legacyAddress = object.legacyAddress;
-    } else {
-      message.legacyAddress = "";
-    }
-    return message;
-  },
-};
-
-const baseQueryGetLegacyDaoResponse: object = {};
-
-export const QueryGetLegacyDaoResponse = {
-  encode(
-    message: QueryGetLegacyDaoResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.dao !== undefined) {
-      Dao.encode(message.dao, writer.uint32(10).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetLegacyDaoResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetLegacyDaoResponse,
-    } as QueryGetLegacyDaoResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.dao = Dao.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): QueryGetLegacyDaoResponse {
-    const message = {
-      ...baseQueryGetLegacyDaoResponse,
-    } as QueryGetLegacyDaoResponse;
-    if (object.dao !== undefined && object.dao !== null) {
-      message.dao = Dao.fromJSON(object.dao);
-    } else {
-      message.dao = undefined;
-    }
-    return message;
-  },
-
-  toJSON(message: QueryGetLegacyDaoResponse): unknown {
-    const obj: any = {};
-    message.dao !== undefined &&
-      (obj.dao = message.dao ? Dao.toJSON(message.dao) : undefined);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<QueryGetLegacyDaoResponse>
-  ): QueryGetLegacyDaoResponse {
-    const message = {
-      ...baseQueryGetLegacyDaoResponse,
-    } as QueryGetLegacyDaoResponse;
-    if (object.dao !== undefined && object.dao !== null) {
-      message.dao = Dao.fromPartial(object.dao);
-    } else {
-      message.dao = undefined;
     }
     return message;
   },
@@ -8761,14 +8257,6 @@ export interface Query {
   ): Promise<QueryAllDaoMemberResponse>;
   /** Queries a list of Member items. */
   MemberAll(request: QueryAllMemberRequest): Promise<QueryAllMemberResponse>;
-  /** Queries a StorageProvider by id. */
-  StorageProvider(
-    request: QueryGetStorageProviderRequest
-  ): Promise<QueryGetStorageProviderResponse>;
-  /** Queries a list of StorageProvider items. */
-  StorageProviderAll(
-    request: QueryAllStorageProviderRequest
-  ): Promise<QueryAllStorageProviderResponse>;
   /** Queries a release by id. */
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse>;
   /** Queries a list of release items. */
@@ -8785,10 +8273,6 @@ export interface Query {
   Dao(request: QueryGetDaoRequest): Promise<QueryGetDaoResponse>;
   /** Queries a list of Dao items. */
   DaoAll(request: QueryAllDaoRequest): Promise<QueryAllDaoResponse>;
-  /** Queries a Dao by legacy address */
-  LegacyDao(
-    request: QueryGetLegacyDaoRequest
-  ): Promise<QueryGetLegacyDaoResponse>;
   /** Queries a comment by id. */
   Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse>;
   /** Queries a list of comment items. */
@@ -9035,34 +8519,6 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  StorageProvider(
-    request: QueryGetStorageProviderRequest
-  ): Promise<QueryGetStorageProviderResponse> {
-    const data = QueryGetStorageProviderRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "StorageProvider",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetStorageProviderResponse.decode(new Reader(data))
-    );
-  }
-
-  StorageProviderAll(
-    request: QueryAllStorageProviderRequest
-  ): Promise<QueryAllStorageProviderResponse> {
-    const data = QueryAllStorageProviderRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "StorageProviderAll",
-      data
-    );
-    return promise.then((data) =>
-      QueryAllStorageProviderResponse.decode(new Reader(data))
-    );
-  }
-
   Release(request: QueryGetReleaseRequest): Promise<QueryGetReleaseResponse> {
     const data = QueryGetReleaseRequest.encode(request).finish();
     const promise = this.rpc.request(
@@ -9135,20 +8591,6 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryAllDaoResponse.decode(new Reader(data)));
-  }
-
-  LegacyDao(
-    request: QueryGetLegacyDaoRequest
-  ): Promise<QueryGetLegacyDaoResponse> {
-    const data = QueryGetLegacyDaoRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Query",
-      "LegacyDao",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetLegacyDaoResponse.decode(new Reader(data))
-    );
   }
 
   Comment(request: QueryGetCommentRequest): Promise<QueryGetCommentResponse> {
