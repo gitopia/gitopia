@@ -33,13 +33,12 @@ func (k msgServer) AddArweaveBackupRef(goCtx context.Context, msg *types.MsgAddA
 	}
 
 	var backup *types.RepositoryBackup
-	i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_ARWEAVE)
-	if !found {
+	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_ARWEAVE); found {
+		backup = repository.Backups[i]
+	} else {
 		backup = new(types.RepositoryBackup)
 		backup.Store = types.RepositoryBackup_ARWEAVE
 		repository.Backups = append(repository.Backups, backup)
-	} else {
-		backup = repository.Backups[i]
 	}
 	backup.Refs = append(backup.Refs, msg.Ref)
 
@@ -72,13 +71,12 @@ func (k msgServer) UpdateIpfsBackupRef(goCtx context.Context, msg *types.MsgUpda
 	}
 
 	var backup *types.RepositoryBackup
-	i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_IPFS)
-	if !found {
+	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_IPFS); found {
+		backup = repository.Backups[i]
+	} else {
 		backup = new(types.RepositoryBackup)
 		backup.Store = types.RepositoryBackup_IPFS
 		repository.Backups = append(repository.Backups, backup)
-	} else {
-		backup = repository.Backups[i]
 	}
 
 	if len(backup.Refs) == 0 {

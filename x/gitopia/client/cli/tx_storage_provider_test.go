@@ -21,7 +21,7 @@ func TestAuthorizeStorageProvider(t *testing.T) {
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"xyz"}
+	fields := []string{sample.AccAddress()}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -51,10 +51,12 @@ func TestAuthorizeStorageProvider(t *testing.T) {
 			provider: "invalid_address",
 			args:     common,
 			code:     sdkerrors.ErrInvalidAddress.ABCICode(),
+			err:      sdkerrors.ErrInvalidAddress,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
+			clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateUser(), append([]string{"test", "test", "https://test.com", "test"}, tc.args...))
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeStorageProvider(), append([]string{tc.provider}, tc.args...))
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
