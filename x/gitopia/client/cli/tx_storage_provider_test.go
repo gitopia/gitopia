@@ -11,56 +11,17 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gitopia/gitopia/testutil/network"
+	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/gitopia/gitopia/x/gitopia/client/cli"
 )
 
-func TestCreateStorageProvider(t *testing.T) {
-	net := network.New(t)
-	val := net.Validators[0]
-	ctx := val.ClientCtx
-
-	fields := []string{"xyz"}
-	for _, tc := range []struct {
-		desc string
-		args []string
-		err  error
-		code uint32
-	}{
-		{
-			desc: "valid",
-			args: []string{
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
-			},
-		},
-	} {
-		tc := tc
-		t.Run(tc.desc, func(t *testing.T) {
-			args := []string{}
-			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateStorageProvider(), args)
-			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
-			} else {
-				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
-			}
-		})
-	}
-}
-
-func TestUpdateStorageProvider(t *testing.T) {
+func TestAuthorizeStorageProvider(t *testing.T) {
 	net := network.New(t)
 
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"xyz"}
+	fields := []string{sample.AccAddress()}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -70,87 +31,33 @@ func TestUpdateStorageProvider(t *testing.T) {
 	args := []string{}
 	args = append(args, fields...)
 	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateStorageProvider(), args)
+	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeStorageProvider(), args)
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
-		desc string
-		id   string
-		args []string
-		code uint32
-		err  error
+		desc     string
+		provider string
+		args     []string
+		code     uint32
+		err      error
 	}{
 		{
-			desc: "valid",
-			id:   "0",
-			args: common,
+			desc:     "valid provider address",
+			provider: sample.AccAddress(),
+			args:     common,
 		},
 		{
-			desc: "key not found",
-			id:   "1",
-			args: common,
-			code: sdkerrors.ErrKeyNotFound.ABCICode(),
+			desc:     "invalid provider address",
+			provider: "invalid_address",
+			args:     common,
+			code:     sdkerrors.ErrInvalidAddress.ABCICode(),
+			err:      sdkerrors.ErrInvalidAddress,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			args := []string{tc.id}
-			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdUpdateStorageProvider(), args)
-			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
-			} else {
-				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
-			}
-		})
-	}
-}
-
-func TestDeleteStorageProvider(t *testing.T) {
-	net := network.New(t)
-
-	val := net.Validators[0]
-	ctx := val.ClientCtx
-
-	fields := []string{"xyz"}
-	common := []string{
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
-	}
-	args := []string{}
-	args = append(args, fields...)
-	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateStorageProvider(), args)
-	require.NoError(t, err)
-
-	for _, tc := range []struct {
-		desc string
-		id   string
-		args []string
-		code uint32
-		err  error
-	}{
-		{
-			desc: "valid",
-			id:   "0",
-			args: common,
-		},
-		{
-			desc: "key not found",
-			id:   "1",
-			args: common,
-			code: sdkerrors.ErrKeyNotFound.ABCICode(),
-		},
-	} {
-		tc := tc
-		t.Run(tc.desc, func(t *testing.T) {
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdDeleteStorageProvider(), append([]string{tc.id}, tc.args...))
+			clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateUser(), append([]string{"test", "test", "https://test.com", "test"}, tc.args...))
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeStorageProvider(), append([]string{tc.provider}, tc.args...))
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

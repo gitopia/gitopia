@@ -7,9 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
-func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {
+func (k msgServer) AddArweaveBackupRef(goCtx context.Context, msg *types.MsgAddArweaveBackupRef) (*types.MsgAddArweaveBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -31,19 +32,12 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.StorageProviderAddress,
-		store:   msg.Store,
-	})
-
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)
-	if !found {
+	var backup *types.RepositoryBackup
+	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_ARWEAVE); found {
+		backup = repository.Backups[i]
+	} else {
 		backup = new(types.RepositoryBackup)
-		backup.ProviderId = provider.Id
+		backup.Store = types.RepositoryBackup_ARWEAVE
 		repository.Backups = append(repository.Backups, backup)
 	}
 	backup.Refs = append(backup.Refs, msg.Ref)
@@ -51,10 +45,10 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgAddRepositoryBackupRefResponse{}, nil
+	return &types.MsgAddArweaveBackupRefResponse{}, nil
 }
 
-func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.MsgUpdateRepositoryBackupRef) (*types.MsgUpdateRepositoryBackupRefResponse, error) {
+func (k msgServer) UpdateIpfsBackupRef(goCtx context.Context, msg *types.MsgUpdateIpfsBackupRef) (*types.MsgUpdateIpfsBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -76,21 +70,15 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	provider, found := k.GetStorageProviderByKey(ctx, storageProviderPKey{
-		creator: msg.StorageProviderAddress,
-		store:   msg.Store,
-	})
-
-	if !found {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "provider (%d) doesn't exist", msg.Creator)
-	}
-
-	backup, found := k.FindBackupProvider(ctx, repository, provider.Id)
-	if !found {
+	var backup *types.RepositoryBackup
+	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_IPFS); found {
+		backup = repository.Backups[i]
+	} else {
 		backup = new(types.RepositoryBackup)
-		backup.ProviderId = provider.Id
+		backup.Store = types.RepositoryBackup_IPFS
 		repository.Backups = append(repository.Backups, backup)
 	}
+
 	if len(backup.Refs) == 0 {
 		backup.Refs = []string{msg.Ref}
 	} else {
@@ -100,5 +88,5 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgUpdateRepositoryBackupRefResponse{}, nil
+	return &types.MsgUpdateIpfsBackupRefResponse{}, nil
 }

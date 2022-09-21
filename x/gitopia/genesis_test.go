@@ -193,15 +193,6 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		MemberCount: 2,
-		StorageProviderList: []types.StorageProvider{
-			{
-				Id: 0,
-			},
-			{
-				Id: 1,
-			},
-		},
-		StorageProviderCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -255,8 +246,6 @@ func TestGenesis(t *testing.T) {
 
 	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	require.Equal(t, genesisState.MemberCount, got.MemberCount)
-	require.ElementsMatch(t, genesisState.StorageProviderList, got.StorageProviderList)
-	require.Equal(t, genesisState.StorageProviderCount, got.StorageProviderCount)
 
 	// this line is used by starport scaffolding # genesis/test/assert
 }

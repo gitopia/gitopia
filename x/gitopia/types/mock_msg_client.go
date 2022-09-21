@@ -165,8 +165,8 @@ func (_m *MockMsgClient) AddPullRequestReviewers(ctx context.Context, in *MsgAdd
 	return r0, r1
 }
 
-// AddRepositoryBackupRef provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) AddRepositoryBackupRef(ctx context.Context, in *MsgAddRepositoryBackupRef, opts ...grpc.CallOption) (*MsgAddRepositoryBackupRefResponse, error) {
+// AddArweaveBackupRef provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) AddArweaveBackupRef(ctx context.Context, in *MsgAddArweaveBackupRef, opts ...grpc.CallOption) (*MsgAddArweaveBackupRefResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -176,17 +176,17 @@ func (_m *MockMsgClient) AddRepositoryBackupRef(ctx context.Context, in *MsgAddR
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *MsgAddRepositoryBackupRefResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgAddRepositoryBackupRef, ...grpc.CallOption) *MsgAddRepositoryBackupRefResponse); ok {
+	var r0 *MsgAddArweaveBackupRefResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgAddArweaveBackupRef, ...grpc.CallOption) *MsgAddArweaveBackupRefResponse); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgAddRepositoryBackupRefResponse)
+			r0 = ret.Get(0).(*MsgAddArweaveBackupRefResponse)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgAddRepositoryBackupRef, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgAddArweaveBackupRef, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -457,36 +457,6 @@ func (_m *MockMsgClient) CreateRepositoryLabel(ctx context.Context, in *MsgCreat
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgCreateRepositoryLabel, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// CreateStorageProvider provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) CreateStorageProvider(ctx context.Context, in *MsgCreateStorageProvider, opts ...grpc.CallOption) (*MsgCreateStorageProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *MsgCreateStorageProviderResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgCreateStorageProvider, ...grpc.CallOption) *MsgCreateStorageProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgCreateStorageProviderResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgCreateStorageProvider, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -787,36 +757,6 @@ func (_m *MockMsgClient) DeleteRepositoryLabel(ctx context.Context, in *MsgDelet
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgDeleteRepositoryLabel, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// DeleteStorageProvider provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) DeleteStorageProvider(ctx context.Context, in *MsgDeleteStorageProvider, opts ...grpc.CallOption) (*MsgDeleteStorageProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *MsgDeleteStorageProviderResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgDeleteStorageProvider, ...grpc.CallOption) *MsgDeleteStorageProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgDeleteStorageProviderResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgDeleteStorageProvider, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -1935,8 +1875,8 @@ func (_m *MockMsgClient) UpdateRelease(ctx context.Context, in *MsgUpdateRelease
 	return r0, r1
 }
 
-// UpdateRepositoryBackupRef provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateRepositoryBackupRef(ctx context.Context, in *MsgUpdateRepositoryBackupRef, opts ...grpc.CallOption) (*MsgUpdateRepositoryBackupRefResponse, error) {
+// UpdateIpfsBackupRef provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) UpdateIpfsBackupRef(ctx context.Context, in *MsgUpdateIpfsBackupRef, opts ...grpc.CallOption) (*MsgUpdateIpfsBackupRefResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -1946,17 +1886,17 @@ func (_m *MockMsgClient) UpdateRepositoryBackupRef(ctx context.Context, in *MsgU
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *MsgUpdateRepositoryBackupRefResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateRepositoryBackupRef, ...grpc.CallOption) *MsgUpdateRepositoryBackupRefResponse); ok {
+	var r0 *MsgUpdateIpfsBackupRefResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateIpfsBackupRef, ...grpc.CallOption) *MsgUpdateIpfsBackupRefResponse); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdateRepositoryBackupRefResponse)
+			r0 = ret.Get(0).(*MsgUpdateIpfsBackupRefResponse)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateRepositoryBackupRef, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateIpfsBackupRef, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -2047,36 +1987,6 @@ func (_m *MockMsgClient) UpdateRepositoryLabel(ctx context.Context, in *MsgUpdat
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateRepositoryLabel, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateStorageProvider provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateStorageProvider(ctx context.Context, in *MsgUpdateStorageProvider, opts ...grpc.CallOption) (*MsgUpdateStorageProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	var r0 *MsgUpdateStorageProviderResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateStorageProvider, ...grpc.CallOption) *MsgUpdateStorageProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdateStorageProviderResponse)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateStorageProvider, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

@@ -8,22 +8,36 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgCreateStorageProvider_ValidateBasic(t *testing.T) {
+func TestMsgAuthorizeStorageProvider_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgCreateStorageProvider
+		msg  MsgAuthorizeStorageProvider
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgCreateStorageProvider{
+			name: "invalid creator address",
+			msg: MsgAuthorizeStorageProvider{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
+			name: "valid creator address",
+			msg: MsgAuthorizeStorageProvider{
+				Creator:  sample.AccAddress(),
+				Provider: sample.AccAddress(),
+			},
+		}, {
+			name: "invalid provider address",
+			msg: MsgAuthorizeStorageProvider{
+				Creator:  sample.AccAddress(),
+				Provider: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
 			name: "valid address",
-			msg: MsgCreateStorageProvider{
-				Creator: sample.AccAddress(),
+			msg: MsgAuthorizeStorageProvider{
+				Creator:  sample.AccAddress(),
+				Provider: sample.AccAddress(),
 			},
 		},
 	}
@@ -39,53 +53,36 @@ func TestMsgCreateStorageProvider_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateStorageProvider_ValidateBasic(t *testing.T) {
+func TestMsgRevokeStorageProviderPermissions_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgUpdateStorageProvider
+		msg  MsgRevokeStorageProviderPermissions
 		err  error
 	}{
 		{
-			name: "invalid address",
-			msg: MsgUpdateStorageProvider{
+			name: "invalid creator address",
+			msg: MsgRevokeStorageProviderPermissions{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
-			msg: MsgUpdateStorageProvider{
-				Creator: sample.AccAddress(),
+			name: "valid creator address",
+			msg: MsgRevokeStorageProviderPermissions{
+				Creator:  sample.AccAddress(),
+				Provider: sample.AccAddress(),
 			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
-		})
-	}
-}
-
-func TestMsgDeleteStorageProvider_ValidateBasic(t *testing.T) {
-	tests := []struct {
-		name string
-		msg  MsgDeleteStorageProvider
-		err  error
-	}{
-		{
-			name: "invalid address",
-			msg: MsgDeleteStorageProvider{
-				Creator: "invalid_address",
+		}, {
+			name: "invalid provider address",
+			msg: MsgRevokeStorageProviderPermissions{
+				Creator:  sample.AccAddress(),
+				Provider: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
-			msg: MsgDeleteStorageProvider{
-				Creator: sample.AccAddress(),
+			name: "valid provider address",
+			msg: MsgRevokeStorageProviderPermissions{
+				Creator:  sample.AccAddress(),
+				Provider: sample.AccAddress(),
 			},
 		},
 	}

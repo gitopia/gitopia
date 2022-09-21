@@ -7,7 +7,6 @@ import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
-import "gitopia/storage_provider.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
@@ -84,16 +83,6 @@ service Query {
 	// Queries a list of Member items.
 	rpc MemberAll(QueryAllMemberRequest) returns (QueryAllMemberResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/member";
-	}
-
-    // Queries a StorageProvider by id.
-	rpc StorageProvider(QueryGetStorageProviderRequest) returns (QueryGetStorageProviderResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage-provider/{id}";
-	}
-
-	// Queries a list of StorageProvider items.
-	rpc StorageProviderAll(QueryAllStorageProviderRequest) returns (QueryAllStorageProviderResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage-provider";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -395,23 +384,6 @@ message QueryGetPullRequestMergePermissionRequest {
 
 message QueryGetPullRequestMergePermissionResponse {
 	bool havePermission = 1;
-}
-
-message QueryGetStorageProviderRequest {
-	uint64 id = 1;
-}
-
-message QueryGetStorageProviderResponse {
-	StorageProvider StorageProvider = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllStorageProviderRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllStorageProviderResponse {
-	repeated StorageProvider StorageProvider = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

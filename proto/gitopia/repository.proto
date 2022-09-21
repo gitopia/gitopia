@@ -92,9 +92,13 @@ message Attachment {
   uint64 size = 2;
   string sha = 3;
   string uploader = 4;
-} 
+}
 
 message RepositoryBackup {
-  uint64 providerId = 1;
+  enum Store {
+    IPFS = 0;
+    ARWEAVE = 1;
+  }
+  Store store = 1;
   repeated string refs = 2;
 }
