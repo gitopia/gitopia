@@ -12,5 +12,6 @@ declare const _default: {
     CosmosIbcGoIbcApplicationsTransferV1: (store: any) => void;
     CosmosIbcGoIbcApplicationsTransferV2: (store: any) => void;
     GitopiaGitopiaGitopiaGitopiaGitopia: (store: any) => void;
+    GitopiaGitopiaGitopiaGitopiaOffchain: (store: any) => void;
 };
 export default _default;

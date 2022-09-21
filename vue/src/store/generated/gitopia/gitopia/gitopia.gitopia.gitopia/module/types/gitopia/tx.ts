@@ -7,7 +7,6 @@ import {
   taskStateFromJSON,
   taskStateToJSON,
 } from "../gitopia/task";
-import { Store, storeFromJSON, storeToJSON } from "../gitopia/storage_provider";
 import {
   MemberRole,
   memberRoleFromJSON,
@@ -71,45 +70,21 @@ export interface MsgDeleteTask {
   id: number;
 }
 
-export interface MsgUpdateRepositoryBackupRef {
+export interface MsgUpdateIpfsBackupRef {
   creator: string;
   repositoryId: RepositoryId | undefined;
-  store: Store;
   ref: string;
 }
 
-export interface MsgUpdateRepositoryBackupRefResponse {}
+export interface MsgUpdateIpfsBackupRefResponse {}
 
-export interface MsgAddRepositoryBackupRef {
+export interface MsgAddArweaveBackupRef {
   creator: string;
   repositoryId: RepositoryId | undefined;
-  store: Store;
   ref: string;
 }
 
-export interface MsgAddRepositoryBackupRefResponse {}
-
-export interface MsgCreateStorageProvider {
-  creator: string;
-  store: Store;
-}
-
-export interface MsgCreateStorageProviderResponse {
-  id: number;
-}
-
-export interface MsgUpdateStorageProvider {
-  creator: string;
-  id: number;
-  store: Store;
-}
-
-export interface MsgUpdateStorageProviderResponse {}
-
-export interface MsgDeleteStorageProvider {
-  creator: string;
-  id: number;
-}
+export interface MsgAddArweaveBackupRefResponse {}
 
 export interface MsgDeleteTaskResponse {}
 
@@ -290,15 +265,6 @@ export interface MsgCreatePullRequestResponse {
   id: number;
   iid: number;
 }
-
-export interface MsgUpdatePullRequest {
-  creator: string;
-  id: number;
-  title: string;
-  description: string;
-}
-
-export interface MsgUpdatePullRequestResponse {}
 
 export interface MsgUpdatePullRequestTitle {
   creator: string;
@@ -497,17 +463,6 @@ export interface MsgCreateIssueResponse {
   id: number;
   iid: number;
 }
-
-export interface MsgUpdateIssue {
-  creator: string;
-  id: number;
-  title: string;
-  description: string;
-  weight: number;
-  assignees: string[];
-}
-
-export interface MsgUpdateIssueResponse {}
 
 export interface MsgUpdateIssueTitle {
   creator: string;
@@ -1670,15 +1625,11 @@ export const MsgDeleteTask = {
   },
 };
 
-const baseMsgUpdateRepositoryBackupRef: object = {
-  creator: "",
-  store: 0,
-  ref: "",
-};
+const baseMsgUpdateIpfsBackupRef: object = { creator: "", ref: "" };
 
-export const MsgUpdateRepositoryBackupRef = {
+export const MsgUpdateIpfsBackupRef = {
   encode(
-    message: MsgUpdateRepositoryBackupRef,
+    message: MsgUpdateIpfsBackupRef,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.creator !== "") {
@@ -1690,24 +1641,16 @@ export const MsgUpdateRepositoryBackupRef = {
         writer.uint32(18).fork()
       ).ldelim();
     }
-    if (message.store !== 0) {
-      writer.uint32(24).int32(message.store);
-    }
     if (message.ref !== "") {
-      writer.uint32(34).string(message.ref);
+      writer.uint32(26).string(message.ref);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgUpdateRepositoryBackupRef {
+  decode(input: Reader | Uint8Array, length?: number): MsgUpdateIpfsBackupRef {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgUpdateRepositoryBackupRef,
-    } as MsgUpdateRepositoryBackupRef;
+    const message = { ...baseMsgUpdateIpfsBackupRef } as MsgUpdateIpfsBackupRef;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1718,9 +1661,6 @@ export const MsgUpdateRepositoryBackupRef = {
           message.repositoryId = RepositoryId.decode(reader, reader.uint32());
           break;
         case 3:
-          message.store = reader.int32() as any;
-          break;
-        case 4:
           message.ref = reader.string();
           break;
         default:
@@ -1731,10 +1671,8 @@ export const MsgUpdateRepositoryBackupRef = {
     return message;
   },
 
-  fromJSON(object: any): MsgUpdateRepositoryBackupRef {
-    const message = {
-      ...baseMsgUpdateRepositoryBackupRef,
-    } as MsgUpdateRepositoryBackupRef;
+  fromJSON(object: any): MsgUpdateIpfsBackupRef {
+    const message = { ...baseMsgUpdateIpfsBackupRef } as MsgUpdateIpfsBackupRef;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -1745,11 +1683,6 @@ export const MsgUpdateRepositoryBackupRef = {
     } else {
       message.repositoryId = undefined;
     }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = storeFromJSON(object.store);
-    } else {
-      message.store = 0;
-    }
     if (object.ref !== undefined && object.ref !== null) {
       message.ref = String(object.ref);
     } else {
@@ -1758,24 +1691,21 @@ export const MsgUpdateRepositoryBackupRef = {
     return message;
   },
 
-  toJSON(message: MsgUpdateRepositoryBackupRef): unknown {
+  toJSON(message: MsgUpdateIpfsBackupRef): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId
         ? RepositoryId.toJSON(message.repositoryId)
         : undefined);
-    message.store !== undefined && (obj.store = storeToJSON(message.store));
     message.ref !== undefined && (obj.ref = message.ref);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<MsgUpdateRepositoryBackupRef>
-  ): MsgUpdateRepositoryBackupRef {
-    const message = {
-      ...baseMsgUpdateRepositoryBackupRef,
-    } as MsgUpdateRepositoryBackupRef;
+    object: DeepPartial<MsgUpdateIpfsBackupRef>
+  ): MsgUpdateIpfsBackupRef {
+    const message = { ...baseMsgUpdateIpfsBackupRef } as MsgUpdateIpfsBackupRef;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -1786,11 +1716,6 @@ export const MsgUpdateRepositoryBackupRef = {
     } else {
       message.repositoryId = undefined;
     }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = object.store;
-    } else {
-      message.store = 0;
-    }
     if (object.ref !== undefined && object.ref !== null) {
       message.ref = object.ref;
     } else {
@@ -1800,11 +1725,11 @@ export const MsgUpdateRepositoryBackupRef = {
   },
 };
 
-const baseMsgUpdateRepositoryBackupRefResponse: object = {};
+const baseMsgUpdateIpfsBackupRefResponse: object = {};
 
-export const MsgUpdateRepositoryBackupRefResponse = {
+export const MsgUpdateIpfsBackupRefResponse = {
   encode(
-    _: MsgUpdateRepositoryBackupRefResponse,
+    _: MsgUpdateIpfsBackupRefResponse,
     writer: Writer = Writer.create()
   ): Writer {
     return writer;
@@ -1813,12 +1738,12 @@ export const MsgUpdateRepositoryBackupRefResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): MsgUpdateRepositoryBackupRefResponse {
+  ): MsgUpdateIpfsBackupRefResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseMsgUpdateRepositoryBackupRefResponse,
-    } as MsgUpdateRepositoryBackupRefResponse;
+      ...baseMsgUpdateIpfsBackupRefResponse,
+    } as MsgUpdateIpfsBackupRefResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1830,37 +1755,33 @@ export const MsgUpdateRepositoryBackupRefResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgUpdateRepositoryBackupRefResponse {
+  fromJSON(_: any): MsgUpdateIpfsBackupRefResponse {
     const message = {
-      ...baseMsgUpdateRepositoryBackupRefResponse,
-    } as MsgUpdateRepositoryBackupRefResponse;
+      ...baseMsgUpdateIpfsBackupRefResponse,
+    } as MsgUpdateIpfsBackupRefResponse;
     return message;
   },
 
-  toJSON(_: MsgUpdateRepositoryBackupRefResponse): unknown {
+  toJSON(_: MsgUpdateIpfsBackupRefResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgUpdateRepositoryBackupRefResponse>
-  ): MsgUpdateRepositoryBackupRefResponse {
+    _: DeepPartial<MsgUpdateIpfsBackupRefResponse>
+  ): MsgUpdateIpfsBackupRefResponse {
     const message = {
-      ...baseMsgUpdateRepositoryBackupRefResponse,
-    } as MsgUpdateRepositoryBackupRefResponse;
+      ...baseMsgUpdateIpfsBackupRefResponse,
+    } as MsgUpdateIpfsBackupRefResponse;
     return message;
   },
 };
 
-const baseMsgAddRepositoryBackupRef: object = {
-  creator: "",
-  store: 0,
-  ref: "",
-};
+const baseMsgAddArweaveBackupRef: object = { creator: "", ref: "" };
 
-export const MsgAddRepositoryBackupRef = {
+export const MsgAddArweaveBackupRef = {
   encode(
-    message: MsgAddRepositoryBackupRef,
+    message: MsgAddArweaveBackupRef,
     writer: Writer = Writer.create()
   ): Writer {
     if (message.creator !== "") {
@@ -1872,24 +1793,16 @@ export const MsgAddRepositoryBackupRef = {
         writer.uint32(18).fork()
       ).ldelim();
     }
-    if (message.store !== 0) {
-      writer.uint32(24).int32(message.store);
-    }
     if (message.ref !== "") {
-      writer.uint32(34).string(message.ref);
+      writer.uint32(26).string(message.ref);
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgAddRepositoryBackupRef {
+  decode(input: Reader | Uint8Array, length?: number): MsgAddArweaveBackupRef {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgAddRepositoryBackupRef,
-    } as MsgAddRepositoryBackupRef;
+    const message = { ...baseMsgAddArweaveBackupRef } as MsgAddArweaveBackupRef;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1900,9 +1813,6 @@ export const MsgAddRepositoryBackupRef = {
           message.repositoryId = RepositoryId.decode(reader, reader.uint32());
           break;
         case 3:
-          message.store = reader.int32() as any;
-          break;
-        case 4:
           message.ref = reader.string();
           break;
         default:
@@ -1913,10 +1823,8 @@ export const MsgAddRepositoryBackupRef = {
     return message;
   },
 
-  fromJSON(object: any): MsgAddRepositoryBackupRef {
-    const message = {
-      ...baseMsgAddRepositoryBackupRef,
-    } as MsgAddRepositoryBackupRef;
+  fromJSON(object: any): MsgAddArweaveBackupRef {
+    const message = { ...baseMsgAddArweaveBackupRef } as MsgAddArweaveBackupRef;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -1927,11 +1835,6 @@ export const MsgAddRepositoryBackupRef = {
     } else {
       message.repositoryId = undefined;
     }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = storeFromJSON(object.store);
-    } else {
-      message.store = 0;
-    }
     if (object.ref !== undefined && object.ref !== null) {
       message.ref = String(object.ref);
     } else {
@@ -1940,24 +1843,21 @@ export const MsgAddRepositoryBackupRef = {
     return message;
   },
 
-  toJSON(message: MsgAddRepositoryBackupRef): unknown {
+  toJSON(message: MsgAddArweaveBackupRef): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.repositoryId !== undefined &&
       (obj.repositoryId = message.repositoryId
         ? RepositoryId.toJSON(message.repositoryId)
         : undefined);
-    message.store !== undefined && (obj.store = storeToJSON(message.store));
     message.ref !== undefined && (obj.ref = message.ref);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<MsgAddRepositoryBackupRef>
-  ): MsgAddRepositoryBackupRef {
-    const message = {
-      ...baseMsgAddRepositoryBackupRef,
-    } as MsgAddRepositoryBackupRef;
+    object: DeepPartial<MsgAddArweaveBackupRef>
+  ): MsgAddArweaveBackupRef {
+    const message = { ...baseMsgAddArweaveBackupRef } as MsgAddArweaveBackupRef;
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -1968,11 +1868,6 @@ export const MsgAddRepositoryBackupRef = {
     } else {
       message.repositoryId = undefined;
     }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = object.store;
-    } else {
-      message.store = 0;
-    }
     if (object.ref !== undefined && object.ref !== null) {
       message.ref = object.ref;
     } else {
@@ -1982,11 +1877,11 @@ export const MsgAddRepositoryBackupRef = {
   },
 };
 
-const baseMsgAddRepositoryBackupRefResponse: object = {};
+const baseMsgAddArweaveBackupRefResponse: object = {};
 
-export const MsgAddRepositoryBackupRefResponse = {
+export const MsgAddArweaveBackupRefResponse = {
   encode(
-    _: MsgAddRepositoryBackupRefResponse,
+    _: MsgAddArweaveBackupRefResponse,
     writer: Writer = Writer.create()
   ): Writer {
     return writer;
@@ -1995,12 +1890,12 @@ export const MsgAddRepositoryBackupRefResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): MsgAddRepositoryBackupRefResponse {
+  ): MsgAddArweaveBackupRefResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseMsgAddRepositoryBackupRefResponse,
-    } as MsgAddRepositoryBackupRefResponse;
+      ...baseMsgAddArweaveBackupRefResponse,
+    } as MsgAddArweaveBackupRefResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2012,420 +1907,24 @@ export const MsgAddRepositoryBackupRefResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgAddRepositoryBackupRefResponse {
+  fromJSON(_: any): MsgAddArweaveBackupRefResponse {
     const message = {
-      ...baseMsgAddRepositoryBackupRefResponse,
-    } as MsgAddRepositoryBackupRefResponse;
+      ...baseMsgAddArweaveBackupRefResponse,
+    } as MsgAddArweaveBackupRefResponse;
     return message;
   },
 
-  toJSON(_: MsgAddRepositoryBackupRefResponse): unknown {
+  toJSON(_: MsgAddArweaveBackupRefResponse): unknown {
     const obj: any = {};
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<MsgAddRepositoryBackupRefResponse>
-  ): MsgAddRepositoryBackupRefResponse {
+    _: DeepPartial<MsgAddArweaveBackupRefResponse>
+  ): MsgAddArweaveBackupRefResponse {
     const message = {
-      ...baseMsgAddRepositoryBackupRefResponse,
-    } as MsgAddRepositoryBackupRefResponse;
-    return message;
-  },
-};
-
-const baseMsgCreateStorageProvider: object = { creator: "", store: 0 };
-
-export const MsgCreateStorageProvider = {
-  encode(
-    message: MsgCreateStorageProvider,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.store !== 0) {
-      writer.uint32(16).int32(message.store);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgCreateStorageProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgCreateStorageProvider,
-    } as MsgCreateStorageProvider;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.store = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgCreateStorageProvider {
-    const message = {
-      ...baseMsgCreateStorageProvider,
-    } as MsgCreateStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = storeFromJSON(object.store);
-    } else {
-      message.store = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgCreateStorageProvider): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.store !== undefined && (obj.store = storeToJSON(message.store));
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgCreateStorageProvider>
-  ): MsgCreateStorageProvider {
-    const message = {
-      ...baseMsgCreateStorageProvider,
-    } as MsgCreateStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = object.store;
-    } else {
-      message.store = 0;
-    }
-    return message;
-  },
-};
-
-const baseMsgCreateStorageProviderResponse: object = { id: 0 };
-
-export const MsgCreateStorageProviderResponse = {
-  encode(
-    message: MsgCreateStorageProviderResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.id !== 0) {
-      writer.uint32(8).uint64(message.id);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgCreateStorageProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgCreateStorageProviderResponse,
-    } as MsgCreateStorageProviderResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgCreateStorageProviderResponse {
-    const message = {
-      ...baseMsgCreateStorageProviderResponse,
-    } as MsgCreateStorageProviderResponse;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgCreateStorageProviderResponse): unknown {
-    const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgCreateStorageProviderResponse>
-  ): MsgCreateStorageProviderResponse {
-    const message = {
-      ...baseMsgCreateStorageProviderResponse,
-    } as MsgCreateStorageProviderResponse;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-};
-
-const baseMsgUpdateStorageProvider: object = { creator: "", id: 0, store: 0 };
-
-export const MsgUpdateStorageProvider = {
-  encode(
-    message: MsgUpdateStorageProvider,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
-    if (message.store !== 0) {
-      writer.uint32(24).int32(message.store);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgUpdateStorageProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgUpdateStorageProvider,
-    } as MsgUpdateStorageProvider;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
-          message.store = reader.int32() as any;
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgUpdateStorageProvider {
-    const message = {
-      ...baseMsgUpdateStorageProvider,
-    } as MsgUpdateStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = storeFromJSON(object.store);
-    } else {
-      message.store = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgUpdateStorageProvider): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.store !== undefined && (obj.store = storeToJSON(message.store));
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgUpdateStorageProvider>
-  ): MsgUpdateStorageProvider {
-    const message = {
-      ...baseMsgUpdateStorageProvider,
-    } as MsgUpdateStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.store !== undefined && object.store !== null) {
-      message.store = object.store;
-    } else {
-      message.store = 0;
-    }
-    return message;
-  },
-};
-
-const baseMsgUpdateStorageProviderResponse: object = {};
-
-export const MsgUpdateStorageProviderResponse = {
-  encode(
-    _: MsgUpdateStorageProviderResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgUpdateStorageProviderResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgUpdateStorageProviderResponse,
-    } as MsgUpdateStorageProviderResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(_: any): MsgUpdateStorageProviderResponse {
-    const message = {
-      ...baseMsgUpdateStorageProviderResponse,
-    } as MsgUpdateStorageProviderResponse;
-    return message;
-  },
-
-  toJSON(_: MsgUpdateStorageProviderResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  fromPartial(
-    _: DeepPartial<MsgUpdateStorageProviderResponse>
-  ): MsgUpdateStorageProviderResponse {
-    const message = {
-      ...baseMsgUpdateStorageProviderResponse,
-    } as MsgUpdateStorageProviderResponse;
-    return message;
-  },
-};
-
-const baseMsgDeleteStorageProvider: object = { creator: "", id: 0 };
-
-export const MsgDeleteStorageProvider = {
-  encode(
-    message: MsgDeleteStorageProvider,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgDeleteStorageProvider {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgDeleteStorageProvider,
-    } as MsgDeleteStorageProvider;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgDeleteStorageProvider {
-    const message = {
-      ...baseMsgDeleteStorageProvider,
-    } as MsgDeleteStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgDeleteStorageProvider): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgDeleteStorageProvider>
-  ): MsgDeleteStorageProvider {
-    const message = {
-      ...baseMsgDeleteStorageProvider,
-    } as MsgDeleteStorageProvider;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
+      ...baseMsgAddArweaveBackupRefResponse,
+    } as MsgAddArweaveBackupRefResponse;
     return message;
   },
 };
@@ -5645,173 +5144,6 @@ export const MsgCreatePullRequestResponse = {
     } else {
       message.iid = 0;
     }
-    return message;
-  },
-};
-
-const baseMsgUpdatePullRequest: object = {
-  creator: "",
-  id: 0,
-  title: "",
-  description: "",
-};
-
-export const MsgUpdatePullRequest = {
-  encode(
-    message: MsgUpdatePullRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
-    if (message.title !== "") {
-      writer.uint32(34).string(message.title);
-    }
-    if (message.description !== "") {
-      writer.uint32(50).string(message.description);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgUpdatePullRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgUpdatePullRequest } as MsgUpdatePullRequest;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 4:
-          message.title = reader.string();
-          break;
-        case 6:
-          message.description = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgUpdatePullRequest {
-    const message = { ...baseMsgUpdatePullRequest } as MsgUpdatePullRequest;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = String(object.title);
-    } else {
-      message.title = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    return message;
-  },
-
-  toJSON(message: MsgUpdatePullRequest): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.title !== undefined && (obj.title = message.title);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<MsgUpdatePullRequest>): MsgUpdatePullRequest {
-    const message = { ...baseMsgUpdatePullRequest } as MsgUpdatePullRequest;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = object.title;
-    } else {
-      message.title = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    return message;
-  },
-};
-
-const baseMsgUpdatePullRequestResponse: object = {};
-
-export const MsgUpdatePullRequestResponse = {
-  encode(
-    _: MsgUpdatePullRequestResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgUpdatePullRequestResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgUpdatePullRequestResponse,
-    } as MsgUpdatePullRequestResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(_: any): MsgUpdatePullRequestResponse {
-    const message = {
-      ...baseMsgUpdatePullRequestResponse,
-    } as MsgUpdatePullRequestResponse;
-    return message;
-  },
-
-  toJSON(_: MsgUpdatePullRequestResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  fromPartial(
-    _: DeepPartial<MsgUpdatePullRequestResponse>
-  ): MsgUpdatePullRequestResponse {
-    const message = {
-      ...baseMsgUpdatePullRequestResponse,
-    } as MsgUpdatePullRequestResponse;
     return message;
   },
 };
@@ -9512,199 +8844,6 @@ export const MsgCreateIssueResponse = {
     } else {
       message.iid = 0;
     }
-    return message;
-  },
-};
-
-const baseMsgUpdateIssue: object = {
-  creator: "",
-  id: 0,
-  title: "",
-  description: "",
-  weight: 0,
-  assignees: "",
-};
-
-export const MsgUpdateIssue = {
-  encode(message: MsgUpdateIssue, writer: Writer = Writer.create()): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
-    if (message.title !== "") {
-      writer.uint32(26).string(message.title);
-    }
-    if (message.description !== "") {
-      writer.uint32(34).string(message.description);
-    }
-    if (message.weight !== 0) {
-      writer.uint32(40).uint64(message.weight);
-    }
-    for (const v of message.assignees) {
-      writer.uint32(50).string(v!);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssue {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
-    message.assignees = [];
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
-          message.title = reader.string();
-          break;
-        case 4:
-          message.description = reader.string();
-          break;
-        case 5:
-          message.weight = longToNumber(reader.uint64() as Long);
-          break;
-        case 6:
-          message.assignees.push(reader.string());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgUpdateIssue {
-    const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
-    message.assignees = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = String(object.title);
-    } else {
-      message.title = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    if (object.weight !== undefined && object.weight !== null) {
-      message.weight = Number(object.weight);
-    } else {
-      message.weight = 0;
-    }
-    if (object.assignees !== undefined && object.assignees !== null) {
-      for (const e of object.assignees) {
-        message.assignees.push(String(e));
-      }
-    }
-    return message;
-  },
-
-  toJSON(message: MsgUpdateIssue): unknown {
-    const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.title !== undefined && (obj.title = message.title);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    message.weight !== undefined && (obj.weight = message.weight);
-    if (message.assignees) {
-      obj.assignees = message.assignees.map((e) => e);
-    } else {
-      obj.assignees = [];
-    }
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<MsgUpdateIssue>): MsgUpdateIssue {
-    const message = { ...baseMsgUpdateIssue } as MsgUpdateIssue;
-    message.assignees = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = object.title;
-    } else {
-      message.title = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    if (object.weight !== undefined && object.weight !== null) {
-      message.weight = object.weight;
-    } else {
-      message.weight = 0;
-    }
-    if (object.assignees !== undefined && object.assignees !== null) {
-      for (const e of object.assignees) {
-        message.assignees.push(e);
-      }
-    }
-    return message;
-  },
-};
-
-const baseMsgUpdateIssueResponse: object = {};
-
-export const MsgUpdateIssueResponse = {
-  encode(_: MsgUpdateIssueResponse, writer: Writer = Writer.create()): Writer {
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgUpdateIssueResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMsgUpdateIssueResponse } as MsgUpdateIssueResponse;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(_: any): MsgUpdateIssueResponse {
-    const message = { ...baseMsgUpdateIssueResponse } as MsgUpdateIssueResponse;
-    return message;
-  },
-
-  toJSON(_: MsgUpdateIssueResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
-
-  fromPartial(_: DeepPartial<MsgUpdateIssueResponse>): MsgUpdateIssueResponse {
-    const message = { ...baseMsgUpdateIssueResponse } as MsgUpdateIssueResponse;
     return message;
   },
 };
@@ -14322,9 +13461,6 @@ export interface Msg {
   CreatePullRequest(
     request: MsgCreatePullRequest
   ): Promise<MsgCreatePullRequestResponse>;
-  UpdatePullRequest(
-    request: MsgUpdatePullRequest
-  ): Promise<MsgUpdatePullRequestResponse>;
   UpdatePullRequestTitle(
     request: MsgUpdatePullRequestTitle
   ): Promise<MsgUpdatePullRequestTitleResponse>;
@@ -14377,7 +13513,6 @@ export interface Msg {
   UpdateComment(request: MsgUpdateComment): Promise<MsgUpdateCommentResponse>;
   DeleteComment(request: MsgDeleteComment): Promise<MsgDeleteCommentResponse>;
   CreateIssue(request: MsgCreateIssue): Promise<MsgCreateIssueResponse>;
-  UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse>;
   UpdateIssueTitle(
     request: MsgUpdateIssueTitle
   ): Promise<MsgUpdateIssueTitleResponse>;
@@ -14459,21 +13594,12 @@ export interface Msg {
   ): Promise<MsgUpdateUserAvatarResponse>;
   DeleteUser(request: MsgDeleteUser): Promise<MsgDeleteUserResponse>;
   /** rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse); */
-  UpdateRepositoryBackupRef(
-    request: MsgUpdateRepositoryBackupRef
-  ): Promise<MsgUpdateRepositoryBackupRefResponse>;
-  CreateStorageProvider(
-    request: MsgCreateStorageProvider
-  ): Promise<MsgCreateStorageProviderResponse>;
-  UpdateStorageProvider(
-    request: MsgUpdateStorageProvider
-  ): Promise<MsgUpdateStorageProviderResponse>;
-  DeleteStorageProvider(
-    request: MsgDeleteStorageProvider
-  ): Promise<MsgDeleteStorageProviderResponse>;
-  AddRepositoryBackupRef(
-    request: MsgAddRepositoryBackupRef
-  ): Promise<MsgAddRepositoryBackupRefResponse>;
+  UpdateIpfsBackupRef(
+    request: MsgUpdateIpfsBackupRef
+  ): Promise<MsgUpdateIpfsBackupRefResponse>;
+  AddArweaveBackupRef(
+    request: MsgAddArweaveBackupRef
+  ): Promise<MsgAddArweaveBackupRefResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -14758,20 +13884,6 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreatePullRequestResponse.decode(new Reader(data))
-    );
-  }
-
-  UpdatePullRequest(
-    request: MsgUpdatePullRequest
-  ): Promise<MsgUpdatePullRequestResponse> {
-    const data = MsgUpdatePullRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "UpdatePullRequest",
-      data
-    );
-    return promise.then((data) =>
-      MsgUpdatePullRequestResponse.decode(new Reader(data))
     );
   }
 
@@ -15066,18 +14178,6 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateIssueResponse.decode(new Reader(data))
-    );
-  }
-
-  UpdateIssue(request: MsgUpdateIssue): Promise<MsgUpdateIssueResponse> {
-    const data = MsgUpdateIssue.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "UpdateIssue",
-      data
-    );
-    return promise.then((data) =>
-      MsgUpdateIssueResponse.decode(new Reader(data))
     );
   }
 
@@ -15491,73 +14591,31 @@ export class MsgClientImpl implements Msg {
     );
   }
 
-  UpdateRepositoryBackupRef(
-    request: MsgUpdateRepositoryBackupRef
-  ): Promise<MsgUpdateRepositoryBackupRefResponse> {
-    const data = MsgUpdateRepositoryBackupRef.encode(request).finish();
+  UpdateIpfsBackupRef(
+    request: MsgUpdateIpfsBackupRef
+  ): Promise<MsgUpdateIpfsBackupRefResponse> {
+    const data = MsgUpdateIpfsBackupRef.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Msg",
-      "UpdateRepositoryBackupRef",
+      "UpdateIpfsBackupRef",
       data
     );
     return promise.then((data) =>
-      MsgUpdateRepositoryBackupRefResponse.decode(new Reader(data))
+      MsgUpdateIpfsBackupRefResponse.decode(new Reader(data))
     );
   }
 
-  CreateStorageProvider(
-    request: MsgCreateStorageProvider
-  ): Promise<MsgCreateStorageProviderResponse> {
-    const data = MsgCreateStorageProvider.encode(request).finish();
+  AddArweaveBackupRef(
+    request: MsgAddArweaveBackupRef
+  ): Promise<MsgAddArweaveBackupRefResponse> {
+    const data = MsgAddArweaveBackupRef.encode(request).finish();
     const promise = this.rpc.request(
       "gitopia.gitopia.gitopia.Msg",
-      "CreateStorageProvider",
+      "AddArweaveBackupRef",
       data
     );
     return promise.then((data) =>
-      MsgCreateStorageProviderResponse.decode(new Reader(data))
-    );
-  }
-
-  UpdateStorageProvider(
-    request: MsgUpdateStorageProvider
-  ): Promise<MsgUpdateStorageProviderResponse> {
-    const data = MsgUpdateStorageProvider.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "UpdateStorageProvider",
-      data
-    );
-    return promise.then((data) =>
-      MsgUpdateStorageProviderResponse.decode(new Reader(data))
-    );
-  }
-
-  DeleteStorageProvider(
-    request: MsgDeleteStorageProvider
-  ): Promise<MsgDeleteStorageProviderResponse> {
-    const data = MsgDeleteStorageProvider.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "DeleteStorageProvider",
-      data
-    );
-    return promise.then((data) =>
-      MsgDeleteStorageProviderResponse.decode(new Reader(data))
-    );
-  }
-
-  AddRepositoryBackupRef(
-    request: MsgAddRepositoryBackupRef
-  ): Promise<MsgAddRepositoryBackupRefResponse> {
-    const data = MsgAddRepositoryBackupRef.encode(request).finish();
-    const promise = this.rpc.request(
-      "gitopia.gitopia.gitopia.Msg",
-      "AddRepositoryBackupRef",
-      data
-    );
-    return promise.then((data) =>
-      MsgAddRepositoryBackupRefResponse.decode(new Reader(data))
+      MsgAddArweaveBackupRefResponse.decode(new Reader(data))
     );
   }
 }

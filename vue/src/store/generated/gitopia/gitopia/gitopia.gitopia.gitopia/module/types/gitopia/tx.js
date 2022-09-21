@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { taskTypeFromJSON, taskTypeToJSON, taskStateFromJSON, taskStateToJSON, } from "../gitopia/task";
-import { storeFromJSON, storeToJSON } from "../gitopia/storage_provider";
 import { memberRoleFromJSON, memberRoleToJSON, } from "../gitopia/member";
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
@@ -810,12 +809,8 @@ export const MsgDeleteTask = {
         return message;
     },
 };
-const baseMsgUpdateRepositoryBackupRef = {
-    creator: "",
-    store: 0,
-    ref: "",
-};
-export const MsgUpdateRepositoryBackupRef = {
+const baseMsgUpdateIpfsBackupRef = { creator: "", ref: "" };
+export const MsgUpdateIpfsBackupRef = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
@@ -823,20 +818,15 @@ export const MsgUpdateRepositoryBackupRef = {
         if (message.repositoryId !== undefined) {
             RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
         }
-        if (message.store !== 0) {
-            writer.uint32(24).int32(message.store);
-        }
         if (message.ref !== "") {
-            writer.uint32(34).string(message.ref);
+            writer.uint32(26).string(message.ref);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgUpdateRepositoryBackupRef,
-        };
+        const message = { ...baseMsgUpdateIpfsBackupRef };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -847,9 +837,6 @@ export const MsgUpdateRepositoryBackupRef = {
                     message.repositoryId = RepositoryId.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.store = reader.int32();
-                    break;
-                case 4:
                     message.ref = reader.string();
                     break;
                 default:
@@ -860,9 +847,7 @@ export const MsgUpdateRepositoryBackupRef = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseMsgUpdateRepositoryBackupRef,
-        };
+        const message = { ...baseMsgUpdateIpfsBackupRef };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -874,12 +859,6 @@ export const MsgUpdateRepositoryBackupRef = {
         }
         else {
             message.repositoryId = undefined;
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = storeFromJSON(object.store);
-        }
-        else {
-            message.store = 0;
         }
         if (object.ref !== undefined && object.ref !== null) {
             message.ref = String(object.ref);
@@ -896,14 +875,11 @@ export const MsgUpdateRepositoryBackupRef = {
             (obj.repositoryId = message.repositoryId
                 ? RepositoryId.toJSON(message.repositoryId)
                 : undefined);
-        message.store !== undefined && (obj.store = storeToJSON(message.store));
         message.ref !== undefined && (obj.ref = message.ref);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseMsgUpdateRepositoryBackupRef,
-        };
+        const message = { ...baseMsgUpdateIpfsBackupRef };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -916,12 +892,6 @@ export const MsgUpdateRepositoryBackupRef = {
         else {
             message.repositoryId = undefined;
         }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = object.store;
-        }
-        else {
-            message.store = 0;
-        }
         if (object.ref !== undefined && object.ref !== null) {
             message.ref = object.ref;
         }
@@ -931,8 +901,8 @@ export const MsgUpdateRepositoryBackupRef = {
         return message;
     },
 };
-const baseMsgUpdateRepositoryBackupRefResponse = {};
-export const MsgUpdateRepositoryBackupRefResponse = {
+const baseMsgUpdateIpfsBackupRefResponse = {};
+export const MsgUpdateIpfsBackupRefResponse = {
     encode(_, writer = Writer.create()) {
         return writer;
     },
@@ -940,7 +910,7 @@ export const MsgUpdateRepositoryBackupRefResponse = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = {
-            ...baseMsgUpdateRepositoryBackupRefResponse,
+            ...baseMsgUpdateIpfsBackupRefResponse,
         };
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -954,7 +924,7 @@ export const MsgUpdateRepositoryBackupRefResponse = {
     },
     fromJSON(_) {
         const message = {
-            ...baseMsgUpdateRepositoryBackupRefResponse,
+            ...baseMsgUpdateIpfsBackupRefResponse,
         };
         return message;
     },
@@ -964,17 +934,13 @@ export const MsgUpdateRepositoryBackupRefResponse = {
     },
     fromPartial(_) {
         const message = {
-            ...baseMsgUpdateRepositoryBackupRefResponse,
+            ...baseMsgUpdateIpfsBackupRefResponse,
         };
         return message;
     },
 };
-const baseMsgAddRepositoryBackupRef = {
-    creator: "",
-    store: 0,
-    ref: "",
-};
-export const MsgAddRepositoryBackupRef = {
+const baseMsgAddArweaveBackupRef = { creator: "", ref: "" };
+export const MsgAddArweaveBackupRef = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== "") {
             writer.uint32(10).string(message.creator);
@@ -982,20 +948,15 @@ export const MsgAddRepositoryBackupRef = {
         if (message.repositoryId !== undefined) {
             RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
         }
-        if (message.store !== 0) {
-            writer.uint32(24).int32(message.store);
-        }
         if (message.ref !== "") {
-            writer.uint32(34).string(message.ref);
+            writer.uint32(26).string(message.ref);
         }
         return writer;
     },
     decode(input, length) {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgAddRepositoryBackupRef,
-        };
+        const message = { ...baseMsgAddArweaveBackupRef };
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -1006,9 +967,6 @@ export const MsgAddRepositoryBackupRef = {
                     message.repositoryId = RepositoryId.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.store = reader.int32();
-                    break;
-                case 4:
                     message.ref = reader.string();
                     break;
                 default:
@@ -1019,9 +977,7 @@ export const MsgAddRepositoryBackupRef = {
         return message;
     },
     fromJSON(object) {
-        const message = {
-            ...baseMsgAddRepositoryBackupRef,
-        };
+        const message = { ...baseMsgAddArweaveBackupRef };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = String(object.creator);
         }
@@ -1033,12 +989,6 @@ export const MsgAddRepositoryBackupRef = {
         }
         else {
             message.repositoryId = undefined;
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = storeFromJSON(object.store);
-        }
-        else {
-            message.store = 0;
         }
         if (object.ref !== undefined && object.ref !== null) {
             message.ref = String(object.ref);
@@ -1055,14 +1005,11 @@ export const MsgAddRepositoryBackupRef = {
             (obj.repositoryId = message.repositoryId
                 ? RepositoryId.toJSON(message.repositoryId)
                 : undefined);
-        message.store !== undefined && (obj.store = storeToJSON(message.store));
         message.ref !== undefined && (obj.ref = message.ref);
         return obj;
     },
     fromPartial(object) {
-        const message = {
-            ...baseMsgAddRepositoryBackupRef,
-        };
+        const message = { ...baseMsgAddArweaveBackupRef };
         if (object.creator !== undefined && object.creator !== null) {
             message.creator = object.creator;
         }
@@ -1075,12 +1022,6 @@ export const MsgAddRepositoryBackupRef = {
         else {
             message.repositoryId = undefined;
         }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = object.store;
-        }
-        else {
-            message.store = 0;
-        }
         if (object.ref !== undefined && object.ref !== null) {
             message.ref = object.ref;
         }
@@ -1090,8 +1031,8 @@ export const MsgAddRepositoryBackupRef = {
         return message;
     },
 };
-const baseMsgAddRepositoryBackupRefResponse = {};
-export const MsgAddRepositoryBackupRefResponse = {
+const baseMsgAddArweaveBackupRefResponse = {};
+export const MsgAddArweaveBackupRefResponse = {
     encode(_, writer = Writer.create()) {
         return writer;
     },
@@ -1099,7 +1040,7 @@ export const MsgAddRepositoryBackupRefResponse = {
         const reader = input instanceof Uint8Array ? new Reader(input) : input;
         let end = length === undefined ? reader.len : reader.pos + length;
         const message = {
-            ...baseMsgAddRepositoryBackupRefResponse,
+            ...baseMsgAddArweaveBackupRefResponse,
         };
         while (reader.pos < end) {
             const tag = reader.uint32();
@@ -1113,7 +1054,7 @@ export const MsgAddRepositoryBackupRefResponse = {
     },
     fromJSON(_) {
         const message = {
-            ...baseMsgAddRepositoryBackupRefResponse,
+            ...baseMsgAddArweaveBackupRefResponse,
         };
         return message;
     },
@@ -1123,350 +1064,8 @@ export const MsgAddRepositoryBackupRefResponse = {
     },
     fromPartial(_) {
         const message = {
-            ...baseMsgAddRepositoryBackupRefResponse,
+            ...baseMsgAddArweaveBackupRefResponse,
         };
-        return message;
-    },
-};
-const baseMsgCreateStorageProvider = { creator: "", store: 0 };
-export const MsgCreateStorageProvider = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.store !== 0) {
-            writer.uint32(16).int32(message.store);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgCreateStorageProvider,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.store = reader.int32();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseMsgCreateStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = storeFromJSON(object.store);
-        }
-        else {
-            message.store = 0;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.store !== undefined && (obj.store = storeToJSON(message.store));
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseMsgCreateStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = object.store;
-        }
-        else {
-            message.store = 0;
-        }
-        return message;
-    },
-};
-const baseMsgCreateStorageProviderResponse = { id: 0 };
-export const MsgCreateStorageProviderResponse = {
-    encode(message, writer = Writer.create()) {
-        if (message.id !== 0) {
-            writer.uint32(8).uint64(message.id);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgCreateStorageProviderResponse,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseMsgCreateStorageProviderResponse,
-        };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.id !== undefined && (obj.id = message.id);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseMsgCreateStorageProviderResponse,
-        };
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        return message;
-    },
-};
-const baseMsgUpdateStorageProvider = { creator: "", id: 0, store: 0 };
-export const MsgUpdateStorageProvider = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
-        }
-        if (message.store !== 0) {
-            writer.uint32(24).int32(message.store);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgUpdateStorageProvider,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                case 3:
-                    message.store = reader.int32();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseMsgUpdateStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = storeFromJSON(object.store);
-        }
-        else {
-            message.store = 0;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        message.store !== undefined && (obj.store = storeToJSON(message.store));
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseMsgUpdateStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.store !== undefined && object.store !== null) {
-            message.store = object.store;
-        }
-        else {
-            message.store = 0;
-        }
-        return message;
-    },
-};
-const baseMsgUpdateStorageProviderResponse = {};
-export const MsgUpdateStorageProviderResponse = {
-    encode(_, writer = Writer.create()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgUpdateStorageProviderResponse,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(_) {
-        const message = {
-            ...baseMsgUpdateStorageProviderResponse,
-        };
-        return message;
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    fromPartial(_) {
-        const message = {
-            ...baseMsgUpdateStorageProviderResponse,
-        };
-        return message;
-    },
-};
-const baseMsgDeleteStorageProvider = { creator: "", id: 0 };
-export const MsgDeleteStorageProvider = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgDeleteStorageProvider,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = {
-            ...baseMsgDeleteStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = {
-            ...baseMsgDeleteStorageProvider,
-        };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
         return message;
     },
 };
@@ -4441,158 +4040,6 @@ export const MsgCreatePullRequestResponse = {
         else {
             message.iid = 0;
         }
-        return message;
-    },
-};
-const baseMsgUpdatePullRequest = {
-    creator: "",
-    id: 0,
-    title: "",
-    description: "",
-};
-export const MsgUpdatePullRequest = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
-        }
-        if (message.title !== "") {
-            writer.uint32(34).string(message.title);
-        }
-        if (message.description !== "") {
-            writer.uint32(50).string(message.description);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgUpdatePullRequest };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                case 4:
-                    message.title = reader.string();
-                    break;
-                case 6:
-                    message.description = reader.string();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseMsgUpdatePullRequest };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.title !== undefined && object.title !== null) {
-            message.title = String(object.title);
-        }
-        else {
-            message.title = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = String(object.description);
-        }
-        else {
-            message.description = "";
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        message.title !== undefined && (obj.title = message.title);
-        message.description !== undefined &&
-            (obj.description = message.description);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseMsgUpdatePullRequest };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.title !== undefined && object.title !== null) {
-            message.title = object.title;
-        }
-        else {
-            message.title = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = object.description;
-        }
-        else {
-            message.description = "";
-        }
-        return message;
-    },
-};
-const baseMsgUpdatePullRequestResponse = {};
-export const MsgUpdatePullRequestResponse = {
-    encode(_, writer = Writer.create()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = {
-            ...baseMsgUpdatePullRequestResponse,
-        };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(_) {
-        const message = {
-            ...baseMsgUpdatePullRequestResponse,
-        };
-        return message;
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    fromPartial(_) {
-        const message = {
-            ...baseMsgUpdatePullRequestResponse,
-        };
         return message;
     },
 };
@@ -7940,198 +7387,6 @@ export const MsgCreateIssueResponse = {
         else {
             message.iid = 0;
         }
-        return message;
-    },
-};
-const baseMsgUpdateIssue = {
-    creator: "",
-    id: 0,
-    title: "",
-    description: "",
-    weight: 0,
-    assignees: "",
-};
-export const MsgUpdateIssue = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== "") {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.id !== 0) {
-            writer.uint32(16).uint64(message.id);
-        }
-        if (message.title !== "") {
-            writer.uint32(26).string(message.title);
-        }
-        if (message.description !== "") {
-            writer.uint32(34).string(message.description);
-        }
-        if (message.weight !== 0) {
-            writer.uint32(40).uint64(message.weight);
-        }
-        for (const v of message.assignees) {
-            writer.uint32(50).string(v);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgUpdateIssue };
-        message.assignees = [];
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.id = longToNumber(reader.uint64());
-                    break;
-                case 3:
-                    message.title = reader.string();
-                    break;
-                case 4:
-                    message.description = reader.string();
-                    break;
-                case 5:
-                    message.weight = longToNumber(reader.uint64());
-                    break;
-                case 6:
-                    message.assignees.push(reader.string());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseMsgUpdateIssue };
-        message.assignees = [];
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = Number(object.id);
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.title !== undefined && object.title !== null) {
-            message.title = String(object.title);
-        }
-        else {
-            message.title = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = String(object.description);
-        }
-        else {
-            message.description = "";
-        }
-        if (object.weight !== undefined && object.weight !== null) {
-            message.weight = Number(object.weight);
-        }
-        else {
-            message.weight = 0;
-        }
-        if (object.assignees !== undefined && object.assignees !== null) {
-            for (const e of object.assignees) {
-                message.assignees.push(String(e));
-            }
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.id !== undefined && (obj.id = message.id);
-        message.title !== undefined && (obj.title = message.title);
-        message.description !== undefined &&
-            (obj.description = message.description);
-        message.weight !== undefined && (obj.weight = message.weight);
-        if (message.assignees) {
-            obj.assignees = message.assignees.map((e) => e);
-        }
-        else {
-            obj.assignees = [];
-        }
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseMsgUpdateIssue };
-        message.assignees = [];
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = "";
-        }
-        if (object.id !== undefined && object.id !== null) {
-            message.id = object.id;
-        }
-        else {
-            message.id = 0;
-        }
-        if (object.title !== undefined && object.title !== null) {
-            message.title = object.title;
-        }
-        else {
-            message.title = "";
-        }
-        if (object.description !== undefined && object.description !== null) {
-            message.description = object.description;
-        }
-        else {
-            message.description = "";
-        }
-        if (object.weight !== undefined && object.weight !== null) {
-            message.weight = object.weight;
-        }
-        else {
-            message.weight = 0;
-        }
-        if (object.assignees !== undefined && object.assignees !== null) {
-            for (const e of object.assignees) {
-                message.assignees.push(e);
-            }
-        }
-        return message;
-    },
-};
-const baseMsgUpdateIssueResponse = {};
-export const MsgUpdateIssueResponse = {
-    encode(_, writer = Writer.create()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgUpdateIssueResponse };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(_) {
-        const message = { ...baseMsgUpdateIssueResponse };
-        return message;
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    fromPartial(_) {
-        const message = { ...baseMsgUpdateIssueResponse };
         return message;
     },
 };
@@ -12290,11 +11545,6 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreatePullRequest", data);
         return promise.then((data) => MsgCreatePullRequestResponse.decode(new Reader(data)));
     }
-    UpdatePullRequest(request) {
-        const data = MsgUpdatePullRequest.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdatePullRequest", data);
-        return promise.then((data) => MsgUpdatePullRequestResponse.decode(new Reader(data)));
-    }
     UpdatePullRequestTitle(request) {
         const data = MsgUpdatePullRequestTitle.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdatePullRequestTitle", data);
@@ -12404,11 +11654,6 @@ export class MsgClientImpl {
         const data = MsgCreateIssue.encode(request).finish();
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateIssue", data);
         return promise.then((data) => MsgCreateIssueResponse.decode(new Reader(data)));
-    }
-    UpdateIssue(request) {
-        const data = MsgUpdateIssue.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateIssue", data);
-        return promise.then((data) => MsgUpdateIssueResponse.decode(new Reader(data)));
     }
     UpdateIssueTitle(request) {
         const data = MsgUpdateIssueTitle.encode(request).finish();
@@ -12560,30 +11805,15 @@ export class MsgClientImpl {
         const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteUser", data);
         return promise.then((data) => MsgDeleteUserResponse.decode(new Reader(data)));
     }
-    UpdateRepositoryBackupRef(request) {
-        const data = MsgUpdateRepositoryBackupRef.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateRepositoryBackupRef", data);
-        return promise.then((data) => MsgUpdateRepositoryBackupRefResponse.decode(new Reader(data)));
+    UpdateIpfsBackupRef(request) {
+        const data = MsgUpdateIpfsBackupRef.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateIpfsBackupRef", data);
+        return promise.then((data) => MsgUpdateIpfsBackupRefResponse.decode(new Reader(data)));
     }
-    CreateStorageProvider(request) {
-        const data = MsgCreateStorageProvider.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "CreateStorageProvider", data);
-        return promise.then((data) => MsgCreateStorageProviderResponse.decode(new Reader(data)));
-    }
-    UpdateStorageProvider(request) {
-        const data = MsgUpdateStorageProvider.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "UpdateStorageProvider", data);
-        return promise.then((data) => MsgUpdateStorageProviderResponse.decode(new Reader(data)));
-    }
-    DeleteStorageProvider(request) {
-        const data = MsgDeleteStorageProvider.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteStorageProvider", data);
-        return promise.then((data) => MsgDeleteStorageProviderResponse.decode(new Reader(data)));
-    }
-    AddRepositoryBackupRef(request) {
-        const data = MsgAddRepositoryBackupRef.encode(request).finish();
-        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "AddRepositoryBackupRef", data);
-        return promise.then((data) => MsgAddRepositoryBackupRefResponse.decode(new Reader(data)));
+    AddArweaveBackupRef(request) {
+        const data = MsgAddArweaveBackupRef.encode(request).finish();
+        const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "AddArweaveBackupRef", data);
+        return promise.then((data) => MsgAddArweaveBackupRefResponse.decode(new Reader(data)));
     }
 }
 var globalThis = (() => {

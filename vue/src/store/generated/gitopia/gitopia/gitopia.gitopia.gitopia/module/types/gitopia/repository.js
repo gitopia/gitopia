@@ -51,6 +51,36 @@ export function repositoryCollaborator_PermissionToJSON(object) {
             return "UNKNOWN";
     }
 }
+export var RepositoryBackup_Store;
+(function (RepositoryBackup_Store) {
+    RepositoryBackup_Store[RepositoryBackup_Store["IPFS"] = 0] = "IPFS";
+    RepositoryBackup_Store[RepositoryBackup_Store["ARWEAVE"] = 1] = "ARWEAVE";
+    RepositoryBackup_Store[RepositoryBackup_Store["UNRECOGNIZED"] = -1] = "UNRECOGNIZED";
+})(RepositoryBackup_Store || (RepositoryBackup_Store = {}));
+export function repositoryBackup_StoreFromJSON(object) {
+    switch (object) {
+        case 0:
+        case "IPFS":
+            return RepositoryBackup_Store.IPFS;
+        case 1:
+        case "ARWEAVE":
+            return RepositoryBackup_Store.ARWEAVE;
+        case -1:
+        case "UNRECOGNIZED":
+        default:
+            return RepositoryBackup_Store.UNRECOGNIZED;
+    }
+}
+export function repositoryBackup_StoreToJSON(object) {
+    switch (object) {
+        case RepositoryBackup_Store.IPFS:
+            return "IPFS";
+        case RepositoryBackup_Store.ARWEAVE:
+            return "ARWEAVE";
+        default:
+            return "UNKNOWN";
+    }
+}
 const baseRepository = {
     creator: "",
     id: 0,
@@ -1449,11 +1479,11 @@ export const Attachment = {
         return message;
     },
 };
-const baseRepositoryBackup = { providerId: 0, refs: "" };
+const baseRepositoryBackup = { store: 0, refs: "" };
 export const RepositoryBackup = {
     encode(message, writer = Writer.create()) {
-        if (message.providerId !== 0) {
-            writer.uint32(8).uint64(message.providerId);
+        if (message.store !== 0) {
+            writer.uint32(8).int32(message.store);
         }
         for (const v of message.refs) {
             writer.uint32(18).string(v);
@@ -1469,7 +1499,7 @@ export const RepositoryBackup = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.providerId = longToNumber(reader.uint64());
+                    message.store = reader.int32();
                     break;
                 case 2:
                     message.refs.push(reader.string());
@@ -1484,11 +1514,11 @@ export const RepositoryBackup = {
     fromJSON(object) {
         const message = { ...baseRepositoryBackup };
         message.refs = [];
-        if (object.providerId !== undefined && object.providerId !== null) {
-            message.providerId = Number(object.providerId);
+        if (object.store !== undefined && object.store !== null) {
+            message.store = repositoryBackup_StoreFromJSON(object.store);
         }
         else {
-            message.providerId = 0;
+            message.store = 0;
         }
         if (object.refs !== undefined && object.refs !== null) {
             for (const e of object.refs) {
@@ -1499,7 +1529,8 @@ export const RepositoryBackup = {
     },
     toJSON(message) {
         const obj = {};
-        message.providerId !== undefined && (obj.providerId = message.providerId);
+        message.store !== undefined &&
+            (obj.store = repositoryBackup_StoreToJSON(message.store));
         if (message.refs) {
             obj.refs = message.refs.map((e) => e);
         }
@@ -1511,11 +1542,11 @@ export const RepositoryBackup = {
     fromPartial(object) {
         const message = { ...baseRepositoryBackup };
         message.refs = [];
-        if (object.providerId !== undefined && object.providerId !== null) {
-            message.providerId = object.providerId;
+        if (object.store !== undefined && object.store !== null) {
+            message.store = object.store;
         }
         else {
-            message.providerId = 0;
+            message.store = 0;
         }
         if (object.refs !== undefined && object.refs !== null) {
             for (const e of object.refs) {
