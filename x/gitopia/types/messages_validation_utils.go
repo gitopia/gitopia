@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"regexp"
 
+	"encoding/base64"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/ipfs/go-cid"
 )
 
 func ValidateRepositoryId(repositoryId RepositoryId) error {
@@ -32,7 +34,31 @@ func ValidateRepositoryId(repositoryId RepositoryId) error {
 	}
 	sanitized := IsNameSanitized(repositoryId.Name)
 	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+		return fmt.Errorf("repository name is not sanitized")
+	}
+
+	return nil
+}
+
+func ValidateIpfsCid(ipfsCid string) error {
+	// if len(ipfsCid) != 46 {
+	// 	return fmt.Errorf("invalid IPFS cid (%s)", ipfsCid)
+	// }
+
+	if _, err := cid.Decode(ipfsCid); err != nil {
+		return fmt.Errorf("invalid IPFS cid (%s)", ipfsCid)
+	}
+
+	return nil
+}
+
+func ValidateArweaveTxId(arweaveTxId string) error {
+	if len(arweaveTxId) != 43 {
+		return fmt.Errorf("invalid arweave transaction id (%s)", arweaveTxId)
+	}
+
+	if _, err := base64.URLEncoding.WithPadding(base64.NoPadding).DecodeString(arweaveTxId); err != nil {
+		return fmt.Errorf("invalid arweave transaction id (%s)", arweaveTxId)
 	}
 
 	return nil

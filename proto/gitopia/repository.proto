@@ -94,12 +94,11 @@ message Attachment {
   string uploader = 4;
 }
 
-enum RepositoryBackupStore {
-  IPFS = 0;
-  ARWEAVE = 1;
-}
-
 message RepositoryBackup {
-  RepositoryBackupStore store = 1;
+  enum Store {
+    IPFS = 0;
+    ARWEAVE = 1;
+  }
+  Store store = 1;
   repeated string refs = 2;
 }

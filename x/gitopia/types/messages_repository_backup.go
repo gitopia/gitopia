@@ -3,34 +3,32 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/ipfs/go-cid"
 )
 
 const (
-	TypeMsgAddRepositoryBackupRef    = "add_repository_backup_ref"
-	TypeMsgUpdateRepositoryBackupRef = "update_repository_backup_ref"
+	TypeMsgAddArweaveBackupRef = "add_arweave_backup_ref"
+	TypeMsgUpdateIpfsBackupRef = "update_ipfs_backup_ref"
 )
 
-var _ sdk.Msg = &MsgAddRepositoryBackupRef{}
+var _ sdk.Msg = &MsgAddArweaveBackupRef{}
 
-func NewMsgAddRepositoryBackupRef(creator string, repositoryId RepositoryId, store RepositoryBackupStore, ref string) *MsgAddRepositoryBackupRef {
-	return &MsgAddRepositoryBackupRef{
+func NewMsgAddArweaveBackupRef(creator string, repositoryId RepositoryId, ref string) *MsgAddArweaveBackupRef {
+	return &MsgAddArweaveBackupRef{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Store:        store,
 		Ref:          ref,
 	}
 }
 
-func (msg *MsgAddRepositoryBackupRef) Route() string {
+func (msg *MsgAddArweaveBackupRef) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgAddRepositoryBackupRef) Type() string {
-	return TypeMsgAddRepositoryBackupRef
+func (msg *MsgAddArweaveBackupRef) Type() string {
+	return TypeMsgAddArweaveBackupRef
 }
 
-func (msg *MsgAddRepositoryBackupRef) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddArweaveBackupRef) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -38,12 +36,12 @@ func (msg *MsgAddRepositoryBackupRef) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgAddRepositoryBackupRef) GetSignBytes() []byte {
+func (msg *MsgAddArweaveBackupRef) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
+func (msg *MsgAddArweaveBackupRef) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
@@ -54,41 +52,32 @@ func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
-	_, exists := StorageProvider_Store_value[msg.Store.String()]
-	if !exists {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
-	}
-
-	if msg.Store == RepositoryBackupStore_IPFS {
-		_, err = cid.Decode(msg.Ref)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid IPFS cid (%s)", msg.Ref)
-		}
+	if err := ValidateArweaveTxId(msg.Ref); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
 }
 
-var _ sdk.Msg = &MsgUpdateRepositoryBackupRef{}
+var _ sdk.Msg = &MsgUpdateIpfsBackupRef{}
 
-func NewMsgUpdateRepositoryBackupRef(creator string, repositoryId RepositoryId, store RepositoryBackupStore, ref string) *MsgUpdateRepositoryBackupRef {
-	return &MsgUpdateRepositoryBackupRef{
+func NewMsgUpdateIpfsBackupRef(creator string, repositoryId RepositoryId, ref string) *MsgUpdateIpfsBackupRef {
+	return &MsgUpdateIpfsBackupRef{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Store:        store,
 		Ref:          ref,
 	}
 }
 
-func (msg *MsgUpdateRepositoryBackupRef) Route() string {
+func (msg *MsgUpdateIpfsBackupRef) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgUpdateRepositoryBackupRef) Type() string {
-	return TypeMsgUpdateRepositoryBackupRef
+func (msg *MsgUpdateIpfsBackupRef) Type() string {
+	return TypeMsgUpdateIpfsBackupRef
 }
 
-func (msg *MsgUpdateRepositoryBackupRef) GetSigners() []sdk.AccAddress {
+func (msg *MsgUpdateIpfsBackupRef) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -96,12 +85,12 @@ func (msg *MsgUpdateRepositoryBackupRef) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgUpdateRepositoryBackupRef) GetSignBytes() []byte {
+func (msg *MsgUpdateIpfsBackupRef) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
+func (msg *MsgUpdateIpfsBackupRef) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
@@ -112,16 +101,8 @@ func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
-	_, exists := StorageProvider_Store_value[msg.Store.String()]
-	if !exists {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid store (%v)", msg.Store)
-	}
-
-	if msg.Store == RepositoryBackupStore_IPFS {
-		_, err = cid.Decode(msg.Ref)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid IPFS cid (%s)", msg.Ref)
-		}
+	if err := ValidateIpfsCid(msg.Ref); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil

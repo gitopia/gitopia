@@ -12,26 +12,24 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdAddRepositoryBackupRef() *cobra.Command {
+func CmdAddArweaveBackupRef() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-repository-backup-ref [id] [repository-name] [store] [ref]",
-		Short: "add repository backup reference",
-		Args:  cobra.ExactArgs(4),
+		Use:   "add-arweave-backup-ref [id] [repository-name] [ref]",
+		Short: "add arweave backup reference",
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
-			argStore := (types.RepositoryBackupStore)(types.RepositoryBackupStore_value[args[2]])
-			argRef := args[3]
+			argRef := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAddRepositoryBackupRef(
+			msg := types.NewMsgAddArweaveBackupRef(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
-				argStore,
 				argRef,
 			)
 			if err := msg.ValidateBasic(); err != nil {
@@ -46,26 +44,24 @@ func CmdAddRepositoryBackupRef() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateRepositoryBackupRef() *cobra.Command {
+func CmdUpdateIpfsBackupRef() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-repository-backup-ref [id] [repository-name] [store] [ref]",
-		Short: "update repository backup reference",
-		Args:  cobra.ExactArgs(4),
+		Use:   "update-ipfs-backup-ref [id] [repository-name] [ref]",
+		Short: "update ipfs backup reference",
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
-			argStore := (types.RepositoryBackupStore)(types.RepositoryBackupStore_value[args[2]])
-			argRef := args[3]
+			argRef := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateRepositoryBackupRef(
+			msg := types.NewMsgUpdateIpfsBackupRef(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
-				argStore,
 				argRef,
 			)
 			if err := msg.ValidateBasic(); err != nil {

@@ -165,8 +165,8 @@ func (_m *MockMsgClient) AddPullRequestReviewers(ctx context.Context, in *MsgAdd
 	return r0, r1
 }
 
-// AddRepositoryBackupRef provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) AddRepositoryBackupRef(ctx context.Context, in *MsgAddRepositoryBackupRef, opts ...grpc.CallOption) (*MsgAddRepositoryBackupRefResponse, error) {
+// AddArweaveBackupRef provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) AddArweaveBackupRef(ctx context.Context, in *MsgAddArweaveBackupRef, opts ...grpc.CallOption) (*MsgAddArweaveBackupRefResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -176,17 +176,17 @@ func (_m *MockMsgClient) AddRepositoryBackupRef(ctx context.Context, in *MsgAddR
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *MsgAddRepositoryBackupRefResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgAddRepositoryBackupRef, ...grpc.CallOption) *MsgAddRepositoryBackupRefResponse); ok {
+	var r0 *MsgAddArweaveBackupRefResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgAddArweaveBackupRef, ...grpc.CallOption) *MsgAddArweaveBackupRefResponse); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgAddRepositoryBackupRefResponse)
+			r0 = ret.Get(0).(*MsgAddArweaveBackupRefResponse)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgAddRepositoryBackupRef, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgAddArweaveBackupRef, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)
@@ -1875,8 +1875,8 @@ func (_m *MockMsgClient) UpdateRelease(ctx context.Context, in *MsgUpdateRelease
 	return r0, r1
 }
 
-// UpdateRepositoryBackupRef provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateRepositoryBackupRef(ctx context.Context, in *MsgUpdateRepositoryBackupRef, opts ...grpc.CallOption) (*MsgUpdateRepositoryBackupRefResponse, error) {
+// UpdateIpfsBackupRef provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) UpdateIpfsBackupRef(ctx context.Context, in *MsgUpdateIpfsBackupRef, opts ...grpc.CallOption) (*MsgUpdateIpfsBackupRefResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -1886,17 +1886,17 @@ func (_m *MockMsgClient) UpdateRepositoryBackupRef(ctx context.Context, in *MsgU
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *MsgUpdateRepositoryBackupRefResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateRepositoryBackupRef, ...grpc.CallOption) *MsgUpdateRepositoryBackupRefResponse); ok {
+	var r0 *MsgUpdateIpfsBackupRefResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateIpfsBackupRef, ...grpc.CallOption) *MsgUpdateIpfsBackupRefResponse); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdateRepositoryBackupRefResponse)
+			r0 = ret.Get(0).(*MsgUpdateIpfsBackupRefResponse)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateRepositoryBackupRef, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateIpfsBackupRef, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

@@ -22,13 +22,13 @@ func (k msgServer) AuthorizeStorageProvider(goCtx context.Context, msg *types.Ms
 	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
 	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	updateRepositoryBackupRefAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}))
+	updateRepositoryBackupRefAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgUpdateIpfsBackupRef{}))
 	err := k.authzKeeper.SaveGrant(ctx, grantee, granter, updateRepositoryBackupRefAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
 	}
 
-	addRepositoryBackupRefAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}))
+	addRepositoryBackupRefAuthorization := authz.NewGenericAuthorization(sdk.MsgTypeURL(&types.MsgAddArweaveBackupRef{}))
 	err = k.authzKeeper.SaveGrant(ctx, grantee, granter, addRepositoryBackupRefAuthorization, now.AddDate(1, 0, 0))
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (k msgServer) RevokeStorageProviderPermissions(goCtx context.Context, msg *
 	granter, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	typeUrls := map[string]struct{}{
-		sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}):    {},
-		sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}): {},
+		sdk.MsgTypeURL(&types.MsgAddArweaveBackupRef{}): {},
+		sdk.MsgTypeURL(&types.MsgUpdateIpfsBackupRef{}): {},
 	}
 
 	authorizations := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
