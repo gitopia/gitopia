@@ -21,20 +21,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.ToggleArweaveBackup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRevokeStorageProviderPermissions:
-			res, err := msgServer.RevokeStorageProviderPermissions(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRevokeProviderPermission:
+			res, err := msgServer.RevokeProviderPermission(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAuthorizeStorageProvider:
-			res, err := msgServer.AuthorizeStorageProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgRevokeGitServerPermissions:
-			res, err := msgServer.RevokeGitServerPermissions(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgAuthorizeGitServer:
-			res, err := msgServer.AuthorizeGitServer(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAuthorizeProvider:
+			res, err := msgServer.AuthorizeProvider(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		// case *types.MsgCreateTask:

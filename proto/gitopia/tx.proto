@@ -20,10 +20,8 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
-  rpc RevokeStorageProviderPermissions(MsgRevokeStorageProviderPermissions) returns (MsgRevokeStorageProviderPermissionsResponse);
-  rpc AuthorizeStorageProvider(MsgAuthorizeStorageProvider) returns (MsgAuthorizeStorageProviderResponse);
-  rpc RevokeGitServerPermissions(MsgRevokeGitServerPermissions) returns (MsgRevokeGitServerPermissionsResponse);
-  rpc AuthorizeGitServer(MsgAuthorizeGitServer) returns (MsgAuthorizeGitServerResponse);
+  rpc RevokeProviderPermission(MsgRevokeProviderPermission) returns (MsgRevokeProviderPermissionResponse);
+  rpc AuthorizeProvider(MsgAuthorizeProvider) returns (MsgAuthorizeProviderResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
   rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
   rpc DeleteTask(MsgDeleteTask) returns (MsgDeleteTaskResponse);
@@ -100,33 +98,28 @@ service Msg {
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
 
-message MsgRevokeStorageProviderPermissions {
-  string creator = 1;
-  string provider = 2;
+enum ProviderPermission {
+  GIT_SERVER = 0;
+  STORAGE = 1;
 }
 
-message MsgRevokeStorageProviderPermissionsResponse {}
-
-message MsgAuthorizeStorageProvider {
+message MsgRevokeProviderPermission {
   string creator = 1;
-  string provider = 2;
+  string granter = 2;
+  string provider = 3;
+  ProviderPermission permission = 4;
 }
 
-message MsgAuthorizeStorageProviderResponse {}
+message MsgRevokeProviderPermissionResponse {}
 
-message MsgRevokeGitServerPermissions {
+message MsgAuthorizeProvider {
   string creator = 1;
-  string provider = 2;
+  string granter = 2;
+  string provider = 3;
+  ProviderPermission permission = 4;
 }
 
-message MsgRevokeGitServerPermissionsResponse {}
-
-message MsgAuthorizeGitServer {
-  string creator = 1;
-  string provider = 2;
-}
-
-message MsgAuthorizeGitServerResponse {}
+message MsgAuthorizeProviderResponse {}
 
 message MsgCreateTask {
   string creator = 1;

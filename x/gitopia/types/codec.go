@@ -9,10 +9,8 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgRevokeStorageProviderPermissions{}, "gitopia/RevokeStorageProviderPermissions", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeStorageProvider{}, "gitopia/AuthorizeStorageProvider", nil)
-	cdc.RegisterConcrete(&MsgRevokeGitServerPermissions{}, "gitopia/RevokeGitServerPermissions", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeGitServer{}, "gitopia/AuthorizeGitServer", nil)
+	cdc.RegisterConcrete(&MsgRevokeProviderPermission{}, "gitopia/RevokeProviderPermission", nil)
+	cdc.RegisterConcrete(&MsgAuthorizeProvider{}, "gitopia/AuthorizeProvider", nil)
 	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
 	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
@@ -100,12 +98,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeStorageProvider{},
-		&MsgRevokeStorageProviderPermissions{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeGitServer{},
-		&MsgRevokeGitServerPermissions{},
+		&MsgAuthorizeProvider{},
+		&MsgRevokeProviderPermission{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		// &MsgCreateTask{},
