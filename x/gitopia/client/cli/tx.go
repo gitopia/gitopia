@@ -50,8 +50,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAddMember())
 	cmd.AddCommand(CmdUpdateMemberRole())
 	cmd.AddCommand(CmdRemoveMember())
-	cmd.AddCommand(CmdUpdateIpfsBackupRef())
-	cmd.AddCommand(CmdAddArweaveBackupRef())
+	cmd.AddCommand(CmdUpdateRepositoryBackupRef())
+	cmd.AddCommand(CmdAddRepositoryBackupRef())
 	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())

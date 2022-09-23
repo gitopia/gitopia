@@ -10,7 +10,7 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
-func (k msgServer) AddArweaveBackupRef(goCtx context.Context, msg *types.MsgAddArweaveBackupRef) (*types.MsgAddArweaveBackupRefResponse, error) {
+func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -33,11 +33,11 @@ func (k msgServer) AddArweaveBackupRef(goCtx context.Context, msg *types.MsgAddA
 	}
 
 	var backup *types.RepositoryBackup
-	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_ARWEAVE); found {
+	if i, found := utils.RepositoryBackupExists(repository.Backups, msg.Store); found {
 		backup = repository.Backups[i]
 	} else {
 		backup = new(types.RepositoryBackup)
-		backup.Store = types.RepositoryBackup_ARWEAVE
+		backup.Store = msg.Store
 		repository.Backups = append(repository.Backups, backup)
 	}
 	backup.Refs = append(backup.Refs, msg.Ref)
@@ -45,10 +45,10 @@ func (k msgServer) AddArweaveBackupRef(goCtx context.Context, msg *types.MsgAddA
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgAddArweaveBackupRefResponse{}, nil
+	return &types.MsgAddRepositoryBackupRefResponse{}, nil
 }
 
-func (k msgServer) UpdateIpfsBackupRef(goCtx context.Context, msg *types.MsgUpdateIpfsBackupRef) (*types.MsgUpdateIpfsBackupRefResponse, error) {
+func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.MsgUpdateRepositoryBackupRef) (*types.MsgUpdateRepositoryBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -71,11 +71,11 @@ func (k msgServer) UpdateIpfsBackupRef(goCtx context.Context, msg *types.MsgUpda
 	}
 
 	var backup *types.RepositoryBackup
-	if i, found := utils.RepositoryBackupExists(repository.Backups, types.RepositoryBackup_IPFS); found {
+	if i, found := utils.RepositoryBackupExists(repository.Backups, msg.Store); found {
 		backup = repository.Backups[i]
 	} else {
 		backup = new(types.RepositoryBackup)
-		backup.Store = types.RepositoryBackup_IPFS
+		backup.Store = msg.Store
 		repository.Backups = append(repository.Backups, backup)
 	}
 
@@ -88,5 +88,5 @@ func (k msgServer) UpdateIpfsBackupRef(goCtx context.Context, msg *types.MsgUpda
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
-	return &types.MsgUpdateIpfsBackupRefResponse{}, nil
+	return &types.MsgUpdateRepositoryBackupRefResponse{}, nil
 }

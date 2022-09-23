@@ -96,8 +96,8 @@ service Msg {
   rpc UpdateUserAvatar(MsgUpdateUserAvatar) returns (MsgUpdateUserAvatarResponse);
   rpc DeleteUser(MsgDeleteUser) returns (MsgDeleteUserResponse);
   // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
-  rpc UpdateIpfsBackupRef(MsgUpdateIpfsBackupRef) returns (MsgUpdateIpfsBackupRefResponse);
-  rpc AddArweaveBackupRef(MsgAddArweaveBackupRef) returns (MsgAddArweaveBackupRefResponse);
+  rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
+  rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
 
 message MsgRevokeStorageProviderPermissions {
@@ -152,22 +152,24 @@ message MsgDeleteTask {
   uint64 id = 2;
 }
 
-message MsgUpdateIpfsBackupRef {
+message MsgUpdateRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string ref = 3;
+  RepositoryBackup.Store store = 3;
+  string ref = 4;
 }
 
-message MsgUpdateIpfsBackupRefResponse {
+message MsgUpdateRepositoryBackupRefResponse {
 }
 
-message MsgAddArweaveBackupRef {
+message MsgAddRepositoryBackupRef {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string ref = 3;
+  RepositoryBackup.Store store = 3;
+  string ref = 4;
 }
 
-message MsgAddArweaveBackupRefResponse {
+message MsgAddRepositoryBackupRefResponse {
 }
 
 message MsgDeleteTaskResponse {}
