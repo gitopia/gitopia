@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -77,6 +79,29 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	repository.Issues = append(repository.Issues, &repositoryIssue)
 
 	k.SetRepository(ctx, repository)
+
+	assigneesJson, _ := json.Marshal(issue.Assignees)
+	labelsJson, _ := json.Marshal(issue.Labels)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(repositoryIssue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIIdKey, strconv.FormatUint(repositoryIssue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
+			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
+			sdk.NewAttribute(types.EventAttributeIssueAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeIssueLablesKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(issue.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(issue.ClosedAt, 10)),
+		),
+	)
 
 	return &types.MsgCreateIssueResponse{
 		Id:  id,
