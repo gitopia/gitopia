@@ -70,14 +70,24 @@ const (
 )
 
 const (
-	InvokeForkRepositoryEventKey         = "InvokeForkRepository"
-	ForkRepositoryEventKey               = "ForkRepository"
-	InvokeMergePullRequestEventKey       = "InvokeMergePullRequest"
-	SetPullRequestStateEventKey          = "SetPullRequestState"
-	SetRepositoryBranchEventKey          = "SetRepositoryBranch"
-	SetRepositoryTagEventKey             = "SetRepositoryTag"
-	MultiSetRepositoryBranchEventKey     = "MultiSetRepositoryBranch"
-	MultiSetRepositoryTagEventKey        = "MultiSetRepositoryTag"
+	InvokeMergePullRequestEventKey   = "InvokeMergePullRequest"
+	SetPullRequestStateEventKey      = "SetPullRequestState"
+	SetRepositoryBranchEventKey      = "SetRepositoryBranch"
+	SetRepositoryTagEventKey         = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey    = "MultiSetRepositoryTag"
+)
+
+const (
+	CreateUserEventKey         = "CreateUser"
+	UpdateUserUsernameEventKey = "UpdateUserUsername"
+	UpdateUserNameEventKey     = "UpdateUserName"
+	UpdateUserBioEventKey      = "UpdateUserBio"
+	UpdateUserAvatarEventKey   = "UpdateUserAvatar"
+	DeleteUserEventKey         = "DeleteUser"
+)
+
+const (
 	CreateRepositoryEventKey             = "CreateRepository"
 	ChangeOwnerEventKey                  = "ChangeOwner"
 	RenameRepositoryEventKey             = "RenameRepository"
@@ -90,7 +100,12 @@ const (
 	ToggleRepositoryForkingEventKey      = "ToggleRepositoryForking"
 	ToggleArweaveBackupEventKey          = "ToggleArweaveBackup"
 	DeleteRepositoryEventKey             = "DeleteRepository"
-	CreateIssueEventKey                  = "CreateIssue"
+	InvokeForkRepositoryEventKey         = "InvokeForkRepository"
+	ForkRepositoryEventKey               = "ForkRepository"
+)
+
+const (
+	CreateIssueEventKey = "CreateIssue"
 )
 
 const (
@@ -103,24 +118,29 @@ const (
 	EventAttributeTaskStateKey                 = "TaskState"
 	EventAttributeMessageKey                   = "Message"
 	EventAttributeParentRepoId                 = "ParentRepositoryId"
-	EventAttributeEnableArweaveBackupKey       = "EnableArweaveBackup"
 	EventAttributeCreatedAtKey                 = "CreatedAt"
 	EventAttributeUpdatedAtKey                 = "UpdatedAt"
 	EventAttributeClosedAtKey                  = "ClosedAt"
 )
 
 const (
-	EventAttributeRepoNameKey             = "RepositoryName"
-	EventAttributeRepoIdKey               = "RepositoryId"
-	EventAttributeRepoOwnerIdKey          = "RepositoryOwnerId"
-	EventAttributeRepoOwnerTypeKey        = "RepositoryOwnerType"
-	EventAttributeRepoCollaboratorKey     = "RepositoryCollaboratorKey"
-	EventAttributeRepoLabelIdKey          = "RepositoryLabelId"
-	EventAttributeRepoLabelNameKey        = "RepositoryLabelName"
-	EventAttributeRepoLabelColorKey       = "RepositoryLabelColor"
-	EventAttributeRepoAllowForkingKey     = "RepositoryAllowForking"
-	EventAttributeRepoEnableArweaveBackup = "RepositoryEnableArweaveBackup"
-	EventAttributeForkRepoOwnerIdKey      = "ForkRepositoryOwnerId"
+	EventAttributeUserIdKey       = "UserId"
+	EventAttributeUserUsernameKey = "UserUsername"
+	EventAttributeUserNameKey     = "UserName"
+)
+
+const (
+	EventAttributeRepoNameKey                = "RepositoryName"
+	EventAttributeRepoIdKey                  = "RepositoryId"
+	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
+	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"
+	EventAttributeRepoCollaboratorKey        = "RepositoryCollaboratorKey"
+	EventAttributeRepoLabelIdKey             = "RepositoryLabelId"
+	EventAttributeRepoLabelNameKey           = "RepositoryLabelName"
+	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"
+	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
+	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
+	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
 )
 
 const (

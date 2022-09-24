@@ -845,7 +845,7 @@ func (k msgServer) ToggleArweaveBackup(goCtx context.Context, msg *types.MsgTogg
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackup, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
