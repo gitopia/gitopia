@@ -225,7 +225,9 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, ownerAddress.address),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)

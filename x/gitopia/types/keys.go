@@ -120,6 +120,7 @@ const (
 	EventAttributeRepoLabelColorKey       = "RepositoryLabelColor"
 	EventAttributeRepoAllowForkingKey     = "RepositoryAllowForking"
 	EventAttributeRepoEnableArweaveBackup = "RepositoryEnableArweaveBackup"
+	EventAttributeForkRepoOwnerIdKey      = "ForkRepositoryOwnerId"
 )
 
 const (
