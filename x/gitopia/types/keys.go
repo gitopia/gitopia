@@ -88,6 +88,16 @@ const (
 )
 
 const (
+	CreateDaoEventKey            = "CreateDao"
+	RenameDaoEventKey            = "RenameDao"
+	UpdateDaoDescriptionEventKey = "UpdateDaoDescription"
+	UpdateDaoWebsiteEventKey     = "UpdateDaoWebsite"
+	UpdateDaoLocationEventKey    = "UpdateDaoLocation"
+	UpdateDaoAvatarEventKey      = "UpdateDaoAvatar"
+	DeleteDaoEventKey            = "DeleteDao"
+)
+
+const (
 	CreateRepositoryEventKey             = "CreateRepository"
 	ChangeOwnerEventKey                  = "ChangeOwner"
 	RenameRepositoryEventKey             = "RenameRepository"
@@ -140,6 +150,12 @@ const (
 	EventAttributeUserIdKey       = "UserId"
 	EventAttributeUserUsernameKey = "UserUsername"
 	EventAttributeUserNameKey     = "UserName"
+)
+
+const (
+	EventAttributeDaoIdKey      = "DaoId"
+	EventAttributeDaoAddressKey = "DaoAddress"
+	EventAttributeDaoNameKey    = "DaoName"
 )
 
 const (

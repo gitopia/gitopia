@@ -46,7 +46,9 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 			CreatedAt:    ctx.BlockTime().Unix(),
 			UpdatedAt:    ctx.BlockTime().Unix(),
 		}
-		k.AppendTag(ctx, tag)
+		id := k.AppendTag(ctx, tag)
+
+		tag.Id = id // For event attribute
 	}
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
@@ -109,8 +111,9 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 				CreatedAt:    ctx.BlockTime().Unix(),
 				UpdatedAt:    ctx.BlockTime().Unix(),
 			}
-			k.AppendTag(ctx, t)
+			id := k.AppendTag(ctx, t)
 
+			t.Id = id // For event attribute
 			updatedTags = append(updatedTags, t)
 		}
 	}

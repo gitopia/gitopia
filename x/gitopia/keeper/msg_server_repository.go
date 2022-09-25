@@ -49,7 +49,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
 	}
 
-	k.AppendRepository(
+	id := k.AppendRepository(
 		ctx,
 		repository,
 	)
@@ -60,7 +60,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(repository.CreatedAt, 10)),

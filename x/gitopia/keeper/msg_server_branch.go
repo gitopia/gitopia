@@ -47,7 +47,9 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 			CreatedAt:      ctx.BlockTime().Unix(),
 			UpdatedAt:      ctx.BlockTime().Unix(),
 		}
-		k.AppendBranch(ctx, branch)
+		id := k.AppendBranch(ctx, branch)
+
+		branch.Id = id // For event attribute
 	}
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
@@ -113,8 +115,9 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 				CreatedAt:      ctx.BlockTime().Unix(),
 				UpdatedAt:      ctx.BlockTime().Unix(),
 			}
-			k.AppendBranch(ctx, b)
+			id := k.AppendBranch(ctx, b)
 
+			b.Id = id // For event attribute
 			updatedBranches = append(updatedBranches, b)
 		}
 	}

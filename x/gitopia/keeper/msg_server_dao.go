@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -53,7 +54,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 
 	member := types.Member{
 		Address:    msg.Creator,
-		DaoAddress: id,
+		DaoAddress: dao.Address,
 		Role:       types.MemberRole_OWNER,
 	}
 
@@ -62,7 +63,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 	whois := types.Whois{
 		Creator:   msg.Creator,
 		Name:      daoName,
-		Address:   id,
+		Address:   dao.Address,
 		OwnerType: types.OwnerType_DAO,
 	}
 
@@ -71,8 +72,21 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		whois,
 	)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateDaoEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(dao.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreateDaoResponse{
-		Id: id,
+		Id: dao.Address,
 	}, nil
 }
 
@@ -136,6 +150,18 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RenameDaoEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgRenameDaoResponse{}, nil
 }
 
@@ -170,6 +196,18 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoDescriptionEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateDaoDescriptionResponse{}, nil
 }
 
@@ -202,6 +240,18 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 	dao.Website = msg.Url
 	dao.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetDao(ctx, dao)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoWebsiteEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateDaoWebsiteResponse{}, nil
 }
@@ -237,6 +287,18 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoLocationEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateDaoLocationResponse{}, nil
 }
 
@@ -271,6 +333,18 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoAvatarEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateDaoAvatarResponse{}, nil
 }
 
@@ -292,6 +366,17 @@ func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*t
 	}
 
 	DoRemoveDao(ctx, k, user, dao)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteDaoEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+		),
+	)
 
 	return &types.MsgDeleteDaoResponse{}, nil
 }

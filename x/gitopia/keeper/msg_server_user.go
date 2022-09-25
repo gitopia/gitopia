@@ -61,7 +61,7 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateUserEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeUserUsernameKey, user.Username),
 			sdk.NewAttribute(types.EventAttributeUserNameKey, user.Name),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(user.CreatedAt, 10)),
@@ -69,7 +69,7 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		),
 	)
 
-	return &types.MsgCreateUserResponse{Id: id}, nil
+	return &types.MsgCreateUserResponse{Id: user.Creator}, nil
 }
 
 func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdateUserUsername) (*types.MsgUpdateUserUsernameResponse, error) {
