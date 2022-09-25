@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -32,12 +33,13 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if tag, found := k.GetRepositoryTag(ctx, repository.Id, msg.Tag.Name); found {
+	tag, found := k.GetRepositoryTag(ctx, repository.Id, msg.Tag.Name)
+	if found {
 		tag.Sha = msg.Tag.Sha
 		tag.UpdatedAt = ctx.BlockTime().Unix()
 		k.SetRepositoryTag(ctx, tag)
 	} else {
-		tag := types.Tag{
+		tag = types.Tag{
 			RepositoryId: repository.Id,
 			Name:         msg.Tag.Name,
 			Sha:          msg.Tag.Sha,
@@ -50,6 +52,8 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	tagJson, _ := json.Marshal(tag)
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -57,8 +61,10 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoTagKey, string(tagJson)),
 			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
 			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
 
@@ -87,11 +93,14 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	var updatedTags []types.Tag
 	for _, tag := range msg.Tags {
 		if t, found := k.GetRepositoryTag(ctx, repository.Id, tag.Name); found {
 			t.Sha = tag.Sha
 			t.UpdatedAt = ctx.BlockTime().Unix()
 			k.SetRepositoryTag(ctx, t)
+
+			updatedTags = append(updatedTags, t)
 		} else {
 			t := types.Tag{
 				RepositoryId: repository.Id,
@@ -101,11 +110,15 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 				UpdatedAt:    ctx.BlockTime().Unix(),
 			}
 			k.AppendTag(ctx, t)
+
+			updatedTags = append(updatedTags, t)
 		}
 	}
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	tagsJson, _ := json.Marshal(updatedTags)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -114,8 +127,10 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoTagKey, string(tagsJson)),
 			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
 			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
 
@@ -144,7 +159,8 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if _, found := k.GetRepositoryTag(ctx, repository.Id, msg.Tag); found {
+	tag, found := k.GetRepositoryTag(ctx, repository.Id, msg.Tag)
+	if found {
 		k.RemoveRepositoryTag(ctx, repository.Id, msg.Tag)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exist", msg.Tag))
@@ -152,6 +168,22 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	tagJson, _ := json.Marshal(tag)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryTagEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoTagKey, string(tagJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
+			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgDeleteTagResponse{}, nil
 }
@@ -179,10 +211,14 @@ func (k msgServer) MultiDeleteTag(goCtx context.Context, msg *types.MsgMultiDele
 	}
 
 	/* Check if all tag exists */
+	var deletedTags []types.Tag
 	for _, tag := range msg.Tags {
-		if _, found := k.GetRepositoryTag(ctx, repository.Id, tag); !found {
+		tag, found := k.GetRepositoryTag(ctx, repository.Id, tag)
+		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) doesn't exist", tag))
 		}
+
+		deletedTags = append(deletedTags, tag)
 	}
 
 	for _, tag := range msg.Tags {
@@ -191,6 +227,22 @@ func (k msgServer) MultiDeleteTag(goCtx context.Context, msg *types.MsgMultiDele
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	tagsJson, _ := json.Marshal(deletedTags)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.MultiDeleteRepositoryTagEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoTagKey, string(tagsJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(true)),
+			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgMultiDeleteTagResponse{}, nil
 }

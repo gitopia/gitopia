@@ -105,6 +105,8 @@ const (
 	SetRepositoryDefaultBranchEventKey   = "SetRepositoryDefaultBranch"
 	DeleteRepositoryBranchEventKey       = "DeleteRepositoryBranch"
 	MultiDeleteRepositoryBranchEventKey  = "MultiDeleteRepositoryBranch"
+	DeleteRepositoryTagEventKey          = "DeleteRepositoryTag"
+	MultiDeleteRepositoryTagEventKey     = "MultiDeleteRepositoryTag"
 )
 
 const (
@@ -144,8 +146,8 @@ const (
 	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
 	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
 	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
-	EventAttributeRepoBranchesKey            = "RepositoryBranches"
-	EventAttributeRepoTagsKey                = "RepositoryTags"
+	EventAttributeRepoBranchKey              = "RepositoryBranch"
+	EventAttributeRepoTagKey                 = "RepositoryTag"
 	EventAttributeRepoDefaultBranchKey       = "RepositoryDefaultBranch"
 )
 
