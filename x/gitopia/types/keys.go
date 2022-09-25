@@ -110,7 +110,15 @@ const (
 )
 
 const (
-	CreateIssueEventKey = "CreateIssue"
+	CreateIssueEventKey            = "CreateIssue"
+	UpdateIssueTitleEventKey       = "UpdateIssueTitle"
+	UpdateIssueDescriptionEventKey = "UpdateIssueDescription"
+	ToggleIssueStateEventKey       = "ToggleIssueState"
+	AddIssueAssigneesEventKey      = "AddIssueAssignees"
+	RemoveIssueAssigneesEventKey   = "RemoveIssueAssignees"
+	AddIssueLabelsEventKey         = "AddIssueLabels"
+	RemoveIssueLabelsEventKey      = "RemoveIssueLabels"
+	DeleteIssueEventKey            = "DeleteIssue"
 )
 
 const (
@@ -157,7 +165,8 @@ const (
 	EventAttributeIssueTitleKey     = "IssueTitle"
 	EventAttributeIssueStateKey     = "IssueState"
 	EventAttributeIssueAssigneesKey = "IssueAssignees"
-	EventAttributeIssueLablesKey    = "IssueLabels"
+	EventAttributeIssueLabelsKey    = "IssueLabels"
+	EventAttributeClosedByKey       = "ClosedBy"
 )
 
 const (
