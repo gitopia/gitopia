@@ -86,6 +86,9 @@ const (
 	UpdateDaoLocationEventKey    = "UpdateDaoLocation"
 	UpdateDaoAvatarEventKey      = "UpdateDaoAvatar"
 	DeleteDaoEventKey            = "DeleteDao"
+	AddDaoMemberEventKey         = "AddDaoMember"
+	UpdateDaoMemberRoleEventKey  = "UpdateDaoMemberRole"
+	RemoveDaoMemberEventKey      = "RemoveDaoMember"
 )
 
 const (
@@ -169,9 +172,11 @@ const (
 )
 
 const (
-	EventAttributeDaoIdKey      = "DaoId"
-	EventAttributeDaoAddressKey = "DaoAddress"
-	EventAttributeDaoNameKey    = "DaoName"
+	EventAttributeDaoIdKey            = "DaoId"
+	EventAttributeDaoAddressKey       = "DaoAddress"
+	EventAttributeDaoNameKey          = "DaoName"
+	EventAttributeDaoMemberAddressKey = "DaoMemberAddress"
+	EventAttributeDaoMemberRoleKey    = "DaoMemberRole"
 )
 
 const (
