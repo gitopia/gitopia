@@ -70,15 +70,6 @@ const (
 )
 
 const (
-	InvokeMergePullRequestEventKey   = "InvokeMergePullRequest"
-	SetPullRequestStateEventKey      = "SetPullRequestState"
-	SetRepositoryBranchEventKey      = "SetRepositoryBranch"
-	SetRepositoryTagEventKey         = "SetRepositoryTag"
-	MultiSetRepositoryBranchEventKey = "MultiSetRepositoryBranch"
-	MultiSetRepositoryTagEventKey    = "MultiSetRepositoryTag"
-)
-
-const (
 	CreateUserEventKey         = "CreateUser"
 	UpdateUserUsernameEventKey = "UpdateUserUsername"
 	UpdateUserNameEventKey     = "UpdateUserName"
@@ -112,6 +103,10 @@ const (
 	DeleteRepositoryEventKey             = "DeleteRepository"
 	InvokeForkRepositoryEventKey         = "InvokeForkRepository"
 	ForkRepositoryEventKey               = "ForkRepository"
+	SetRepositoryBranchEventKey          = "SetRepositoryBranch"
+	SetRepositoryTagEventKey             = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey     = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey        = "MultiSetRepositoryTag"
 	SetRepositoryDefaultBranchEventKey   = "SetRepositoryDefaultBranch"
 	DeleteRepositoryBranchEventKey       = "DeleteRepositoryBranch"
 	MultiDeleteRepositoryBranchEventKey  = "MultiDeleteRepositoryBranch"
@@ -132,18 +127,32 @@ const (
 )
 
 const (
-	EventAttributeIsGitRefUpdatedKey           = "GitRefUpdated"
-	EventAttributeCreatorKey                   = "Creator"
-	EventAttributePullRequestIdKey             = "PullRequestId"
-	EventAttributePullRequestStateKey          = "PullRequestState"
-	EventAttributePullRequestMergeCommitShaKey = "PullRequestMergeCommitSha"
-	EventAttributeTaskIdKey                    = "TaskId"
-	EventAttributeTaskStateKey                 = "TaskState"
-	EventAttributeMessageKey                   = "Message"
-	EventAttributeParentRepoId                 = "ParentRepositoryId"
-	EventAttributeCreatedAtKey                 = "CreatedAt"
-	EventAttributeUpdatedAtKey                 = "UpdatedAt"
-	EventAttributeClosedAtKey                  = "ClosedAt"
+	CreatePullRequestEventKey            = "CreatePullRequest"
+	UpdatePullRequestTitleEventKey       = "UpdatePullRequestTitle"
+	UpdatePullRequestDescriptionEventKey = "UpdatePullRequestDescription"
+	InvokeMergePullRequestEventKey       = "InvokeMergePullRequest"
+	SetPullRequestStateEventKey          = "SetPullRequestState"
+	AddPullRequestReviewersEventKey      = "AddPullRequestReviewers"
+	RemovePullRequestReviewersEventKey   = "RemovePullRequestReviewers"
+	AddPullRequestAssigneesEventKey      = "AddPullRequestAssignees"
+	RemovePullRequestAssigneesEventKey   = "RemovePullRequestAssignees"
+	AddPullRequestLabelsEventKey         = "AddPullRequestLabels"
+	RemovePullRequestLabelsEventKey      = "RemovePullRequestLabels"
+	DeletePullRequestEventKey            = "DeletePullRequest"
+)
+
+const (
+	EventAttributeIsGitRefUpdatedKey = "GitRefUpdated"
+	EventAttributeCreatorKey         = "Creator"
+	EventAttributeTaskIdKey          = "TaskId"
+	EventAttributeTaskStateKey       = "TaskState"
+	EventAttributeMessageKey         = "Message"
+	EventAttributeParentRepoId       = "ParentRepositoryId"
+	EventAttributeCreatedAtKey       = "CreatedAt"
+	EventAttributeUpdatedAtKey       = "UpdatedAt"
+	EventAttributeClosedAtKey        = "ClosedAt"
+	EventAttributeAssigneesKey       = "Assignees"
+	EventAttributeLabelsKey          = "Labels"
 )
 
 const (
@@ -176,13 +185,25 @@ const (
 )
 
 const (
-	EventAttributeIssueIdKey        = "IssueId"
-	EventAttributeIssueIIdKey       = "IssueIId"
-	EventAttributeIssueTitleKey     = "IssueTitle"
-	EventAttributeIssueStateKey     = "IssueState"
-	EventAttributeIssueAssigneesKey = "IssueAssignees"
-	EventAttributeIssueLabelsKey    = "IssueLabels"
-	EventAttributeClosedByKey       = "ClosedBy"
+	EventAttributeIssueIdKey    = "IssueId"
+	EventAttributeIssueIidKey   = "IssueIid"
+	EventAttributeIssueTitleKey = "IssueTitle"
+	EventAttributeIssueStateKey = "IssueState"
+	EventAttributeClosedByKey   = "ClosedBy"
+)
+
+const (
+	EventAttributePullRequestIdKey             = "PullRequestId"
+	EventAttributePullRequestStateKey          = "PullRequestState"
+	EventAttributePullRequestIidKey            = "PullRequestIid"
+	EventAttributePullRequestTitleKey          = "PullRequestTitle"
+	EventAttributePullRequestDraftKey          = "PullRequestDraft"
+	EventAttributePullRequestHeadKey           = "PullRequestHead"
+	EventAttributePullRequestBaseKey           = "PullRequestBase"
+	EventAttributePullRequestMergeCommitShaKey = "PullRequestMergeCommitSha"
+	EventAttributePullRequestMergedByKey       = "PullRequestMergedBy"
+	EventAttributePullRequestMergedAtKey       = "PullRequestMergedAt"
+	EventAttributePullRequestReviewersKey      = "PullRequestReviewers"
 )
 
 const (
