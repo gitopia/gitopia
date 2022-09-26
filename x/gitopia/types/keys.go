@@ -142,6 +142,12 @@ const (
 )
 
 const (
+	CreateReleaseEventKey = "CreateRelease"
+	UpdateReleaseEventKey = "UpdateRelease"
+	DeleteReleaseEventKey = "DeleteRelease"
+)
+
+const (
 	EventAttributeIsGitRefUpdatedKey = "GitRefUpdated"
 	EventAttributeCreatorKey         = "Creator"
 	EventAttributeTaskIdKey          = "TaskId"
@@ -151,6 +157,7 @@ const (
 	EventAttributeCreatedAtKey       = "CreatedAt"
 	EventAttributeUpdatedAtKey       = "UpdatedAt"
 	EventAttributeClosedAtKey        = "ClosedAt"
+	EventAttributePublishedAtKey     = "PublishedAt"
 	EventAttributeAssigneesKey       = "Assignees"
 	EventAttributeLabelsKey          = "Labels"
 )
@@ -204,6 +211,14 @@ const (
 	EventAttributePullRequestMergedByKey       = "PullRequestMergedBy"
 	EventAttributePullRequestMergedAtKey       = "PullRequestMergedAt"
 	EventAttributePullRequestReviewersKey      = "PullRequestReviewers"
+)
+
+const (
+	EventAttributeReleaseIdKey         = "ReleaseId"
+	EventAttributeReleaseTagNameKey    = "ReleaseTagName"
+	EventAttributeReleaseNameKey       = "ReleaseName"
+	EventAttributeReleaseDraftKey      = "ReleaseDraft"
+	EventAttributeReleasePreReleaseKey = "ReleasePreRelease"
 )
 
 const (

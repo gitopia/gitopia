@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -91,6 +92,23 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 
 	k.SetRepository(ctx, repository)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateReleaseEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
+			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
+			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
+			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(release.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(release.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePublishedAtKey, strconv.FormatInt(release.PublishedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreateReleaseResponse{
 		Id: id,
 	}, nil
@@ -169,6 +187,22 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 
 	k.SetRelease(ctx, release)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateReleaseEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(release.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
+			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
+			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
+			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(release.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePublishedAtKey, strconv.FormatInt(release.PublishedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateReleaseResponse{}, nil
 }
 
@@ -195,6 +229,16 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 	}
 
 	DoRemoveRelease(ctx, k, release, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteReleaseEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(release.Id, 10)),
+		),
+	)
 
 	return &types.MsgDeleteReleaseResponse{}, nil
 }
