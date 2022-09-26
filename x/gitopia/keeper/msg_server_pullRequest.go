@@ -128,6 +128,29 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 
 	k.SetRepository(ctx, baseRepository)
 
+	headJson, _ := json.Marshal(head)
+	baseJson, _ := json.Marshal(base)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreatePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestTitleKey, pullRequest.Title),
+			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
+			sdk.NewAttribute(types.EventAttributePullRequestDraftKey, strconv.FormatBool(pullRequest.Draft)),
+			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
+			sdk.NewAttribute(types.EventAttributePullRequestBaseKey, string(baseJson)),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(pullRequest.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(pullRequest.ClosedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedAtKey, strconv.FormatInt(pullRequest.MergedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreatePullRequestResponse{
 		Id:  id,
 		Iid: pullRequest.Iid,
@@ -181,6 +204,19 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 
 	k.SetPullRequest(ctx, pullRequest)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdatePullRequestTitleEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestTitleKey, pullRequest.Title),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdatePullRequestTitleResponse{}, nil
 }
 
@@ -229,6 +265,18 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 
 	k.SetPullRequest(ctx, pullRequest)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdatePullRequestDescriptionEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdatePullRequestDescriptionResponse{}, nil
 }
 
@@ -266,7 +314,9 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeMergePullRequestEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
@@ -330,6 +380,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	var baseBranch types.Branch
 	switch msg.State {
 	case types.PullRequest_OPEN.String():
 		if pullRequest.State == types.PullRequest_OPEN || pullRequest.State == types.PullRequest_MERGED {
@@ -349,7 +400,8 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		}
 
 		// Update the branch ref in the base repository
-		baseBranch, found := k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
+		var found bool
+		baseBranch, found = k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
 
@@ -407,6 +459,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	pullRequest.Comments = append(pullRequest.Comments, id)
 
+	baseRepository.UpdatedAt = currentTime
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
 
@@ -415,30 +468,31 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		isGitRefUpdated = true
 	}
 
-	repoId := types.RepositoryId{
-		Id:   baseRepository.Owner.Id,
-		Name: baseRepository.Name,
-	}
-	baseRepoKeyJson, err := json.Marshal(repoId)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error encoding repository id to json")
-	}
+	headJson, _ := json.Marshal(pullRequest.Head)
+	baseBranchJson, _ := json.Marshal(baseBranch)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.SetPullRequestStateEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(msg.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, msg.State),
 			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
 			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(isGitRefUpdated)),
-			sdk.NewAttribute(types.EventAttributeEnableArweaveBackupKey, strconv.FormatBool(baseRepository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(baseRepository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
+			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(baseBranchJson)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedByKey, pullRequest.MergedBy),
+			sdk.NewAttribute(types.EventAttributeClosedByKey, pullRequest.ClosedBy),
+			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(pullRequest.ClosedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedAtKey, strconv.FormatInt(pullRequest.MergedAt, 10)),
 		),
 	)
 
@@ -502,6 +556,21 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 
 	k.SetPullRequest(ctx, pullRequest)
 
+	reviewersJson, _ := json.Marshal(msg.Reviewers)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddPullRequestReviewersEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestReviewersKey, string(reviewersJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgAddPullRequestReviewersResponse{}, nil
 }
 
@@ -556,6 +625,21 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetPullRequest(ctx, pullRequest)
+
+	reviewersJson, _ := json.Marshal(msg.Reviewers)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemovePullRequestReviewersEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestReviewersKey, string(reviewersJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgRemovePullRequestReviewersResponse{}, nil
 }
@@ -615,6 +699,21 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 
 	k.SetPullRequest(ctx, pullRequest)
 
+	assigneesJson, _ := json.Marshal(msg.Assignees)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddPullRequestAssigneesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgAddPullRequestAssigneesResponse{}, nil
 }
 
@@ -669,6 +768,21 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetPullRequest(ctx, pullRequest)
+
+	assigneesJson, _ := json.Marshal(msg.Assignees)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemovePullRequestAssigneesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
 }
@@ -736,6 +850,21 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	k.SetPullRequest(ctx, pullRequest)
+
+	labelsJson, _ := json.Marshal(msg.LabelIds)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddPullRequestLabelsEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgAddPullRequestLabelsResponse{}, nil
 }
@@ -805,6 +934,21 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 
 	k.SetPullRequest(ctx, pullRequest)
 
+	labelsJson, _ := json.Marshal(msg.LabelIds)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemovePullRequestLabelsEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgRemovePullRequestLabelsResponse{}, nil
 }
 
@@ -821,6 +965,17 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	}
 
 	k.RemovePullRequest(ctx, msg.Id)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeletePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+		),
+	)
 
 	return &types.MsgDeletePullRequestResponse{}, nil
 }

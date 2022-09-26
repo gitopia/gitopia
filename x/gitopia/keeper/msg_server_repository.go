@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -50,9 +49,23 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
 	}
 
-	k.AppendRepository(
+	id := k.AppendRepository(
 		ctx,
 		repository,
+	)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(repository.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
 	)
 
 	return &types.MsgCreateRepositoryResponse{
@@ -147,6 +160,18 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		Name:    repository.Name,
 	})
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ChangeOwnerEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgChangeOwnerResponse{}, nil
 }
 
@@ -194,19 +219,15 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		Provider: msg.Provider,
 	})
 
-	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
-			sdk.NewAttribute(types.EventAttributeOwnerIdKey, ownerAddress.address),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
@@ -281,6 +302,21 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	repository.Forks = append(repository.Forks, id)
 	k.SetRepository(ctx, repository)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, forkRepository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(forkRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, forkRepository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, forkRepository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(forkRepository.Parent, 10)),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(forkRepository.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(forkRepository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgForkRepositoryResponse{
 		Id: id,
 	}, nil
@@ -316,18 +352,12 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 	task.State = types.StateSuccess
 	k.SetTask(ctx, task)
 
-	baseRepoKeyJson, err := json.Marshal(msg.RepositoryId)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, fmt.Sprintf("error encoding repo id to json: %v", msg.RepositoryId))
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeBaseRepoKeyKey, string(baseRepoKeyJson)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(repository.Parent, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
@@ -379,6 +409,17 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		Name:    repository.Name,
 	})
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RenameRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgRenameRepositoryResponse{}, nil
 }
 
@@ -412,6 +453,17 @@ func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateRepositoryDescriptionEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateRepositoryDescriptionResponse{}, nil
 }
@@ -459,20 +511,28 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 
 	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.address); exists {
 		repository.Collaborators[i].Permission = types.RepositoryCollaborator_Permission(permission)
-		k.SetRepository(ctx, repository)
-
-		return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
+	} else {
+		repositoryCollaborator := types.RepositoryCollaborator{
+			Id:         userAddress.address,
+			Permission: types.RepositoryCollaborator_Permission(permission),
+		}
+		repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
 	}
 
-	var repositoryCollaborator = types.RepositoryCollaborator{
-		Id:         userAddress.address,
-		Permission: types.RepositoryCollaborator_Permission(permission),
-	}
-
-	repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
 	repository.UpdatedAt = ctx.BlockTime().Unix()
-
 	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateRepositoryCollaboratorEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.address),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
 }
@@ -512,6 +572,18 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemoveRepositoryCollaboratorEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.address),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgRemoveRepositoryCollaboratorResponse{}, nil
 }
@@ -554,6 +626,20 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateRepositoryLabelEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoLabelIdKey, strconv.FormatUint(repositoryLabel.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoLabelNameKey, repositoryLabel.Name),
+			sdk.NewAttribute(types.EventAttributeRepoLabelColorKey, repositoryLabel.Color),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgCreateRepositoryLabelResponse{Id: repositoryLabel.Id}, nil
 }
@@ -599,6 +685,20 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateRepositoryLabelEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoLabelIdKey, strconv.FormatUint(msg.LabelId, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoLabelNameKey, msg.Name),
+			sdk.NewAttribute(types.EventAttributeRepoLabelColorKey, msg.Color),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateRepositoryLabelResponse{}, nil
 }
 
@@ -633,6 +733,18 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryLabelEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoLabelIdKey, strconv.FormatUint(msg.LabelId, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgDeleteRepositoryLabelResponse{}, nil
 }
 
@@ -661,6 +773,18 @@ func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.Msg
 	repository.AllowForking = !repository.AllowForking
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleRepositoryForkingEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoAllowForkingKey, strconv.FormatBool(repository.AllowForking)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgToggleRepositoryForkingResponse{AllowForking: repository.AllowForking}, nil
 }
@@ -714,6 +838,18 @@ func (k msgServer) ToggleArweaveBackup(goCtx context.Context, msg *types.MsgTogg
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleArweaveBackupEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(repository.EnableArweaveBackup)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgToggleArweaveBackupResponse{EnableArweaveBackup: repository.EnableArweaveBackup}, nil
 }
 
@@ -740,6 +876,16 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	}
 
 	DoRemoveRepository(ctx, k, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+		),
+	)
 
 	return &types.MsgDeleteRepositoryResponse{}, nil
 }

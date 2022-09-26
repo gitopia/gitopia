@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -55,7 +56,20 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		whois,
 	)
 
-	return &types.MsgCreateUserResponse{Id: id}, nil
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateUserEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeUserUsernameKey, user.Username),
+			sdk.NewAttribute(types.EventAttributeUserNameKey, user.Name),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(user.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgCreateUserResponse{Id: user.Creator}, nil
 }
 
 func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdateUserUsername) (*types.MsgUpdateUserUsernameResponse, error) {
@@ -98,6 +112,17 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 
 	k.SetUser(ctx, user)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserUsernameEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUserUsernameKey, user.Username),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateUserUsernameResponse{}, nil
 }
 
@@ -113,6 +138,17 @@ func (k msgServer) UpdateUserName(goCtx context.Context, msg *types.MsgUpdateUse
 	user.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetUser(ctx, user)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserNameEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUserNameKey, user.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateUserNameResponse{}, nil
 }
@@ -130,6 +166,16 @@ func (k msgServer) UpdateUserBio(goCtx context.Context, msg *types.MsgUpdateUser
 
 	k.SetUser(ctx, user)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserBioEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateUserBioResponse{}, nil
 }
 
@@ -146,6 +192,16 @@ func (k msgServer) UpdateUserAvatar(goCtx context.Context, msg *types.MsgUpdateU
 
 	k.SetUser(ctx, user)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserAvatarEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateUserAvatarResponse{}, nil
 }
 
@@ -161,6 +217,15 @@ func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (
 	k.Keeper.RemoveWhois(
 		ctx,
 		strings.ToLower(user.Username),
+	)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteUserEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+		),
 	)
 
 	return &types.MsgDeleteUserResponse{}, nil

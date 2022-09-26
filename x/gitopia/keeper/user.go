@@ -36,7 +36,7 @@ func (k Keeper) SetUserCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendUser(
 	ctx sdk.Context,
 	user types.User,
-) string {
+) uint64 {
 	// Create the user
 	count := k.GetUserCount(ctx)
 
@@ -63,7 +63,7 @@ func (k Keeper) AppendUser(
 		}
 	*/
 
-	return user.Creator
+	return count
 }
 
 // SetUser set a specific user in the store

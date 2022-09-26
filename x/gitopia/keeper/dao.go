@@ -37,7 +37,7 @@ func (k Keeper) SetDaoCount(ctx sdk.Context, count uint64) {
 func (k Keeper) AppendDao(
 	ctx sdk.Context,
 	dao types.Dao,
-) string {
+) uint64 {
 	// Create the Dao
 	count := k.GetDaoCount(ctx)
 
@@ -51,7 +51,7 @@ func (k Keeper) AppendDao(
 	// Update Dao count
 	k.SetDaoCount(ctx, count+1)
 
-	return dao.Address
+	return count
 }
 
 func (k Keeper) SetUserDao(

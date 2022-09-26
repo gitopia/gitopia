@@ -70,28 +70,160 @@ const (
 )
 
 const (
-	InvokeForkRepositoryEventKey               = "InvokeForkRepository"
-	ForkRepositoryEventKey                     = "ForkRepository"
-	InvokeMergePullRequestEventKey             = "InvokeMergePullRequest"
-	SetPullRequestStateEventKey                = "SetPullRequestState"
-	SetRepositoryBranchEventKey                = "SetRepositoryBranch"
-	SetRepositoryTagEventKey                   = "SetRepositoryTag"
-	MultiSetRepositoryBranchEventKey           = "MultiSetRepositoryBranch"
-	MultiSetRepositoryTagEventKey              = "MultiSetRepositoryTag"
-	EventAttributeIsGitRefUpdatedKey           = "GitRefUpdated"
-	EventAttributeCreatorKey                   = "Creator"
-	EventAttributeRepoNameKey                  = "RepositoryName"
-	EventAttributeRepoIdKey                    = "RepositoryId"
-	EventAttributeOwnerIdKey                   = "OwnerId"
+	CreateUserEventKey         = "CreateUser"
+	UpdateUserUsernameEventKey = "UpdateUserUsername"
+	UpdateUserNameEventKey     = "UpdateUserName"
+	UpdateUserBioEventKey      = "UpdateUserBio"
+	UpdateUserAvatarEventKey   = "UpdateUserAvatar"
+	DeleteUserEventKey         = "DeleteUser"
+)
+
+const (
+	CreateDaoEventKey            = "CreateDao"
+	RenameDaoEventKey            = "RenameDao"
+	UpdateDaoDescriptionEventKey = "UpdateDaoDescription"
+	UpdateDaoWebsiteEventKey     = "UpdateDaoWebsite"
+	UpdateDaoLocationEventKey    = "UpdateDaoLocation"
+	UpdateDaoAvatarEventKey      = "UpdateDaoAvatar"
+	DeleteDaoEventKey            = "DeleteDao"
+	AddDaoMemberEventKey         = "AddDaoMember"
+	UpdateDaoMemberRoleEventKey  = "UpdateDaoMemberRole"
+	RemoveDaoMemberEventKey      = "RemoveDaoMember"
+)
+
+const (
+	CreateRepositoryEventKey             = "CreateRepository"
+	ChangeOwnerEventKey                  = "ChangeOwner"
+	RenameRepositoryEventKey             = "RenameRepository"
+	UpdateRepositoryDescriptionEventKey  = "UpdateRepositoryDescription"
+	UpdateRepositoryCollaboratorEventKey = "UpdateRepositoryCollaborator"
+	RemoveRepositoryCollaboratorEventKey = "RemoveRepositoryCollaborator"
+	CreateRepositoryLabelEventKey        = "CreateRepositoryLabel"
+	UpdateRepositoryLabelEventKey        = "UpdateRepositoryLabel"
+	DeleteRepositoryLabelEventKey        = "DeleteRepositoryLabel"
+	ToggleRepositoryForkingEventKey      = "ToggleRepositoryForking"
+	ToggleArweaveBackupEventKey          = "ToggleArweaveBackup"
+	DeleteRepositoryEventKey             = "DeleteRepository"
+	InvokeForkRepositoryEventKey         = "InvokeForkRepository"
+	ForkRepositoryEventKey               = "ForkRepository"
+	SetRepositoryBranchEventKey          = "SetRepositoryBranch"
+	SetRepositoryTagEventKey             = "SetRepositoryTag"
+	MultiSetRepositoryBranchEventKey     = "MultiSetRepositoryBranch"
+	MultiSetRepositoryTagEventKey        = "MultiSetRepositoryTag"
+	SetRepositoryDefaultBranchEventKey   = "SetRepositoryDefaultBranch"
+	DeleteRepositoryBranchEventKey       = "DeleteRepositoryBranch"
+	MultiDeleteRepositoryBranchEventKey  = "MultiDeleteRepositoryBranch"
+	DeleteRepositoryTagEventKey          = "DeleteRepositoryTag"
+	MultiDeleteRepositoryTagEventKey     = "MultiDeleteRepositoryTag"
+)
+
+const (
+	CreateIssueEventKey            = "CreateIssue"
+	UpdateIssueTitleEventKey       = "UpdateIssueTitle"
+	UpdateIssueDescriptionEventKey = "UpdateIssueDescription"
+	ToggleIssueStateEventKey       = "ToggleIssueState"
+	AddIssueAssigneesEventKey      = "AddIssueAssignees"
+	RemoveIssueAssigneesEventKey   = "RemoveIssueAssignees"
+	AddIssueLabelsEventKey         = "AddIssueLabels"
+	RemoveIssueLabelsEventKey      = "RemoveIssueLabels"
+	DeleteIssueEventKey            = "DeleteIssue"
+)
+
+const (
+	CreatePullRequestEventKey            = "CreatePullRequest"
+	UpdatePullRequestTitleEventKey       = "UpdatePullRequestTitle"
+	UpdatePullRequestDescriptionEventKey = "UpdatePullRequestDescription"
+	InvokeMergePullRequestEventKey       = "InvokeMergePullRequest"
+	SetPullRequestStateEventKey          = "SetPullRequestState"
+	AddPullRequestReviewersEventKey      = "AddPullRequestReviewers"
+	RemovePullRequestReviewersEventKey   = "RemovePullRequestReviewers"
+	AddPullRequestAssigneesEventKey      = "AddPullRequestAssignees"
+	RemovePullRequestAssigneesEventKey   = "RemovePullRequestAssignees"
+	AddPullRequestLabelsEventKey         = "AddPullRequestLabels"
+	RemovePullRequestLabelsEventKey      = "RemovePullRequestLabels"
+	DeletePullRequestEventKey            = "DeletePullRequest"
+)
+
+const (
+	CreateReleaseEventKey = "CreateRelease"
+	UpdateReleaseEventKey = "UpdateRelease"
+	DeleteReleaseEventKey = "DeleteRelease"
+)
+
+const (
+	EventAttributeIsGitRefUpdatedKey = "GitRefUpdated"
+	EventAttributeCreatorKey         = "Creator"
+	EventAttributeTaskIdKey          = "TaskId"
+	EventAttributeTaskStateKey       = "TaskState"
+	EventAttributeMessageKey         = "Message"
+	EventAttributeParentRepoId       = "ParentRepositoryId"
+	EventAttributeCreatedAtKey       = "CreatedAt"
+	EventAttributeUpdatedAtKey       = "UpdatedAt"
+	EventAttributeClosedAtKey        = "ClosedAt"
+	EventAttributePublishedAtKey     = "PublishedAt"
+	EventAttributeAssigneesKey       = "Assignees"
+	EventAttributeLabelsKey          = "Labels"
+)
+
+const (
+	EventAttributeUserIdKey       = "UserId"
+	EventAttributeUserUsernameKey = "UserUsername"
+	EventAttributeUserNameKey     = "UserName"
+)
+
+const (
+	EventAttributeDaoIdKey            = "DaoId"
+	EventAttributeDaoAddressKey       = "DaoAddress"
+	EventAttributeDaoNameKey          = "DaoName"
+	EventAttributeDaoMemberAddressKey = "DaoMemberAddress"
+	EventAttributeDaoMemberRoleKey    = "DaoMemberRole"
+)
+
+const (
+	EventAttributeRepoNameKey                = "RepositoryName"
+	EventAttributeRepoIdKey                  = "RepositoryId"
+	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
+	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"
+	EventAttributeRepoCollaboratorKey        = "RepositoryCollaboratorKey"
+	EventAttributeRepoLabelIdKey             = "RepositoryLabelId"
+	EventAttributeRepoLabelNameKey           = "RepositoryLabelName"
+	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"
+	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
+	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
+	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
+	EventAttributeRepoBranchKey              = "RepositoryBranch"
+	EventAttributeRepoTagKey                 = "RepositoryTag"
+	EventAttributeRepoDefaultBranchKey       = "RepositoryDefaultBranch"
+)
+
+const (
+	EventAttributeIssueIdKey    = "IssueId"
+	EventAttributeIssueIidKey   = "IssueIid"
+	EventAttributeIssueTitleKey = "IssueTitle"
+	EventAttributeIssueStateKey = "IssueState"
+	EventAttributeClosedByKey   = "ClosedBy"
+)
+
+const (
 	EventAttributePullRequestIdKey             = "PullRequestId"
 	EventAttributePullRequestStateKey          = "PullRequestState"
+	EventAttributePullRequestIidKey            = "PullRequestIid"
+	EventAttributePullRequestTitleKey          = "PullRequestTitle"
+	EventAttributePullRequestDraftKey          = "PullRequestDraft"
+	EventAttributePullRequestHeadKey           = "PullRequestHead"
+	EventAttributePullRequestBaseKey           = "PullRequestBase"
 	EventAttributePullRequestMergeCommitShaKey = "PullRequestMergeCommitSha"
-	EventAttributeTaskIdKey                    = "TaskId"
-	EventAttributeTaskStateKey                 = "TaskState"
-	EventAttributeMessageKey                   = "Message"
-	EventAttributeParentRepoId                 = "ParentRepositoryId"
-	EventAttributeBaseRepoKeyKey               = "BaseRepositoryKey"
-	EventAttributeEnableArweaveBackupKey       = "EnableArweaveBackup"
+	EventAttributePullRequestMergedByKey       = "PullRequestMergedBy"
+	EventAttributePullRequestMergedAtKey       = "PullRequestMergedAt"
+	EventAttributePullRequestReviewersKey      = "PullRequestReviewers"
+)
+
+const (
+	EventAttributeReleaseIdKey         = "ReleaseId"
+	EventAttributeReleaseTagNameKey    = "ReleaseTagName"
+	EventAttributeReleaseNameKey       = "ReleaseName"
+	EventAttributeReleaseDraftKey      = "ReleaseDraft"
+	EventAttributeReleasePreReleaseKey = "ReleasePreRelease"
 )
 
 const (

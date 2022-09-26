@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -78,6 +80,29 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	k.SetRepository(ctx, repository)
 
+	assigneesJson, _ := json.Marshal(issue.Assignees)
+	labelsJson, _ := json.Marshal(issue.Labels)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(repositoryIssue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(repositoryIssue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
+			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
+			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(issue.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(issue.ClosedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreateIssueResponse{
 		Id:  id,
 		Iid: issue.Iid,
@@ -131,6 +156,19 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 
 	k.SetIssue(ctx, issue)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateIssueTitleEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateIssueTitleResponse{}, nil
 }
 
@@ -178,6 +216,18 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateIssueDescriptionEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateIssueDescriptionResponse{}, nil
 }
@@ -241,6 +291,21 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleIssueStateEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
+			sdk.NewAttribute(types.EventAttributeClosedByKey, issue.ClosedBy),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(issue.ClosedAt, 10)),
+		),
+	)
 
 	return &types.MsgToggleIssueStateResponse{
 		State: issue.State.String(),
@@ -307,6 +372,21 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 
 	k.SetIssue(ctx, issue)
 
+	assigneesJson, _ := json.Marshal(msg.Assignees)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddIssueAssigneesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgAddIssueAssigneesResponse{}, nil
 }
 
@@ -366,6 +446,21 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
+
+	assigneesJson, _ := json.Marshal(msg.Assignees)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemoveIssueAssigneesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgRemoveIssueAssigneesResponse{}, nil
 }
@@ -433,6 +528,21 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	issue.Comments = append(issue.Comments, id)
 
 	k.SetIssue(ctx, issue)
+
+	labelsJson, _ := json.Marshal(msg.LabelIds)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddIssueLabelsEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgAddIssueLabelsResponse{}, nil
 }
@@ -502,6 +612,21 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 
 	k.SetIssue(ctx, issue)
 
+	labelsJson, _ := json.Marshal(msg.LabelIds)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemoveIssueLabelsEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgRemoveIssueLabelsResponse{}, nil
 }
 
@@ -528,6 +653,17 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 	}
 
 	DoRemoveIssue(ctx, k, issue, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteIssueEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+		),
+	)
 
 	return &types.MsgDeleteIssueResponse{}, nil
 }

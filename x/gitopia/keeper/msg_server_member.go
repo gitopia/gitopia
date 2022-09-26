@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -60,6 +61,20 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 	dao.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.AddDaoMemberEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoMemberAddressKey, member.Address),
+			sdk.NewAttribute(types.EventAttributeDaoMemberRoleKey, member.Role.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgAddMemberResponse{}, nil
 }
 
@@ -110,6 +125,20 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 	dao.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetDao(ctx, dao)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoMemberRoleEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoMemberAddressKey, member.Address),
+			sdk.NewAttribute(types.EventAttributeDaoMemberRoleKey, member.Role.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateMemberRoleResponse{}, nil
 }
 
@@ -158,6 +187,20 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 
 	dao.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetDao(ctx, dao)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemoveDaoMemberEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoMemberAddressKey, member.Address),
+			sdk.NewAttribute(types.EventAttributeDaoMemberRoleKey, member.Role.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgRemoveMemberResponse{}, nil
 }
