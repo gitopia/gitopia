@@ -21,20 +21,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.ToggleArweaveBackup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRevokeStorageProviderPermissions:
-			res, err := msgServer.RevokeStorageProviderPermissions(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgRevokeProviderPermission:
+			res, err := msgServer.RevokeProviderPermission(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAuthorizeStorageProvider:
-			res, err := msgServer.AuthorizeStorageProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgRevokeGitServerPermissions:
-			res, err := msgServer.RevokeGitServerPermissions(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgAuthorizeGitServer:
-			res, err := msgServer.AuthorizeGitServer(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAuthorizeProvider:
+			res, err := msgServer.AuthorizeProvider(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		// case *types.MsgCreateTask:
@@ -98,12 +90,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 
 			// this line is used by starport scaffolding # 1
-		case *types.MsgUpdateIpfsBackupRef:
-			res, err := msgServer.UpdateIpfsBackupRef(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateRepositoryBackupRef:
+			res, err := msgServer.UpdateRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAddArweaveBackupRef:
-			res, err := msgServer.AddArweaveBackupRef(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgAddRepositoryBackupRef:
+			res, err := msgServer.AddRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:

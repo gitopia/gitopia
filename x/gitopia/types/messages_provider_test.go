@@ -8,36 +8,47 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgAuthorizeStorageProvider_ValidateBasic(t *testing.T) {
+func TestMsgAuthorizeProvider_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgAuthorizeStorageProvider
+		msg  MsgAuthorizeProvider
 		err  error
 	}{
 		{
 			name: "invalid creator address",
-			msg: MsgAuthorizeStorageProvider{
+			msg: MsgAuthorizeProvider{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid creator address",
-			msg: MsgAuthorizeStorageProvider{
-				Creator:  sample.AccAddress(),
-				Provider: sample.AccAddress(),
+			name: "valid message",
+			msg: MsgAuthorizeProvider{
+				Creator:    sample.AccAddress(),
+				Granter:    sample.AccAddress(),
+				Provider:   sample.AccAddress(),
+				Permission: ProviderPermission_GIT_SERVER,
 			},
 		}, {
 			name: "invalid provider address",
-			msg: MsgAuthorizeStorageProvider{
+			msg: MsgAuthorizeProvider{
 				Creator:  sample.AccAddress(),
 				Provider: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
-			msg: MsgAuthorizeStorageProvider{
+			name: "invalid granter address",
+			msg: MsgAuthorizeProvider{
 				Creator:  sample.AccAddress(),
+				Granter:  "invalid_address",
 				Provider: sample.AccAddress(),
+			},
+		}, {
+			name: "invalid permission",
+			msg: MsgAuthorizeProvider{
+				Creator:    sample.AccAddress(),
+				Granter:    sample.AccAddress(),
+				Provider:   sample.AccAddress(),
+				Permission: 9,
 			},
 		},
 	}
@@ -53,36 +64,47 @@ func TestMsgAuthorizeStorageProvider_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgRevokeStorageProviderPermissions_ValidateBasic(t *testing.T) {
+func TestMsgRevokeProviderPermission_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgRevokeStorageProviderPermissions
+		msg  MsgRevokeProviderPermission
 		err  error
 	}{
 		{
 			name: "invalid creator address",
-			msg: MsgRevokeStorageProviderPermissions{
+			msg: MsgRevokeProviderPermission{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid creator address",
-			msg: MsgRevokeStorageProviderPermissions{
-				Creator:  sample.AccAddress(),
-				Provider: sample.AccAddress(),
+			name: "valid message",
+			msg: MsgRevokeProviderPermission{
+				Creator:    sample.AccAddress(),
+				Granter:    sample.AccAddress(),
+				Provider:   sample.AccAddress(),
+				Permission: ProviderPermission_GIT_SERVER,
 			},
 		}, {
 			name: "invalid provider address",
-			msg: MsgRevokeStorageProviderPermissions{
+			msg: MsgRevokeProviderPermission{
 				Creator:  sample.AccAddress(),
 				Provider: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid provider address",
-			msg: MsgRevokeStorageProviderPermissions{
+			name: "invalid granter address",
+			msg: MsgRevokeProviderPermission{
 				Creator:  sample.AccAddress(),
+				Granter:  "invalid_address",
 				Provider: sample.AccAddress(),
+			},
+		}, {
+			name: "invalid permission",
+			msg: MsgRevokeProviderPermission{
+				Creator:    sample.AccAddress(),
+				Granter:    sample.AccAddress(),
+				Provider:   sample.AccAddress(),
+				Permission: 9,
 			},
 		},
 	}

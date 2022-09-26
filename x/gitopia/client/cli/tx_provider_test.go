@@ -15,13 +15,13 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/client/cli"
 )
 
-func TestAuthorizeStorageProvider(t *testing.T) {
+func TestAuthorizeProvider(t *testing.T) {
 	net := network.New(t)
 
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{sample.AccAddress()}
+	fields := []string{sample.AccAddress(), sample.AccAddress(), "GIT_SERVER"}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
@@ -31,33 +31,40 @@ func TestAuthorizeStorageProvider(t *testing.T) {
 	args := []string{}
 	args = append(args, fields...)
 	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeStorageProvider(), args)
+	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeProvider(), args)
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
-		desc     string
-		provider string
-		args     []string
-		code     uint32
-		err      error
+		desc       string
+		granter    string
+		provider   string
+		permission string
+		args       []string
+		code       uint32
+		err        error
 	}{
+		// TODO: creator = granter
+		// {
+		// 	desc:       "valid provider address",
+		// 	granter:    sample.AccAddress(),
+		// 	provider:   sample.AccAddress(),
+		// 	permission: "GIT_SERVER",
+		// 	args:       common,
+		// },
 		{
-			desc:     "valid provider address",
-			provider: sample.AccAddress(),
-			args:     common,
-		},
-		{
-			desc:     "invalid provider address",
-			provider: "invalid_address",
-			args:     common,
-			code:     sdkerrors.ErrInvalidAddress.ABCICode(),
-			err:      sdkerrors.ErrInvalidAddress,
+			desc:       "invalid dao address",
+			granter:    sample.AccAddress(),
+			provider:   sample.AccAddress(),
+			permission: "GIT_SERVER",
+			args:       common,
+			code:       sdkerrors.ErrKeyNotFound.ABCICode(),
+			err:        sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateUser(), append([]string{"test", "test", "https://test.com", "test"}, tc.args...))
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeStorageProvider(), append([]string{tc.provider}, tc.args...))
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeProvider(), append([]string{tc.granter, tc.provider, tc.permission}, tc.args...))
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

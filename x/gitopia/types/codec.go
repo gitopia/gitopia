@@ -9,10 +9,8 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgRevokeStorageProviderPermissions{}, "gitopia/RevokeStorageProviderPermissions", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeStorageProvider{}, "gitopia/AuthorizeStorageProvider", nil)
-	cdc.RegisterConcrete(&MsgRevokeGitServerPermissions{}, "gitopia/RevokeGitServerPermissions", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeGitServer{}, "gitopia/AuthorizeGitServer", nil)
+	cdc.RegisterConcrete(&MsgRevokeProviderPermission{}, "gitopia/RevokeProviderPermission", nil)
+	cdc.RegisterConcrete(&MsgAuthorizeProvider{}, "gitopia/AuthorizeProvider", nil)
 	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
 	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
@@ -32,8 +30,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateMemberRole{}, "gitopia/UpdateMemberRole", nil)
 	cdc.RegisterConcrete(&MsgRemoveMember{}, "gitopia/RemoveMember", nil)
 
-	cdc.RegisterConcrete(&MsgUpdateIpfsBackupRef{}, "gitopia/UpdateIpfsBackupRef", nil)
-	cdc.RegisterConcrete(&MsgAddArweaveBackupRef{}, "gitopia/AddArweaveBackupRef", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepositoryBackupRef{}, "gitopia/UpdateRepositoryBackupRef", nil)
+	cdc.RegisterConcrete(&MsgAddRepositoryBackupRef{}, "gitopia/AddRepositoryBackupRef", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
 	cdc.RegisterConcrete(&MsgUpdateRelease{}, "gitopia/UpdateRelease", nil)
@@ -100,12 +98,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeStorageProvider{},
-		&MsgRevokeStorageProviderPermissions{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeGitServer{},
-		&MsgRevokeGitServerPermissions{},
+		&MsgAuthorizeProvider{},
+		&MsgRevokeProviderPermission{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		// &MsgCreateTask{},
@@ -131,8 +125,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRemoveMember{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAddArweaveBackupRef{},
-		&MsgUpdateIpfsBackupRef{},
+		&MsgAddRepositoryBackupRef{},
+		&MsgUpdateRepositoryBackupRef{},
 	)
 	// this line is used by starport scaffolding # 3
 	registry.RegisterImplementations((*sdk.Msg)(nil),

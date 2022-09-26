@@ -19,12 +19,12 @@ func (k Keeper) CheckStorageProviderAuthorization(c context.Context, req *types.
 	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
 	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
 
-	authorization, _ := k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateIpfsBackupRef{}))
+	authorization, _ := k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}))
 	if authorization == nil {
 		return &types.QueryCheckStorageProviderAuthorizationResponse{HaveAuthorization: false}, nil
 	}
 
-	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgAddArweaveBackupRef{}))
+	authorization, _ = k.authzKeeper.GetCleanAuthorization(ctx, grantee, granter, sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}))
 	if authorization == nil {
 		return &types.QueryCheckStorageProviderAuthorizationResponse{HaveAuthorization: false}, nil
 	}

@@ -32,9 +32,8 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdToggleArweaveBackup())
 
-	cmd.AddCommand(CmdAuthorizeStorageProvider())
-	cmd.AddCommand(CmdRevokeStorageProviderPermissions())
-	cmd.AddCommand(CmdRevokeGitServerPermissions())
+	cmd.AddCommand(CmdAuthorizeProvider())
+	cmd.AddCommand(CmdRevokeProviderPermission())
 
 	cmd.AddCommand(CmdCreateTask())
 	cmd.AddCommand(CmdUpdateTask())
@@ -50,8 +49,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdAddMember())
 	cmd.AddCommand(CmdUpdateMemberRole())
 	cmd.AddCommand(CmdRemoveMember())
-	cmd.AddCommand(CmdUpdateIpfsBackupRef())
-	cmd.AddCommand(CmdAddArweaveBackupRef())
+	cmd.AddCommand(CmdUpdateRepositoryBackupRef())
+	cmd.AddCommand(CmdAddRepositoryBackupRef())
 	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())
@@ -95,7 +94,6 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdCreateRepository())
 	cmd.AddCommand(CmdInvokeForkRepository())
-	cmd.AddCommand(CmdAuthorizeGitServer())
 	cmd.AddCommand(CmdForkRepository())
 	cmd.AddCommand(CmdRenameRepository())
 	cmd.AddCommand(CmdUpdateRepositoryDescription())
