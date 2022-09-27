@@ -136,6 +136,27 @@ func (k Keeper) GetAllDaoMember(ctx sdk.Context, daoAddress string) (list []type
 	return
 }
 
+// GetDaoOwner returns all dao owner
+func (k Keeper) GetAllDaoOwner(ctx sdk.Context, daoAddress string) (list []types.Member) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetMemberKeyForDaoAddress(daoAddress)),
+	)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Member
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		if val.Role == types.MemberRole_OWNER {
+			list = append(list, val)
+		}
+	}
+
+	return
+}
+
 // GetMemberIDBytes returns the byte representation of the ID
 func GetMemberIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)

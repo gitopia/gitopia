@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*types.MsgAddMemberResponse, error) {
@@ -119,6 +120,12 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
 	}
 
+	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
+	_, found = utils.MemberExists(owners, member.Address)
+	if found && len(owners) == 1 { // user is the only owner
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
+	}
+
 	member.Role = msg.Role
 	k.SetMember(ctx, member)
 
@@ -181,6 +188,12 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 	member, found := k.GetDaoMember(ctx, daoAddress.address, memberAddress.address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
+	}
+
+	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
+	_, found = utils.MemberExists(owners, member.Address)
+	if found && len(owners) == 1 { // user is the only owner
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
 	k.RemoveDaoMember(ctx, member.DaoAddress, member.Address)
