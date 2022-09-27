@@ -484,6 +484,8 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, baseRepository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, baseRepository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(isGitRefUpdated)),
 			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(baseRepository.EnableArweaveBackup)),
 			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
