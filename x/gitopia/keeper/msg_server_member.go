@@ -121,8 +121,7 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 	}
 
 	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	_, found = utils.MemberExists(owners, member.Address)
-	if found && len(owners) == 1 { // user is the only owner
+	if _, found := utils.MemberExists(owners, member.Address); found && len(owners) == 1 { // user is the only owner
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
@@ -191,8 +190,7 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 	}
 
 	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	_, found = utils.MemberExists(owners, member.Address)
-	if found && len(owners) == 1 { // user is the only owner
+	if _, found := utils.MemberExists(owners, member.Address); found && len(owners) == 1 { // user is the only owner
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
