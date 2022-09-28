@@ -76,9 +76,17 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
 		}
 
-		// Set gitopia dao as verified
 		if legacyDaoAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
+			// Set gitopia dao as verified
 			dao.Verified = true
+
+			// Create a whois record for gitopia
+			gitopiaGenesis.WhoisList = append(gitopiaGenesis.WhoisList, gitopiatypes.Whois{
+				Creator:   gitopiaGenesisv013.OrganizationList[i].Creator,
+				Name:      "gitopia",
+				Address:   dao.Address,
+				OwnerType: gitopiatypes.OwnerType_DAO,
+			})
 		}
 
 		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
@@ -427,6 +435,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	}
 
 	// Set Count
+	gitopiaGenesis.WhoisCount = 1
 	gitopiaGenesis.UserCount = gitopiaGenesisv013.UserCount
 	gitopiaGenesis.DaoCount = gitopiaGenesisv013.OrganizationCount
 	gitopiaGenesis.MemberCount = memberCount
