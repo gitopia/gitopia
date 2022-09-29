@@ -8,7 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
 
 func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*types.MsgAddMemberResponse, error) {
@@ -121,7 +120,7 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 	}
 
 	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	if _, found := utils.MemberExists(owners, member.Address); found && len(owners) == 1 { // user is the only owner
+	if len(owners) == 1 && memberAddress.address == msg.Creator { // Only owner cannot update their role
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
@@ -190,7 +189,7 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 	}
 
 	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	if _, found := utils.MemberExists(owners, member.Address); found && len(owners) == 1 { // user is the only owner
+	if len(owners) == 1 && memberAddress.address == msg.Creator { // only owner cannot remove themselves
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
