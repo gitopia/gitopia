@@ -6,10 +6,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	v010 "github.com/gitopia/gitopia/x/gitopia/migrations/v010"
+
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )
@@ -17,8 +19,8 @@ import (
 type (
 	Keeper struct {
 		cdc      codec.BinaryCodec
-		storeKey sdk.StoreKey
-		memKey   sdk.StoreKey
+		storeKey storetypes.StoreKey
+		memKey   storetypes.StoreKey
 
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
@@ -30,7 +32,7 @@ type (
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
-	memKey sdk.StoreKey,
+	memKey storetypes.StoreKey,
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
 	// this line is used by starport scaffolding # ibc/keeper/parameter

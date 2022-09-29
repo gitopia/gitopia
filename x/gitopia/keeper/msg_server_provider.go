@@ -31,6 +31,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	}
 
 	now := ctx.BlockTime()
+	expiration := now.AddDate(1, 0, 0)
 	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
 	granter, _ := sdk.AccAddressFromBech32(msg.Granter)
 
@@ -53,7 +54,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	case types.ProviderPermission_GIT_SERVER:
 		for t := range gitServerTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, now.AddDate(1, 0, 0))
+			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
 			if err != nil {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
 			}
@@ -61,7 +62,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	case types.ProviderPermission_STORAGE:
 		for t := range storageTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, now.AddDate(1, 0, 0))
+			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
 			if err != nil {
 				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
 			}
@@ -101,14 +102,20 @@ func (k msgServer) RevokeProviderPermission(goCtx context.Context, msg *types.Ms
 
 	switch msg.Permission {
 	case types.ProviderPermission_GIT_SERVER:
-		authorizations := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+		authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
+		}
 		for i := range authorizations {
 			if _, found := gitServerTypeUrls[authorizations[i].MsgTypeURL()]; found {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		authorizations := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+		authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
+		}
 		for i := range authorizations {
 			if _, found := storageTypeUrls[authorizations[i].MsgTypeURL()]; found {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())

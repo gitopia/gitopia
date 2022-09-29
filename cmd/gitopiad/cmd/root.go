@@ -19,6 +19,7 @@ import (
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/snapshots"
+	snapshotsTypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
@@ -26,9 +27,11 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
+	tmcfg "github.com/tendermint/tendermint/config"
+
 	tmcmds "github.com/tendermint/tendermint/cmd/tendermint/commands"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
@@ -42,7 +45,7 @@ import (
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	encodingConfig := gitopia.MakeEncodingConfig()
 	initClientCtx := client.Context{}.
-		WithCodec(encodingConfig.Marshaler).
+		WithCodec(encodingConfig.Codec).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
@@ -69,7 +72,8 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 				return err
 			}
 			customAppTemplate, customAppConfig := initAppConfig()
-			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig)
+			customTMConfig := initTendermintConfig()
+			return server.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig, customTMConfig)
 		},
 		SilenceUsage: true,
 	}
@@ -77,6 +81,18 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 	initRootCmd(rootCmd, encodingConfig)
 
 	return rootCmd, encodingConfig
+}
+
+// initTendermintConfig helps to override default Tendermint Config values.
+// return tmcfg.DefaultConfig if no custom configuration is required for the application.
+func initTendermintConfig() *tmcfg.Config {
+	cfg := tmcfg.DefaultConfig()
+
+	// these values put a higher strain on node memory
+	// cfg.P2P.MaxNumInboundPeers = 100
+	// cfg.P2P.MaxNumOutboundPeers = 40
+
+	return cfg
 }
 
 // initAppConfig helps to override default appConfig template and configs.
@@ -130,7 +146,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		keys.Commands(gitopia.DefaultNodeHome),
 	)
 	// add rosetta
-	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler))
+	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Codec))
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
@@ -179,6 +195,7 @@ func txCommand() *cobra.Command {
 		authcmd.GetBroadcastCommand(),
 		authcmd.GetEncodeCommand(),
 		authcmd.GetDecodeCommand(),
+		authcmd.GetAuxToFeeCommand(),
 	)
 
 	gitopia.ModuleBasics.AddTxCommands(cmd)
@@ -205,7 +222,7 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 	}
 
 	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
-	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
+	snapshotDB, err := dbm.NewDB("metadata", server.GetAppDBBackend(appOpts), snapshotDir)
 	if err != nil {
 		panic(err)
 	}
@@ -214,11 +231,11 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		panic(err)
 	}
 
-	return gitopia.New(
+	return gitopia.NewGitopiaApp(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
-		cosmoscmd.EncodingConfig(gitopia.MakeEncodingConfig()), // Ideally, we would reuse the one created by NewRootCmd.
+		gitopiaappparams.EncodingConfig(gitopia.MakeEncodingConfig()), // Ideally, we would reuse the one created by NewRootCmd.
 		appOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
@@ -229,9 +246,10 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 		baseapp.SetInterBlockCache(cache),
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
-		baseapp.SetSnapshotStore(snapshotStore),
-		baseapp.SetSnapshotInterval(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval))),
-		baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))),
+		baseapp.SetSnapshot(snapshotStore, snapshotsTypes.SnapshotOptions{
+			Interval:   cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
+			KeepRecent: cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
+		}),
 	)
 }
 
@@ -239,18 +257,18 @@ func createGitopiaAppAndExport(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, height int64, forZeroHeight bool, jailWhiteList []string,
 	appOpts servertypes.AppOptions) (servertypes.ExportedApp, error) {
 
-	encCfg := cosmoscmd.EncodingConfig(gitopia.MakeEncodingConfig())
+	encCfg := gitopiaappparams.EncodingConfig(gitopia.MakeEncodingConfig())
 	// Ideally, we would reuse the one created by NewRootCmd.
-	encCfg.Marshaler = codec.NewProtoCodec(encCfg.InterfaceRegistry)
-	var app cosmoscmd.App
+	encCfg.Codec = codec.NewProtoCodec(encCfg.InterfaceRegistry)
+	var app *gitopia.GitopiaApp
 	if height != -1 {
-		app = gitopia.New(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts)
+		app = gitopia.NewGitopiaApp(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), encCfg, appOpts)
 
 		if err := app.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		app = gitopia.New(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts)
+		app = gitopia.NewGitopiaApp(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), encCfg, appOpts)
 	}
 
 	return app.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)

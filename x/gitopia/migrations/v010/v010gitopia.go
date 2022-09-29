@@ -3,6 +3,7 @@ package v010
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	v012 "github.com/gitopia/gitopia/x/gitopia/migrations/v012"
 	"github.com/gitopia/gitopia/x/gitopia/types"
@@ -65,7 +66,7 @@ func migrateUser(store sdk.KVStore, cdc codec.BinaryCodec) {
 
 }
 
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey, cdc codec.BinaryCodec) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec) error {
 	store := ctx.KVStore(storeKey)
 
 	migrateUser(store, cdc)
