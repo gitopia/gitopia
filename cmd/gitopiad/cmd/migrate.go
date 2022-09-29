@@ -77,9 +77,17 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 			UpdatedAt:   gitopiaGenesisv013.OrganizationList[i].UpdatedAt,
 		}
 
-		// Set gitopia dao as verified
 		if legacyDaoAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
+			// Set gitopia dao as verified
 			dao.Verified = true
+
+			// Create a whois record for gitopia
+			gitopiaGenesis.WhoisList = append(gitopiaGenesis.WhoisList, gitopiatypes.Whois{
+				Creator:   gitopiaGenesisv013.OrganizationList[i].Creator,
+				Name:      "gitopia",
+				Address:   dao.Address,
+				OwnerType: gitopiatypes.OwnerType_DAO,
+			})
 		}
 
 		gitopiaGenesis.DaoList = append(gitopiaGenesis.DaoList,
@@ -89,6 +97,14 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 		// Migrate Member
 		for _, v013 := range gitopiaGenesisv013.OrganizationList[i].Members {
 			var role gitopiatypes.MemberRole
+
+			// Migrate UserDao
+			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
+				gitopiatypes.UserDao{
+					UserAddress: v013.Id,
+					DaoAddress:  newDaoAddress.String(),
+				},
+			)
 
 			if v013.Role == gitopiatypesv013.OrganizationMember_OWNER {
 				role = gitopiatypes.MemberRole_OWNER
@@ -110,15 +126,6 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 
 	// Migrate User
 	for i := range gitopiaGenesisv013.UserList {
-		// Migrate UserDao
-		for _, v013 := range gitopiaGenesisv013.UserList[i].Organizations {
-			gitopiaGenesis.UserDaoList = append(gitopiaGenesis.UserDaoList,
-				gitopiatypes.UserDao{
-					UserAddress: gitopiaGenesisv013.UserList[i].Creator,
-					DaoAddress:  newDaoAddressMap[v013.Id],
-				},
-			)
-		}
 		gitopiaGenesis.UserList = append(gitopiaGenesis.UserList,
 			gitopiatypes.User{
 				Creator:        gitopiaGenesisv013.UserList[i].Creator,
@@ -429,6 +436,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 	}
 
 	// Set Count
+	gitopiaGenesis.WhoisCount = 1
 	gitopiaGenesis.UserCount = gitopiaGenesisv013.UserCount
 	gitopiaGenesis.DaoCount = gitopiaGenesisv013.OrganizationCount
 	gitopiaGenesis.MemberCount = memberCount

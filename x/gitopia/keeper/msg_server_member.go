@@ -119,6 +119,11 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
 	}
 
+	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
+	if len(owners) == 1 && memberAddress.address == msg.Creator { // Only owner cannot update their role
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
+	}
+
 	member.Role = msg.Role
 	k.SetMember(ctx, member)
 
@@ -181,6 +186,11 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 	member, found := k.GetDaoMember(ctx, daoAddress.address, memberAddress.address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
+	}
+
+	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
+	if len(owners) == 1 && memberAddress.address == msg.Creator { // only owner cannot remove themselves
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
 	k.RemoveDaoMember(ctx, member.DaoAddress, member.Address)

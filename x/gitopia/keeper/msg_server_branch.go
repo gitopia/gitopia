@@ -132,6 +132,8 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.MultiSetRepositoryBranchEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchesJson)),
