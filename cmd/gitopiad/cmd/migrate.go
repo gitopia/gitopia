@@ -16,8 +16,10 @@ import (
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	govv046 "github.com/cosmos/cosmos-sdk/x/gov/migrations/v046"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	"github.com/cosmos/cosmos-sdk/x/group"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -509,6 +511,9 @@ func MigrateCmd() *cobra.Command {
 
 			migrateGitopiaGenesisTov014(gitopiaGenesisv013, &gitopiaGenesis)
 
+			// Migrate govv1beta1 genesis to govv1 genesis
+			migratedGovGenesis, _ := govv046.MigrateJSON(&govGenesis)
+
 			var baseAccounts []*codectypes.Any
 			var moduleAccounts []string
 			for i := range authGenesis.Accounts {
@@ -588,6 +593,7 @@ func MigrateCmd() *cobra.Command {
 				genutilGenesis      = genutiltypes.DefaultGenesisState()
 				stakingGenesis      = stakingtypes.DefaultGenesisState()
 				authzGenesis        = authz.DefaultGenesisState()
+				groupGenesis        = group.NewGenesisState()
 			)
 
 			stakingGenesis.Params.BondDenom = "utlore"
@@ -595,7 +601,7 @@ func MigrateCmd() *cobra.Command {
 			state[authtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&authGenesis)
 			state[banktypes.ModuleName] = ctx.Codec.MustMarshalJSON(&bankGenesis)
 			state[crisistypes.ModuleName] = ctx.Codec.MustMarshalJSON(&crisisGenesis)
-			state[govtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&govGenesis)
+			state[govtypes.ModuleName] = ctx.Codec.MustMarshalJSON(migratedGovGenesis)
 			state[distributiontypes.ModuleName] = ctx.Codec.MustMarshalJSON(distributionGenesis)
 			state[minttypes.ModuleName] = ctx.Codec.MustMarshalJSON(&mintGenesis)
 			state[slashingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(slashingGenesis)
@@ -604,6 +610,7 @@ func MigrateCmd() *cobra.Command {
 			state["ibc"] = ctx.Codec.MustMarshalJSON(&ibcGenesis)
 			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(authzGenesis)
 			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&gitopiaGenesis)
+			state[group.ModuleName] = ctx.Codec.MustMarshalJSON(groupGenesis)
 
 			genesis.AppState, err = json.Marshal(state)
 			if err != nil {

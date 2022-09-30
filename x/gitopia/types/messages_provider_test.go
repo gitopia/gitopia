@@ -42,6 +42,7 @@ func TestMsgAuthorizeProvider_ValidateBasic(t *testing.T) {
 				Granter:  "invalid_address",
 				Provider: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid permission",
 			msg: MsgAuthorizeProvider{
@@ -50,6 +51,7 @@ func TestMsgAuthorizeProvider_ValidateBasic(t *testing.T) {
 				Provider:   sample.AccAddress(),
 				Permission: 9,
 			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
@@ -98,6 +100,7 @@ func TestMsgRevokeProviderPermission_ValidateBasic(t *testing.T) {
 				Granter:  "invalid_address",
 				Provider: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid permission",
 			msg: MsgRevokeProviderPermission{
@@ -106,6 +109,7 @@ func TestMsgRevokeProviderPermission_ValidateBasic(t *testing.T) {
 				Provider:   sample.AccAddress(),
 				Permission: 9,
 			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

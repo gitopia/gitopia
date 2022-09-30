@@ -47,7 +47,11 @@ func newKeyRingWrapper(uid string, keyring keyring.Keyring) (keyringWrapper, err
 	if err != nil {
 		return keyringWrapper{}, err
 	}
-	wrapper := keyringWrapper{uid: uid, pubKey: info.GetPubKey(), keyring: keyring}
+	pubKey, err := info.GetPubKey()
+	if err != nil {
+		return keyringWrapper{}, err
+	}
+	wrapper := keyringWrapper{uid: uid, pubKey: pubKey, keyring: keyring}
 	return wrapper, nil
 }
 

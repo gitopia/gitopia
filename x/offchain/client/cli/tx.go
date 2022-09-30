@@ -85,7 +85,7 @@ func CmdVerifyMsg() *cobra.Command {
 			switch outputFormat {
 
 			case "json":
-				data = clientCtx.JSONCodec.MustMarshalJSON(&types.ListOfMsgSignData{
+				data = clientCtx.Codec.MustMarshalJSON(&types.ListOfMsgSignData{
 					Msgs: msgs,
 				})
 				fmt.Println(string(data))
