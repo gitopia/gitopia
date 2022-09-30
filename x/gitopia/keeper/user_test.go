@@ -15,8 +15,7 @@ func createNUser(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.User {
 	items := make([]types.User, n)
 	for i := range items {
 		items[i].Creator = sample.AccAddress()
-		items[i].Id = uint64(i)
-		items[i].Creator = keeper.AppendUser(ctx, items[i])
+		items[i].Id = keeper.AppendUser(ctx, items[i])
 	}
 	return items
 }
