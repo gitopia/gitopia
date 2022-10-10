@@ -13,11 +13,6 @@ import (
 func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
 	if err != nil {
 		return nil, err
@@ -50,11 +45,6 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 
 func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.MsgUpdateRepositoryBackupRef) (*types.MsgUpdateRepositoryBackupRefResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
 
 	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
 	if err != nil {
