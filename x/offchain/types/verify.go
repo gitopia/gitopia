@@ -75,6 +75,7 @@ func verifySignature(tx sdk.Tx, sig signing.SignatureV2, signer cryptotypes.PubK
 	// TODO: we're imposing chainID accountNumber and sequence, is there a way to verify those params beforehand?
 	// TODO: so we can return a bad request error instead of an unauthorized sig one
 	signerData := authsigning.SignerData{
+		Address:       sig.PubKey.String(),
 		ChainID:       ExpectedChainID,
 		AccountNumber: ExpectedAccountNumber,
 		Sequence:      ExpectedSequence,
