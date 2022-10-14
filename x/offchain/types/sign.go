@@ -108,6 +108,7 @@ func (s Signer) Sign(msgs []sdk.Msg) (authsigning.SigVerifiableTx, error) {
 	signMode := s.txConfig.SignModeHandler().DefaultMode()
 
 	signerData := authsigning.SignerData{
+		Address:       s.privKey.PubKey().String(),
 		ChainID:       ExpectedChainID,
 		AccountNumber: ExpectedAccountNumber,
 		Sequence:      ExpectedSequence,
