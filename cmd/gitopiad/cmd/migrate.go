@@ -514,6 +514,10 @@ func MigrateCmd() *cobra.Command {
 			// Migrate govv1beta1 genesis to govv1 genesis
 			migratedGovGenesis, _ := govv046.MigrateJSON(&govGenesis)
 
+			twoDays := 2 * 24 * time.Hour
+			migratedGovGenesis.DepositParams.MaxDepositPeriod = &twoDays
+			migratedGovGenesis.VotingParams.VotingPeriod = &twoDays
+
 			var baseAccounts []*codectypes.Any
 			var moduleAccounts []string
 			for i := range authGenesis.Accounts {
