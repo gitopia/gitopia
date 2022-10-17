@@ -2,20 +2,28 @@
 
 All notable changes will be documented here.
 
-## [Unreleased] - 20XX-XX-XX
+## [v1.0.0] - 2022-10-17
 
 ### Fixes
 
-- 
+- Do not allow update/removal of only owner in dao
+- Set timeout_commit to 1s
+- Module addresses for daos, existing address generation logic overlaps when new chain starts with older state
 
 ### Features
 
-- Transaction to revoke git server permissions
-- Transactions to authorize and revoke storage provider permissions
-- Query to check whether storage provider has authorization
-- Verified field in User
+- Upgraded cosmos-sdk version to v0.46.2 and tendermint version to v0.34.21
+- Reserve usernames and dao names
+- Provider transactions: authorize and revoke permissions
+- Query to check whether provider has authorization
+- Add a Verified field in User
+- Add Backups and EnableArweaveBackup fields in Repository
 - Transaction to toggle arweave backup flag
-- Query endpoint `/legacy-dao/{legacyAddress}` to query dao by their legacyAddress
+- Set max deposit period and voting period to 2 days
+- Migration script for migratiing existing app state to new genesis
+- Offchain module for signing and verifying arbitrary messages
+- Emit events from all transactions
+- Cross platform builds
 
 ### Breaking Changes
 
