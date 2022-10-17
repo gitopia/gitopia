@@ -8,7 +8,6 @@ import "gitopia/tag.proto";
 import "gitopia/member.proto";
 import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # proto/tx/import
-import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/dao.proto";

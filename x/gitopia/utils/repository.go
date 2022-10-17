@@ -13,7 +13,7 @@ func RepositoryCollaboratorExists(r []*types.RepositoryCollaborator, val string)
 	return 0, false
 }
 
-func RepositoryIssueExists(r []*types.RepositoryIssue, val uint64) (int, bool) {
+func IssueIidExists(r []*types.IssueIid, val uint64) (int, bool) {
 	for i, v := range r {
 		if v.Iid == val {
 			return i, true

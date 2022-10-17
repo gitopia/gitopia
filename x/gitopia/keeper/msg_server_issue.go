@@ -9,7 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
+	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -75,8 +75,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			State:     types.BountyStateSRCDEBITTED,
 			Parent:    types.BountyParentIssue,
 			ExpireAt:  msg.BountyExpiry,
-			CreatedAt: blockTime,
-			UpdatedAt: blockTime,
+			CreatedAt: ctx.BlockTime().Unix(),
+			UpdatedAt: ctx.BlockTime().Unix(),
 		}
 
 		if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.BountyAmount...); err != nil {
@@ -131,8 +131,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(repositoryIssue.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(repositoryIssue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issueIid.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issueIid.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
 			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
 			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),

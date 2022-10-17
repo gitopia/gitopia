@@ -212,7 +212,8 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 			issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 			k.cdc.MustUnmarshal(issueStore.Get(GetIssueIDBytes(repository.Issues[i].Id)), &issue)
 
-		return &types.QueryGetRepositoryIssueResponse{Issue: &issue}, nil
+			return &types.QueryGetRepositoryIssueResponse{Issue: &issue}, nil
+		}
 	}
 
 	return nil, sdkerrors.ErrKeyNotFound

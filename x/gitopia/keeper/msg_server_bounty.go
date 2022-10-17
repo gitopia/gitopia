@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
+	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )

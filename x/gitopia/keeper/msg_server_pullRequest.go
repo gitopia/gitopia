@@ -9,7 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v2/modules/apps/transfer/types"
+	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -884,21 +884,13 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	headRepository, found := k.GetRepository(ctx, pullRequest.Head.RepositoryId)
+	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
 	}
 
 	if msg.Creator != pullRequest.Creator {
-		var organization types.Organization
-		if headRepository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-			organization, found = k.GetOrganization(ctx, headRepository.Owner.Id)
-			if !found {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", headRepository.Owner.Id))
-			}
-		}
-
-		if !utils.HavePermission(headRepository, msg.Creator, utils.LinkPullRequestIssuePermission, organization) {
+		if !k.HavePermission(ctx, msg.Creator, headRepository, types.LinkPullRequestIssuePermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	}
@@ -991,21 +983,13 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	headRepository, found := k.GetRepository(ctx, pullRequest.Head.RepositoryId)
+	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
 	}
 
 	if msg.Creator != pullRequest.Creator {
-		var organization types.Organization
-		if headRepository.Owner.Type == types.RepositoryOwner_ORGANIZATION {
-			organization, found = k.GetOrganization(ctx, headRepository.Owner.Id)
-			if !found {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", headRepository.Owner.Id))
-			}
-		}
-
-		if !utils.HavePermission(headRepository, msg.Creator, utils.LinkPullRequestIssuePermission, organization) {
+		if !k.HavePermission(ctx, msg.Creator, headRepository, types.LinkPullRequestIssuePermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	}
