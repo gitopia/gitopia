@@ -10,16 +10,16 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-var gitServerTypeUrls = map[string]struct{}{
-	sdk.MsgTypeURL(&types.MsgForkRepository{}):        {},
-	sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}): {},
-	sdk.MsgTypeURL(&types.MsgSetPullRequestState{}):   {},
-	sdk.MsgTypeURL(&types.MsgUpdateTask{}):            {},
+var gitServerTypeUrls = [4]string{
+	sdk.MsgTypeURL(&types.MsgForkRepository{}),
+	sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}),
+	sdk.MsgTypeURL(&types.MsgSetPullRequestState{}),
+	sdk.MsgTypeURL(&types.MsgUpdateTask{}),
 }
 
-var storageTypeUrls = map[string]struct{}{
-	sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}):    {},
-	sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}): {},
+var storageTypeUrls = [2]string{
+	sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}),
+	sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}),
 }
 
 func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthorizeProvider) (*types.MsgAuthorizeProviderResponse, error) {
@@ -52,7 +52,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 
 	switch msg.Permission {
 	case types.ProviderPermission_GIT_SERVER:
-		for t := range gitServerTypeUrls {
+		for _, t := range gitServerTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
 			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
 			if err != nil {
@@ -60,7 +60,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		for t := range storageTypeUrls {
+		for _, t := range storageTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
 			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
 			if err != nil {
@@ -102,23 +102,17 @@ func (k msgServer) RevokeProviderPermission(goCtx context.Context, msg *types.Ms
 
 	switch msg.Permission {
 	case types.ProviderPermission_GIT_SERVER:
-		authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
-		if err != nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
-		}
-		for i := range authorizations {
-			if _, found := gitServerTypeUrls[authorizations[i].MsgTypeURL()]; found {
-				k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())
+		for _, t := range gitServerTypeUrls {
+			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
+			if authorization != nil {
+				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
-		if err != nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
-		}
-		for i := range authorizations {
-			if _, found := storageTypeUrls[authorizations[i].MsgTypeURL()]; found {
-				k.authzKeeper.DeleteGrant(ctx, grantee, granter, authorizations[i].MsgTypeURL())
+		for _, t := range storageTypeUrls {
+			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
+			if authorization != nil {
+				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)
 			}
 		}
 	default:

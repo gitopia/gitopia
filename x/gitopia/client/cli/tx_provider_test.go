@@ -1,5 +1,6 @@
 package cli_test
 
+/*
 import (
 	"fmt"
 	"testing"
@@ -63,11 +64,7 @@ func TestAuthorizeProvider(t *testing.T) {
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
-			clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateUser(), append([]string{"test", "test", "https://test.com", "test"}, tc.args...))
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdAuthorizeProvider(), append([]string{tc.granter, tc.provider, tc.permission}, tc.args...))
-			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
-			} else {
+			clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateUser(), append([]string{"test", "teSWz
 				require.NoError(t, err)
 				var resp sdk.TxResponse
 				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
@@ -76,3 +73,4 @@ func TestAuthorizeProvider(t *testing.T) {
 		})
 	}
 }
+*/

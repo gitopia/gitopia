@@ -4,7 +4,6 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,21 +19,9 @@ func (k Keeper) CheckGitServerAuthorization(c context.Context, req *types.QueryC
 	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
 	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
 
-	authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
-	}
-
-	for t := range gitServerTypeUrls {
-		var found bool
-		for _, a := range authorizations {
-			if t == a.MsgTypeURL() {
-				found = true
-				break
-			}
-		}
-
-		if !found {
+	for _, t := range gitServerTypeUrls {
+		authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
+		if authorization == nil {
 			return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
 		}
 	}
@@ -52,21 +39,9 @@ func (k Keeper) CheckStorageProviderAuthorization(c context.Context, req *types.
 	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
 	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
 
-	authorizations, err := k.authzKeeper.GetAuthorizations(ctx, grantee, granter)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error querying authorizations")
-	}
-
-	for t := range storageTypeUrls {
-		var found bool
-		for _, a := range authorizations {
-			if t == a.MsgTypeURL() {
-				found = true
-				break
-			}
-		}
-
-		if !found {
+	for _, t := range storageTypeUrls {
+		authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
+		if authorization == nil {
 			return &types.QueryCheckStorageProviderAuthorizationResponse{HaveAuthorization: false}, nil
 		}
 	}
