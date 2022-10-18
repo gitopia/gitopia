@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -91,6 +92,12 @@ func (k Keeper) GetAllBounty(ctx sdk.Context) (list []types.Bounty) {
 	}
 
 	return
+}
+
+// GetBountyIDBytes returns the Module address for bounty id
+func GetBountyAddress(bountyId uint64) sdk.AccAddress {
+	key := append([]byte("bounty"), sdk.Uint64ToBigEndian(bountyId)...)
+	return address.Module(types.ModuleName, key)
 }
 
 // GetBountyIDBytes returns the byte representation of the ID

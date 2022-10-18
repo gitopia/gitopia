@@ -9,7 +9,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -446,8 +445,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		k.SetTask(ctx, task)
 		k.SetRepositoryBranch(ctx, baseBranch)
 
-		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
-
 		for _, issueIid := range pullRequest.Issues {
 			issue, found := k.GetIssue(ctx, issueIid.Id)
 			if !found {
@@ -481,8 +478,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 				if k.bankKeeper.BlockedAddr(rewardAccAddress) {
 					continue
 				}
+				bountyAddress := GetBountyAddress(bounty.Id)
 				if err := k.bankKeeper.SendCoins(
-					ctx, escrowAddress, rewardAccAddress, bounty.Amount,
+					ctx, bountyAddress, rewardAccAddress, bounty.Amount,
 				); err != nil {
 					continue
 				}

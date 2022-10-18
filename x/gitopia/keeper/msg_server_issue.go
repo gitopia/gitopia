@@ -9,7 +9,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -82,15 +81,12 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.BountyAmount...); err != nil {
 			return nil, err
 		}
-
-		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
-
 		creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
 		if err != nil {
 			return nil, err
 		}
-
-		err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, escrowAddress, msg.BountyAmount)
+		bountyAddress := GetBountyAddress(k.GetBountyCount(ctx) + 1)
+		err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, bountyAddress, msg.BountyAmount)
 		if err != nil {
 			return nil, err
 		}
@@ -300,7 +296,6 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	}
 
 	blockTime := ctx.BlockTime().Unix()
-	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 
 	switch issue.State {
 	case types.Issue_OPEN:
@@ -335,8 +330,9 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 			if k.bankKeeper.BlockedAddr(creatorAccAddress) {
 				continue
 			}
+			bountyAddress := GetBountyAddress(bounty.Id)
 			if err := k.bankKeeper.SendCoins(
-				ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+				ctx, bountyAddress, creatorAccAddress, bounty.Amount,
 			); err != nil {
 				continue
 			}
@@ -796,7 +792,6 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		k.SetPullRequest(ctx, pullRequest)
 	}
 
-	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
 	for _, bountyId := range issue.Bounties {
 		bounty, found := k.GetBounty(ctx, bountyId)
 		if !found {
@@ -816,8 +811,9 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		if k.bankKeeper.BlockedAddr(creatorAccAddress) {
 			continue
 		}
+		bountyAddress := GetBountyAddress(bounty.Id)
 		if err := k.bankKeeper.SendCoins(
-			ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+			ctx, bountyAddress, creatorAccAddress, bounty.Amount,
 		); err != nil {
 			continue
 		}

@@ -11,9 +11,6 @@ const (
 	TypeMsgUpdateBounty = "update_bounty"
 	TypeMsgCloseBounty  = "close_bounty"
 	TypeMsgDeleteBounty = "delete_bounty"
-
-	BountyChannelId = "transfer"
-	BountyPortId    = "gitopia-bounty-1"
 )
 
 var _ sdk.Msg = &MsgCreateBounty{}

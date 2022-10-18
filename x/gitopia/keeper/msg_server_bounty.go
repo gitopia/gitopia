@@ -7,7 +7,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	ibcTypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/gitopia/gitopia/x/gitopia/utils"
 )
@@ -54,14 +53,12 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 		return nil, err
 	}
 
-	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
-
 	creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
-
-	err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, escrowAddress, msg.Amount)
+	bountyAddress := GetBountyAddress(k.GetBountyCount(ctx) + 1)
+	err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, bountyAddress, msg.Amount)
 	if err != nil {
 		return nil, err
 	}
@@ -230,10 +227,9 @@ func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s is not allowed to receive funds", msg.Creator)
 	}
 
-	escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
-
+	bountyAddress := GetBountyAddress(bounty.Id)
 	if err := k.bankKeeper.SendCoins(
-		ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+		ctx, bountyAddress, creatorAccAddress, bounty.Amount,
 	); err != nil {
 		return nil, err
 	}
@@ -327,10 +323,9 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s is not allowed to receive funds", msg.Creator)
 		}
 
-		escrowAddress := ibcTypes.GetEscrowAddress(types.BountyPortId, types.BountyChannelId)
-
+		bountyAddress := GetBountyAddress(bounty.Id)
 		if err := k.bankKeeper.SendCoins(
-			ctx, escrowAddress, creatorAccAddress, bounty.Amount,
+			ctx, bountyAddress, creatorAccAddress, bounty.Amount,
 		); err != nil {
 			return nil, err
 		}
