@@ -8,12 +8,13 @@ All notable changes will be documented here.
 
 - Do not allow update/removal of only owner in dao
 - Set timeout_commit to 1s
-- Module addresses for daos, existing address generation logic overlaps when new chain starts with older state
 
 ### Features
 
 - Upgraded cosmos-sdk version to v0.46.2 and tendermint version to v0.34.21
+- New onboarding flow to set username, profile, etc
 - Reserve usernames and dao names
+- New whois query to resolve usernames or dao name: `/gitopia/gitopia/gitopia/whois/{name}`
 - Provider transactions: authorize and revoke permissions
 - Query to check whether provider has authorization
 - Add a Verified field in User
@@ -27,6 +28,10 @@ All notable changes will be documented here.
 
 ### Breaking Changes
 
+- New module addresses for daos: Existing address generation logic overlaps when new chain starts with older state, so we have migrated existing addresses to the new address. Older addresses will be invalid
+- Repository query has been changed to `/gitopia/gitopia/gitopia/user/{id}/repository/{repositoryName}`. `id` can be user address, username or dao name
+- Branch query has been changed to `/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch`
+- Tag query has been changed to `/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag`
 - Decoupled Branch from Repository
 - Decoupled Tag from Repository
 - Decoupled Repository from User and Organization
