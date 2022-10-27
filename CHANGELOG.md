@@ -2,6 +2,11 @@
 
 All notable changes will be documented here.
 
+## [v1.1.0] - 2022-10-27
+
+- Upgraded cosmos-sdk version to v0.46.3 and tendermint version to v0.34.22
+- Added support for Ledger Nano S plus
+
 ## [v1.0.0] - 2022-10-17
 
 ### Fixes
