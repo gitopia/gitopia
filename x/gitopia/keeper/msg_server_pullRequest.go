@@ -21,7 +21,12 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	headRepository, found := k.GetAddressRepository(ctx, msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name)
+	headRepoOwnerAddress, err := k.ResolveAddress(ctx, msg.HeadRepositoryId.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	headRepository, found := k.GetAddressRepository(ctx, headRepoOwnerAddress.address, msg.HeadRepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
 	}
@@ -34,7 +39,12 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("head-branch (%v) doesn't exist", msg.HeadBranch))
 	}
 
-	baseRepository, found := k.GetAddressRepository(ctx, msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name)
+	baseRepositoryAddress, err := k.ResolveAddress(ctx, msg.BaseRepositoryId.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	baseRepository, found := k.GetAddressRepository(ctx, baseRepositoryAddress.address, msg.BaseRepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("base-repository (%v/%v) doesn't exist", msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name))
 	}
@@ -406,7 +416,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
 
 		}
-		pullRequest.Head.CommitSha = baseBranch.Sha
+		pullRequest.Base.CommitSha = baseBranch.Sha
 		baseBranch.Sha = msg.MergeCommitSha
 		baseBranch.UpdatedAt = currentTime
 
