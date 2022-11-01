@@ -2,6 +2,10 @@
 
 All notable changes will be documented here.
 
+## [v1.1.2] - 2022-11-1
+
+- Fix: allow change of case in username and dao name
+
 ## [v1.1.1] - 2022-11-1
 
 - Resolve username in create pr transaction
