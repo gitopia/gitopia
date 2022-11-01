@@ -14,7 +14,15 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params:	types.DefaultParams(),
 		
-		// this line is used by starport scaffolding # genesis/test/state
+		RewardsList: []types.Rewards{
+		{
+			Recipient: "0",
+},
+		{
+			Recipient: "1",
+},
+	},
+	// this line is used by starport scaffolding # genesis/test/state
 	}
 
 	k, ctx := keepertest.RewardsKeeper(t)
@@ -27,5 +35,6 @@ func TestGenesis(t *testing.T) {
 
 	
 
-	// this line is used by starport scaffolding # genesis/test/assert
+	require.ElementsMatch(t, genesisState.RewardsList, got.RewardsList)
+// this line is used by starport scaffolding # genesis/test/assert
 }

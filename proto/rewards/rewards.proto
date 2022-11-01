@@ -1,0 +1,12 @@
+syntax = "proto3";
+package gitopia.gitopia.rewards;
+
+option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+
+message Rewards {
+  string creator = 1;
+
+  string recipient = 2; 
+  string rewards = 3; 
+}
+

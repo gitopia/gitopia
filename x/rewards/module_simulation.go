@@ -24,7 +24,11 @@ var (
 )
 
 const (
-    // this line is used by starport scaffolding # simapp/module/const
+    opWeightMsgCreateReward = "op_weight_msg_reward"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateRewards int = 100
+
+	// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module
@@ -35,7 +39,17 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	rewardsGenesis := types.GenesisState{
 		Params:	types.DefaultParams(),
-		// this line is used by starport scaffolding # simapp/module/genesisState
+		RewardsList: []types.Rewards{
+		{
+			Creator: sample.AccAddress(),
+Recipient: "0",
+},
+		{
+			Creator: sample.AccAddress(),
+Recipient: "1",
+},
+	},
+	// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&rewardsGenesis)
 }
@@ -58,6 +72,17 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
+
+	var weightMsgCreateReward int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateReward, &weightMsgCreateReward, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateReward = defaultWeightMsgCreateRewards
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateReward,
+		rewardssimulation.SimulateMsgCreateReward(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
 
