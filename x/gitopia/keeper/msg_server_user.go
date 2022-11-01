@@ -83,7 +83,7 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 	newUsername := strings.ToLower(msg.Username)
 	currentUsername := strings.ToLower(user.Username)
 
-	if _, found := k.GetWhois(ctx, newUsername); found {
+	if whois, found := k.GetWhois(ctx, newUsername); found && whois.Address != user.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("username is already taken: (%v)", msg.Username))
 	}
 
@@ -92,11 +92,13 @@ func (k msgServer) UpdateUserUsername(goCtx context.Context, msg *types.MsgUpdat
 	}
 
 	if whois, found := k.GetWhois(ctx, currentUsername); found {
-		// Remove existing key
-		k.RemoveWhois(ctx, whois.Name)
+		if newUsername != currentUsername { // skip whois update for case change in username
+			// Remove existing key
+			k.RemoveWhois(ctx, whois.Name)
 
-		whois.Name = newUsername
-		k.SetWhois(ctx, whois)
+			whois.Name = newUsername
+			k.SetWhois(ctx, whois)
+		}
 	} else {
 		whois := types.Whois{
 			Creator:   msg.Creator,
