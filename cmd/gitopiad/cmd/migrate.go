@@ -81,7 +81,7 @@ func migrateGitopiaGenesisTov014(gitopiaGenesisv013 gitopiatypesv013.GenesisStat
 
 		if legacyDaoAddress == "gitopia1dlpc7ps63kj5v0kn5v8eq9sn2n8v8r5z9jmwff" {
 			// Set gitopia dao as verified
-			dao.Name = "gitopia"
+			dao.Name = "Gitopia"
 			dao.Verified = true
 
 			// Create a whois record for gitopia
