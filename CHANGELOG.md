@@ -2,6 +2,11 @@
 
 All notable changes will be documented here.
 
+## [v1.1.1] - 2022-11-1
+
+- Resolve username in create pr transaction
+- Set gitopia dao name in migrate script
+
 ## [v1.1.0] - 2022-10-27
 
 - Upgraded cosmos-sdk version to v0.46.3 and tendermint version to v0.34.22
