@@ -12,43 +12,47 @@ const (
 var _ sdk.Msg = &MsgCreateReward{}
 
 func NewMsgCreateReward(
-    creator string,
-    recipient string,
-    totalAmount *sdk.Coin,
+	creator string,
+	recipient string,
+	totalAmount *sdk.Coin,
 ) *MsgCreateReward {
-  return &MsgCreateReward{
-		Creator : creator,
-		Recipient: recipient,
+	return &MsgCreateReward{
+		Creator:     creator,
+		Recipient:   recipient,
 		TotalAmount: totalAmount,
 	}
 }
 
 func (msg *MsgCreateReward) Route() string {
-  return RouterKey
+	return RouterKey
 }
 
 func (msg *MsgCreateReward) Type() string {
-  return TypeMsgCreateReward
+	return TypeMsgCreateReward
 }
 
 func (msg *MsgCreateReward) GetSigners() []sdk.AccAddress {
-  creator, err := sdk.AccAddressFromBech32(msg.Creator)
-  if err != nil {
-    panic(err)
-  }
-  return []sdk.AccAddress{creator}
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgCreateReward) GetSignBytes() []byte {
-  bz := ModuleCdc.MustMarshalJSON(msg)
-  return sdk.MustSortJSON(bz)
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
 }
 
 func (msg *MsgCreateReward) ValidateBasic() error {
-  _, err := sdk.AccAddressFromBech32(msg.Creator)
-  	if err != nil {
-  		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-  	}
-  return nil
-}
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+  _, err = sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
+	}
 
+	return nil
+}
