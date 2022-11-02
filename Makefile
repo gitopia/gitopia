@@ -87,7 +87,7 @@ $(BUILD_TARGETS): go.sum $(BUILDDIR)/
 $(BUILDDIR)/:
 	mkdir -p $(BUILDDIR)/
 
-all: $(BUILDDIR) windows darwin linux
+all: $(BUILDDIR) windows darwin linux git_release_tar_gz git_release_zip
 
 ##### LINUX BUILDS #####
 linux: $(BUILDDIR) build/$(APPNAME)_$(VERSION)_linux_arm.tar.gz build/$(APPNAME)_$(VERSION)_linux_arm64.tar.gz build/$(APPNAME)_$(VERSION)_linux_386.tar.gz build/$(APPNAME)_$(VERSION)_linux_amd64.tar.gz
@@ -129,6 +129,13 @@ build/$(APPNAME)_$(VERSION)_windows_386.zip:
 build/$(APPNAME)_$(VERSION)_windows_amd64.zip:
 	$(call build,windows,amd64,.exe)
 	$(call zip,windows,amd64,.exe)
+
+git_release_tar_gz:
+	git archive --format=tar --prefix=$(APPNAME)-$(VERSION)/ v$(VERSION) \
+		| gzip > $(BUILDDIR)/$(APPNAME)-$(VERSION).tar.gz
+
+git_release_zip:
+	git archive --format zip --output $(BUILDDIR)/$(APPNAME)-$(VERSION).zip v$(VERSION)
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
