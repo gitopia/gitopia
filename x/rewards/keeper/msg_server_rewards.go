@@ -3,35 +3,39 @@ package keeper
 import (
 	"context"
 
-    "github.com/gitopia/gitopia/x/rewards/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
-
-func (k msgServer) CreateReward(goCtx context.Context,  msg *types.MsgCreateReward) (*types.MsgCreateRewardResponse, error) {
+func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateReward) (*types.MsgCreateRewardResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-    // Check if the value already exists
-    _, isFound := k.GetRewards(
-        ctx,
-        msg.Recipient,
-        )
-    if isFound {
-        return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
-    }
+	rewards, isFound := k.GetRewards(ctx, msg.Recipient)
+	// wallet has rewards
+	if isFound {
+		// wallet has rewards from the same creator
+		if _, ok := rewards.RewardsByCreator[msg.Creator]; ok {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward for this recipient already exists")
+		} else {
+			// wallet gets a new reward from the creator
+			rewards.RewardsByCreator[msg.Creator] = &types.Reward{TotalAmount: msg.TotalAmount}
+		}
+	} else {
+		// this is the first reward for the wallet
+		rewards = types.Rewards{
+			Recipient: msg.Recipient,
+			RewardsByCreator: map[string]*types.Reward{
+				msg.Creator: {
+					TotalAmount: msg.TotalAmount,
+				},
+			},
+		}
+	}
 
-    var rewards = types.Rewards{
-        Creator: msg.Creator,
-        Recipient: msg.Recipient,
-        Rewards: msg.Reward,
-        
-    }
-
-   k.SetRewards(
-   		ctx,
-   		rewards,
-   	)
+	k.SetRewards(
+		ctx,
+		rewards,
+	)
 	return &types.MsgCreateRewardResponse{}, nil
 }
-

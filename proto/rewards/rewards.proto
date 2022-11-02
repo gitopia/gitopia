@@ -4,9 +4,12 @@ package gitopia.gitopia.rewards;
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 message Rewards {
-  string creator = 1;
-
-  string recipient = 2; 
-  string rewards = 3; 
+  string recipient = 1; 
+  // map from creator to reward
+  map<string, Reward> rewardsByCreator = 2; 
 }
 
+message Reward {
+  string totalAmount = 1;
+  string claimedAmount = 2;
+}

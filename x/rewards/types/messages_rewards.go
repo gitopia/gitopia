@@ -14,14 +14,12 @@ var _ sdk.Msg = &MsgCreateReward{}
 func NewMsgCreateReward(
     creator string,
     recipient string,
-    reward string,
-    
+    totalAmount string,
 ) *MsgCreateReward {
   return &MsgCreateReward{
 		Creator : creator,
 		Recipient: recipient,
-		Reward: reward,
-        
+		TotalAmount: totalAmount,
 	}
 }
 

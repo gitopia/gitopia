@@ -16,7 +16,7 @@ message MsgCreateReward {
   string creator = 1;
   string recipient = 2;
 
-  string reward = 3;
+  string totalAmount = 3;
 }
 message MsgCreateRewardResponse {}
 

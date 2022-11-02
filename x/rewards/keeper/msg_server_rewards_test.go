@@ -32,6 +32,6 @@ func TestRewardMsgServerCreate(t *testing.T) {
             
 		)
 		require.True(t, found)
-		require.Equal(t, expected.Creator, rst.Creator)
+		require.Equal(t, expected.Recipient, rst.Recipient)
 	}
 }

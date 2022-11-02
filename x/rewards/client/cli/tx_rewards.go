@@ -11,7 +11,7 @@ import (
 
 func CmdCreateReward() *cobra.Command {
     cmd := &cobra.Command{
-		Use:   "create-reward [recipient] [reward]",
+		Use:   "create-reward [recipient] [amount]",
 		Short: "Create a new reward",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -19,7 +19,7 @@ func CmdCreateReward() *cobra.Command {
          indexRecipient := args[0]
         
             // Get value arguments
-		 argReward := args[1]
+		 argAmount := args[1]
 		
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -29,7 +29,7 @@ func CmdCreateReward() *cobra.Command {
 			msg := types.NewMsgCreateReward(
 			    clientCtx.GetFromAddress().String(),
 			    indexRecipient,
-                argReward,
+                argAmount,
 			    )
 			if err := msg.ValidateBasic(); err != nil {
 				return err

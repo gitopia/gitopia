@@ -23,9 +23,9 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Rewards struct {
-	Creator   string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Recipient string `protobuf:"bytes,2,opt,name=recipient,proto3" json:"recipient,omitempty"`
-	Rewards   string `protobuf:"bytes,3,opt,name=rewards,proto3" json:"rewards,omitempty"`
+	Recipient string `protobuf:"bytes,1,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	// map from creator to reward
+	RewardsByCreator map[string]*Reward `protobuf:"bytes,2,rep,name=rewardsByCreator,proto3" json:"rewardsByCreator,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *Rewards) Reset()         { *m = Rewards{} }
@@ -61,13 +61,6 @@ func (m *Rewards) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Rewards proto.InternalMessageInfo
 
-func (m *Rewards) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
-
 func (m *Rewards) GetRecipient() string {
 	if m != nil {
 		return m.Recipient
@@ -75,32 +68,92 @@ func (m *Rewards) GetRecipient() string {
 	return ""
 }
 
-func (m *Rewards) GetRewards() string {
+func (m *Rewards) GetRewardsByCreator() map[string]*Reward {
 	if m != nil {
-		return m.Rewards
+		return m.RewardsByCreator
+	}
+	return nil
+}
+
+type Reward struct {
+	TotalAmount   string `protobuf:"bytes,1,opt,name=totalAmount,proto3" json:"totalAmount,omitempty"`
+	ClaimedAmount string `protobuf:"bytes,2,opt,name=claimedAmount,proto3" json:"claimedAmount,omitempty"`
+}
+
+func (m *Reward) Reset()         { *m = Reward{} }
+func (m *Reward) String() string { return proto.CompactTextString(m) }
+func (*Reward) ProtoMessage()    {}
+func (*Reward) Descriptor() ([]byte, []int) {
+	return fileDescriptor_35285a44c4c54379, []int{1}
+}
+func (m *Reward) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Reward) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Reward.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Reward) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Reward.Merge(m, src)
+}
+func (m *Reward) XXX_Size() int {
+	return m.Size()
+}
+func (m *Reward) XXX_DiscardUnknown() {
+	xxx_messageInfo_Reward.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Reward proto.InternalMessageInfo
+
+func (m *Reward) GetTotalAmount() string {
+	if m != nil {
+		return m.TotalAmount
+	}
+	return ""
+}
+
+func (m *Reward) GetClaimedAmount() string {
+	if m != nil {
+		return m.ClaimedAmount
 	}
 	return ""
 }
 
 func init() {
 	proto.RegisterType((*Rewards)(nil), "gitopia.gitopia.rewards.Rewards")
+	proto.RegisterMapType((map[string]*Reward)(nil), "gitopia.gitopia.rewards.Rewards.RewardsByCreatorEntry")
+	proto.RegisterType((*Reward)(nil), "gitopia.gitopia.rewards.Reward")
 }
 
 func init() { proto.RegisterFile("rewards/rewards.proto", fileDescriptor_35285a44c4c54379) }
 
 var fileDescriptor_35285a44c4c54379 = []byte{
-	// 169 bytes of a gzipped FileDescriptorProto
+	// 269 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2d, 0x4a, 0x2d, 0x4f,
 	0x2c, 0x4a, 0x29, 0xd6, 0x87, 0xd2, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xe2, 0xe9, 0x99,
-	0x25, 0xf9, 0x05, 0x99, 0x89, 0x7a, 0x30, 0x1a, 0x2a, 0xad, 0x14, 0xcd, 0xc5, 0x1e, 0x04, 0x61,
-	0x0a, 0x49, 0x70, 0xb1, 0x27, 0x17, 0xa5, 0x26, 0x96, 0xe4, 0x17, 0x49, 0x30, 0x2a, 0x30, 0x6a,
-	0x70, 0x06, 0xc1, 0xb8, 0x42, 0x32, 0x5c, 0x9c, 0x45, 0xa9, 0xc9, 0x99, 0x05, 0x99, 0xa9, 0x79,
-	0x25, 0x12, 0x4c, 0x60, 0x39, 0x84, 0x00, 0x48, 0x1f, 0xd4, 0x34, 0x09, 0x66, 0x88, 0x3e, 0x28,
-	0xd7, 0xc9, 0xe5, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c,
-	0xf0, 0x58, 0x8e, 0xe1, 0xc2, 0x63, 0x39, 0x86, 0x1b, 0x8f, 0xe5, 0x18, 0xa2, 0xb4, 0xd2, 0x33,
-	0x4b, 0x32, 0x4a, 0x93, 0xf4, 0x92, 0xf3, 0x73, 0xf5, 0xa1, 0x4e, 0x82, 0xd3, 0x15, 0x30, 0xb7,
-	0xeb, 0x97, 0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0xbd, 0x60, 0x0c, 0x08, 0x00, 0x00, 0xff,
-	0xff, 0x10, 0xbe, 0x20, 0x07, 0xdb, 0x00, 0x00, 0x00,
+	0x25, 0xf9, 0x05, 0x99, 0x89, 0x7a, 0x30, 0x1a, 0x2a, 0xad, 0xf4, 0x91, 0x91, 0x8b, 0x3d, 0x08,
+	0xc2, 0x16, 0x92, 0xe1, 0xe2, 0x2c, 0x4a, 0x4d, 0xce, 0x2c, 0xc8, 0x4c, 0xcd, 0x2b, 0x91, 0x60,
+	0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x42, 0x08, 0x08, 0x25, 0x71, 0x09, 0x40, 0x35, 0x39, 0x55, 0x3a,
+	0x17, 0xa5, 0x26, 0x96, 0xe4, 0x17, 0x49, 0x30, 0x29, 0x30, 0x6b, 0x70, 0x1b, 0x99, 0xe9, 0xe1,
+	0x30, 0x5d, 0x2f, 0x08, 0x95, 0x86, 0x6b, 0x74, 0xcd, 0x2b, 0x29, 0xaa, 0x0c, 0xc2, 0x30, 0x4f,
+	0x2a, 0x85, 0x4b, 0x14, 0xab, 0x52, 0x21, 0x01, 0x2e, 0xe6, 0xec, 0xd4, 0x4a, 0xa8, 0xa3, 0x40,
+	0x4c, 0x21, 0x53, 0x2e, 0xd6, 0xb2, 0xc4, 0x9c, 0xd2, 0x54, 0x09, 0x26, 0x05, 0x46, 0x0d, 0x6e,
+	0x23, 0x79, 0x02, 0x6e, 0x08, 0x82, 0xa8, 0xb6, 0x62, 0xb2, 0x60, 0x54, 0x0a, 0xe0, 0x62, 0x83,
+	0x08, 0x0a, 0x29, 0x70, 0x71, 0x97, 0xe4, 0x97, 0x24, 0xe6, 0x38, 0xe6, 0xe6, 0x97, 0xc2, 0xfd,
+	0x8c, 0x2c, 0x24, 0xa4, 0xc2, 0xc5, 0x9b, 0x9c, 0x93, 0x98, 0x99, 0x9b, 0x9a, 0x02, 0x55, 0xc3,
+	0x04, 0x56, 0x83, 0x2a, 0xe8, 0xe4, 0x72, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f,
+	0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c,
+	0x51, 0x5a, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0x50, 0x97, 0xc1,
+	0xe9, 0x0a, 0x58, 0x24, 0xe9, 0x97, 0x54, 0x16, 0xa4, 0x16, 0x27, 0xb1, 0x81, 0xe3, 0xca, 0x18,
+	0x10, 0x00, 0x00, 0xff, 0xff, 0x14, 0xb6, 0x6f, 0x99, 0xc4, 0x01, 0x00, 0x00,
 }
 
 func (m *Rewards) Marshal() (dAtA []byte, err error) {
@@ -123,24 +176,73 @@ func (m *Rewards) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Rewards) > 0 {
-		i -= len(m.Rewards)
-		copy(dAtA[i:], m.Rewards)
-		i = encodeVarintRewards(dAtA, i, uint64(len(m.Rewards)))
-		i--
-		dAtA[i] = 0x1a
+	if len(m.RewardsByCreator) > 0 {
+		for k := range m.RewardsByCreator {
+			v := m.RewardsByCreator[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintRewards(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintRewards(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintRewards(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
+		}
 	}
 	if len(m.Recipient) > 0 {
 		i -= len(m.Recipient)
 		copy(dAtA[i:], m.Recipient)
 		i = encodeVarintRewards(dAtA, i, uint64(len(m.Recipient)))
 		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Reward) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Reward) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Reward) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ClaimedAmount) > 0 {
+		i -= len(m.ClaimedAmount)
+		copy(dAtA[i:], m.ClaimedAmount)
+		i = encodeVarintRewards(dAtA, i, uint64(len(m.ClaimedAmount)))
+		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintRewards(dAtA, i, uint64(len(m.Creator)))
+	if len(m.TotalAmount) > 0 {
+		i -= len(m.TotalAmount)
+		copy(dAtA[i:], m.TotalAmount)
+		i = encodeVarintRewards(dAtA, i, uint64(len(m.TotalAmount)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -164,15 +266,37 @@ func (m *Rewards) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovRewards(uint64(l))
-	}
 	l = len(m.Recipient)
 	if l > 0 {
 		n += 1 + l + sovRewards(uint64(l))
 	}
-	l = len(m.Rewards)
+	if len(m.RewardsByCreator) > 0 {
+		for k, v := range m.RewardsByCreator {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovRewards(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovRewards(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovRewards(uint64(mapEntrySize))
+		}
+	}
+	return n
+}
+
+func (m *Reward) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.TotalAmount)
+	if l > 0 {
+		n += 1 + l + sovRewards(uint64(l))
+	}
+	l = len(m.ClaimedAmount)
 	if l > 0 {
 		n += 1 + l + sovRewards(uint64(l))
 	}
@@ -216,38 +340,6 @@ func (m *Rewards) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRewards
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRewards
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRewards
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Recipient", wireType)
 			}
 			var stringLen uint64
@@ -278,9 +370,188 @@ func (m *Rewards) Unmarshal(dAtA []byte) error {
 			}
 			m.Recipient = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Rewards", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RewardsByCreator", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRewards
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthRewards
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthRewards
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.RewardsByCreator == nil {
+				m.RewardsByCreator = make(map[string]*Reward)
+			}
+			var mapkey string
+			var mapvalue *Reward
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowRewards
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRewards
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthRewards
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthRewards
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowRewards
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthRewards
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthRewards
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &Reward{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipRewards(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthRewards
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.RewardsByCreator[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRewards(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRewards
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Reward) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRewards
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Reward: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Reward: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TotalAmount", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -308,7 +579,39 @@ func (m *Rewards) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Rewards = string(dAtA[iNdEx:postIndex])
+			m.TotalAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClaimedAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRewards
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRewards
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRewards
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClaimedAmount = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
