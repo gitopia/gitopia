@@ -3,6 +3,7 @@ package rewards
 import (
 	"math/rand"
 
+	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,8 +45,8 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 				Recipient: sample.AccAddress(),
 				RewardsByCreator: map[string]*types.Reward{
 					sample.AccAddress(): {
-						TotalAmount:   "100utlore",
-						ClaimedAmount: "75utlore",
+						TotalAmount:    &sdk.Coin{Amount: math.NewInt(100), Denom: "utlore"},
+						ClaimedAmount:  &sdk.Coin{Amount: math.NewInt(75), Denom: "utlore"},
 					},
 				},
 			},
@@ -54,8 +55,8 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 				Recipient: sample.AccAddress(),
 				RewardsByCreator: map[string]*types.Reward{
 					sample.AccAddress(): {
-						TotalAmount:   "530utlore",
-						ClaimedAmount: "530utlore",
+						TotalAmount:   &sdk.Coin{Amount: math.NewInt(530), Denom: "utlore"},
+						ClaimedAmount: &sdk.Coin{Amount: math.NewInt(530), Denom: "utlore"},
 					},
 				},
 			},

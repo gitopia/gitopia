@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "rewards/rewards.proto";
+import "cosmos/base/v1beta1/coin.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
@@ -16,7 +17,7 @@ message MsgCreateReward {
   string creator = 1;
   string recipient = 2;
 
-  string totalAmount = 3;
+  cosmos.base.v1beta1.Coin totalAmount = 3;
 }
 message MsgCreateRewardResponse {}
 

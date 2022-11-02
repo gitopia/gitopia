@@ -3,6 +3,8 @@ package gitopia.gitopia.rewards;
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
+import "cosmos/base/v1beta1/coin.proto";
+
 message Rewards {
   string recipient = 1; 
   // map from creator to reward
@@ -10,6 +12,6 @@ message Rewards {
 }
 
 message Reward {
-  string totalAmount = 1;
-  string claimedAmount = 2;
+  cosmos.base.v1beta1.Coin totalAmount = 1;
+  cosmos.base.v1beta1.Coin claimedAmount = 2;
 }
