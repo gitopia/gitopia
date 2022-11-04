@@ -681,8 +681,13 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Assignees)+len(msg.Assignees) > 10 {
