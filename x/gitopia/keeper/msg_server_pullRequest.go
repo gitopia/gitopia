@@ -31,10 +31,6 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, headRepository, types.PullRequestCreatePermission) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
-	}
-
 	if _, found := k.GetRepositoryBranch(ctx, headRepository.Id, msg.HeadBranch); !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("head-branch (%v) doesn't exist", msg.HeadBranch))
 	}
@@ -101,27 +97,33 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		Base:                &base,
 	}
 
-	for _, r := range msg.Reviewers {
-		_, found := k.GetUser(ctx, r)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
+	if len(msg.Reviewers) > 0 || len(msg.Assignees) > 0 || len(msg.LabelIds) > 0 {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.AssignPermission) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 		}
-		pullRequest.Reviewers = append(pullRequest.Reviewers, r)
-	}
 
-	for _, a := range msg.Assignees {
-		_, found := k.GetUser(ctx, a)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		for _, r := range msg.Reviewers {
+			_, found := k.GetUser(ctx, r)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
+			}
+			pullRequest.Reviewers = append(pullRequest.Reviewers, r)
 		}
-		pullRequest.Assignees = append(pullRequest.Assignees, a)
-	}
 
-	for _, labelId := range msg.LabelIds {
-		if i, exists := utils.RepositoryLabelIdExists(baseRepository.Labels, labelId); exists {
-			pullRequest.Labels = append(pullRequest.Labels, baseRepository.Labels[i].Id)
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
+		for _, a := range msg.Assignees {
+			_, found := k.GetUser(ctx, a)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+			}
+			pullRequest.Assignees = append(pullRequest.Assignees, a)
+		}
+
+		for _, labelId := range msg.LabelIds {
+			if i, exists := utils.RepositoryLabelIdExists(baseRepository.Labels, labelId); exists {
+				pullRequest.Labels = append(pullRequest.Labels, baseRepository.Labels[i].Id)
+			} else {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
+			}
 		}
 	}
 
