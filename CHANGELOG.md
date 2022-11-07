@@ -2,7 +2,11 @@
 
 All notable changes will be documented here.
 
-## [v1.1.3] - 2022-11-07
+## [v1.2.0] - 2022-11-07
+
+- Upgrade cosmos-sdk version to v0.46.4 and iavl version to v0.19.4
+
+## [v1.1.3] - 2022-11-04
 
 - Fix: pull request permissions
 
