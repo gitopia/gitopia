@@ -2,11 +2,15 @@
 
 All notable changes will be documented here.
 
-## [v1.1.2] - 2022-11-1
+## [v1.1.3] - 2022-11-07
+
+- Fix: pull request permissions
+
+## [v1.1.2] - 2022-11-01
 
 - Fix: allow change of case in username and dao name
 
-## [v1.1.1] - 2022-11-1
+## [v1.1.1] - 2022-11-01
 
 - Resolve username in create pr transaction
 - Set gitopia dao name in migrate script
