@@ -2,11 +2,19 @@
 
 All notable changes will be documented here.
 
-## [v1.1.2] - 2022-11-1
+## [v1.2.0] - 2022-11-07
+
+- Upgrade cosmos-sdk version to v0.46.4 and iavl version to v0.19.4
+
+## [v1.1.3] - 2022-11-04
+
+- Fix: pull request permissions
+
+## [v1.1.2] - 2022-11-01
 
 - Fix: allow change of case in username and dao name
 
-## [v1.1.1] - 2022-11-1
+## [v1.1.1] - 2022-11-01
 
 - Resolve username in create pr transaction
 - Set gitopia dao name in migrate script
