@@ -63,7 +63,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	}
 
 	// PR to verified repo
-	prs:= k.gitopiaKeeper.GetAllPullRequest(ctx)
+	prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
 	prCreated := false
 	prMerged := false
 	for _, pr := range prs {
@@ -81,7 +81,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 			IsComplete: true,
 		})
 	}
-	
+
 	if prMerged {
 		tasks = append(tasks, types.Task{
 			Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
@@ -103,6 +103,16 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		})
 	}
 
-	
+	// proposal voting
+	votes := k.GovKeeper.GetAllVotes(ctx)
+	for _, vote := range votes {
+		if vote.Voter == req.Address {
+			tasks = append(tasks, types.Task{
+				Type:       types.TaskType_LORE_STAKED,
+				IsComplete: true,
+			})
+		}
+	}
+
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
 }

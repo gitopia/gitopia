@@ -470,6 +470,7 @@ func NewGitopiaApp(
 		app.GetSubspace(rewardstypes.ModuleName),
 		&app.GitopiaKeeper,
 		app.StakingKeeper,
+		app.GovKeeper,
 	)
 
 	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)

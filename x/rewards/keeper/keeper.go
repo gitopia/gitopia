@@ -10,8 +10,9 @@ import (
 	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 )
 
 type (
@@ -23,6 +24,7 @@ type (
 
 		gitopiaKeeper *gitopiakeeper.Keeper
 		stakingKeeper stakingkeeper.Keeper
+		GovKeeper     govkeeper.Keeper
 	}
 )
 
@@ -33,6 +35,7 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	gk *gitopiakeeper.Keeper,
 	sk stakingkeeper.Keeper,
+	gok govkeeper.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -47,6 +50,7 @@ func NewKeeper(
 		paramstore:    ps,
 		gitopiaKeeper: gk,
 		stakingKeeper: sk,
+		GovKeeper:     gok,
 	}
 }
 

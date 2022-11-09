@@ -3,14 +3,14 @@ package keeper
 import (
 	"testing"
 
-	"github.com/gitopia/gitopia/x/rewards/keeper"
-	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/gitopia/gitopia/x/rewards/keeper"
+	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -18,8 +18,9 @@ import (
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
-	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -77,18 +78,19 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stakingKeeper := stakingkeeper.NewKeeper(
 		cdc,
 		storeKey,
-		nil, 
+		nil,
 		nil,
 		ss,
 	)
 
 	k := keeper.NewKeeper(
-	    cdc,
-	    storeKey,
-	    memStoreKey,
-	    paramsSubspace,
-		gitopiaKeeper, 
+		cdc,
+		storeKey,
+		memStoreKey,
+		paramsSubspace,
+		gitopiaKeeper,
 		stakingKeeper,
+		govkeeper.Keeper{},
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
