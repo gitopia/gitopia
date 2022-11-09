@@ -15,6 +15,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
+
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -30,17 +34,50 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
+	ss := typesparams.NewSubspace(cdc,
+		types.Amino,
+		storeKey,
+		memStoreKey,
+		"GitopiaSubSpace",
+	)
+
 	paramsSubspace := typesparams.NewSubspace(cdc,
 		types.Amino,
 		storeKey,
 		memStoreKey,
 		"RewardsParams",
 	)
+
+	ak := authkeeper.NewAccountKeeper(
+		cdc,
+		storeKey,
+		ss,
+		nil,
+		nil,
+		"gitopia",
+	)
+
+	authzKeeper := authzkeeper.NewKeeper(
+		storeKey,
+		cdc,
+		nil,
+		ak,
+	)
+
+	gitopiaKeeper := gitopiakeeper.NewKeeper(
+		codec.NewProtoCodec(registry),
+		storeKey,
+		memStoreKey,
+		ak,
+		&authzKeeper,
+	)
+
 	k := keeper.NewKeeper(
 	    cdc,
 	    storeKey,
 	    memStoreKey,
-	    paramsSubspace, 
+	    paramsSubspace,
+		gitopiaKeeper, 
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

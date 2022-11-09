@@ -92,6 +92,9 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/rewards"
+	rewardskeeper "github.com/gitopia/gitopia/x/rewards/keeper"
+	rewardstypes "github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -223,6 +226,7 @@ type GitopiaApp struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	GitopiaKeeper gitopiakeeper.Keeper
+	RewardsKeeper rewardskeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -459,6 +463,17 @@ func NewGitopiaApp(
 
 	gitopiaModule := gitopia.NewAppModule(appCodec, app.GitopiaKeeper)
 
+	app.RewardsKeeper = *rewardskeeper.NewKeeper(
+		appCodec,
+		keys[gitopiatypes.StoreKey],
+		keys[gitopiatypes.MemStoreKey],
+		app.GetSubspace(rewardstypes.ModuleName),
+		&app.GitopiaKeeper,
+	)
+
+	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)
+	
+
 	govConfig := govtypes.DefaultConfig()
 	app.GovKeeper = govkeeper.NewKeeper(
 		appCodec,
@@ -515,6 +530,7 @@ func NewGitopiaApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		gitopiaModule,
+		rewardsModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
