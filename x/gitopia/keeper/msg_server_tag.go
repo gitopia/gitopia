@@ -24,7 +24,7 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -88,7 +88,7 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -157,7 +157,7 @@ func (k msgServer) DeleteTag(goCtx context.Context, msg *types.MsgDeleteTag) (*t
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -208,7 +208,7 @@ func (k msgServer) MultiDeleteTag(goCtx context.Context, msg *types.MsgMultiDele
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}

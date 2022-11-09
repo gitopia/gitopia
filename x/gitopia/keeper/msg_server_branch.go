@@ -24,7 +24,7 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -89,7 +89,7 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -159,7 +159,7 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -210,7 +210,7 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -261,7 +261,7 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}

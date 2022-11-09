@@ -26,7 +26,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}

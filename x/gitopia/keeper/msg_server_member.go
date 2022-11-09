@@ -23,7 +23,7 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.DaoId))
 	}
@@ -33,12 +33,12 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	_, found = k.GetUser(ctx, memberAddress.address)
+	_, found = k.GetUser(ctx, memberAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.UserId))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -46,13 +46,13 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
 	}
 
-	if _, found := k.GetDaoMember(ctx, daoAddress.address, memberAddress.address); found {
+	if _, found := k.GetDaoMember(ctx, daoAddress.Address, memberAddress.Address); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is already member of dao", msg.UserId))
 	}
 
 	member := types.Member{
-		Address:    memberAddress.address,
-		DaoAddress: daoAddress.address,
+		Address:    memberAddress.Address,
+		DaoAddress: daoAddress.Address,
 		Role:       msg.Role,
 	}
 
@@ -91,7 +91,7 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.DaoId))
 	}
@@ -101,12 +101,12 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	_, found = k.GetUser(ctx, memberAddress.address)
+	_, found = k.GetUser(ctx, memberAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.UserId))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -114,13 +114,13 @@ func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateM
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
 	}
 
-	member, found := k.GetDaoMember(ctx, daoAddress.address, memberAddress.address)
+	member, found := k.GetDaoMember(ctx, daoAddress.Address, memberAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
 	}
 
-	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	if len(owners) == 1 && memberAddress.address == msg.Creator { // Only owner cannot update their role
+	owners := k.GetAllDaoOwner(ctx, daoAddress.Address)
+	if len(owners) == 1 && memberAddress.Address == msg.Creator { // Only owner cannot update their role
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 
@@ -160,7 +160,7 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.DaoId))
 	}
@@ -170,12 +170,12 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	_, found = k.GetUser(ctx, memberAddress.address)
+	_, found = k.GetUser(ctx, memberAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.UserId))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -183,13 +183,13 @@ func (k msgServer) RemoveMember(goCtx context.Context, msg *types.MsgRemoveMembe
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
 	}
 
-	member, found := k.GetDaoMember(ctx, daoAddress.address, memberAddress.address)
+	member, found := k.GetDaoMember(ctx, daoAddress.Address, memberAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is not a member of dao", msg.UserId))
 	}
 
-	owners := k.GetAllDaoOwner(ctx, daoAddress.address)
-	if len(owners) == 1 && memberAddress.address == msg.Creator { // only owner cannot remove themselves
+	owners := k.GetAllDaoOwner(ctx, daoAddress.Address)
+	if len(owners) == 1 && memberAddress.Address == msg.Creator { // only owner cannot remove themselves
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("owner (%v) is the only owner", msg.UserId))
 	}
 

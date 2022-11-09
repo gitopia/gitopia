@@ -78,7 +78,7 @@ func (k Keeper) PullRequestMergePermission(c context.Context, req *types.QueryGe
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if k.HavePermission(ctx, address.address, repository, types.PullRequestMergePermission) {
+	if k.HavePermission(ctx, address.Address, repository, types.PullRequestMergePermission) {
 		return &types.QueryGetPullRequestMergePermissionResponse{HavePermission: true}, nil
 	}
 

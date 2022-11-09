@@ -103,12 +103,12 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -178,12 +178,12 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -224,12 +224,12 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -269,12 +269,12 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}
@@ -315,12 +315,12 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, daoAddress.address)
+	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.address, msg.Creator); found {
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
 		if m.Role != types.MemberRole_OWNER {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
 		}

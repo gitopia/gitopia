@@ -54,7 +54,7 @@ func (k Keeper) DaoMemberAll(c context.Context, req *types.QueryAllDaoMemberRequ
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	memberStore := prefix.NewStore(store, []byte(types.GetMemberKeyForDaoAddress(daoAddress.address)))
+	memberStore := prefix.NewStore(store, []byte(types.GetMemberKeyForDaoAddress(daoAddress.Address)))
 
 	pageRes, err := query.Paginate(memberStore, req.Pagination, func(key []byte, value []byte) error {
 		var member types.Member
@@ -89,7 +89,7 @@ func (k Keeper) DaoMember(c context.Context, req *types.QueryGetDaoMemberRequest
 		return nil, err
 	}
 
-	member, found := k.GetDaoMember(ctx, daoAddress.address, userAddress.address)
+	member, found := k.GetDaoMember(ctx, daoAddress.Address, userAddress.Address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

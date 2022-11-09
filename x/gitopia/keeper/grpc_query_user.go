@@ -52,7 +52,7 @@ func (k Keeper) User(c context.Context, req *types.QueryGetUserRequest) (*types.
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	user, found := k.GetUser(ctx, address.address)
+	user, found := k.GetUser(ctx, address.Address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -73,7 +73,7 @@ func (k Keeper) AnyRepositoryAll(c context.Context, req *types.QueryAllAnyReposi
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	repositoryStore := prefix.NewStore(store, types.KeyPrefix(types.GetRepositoryKeyForAddress(address.address)))
+	repositoryStore := prefix.NewStore(store, types.KeyPrefix(types.GetRepositoryKeyForAddress(address.Address)))
 
 	var repositorys []*types.Repository
 	pageRes, err := query.Paginate(repositoryStore, req.Pagination, func(key []byte, value []byte) error {
@@ -105,7 +105,7 @@ func (k Keeper) AnyRepository(c context.Context, req *types.QueryGetAnyRepositor
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

@@ -76,7 +76,7 @@ func (k Keeper) RepositoryReleaseLatest(c context.Context, req *types.QueryGetLa
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -107,7 +107,7 @@ func (k Keeper) RepositoryRelease(c context.Context, req *types.QueryGetReposito
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -139,7 +139,7 @@ func (k Keeper) RepositoryReleaseAll(c context.Context, req *types.QueryAllRepos
 	var repository types.Repository
 	var releases []*types.Release
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -170,7 +170,7 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 
 	var issues []*types.Issue
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -202,7 +202,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 
 	var issue types.Issue
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -231,7 +231,7 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 
 	var pullRequests []*types.PullRequest
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -264,7 +264,7 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 
 	var pullRequest types.PullRequest
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -291,7 +291,7 @@ func (k Keeper) ForkAll(c context.Context, req *types.QueryGetAllForkRequest) (*
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

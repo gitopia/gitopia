@@ -54,7 +54,7 @@ func (k Keeper) RepositoryBranchAll(c context.Context, req *types.QueryAllReposi
 	if err != nil {
 		return nil, err
 	}
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -95,7 +95,7 @@ func (k Keeper) RepositoryBranch(c context.Context, req *types.QueryGetRepositor
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -120,7 +120,7 @@ func (k Keeper) RepositoryBranchSha(c context.Context, req *types.QueryGetReposi
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
