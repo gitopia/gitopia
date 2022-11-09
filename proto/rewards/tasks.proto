@@ -1,0 +1,19 @@
+syntax = "proto3";
+package gitopia.gitopia.rewards;
+
+option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+
+enum taskType {
+  UNKNOWN = 0;
+  CREATE_NON_EMPTY_REPO = 1;
+  CREATE_NON_EMPTY_DAO_REPO = 2;
+  PR_TO_VERIFIED_REPO = 3;
+  PR_TO_VERIFIED_REPO_MERGED = 4;
+  LORE_STAKED = 5;
+  VOTE_PROPOSAL = 6;
+}
+
+message Task {
+  taskType type  = 1;
+  bool isComplete  = 2;
+}

@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "rewards/params.proto";
 import "rewards/rewards.proto";
+import "rewards/tasks.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
@@ -24,6 +25,11 @@ service Query {
 	// Queries a list of Rewards items.
 	rpc RewardsAll(QueryAllRewardsRequest) returns (QueryAllRewardsResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards";
+	}
+
+	// Queries a list of tasks items.
+	rpc Tasks(QueryTasksRequest) returns (QueryTasksResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/rewards/tasks";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -56,4 +62,11 @@ message QueryAllRewardsResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
+message QueryTasksRequest {
+	string address = 1;
+}
+
+message QueryTasksResponse {
+	repeated Task tasks = 1 [(gogoproto.nullable) = false];
+}
 // this line is used by starport scaffolding # 3
