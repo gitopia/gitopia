@@ -11,6 +11,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
 
 type (
@@ -21,6 +22,7 @@ type (
 		paramstore paramtypes.Subspace
 
 		gitopiaKeeper *gitopiakeeper.Keeper
+		stakingKeeper stakingkeeper.Keeper
 	}
 )
 
@@ -30,7 +32,7 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	gk *gitopiakeeper.Keeper,
-
+	sk stakingkeeper.Keeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -44,6 +46,7 @@ func NewKeeper(
 		memKey:        memKey,
 		paramstore:    ps,
 		gitopiaKeeper: gk,
+		stakingKeeper: sk,
 	}
 }
 

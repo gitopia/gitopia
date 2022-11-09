@@ -19,6 +19,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -72,12 +73,22 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		&authzKeeper,
 	)
 
+	// TODO: no tests written for code using this dependency. initialize with correct params
+	stakingKeeper := stakingkeeper.NewKeeper(
+		cdc,
+		storeKey,
+		nil, 
+		nil,
+		ss,
+	)
+
 	k := keeper.NewKeeper(
 	    cdc,
 	    storeKey,
 	    memStoreKey,
 	    paramsSubspace,
 		gitopiaKeeper, 
+		stakingKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

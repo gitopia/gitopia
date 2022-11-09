@@ -89,5 +89,20 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		})
 	}
 
+	accAddr, err := sdk.AccAddressFromBech32(req.Address)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	// lore staking
+	delegations := k.stakingKeeper.GetDelegatorDelegations(ctx, accAddr, 1) // atleast 1
+	if len(delegations) > 0 {
+		tasks = append(tasks, types.Task{
+			Type:       types.TaskType_LORE_STAKED,
+			IsComplete: true,
+		})
+	}
+
+	
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
 }
