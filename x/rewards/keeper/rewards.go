@@ -34,6 +34,27 @@ func (k Keeper) GetRewards(
 	return val, true
 }
 
+// GetRewards returns a rewards from its index and creator
+func (k Keeper) GetRewardForOwner(
+    ctx sdk.Context,
+    recipient string,
+    creator string,
+) (val types.Reward, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RewardsKeyPrefix))
+
+	b := store.Get(types.RewardsKey(
+        recipient,
+    ))
+    if b == nil {
+        return val, false
+    }
+
+	rewards := types.Rewards{}
+	k.cdc.MustUnmarshal(b, &rewards)
+
+	return *rewards.RewardsByCreator[creator], true
+}
+
 // RemoveRewards removes a rewards from the store
 func (k Keeper) RemoveRewards(
     ctx sdk.Context,
