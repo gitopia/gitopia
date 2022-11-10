@@ -9,7 +9,8 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreateReward(MsgCreateReward) returns (MsgCreateRewardResponse);
+  rpc CreateReward(MsgCreateReward) returns (MsgCreateRewardResponse);
+  rpc Settle(MsgSettle) returns (MsgSettleResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -20,5 +21,14 @@ message MsgCreateReward {
   cosmos.base.v1beta1.Coin totalAmount = 3;
 }
 message MsgCreateRewardResponse {}
+
+message MsgSettle {
+  string creator = 1;
+  string recipient = 2;
+  string amount = 3;
+}
+
+message MsgSettleResponse {
+}
 
 // this line is used by starport scaffolding # proto/tx/message
