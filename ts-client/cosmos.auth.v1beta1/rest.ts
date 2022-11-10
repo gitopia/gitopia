@@ -260,6 +260,26 @@ export interface V1Beta1QueryAccountAddressByIDResponse {
  * QueryAccountResponse is the response type for the Query/Account RPC method.
  */
 export interface V1Beta1QueryAccountResponse {
+  /** account defines the account of the corresponding address. */
+  account?: ProtobufAny;
+}
+
+/**
+* QueryAccountsResponse is the response type for the Query/Accounts RPC method.
+
+Since: cosmos-sdk 0.43
+*/
+export interface V1Beta1QueryAccountsResponse {
+  accounts?: ProtobufAny[];
+
+  /** pagination defines the pagination in the response. */
+  pagination?: V1Beta1PageResponse;
+}
+
+/**
+ * QueryModuleAccountByNameResponse is the response type for the Query/ModuleAccountByName RPC method.
+ */
+export interface V1Beta1QueryModuleAccountByNameResponse {
   /**
    * `Any` contains an arbitrary serialized protocol buffer message along with a
    * URL that describes the type of the serialized message.
@@ -348,26 +368,6 @@ export interface V1Beta1QueryAccountResponse {
 }
 
 /**
-* QueryAccountsResponse is the response type for the Query/Accounts RPC method.
-
-Since: cosmos-sdk 0.43
-*/
-export interface V1Beta1QueryAccountsResponse {
-  accounts?: ProtobufAny[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
-/**
 * QueryModuleAccountsResponse is the response type for the Query/ModuleAccounts RPC method.
 
 Since: cosmos-sdk 0.46
@@ -380,7 +380,7 @@ export interface V1Beta1QueryModuleAccountsResponse {
  * QueryParamsResponse is the response type for the Query/Params RPC method.
  */
 export interface V1Beta1QueryParamsResponse {
-  /** Params defines the parameters for the auth module. */
+  /** params defines the parameters of the module. */
   params?: V1Beta1Params;
 }
 
@@ -697,6 +697,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryModuleAccounts = (params: RequestParams = {}) =>
     this.request<V1Beta1QueryModuleAccountsResponse, RpcStatus>({
       path: `/cosmos/auth/v1beta1/module_accounts`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryModuleAccountByName
+   * @summary ModuleAccountByName returns the module account info by module name
+   * @request GET:/cosmos/auth/v1beta1/module_accounts/{name}
+   */
+  queryModuleAccountByName = (name: string, params: RequestParams = {}) =>
+    this.request<V1Beta1QueryModuleAccountByNameResponse, RpcStatus>({
+      path: `/cosmos/auth/v1beta1/module_accounts/${name}`,
       method: "GET",
       format: "json",
       ...params,

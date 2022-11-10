@@ -26,7 +26,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	headRepository, found := k.GetAddressRepository(ctx, headRepoOwnerAddress.address, msg.HeadRepositoryId.Name)
+	headRepository, found := k.GetAddressRepository(ctx, headRepoOwnerAddress.Address, msg.HeadRepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
 	}
@@ -40,7 +40,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	baseRepository, found := k.GetAddressRepository(ctx, baseRepositoryAddress.address, msg.BaseRepositoryId.Name)
+	baseRepository, found := k.GetAddressRepository(ctx, baseRepositoryAddress.Address, msg.BaseRepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("base-repository (%v/%v) doesn't exist", msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name))
 	}

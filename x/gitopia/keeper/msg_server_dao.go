@@ -119,7 +119,7 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 	newDaoName := strings.ToLower(msg.Name)
 	currentDaoName := strings.ToLower(dao.Name)
 
-	if whois, found := k.GetWhois(ctx, newDaoName); found && whois.Address != daoAddress.address {
+	if whois, found := k.GetWhois(ctx, newDaoName); found && whois.Address != daoAddress.Address {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name is already taken: (%v)", msg.Name))
 	}
 	if _, reserved := types.ReservedUsernames[newDaoName]; reserved {
