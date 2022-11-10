@@ -21,20 +21,26 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	headRepository, found := k.GetAddressRepository(ctx, msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
+	headRepoOwnerAddress, err := k.ResolveAddress(ctx, msg.HeadRepositoryId.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, headRepository, types.PullRequestCreatePermission) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	headRepository, found := k.GetAddressRepository(ctx, headRepoOwnerAddress.address, msg.HeadRepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
 	}
 
 	if _, found := k.GetRepositoryBranch(ctx, headRepository.Id, msg.HeadBranch); !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("head-branch (%v) doesn't exist", msg.HeadBranch))
 	}
 
-	baseRepository, found := k.GetAddressRepository(ctx, msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name)
+	baseRepositoryAddress, err := k.ResolveAddress(ctx, msg.BaseRepositoryId.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	baseRepository, found := k.GetAddressRepository(ctx, baseRepositoryAddress.address, msg.BaseRepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("base-repository (%v/%v) doesn't exist", msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name))
 	}
@@ -91,27 +97,33 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		Base:                &base,
 	}
 
-	for _, r := range msg.Reviewers {
-		_, found := k.GetUser(ctx, r)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
+	if len(msg.Reviewers) > 0 || len(msg.Assignees) > 0 || len(msg.LabelIds) > 0 {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.AssignPermission) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 		}
-		pullRequest.Reviewers = append(pullRequest.Reviewers, r)
-	}
 
-	for _, a := range msg.Assignees {
-		_, found := k.GetUser(ctx, a)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+		for _, r := range msg.Reviewers {
+			_, found := k.GetUser(ctx, r)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("reviewer (%v) doesn't exist", r))
+			}
+			pullRequest.Reviewers = append(pullRequest.Reviewers, r)
 		}
-		pullRequest.Assignees = append(pullRequest.Assignees, a)
-	}
 
-	for _, labelId := range msg.LabelIds {
-		if i, exists := utils.RepositoryLabelIdExists(baseRepository.Labels, labelId); exists {
-			pullRequest.Labels = append(pullRequest.Labels, baseRepository.Labels[i].Id)
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
+		for _, a := range msg.Assignees {
+			_, found := k.GetUser(ctx, a)
+			if !found {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("assignee (%v) doesn't exist", a))
+			}
+			pullRequest.Assignees = append(pullRequest.Assignees, a)
+		}
+
+		for _, labelId := range msg.LabelIds {
+			if i, exists := utils.RepositoryLabelIdExists(baseRepository.Labels, labelId); exists {
+				pullRequest.Labels = append(pullRequest.Labels, baseRepository.Labels[i].Id)
+			} else {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("label id (%v) doesn't exists in repository", labelId))
+			}
 		}
 	}
 
@@ -406,7 +418,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
 
 		}
-		pullRequest.Head.CommitSha = baseBranch.Sha
+		pullRequest.Base.CommitSha = baseBranch.Sha
 		baseBranch.Sha = msg.MergeCommitSha
 		baseBranch.UpdatedAt = currentTime
 
@@ -516,8 +528,13 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Reviewers)+len(msg.Reviewers) > 10 {
@@ -589,8 +606,13 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Reviewers) < len(msg.Reviewers) {
@@ -659,8 +681,13 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Assignees)+len(msg.Assignees) > 10 {
@@ -732,8 +759,13 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Assignees) < len(msg.Assignees) {
@@ -802,13 +834,13 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Labels)+len(msg.LabelIds) > 50 {
@@ -884,13 +916,13 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
 	}
 
-	if msg.Creator != pullRequest.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.AssignPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to assign reviewers, assignees or labels", msg.Creator))
 	}
 
 	if len(pullRequest.Labels) < len(msg.LabelIds) {
