@@ -25,7 +25,7 @@ message MsgCreateRewardResponse {}
 message MsgSettle {
   string creator = 1;
   string recipient = 2;
-  string amount = 3;
+  cosmos.base.v1beta1.Coin amount = 3;
 }
 
 message MsgSettleResponse {

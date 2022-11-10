@@ -9,7 +9,7 @@ const TypeMsgSettle = "settle"
 
 var _ sdk.Msg = &MsgSettle{}
 
-func NewMsgSettle(creator string, recipient string, amount string) *MsgSettle {
+func NewMsgSettle(creator string, recipient string, amount *sdk.Coin,) *MsgSettle {
   return &MsgSettle{
 		Creator: creator,
     Recipient: recipient,
