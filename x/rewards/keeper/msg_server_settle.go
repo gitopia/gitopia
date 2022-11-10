@@ -9,10 +9,8 @@ import (
 
 
 func (k msgServer) Settle(goCtx context.Context,  msg *types.MsgSettle) (*types.MsgSettleResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+    _ = sdk.UnwrapSDKContext(goCtx)
 
-    // TODO: Handling the message
-    _ = ctx
 
 	return &types.MsgSettleResponse{}, nil
 }

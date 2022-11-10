@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 func CmdSettle() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "settle [recipient] [amount]",
-		Short: "Broadcast message settle",
+		Short: "settle the reward to recipient",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argRecipient := args[0]

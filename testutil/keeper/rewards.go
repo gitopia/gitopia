@@ -21,6 +21,7 @@ import (
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -91,6 +92,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		gitopiaKeeper,
 		stakingKeeper,
 		govkeeper.Keeper{},
+		bankKeeper.BaseKeeper{},
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
