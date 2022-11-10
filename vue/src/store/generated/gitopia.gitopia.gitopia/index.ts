@@ -1494,159 +1494,29 @@ export default {
 		},
 		
 		
-		async sendMsgUpdateRepositoryBackupRef({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateMemberRole({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryBackupRef({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateMemberRole({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateMemberRole:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateMemberRole:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgAuthorizeProvider({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgMultiDeleteBranch({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAuthorizeProvider({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiDeleteBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAuthorizeProvider:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgMultiDeleteBranch:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAuthorizeProvider:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgMultiDeleteTag({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiDeleteTag({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiDeleteTag:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgMultiDeleteTag:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteUser({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteUser({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteUser:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteUser:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateDao({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateDao({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateDao:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateDao:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemoveIssueAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveIssueAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveIssueAssignees:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemoveIssueAssignees:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgToggleArweaveBackup({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleArweaveBackup({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleArweaveBackup:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgToggleArweaveBackup:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateDaoDescription({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoDescription:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateDaoDescription:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateDaoWebsite({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoWebsite({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoWebsite:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateDaoWebsite:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAddPullRequestAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddPullRequestAssignees:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAddMember({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddMember({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddMember:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddMember:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateIssueDescription({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateIssueDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateIssueDescription:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateIssueDescription:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgMultiDeleteBranch:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1663,94 +1533,16 @@ export default {
 				}
 			}
 		},
-		async sendMsgDeleteComment({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdatePullRequestDescription({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteComment({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdatePullRequestDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteComment:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdatePullRequestDescription:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgDeleteComment:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateComment({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateComment({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateComment:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateComment:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemovePullRequestAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemovePullRequestAssignees:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgSetDefaultBranch({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetDefaultBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetDefaultBranch:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgSetDefaultBranch:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgMultiSetTag({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiSetTag({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiSetTag:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgMultiSetTag:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateIssue({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateIssue({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateIssue:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateIssue:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeletePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeletePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeletePullRequest:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeletePullRequest:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdatePullRequestDescription:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1767,55 +1559,315 @@ export default {
 				}
 			}
 		},
-		async sendMsgUpdateDaoLocation({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgDeleteTask({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoLocation({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteTask({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoLocation:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteTask:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdateDaoLocation:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgDeleteTask:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgUpdateIssueTitle({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRemoveMember({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateIssueTitle({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveMember({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateIssueTitle:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveMember:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdateIssueTitle:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRemoveMember:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgUpdateRepositoryCollaborator({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgDeleteUser({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryCollaborator({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteUser({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteUser:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgDeleteUser:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgCreateRelease({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRevokeProviderPermission({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateRelease({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRevokeProviderPermission({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateRelease:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeProviderPermission:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgCreateRelease:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRevokeProviderPermission:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddRepositoryBackupRef({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddRepositoryBackupRef({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddRepositoryBackupRef:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgSetDefaultBranch({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetDefaultBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetDefaultBranch:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetDefaultBranch:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgForkRepositorySuccess({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgForkRepositorySuccess({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgForkRepositorySuccess:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgForkRepositorySuccess:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateUserBio({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserBio({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserBio:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateUserBio:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateTask({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateTask({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateTask:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateTask:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteDao({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteDao({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteDao:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteDao:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteIssue({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteIssue({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteIssue:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteIssue:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteBranch({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteBranch:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteBranch:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteComment({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteComment({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteComment:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteComment:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgInvokeForkRepository({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgInvokeForkRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgInvokeForkRepository:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgInvokeForkRepository:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAuthorizeProvider({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAuthorizeProvider({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAuthorizeProvider:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAuthorizeProvider:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgSetBranch({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetBranch:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetBranch:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateRepositoryDescription({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateRepositoryDescription:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateRepositoryDescription:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeletePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeletePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeletePullRequest:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeletePullRequest:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateTask({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateTask({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateTask:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgMultiSetTag({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiSetTag({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMultiSetTag:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgMultiSetTag:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateDaoDescription({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateDaoDescription:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateDaoDescription:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgInvokeMergePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgInvokeMergePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgInvokeMergePullRequest:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgInvokeMergePullRequest:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeleteRepository({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteRepository:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteRepository:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateUserUsername({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserUsername({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserUsername:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateUserUsername:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1845,175 +1897,6 @@ export default {
 				}
 			}
 		},
-		async sendMsgRenameDao({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRenameDao({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRenameDao:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRenameDao:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgToggleRepositoryForking({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleRepositoryForking({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleRepositoryForking:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgToggleRepositoryForking:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAddPullRequestLabels({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestLabels:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddPullRequestLabels:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgForkRepository({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgForkRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgForkRepository:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgForkRepository:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemoveIssueLabels({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveIssueLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveIssueLabels:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemoveIssueLabels:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteRepositoryLabel({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteRepositoryLabel({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteRepositoryLabel:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateRepositoryDescription({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryDescription:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateRepositoryDescription:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateUserUsername({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserUsername({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserUsername:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateUserUsername:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateMemberRole({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateMemberRole({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateMemberRole:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateMemberRole:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAddPullRequestReviewers({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestReviewers({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddPullRequestReviewers:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgInvokeForkRepository({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgInvokeForkRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgInvokeForkRepository:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgInvokeForkRepository:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateUser({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateUser({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateUser:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateUser:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateUserBio({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserBio({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserBio:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateUserBio:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgUpdateUserName({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -2027,276 +1910,55 @@ export default {
 				}
 			}
 		},
-		async sendMsgAddRepositoryBackupRef({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgCreateIssue({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddRepositoryBackupRef({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateIssue({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreateIssue:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAddRepositoryBackupRef:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgCreateIssue:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgUpdatePullRequestTitle({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRemoveIssueAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdatePullRequestTitle({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveIssueAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePullRequestTitle:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveIssueAssignees:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdatePullRequestTitle:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRemoveIssueAssignees:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgUpdateRepositoryLabel({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateRepositoryBackupRef({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryLabel({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryBackupRef({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdateRepositoryLabel:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgSetTag({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateDaoLocation({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetTag({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoLocation({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetTag:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateDaoLocation:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgSetTag:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateUserAvatar({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserAvatar({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserAvatar:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateUserAvatar:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteTask({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteTask({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteTask:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteTask:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgSetPullRequestState({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetPullRequestState({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetPullRequestState:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgSetPullRequestState:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRevokeProviderPermission({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRevokeProviderPermission({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeProviderPermission:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRevokeProviderPermission:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgForkRepositorySuccess({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgForkRepositorySuccess({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgForkRepositorySuccess:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgForkRepositorySuccess:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgMultiDeleteBranch({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiDeleteBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiDeleteBranch:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgMultiDeleteBranch:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgSetBranch({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetBranch:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgSetBranch:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemovePullRequestReviewers({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestReviewers({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemovePullRequestReviewers:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreatePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreatePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePullRequest:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreatePullRequest:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdatePullRequestDescription({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdatePullRequestDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePullRequestDescription:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdatePullRequestDescription:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateRelease({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRelease({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRelease:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateRelease:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateComment({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateComment({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateComment:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateComment:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteBranch({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteBranch({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteBranch:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteBranch:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteDao({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteDao({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteDao:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteDao:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgUpdateTask({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateTask({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateTask:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdateTask:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteTag({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteTag({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteTag:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteTag:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteIssue({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteIssue({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteIssue:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteIssue:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateDaoLocation:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -2313,29 +1975,68 @@ export default {
 				}
 			}
 		},
-		async sendMsgRemovePullRequestLabels({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgMultiDeleteTag({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgMultiDeleteTag({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgMultiDeleteTag:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgRemovePullRequestLabels:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgMultiDeleteTag:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgRemoveMember({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRemoveIssueLabels({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveMember({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemoveIssueLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveMember:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveIssueLabels:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgRemoveMember:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRemoveIssueLabels:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgToggleRepositoryForking({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleRepositoryForking({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgToggleRepositoryForking:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgToggleRepositoryForking:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateRelease({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateRelease({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateRelease:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateRelease:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRemovePullRequestAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemovePullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRemovePullRequestAssignees:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -2352,29 +2053,159 @@ export default {
 				}
 			}
 		},
-		async sendMsgToggleIssueState({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateRepositoryLabel({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleIssueState({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryLabel({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleIssueState:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgToggleIssueState:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdateRepositoryLabel:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async sendMsgInvokeMergePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgRemovePullRequestReviewers({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgInvokeMergePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestReviewers({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgInvokeMergePullRequest:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemovePullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgInvokeMergePullRequest:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRemovePullRequestReviewers:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddPullRequestAssignees({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestAssignees({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddPullRequestAssignees:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddMember({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddMember({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddMember:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddMember:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateRelease({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRelease({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateRelease:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateRelease:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateDaoWebsite({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateDaoWebsite({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateDaoWebsite:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateDaoWebsite:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreatePullRequest({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreatePullRequest({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreatePullRequest:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreatePullRequest:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdateUserAvatar({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateUserAvatar({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserAvatar:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateUserAvatar:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgSetTag({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetTag({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetTag:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetTag:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgToggleArweaveBackup({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleArweaveBackup({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgToggleArweaveBackup:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgToggleArweaveBackup:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddPullRequestReviewers({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestReviewers({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddPullRequestReviewers:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateComment({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateComment({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateComment:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateComment:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -2391,6 +2222,45 @@ export default {
 				}
 			}
 		},
+		async sendMsgDeleteTag({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteTag({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteTag:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteTag:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddPullRequestLabels({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgAddPullRequestLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddPullRequestLabels:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRemovePullRequestLabels({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRemovePullRequestLabels({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemovePullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRemovePullRequestLabels:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgRemoveRepositoryCollaborator({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -2401,45 +2271,6 @@ export default {
 					throw new Error('TxClient:MsgRemoveRepositoryCollaborator:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgRemoveRepositoryCollaborator:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgCreateTask({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateTask({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateTask:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgChangeOwner({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgChangeOwner({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgChangeOwner:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgChangeOwner:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeleteRepository({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteRepository:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteRepository:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -2456,160 +2287,199 @@ export default {
 				}
 			}
 		},
-		
-		async MsgUpdateRepositoryBackupRef({ rootGetters }, { value }) {
+		async sendMsgUpdateRepositoryCollaborator({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryBackupRef({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateRepositoryCollaborator({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgAuthorizeProvider({ rootGetters }, { value }) {
+		async sendMsgToggleIssueState({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAuthorizeProvider({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgToggleIssueState({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAuthorizeProvider:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAuthorizeProvider:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgToggleIssueState:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgToggleIssueState:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgMultiDeleteTag({ rootGetters }, { value }) {
+		async sendMsgCreateUser({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiDeleteTag({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateUser({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiDeleteTag:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgMultiDeleteTag:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCreateUser:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateUser:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgDeleteUser({ rootGetters }, { value }) {
+		async sendMsgDeleteRepositoryLabel({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteUser({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgDeleteRepositoryLabel({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteUser:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteUser:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeleteRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteRepositoryLabel:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgCreateDao({ rootGetters }, { value }) {
+		async sendMsgCreateDao({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateDao({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgCreateDao({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgCreateDao:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateDao:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgCreateDao:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgRemoveIssueAssignees({ rootGetters }, { value }) {
+		async sendMsgRenameDao({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveIssueAssignees({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgRenameDao({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveIssueAssignees:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemoveIssueAssignees:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRenameDao:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRenameDao:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgToggleArweaveBackup({ rootGetters }, { value }) {
+		async sendMsgChangeOwner({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleArweaveBackup({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgChangeOwner({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleArweaveBackup:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgToggleArweaveBackup:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgChangeOwner:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgChangeOwner:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgUpdateDaoDescription({ rootGetters }, { value }) {
+		async sendMsgForkRepository({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoDescription({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgForkRepository({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoDescription:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateDaoDescription:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgForkRepository:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgForkRepository:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgUpdateDaoWebsite({ rootGetters }, { value }) {
+		async sendMsgUpdateIssueTitle({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoWebsite({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateIssueTitle({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoWebsite:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateDaoWebsite:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateIssueTitle:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateIssueTitle:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgAddPullRequestAssignees({ rootGetters }, { value }) {
+		async sendMsgSetPullRequestState({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestAssignees({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgSetPullRequestState({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddPullRequestAssignees:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgSetPullRequestState:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgSetPullRequestState:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgAddMember({ rootGetters }, { value }) {
+		async sendMsgUpdateComment({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddMember({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateComment({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddMember:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddMember:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateComment:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateComment:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgUpdateIssueDescription({ rootGetters }, { value }) {
+		async sendMsgUpdateIssueDescription({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateIssueDescription({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdateIssueDescription({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgUpdateIssueDescription:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateIssueDescription:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgUpdatePullRequestTitle({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaGitopia.tx.sendMsgUpdatePullRequestTitle({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdatePullRequestTitle:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdatePullRequestTitle:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		
+		async MsgUpdateMemberRole({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateMemberRole({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateMemberRole:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdateIssueDescription:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateMemberRole:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgMultiDeleteBranch({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiDeleteBranch({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMultiDeleteBranch:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgMultiDeleteBranch:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -2626,94 +2496,16 @@ export default {
 				}
 			}
 		},
-		async MsgDeleteComment({ rootGetters }, { value }) {
+		async MsgUpdatePullRequestDescription({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteComment({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdatePullRequestDescription({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteComment:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdatePullRequestDescription:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgDeleteComment:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateComment({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateComment({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateComment:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateComment:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemovePullRequestAssignees({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestAssignees({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemovePullRequestAssignees:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgSetDefaultBranch({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetDefaultBranch({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetDefaultBranch:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgSetDefaultBranch:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgMultiSetTag({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiSetTag({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiSetTag:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgMultiSetTag:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateIssue({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateIssue({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateIssue:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateIssue:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeletePullRequest({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeletePullRequest({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeletePullRequest:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeletePullRequest:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdatePullRequestDescription:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -2730,55 +2522,315 @@ export default {
 				}
 			}
 		},
-		async MsgUpdateDaoLocation({ rootGetters }, { value }) {
+		async MsgDeleteTask({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoLocation({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteTask({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateDaoLocation:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteTask:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdateDaoLocation:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeleteTask:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgUpdateIssueTitle({ rootGetters }, { value }) {
+		async MsgRemoveMember({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateIssueTitle({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveMember({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateIssueTitle:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveMember:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdateIssueTitle:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRemoveMember:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgUpdateRepositoryCollaborator({ rootGetters }, { value }) {
+		async MsgDeleteUser({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryCollaborator({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteUser({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteUser:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeleteUser:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgCreateRelease({ rootGetters }, { value }) {
+		async MsgRevokeProviderPermission({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateRelease({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRevokeProviderPermission({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateRelease:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeProviderPermission:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCreateRelease:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRevokeProviderPermission:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddRepositoryBackupRef({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddRepositoryBackupRef({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddRepositoryBackupRef:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSetDefaultBranch({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetDefaultBranch({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetDefaultBranch:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetDefaultBranch:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgForkRepositorySuccess({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgForkRepositorySuccess({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgForkRepositorySuccess:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgForkRepositorySuccess:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateUserBio({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserBio({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserBio:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateUserBio:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateTask({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateTask({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateTask:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateTask:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteDao({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteDao({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteDao:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteDao:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteIssue({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteIssue({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteIssue:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteIssue:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteBranch({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteBranch({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteBranch:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteBranch:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteComment({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteComment({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteComment:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteComment:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgInvokeForkRepository({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgInvokeForkRepository({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgInvokeForkRepository:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgInvokeForkRepository:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAuthorizeProvider({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAuthorizeProvider({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAuthorizeProvider:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAuthorizeProvider:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSetBranch({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetBranch({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetBranch:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetBranch:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateRepositoryDescription({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryDescription({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateRepositoryDescription:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateRepositoryDescription:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeletePullRequest({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeletePullRequest({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeletePullRequest:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeletePullRequest:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateTask({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateTask({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateTask:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgMultiSetTag({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiSetTag({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgMultiSetTag:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgMultiSetTag:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateDaoDescription({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoDescription({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateDaoDescription:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateDaoDescription:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgInvokeMergePullRequest({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgInvokeMergePullRequest({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgInvokeMergePullRequest:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgInvokeMergePullRequest:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteRepository({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteRepository({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteRepository:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteRepository:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateUserUsername({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserUsername({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserUsername:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateUserUsername:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -2808,175 +2860,6 @@ export default {
 				}
 			}
 		},
-		async MsgRenameDao({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRenameDao({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRenameDao:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRenameDao:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgToggleRepositoryForking({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleRepositoryForking({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleRepositoryForking:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgToggleRepositoryForking:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgAddPullRequestLabels({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestLabels({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestLabels:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddPullRequestLabels:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgForkRepository({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgForkRepository({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgForkRepository:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgForkRepository:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemoveIssueLabels({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveIssueLabels({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveIssueLabels:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemoveIssueLabels:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteRepositoryLabel({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteRepositoryLabel({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteRepositoryLabel:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateRepositoryDescription({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryDescription({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryDescription:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateRepositoryDescription:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateUserUsername({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserUsername({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserUsername:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateUserUsername:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateMemberRole({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateMemberRole({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateMemberRole:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateMemberRole:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgAddPullRequestReviewers({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestReviewers({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddPullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddPullRequestReviewers:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgInvokeForkRepository({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgInvokeForkRepository({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgInvokeForkRepository:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgInvokeForkRepository:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateUser({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateUser({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateUser:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateUser:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateUserBio({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserBio({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserBio:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateUserBio:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgUpdateUserName({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -2990,276 +2873,55 @@ export default {
 				}
 			}
 		},
-		async MsgAddRepositoryBackupRef({ rootGetters }, { value }) {
+		async MsgCreateIssue({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddRepositoryBackupRef({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateIssue({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreateIssue:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgAddRepositoryBackupRef:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCreateIssue:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgUpdatePullRequestTitle({ rootGetters }, { value }) {
+		async MsgRemoveIssueAssignees({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdatePullRequestTitle({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveIssueAssignees({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePullRequestTitle:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveIssueAssignees:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdatePullRequestTitle:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRemoveIssueAssignees:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgUpdateRepositoryLabel({ rootGetters }, { value }) {
+		async MsgUpdateRepositoryBackupRef({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryLabel({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryBackupRef({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgUpdateRepositoryLabel:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateRepositoryBackupRef:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgSetTag({ rootGetters }, { value }) {
+		async MsgUpdateDaoLocation({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetTag({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoLocation({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetTag:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateDaoLocation:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgSetTag:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateUserAvatar({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserAvatar({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateUserAvatar:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateUserAvatar:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteTask({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteTask({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteTask:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteTask:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgSetPullRequestState({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetPullRequestState({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetPullRequestState:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgSetPullRequestState:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRevokeProviderPermission({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRevokeProviderPermission({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeProviderPermission:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRevokeProviderPermission:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgForkRepositorySuccess({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgForkRepositorySuccess({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgForkRepositorySuccess:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgForkRepositorySuccess:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgMultiDeleteBranch({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiDeleteBranch({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgMultiDeleteBranch:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgMultiDeleteBranch:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgSetBranch({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetBranch({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgSetBranch:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgSetBranch:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemovePullRequestReviewers({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestReviewers({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemovePullRequestReviewers:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreatePullRequest({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreatePullRequest({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreatePullRequest:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreatePullRequest:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdatePullRequestDescription({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdatePullRequestDescription({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePullRequestDescription:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdatePullRequestDescription:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateRelease({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRelease({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateRelease:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateRelease:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgCreateComment({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateComment({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateComment:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateComment:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteBranch({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteBranch({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteBranch:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteBranch:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteDao({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteDao({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteDao:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteDao:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgUpdateTask({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateTask({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdateTask:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgUpdateTask:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteTag({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteTag({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteTag:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteTag:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteIssue({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteIssue({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteIssue:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteIssue:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateDaoLocation:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -3276,29 +2938,68 @@ export default {
 				}
 			}
 		},
-		async MsgRemovePullRequestLabels({ rootGetters }, { value }) {
+		async MsgMultiDeleteTag({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestLabels({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgMultiDeleteTag({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemovePullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgMultiDeleteTag:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgRemovePullRequestLabels:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgMultiDeleteTag:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgRemoveMember({ rootGetters }, { value }) {
+		async MsgRemoveIssueLabels({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveMember({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemoveIssueLabels({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveMember:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveIssueLabels:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgRemoveMember:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRemoveIssueLabels:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgToggleRepositoryForking({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleRepositoryForking({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgToggleRepositoryForking:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgToggleRepositoryForking:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateRelease({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateRelease({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateRelease:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateRelease:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRemovePullRequestAssignees({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestAssignees({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemovePullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRemovePullRequestAssignees:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -3315,29 +3016,159 @@ export default {
 				}
 			}
 		},
-		async MsgToggleIssueState({ rootGetters }, { value }) {
+		async MsgUpdateRepositoryLabel({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleIssueState({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryLabel({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgToggleIssueState:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgToggleIssueState:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateRepositoryLabel:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgInvokeMergePullRequest({ rootGetters }, { value }) {
+		async MsgRemovePullRequestReviewers({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgInvokeMergePullRequest({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestReviewers({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgInvokeMergePullRequest:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemovePullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgInvokeMergePullRequest:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRemovePullRequestReviewers:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddPullRequestAssignees({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestAssignees({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestAssignees:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddPullRequestAssignees:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddMember({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddMember({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddMember:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddMember:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateRelease({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRelease({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateRelease:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateRelease:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateDaoWebsite({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateDaoWebsite({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateDaoWebsite:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateDaoWebsite:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreatePullRequest({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreatePullRequest({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreatePullRequest:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreatePullRequest:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateUserAvatar({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateUserAvatar({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateUserAvatar:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateUserAvatar:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSetTag({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetTag({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetTag:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetTag:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgToggleArweaveBackup({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleArweaveBackup({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgToggleArweaveBackup:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgToggleArweaveBackup:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddPullRequestReviewers({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestReviewers({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestReviewers:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddPullRequestReviewers:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateComment({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateComment({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateComment:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateComment:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -3354,6 +3185,45 @@ export default {
 				}
 			}
 		},
+		async MsgDeleteTag({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteTag({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteTag:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteTag:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddPullRequestLabels({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgAddPullRequestLabels({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddPullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddPullRequestLabels:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRemovePullRequestLabels({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRemovePullRequestLabels({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemovePullRequestLabels:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRemovePullRequestLabels:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		async MsgRemoveRepositoryCollaborator({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -3367,16 +3237,94 @@ export default {
 				}
 			}
 		},
-		async MsgCreateTask({ rootGetters }, { value }) {
+		async MsgCreateRepository({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateTask({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateRepository({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateTask:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgCreateRepository:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCreateTask:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgCreateRepository:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateRepositoryCollaborator({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateRepositoryCollaborator({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateRepositoryCollaborator:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgToggleIssueState({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgToggleIssueState({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgToggleIssueState:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgToggleIssueState:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateUser({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateUser({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateUser:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateUser:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteRepositoryLabel({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteRepositoryLabel({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteRepositoryLabel:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeleteRepositoryLabel:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateDao({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateDao({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateDao:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateDao:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRenameDao({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgRenameDao({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRenameDao:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRenameDao:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -3393,29 +3341,81 @@ export default {
 				}
 			}
 		},
-		async MsgDeleteRepository({ rootGetters }, { value }) {
+		async MsgForkRepository({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgDeleteRepository({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgForkRepository({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteRepository:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgForkRepository:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgDeleteRepository:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgForkRepository:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		async MsgCreateRepository({ rootGetters }, { value }) {
+		async MsgUpdateIssueTitle({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaGitopia.tx.msgCreateRepository({value})
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateIssueTitle({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateRepository:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdateIssueTitle:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgCreateRepository:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdateIssueTitle:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgSetPullRequestState({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgSetPullRequestState({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgSetPullRequestState:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgSetPullRequestState:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateComment({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateComment({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateComment:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateComment:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateIssueDescription({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdateIssueDescription({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateIssueDescription:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdateIssueDescription:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdatePullRequestTitle({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaGitopia.tx.msgUpdatePullRequestTitle({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdatePullRequestTitle:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgUpdatePullRequestTitle:Create Could not create message: ' + e.message)
 				}
 			}
 		},

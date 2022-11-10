@@ -18,13 +18,12 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	ctx := sdk.UnwrapSDKContext(c)
 	var tasks []types.Task
 
-	whois, err := k.gitopiaKeeper.ResolveAddress(ctx, req.Address)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	if whois.OwnerType != gTypes.OwnerType_USER {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	verified := false
+	if user, found := k.gitopiaKeeper.GetUser(ctx, req.Address); found {
+		verified = user.Verified
+	} else {
+		// DAOs cannot claim rewards
+		return nil, status.Error(codes.InvalidArgument, "user not found")
 	}
 
 	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
@@ -63,30 +62,32 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	}
 
 	// PR to verified repo
-	prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
-	prCreated := false
-	prMerged := false
-	for _, pr := range prs {
-		if pr.Creator == req.Address {
-			prCreated = true
-			if pr.State == gTypes.PullRequest_MERGED {
-				prMerged = true
+	if verified {
+		prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
+		prCreated := false
+		prMerged := false
+		for _, pr := range prs {
+			if pr.Creator == req.Address {
+				prCreated = true
+				if pr.State == gTypes.PullRequest_MERGED {
+					prMerged = true
+				}
 			}
 		}
-	}
 
-	if prCreated {
-		tasks = append(tasks, types.Task{
-			Type:       types.TaskType_PR_TO_VERIFIED_REPO,
-			IsComplete: true,
-		})
-	}
+		if prCreated {
+			tasks = append(tasks, types.Task{
+				Type:       types.TaskType_PR_TO_VERIFIED_REPO,
+				IsComplete: true,
+			})
+		}
 
-	if prMerged {
-		tasks = append(tasks, types.Task{
-			Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
-			IsComplete: true,
-		})
+		if prMerged {
+			tasks = append(tasks, types.Task{
+				Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
+				IsComplete: true,
+			})
+		}
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(req.Address)
