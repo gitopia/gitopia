@@ -18,10 +18,8 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	ctx := sdk.UnwrapSDKContext(c)
 	var tasks []types.Task
 
-	verified := false
-	if user, found := k.gitopiaKeeper.GetUser(ctx, req.Address); found {
-		verified = user.Verified
-	} else {
+	user, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
+	if !found {
 		// DAOs cannot claim rewards
 		return nil, status.Error(codes.InvalidArgument, "user not found")
 	}
@@ -62,7 +60,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	}
 
 	// PR to verified repo
-	if verified {
+	if user.Verified {
 		prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
 		prCreated := false
 		prMerged := false
