@@ -13,12 +13,18 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/rewards/params";
-  }
-  // Queries a Rewards by index.
+  	// Parameters queries the parameters of the module.
+  	rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    	option (google.api.http).get = "/gitopia/gitopia/rewards/params";
+  	}
+
+  	// Queries a Rewards by index.
 	rpc Rewards(QueryGetRewardsRequest) returns (QueryGetRewardsResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards/{recipient}";
+	}
+
+	// Queries a Rewards by index.
+	rpc RewardForCreator(QueryGetRewardForCreatorRequest) returns (QueryGetRewardForCreatorResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards/{recipient}";
 	}
 
@@ -51,6 +57,15 @@ message QueryGetRewardsRequest {
 
 message QueryGetRewardsResponse {
 	Rewards rewards = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRewardForCreatorRequest {
+	string creator = 1;
+	string recipient = 2;
+}
+
+message QueryGetRewardForCreatorResponse {
+  	Reward reward = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllRewardsRequest {

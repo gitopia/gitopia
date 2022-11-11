@@ -55,3 +55,21 @@ func (k Keeper) Rewards(c context.Context, req *types.QueryGetRewardsRequest) (*
 
 	return &types.QueryGetRewardsResponse{Rewards: val}, nil
 }
+
+func (k Keeper) RewardForCreator(c context.Context, req *types.QueryGetRewardForCreatorRequest) (*types.QueryGetRewardForCreatorResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	val, found := k.GetRewardForCreator(
+	    ctx,
+	    req.Recipient,
+		req.Creator,
+        )
+	if !found {
+	    return nil, status.Error(codes.NotFound, "not found")
+	}
+
+	return &types.QueryGetRewardForCreatorResponse{Reward: val}, nil
+}

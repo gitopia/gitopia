@@ -35,7 +35,7 @@ func (k Keeper) GetRewards(
 }
 
 // GetRewards returns a rewards from its index and creator
-func (k Keeper) GetRewardForOwner(
+func (k Keeper) GetRewardForCreator(
     ctx sdk.Context,
     recipient string,
     creator string,

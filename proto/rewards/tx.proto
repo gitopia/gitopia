@@ -1,7 +1,6 @@
 syntax = "proto3";
 package gitopia.gitopia.rewards;
 
-import "rewards/rewards.proto";
 import "cosmos/base/v1beta1/coin.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
