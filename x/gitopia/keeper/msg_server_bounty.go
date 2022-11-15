@@ -57,7 +57,7 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 	if err != nil {
 		return nil, err
 	}
-	bountyAddress := GetBountyAddress(k.GetBountyCount(ctx) + 1)
+	bountyAddress := GetBountyAddress(k.GetBountyCount(ctx))
 	err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, bountyAddress, msg.Amount)
 	if err != nil {
 		return nil, err
