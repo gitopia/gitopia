@@ -927,11 +927,12 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		Id:  pullRequest.Id,
 		Iid: pullRequest.Iid,
 	})
+	issue.CommentsCount += 1
 	issue.UpdatedAt = blockTime
 
 	var pullRequestComment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
+		ParentId:    pullRequest.Id,
 		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
 		System:      true,
@@ -946,13 +947,13 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 
 	var issueComment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
+		ParentId:    issue.Id,
+		CommentIid:  issue.CommentsCount,
 		Body:        utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
 		System:      true,
 		CreatedAt:   blockTime,
 		UpdatedAt:   blockTime,
-		CommentType: types.Comment_PULLREQUEST,
+		CommentType: types.Comment_ISSUE,
 	}
 	issueCommentId := k.AppendComment(
 		ctx,
@@ -1019,10 +1020,11 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pullRequest (%v) isn't linked in issue (%v)", pullRequest.Iid, issueIid.Iid))
 	}
 	issue.UpdatedAt = blockTime
+	issue.CommentsCount += 1
 
 	var pullRequestComment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
+		ParentId:    pullRequest.Id,
 		CommentIid:  pullRequest.CommentsCount,
 		Body:        utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
 		System:      true,
@@ -1037,13 +1039,13 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 
 	var issueComment = types.Comment{
 		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
+		ParentId:    issue.Id,
+		CommentIid:  issue.CommentsCount,
 		Body:        utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
 		System:      true,
 		CreatedAt:   blockTime,
 		UpdatedAt:   blockTime,
-		CommentType: types.Comment_PULLREQUEST,
+		CommentType: types.Comment_ISSUE,
 	}
 	issueCommentId := k.AppendComment(
 		ctx,
