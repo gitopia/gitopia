@@ -471,7 +471,6 @@ func NewGitopiaApp(
 		&app.GitopiaKeeper,
 		app.StakingKeeper,
 		app.GovKeeper,
-		app.BankKeeper,
 	)
 
 	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)

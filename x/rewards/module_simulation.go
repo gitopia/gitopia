@@ -3,7 +3,6 @@ package rewards
 import (
 	"math/rand"
 
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -43,28 +42,6 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 		accs[i] = acc.Address.String()
 	}
 	rewardsGenesis := types.GenesisState{
-		Params: types.DefaultParams(),
-		RewardsList: []types.Rewards{
-			{
-				Recipient: sample.AccAddress(),
-				RewardsByCreator: map[string]*types.Reward{
-					sample.AccAddress(): {
-						TotalAmount:    &sdk.Coin{Amount: math.NewInt(100), Denom: "utlore"},
-						ClaimedAmount:  &sdk.Coin{Amount: math.NewInt(75), Denom: "utlore"},
-					},
-				},
-			},
-			{
-
-				Recipient: sample.AccAddress(),
-				RewardsByCreator: map[string]*types.Reward{
-					sample.AccAddress(): {
-						TotalAmount:   &sdk.Coin{Amount: math.NewInt(530), Denom: "utlore"},
-						ClaimedAmount: &sdk.Coin{Amount: math.NewInt(530), Denom: "utlore"},
-					},
-				},
-			},
-		},
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&rewardsGenesis)
@@ -87,29 +64,6 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
-
-	var weightMsgCreateReward int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateReward, &weightMsgCreateReward, nil,
-		func(_ *rand.Rand) {
-			weightMsgCreateReward = defaultWeightMsgCreateReward
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgCreateReward,
-		rewardssimulation.SimulateMsgCreateReward(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
-	var weightMsgSettle int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSettle, &weightMsgSettle, nil,
-		func(_ *rand.Rand) {
-			weightMsgSettle = defaultWeightMsgSettle
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgSettle,
-		rewardssimulation.SimulateMsgSettle(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
-
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
