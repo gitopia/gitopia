@@ -7,11 +7,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type RepositoryPullRequestSlice []*RepositoryPullRequest
+type PullRequestIidSlice []*PullRequestIid
 
-func (r RepositoryPullRequestSlice) Len() int           { return len(r) }
-func (r RepositoryPullRequestSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r RepositoryPullRequestSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (r PullRequestIidSlice) Len() int           { return len(r) }
+func (r PullRequestIidSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r PullRequestIidSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
@@ -579,6 +579,86 @@ func (msg *MsgRemovePullRequestAssignees) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate assignee (%s)", assignee)
 		}
 	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgLinkPullRequestIssueByIid{}
+
+func NewMsgLinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgLinkPullRequestIssueByIid {
+	return &MsgLinkPullRequestIssueByIid{
+		Id:       id,
+		Creator:  creator,
+		IssueIid: issueIid,
+	}
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) Type() string {
+	return "LinkPullRequestIssueByIid"
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgLinkPullRequestIssueByIid) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUnlinkPullRequestIssueByIid{}
+
+func NewMsgUnlinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgUnlinkPullRequestIssueByIid {
+	return &MsgUnlinkPullRequestIssueByIid{
+		Id:       id,
+		Creator:  creator,
+		IssueIid: issueIid,
+	}
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) Type() string {
+	return "LinkPullRequestIssueByIid"
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUnlinkPullRequestIssueByIid) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
 	return nil
 }
 

@@ -207,7 +207,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if i, exists := utils.RepositoryIssueExists(repository.Issues, req.IssueIid); exists {
+	if i, exists := utils.IssueIidExists(repository.Issues, req.IssueIid); exists {
 		issueStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
 		k.cdc.MustUnmarshal(issueStore.Get(GetIssueIDBytes(repository.Issues[i].Id)), &issue)
 
@@ -269,7 +269,7 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, req.PullIid); exists {
+	if i, exists := utils.PullRequestIidExists(repository.PullRequests, req.PullIid); exists {
 		pullRequestStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PullRequestKey))
 		k.cdc.MustUnmarshal(pullRequestStore.Get(GetPullRequestIDBytes(repository.PullRequests[i].Id)), &pullRequest)
 
@@ -438,16 +438,16 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.Sort != "ASC" {
-		sort.Sort(sort.Reverse(types.RepositoryIssueSlice(issues)))
+		sort.Sort(sort.Reverse(types.IssueIidSlice(issues)))
 	}
 
 	if option.CreatedBy != "" {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if issue.Creator == option.CreatedBy {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -459,12 +459,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.Assignee != "" {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if _, exists := utils.AssigneeExists(issue.Assignees, option.Assignee); exists {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -476,12 +476,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.State == types.Issue_CLOSED.String() {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if issue.State == types.Issue_CLOSED {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -491,12 +491,12 @@ func PaginateAllRepositoryIssue(
 		issues = issueBuffer
 		totalIssueCount = uint64(len(issueBuffer))
 	} else if option.State == types.Issue_OPEN.String() {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if issue.State == types.Issue_OPEN {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -508,12 +508,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.Labels == "ANY" {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if len(issue.Labels) > 0 {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -523,12 +523,12 @@ func PaginateAllRepositoryIssue(
 		issues = issueBuffer
 		totalIssueCount = uint64(len(issueBuffer))
 	} else if option.Labels == "NONE" {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if len(issue.Labels) == 0 {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -540,7 +540,7 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if len(option.LabelIds) > 0 {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
@@ -554,7 +554,7 @@ func PaginateAllRepositoryIssue(
 				}
 			}
 			if contains {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -566,12 +566,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.UpdatedAfter != 0 {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if issue.UpdatedAt > option.UpdatedAfter {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -583,12 +583,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.UpdatedBefore != 0 {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if issue.UpdatedAt < option.UpdatedBefore {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -600,12 +600,12 @@ func PaginateAllRepositoryIssue(
 	}
 
 	if option.Search != "" {
-		var issueBuffer []*types.RepositoryIssue
+		var issueBuffer []*types.IssueIid
 		for i := 0; uint64(i) < totalIssueCount; i++ {
 			var issue types.Issue
 			k.cdc.MustUnmarshal(issueStore.Get(GetRepositoryIDBytes(issues[uint64(i)].Id)), &issue)
 			if strings.Contains(issue.Title, option.Search) {
-				repositoryIssue := types.RepositoryIssue{
+				repositoryIssue := types.IssueIid{
 					Id:  issue.Id,
 					Iid: issue.Iid,
 				}
@@ -709,16 +709,16 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.Sort != "ASC" {
-		sort.Sort(sort.Reverse(types.RepositoryPullRequestSlice(pullRequests)))
+		sort.Sort(sort.Reverse(types.PullRequestIidSlice(pullRequests)))
 	}
 
 	if option.CreatedBy != "" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.Creator == option.CreatedBy {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -730,12 +730,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.Assignee != "" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if _, exists := utils.AssigneeExists(pullRequest.Assignees, option.Assignee); exists {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -747,12 +747,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.Reviewer != "" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, option.Reviewer); exists {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -764,12 +764,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.State == types.PullRequest_OPEN.String() {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.State == types.PullRequest_OPEN {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -779,12 +779,12 @@ func PaginateAllRepositoryPullRequest(
 		pullRequests = pullRequestBuffer
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	} else if option.State == types.PullRequest_CLOSED.String() {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.State == types.PullRequest_CLOSED {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -794,12 +794,12 @@ func PaginateAllRepositoryPullRequest(
 		pullRequests = pullRequestBuffer
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	} else if option.State == types.PullRequest_MERGED.String() {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.State == types.PullRequest_MERGED {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -811,12 +811,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.Labels == "ANY" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if len(pullRequest.Labels) > 0 {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -826,12 +826,12 @@ func PaginateAllRepositoryPullRequest(
 		pullRequests = pullRequestBuffer
 		totalPullRequestCount = uint64(len(pullRequestBuffer))
 	} else if option.Labels == "NONE" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if len(pullRequest.Labels) == 0 {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -843,7 +843,7 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if len(option.LabelIds) > 0 {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
@@ -857,7 +857,7 @@ func PaginateAllRepositoryPullRequest(
 				}
 			}
 			if contains {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -869,12 +869,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.UpdatedAfter != 0 {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.UpdatedAt > option.UpdatedAfter {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -886,12 +886,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.UpdatedBefore != 0 {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if pullRequest.UpdatedAt < option.UpdatedBefore {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}
@@ -903,12 +903,12 @@ func PaginateAllRepositoryPullRequest(
 	}
 
 	if option.Search != "" {
-		var pullRequestBuffer []*types.RepositoryPullRequest
+		var pullRequestBuffer []*types.PullRequestIid
 		for i := 0; uint64(i) < totalPullRequestCount; i++ {
 			var pullRequest types.PullRequest
 			k.cdc.MustUnmarshal(pullRequestStore.Get(GetRepositoryIDBytes(pullRequests[uint64(i)].Id)), &pullRequest)
 			if strings.Contains(pullRequest.Title, option.Search) {
-				repositoryPullRequest := types.RepositoryPullRequest{
+				repositoryPullRequest := types.PullRequestIid{
 					Id:  pullRequest.Id,
 					Iid: pullRequest.Iid,
 				}

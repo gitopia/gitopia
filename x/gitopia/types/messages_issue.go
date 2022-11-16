@@ -5,15 +5,15 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type RepositoryIssueSlice []*RepositoryIssue
+type IssueIidSlice []*IssueIid
 
-func (r RepositoryIssueSlice) Len() int           { return len(r) }
-func (r RepositoryIssueSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r RepositoryIssueSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (r IssueIidSlice) Len() int           { return len(r) }
+func (r IssueIidSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r IssueIidSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, description string, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, description string, labelIds []uint64, weight uint64, assignees []string, bountyAmount []sdk.Coin, bountyExpiry int64) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -22,6 +22,8 @@ func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, 
 		LabelIds:     labelIds,
 		Weight:       weight,
 		Assignees:    assignees,
+		BountyAmount: bountyAmount,
+		BountyExpiry: bountyExpiry,
 	}
 }
 
@@ -91,6 +93,14 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", labelId)
 			}
 		}
+	}
+
+	if err := msg.BountyAmount.Validate(); err != nil {
+		return err
+	}
+
+	if msg.BountyExpiry < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")
 	}
 
 	return nil

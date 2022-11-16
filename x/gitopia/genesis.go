@@ -40,6 +40,14 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set member count
 	k.SetMemberCount(ctx, genState.MemberCount)
 
+	// Set all the bounty
+	for _, elem := range genState.BountyList {
+		k.SetBounty(ctx, elem)
+	}
+
+	// Set bounty count
+	k.SetBountyCount(ctx, genState.BountyCount)
+
 	// this line is used by starport scaffolding # genesis/module/init
 	// Set all the release
 	for _, elem := range genState.ReleaseList {
@@ -133,6 +141,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.MemberList = k.GetAllMember(ctx)
 	genesis.MemberCount = k.GetMemberCount(ctx)
 
+	genesis.BountyList = k.GetAllBounty(ctx)
+	genesis.BountyCount = k.GetBountyCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 	// Get all release
 	genesis.ReleaseList = k.GetAllRelease(ctx)

@@ -347,6 +347,74 @@ func CmdRemovePullRequestAssignees() *cobra.Command {
 	return cmd
 }
 
+func CmdLinkPullRequestIssueByIid() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "link-pullrequest-issue-by-iid [id] [issue-iid]",
+		Short: "Link pullRequest issue by Iid",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsIssueIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgLinkPullRequestIssueByIid(clientCtx.GetFromAddress().String(), id, argsIssueIid)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUnlinkPullRequestIssueByIid() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "unlink-pullrequest-issue-by-iid [id] [issue-iid]",
+		Short: "Unlink pullRequest issue by Iid",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			argsIssueIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUnlinkPullRequestIssueByIid(clientCtx.GetFromAddress().String(), id, argsIssueIid)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdAddPullRequestLabels() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-pullrequest-labels [id] [labels]",

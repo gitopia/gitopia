@@ -251,6 +251,11 @@ const (
 	MemberCountKey = "Member-count-"
 )
 
+const (
+	BountyKey      = "Bounty-value-"
+	BountyCountKey = "Bounty-count-"
+)
+
 // GetRepositoryKeyForAddress returns Key from address
 func GetRepositoryKeyForAddress(address string) string {
 	return RepositoryKey + address + "-"

@@ -32,6 +32,11 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgUpdateRepositoryBackupRef{}, "gitopia/UpdateRepositoryBackupRef", nil)
 	cdc.RegisterConcrete(&MsgAddRepositoryBackupRef{}, "gitopia/AddRepositoryBackupRef", nil)
+
+	cdc.RegisterConcrete(&MsgCreateBounty{}, "gitopia/CreateBounty", nil)
+	cdc.RegisterConcrete(&MsgUpdateBountyExpiry{}, "gitopia/UpdateBountyExpiry", nil)
+	cdc.RegisterConcrete(&MsgCloseBounty{}, "gitopia/CloseBounty", nil)
+	cdc.RegisterConcrete(&MsgDeleteBounty{}, "gitopia/DeleteBounty", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
 	cdc.RegisterConcrete(&MsgUpdateRelease{}, "gitopia/UpdateRelease", nil)
@@ -43,6 +48,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestReviewers{}, "gitopia/AddPullRequestReviewers", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestReviewers{}, "gitopia/RemovePullRequestReviewers", nil)
+	cdc.RegisterConcrete(&MsgLinkPullRequestIssueByIid{}, "gitopia/LinkPullRequestIssueByIid", nil)
+	cdc.RegisterConcrete(&MsgUnlinkPullRequestIssueByIid{}, "gitopia/UnlinkPullRequestIssueByIid", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestAssignees{}, "gitopia/AddPullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestAssignees{}, "gitopia/RemovePullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestLabels{}, "gitopia/AddPullRequestLabels", nil)
@@ -128,6 +135,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgAddRepositoryBackupRef{},
 		&MsgUpdateRepositoryBackupRef{},
 	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateBounty{},
+		&MsgUpdateBountyExpiry{},
+		&MsgCloseBounty{},
+		&MsgDeleteBounty{},
+	)
 	// this line is used by starport scaffolding # 3
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRelease{},
@@ -143,6 +156,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRemovePullRequestReviewers{},
 		&MsgAddPullRequestAssignees{},
 		&MsgRemovePullRequestAssignees{},
+		&MsgLinkPullRequestIssueByIid{},
+		&MsgUnlinkPullRequestIssueByIid{},
 		&MsgAddPullRequestLabels{},
 		&MsgRemovePullRequestLabels{},
 		&MsgDeletePullRequest{},

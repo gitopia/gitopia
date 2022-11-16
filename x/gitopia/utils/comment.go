@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -55,4 +56,36 @@ func AddReviewersCommentBody(creator string, reviewers []string) string {
 
 func RemoveReviewersCommentBody(creator string, reviewers []string) string {
 	return fmt.Sprintf("@%v removed review request for"+JoinReviewers(reviewers), creator)
+}
+
+func CreateBountyCommentBody(creator string, amount sdk.Coins) string {
+	return fmt.Sprintf("@%v created bounty of %v", creator, amount.String())
+}
+
+func UpdateBountyExpiryCommentBody(creator string) string {
+	return fmt.Sprintf("@%v changed bounty expiry", creator)
+}
+
+func CloseBountyCommentBody(creator string) string {
+	return fmt.Sprintf("@%v closed bounty", creator)
+}
+
+func DeleteBountyCommentBody(creator string) string {
+	return fmt.Sprintf("@%v deleted bounty", creator)
+}
+
+func LinkIssueCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v linked issue #%v", creator, iid)
+}
+
+func UnlinkIssueCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v unlinked issue #%v", creator, iid)
+}
+
+func LinkPullRequestCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v linked pull request #%v", creator, iid)
+}
+
+func UnlinkPullRequestCommentBody(creator string, iid uint64) string {
+	return fmt.Sprintf("@%v unlinked pull request #%v", creator, iid)
 }

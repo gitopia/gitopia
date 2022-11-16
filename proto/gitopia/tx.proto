@@ -1,12 +1,13 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
+import "gogoproto/gogo.proto";
 import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
+import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # proto/tx/import
-import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/dao.proto";
@@ -14,6 +15,7 @@ import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
@@ -36,6 +38,10 @@ service Msg {
   rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
   rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
+  rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
+  rpc UpdateBountyExpiry(MsgUpdateBountyExpiry) returns (MsgUpdateBountyExpiryResponse);
+  rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
+  rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
@@ -49,6 +55,8 @@ service Msg {
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
   rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
   rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
+  rpc LinkPullRequestIssueByIid(MsgLinkPullRequestIssueByIid) returns (MsgLinkPullRequestIssueByIidResponse);
+  rpc UnlinkPullRequestIssueByIid(MsgUnlinkPullRequestIssueByIid) returns (MsgUnlinkPullRequestIssueByIidResponse);
   rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
   rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
@@ -282,6 +290,41 @@ message MsgRemoveMember {
 
 message MsgRemoveMemberResponse { }
 
+message MsgCreateBounty {
+  string creator = 1;
+  repeated cosmos.base.v1beta1.Coin amount = 2
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  int64 expiry = 3;
+  uint64 parentId = 4;
+  BountyParent parent = 5;
+}
+
+message MsgCreateBountyResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateBountyExpiry {
+  string creator = 1;
+  uint64 id = 2;
+  int64 expiry = 3;
+}
+
+message MsgUpdateBountyExpiryResponse {}
+
+message MsgCloseBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgCloseBountyResponse {}
+
+message MsgDeleteBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteBountyResponse {}
+
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
   string creator = 1;
@@ -408,6 +451,22 @@ message MsgRemovePullRequestAssignees {
 
 message MsgRemovePullRequestAssigneesResponse { }
 
+message MsgLinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 issueIid = 3;
+}
+
+message MsgLinkPullRequestIssueByIidResponse { }
+
+message MsgUnlinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 issueIid = 3;
+}
+
+message MsgUnlinkPullRequestIssueByIidResponse { }
+
 message MsgAddPullRequestLabels {
   string creator = 1;
   uint64 pullRequestId = 2;
@@ -531,6 +590,9 @@ message MsgCreateIssue {
   repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
+  repeated cosmos.base.v1beta1.Coin bountyAmount = 8
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  int64 bountyExpiry = 9;
 }
 
 message MsgCreateIssueResponse {

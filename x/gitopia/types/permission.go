@@ -7,6 +7,7 @@ const (
 	DeleteIssuePermission                 = RepositoryCollaborator_ADMIN
 	DeleteRepositoryPermission            = RepositoryCollaborator_ADMIN
 	LabelPermission                       = RepositoryCollaborator_TRIAGE
+	LinkPullRequestIssuePermission        = RepositoryCollaborator_TRIAGE
 	PullRequestCreatePermission           = RepositoryCollaborator_WRITE
 	PullRequestMergePermission            = RepositoryCollaborator_WRITE
 	PushBranchPermission                  = RepositoryCollaborator_WRITE

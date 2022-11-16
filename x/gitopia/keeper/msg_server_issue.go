@@ -66,17 +66,56 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		}
 	}
 
-	id := k.AppendIssue(
+	var bountyId uint64
+	if len(msg.BountyAmount) > 0 {
+		var bounty = types.Bounty{
+			Creator:   msg.Creator,
+			Amount:    msg.BountyAmount,
+			State:     types.BountyStateSRCDEBITTED,
+			Parent:    types.BountyParentIssue,
+			ExpireAt:  msg.BountyExpiry,
+			CreatedAt: ctx.BlockTime().Unix(),
+			UpdatedAt: ctx.BlockTime().Unix(),
+		}
+
+		if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.BountyAmount...); err != nil {
+			return nil, err
+		}
+		creatorAccAddress, err := sdk.AccAddressFromBech32(msg.Creator)
+		if err != nil {
+			return nil, err
+		}
+		bountyAddress := GetBountyAddress(k.GetBountyCount(ctx) + 1)
+		err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, bountyAddress, msg.BountyAmount)
+		if err != nil {
+			return nil, err
+		}
+
+		bountyId = k.AppendBounty(
+			ctx,
+			bounty,
+		)
+
+		issue.Bounties = append(issue.Bounties, bountyId)
+	}
+
+	issueId := k.AppendIssue(
 		ctx,
 		issue,
 	)
 
-	var repositoryIssue = types.RepositoryIssue{
-		Iid: repository.IssuesCount,
-		Id:  id,
+	if len(msg.BountyAmount) > 0 {
+		bounty, _ := k.GetBounty(ctx, bountyId)
+		bounty.ParentId = issueId
+		k.SetBounty(ctx, bounty)
 	}
 
-	repository.Issues = append(repository.Issues, &repositoryIssue)
+	var issueIid = types.IssueIid{
+		Iid: repository.IssuesCount,
+		Id:  issueId,
+	}
+
+	repository.Issues = append(repository.Issues, &issueIid)
 
 	k.SetRepository(ctx, repository)
 
@@ -88,8 +127,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(repositoryIssue.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(repositoryIssue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issueIid.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issueIid.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
 			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
 			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
@@ -104,7 +143,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	)
 
 	return &types.MsgCreateIssueResponse{
-		Id:  id,
+		Id:  issueId,
 		Iid: issue.Iid,
 	}, nil
 }
@@ -256,21 +295,62 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		}
 	}
 
-	if issue.State == types.Issue_OPEN {
+	blockTime := ctx.BlockTime().Unix()
+
+	switch issue.State {
+	case types.Issue_OPEN:
+		for _, pullRequestIid := range issue.PullRequests {
+			pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+			if !found {
+				continue
+			}
+			if pullRequest.State == types.PullRequest_OPEN {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close issue with OPEN linked pull request")
+			}
+		}
 		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
-		issue.ClosedAt = ctx.BlockTime().Unix()
-	} else if issue.State == types.Issue_CLOSED {
+		issue.ClosedAt = blockTime
+		for _, bountyId := range issue.Bounties {
+			bounty, found := k.GetBounty(ctx, bountyId)
+			if !found {
+				continue
+			}
+			if bounty.State != types.BountyStateSRCDEBITTED {
+				continue
+			}
+			creatorAccAddress, err := sdk.AccAddressFromBech32(bounty.Creator)
+			if err != nil {
+				continue
+			}
+
+			if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+				continue
+			}
+			if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+				continue
+			}
+			bountyAddress := GetBountyAddress(bounty.Id)
+			if err := k.bankKeeper.SendCoins(
+				ctx, bountyAddress, creatorAccAddress, bounty.Amount,
+			); err != nil {
+				continue
+			}
+
+			bounty.State = types.BountyStateREVERTEDBACK
+			bounty.ExpireAt = time.Time{}.Unix()
+			bounty.UpdatedAt = blockTime
+
+			k.SetBounty(ctx, bounty)
+		}
+	case types.Issue_CLOSED:
 		issue.State = types.Issue_OPEN
 		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
-	} else {
-		/* TODO: specify error */
-		return nil, sdkerrors.Error{}
 	}
 
 	issue.CommentsCount += 1
-	issue.UpdatedAt = ctx.BlockTime().Unix()
+	issue.UpdatedAt = blockTime
 
 	var comment = types.Comment{
 		Creator:     "GITOPIA",
@@ -334,7 +414,13 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if len(issue.Assignees)+len(msg.Assignees) > 10 {
+	totalAssignees := len(issue.Assignees) + len(msg.Assignees)
+
+	if len(issue.Bounties) > 0 && totalAssignees > 1 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue with bounty can't have more then 1 assignee")
+	}
+
+	if totalAssignees > 10 {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "issue can't have more than 10 assignees")
 	}
 
@@ -652,6 +738,16 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	for _, pullRequestIid := range issue.PullRequests {
+		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		if !found {
+			continue
+		}
+		if pullRequest.State == types.PullRequest_OPEN {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't delete issue having OPEN linked pull request")
+		}
+	}
+
 	DoRemoveIssue(ctx, k, issue, repository)
 
 	ctx.EventManager().EmitEvent(
@@ -669,16 +765,65 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 }
 
 func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
+	blockTime := ctx.BlockTime().Unix()
 	for _, commentId := range issue.Comments {
 		k.RemoveComment(ctx, commentId)
 	}
 
-	if i, exists := utils.RepositoryIssueExists(repository.Issues, issue.Iid); exists {
+	if i, exists := utils.IssueIidExists(repository.Issues, issue.Iid); exists {
 		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
+		repository.UpdatedAt = blockTime
+
+		k.SetRepository(ctx, repository)
 	}
 
-	repository.UpdatedAt = ctx.BlockTime().Unix()
+	for _, pullRequestIid := range issue.PullRequests {
+		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		if !found {
+			continue
+		}
+		if i, exists := utils.IssueIidExists(pullRequest.Issues, issue.Iid); exists {
+			pullRequest.Issues = append(pullRequest.Issues[:i], pullRequest.Issues[i+1:]...)
+		} else {
+			continue
+		}
+		pullRequest.UpdatedAt = blockTime
 
-	k.SetRepository(ctx, repository)
+		k.SetPullRequest(ctx, pullRequest)
+	}
+
+	for _, bountyId := range issue.Bounties {
+		bounty, found := k.GetBounty(ctx, bountyId)
+		if !found {
+			continue
+		}
+		if bounty.State != types.BountyStateSRCDEBITTED {
+			continue
+		}
+		creatorAccAddress, err := sdk.AccAddressFromBech32(bounty.Creator)
+		if err != nil {
+			continue
+		}
+
+		if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+			continue
+		}
+		if k.bankKeeper.BlockedAddr(creatorAccAddress) {
+			continue
+		}
+		bountyAddress := GetBountyAddress(bounty.Id)
+		if err := k.bankKeeper.SendCoins(
+			ctx, bountyAddress, creatorAccAddress, bounty.Amount,
+		); err != nil {
+			continue
+		}
+
+		bounty.State = types.BountyStateREVERTEDBACK
+		bounty.ExpireAt = time.Time{}.Unix()
+		bounty.UpdatedAt = blockTime
+
+		k.SetBounty(ctx, bounty)
+	}
+
 	k.RemoveIssue(ctx, issue.Id)
 }

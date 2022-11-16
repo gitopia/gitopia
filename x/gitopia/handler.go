@@ -98,6 +98,24 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.AddRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
+
+		case *types.MsgCreateBounty:
+			res, err := msgServer.CreateBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateBountyExpiry:
+			res, err := msgServer.UpdateBountyExpiry(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgCloseBounty:
+			res, err := msgServer.CloseBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDeleteBounty:
+			res, err := msgServer.DeleteBounty(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+			// this line is used by starport scaffolding # 1
 		case *types.MsgCreateRelease:
 			res, err := msgServer.CreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -144,6 +162,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgRemovePullRequestAssignees:
 			res, err := msgServer.RemovePullRequestAssignees(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgLinkPullRequestIssueByIid:
+			res, err := msgServer.LinkPullRequestIssueByIid(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUnlinkPullRequestIssueByIid:
+			res, err := msgServer.UnlinkPullRequestIssueByIid(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgAddPullRequestLabels:
