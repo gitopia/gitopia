@@ -54,9 +54,6 @@ func (msg *MsgCreateBounty) ValidateBasic() error {
 	if err := msg.Amount.Validate(); err != nil {
 		return err
 	}
-	if !msg.Amount.IsAllPositive() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, msg.Amount.String())
-	}
 	if msg.Expiry < 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")
 	}
