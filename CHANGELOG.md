@@ -2,6 +2,12 @@
 
 All notable changes will be documented here.
 
+## [Unreleased] - 20XX-XX-XX
+
+- Removed `issues` from Repository proto
+- UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, and DeleteIssue tx takes `repositoryId` and `iid` instead of `id`.
+- Add `repositoryId` in Comment proto
+
 ## [v1.2.0] - 2022-11-07
 
 - Upgrade cosmos-sdk version to v0.46.4 and iavl version to v0.19.4
