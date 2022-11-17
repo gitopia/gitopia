@@ -280,3 +280,8 @@ func GetMemberKeyForDaoAddress(daoAddress string) string {
 func GetUserDaoKeyForUserAddress(userAddress string) string {
 	return UserDaoKey + userAddress + "-"
 }
+
+// GetIssueKeyForRepositoryId returns Key from repository-id
+func GetIssueKeyForRepositoryId(repositoryId uint64) string {
+	return IssueKey + strconv.FormatUint(repositoryId, 10) + "-"
+}
