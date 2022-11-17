@@ -15,25 +15,24 @@ message Repository {
   repeated uint64 forks = 6; 
   string subscribers = 7; 
   string commits = 8;
-  repeated PullRequestIid pullRequests = 9;
-  uint64 issuesCount = 10;
-  uint64 pullsCount = 11;
-  repeated RepositoryLabel labels = 12;
-  uint64 labelsCount = 13;
-  repeated RepositoryRelease releases = 14;
-  int64 createdAt = 15;
-  int64 updatedAt = 16;
-  int64 pushedAt = 17;
-  repeated uint64 stargazers = 18;
-  bool archived = 19;
-  string license = 20;
-  string defaultBranch = 21;
-  uint64 parent = 22;
-  bool fork = 23;
-  repeated RepositoryCollaborator collaborators = 24;
-  bool allowForking = 25;
-  repeated RepositoryBackup backups = 26;
-  bool enableArweaveBackup = 27;
+  uint64 issuesCount = 9;
+  uint64 pullsCount = 10;
+  repeated RepositoryLabel labels = 11;
+  uint64 labelsCount = 12;
+  repeated RepositoryRelease releases = 13;
+  int64 createdAt = 14;
+  int64 updatedAt = 15;
+  int64 pushedAt = 16;
+  repeated uint64 stargazers = 17;
+  bool archived = 18;
+  string license = 19;
+  string defaultBranch = 20;
+  uint64 parent = 21;
+  bool fork = 22;
+  repeated RepositoryCollaborator collaborators = 23;
+  bool allowForking = 24;
+  repeated RepositoryBackup backups = 25;
+  bool enableArweaveBackup = 26;
 }
 
 message RepositoryId {
