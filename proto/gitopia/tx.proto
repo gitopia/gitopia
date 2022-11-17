@@ -385,34 +385,38 @@ message MsgCreatePullRequestResponse {
 
 message MsgUpdatePullRequestTitle {
   string creator = 1;
-  uint64 id = 2;
-  string title = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string title = 4;
 }
 
 message MsgUpdatePullRequestTitleResponse { }
 
 message MsgUpdatePullRequestDescription {
   string creator = 1;
-  uint64 id = 2;
-  string description = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string description = 4;
 }
 
 message MsgUpdatePullRequestDescriptionResponse { }
 
 message MsgInvokeMergePullRequest {
   string creator = 1;
-  uint64 id = 2;
-  string provider = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string provider = 4;
 }
 
 message MsgInvokeMergePullRequestResponse { }
 
 message MsgSetPullRequestState {
   string creator = 1;
-  uint64 id = 2;
-  string state = 3;
-  string mergeCommitSha = 4;
-  uint64 taskId = 5;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string state = 4;
+  string mergeCommitSha = 5;
+  uint64 taskId = 6;
 }
 
 message MsgSetPullRequestStateResponse {
@@ -421,71 +425,80 @@ message MsgSetPullRequestStateResponse {
 
 message MsgAddPullRequestReviewers {
   string creator = 1;
-  uint64 id = 2;
-  repeated string reviewers = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string reviewers = 4;
 }
 
 message MsgAddPullRequestReviewersResponse { }
 
 message MsgRemovePullRequestReviewers {
   string creator = 1;
-  uint64 id = 2;
-  repeated string reviewers = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string reviewers = 4;
 }
 
 message MsgRemovePullRequestReviewersResponse { }
 
 message MsgAddPullRequestAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgAddPullRequestAssigneesResponse { }
 
 message MsgRemovePullRequestAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgRemovePullRequestAssigneesResponse { }
 
 message MsgLinkPullRequestIssueByIid {
   string creator = 1;
-  uint64 id = 2;
-  uint64 issueIid = 3;
+  uint64 repositoryId = 2;
+  uint64 pullRequestIid = 3;
+  uint64 issueIid = 4;
 }
 
 message MsgLinkPullRequestIssueByIidResponse { }
 
 message MsgUnlinkPullRequestIssueByIid {
   string creator = 1;
-  uint64 id = 2;
-  uint64 issueIid = 3;
+  uint64 repositoryId = 2;
+  uint64 pullRequestIid = 3;
+  uint64 issueIid = 4;
 }
 
 message MsgUnlinkPullRequestIssueByIidResponse { }
 
 message MsgAddPullRequestLabels {
   string creator = 1;
-  uint64 pullRequestId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgAddPullRequestLabelsResponse { }
 
 message MsgRemovePullRequestLabels {
   string creator = 1;
-  uint64 pullRequestId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgRemovePullRequestLabelsResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
 }
 
 message MsgDeletePullRequestResponse { }
