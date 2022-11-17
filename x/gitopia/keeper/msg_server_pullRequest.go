@@ -197,14 +197,15 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -258,14 +259,15 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.UpdateDescriptionCommentBody(msg.Creator),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UpdateDescriptionCommentBody(msg.Creator),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -446,7 +448,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		k.SetRepositoryBranch(ctx, baseBranch)
 
 		for _, issueIid := range pullRequest.Issues {
-			issue, found := k.GetIssue(ctx, issueIid.Id)
+			issue, found := k.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
 			if !found {
 				continue
 			}
@@ -502,14 +504,15 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -604,14 +607,15 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -679,14 +683,15 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -757,14 +762,15 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -832,14 +838,15 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -897,20 +904,18 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 linked issues")
 	}
 
-	var issueIid *types.IssueIid
-	if i, exists := utils.IssueIidExists(headRepository.Issues, msg.IssueIid); exists {
-		issueIid = headRepository.Issues[i]
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue iid (%v) does not exists", msg.IssueIid))
+	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, msg.IssueIid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issue.Iid))
 	}
 
 	if _, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", msg.IssueIid))
 	}
 
-	issue, found := k.GetIssue(ctx, issueIid.Id)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Id))
+	issueIid := &types.IssueIid{
+		Iid: issue.Iid,
+		Id:  issue.Iid,
 	}
 
 	pullRequest.Issues = append(pullRequest.Issues, issueIid)
@@ -931,14 +936,15 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 	issue.UpdatedAt = blockTime
 
 	var pullRequestComment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    pullRequest.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
-		System:      true,
-		CreatedAt:   blockTime,
-		UpdatedAt:   blockTime,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 	pullRequestCommentId := k.AppendComment(
 		ctx,
@@ -946,14 +952,15 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 	)
 
 	var issueComment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    issue.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
-		System:      true,
-		CreatedAt:   blockTime,
-		UpdatedAt:   blockTime,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    issue.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.Comment_ISSUE,
 	}
 	issueCommentId := k.AppendComment(
 		ctx,
@@ -1005,9 +1012,9 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue with iid (%v) isn't linked", msg.IssueIid))
 	}
 
-	issue, found := k.GetIssue(ctx, issueIid.Id)
+	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Iid))
 	}
 
 	blockTime := ctx.BlockTime().Unix()
@@ -1023,14 +1030,15 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 	issue.CommentsCount += 1
 
 	var pullRequestComment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    pullRequest.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
-		System:      true,
-		CreatedAt:   blockTime,
-		UpdatedAt:   blockTime,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 	id := k.AppendComment(
 		ctx,
@@ -1038,14 +1046,15 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 	)
 
 	var issueComment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    issue.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
-		System:      true,
-		CreatedAt:   blockTime,
-		UpdatedAt:   blockTime,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    issue.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.Comment_ISSUE,
 	}
 	issueCommentId := k.AppendComment(
 		ctx,
@@ -1106,14 +1115,15 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.PullRequestId,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
@@ -1189,14 +1199,15 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.PullRequestId,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.Comment_PULLREQUEST,
 	}
 
 	id := k.AppendComment(
