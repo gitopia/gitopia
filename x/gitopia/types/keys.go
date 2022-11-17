@@ -285,3 +285,8 @@ func GetUserDaoKeyForUserAddress(userAddress string) string {
 func GetIssueKeyForRepositoryId(repositoryId uint64) string {
 	return IssueKey + strconv.FormatUint(repositoryId, 10) + "-"
 }
+
+// GetPullRequestKeyForRepositoryId returns Key from repository-id
+func GetPullRequestKeyForRepositoryId(repositoryId uint64) string {
+	return PullRequestKey + strconv.FormatUint(repositoryId, 10) + "-"
+}
