@@ -105,6 +105,25 @@ func (k Keeper) GetAllRepositoryIssue(ctx sdk.Context, repositoryId uint64) (lis
 	return
 }
 
+// GetAllIssue returns all issue
+func (k Keeper) GetAllIssue(ctx sdk.Context) (list []types.Issue) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.IssueKey),
+	)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Issue
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
 // GetIssueIDBytes returns the byte representation of the ID
 func GetIssueIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)
