@@ -110,13 +110,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		k.SetBounty(ctx, bounty)
 	}
 
-	var issueIid = types.IssueIid{
-		Iid: repository.IssuesCount,
-		Id:  issueId,
-	}
-
-	repository.Issues = append(repository.Issues, &issueIid)
-
 	k.SetRepository(ctx, repository)
 
 	assigneesJson, _ := json.Marshal(issue.Assignees)
@@ -127,8 +120,8 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issueIid.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issueIid.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
 			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
 			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
@@ -156,9 +149,9 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if issue.Title == msg.Title {
@@ -176,14 +169,15 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 	issue.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.UpdateTitleCommentBody(msg.Creator, oldTitle, issue.Title),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.UpdateTitleCommentBody(msg.Creator, oldTitle, issue.Title),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -219,9 +213,9 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if issue.Description == msg.Description {
@@ -237,14 +231,15 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 	issue.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.UpdateDescriptionCommentBody(msg.Creator),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.UpdateDescriptionCommentBody(msg.Creator),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -279,9 +274,9 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -353,14 +348,15 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	issue.UpdatedAt = blockTime
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -400,9 +396,9 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -439,14 +435,15 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -484,9 +481,9 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -514,14 +511,15 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -559,9 +557,9 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.IssueId)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.IssueId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -596,14 +594,15 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.IssueId,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.AddLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -641,9 +640,9 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.IssueId)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.IssueId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -679,14 +678,15 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 	issue.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.IssueId,
-		CommentIid:  issue.CommentsCount,
-		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   issue.UpdatedAt,
-		UpdatedAt:   issue.UpdatedAt,
-		CommentType: types.Comment_ISSUE,
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    msg.Iid,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    issue.UpdatedAt,
+		UpdatedAt:    issue.UpdatedAt,
+		CommentType:  types.Comment_ISSUE,
 	}
 
 	id := k.AppendComment(
@@ -724,9 +724,9 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	issue, found := k.GetIssue(ctx, msg.Id)
+	issue, found := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
@@ -750,6 +750,9 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 
 	DoRemoveIssue(ctx, k, issue, repository)
 
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -768,13 +771,6 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 	blockTime := ctx.BlockTime().Unix()
 	for _, commentId := range issue.Comments {
 		k.RemoveComment(ctx, commentId)
-	}
-
-	if i, exists := utils.IssueIidExists(repository.Issues, issue.Iid); exists {
-		repository.Issues = append(repository.Issues[:i], repository.Issues[i+1:]...)
-		repository.UpdatedAt = blockTime
-
-		k.SetRepository(ctx, repository)
 	}
 
 	for _, pullRequestIid := range issue.PullRequests {
@@ -825,5 +821,5 @@ func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository t
 		k.SetBounty(ctx, bounty)
 	}
 
-	k.RemoveIssue(ctx, issue.Id)
+	k.RemoveRepositoryIssue(ctx, repository.Id, issue.Iid)
 }
