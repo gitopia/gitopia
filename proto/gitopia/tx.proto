@@ -602,23 +602,26 @@ message MsgCreateIssueResponse {
 
 message MsgUpdateIssueTitle {
   string creator = 1;
-  uint64 id = 2;
-  string title = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string title = 4;
 }
 
 message MsgUpdateIssueTitleResponse { }
 
 message MsgUpdateIssueDescription {
   string creator = 1;
-  uint64 id = 2;
-  string description = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string description = 4;
 }
 
 message MsgUpdateIssueDescriptionResponse { }
 
 message MsgToggleIssueState {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
 }
 
 message MsgToggleIssueStateResponse {
@@ -627,39 +630,44 @@ message MsgToggleIssueStateResponse {
 
 message MsgAddIssueAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgAddIssueAssigneesResponse { }
 
 message MsgRemoveIssueAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgRemoveIssueAssigneesResponse { }
 
 message MsgAddIssueLabels {
   string creator = 1;
-  uint64 issueId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgAddIssueLabelsResponse { }
 
 message MsgRemoveIssueLabels {
   string creator = 1;
-  uint64 issueId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgRemoveIssueLabelsResponse { }
 
 message MsgDeleteIssue {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
 }
 
 message MsgDeleteIssueResponse { }
