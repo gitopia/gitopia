@@ -4,8 +4,8 @@ All notable changes will be documented here.
 
 ## [Unreleased] - 20XX-XX-XX
 
-- Removed `issues` from Repository proto
-- UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, and DeleteIssue tx takes `repositoryId` and `iid` instead of `id`.
+- Removed `issues` and `pullRequests` from Repository proto
+- UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, DeleteIssue, UpdatePullRequestTitle, UpdatePullRequestDescription, InvokeMergePullRequest, SetPullRequestState, AddPullRequestReviewers, RemovePullRequestReviewers, AddPullRequestAssignees, RemovePullRequestAssignees, LinkPullRequestIssueByIid, UnlinkPullRequestIssueByIid, AddPullRequestLabels, RemovePullRequestLabels, and DeletePullRequest tx takes `repositoryId` and `iid` instead of `id`.
 - Add `repositoryId` in Comment proto
 
 ## [v1.2.0] - 2022-11-07
