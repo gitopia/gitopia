@@ -54,8 +54,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
 	}
 
-	for _, p := range baseRepository.PullRequests {
-		pullRequest, _ := k.GetPullRequest(ctx, p.Id)
+	pullRequests := k.GetAllRepositoryPullRequest(ctx, baseRepository.Id)
+	for _, pullRequest := range pullRequests {
 		if pullRequest.Head.RepositoryId == headRepository.Id &&
 			pullRequest.State == types.PullRequest_OPEN &&
 			pullRequest.Base.Branch == msg.BaseBranch &&
@@ -132,12 +132,6 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		pullRequest,
 	)
 
-	var pullRequestIid = types.PullRequestIid{
-		Iid: baseRepository.PullsCount,
-		Id:  id,
-	}
-	baseRepository.PullRequests = append(baseRepository.PullRequests, &pullRequestIid)
-
 	k.SetRepository(ctx, baseRepository)
 
 	headJson, _ := json.Marshal(head)
@@ -177,9 +171,9 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if pullRequest.Title == msg.Title {
@@ -241,9 +235,9 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if pullRequest.Description == msg.Description {
@@ -302,9 +296,9 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -348,9 +342,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	task, _ = k.GetTask(ctx, msg.TaskId)
@@ -574,9 +568,9 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -653,9 +647,9 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -729,9 +723,9 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -808,9 +802,9 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -884,9 +878,9 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
 	}
 
 	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
@@ -984,9 +978,9 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
 	}
 
 	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
@@ -1078,9 +1072,9 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -1161,9 +1155,9 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -1240,16 +1234,20 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	k.RemovePullRequest(ctx, msg.Id)
+	for _, commentId := range pullRequest.Comments {
+		k.RemoveComment(ctx, commentId)
+	}
+
+	k.RemoveRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -1263,19 +1261,4 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	)
 
 	return &types.MsgDeletePullRequestResponse{}, nil
-}
-
-func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
-	for _, commentId := range pullRequest.Comments {
-		k.RemoveComment(ctx, commentId)
-	}
-
-	if i, exists := utils.PullRequestIidExists(repository.PullRequests, pullRequest.Iid); exists {
-		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
-	}
-
-	repository.UpdatedAt = ctx.BlockTime().Unix()
-
-	k.SetRepository(ctx, repository)
-	k.RemovePullRequest(ctx, pullRequest.Id)
 }
