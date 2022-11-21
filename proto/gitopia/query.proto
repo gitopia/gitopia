@@ -108,17 +108,10 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
 	}
 
-
-	// Queries a pullRequest by id.
-	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest/{id}";
-	}
-
 	// Queries a list of pullRequest items.
 	rpc PullRequestAll(QueryAllPullRequestRequest) returns (QueryAllPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest";
 	}
-
 
 	// Queries a Dao by id.
 	rpc Dao(QueryGetDaoRequest) returns (QueryGetDaoResponse) {
@@ -167,11 +160,12 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue";
 	}
 
-	// Queries a repository pullRequest by id.
+	// Queries a repository pullRequest.
 	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}";
 	}
 
+	// Queries a list of repository pullRequest.
 	rpc RepositoryPullRequestAll(QueryAllRepositoryPullRequestRequest) returns (QueryAllRepositoryPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull";
 	}
@@ -227,7 +221,7 @@ service Query {
 	}
 
 	rpc PullRequestMergePermission(QueryGetPullRequestMergePermissionRequest) returns (QueryGetPullRequestMergePermissionResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/pull/{pullId}/merge";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge";
 	}
 
 	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
@@ -402,7 +396,8 @@ message QueryAllBountyResponse {
 // this line is used by starport scaffolding # 3
 message QueryGetPullRequestMergePermissionRequest {
 	string userId = 1;
-	uint64 pullId = 2;
+	uint64 repositoryId = 2;
+	uint64 pullIid = 3;
 }
 
 message QueryGetPullRequestMergePermissionResponse {

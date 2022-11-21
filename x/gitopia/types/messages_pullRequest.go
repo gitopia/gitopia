@@ -7,11 +7,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type PullRequestIidSlice []*PullRequestIid
+type PullRequestList []*PullRequest
 
-func (r PullRequestIidSlice) Len() int           { return len(r) }
-func (r PullRequestIidSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r PullRequestIidSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (pr PullRequestList) Len() int           { return len(pr) }
+func (pr PullRequestList) Less(i, j int) bool { return pr[i].Iid < pr[j].Iid }
+func (pr PullRequestList) Swap(i, j int)      { pr[i], pr[j] = pr[j], pr[i] }
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
