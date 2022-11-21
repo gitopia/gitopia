@@ -5,11 +5,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type IssueIidSlice []*IssueIid
+type IssueList []*Issue
 
-func (r IssueIidSlice) Len() int           { return len(r) }
-func (r IssueIidSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r IssueIidSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (i IssueList) Len() int           { return len(i) }
+func (r IssueList) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r IssueList) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
