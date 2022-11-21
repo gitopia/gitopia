@@ -172,21 +172,19 @@ func (k msgServer) UpdateIssueTitle(goCtx context.Context, msg *types.MsgUpdateI
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.UpdateTitleCommentBody(msg.Creator, oldTitle, issue.Title),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeModifiedTitle,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	ctx.EventManager().EmitEvent(
@@ -234,21 +232,19 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.UpdateDescriptionCommentBody(msg.Creator),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeModifiedDescription,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	ctx.EventManager().EmitEvent(
@@ -291,11 +287,12 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	}
 
 	blockTime := ctx.BlockTime().Unix()
+	var commentType types.CommentType
 
 	switch issue.State {
 	case types.Issue_OPEN:
 		for _, pullRequestIid := range issue.PullRequests {
-			pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+			pullRequest, found := k.GetRepositoryPullRequest(ctx, repository.Id, pullRequestIid.Iid)
 			if !found {
 				continue
 			}
@@ -338,10 +335,12 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 
 			k.SetBounty(ctx, bounty)
 		}
+		commentType = types.CommentTypeIssueClosed
 	case types.Issue_CLOSED:
 		issue.State = types.Issue_OPEN
 		issue.ClosedBy = string("")
 		issue.ClosedAt = time.Time{}.Unix()
+		commentType = types.CommentTypeIssueOpened
 	}
 
 	issue.CommentsCount += 1
@@ -351,21 +350,19 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.IssueToggleStateCommentBody(msg.Creator, issue.State),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  commentType,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	ctx.EventManager().EmitEvent(
@@ -438,21 +435,19 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeAddAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -514,21 +509,19 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeRemoveAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -597,21 +590,19 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.AddLabelsCommentBody(msg.Creator, labelNames),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeAddLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -681,21 +672,19 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    msg.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
 		System:       true,
 		CreatedAt:    issue.UpdatedAt,
 		UpdatedAt:    issue.UpdatedAt,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeRemoveLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	issue.Comments = append(issue.Comments, id)
-
 	k.SetIssue(ctx, issue)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -739,7 +728,7 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 	}
 
 	for _, pullRequestIid := range issue.PullRequests {
-		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		pullRequest, found := k.GetRepositoryPullRequest(ctx, repository.Id, pullRequestIid.Iid)
 		if !found {
 			continue
 		}
@@ -769,12 +758,14 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 
 func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
 	blockTime := ctx.BlockTime().Unix()
-	for _, commentId := range issue.Comments {
-		k.RemoveComment(ctx, commentId)
+
+	comments := k.GetAllIssueComment(ctx, repository.Id, issue.Iid)
+	for _, comment := range comments {
+		k.RemoveIssueComment(ctx, repository.Id, issue.Iid, comment.CommentIid)
 	}
 
 	for _, pullRequestIid := range issue.PullRequests {
-		pullRequest, found := k.GetPullRequest(ctx, pullRequestIid.Id)
+		pullRequest, found := k.GetRepositoryPullRequest(ctx, repository.Id, pullRequestIid.Iid)
 		if !found {
 			continue
 		}
