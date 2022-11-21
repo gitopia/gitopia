@@ -14,9 +14,9 @@ import (
 
 func CmdCreateBounty() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-bounty [amount] [expiry] [parent-id] [parent]",
+		Use:   "create-bounty [amount] [expiry] [repository-id] [parent-id] [parent]",
 		Short: "Create a new Bounty",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
 			if err != nil {
@@ -26,11 +26,15 @@ func CmdCreateBounty() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argParentId, err := strconv.ParseUint(args[2], 10, 64)
+			argRepositoryId, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
 			}
-			argParent := args[3]
+			argParentId, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
+			argParent := args[4]
 			parent, ok := types.BountyParent_value[argParent]
 			if !ok {
 				return errors.New("invalid bounty parent")
@@ -41,7 +45,7 @@ func CmdCreateBounty() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateBounty(clientCtx.GetFromAddress().String(), argAmount, argExpiry, argParentId, types.BountyParent(parent))
+			msg := types.NewMsgCreateBounty(clientCtx.GetFromAddress().String(), argAmount, argExpiry, argRepositoryId, argParentId, types.BountyParent(parent))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
