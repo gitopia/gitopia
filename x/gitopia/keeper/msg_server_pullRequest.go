@@ -194,21 +194,19 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeModifiedTitle,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	ctx.EventManager().EmitEvent(
@@ -256,21 +254,19 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.UpdateDescriptionCommentBody(msg.Creator),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeModifiedDescription,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	ctx.EventManager().EmitEvent(
@@ -497,24 +493,35 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	pullRequest.UpdatedAt = blockTime
 	pullRequest.CommentsCount += 1
 
+	var commentType types.CommentType
+	switch pullRequest.State {
+	case types.PullRequest_MERGED:
+		commentType = types.CommentTypePullRequestMerged
+	case types.PullRequest_CLOSED:
+		commentType = types.CommentTypePullRequestClosed
+	case types.PullRequest_OPEN:
+		commentType = types.CommentTypePullRequestOpened
+	default:
+		commentType = types.CommentTypeNone
+	}
+
 	var comment = types.Comment{
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  commentType,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
 
 	baseRepository.UpdatedAt = blockTime
 	k.SetRepository(ctx, baseRepository)
@@ -604,21 +611,19 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeAddReviewers,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	reviewersJson, _ := json.Marshal(msg.Reviewers)
@@ -680,21 +685,19 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeRemoveReviewers,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	reviewersJson, _ := json.Marshal(msg.Reviewers)
@@ -759,21 +762,19 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeAddAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -835,21 +836,19 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeRemoveAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -933,37 +932,35 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
 		System:       true,
 		CreatedAt:    blockTime,
 		UpdatedAt:    blockTime,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeNone,
 	}
-	pullRequestCommentId := k.AppendComment(
-		ctx,
-		pullRequestComment,
-	)
-
 	var issueComment = types.Comment{
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    issue.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
 		System:       true,
 		CreatedAt:    blockTime,
 		UpdatedAt:    blockTime,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeNone,
 	}
-	issueCommentId := k.AppendComment(
+
+	k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+	k.AppendComment(
 		ctx,
 		issueComment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, pullRequestCommentId)
-	issue.Comments = append(issue.Comments, issueCommentId)
-
 	k.SetPullRequest(ctx, pullRequest)
 	k.SetIssue(ctx, issue)
 
@@ -1027,37 +1024,35 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
 		System:       true,
 		CreatedAt:    blockTime,
 		UpdatedAt:    blockTime,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeNone,
 	}
-	id := k.AppendComment(
-		ctx,
-		pullRequestComment,
-	)
-
 	var issueComment = types.Comment{
 		Creator:      "GITOPIA",
 		RepositoryId: issue.RepositoryId,
 		ParentIid:    issue.Iid,
+		Parent:       types.CommentParentIssue,
 		CommentIid:   issue.CommentsCount,
 		Body:         utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
 		System:       true,
 		CreatedAt:    blockTime,
 		UpdatedAt:    blockTime,
-		CommentType:  types.Comment_ISSUE,
+		CommentType:  types.CommentTypeNone,
 	}
-	issueCommentId := k.AppendComment(
+
+	k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+	k.AppendComment(
 		ctx,
 		issueComment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-	issue.Comments = append(issue.Comments, issueCommentId)
-
 	k.SetPullRequest(ctx, pullRequest)
 	k.SetIssue(ctx, issue)
 
@@ -1112,21 +1107,19 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.AddLabelsCommentBody(msg.Creator, labelNames),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeAddLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -1196,21 +1189,19 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 		Creator:      "GITOPIA",
 		RepositoryId: pullRequest.Base.RepositoryId,
 		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
 		CommentIid:   pullRequest.CommentsCount,
 		Body:         utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
 		System:       true,
 		CreatedAt:    pullRequest.UpdatedAt,
 		UpdatedAt:    pullRequest.UpdatedAt,
-		CommentType:  types.Comment_PULLREQUEST,
+		CommentType:  types.CommentTypeRemoveLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -1243,11 +1234,15 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	for _, commentId := range pullRequest.Comments {
-		k.RemoveComment(ctx, commentId)
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
 
-	k.RemoveRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
+	DoRemovePullRequest(ctx, k, pullRequest, repository)
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -1261,4 +1256,13 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	)
 
 	return &types.MsgDeletePullRequestResponse{}, nil
+}
+
+func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
+	comments := k.GetAllPullRequestComment(ctx, repository.Id, pullRequest.Iid)
+	for _, comment := range comments {
+		k.RemovePullRequestComment(ctx, repository.Id, pullRequest.Iid, comment.CommentIid)
+	}
+
+	k.RemoveRepositoryPullRequest(ctx, repository.Id, pullRequest.Iid)
 }
