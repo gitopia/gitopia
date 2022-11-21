@@ -900,9 +900,9 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repositor
 		DoRemoveIssue(ctx, k, i, repository)
 	}
 
-	for _, pr := range repository.PullRequests {
-		pullRequest, _ := k.GetPullRequest(ctx, pr.Id)
-		DoRemovePullRequest(ctx, k, pullRequest, repository)
+	repositoryPullRequests := k.GetAllRepositoryPullRequest(ctx, repository.Id)
+	for _, pr := range repositoryPullRequests {
+		DoRemovePullRequest(ctx, k, pr, repository)
 	}
 
 	for _, r := range repository.Releases {
