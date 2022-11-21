@@ -297,8 +297,9 @@ message MsgCreateBounty {
   repeated cosmos.base.v1beta1.Coin amount = 2
       [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
   int64 expiry = 3;
-  uint64 parentId = 4;
-  BountyParent parent = 5;
+  uint64 repositoryId = 4;
+  uint64 parentIid = 5;
+  BountyParent parent = 6;
 }
 
 message MsgCreateBountyResponse {

@@ -25,6 +25,9 @@ enum CommentType {
   COMMENT_TYPE_PULL_REQUEST_OPENED = 12 [(gogoproto.enumvalue_customname) = "CommentTypePullRequestOpened"];
   COMMENT_TYPE_PULL_REQUEST_MERGED = 13 [(gogoproto.enumvalue_customname) = "CommentTypePullRequestMerged"];
   COMMENT_TYPE_REVIEW = 14 [(gogoproto.enumvalue_customname) = "CommentTypeReview"];
+  COMMENT_TYPE_ADD_BOUNTY = 15 [(gogoproto.enumvalue_customname) = "CommentTypeAddBounty"];
+  COMMENT_TYPE_MODIFIED_BOUNTY = 16 [(gogoproto.enumvalue_customname) = "CommentTypeModifiedBounty"];
+  COMMENT_TYPE_CLOSED_BOUNTY = 17 [(gogoproto.enumvalue_customname) = "CommentTypeClosedBounty"];
 }
 
 enum CommentParent {
