@@ -69,13 +69,15 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	var bountyId uint64
 	if len(msg.BountyAmount) > 0 {
 		var bounty = types.Bounty{
-			Creator:   msg.Creator,
-			Amount:    msg.BountyAmount,
-			State:     types.BountyStateSRCDEBITTED,
-			Parent:    types.BountyParentIssue,
-			ExpireAt:  msg.BountyExpiry,
-			CreatedAt: ctx.BlockTime().Unix(),
-			UpdatedAt: ctx.BlockTime().Unix(),
+			Creator:      msg.Creator,
+			RepositoryId: issue.RepositoryId,
+			Amount:       msg.BountyAmount,
+			State:        types.BountyStateSRCDEBITTED,
+			Parent:       types.BountyParentIssue,
+			ParentIid:    issue.Iid,
+			ExpireAt:     msg.BountyExpiry,
+			CreatedAt:    ctx.BlockTime().Unix(),
+			UpdatedAt:    ctx.BlockTime().Unix(),
 		}
 
 		if err := k.bankKeeper.IsSendEnabledCoins(ctx, msg.BountyAmount...); err != nil {
@@ -106,7 +108,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	if len(msg.BountyAmount) > 0 {
 		bounty, _ := k.GetBounty(ctx, bountyId)
-		bounty.ParentId = issueId
 		k.SetBounty(ctx, bounty)
 	}
 
