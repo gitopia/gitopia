@@ -16,6 +16,8 @@ import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "gitopia/attachment.proto";
+import "gitopia/reaction.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
@@ -565,14 +567,13 @@ message MsgDeleteDaoResponse { }
 
 message MsgCreateComment {
   string creator = 1;
-  uint64 parentId = 2;
-  string body = 3;
-  repeated string attachments = 4;
-  string diffHunk = 5;
-  string path = 6;
-  bool system = 7;
-  string authorAssociation = 8;
-  string commentType = 9;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  string body = 5;
+  repeated Attachment attachments = 6; 
+  string diffHunk = 7;
+  string path = 8;
 }
 
 message MsgCreateCommentResponse {
@@ -581,16 +582,22 @@ message MsgCreateCommentResponse {
 
 message MsgUpdateComment {
   string creator = 1;
-  uint64 id = 2;
-  string body = 3;
-  repeated string attachments = 4;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  uint64 commentIid = 5;
+  string body = 6;
+  repeated Attachment attachments = 7;
 }
 
 message MsgUpdateCommentResponse { }
 
 message MsgDeleteComment {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  uint64 commentIid = 5;
 }
 
 message MsgDeleteCommentResponse { }
