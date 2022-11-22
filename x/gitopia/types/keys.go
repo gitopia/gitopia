@@ -142,12 +142,21 @@ const (
 	AddPullRequestLabelsEventKey         = "AddPullRequestLabels"
 	RemovePullRequestLabelsEventKey      = "RemovePullRequestLabels"
 	DeletePullRequestEventKey            = "DeletePullRequest"
+	LinkPullRequestIssueByIidEventKey    = "LinkPullRequestIssueByIid"
+	UnlinkPullRequestIssueByIidEventKey  = "UnlinkPullRequestIssueByIid"
 )
 
 const (
 	CreateReleaseEventKey = "CreateRelease"
 	UpdateReleaseEventKey = "UpdateRelease"
 	DeleteReleaseEventKey = "DeleteRelease"
+)
+
+const (
+	CreateBountyEventKey       = "CreateBounty"
+	UpdateBountyExpiryEventKey = "UpdateBountyExpiry"
+	CloseBountyEventKey        = "CloseBounty"
+	DeleteBountyEventKey       = "DeleteBounty"
 )
 
 const (
@@ -224,6 +233,15 @@ const (
 	EventAttributeReleaseNameKey       = "ReleaseName"
 	EventAttributeReleaseDraftKey      = "ReleaseDraft"
 	EventAttributeReleasePreReleaseKey = "ReleasePreRelease"
+)
+
+const (
+	EventAttributeBountyIdKey       = "BountyId"
+	EventAttributeBountyAmountKey   = "BountyAmount"
+	EventAttributeBountyStateKey    = "BountyState"
+	EventAttributeBountyParentKey   = "BountyParent"
+	EventAttributeBountyParentIdKey = "BountyParentId"
+	EventAttributeBountyExpiry      = "BountyExpiry"
 )
 
 const (

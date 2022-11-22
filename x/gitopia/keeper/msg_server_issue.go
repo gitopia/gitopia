@@ -115,6 +115,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	assigneesJson, _ := json.Marshal(issue.Assignees)
 	labelsJson, _ := json.Marshal(issue.Labels)
+	bountyAmountJson, _ := json.Marshal(msg.BountyAmount)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -130,6 +131,11 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeBountyIdKey, strconv.FormatUint(bountyId, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyAmountKey, string(bountyAmountJson)),
+			sdk.NewAttribute(types.EventAttributeBountyStateKey, types.BountyStateSRCDEBITTED.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentKey, types.BountyParentIssue.String()),
+			sdk.NewAttribute(types.EventAttributeBountyExpiry, strconv.FormatInt(msg.BountyExpiry, 10)),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(issue.CreatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(issue.ClosedAt, 10)),
