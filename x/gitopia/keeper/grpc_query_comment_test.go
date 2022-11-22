@@ -5,37 +5,36 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	keepertest "github.com/gitopia/gitopia/testutil/keeper"
+	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	keepertest "github.com/gitopia/gitopia/testutil/keeper"
-	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
 func TestCommentQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNComment(keeper, ctx, 2)
+	msgs := createNComment(keeper, ctx, types.CommentParentIssue, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetCommentRequest
-		response *types.QueryGetCommentResponse
+		request  *types.QueryGetIssueCommentRequest
+		response *types.QueryGetIssueCommentResponse
 		err      error
 	}{
 		{
 			desc:     "First",
-			request:  &types.QueryGetCommentRequest{Id: msgs[0].Id},
-			response: &types.QueryGetCommentResponse{Comment: &msgs[0]},
+			request:  &types.QueryGetIssueCommentRequest{RepositoryId: 0, IssueIid: 1, CommentIid: 1},
+			response: &types.QueryGetIssueCommentResponse{Comment: &msgs[0]},
 		},
 		{
 			desc:     "Second",
-			request:  &types.QueryGetCommentRequest{Id: msgs[1].Id},
-			response: &types.QueryGetCommentResponse{Comment: &msgs[1]},
+			request:  &types.QueryGetIssueCommentRequest{RepositoryId: 0, IssueIid: 1, CommentIid: 2},
+			response: &types.QueryGetIssueCommentResponse{Comment: &msgs[1]},
 		},
 		{
 			desc:    "KeyNotFound",
-			request: &types.QueryGetCommentRequest{Id: uint64(len(msgs))},
+			request: &types.QueryGetIssueCommentRequest{RepositoryId: 0, IssueIid: 1, CommentIid: 10},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
@@ -44,7 +43,7 @@ func TestCommentQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Comment(wctx, tc.request)
+			response, err := keeper.IssueComment(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
