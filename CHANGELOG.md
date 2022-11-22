@@ -4,9 +4,14 @@ All notable changes will be documented here.
 
 ## [Unreleased] - 20XX-XX-XX
 
+- KV changes for issue, pullrequest and comment. 
 - Removed `issues` and `pullRequests` from Repository proto
 - UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, DeleteIssue, UpdatePullRequestTitle, UpdatePullRequestDescription, InvokeMergePullRequest, SetPullRequestState, AddPullRequestReviewers, RemovePullRequestReviewers, AddPullRequestAssignees, RemovePullRequestAssignees, LinkPullRequestIssueByIid, UnlinkPullRequestIssueByIid, AddPullRequestLabels, RemovePullRequestLabels, and DeletePullRequest tx takes `repositoryId` and `iid` instead of `id`.
-- Add `repositoryId` in Comment proto
+- Add `repositoryId` in Comment and Bounty proto
+- Modified comment structure - Parent: issue and pull; various comment types like label, assignees etc; reactions; replies; resolved/unresolved
+- Removed queries to get a issue, pullrequest and comment by id.
+- PullRequestMergePermission query also takes `repositoryId`
+- Add queries RepositoryIssue, RepositoryIssueAll, RepositoryPullRequest, RepositoryPullRequestAll ,IssueComment, PullRequestComment, IssueCommentAll and PullRequestCommentAll.
 
 ## [v1.2.0] - 2022-11-07
 
