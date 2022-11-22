@@ -474,7 +474,6 @@ func NewGitopiaApp(
 	)
 
 	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)
-	
 
 	govConfig := govtypes.DefaultConfig()
 	app.GovKeeper = govkeeper.NewKeeper(
@@ -560,6 +559,7 @@ func NewGitopiaApp(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		gitopiatypes.ModuleName,
+		rewardstypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -583,6 +583,7 @@ func NewGitopiaApp(
 		group.ModuleName,
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
+		rewardstypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -611,6 +612,7 @@ func NewGitopiaApp(
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
 		authz.ModuleName,
+		rewardstypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
