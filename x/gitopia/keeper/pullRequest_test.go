@@ -13,6 +13,10 @@ import (
 func createNPullRequest(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.PullRequest {
 	items := make([]types.PullRequest, n)
 	for i := range items {
+		items[i].Base = &types.PullRequestBase{
+			RepositoryId: 0,
+		}
+		items[i].Iid = uint64(i) + 1
 		items[i].Id = keeper.AppendPullRequest(ctx, items[i])
 	}
 	return items
@@ -22,7 +26,7 @@ func TestPullRequestGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNPullRequest(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetPullRequest(ctx, item.Id)
+		got, found := keeper.GetRepositoryPullRequest(ctx, item.Base.RepositoryId, item.Iid)
 		require.True(t, found)
 		require.Equal(t, item, got)
 	}
@@ -32,8 +36,8 @@ func TestPullRequestRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNPullRequest(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemovePullRequest(ctx, item.Id)
-		_, found := keeper.GetPullRequest(ctx, item.Id)
+		keeper.RemoveRepositoryPullRequest(ctx, item.Base.RepositoryId, item.Iid)
+		_, found := keeper.GetRepositoryPullRequest(ctx, item.Base.RepositoryId, item.Iid)
 		require.False(t, found)
 	}
 }
