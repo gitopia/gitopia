@@ -298,5 +298,5 @@ func GetCommentKeyForIssue(repositoryId uint64, issueIid uint64) string {
 
 // GetCommentKeyForPullRequest returns Key for repository pull request
 func GetCommentKeyForPullRequest(repositoryId uint64, pullRequestIid uint64) string {
-	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-pullrequest-" + strconv.FormatUint(pullRequestIid, 10) + "-"
+	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-pr-" + strconv.FormatUint(pullRequestIid, 10) + "-"
 }
