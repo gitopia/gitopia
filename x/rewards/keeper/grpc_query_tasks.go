@@ -25,18 +25,21 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	}
 	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
 
+	taskComplete := false
 	for _, repo := range repos {
 		// non empty repo
 		if len(repo.Commits) > 0 {
-			tasks = append(tasks, types.Task{
-				Type:       types.TaskType_CREATE_NON_EMPTY_REPO,
-				IsComplete: true,
-			})
+			taskComplete = true
 			break
 		}
 	}
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_CREATE_NON_EMPTY_REPO,
+		IsComplete: taskComplete,
+	})
 
 	// non empty DAO repo
+	taskComplete = false
 	daos := k.gitopiaKeeper.GetAllUserDao(ctx, req.Address)
 	for _, dao := range daos {
 		if dao.Creator == req.Address {
@@ -47,10 +50,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 			for _, repo := range res.Repository {
 				// the repo must be created by the dao owner only, who is also the requested user
 				if repo.Creator == req.Address && len(repo.Commits) > 0 {
-					tasks = append(tasks, types.Task{
-						Type:       types.TaskType_CREATE_NON_EMPTY_DAO_REPO,
-						IsComplete: true,
-					})
+					taskComplete = true
 					break
 				}
 			}
@@ -58,34 +58,36 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 
 	}
 
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_CREATE_NON_EMPTY_DAO_REPO,
+		IsComplete: taskComplete,
+	})
+
+	prCreated := false
+	prMerged := false
 	// PR to verified repo
 	if user.Verified {
 		prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
-		prCreated := false
-		prMerged := false
+
 		for _, pr := range prs {
 			if pr.Creator == req.Address {
 				prCreated = true
 				if pr.State == gTypes.PullRequest_MERGED {
 					prMerged = true
+					break
 				}
 			}
 		}
-
-		if prCreated {
-			tasks = append(tasks, types.Task{
-				Type:       types.TaskType_PR_TO_VERIFIED_REPO,
-				IsComplete: true,
-			})
-		}
-
-		if prMerged {
-			tasks = append(tasks, types.Task{
-				Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
-				IsComplete: true,
-			})
-		}
 	}
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_PR_TO_VERIFIED_REPO,
+		IsComplete: prCreated,
+	})
+
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
+		IsComplete: prMerged,
+	})
 
 	accAddr, err := sdk.AccAddressFromBech32(req.Address)
 	if err != nil {
@@ -93,24 +95,29 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	}
 
 	// lore staking
+	taskComplete = false
 	delegations := k.stakingKeeper.GetDelegatorDelegations(ctx, accAddr, 1) // atleast 1
 	if len(delegations) > 0 {
-		tasks = append(tasks, types.Task{
-			Type:       types.TaskType_LORE_STAKED,
-			IsComplete: true,
-		})
+		taskComplete = true
 	}
 
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_LORE_STAKED,
+		IsComplete: taskComplete,
+	})
+
 	// proposal voting
+	taskComplete = false
 	votes := k.GovKeeper.GetAllVotes(ctx)
 	for _, vote := range votes {
 		if vote.Voter == req.Address {
-			tasks = append(tasks, types.Task{
-				Type:       types.TaskType_LORE_STAKED,
-				IsComplete: true,
-			})
+			taskComplete = true
 		}
 	}
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_VOTE_PROPOSAL,
+		IsComplete: taskComplete,
+	})
 
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
 }
