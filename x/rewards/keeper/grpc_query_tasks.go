@@ -23,7 +23,6 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		// DAOs cannot claim rewards
 		return nil, status.Error(codes.InvalidArgument, "user not found")
 	}
-
 	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
 
 	for _, repo := range repos {

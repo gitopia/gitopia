@@ -464,18 +464,6 @@ func NewGitopiaApp(
 
 	gitopiaModule := gitopia.NewAppModule(appCodec, app.GitopiaKeeper)
 
-	app.RewardsKeeper = *rewardskeeper.NewKeeper(
-		appCodec,
-		keys[gitopiatypes.StoreKey],
-		keys[gitopiatypes.MemStoreKey],
-		app.GetSubspace(rewardstypes.ModuleName),
-		&app.GitopiaKeeper,
-		app.StakingKeeper,
-		app.GovKeeper,
-	)
-
-	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)
-
 	govConfig := govtypes.DefaultConfig()
 	app.GovKeeper = govkeeper.NewKeeper(
 		appCodec,
@@ -488,6 +476,19 @@ func NewGitopiaApp(
 		app.MsgServiceRouter(),
 		govConfig,
 	)
+
+	app.RewardsKeeper = *rewardskeeper.NewKeeper(
+		appCodec,
+		keys[gitopiatypes.StoreKey],
+		keys[gitopiatypes.MemStoreKey],
+		app.GetSubspace(rewardstypes.ModuleName),
+		&app.GitopiaKeeper,
+		app.StakingKeeper,
+		app.GovKeeper,
+	)
+
+	rewardsModule := rewards.NewAppModule(appCodec, app.RewardsKeeper, app.AccountKeeper, app.BankKeeper)
+
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
