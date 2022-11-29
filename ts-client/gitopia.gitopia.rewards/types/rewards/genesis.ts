@@ -1,22 +1,15 @@
 /* eslint-disable */
-import { Params } from "../rewards/params";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.rewards";
 
 /** GenesisState defines the rewards module's genesis state. */
-export interface GenesisState {
-  /** this line is used by starport scaffolding # genesis/proto/state */
-  params: Params | undefined;
-}
+export interface GenesisState {}
 
 const baseGenesisState: object = {};
 
 export const GenesisState = {
-  encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
-    if (message.params !== undefined) {
-      Params.encode(message.params, writer.uint32(10).fork()).ldelim();
-    }
+  encode(_: GenesisState, writer: Writer = Writer.create()): Writer {
     return writer;
   },
 
@@ -27,9 +20,6 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 1:
-          message.params = Params.decode(reader, reader.uint32());
-          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -38,30 +28,18 @@ export const GenesisState = {
     return message;
   },
 
-  fromJSON(object: any): GenesisState {
+  fromJSON(_: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromJSON(object.params);
-    } else {
-      message.params = undefined;
-    }
     return message;
   },
 
-  toJSON(message: GenesisState): unknown {
+  toJSON(_: GenesisState): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<GenesisState>): GenesisState {
+  fromPartial(_: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    } else {
-      message.params = undefined;
-    }
     return message;
   },
 };

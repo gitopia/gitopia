@@ -1,7 +1,7 @@
-import { Params } from "./types/rewards/params"
+import { Task } from "./types/rewards/task"
 
 
 export {     
-    Params,
+    Task,
     
  }

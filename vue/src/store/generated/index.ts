@@ -1,10 +1,12 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
 import GitopiaGitopiaGitopia from './gitopia.gitopia.gitopia'
+import GitopiaGitopiaRewards from './gitopia.gitopia.rewards'
 
 
 export default { 
   GitopiaGitopiaGitopia: load(GitopiaGitopiaGitopia, 'gitopia.gitopia.gitopia'),
+  GitopiaGitopiaRewards: load(GitopiaGitopiaRewards, 'gitopia.gitopia.rewards'),
   
 }
 

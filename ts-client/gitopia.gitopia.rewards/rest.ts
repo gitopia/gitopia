@@ -13,17 +13,23 @@ export interface ProtobufAny {
   "@type"?: string;
 }
 
-/**
- * Params defines the parameters for the module.
- */
-export type RewardsParams = object;
+export interface RewardsQueryTasksResponse {
+  tasks?: RewardsTask[];
+}
 
-/**
- * QueryParamsResponse is response type for the Query/Params RPC method.
- */
-export interface RewardsQueryParamsResponse {
-  /** Params defines the parameters for the module. */
-  params?: RewardsParams;
+export interface RewardsTask {
+  type?: RewardstaskType;
+  isComplete?: boolean;
+}
+
+export enum RewardstaskType {
+  UNKNOWN = "UNKNOWN",
+  CREATE_NON_EMPTY_REPO = "CREATE_NON_EMPTY_REPO",
+  CREATE_NON_EMPTY_DAO_REPO = "CREATE_NON_EMPTY_DAO_REPO",
+  PR_TO_VERIFIED_REPO = "PR_TO_VERIFIED_REPO",
+  PR_TO_VERIFIED_REPO_MERGED = "PR_TO_VERIFIED_REPO_MERGED",
+  LORE_STAKED = "LORE_STAKED",
+  VOTE_PROPOSAL = "VOTE_PROPOSAL",
 }
 
 export interface RpcStatus {
@@ -233,13 +239,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryParams
-   * @summary Parameters queries the parameters of the module.
-   * @request GET:/gitopia/gitopia/rewards/params
+   * @name QueryTasks
+   * @summary Queries a list of tasks items.
+   * @request GET:/gitopia/gitopia/rewards/tasks/{address}
    */
-  queryParams = (params: RequestParams = {}) =>
-    this.request<RewardsQueryParamsResponse, RpcStatus>({
-      path: `/gitopia/gitopia/rewards/params`,
+  queryTasks = (address: string, params: RequestParams = {}) =>
+    this.request<RewardsQueryTasksResponse, RpcStatus>({
+      path: `/gitopia/gitopia/rewards/tasks/${address}`,
       method: "GET",
       format: "json",
       ...params,

@@ -40004,6 +40004,59 @@ paths:
           format: uint64
       tags:
         - Query
+  '/gitopia/gitopia/rewards/tasks/{address}':
+    get:
+      summary: Queries a list of tasks items.
+      operationId: GitopiaGitopiaRewardsTasks
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              tasks:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - UNKNOWN
+                        - CREATE_NON_EMPTY_REPO
+                        - CREATE_NON_EMPTY_DAO_REPO
+                        - PR_TO_VERIFIED_REPO
+                        - PR_TO_VERIFIED_REPO_MERGED
+                        - LORE_STAKED
+                        - VOTE_PROPOSAL
+                      default: UNKNOWN
+                    isComplete:
+                      type: boolean
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /ibc/apps/interchain_accounts/controller/v1/params:
     get:
       summary: Params queries all parameters of the ICA controller submodule.
@@ -79982,6 +80035,54 @@ definitions:
           - USER
           - DAO
         default: USER
+  gitopia.gitopia.rewards.QueryTasksResponse:
+    type: object
+    properties:
+      tasks:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - UNKNOWN
+                - CREATE_NON_EMPTY_REPO
+                - CREATE_NON_EMPTY_DAO_REPO
+                - PR_TO_VERIFIED_REPO
+                - PR_TO_VERIFIED_REPO_MERGED
+                - LORE_STAKED
+                - VOTE_PROPOSAL
+              default: UNKNOWN
+            isComplete:
+              type: boolean
+  gitopia.gitopia.rewards.Task:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - UNKNOWN
+          - CREATE_NON_EMPTY_REPO
+          - CREATE_NON_EMPTY_DAO_REPO
+          - PR_TO_VERIFIED_REPO
+          - PR_TO_VERIFIED_REPO_MERGED
+          - LORE_STAKED
+          - VOTE_PROPOSAL
+        default: UNKNOWN
+      isComplete:
+        type: boolean
+  gitopia.gitopia.rewards.taskType:
+    type: string
+    enum:
+      - UNKNOWN
+      - CREATE_NON_EMPTY_REPO
+      - CREATE_NON_EMPTY_DAO_REPO
+      - PR_TO_VERIFIED_REPO
+      - PR_TO_VERIFIED_REPO_MERGED
+      - LORE_STAKED
+      - VOTE_PROPOSAL
+    default: UNKNOWN
   ibc.applications.interchain_accounts.controller.v1.Params:
     type: object
     properties:

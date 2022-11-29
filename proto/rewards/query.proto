@@ -4,7 +4,7 @@ package gitopia.gitopia.rewards;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "rewards/tasks.proto";
+import "rewards/task.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
@@ -13,7 +13,7 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 service Query {
 	// Queries a list of tasks items.
 	rpc Tasks(QueryTasksRequest) returns (QueryTasksResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/rewards/tasks";
+		option (google.api.http).get = "/gitopia/gitopia/rewards/tasks/{address}";
 	}
 
 // this line is used by starport scaffolding # 2

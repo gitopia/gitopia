@@ -1,9 +1,9 @@
 import { Client, registry, MissingWalletError } from 'gitopia-gitopia-client-ts'
 
-import { Params } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
+import { Task } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
 
 
-export { Params };
+export { Task };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -34,10 +34,10 @@ function getStructure(template) {
 }
 const getDefaultState = () => {
 	return {
-				Params: {},
+				Tasks: {},
 				
 				_Structure: {
-						Params: getStructure(Params.fromPartial({})),
+						Task: getStructure(Task.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -66,11 +66,11 @@ export default {
 		}
 	},
 	getters: {
-				getParams: (state) => (params = { params: {}}) => {
+				getTasks: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
 						(<any> params).query=null
 					}
-			return state.Params[JSON.stringify(params)] ?? {}
+			return state.Tasks[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -111,18 +111,18 @@ export default {
 		 		
 		
 		
-		async QueryParams({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+		async QueryTasks({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
 				const key = params ?? {};
 				const client = initClient(rootGetters);
-				let value= (await client.GitopiaGitopiaRewards.query.queryParams()).data
+				let value= (await client.GitopiaGitopiaRewards.query.queryTasks( key.address)).data
 				
 					
-				commit('QUERY', { query: 'Params', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryParams', payload: { options: { all }, params: {...key},query }})
-				return getters['getParams']( { params: {...key}, query}) ?? {}
+				commit('QUERY', { query: 'Tasks', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryTasks', payload: { options: { all }, params: {...key},query }})
+				return getters['getTasks']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				throw new Error('QueryClient:QueryTasks API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
