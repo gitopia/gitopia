@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -21,7 +22,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	user, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
 	if !found {
 		// DAOs cannot claim rewards
-		return nil, status.Error(codes.InvalidArgument, "user not found")
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("user %s not found", req.Address))
 	}
 	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
 
