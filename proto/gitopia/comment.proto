@@ -4,23 +4,57 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
+import "gitopia/reaction.proto";
+import "gitopia/attachment.proto";
+
+enum CommentType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  COMMENT_TYPE_NONE = 0 [(gogoproto.enumvalue_customname) = "CommentTypeNone"];
+  COMMENT_TYPE_ADD_LABELS = 1 [(gogoproto.enumvalue_customname) = "CommentTypeAddLabels"];
+  COMMENT_TYPE_REMOVE_LABELS = 2 [(gogoproto.enumvalue_customname) = "CommentTypeRemoveLabels"];
+  COMMENT_TYPE_ADD_ASSIGNEES = 3 [(gogoproto.enumvalue_customname) = "CommentTypeAddAssignees"];
+  COMMENT_TYPE_REMOVE_ASSIGNEES = 4 [(gogoproto.enumvalue_customname) = "CommentTypeRemoveAssignees"];
+  COMMENT_TYPE_ADD_REVIEWERS = 5 [(gogoproto.enumvalue_customname) = "CommentTypeAddReviewers"];
+  COMMENT_TYPE_REMOVE_REVIEWERS = 6 [(gogoproto.enumvalue_customname) = "CommentTypeRemoveReviewers"];
+  COMMENT_TYPE_MODIFIED_TITLE = 7 [(gogoproto.enumvalue_customname) = "CommentTypeModifiedTitle"];
+  COMMENT_TYPE_MODIFIED_DESCRIPTION = 8 [(gogoproto.enumvalue_customname) = "CommentTypeModifiedDescription"];
+  COMMENT_TYPE_ISSUE_CLOSED = 9 [(gogoproto.enumvalue_customname) = "CommentTypeIssueClosed"];
+  COMMENT_TYPE_ISSUE_OPENED = 10 [(gogoproto.enumvalue_customname) = "CommentTypeIssueOpened"];
+  COMMENT_TYPE_PULL_REQUEST_CLOSED = 11 [(gogoproto.enumvalue_customname) = "CommentTypePullRequestClosed"];
+  COMMENT_TYPE_PULL_REQUEST_OPENED = 12 [(gogoproto.enumvalue_customname) = "CommentTypePullRequestOpened"];
+  COMMENT_TYPE_PULL_REQUEST_MERGED = 13 [(gogoproto.enumvalue_customname) = "CommentTypePullRequestMerged"];
+  COMMENT_TYPE_REVIEW = 14 [(gogoproto.enumvalue_customname) = "CommentTypeReview"];
+  COMMENT_TYPE_ADD_BOUNTY = 15 [(gogoproto.enumvalue_customname) = "CommentTypeAddBounty"];
+  COMMENT_TYPE_MODIFIED_BOUNTY = 16 [(gogoproto.enumvalue_customname) = "CommentTypeModifiedBounty"];
+  COMMENT_TYPE_CLOSED_BOUNTY = 17 [(gogoproto.enumvalue_customname) = "CommentTypeClosedBounty"];
+}
+
+enum CommentParent {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  COMMENT_PARENT_ISSUE = 0 [(gogoproto.enumvalue_customname) = "CommentParentIssue"];
+  COMMENT_PARENT_PULL_REQUEST = 1 [(gogoproto.enumvalue_customname) = "CommentParentPullRequest"];
+}
 
 message Comment {
   string creator = 1;
   uint64 id = 2;
-  uint64 parentId = 3; 
-  uint64 commentIid = 4; 
-  string body = 5; 
-  repeated string attachments = 6; 
-  string diffHunk = 7; 
-  string path = 8; 
-  bool system = 9;
-  string authorAssociation = 10;
-  int64 createdAt = 11;
-  int64 updatedAt = 12;
-  enum Type {
-    ISSUE = 0;
-	  PULLREQUEST = 1;
-  }
-  Type commentType = 13;
+  uint64 repositoryId = 3; 
+  uint64 parentIid = 4; 
+  CommentParent parent = 5;
+  uint64 commentIid = 6; 
+  string body = 7; 
+  repeated Attachment attachments = 8; 
+  string diffHunk = 9; 
+  string path = 10; 
+  bool system = 11;
+  string authorAssociation = 12;
+  int64 createdAt = 13;
+  int64 updatedAt = 14;
+  CommentType commentType = 15;
+  bool resolved = 16;
+  repeated uint64 replies = 17;
+  repeated Reaction reactions = 18;
+  bool hidden = 19;
 }

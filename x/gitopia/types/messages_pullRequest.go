@@ -7,11 +7,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type PullRequestIidSlice []*PullRequestIid
+type PullRequestList []*PullRequest
 
-func (r PullRequestIidSlice) Len() int           { return len(r) }
-func (r PullRequestIidSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r PullRequestIidSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (pr PullRequestList) Len() int           { return len(pr) }
+func (pr PullRequestList) Less(i, j int) bool { return pr[i].Iid < pr[j].Iid }
+func (pr PullRequestList) Swap(i, j int)      { pr[i], pr[j] = pr[j], pr[i] }
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
@@ -179,11 +179,12 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdatePullRequestTitle{}
 
-func NewMsgUpdatePullRequestTitle(creator string, id uint64, title string) *MsgUpdatePullRequestTitle {
+func NewMsgUpdatePullRequestTitle(creator string, repositoryId uint64, iid uint64, title string) *MsgUpdatePullRequestTitle {
 	return &MsgUpdatePullRequestTitle{
-		Id:      id,
-		Creator: creator,
-		Title:   title,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Title:        title,
 	}
 }
 
@@ -223,11 +224,12 @@ func (msg *MsgUpdatePullRequestTitle) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdatePullRequestDescription{}
 
-func NewMsgUpdatePullRequestDescription(creator string, id uint64, description string) *MsgUpdatePullRequestDescription {
+func NewMsgUpdatePullRequestDescription(creator string, repositoryId uint64, iid uint64, description string) *MsgUpdatePullRequestDescription {
 	return &MsgUpdatePullRequestDescription{
-		Id:          id,
-		Creator:     creator,
-		Description: description,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Description:  description,
 	}
 }
 
@@ -265,11 +267,12 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeMergePullRequest{}
 
-func NewMsgInvokeMergePullRequest(creator string, id uint64, provider string) *MsgInvokeMergePullRequest {
+func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string) *MsgInvokeMergePullRequest {
 	return &MsgInvokeMergePullRequest{
-		Id:       id,
-		Creator:  creator,
-		Provider: provider,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Provider:     provider,
 	}
 }
 
@@ -308,10 +311,11 @@ func (msg *MsgInvokeMergePullRequest) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgSetPullRequestState{}
 
-func NewMsgSetPullRequestState(creator string, id uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
+func NewMsgSetPullRequestState(creator string, repositoryId uint64, iid uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
 	return &MsgSetPullRequestState{
 		Creator:        creator,
-		Id:             id,
+		RepositoryId:   repositoryId,
+		Iid:            iid,
 		State:          state,
 		MergeCommitSha: mergeCommitSha,
 	}
@@ -352,11 +356,12 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgAddPullRequestReviewers{}
 
-func NewMsgAddPullRequestReviewers(creator string, id uint64, reviewers []string) *MsgAddPullRequestReviewers {
+func NewMsgAddPullRequestReviewers(creator string, repositoryId uint64, iid uint64, reviewers []string) *MsgAddPullRequestReviewers {
 	return &MsgAddPullRequestReviewers{
-		Id:        id,
-		Creator:   creator,
-		Reviewers: reviewers,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Reviewers:    reviewers,
 	}
 }
 
@@ -410,11 +415,12 @@ func (msg *MsgAddPullRequestReviewers) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemovePullRequestAssignees{}
 
-func NewMsgRemovePullRequestReviewers(creator string, id uint64, reviewers []string) *MsgRemovePullRequestReviewers {
+func NewMsgRemovePullRequestReviewers(creator string, repositoryId uint64, iid uint64, reviewers []string) *MsgRemovePullRequestReviewers {
 	return &MsgRemovePullRequestReviewers{
-		Id:        id,
-		Creator:   creator,
-		Reviewers: reviewers,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Reviewers:    reviewers,
 	}
 }
 
@@ -468,11 +474,12 @@ func (msg *MsgRemovePullRequestReviewers) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgAddPullRequestAssignees{}
 
-func NewMsgAddPullRequestAssignees(creator string, id uint64, assignees []string) *MsgAddPullRequestAssignees {
+func NewMsgAddPullRequestAssignees(creator string, repositoryId uint64, iid uint64, assignees []string) *MsgAddPullRequestAssignees {
 	return &MsgAddPullRequestAssignees{
-		Id:        id,
-		Creator:   creator,
-		Assignees: assignees,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Assignees:    assignees,
 	}
 }
 
@@ -526,11 +533,12 @@ func (msg *MsgAddPullRequestAssignees) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemovePullRequestAssignees{}
 
-func NewMsgRemovePullRequestAssignees(creator string, id uint64, assignees []string) *MsgRemovePullRequestAssignees {
+func NewMsgRemovePullRequestAssignees(creator string, repositoryId uint64, iid uint64, assignees []string) *MsgRemovePullRequestAssignees {
 	return &MsgRemovePullRequestAssignees{
-		Id:        id,
-		Creator:   creator,
-		Assignees: assignees,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Assignees:    assignees,
 	}
 }
 
@@ -584,11 +592,12 @@ func (msg *MsgRemovePullRequestAssignees) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgLinkPullRequestIssueByIid{}
 
-func NewMsgLinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgLinkPullRequestIssueByIid {
+func NewMsgLinkPullRequestIssueByIid(creator string, repositoryId uint64, pullRequestIid uint64, issueIid uint64) *MsgLinkPullRequestIssueByIid {
 	return &MsgLinkPullRequestIssueByIid{
-		Id:       id,
-		Creator:  creator,
-		IssueIid: issueIid,
+		Creator:        creator,
+		RepositoryId:   repositoryId,
+		PullRequestIid: pullRequestIid,
+		IssueIid:       issueIid,
 	}
 }
 
@@ -624,11 +633,12 @@ func (msg *MsgLinkPullRequestIssueByIid) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUnlinkPullRequestIssueByIid{}
 
-func NewMsgUnlinkPullRequestIssueByIid(creator string, id uint64, issueIid uint64) *MsgUnlinkPullRequestIssueByIid {
+func NewMsgUnlinkPullRequestIssueByIid(creator string, repositoryId uint64, pullRequestIid uint64, issueIid uint64) *MsgUnlinkPullRequestIssueByIid {
 	return &MsgUnlinkPullRequestIssueByIid{
-		Id:       id,
-		Creator:  creator,
-		IssueIid: issueIid,
+		Creator:        creator,
+		RepositoryId:   repositoryId,
+		PullRequestIid: pullRequestIid,
+		IssueIid:       issueIid,
 	}
 }
 
@@ -664,11 +674,12 @@ func (msg *MsgUnlinkPullRequestIssueByIid) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgAddPullRequestLabels{}
 
-func NewMsgAddPullRequestLabels(creator string, pullRequestId uint64, labelIds []uint64) *MsgAddPullRequestLabels {
+func NewMsgAddPullRequestLabels(creator string, repositoryId uint64, iid uint64, labelIds []uint64) *MsgAddPullRequestLabels {
 	return &MsgAddPullRequestLabels{
-		PullRequestId: pullRequestId,
-		Creator:       creator,
-		LabelIds:      labelIds,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		LabelIds:     labelIds,
 	}
 }
 
@@ -718,11 +729,12 @@ func (msg *MsgAddPullRequestLabels) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemovePullRequestLabels{}
 
-func NewMsgRemovePullRequestLabels(creator string, pullRequestId uint64, labelIds []uint64) *MsgRemovePullRequestLabels {
+func NewMsgRemovePullRequestLabels(creator string, repositoryId uint64, iid uint64, labelIds []uint64) *MsgRemovePullRequestLabels {
 	return &MsgRemovePullRequestLabels{
-		PullRequestId: pullRequestId,
-		Creator:       creator,
-		LabelIds:      labelIds,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		LabelIds:     labelIds,
 	}
 }
 
@@ -772,10 +784,11 @@ func (msg *MsgRemovePullRequestLabels) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeletePullRequest{}
 
-func NewMsgDeletePullRequest(creator string, id uint64) *MsgDeletePullRequest {
+func NewMsgDeletePullRequest(creator string, repositoryId uint64, iid uint64) *MsgDeletePullRequest {
 	return &MsgDeletePullRequest{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
 	}
 }
 func (msg *MsgDeletePullRequest) Route() string {

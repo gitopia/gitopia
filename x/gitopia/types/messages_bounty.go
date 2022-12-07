@@ -15,13 +15,14 @@ const (
 
 var _ sdk.Msg = &MsgCreateBounty{}
 
-func NewMsgCreateBounty(creator string, amount []cosmosTypes.Coin, expiry int64, parentId uint64, parent BountyParent) *MsgCreateBounty {
+func NewMsgCreateBounty(creator string, amount []cosmosTypes.Coin, expiry int64, repositoryId uint64, parentIid uint64, parent BountyParent) *MsgCreateBounty {
 	return &MsgCreateBounty{
-		Creator:  creator,
-		Amount:   amount,
-		Expiry:   expiry,
-		ParentId: parentId,
-		Parent:   parent,
+		Creator:      creator,
+		Amount:       amount,
+		Expiry:       expiry,
+		RepositoryId: repositoryId,
+		ParentIid:    parentIid,
+		Parent:       parent,
 	}
 }
 

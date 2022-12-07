@@ -15,26 +15,24 @@ message Repository {
   repeated uint64 forks = 6; 
   string subscribers = 7; 
   string commits = 8;
-  repeated IssueIid issues = 9;
-  repeated PullRequestIid pullRequests = 10;
-  uint64 issuesCount = 11;
-  uint64 pullsCount = 12;
-  repeated RepositoryLabel labels = 13;
-  uint64 labelsCount = 14;
-  repeated RepositoryRelease releases = 15;
-  int64 createdAt = 16;
-  int64 updatedAt = 17;
-  int64 pushedAt = 18;
-  repeated uint64 stargazers = 19;
-  bool archived = 20;
-  string license = 21;
-  string defaultBranch = 22;
-  uint64 parent = 23;
-  bool fork = 24;
-  repeated RepositoryCollaborator collaborators = 25;
-  bool allowForking = 26;
-  repeated RepositoryBackup backups = 27;
-  bool enableArweaveBackup = 28;
+  uint64 issuesCount = 9;
+  uint64 pullsCount = 10;
+  repeated RepositoryLabel labels = 11;
+  uint64 labelsCount = 12;
+  repeated RepositoryRelease releases = 13;
+  int64 createdAt = 14;
+  int64 updatedAt = 15;
+  int64 pushedAt = 16;
+  repeated uint64 stargazers = 17;
+  bool archived = 18;
+  string license = 19;
+  string defaultBranch = 20;
+  uint64 parent = 21;
+  bool fork = 22;
+  repeated RepositoryCollaborator collaborators = 23;
+  bool allowForking = 24;
+  repeated RepositoryBackup backups = 25;
+  bool enableArweaveBackup = 26;
 }
 
 message RepositoryId {
@@ -85,13 +83,6 @@ message RepositoryLabel {
 message RepositoryRelease {
   uint64 id = 1;
   string tagName = 2;
-}
-
-message Attachment {
-  string name = 1;
-  uint64 size = 2;
-  string sha = 3;
-  string uploader = 4;
 }
 
 message RepositoryBackup {

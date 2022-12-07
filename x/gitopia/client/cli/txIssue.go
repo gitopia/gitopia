@@ -95,16 +95,19 @@ func CmdCreateIssue() *cobra.Command {
 
 func CmdUpdateIssueTitle() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue-title [id] [title]",
+		Use:   "update-issue-title [repository-id] [iid] [title]",
 		Short: "Update a issue title",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsTitle, err := cast.ToStringE(args[1])
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsTitle, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
@@ -114,7 +117,7 @@ func CmdUpdateIssueTitle() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssueTitle(clientCtx.GetFromAddress().String(), id, string(argsTitle))
+			msg := types.NewMsgUpdateIssueTitle(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsTitle))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -129,16 +132,19 @@ func CmdUpdateIssueTitle() *cobra.Command {
 
 func CmdUpdateIssueDescription() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-issue-description [id] [description]",
+		Use:   "update-issue-description [repository-id] [iid] [description]",
 		Short: "Update issue description",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsDescription, err := cast.ToStringE(args[1])
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsDescription, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
@@ -148,7 +154,7 @@ func CmdUpdateIssueDescription() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgUpdateIssueDescription(clientCtx.GetFromAddress().String(), id, string(argsDescription))
+			msg := types.NewMsgUpdateIssueDescription(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsDescription))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -163,11 +169,15 @@ func CmdUpdateIssueDescription() *cobra.Command {
 
 func CmdToggleIssueState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "toggle-issue-state [id]",
+		Use:   "toggle-issue-state [repository-id] [iid]",
 		Short: "Toggles issue state",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -177,7 +187,7 @@ func CmdToggleIssueState() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgToggleIssueState(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgToggleIssueState(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -192,16 +202,19 @@ func CmdToggleIssueState() *cobra.Command {
 
 func CmdAddIssueAssignees() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-issue-assignees [id] [assignees]",
+		Use:   "add-issue-assignees [repository-id] [iid] [assignees]",
 		Short: "Add issue assignees",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsAssignees := strings.Split(args[1], ",")
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsAssignees := strings.Split(args[2], ",")
 			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
 				argsAssignees = nil
 			}
@@ -211,7 +224,7 @@ func CmdAddIssueAssignees() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAddIssueAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			msg := types.NewMsgAddIssueAssignees(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -226,16 +239,19 @@ func CmdAddIssueAssignees() *cobra.Command {
 
 func CmdRemoveIssueAssignees() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-issue-assignees [id] [assignees]",
+		Use:   "remove-issue-assignees [repository-id] [iid] [assignees]",
 		Short: "Remove issue assignees",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsAssignees := strings.Split(args[1], ",")
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsAssignees := strings.Split(args[2], ",")
 			if len(argsAssignees) == 1 && argsAssignees[0] == "" {
 				argsAssignees = nil
 			}
@@ -245,7 +261,7 @@ func CmdRemoveIssueAssignees() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRemoveIssueAssignees(clientCtx.GetFromAddress().String(), id, argsAssignees)
+			msg := types.NewMsgRemoveIssueAssignees(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, argsAssignees)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -260,16 +276,19 @@ func CmdRemoveIssueAssignees() *cobra.Command {
 
 func CmdAddIssueLabels() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-issue-labels [id] [labels]",
+		Use:   "add-issue-labels [repository-id] [iid] [labels]",
 		Short: "Add issue labels",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsLabels := strings.Split(args[1], ",")
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsLabels := strings.Split(args[2], ",")
 			labelIds, err := utils.SliceAtoi(argsLabels)
 			if err != nil {
 				return err
@@ -280,7 +299,7 @@ func CmdAddIssueLabels() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAddIssueLabels(clientCtx.GetFromAddress().String(), id, labelIds)
+			msg := types.NewMsgAddIssueLabels(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, labelIds)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -295,16 +314,19 @@ func CmdAddIssueLabels() *cobra.Command {
 
 func CmdRemoveIssueLabels() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "remove-issue-labels [id] [labels]",
+		Use:   "remove-issue-labels [repository-id] [iid] [labels]",
 		Short: "Remove issue labels",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
-
-			argsLabels := strings.Split(args[1], ",")
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsLabels := strings.Split(args[2], ",")
 			labelIds, err := utils.SliceAtoi(argsLabels)
 			if err != nil {
 				return err
@@ -315,7 +337,7 @@ func CmdRemoveIssueLabels() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), id, labelIds)
+			msg := types.NewMsgRemoveIssueLabels(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, labelIds)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -330,11 +352,15 @@ func CmdRemoveIssueLabels() *cobra.Command {
 
 func CmdDeleteIssue() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-issue [id]",
+		Use:   "delete-issue [repository-id] [iid]",
 		Short: "Delete a issue by id",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsIid, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -344,7 +370,7 @@ func CmdDeleteIssue() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteIssue(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeleteIssue(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

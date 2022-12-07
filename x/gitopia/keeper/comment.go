@@ -43,9 +43,21 @@ func (k Keeper) AppendComment(
 	// Set the ID of the appended value
 	comment.Id = count
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
+	var store prefix.Store
+	if comment.Parent == types.CommentParentIssue {
+		store = prefix.NewStore(
+			ctx.KVStore(k.storeKey),
+			types.KeyPrefix(types.GetCommentKeyForIssue(comment.RepositoryId, comment.ParentIid)),
+		)
+	} else {
+		store = prefix.NewStore(
+			ctx.KVStore(k.storeKey),
+			types.KeyPrefix(types.GetCommentKeyForPullRequest(comment.RepositoryId, comment.ParentIid)),
+		)
+	}
+
 	appendedValue := k.cdc.MustMarshal(&comment)
-	store.Set(GetCommentIDBytes(comment.Id), appendedValue)
+	store.Set(GetCommentIDBytes(comment.CommentIid), appendedValue)
 
 	// Update comment count
 	k.SetCommentCount(ctx, count+1)
@@ -55,15 +67,29 @@ func (k Keeper) AppendComment(
 
 // SetComment set a specific comment in the store
 func (k Keeper) SetComment(ctx sdk.Context, comment types.Comment) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
+	var store prefix.Store
+	if comment.Parent == types.CommentParentIssue {
+		store = prefix.NewStore(
+			ctx.KVStore(k.storeKey),
+			types.KeyPrefix(types.GetCommentKeyForIssue(comment.RepositoryId, comment.ParentIid)),
+		)
+	} else {
+		store = prefix.NewStore(
+			ctx.KVStore(k.storeKey),
+			types.KeyPrefix(types.GetCommentKeyForPullRequest(comment.RepositoryId, comment.ParentIid)),
+		)
+	}
 	b := k.cdc.MustMarshal(&comment)
-	store.Set(GetCommentIDBytes(comment.Id), b)
+	store.Set(GetCommentIDBytes(comment.CommentIid), b)
 }
 
-// GetComment returns a comment from its id
-func (k Keeper) GetComment(ctx sdk.Context, id uint64) (val types.Comment, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	b := store.Get(GetCommentIDBytes(id))
+// GetIssueComment returns a comment from its id
+func (k Keeper) GetIssueComment(ctx sdk.Context, repositoryId uint64, issueIid uint64, commentIid uint64) (val types.Comment, found bool) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForIssue(repositoryId, issueIid)),
+	)
+	b := store.Get(GetCommentIDBytes(commentIid))
 	if b == nil {
 		return val, false
 	}
@@ -71,15 +97,79 @@ func (k Keeper) GetComment(ctx sdk.Context, id uint64) (val types.Comment, found
 	return val, true
 }
 
-// RemoveComment removes a comment from the store
-func (k Keeper) RemoveComment(ctx sdk.Context, id uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
-	store.Delete(GetCommentIDBytes(id))
+// GetPullRequestComment returns a comment from its id
+func (k Keeper) GetPullRequestComment(ctx sdk.Context, repositoryId uint64, pullRequestIid uint64, commentIid uint64) (val types.Comment, found bool) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForPullRequest(repositoryId, pullRequestIid)),
+	)
+	b := store.Get(GetCommentIDBytes(commentIid))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
+// RemoveIssueComment removes a comment from the store
+func (k Keeper) RemoveIssueComment(ctx sdk.Context, repositoryId uint64, issueIid uint64, commentIid uint64) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForIssue(repositoryId, issueIid)),
+	)
+	store.Delete(GetCommentIDBytes(commentIid))
+}
+
+// RemovePullRequestComment removes a comment from the store
+func (k Keeper) RemovePullRequestComment(ctx sdk.Context, repositoryId uint64, pullRequestIid uint64, commentIid uint64) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForPullRequest(repositoryId, pullRequestIid)),
+	)
+	store.Delete(GetCommentIDBytes(commentIid))
 }
 
 // GetAllComment returns all comment
 func (k Keeper) GetAllComment(ctx sdk.Context) (list []types.Comment) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CommentKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Comment
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetAllIssueComment returns all issue comment for repository
+func (k Keeper) GetAllIssueComment(ctx sdk.Context, repositoryId uint64, issueIid uint64) (list []types.Comment) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForIssue(repositoryId, issueIid)),
+	)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Comment
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetAllPullRequestComment returns all issue comment for repository
+func (k Keeper) GetAllPullRequestComment(ctx sdk.Context, repositoryId uint64, pullRequestIid uint64) (list []types.Comment) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetCommentKeyForPullRequest(repositoryId, pullRequestIid)),
+	)
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

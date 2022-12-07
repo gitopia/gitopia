@@ -895,14 +895,14 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repositor
 		DecoupleForkRepository(ctx, k, fork)
 	}
 
-	for _, i := range repository.Issues {
-		issue, _ := k.GetIssue(ctx, i.Id)
-		DoRemoveIssue(ctx, k, issue, repository)
+	repositoryIssues := k.GetAllRepositoryIssue(ctx, repository.Id)
+	for _, i := range repositoryIssues {
+		DoRemoveIssue(ctx, k, i, repository)
 	}
 
-	for _, pr := range repository.PullRequests {
-		pullRequest, _ := k.GetPullRequest(ctx, pr.Id)
-		DoRemovePullRequest(ctx, k, pullRequest, repository)
+	repositoryPullRequests := k.GetAllRepositoryPullRequest(ctx, repository.Id)
+	for _, pr := range repositoryPullRequests {
+		DoRemovePullRequest(ctx, k, pr, repository)
 	}
 
 	for _, r := range repository.Releases {

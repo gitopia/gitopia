@@ -12,7 +12,7 @@ import (
 
 func TestCommentMsgServerCreate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
-	users, _, issueId, pullRequestId := setupPreComment(ctx, t, srv)
+	users, _, _, _ := setupPreComment(ctx, t, srv)
 
 	for _, tc := range []struct {
 		desc    string
@@ -21,26 +21,26 @@ func TestCommentMsgServerCreate(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgCreateComment{Creator: "C", ParentId: 0, CommentType: "ISSUE"},
+			request: &types.MsgCreateComment{Creator: "C", ParentIid: 1, Parent: types.CommentParentIssue},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Issue Not Exists",
-			request: &types.MsgCreateComment{Creator: users[0], ParentId: 10, CommentType: "ISSUE"},
+			request: &types.MsgCreateComment{Creator: users[0], ParentIid: 10, Parent: types.CommentParentIssue},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgCreateComment{Creator: users[0], ParentId: 10, CommentType: "PULLREQUEST"},
+			request: &types.MsgCreateComment{Creator: users[0], ParentIid: 10, Parent: types.CommentParentPullRequest},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Issue Comment Completed",
-			request: &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"},
+			request: &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue},
 		},
 		{
 			desc:    "Pull Request Comment Completed",
-			request: &types.MsgCreateComment{Creator: users[0], ParentId: pullRequestId, CommentType: "PULLREQUEST"},
+			request: &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentPullRequest},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -56,8 +56,8 @@ func TestCommentMsgServerCreate(t *testing.T) {
 
 func TestCommentMsgServerUpdate(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
-	users, _, issueId, _ := setupPreComment(ctx, t, srv)
-	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"})
+	users, _, _, _ := setupPreComment(ctx, t, srv)
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -67,22 +67,22 @@ func TestCommentMsgServerUpdate(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgUpdateComment{Id: 0, Creator: "C"},
+			request: &types.MsgUpdateComment{Creator: "C", ParentIid: 1, Parent: types.CommentParentIssue},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Comment Not Exists",
-			request: &types.MsgUpdateComment{Id: 10, Creator: users[0]},
+			request: &types.MsgUpdateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateComment{Id: 0, Creator: users[1]},
+			request: &types.MsgUpdateComment{Creator: users[1], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdateComment{Id: 0, Creator: users[0]},
+			request: &types.MsgUpdateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -98,8 +98,8 @@ func TestCommentMsgServerUpdate(t *testing.T) {
 
 func TestCommentMsgServerDelete(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
-	users, _, issueId, _ := setupPreComment(ctx, t, srv)
-	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentId: issueId, CommentType: "ISSUE"})
+	users, _, _, _ := setupPreComment(ctx, t, srv)
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -109,16 +109,16 @@ func TestCommentMsgServerDelete(t *testing.T) {
 	}{
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgDeleteComment{Creator: users[1], Id: 0},
+			request: &types.MsgDeleteComment{Creator: users[1], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgDeleteComment{Creator: users[0], Id: 0},
+			request: &types.MsgDeleteComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
 		},
 		{
 			desc:    "KeyNotFound",
-			request: &types.MsgDeleteComment{Creator: users[0], Id: 0},
+			request: &types.MsgDeleteComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {

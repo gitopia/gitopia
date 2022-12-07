@@ -50,12 +50,6 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 			request: &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[0]},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
-
-		{
-			desc:    "Unauthorized",
-			request: &types.MsgCreatePullRequest{Creator: users[1], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]},
-			err:     sdkerrors.ErrUnauthorized,
-		},
 		{
 			desc:    "Completed",
 			request: &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]},
@@ -91,21 +85,21 @@ func TestPullRequestMsgServerUpdateTitle(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdatePullRequestTitle{Id: 0, Creator: users[0]},
+			request: &types.MsgUpdatePullRequestTitle{Creator: users[0], RepositoryId: 0, Iid: 1},
 		},
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgUpdatePullRequestTitle{Id: 0, Creator: "C"},
+			request: &types.MsgUpdatePullRequestTitle{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgUpdatePullRequestTitle{Id: 10, Creator: users[0]},
+			request: &types.MsgUpdatePullRequestTitle{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdatePullRequestTitle{Id: 0, Creator: users[1], Title: "title"},
+			request: &types.MsgUpdatePullRequestTitle{Creator: users[1], RepositoryId: 0, Iid: 1, Title: "title"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
@@ -134,21 +128,21 @@ func TestPullRequestMsgServerUpdateDescription(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdatePullRequestDescription{Id: 0, Creator: users[0]},
+			request: &types.MsgUpdatePullRequestDescription{Creator: users[0], RepositoryId: 0, Iid: 1},
 		},
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgUpdatePullRequestDescription{Id: 0, Creator: "C"},
+			request: &types.MsgUpdatePullRequestDescription{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgUpdatePullRequestDescription{Id: 10, Creator: users[0]},
+			request: &types.MsgUpdatePullRequestDescription{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdatePullRequestDescription{Id: 0, Creator: users[1], Description: "description"},
+			request: &types.MsgUpdatePullRequestDescription{Creator: users[1], RepositoryId: 0, Iid: 1, Description: "description"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 	} {
@@ -177,32 +171,32 @@ func TestPullRequestMsgServerSetState(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgSetPullRequestState{Id: 0, Creator: "C", State: "CLOSED"},
+			request: &types.MsgSetPullRequestState{Creator: "C", RepositoryId: 0, Iid: 1, State: "CLOSED"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgSetPullRequestState{Id: 10, Creator: users[0], State: "CLOSED"},
+			request: &types.MsgSetPullRequestState{Creator: users[0], RepositoryId: 0, Iid: 0, State: "CLOSED"},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Invalid State",
-			request: &types.MsgSetPullRequestState{Id: 0, Creator: users[0], State: "INVALID"},
+			request: &types.MsgSetPullRequestState{Creator: users[0], RepositoryId: 0, Iid: 1, State: "INVALID"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Invalid State Change",
-			request: &types.MsgSetPullRequestState{Id: 0, Creator: users[0], State: "OPEN"},
+			request: &types.MsgSetPullRequestState{Creator: users[0], RepositoryId: 0, Iid: 1, State: "OPEN"},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgSetPullRequestState{Id: 0, Creator: users[1], State: "CLOSED"},
+			request: &types.MsgSetPullRequestState{Creator: users[1], RepositoryId: 0, Iid: 1, State: "CLOSED"},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgSetPullRequestState{Id: 0, Creator: users[0], State: "CLOSED"},
+			request: &types.MsgSetPullRequestState{Creator: users[0], RepositoryId: 0, Iid: 1, State: "CLOSED"},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -230,31 +224,31 @@ func TestPullRequestMsgServerAddReviewers(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgAddPullRequestReviewers{Id: 0, Creator: "C"},
+			request: &types.MsgAddPullRequestReviewers{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgAddPullRequestReviewers{Id: 10, Creator: users[0]},
+			request: &types.MsgAddPullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Reviewer Not Exists",
-			request: &types.MsgAddPullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{"C"}},
+			request: &types.MsgAddPullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{"C"}},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgAddPullRequestReviewers{Id: 0, Creator: users[1]},
+			request: &types.MsgAddPullRequestReviewers{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgAddPullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{users[1]}},
+			request: &types.MsgAddPullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{users[1]}},
 		},
 		{
 			desc:    "Reviewer Already Assigned",
-			request: &types.MsgAddPullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{users[1]}},
+			request: &types.MsgAddPullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{users[1]}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -275,7 +269,7 @@ func TestPullRequestMsgServerRemoveReviewers(t *testing.T) {
 	users, repositoryId, branches := setupPrePullRequest(ctx, t, srv)
 	_, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
 	require.NoError(t, err)
-	_, err = srv.AddPullRequestReviewers(ctx, &types.MsgAddPullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{users[1]}})
+	_, err = srv.AddPullRequestReviewers(ctx, &types.MsgAddPullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{users[1]}})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -285,26 +279,26 @@ func TestPullRequestMsgServerRemoveReviewers(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgRemovePullRequestReviewers{Id: 0, Creator: "C"},
+			request: &types.MsgRemovePullRequestReviewers{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgRemovePullRequestReviewers{Id: 10, Creator: users[0]},
+			request: &types.MsgRemovePullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgRemovePullRequestReviewers{Id: 0, Creator: users[1]},
+			request: &types.MsgRemovePullRequestReviewers{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgRemovePullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{users[1]}},
+			request: &types.MsgRemovePullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{users[1]}},
 		},
 		{
 			desc:    "Reviewer Not Assigned",
-			request: &types.MsgRemovePullRequestReviewers{Id: 0, Creator: users[0], Reviewers: []string{users[1]}},
+			request: &types.MsgRemovePullRequestReviewers{Creator: users[0], RepositoryId: 0, Iid: 1, Reviewers: []string{users[1]}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -334,31 +328,31 @@ func TestPullRequestMsgServerAddAssignees(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgAddPullRequestAssignees{Id: 0, Creator: "C"},
+			request: &types.MsgAddPullRequestAssignees{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgAddPullRequestAssignees{Id: 10, Creator: users[0]},
+			request: &types.MsgAddPullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Assignee Not Exists",
-			request: &types.MsgAddPullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{"C"}},
+			request: &types.MsgAddPullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{"C"}},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgAddPullRequestAssignees{Id: 0, Creator: users[1]},
+			request: &types.MsgAddPullRequestAssignees{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgAddPullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{users[1]}},
+			request: &types.MsgAddPullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{users[1]}},
 		},
 		{
 			desc:    "Assignee Already Assigned",
-			request: &types.MsgAddPullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{users[1]}},
+			request: &types.MsgAddPullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{users[1]}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -379,7 +373,7 @@ func TestPullRequestMsgServerRemoveAssignees(t *testing.T) {
 	users, repositoryId, branches := setupPrePullRequest(ctx, t, srv)
 	_, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
 	require.NoError(t, err)
-	_, err = srv.AddPullRequestAssignees(ctx, &types.MsgAddPullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{users[1]}})
+	_, err = srv.AddPullRequestAssignees(ctx, &types.MsgAddPullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{users[1]}})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -390,26 +384,26 @@ func TestPullRequestMsgServerRemoveAssignees(t *testing.T) {
 
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgRemovePullRequestAssignees{Id: 0, Creator: "C"},
+			request: &types.MsgRemovePullRequestAssignees{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgRemovePullRequestAssignees{Id: 10, Creator: users[0]},
+			request: &types.MsgRemovePullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgRemovePullRequestAssignees{Id: 0, Creator: users[1]},
+			request: &types.MsgRemovePullRequestAssignees{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgRemovePullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{users[1]}},
+			request: &types.MsgRemovePullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{users[1]}},
 		},
 		{
 			desc:    "Assignee Not Assigned",
-			request: &types.MsgRemovePullRequestAssignees{Id: 0, Creator: users[0], Assignees: []string{users[1]}},
+			request: &types.MsgRemovePullRequestAssignees{Creator: users[0], RepositoryId: 0, Iid: 1, Assignees: []string{users[1]}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -440,31 +434,31 @@ func TestPullRequestMsgServerAddLabels(t *testing.T) {
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: "C"},
+			request: &types.MsgAddPullRequestLabels{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 10, Creator: users[0]},
+			request: &types.MsgAddPullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "LabelId Not Exists",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{3}},
+			request: &types.MsgAddPullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{3}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: users[1]},
+			request: &types.MsgAddPullRequestLabels{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{1}},
+			request: &types.MsgAddPullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{1}},
 		},
 		{
 			desc:    "LabelId Already Assigned",
-			request: &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{1}},
+			request: &types.MsgAddPullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{1}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -487,7 +481,7 @@ func TestPullRequestMsgServerRemoveLabels(t *testing.T) {
 	require.NoError(t, err)
 	_, err = srv.CreateRepositoryLabel(ctx, &types.MsgCreateRepositoryLabel{Creator: users[0], RepositoryId: repositoryId, Name: "label"})
 	require.NoError(t, err)
-	_, err = srv.AddPullRequestLabels(ctx, &types.MsgAddPullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{1}})
+	_, err = srv.AddPullRequestLabels(ctx, &types.MsgAddPullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{1}})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -498,31 +492,31 @@ func TestPullRequestMsgServerRemoveLabels(t *testing.T) {
 
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 0, Creator: "C"},
+			request: &types.MsgRemovePullRequestLabels{Creator: "C", RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "PullRequest Not Exists",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 10, Creator: users[0]},
+			request: &types.MsgRemovePullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "LabelId Not Exists",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{3}},
+			request: &types.MsgRemovePullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{3}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 0, Creator: users[1]},
+			request: &types.MsgRemovePullRequestLabels{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{1}},
+			request: &types.MsgRemovePullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{1}},
 		},
 		{
 			desc:    "LabelId Not Assigned",
-			request: &types.MsgRemovePullRequestLabels{PullRequestId: 0, Creator: users[0], LabelIds: []uint64{1}},
+			request: &types.MsgRemovePullRequestLabels{Creator: users[0], RepositoryId: 0, Iid: 1, LabelIds: []uint64{1}},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -551,16 +545,16 @@ func TestPullRequestMsgServerDelete(t *testing.T) {
 	}{
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgDeletePullRequest{Creator: users[1], Id: 0},
+			request: &types.MsgDeletePullRequest{Creator: users[1], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Valid",
-			request: &types.MsgDeletePullRequest{Creator: users[0], Id: 0},
+			request: &types.MsgDeletePullRequest{Creator: users[0], RepositoryId: 0, Iid: 1},
 		},
 		{
 			desc:    "KeyNotFound",
-			request: &types.MsgDeletePullRequest{Creator: users[0], Id: 0},
+			request: &types.MsgDeletePullRequest{Creator: users[0], RepositoryId: 0, Iid: 1},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {

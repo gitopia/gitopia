@@ -13,6 +13,8 @@ import (
 func createNIssue(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Issue {
 	items := make([]types.Issue, n)
 	for i := range items {
+		items[i].RepositoryId = 0
+		items[i].Iid = uint64(i) + 1
 		items[i].Id = keeper.AppendIssue(ctx, items[i])
 	}
 	return items
@@ -22,7 +24,7 @@ func TestIssueGet(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNIssue(keeper, ctx, 10)
 	for _, item := range items {
-		got, found := keeper.GetIssue(ctx, item.Id)
+		got, found := keeper.GetRepositoryIssue(ctx, item.RepositoryId, item.Iid)
 		require.True(t, found)
 		require.Equal(t, item, got)
 	}
@@ -32,8 +34,8 @@ func TestIssueRemove(t *testing.T) {
 	keeper, ctx := keepertest.GitopiaKeeper(t)
 	items := createNIssue(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveIssue(ctx, item.Id)
-		_, found := keeper.GetIssue(ctx, item.Id)
+		keeper.RemoveRepositoryIssue(ctx, item.RepositoryId, item.Iid)
+		_, found := keeper.GetRepositoryIssue(ctx, item.RepositoryId, item.Iid)
 		require.False(t, found)
 	}
 }

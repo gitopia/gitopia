@@ -108,17 +108,10 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
 	}
 
-
-	// Queries a pullRequest by id.
-	rpc PullRequest(QueryGetPullRequestRequest) returns (QueryGetPullRequestResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest/{id}";
-	}
-
 	// Queries a list of pullRequest items.
 	rpc PullRequestAll(QueryAllPullRequestRequest) returns (QueryAllPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest";
 	}
-
 
 	// Queries a Dao by id.
 	rpc Dao(QueryGetDaoRequest) returns (QueryGetDaoResponse) {
@@ -130,19 +123,29 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao";
 	}
 
-	// Queries a comment by id.
-	rpc Comment(QueryGetCommentRequest) returns (QueryGetCommentResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment/{id}";
+	// Queries a issue comment.
+	rpc IssueComment(QueryGetIssueCommentRequest) returns (QueryGetIssueCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment/{commentIid}";
 	}
 
-	// Queries a list of comment items.
+	// Queries a pullrequest comment.
+	rpc PullRequestComment(QueryGetPullRequestCommentRequest) returns (QueryGetPullRequestCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment/{commentIid}";
+	}
+
+	// Queries a list of comment.
 	rpc CommentAll(QueryAllCommentRequest) returns (QueryAllCommentResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment";
 	}
 
-	// Queries a issue by id.
-	rpc Issue(QueryGetIssueRequest) returns (QueryGetIssueResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue/{id}";
+	// Queries a list of issue comment.
+	rpc IssueCommentAll(QueryAllIssueCommentRequest) returns (QueryAllIssueCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment";
+	}
+
+	// Queries a list of pullrequest comment.
+	rpc PullRequestCommentAll(QueryAllPullRequestCommentRequest) returns (QueryAllPullRequestCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment";
 	}
 
 	// Queries a list of issue items.
@@ -162,21 +165,22 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases";
 	}
 
-	// Queries a repository by id.
+	// Queries a repository issue by iid.
 	rpc RepositoryIssue(QueryGetRepositoryIssueRequest) returns (QueryGetRepositoryIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}";
 	}
 
-	// Queries a list of repository items.
+	// Queries a list of repository issue.
 	rpc RepositoryIssueAll(QueryAllRepositoryIssueRequest) returns (QueryAllRepositoryIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue";
 	}
 
-	// Queries a repository pullRequest by id.
+	// Queries a repository pullRequest.
 	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}";
 	}
 
+	// Queries a list of repository pullRequest.
 	rpc RepositoryPullRequestAll(QueryAllRepositoryPullRequestRequest) returns (QueryAllRepositoryPullRequestResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull";
 	}
@@ -232,7 +236,7 @@ service Query {
 	}
 
 	rpc PullRequestMergePermission(QueryGetPullRequestMergePermissionRequest) returns (QueryGetPullRequestMergePermissionResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/pull/{pullId}/merge";
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge";
 	}
 
 	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
@@ -407,7 +411,8 @@ message QueryAllBountyResponse {
 // this line is used by starport scaffolding # 3
 message QueryGetPullRequestMergePermissionRequest {
 	string userId = 1;
-	uint64 pullId = 2;
+	uint64 repositoryId = 2;
+	uint64 pullIid = 3;
 }
 
 message QueryGetPullRequestMergePermissionResponse {
@@ -465,11 +470,23 @@ message QueryAllDaoResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetCommentRequest {
-	uint64 id = 1;
+message QueryGetIssueCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 issueIid = 2;
+	uint64 commentIid = 3;
 }
 
-message QueryGetCommentResponse {
+message QueryGetIssueCommentResponse {
+	Comment Comment = 1;
+}
+
+message QueryGetPullRequestCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 pullRequestIid = 2;
+	uint64 commentIid = 3;
+}
+
+message QueryGetPullRequestCommentResponse {
 	Comment Comment = 1;
 }
 
@@ -481,12 +498,27 @@ message QueryAllCommentResponse {
 	repeated Comment Comment = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
-message QueryGetIssueRequest {
-	uint64 id = 1;
+
+message QueryAllIssueCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 issueIid = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 
-message QueryGetIssueResponse {
-	Issue Issue = 1;
+message QueryAllIssueCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllPullRequestCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 pullRequestIid = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllPullRequestCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryAllIssueRequest {
