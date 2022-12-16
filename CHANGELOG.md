@@ -2,8 +2,9 @@
 
 All notable changes will be documented here.
 
-## [Unreleased] - 20XX-XX-XX
+## [v1.3.0] - 20XX-XX-XX
 
+- Bump cosmos-sdk version to v0.46.7 and tendermint version to v0.34.24
 - KV changes for issue, pullrequest and comment. 
 - Removed `issues` and `pullRequests` from Repository proto
 - UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, DeleteIssue, UpdatePullRequestTitle, UpdatePullRequestDescription, InvokeMergePullRequest, SetPullRequestState, AddPullRequestReviewers, RemovePullRequestReviewers, AddPullRequestAssignees, RemovePullRequestAssignees, LinkPullRequestIssueByIid, UnlinkPullRequestIssueByIid, AddPullRequestLabels, RemovePullRequestLabels, and DeletePullRequest tx takes `repositoryId` and `iid` instead of `id`.
