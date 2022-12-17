@@ -457,6 +457,7 @@ func NewGitopiaApp(
 		app.AccountKeeper,
 		app.AuthzKeeper,
 		app.BankKeeper,
+		app.MintKeeper,
 	)
 
 	gitopiaModule := gitopia.NewAppModule(appCodec, app.GitopiaKeeper)

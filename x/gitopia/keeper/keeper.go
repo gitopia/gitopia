@@ -11,6 +11,7 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	v010 "github.com/gitopia/gitopia/x/gitopia/migrations/v010"
 
@@ -28,7 +29,7 @@ type (
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
 		bankKeeper    bankKeeper.Keeper
-
+		mintKeeper    mintkeeper.Keeper
 		// this line is used by starport scaffolding # ibc/keeper/attribute
 	}
 )
@@ -41,18 +42,19 @@ func NewKeeper(
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
+	mintKeeper mintkeeper.Keeper,
 	// this line is used by starport scaffolding # ibc/keeper/parameter
 ) *Keeper {
 	return &Keeper{
-		cdc:      cdc,
-		storeKey: storeKey,
-		memKey:   memKey,
+		cdc:        cdc,
+		storeKey:   storeKey,
+		memKey:     memKey,
 		paramstore: paramStore,
 
 		accountKeeper: ak,
 		authzKeeper:   authzKeeper,
 		bankKeeper:    bankKeeper,
-
+		mintKeeper:    mintKeeper,
 		// this line is used by starport scaffolding # ibc/keeper/return
 	}
 }
