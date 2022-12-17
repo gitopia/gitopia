@@ -9,6 +9,9 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, params min
 	gitopiaParams := k.GetParams(ctx)
 	if ctx.BlockTime().After(gitopiaParams.NextInflationTime) {
 		minter.Inflation = minter.Inflation.Quo(sdk.NewDec(2))
+		params.InflationMax = params.InflationMax.Quo(sdk.NewDec(2))
+		params.InflationMin = params.InflationMin.Quo(sdk.NewDec(2))
+	
 		gitopiaParams.NextInflationTime = gitopiaParams.NextInflationTime.AddDate(2, 0, 0)
 		k.SetParams(ctx, gitopiaParams)
 	}

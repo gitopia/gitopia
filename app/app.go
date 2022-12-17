@@ -453,6 +453,7 @@ func NewGitopiaApp(
 		appCodec,
 		keys[gitopiatypes.StoreKey],
 		keys[gitopiatypes.MemStoreKey],
+		app.GetSubspace(gitopiatypes.ModuleName),
 		app.AccountKeeper,
 		app.AuthzKeeper,
 		app.BankKeeper,
