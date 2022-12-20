@@ -236,12 +236,12 @@ const (
 )
 
 const (
-	EventAttributeBountyIdKey       = "BountyId"
-	EventAttributeBountyAmountKey   = "BountyAmount"
-	EventAttributeBountyStateKey    = "BountyState"
-	EventAttributeBountyParentKey   = "BountyParent"
-	EventAttributeBountyParentIdKey = "BountyParentId"
-	EventAttributeBountyExpiry      = "BountyExpiry"
+	EventAttributeBountyIdKey        = "BountyId"
+	EventAttributeBountyAmountKey    = "BountyAmount"
+	EventAttributeBountyStateKey     = "BountyState"
+	EventAttributeBountyParentKey    = "BountyParent"
+	EventAttributeBountyParentIidKey = "BountyParentIid"
+	EventAttributeBountyExpiry       = "BountyExpiry"
 )
 
 const (
