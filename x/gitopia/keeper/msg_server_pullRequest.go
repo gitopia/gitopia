@@ -146,6 +146,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestTitleKey, pullRequest.Title),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
 			sdk.NewAttribute(types.EventAttributePullRequestDraftKey, strconv.FormatBool(pullRequest.Draft)),
 			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
@@ -277,6 +278,7 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
 		),
 	)

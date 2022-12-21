@@ -125,6 +125,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
+			sdk.NewAttribute(types.EventAttributeIssueDescriptionKey, issue.Description),
 			sdk.NewAttribute(types.EventAttributeIssueStateKey, issue.State.String()),
 			sdk.NewAttribute(types.EventAttributeAssigneesKey, string(assigneesJson)),
 			sdk.NewAttribute(types.EventAttributeLabelsKey, string(labelsJson)),
@@ -262,6 +263,7 @@ func (k msgServer) UpdateIssueDescription(goCtx context.Context, msg *types.MsgU
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueDescriptionKey, issue.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(issue.UpdatedAt, 10)),
 		),
 	)
