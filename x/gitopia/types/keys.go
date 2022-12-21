@@ -23,6 +23,10 @@ const (
 
 // this line is used by starport scaffolding # ibc/keys/port
 
+var (
+	ParamsKey = []byte{0x00}
+)
+
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }

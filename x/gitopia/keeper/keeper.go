@@ -12,7 +12,6 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	v010 "github.com/gitopia/gitopia/x/gitopia/migrations/v010"
 
 	"github.com/gitopia/gitopia/x/gitopia/types"
@@ -24,7 +23,6 @@ type (
 		cdc        codec.BinaryCodec
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
 
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
@@ -38,7 +36,6 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
-	paramStore paramtypes.Subspace,
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
@@ -49,7 +46,6 @@ func NewKeeper(
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
-		paramstore: paramStore,
 
 		accountKeeper: ak,
 		authzKeeper:   authzKeeper,
