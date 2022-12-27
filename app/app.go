@@ -453,6 +453,7 @@ func NewGitopiaApp(
 		appCodec,
 		keys[gitopiatypes.StoreKey],
 		keys[gitopiatypes.MemStoreKey],
+		authtypes.FeeCollectorName,
 		app.AccountKeeper,
 		app.AuthzKeeper,
 		app.BankKeeper,
@@ -529,6 +530,9 @@ func NewGitopiaApp(
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
+		// NOTE: must be ordered after mint module and before distribution module
+		// this is required for minted token distribution
+		gitopiatypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -543,7 +547,6 @@ func NewGitopiaApp(
 		authz.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		gitopiatypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(

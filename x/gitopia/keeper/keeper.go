@@ -20,9 +20,10 @@ import (
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
+		cdc              codec.BinaryCodec
+		storeKey         storetypes.StoreKey
+		memKey           storetypes.StoreKey
+		feeCollectorName string
 
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
@@ -36,6 +37,7 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
+	feeCollectorName string,
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
@@ -43,9 +45,10 @@ func NewKeeper(
 	// this line is used by starport scaffolding # ibc/keeper/parameter
 ) *Keeper {
 	return &Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
+		cdc:              cdc,
+		storeKey:         storeKey,
+		memKey:           memKey,
+		feeCollectorName: feeCollectorName,
 
 		accountKeeper: ak,
 		authzKeeper:   authzKeeper,

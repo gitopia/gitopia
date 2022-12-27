@@ -27,15 +27,120 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type DistributionProportion struct {
+	Address    string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty" yaml:"address"`
+	Proportion int64  `protobuf:"varint,2,opt,name=proportion,proto3" json:"proportion,omitempty" yaml:"proportion"`
+}
+
+func (m *DistributionProportion) Reset()         { *m = DistributionProportion{} }
+func (m *DistributionProportion) String() string { return proto.CompactTextString(m) }
+func (*DistributionProportion) ProtoMessage()    {}
+func (*DistributionProportion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cdae11692a018c3a, []int{0}
+}
+func (m *DistributionProportion) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DistributionProportion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DistributionProportion.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DistributionProportion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DistributionProportion.Merge(m, src)
+}
+func (m *DistributionProportion) XXX_Size() int {
+	return m.Size()
+}
+func (m *DistributionProportion) XXX_DiscardUnknown() {
+	xxx_messageInfo_DistributionProportion.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DistributionProportion proto.InternalMessageInfo
+
+func (m *DistributionProportion) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *DistributionProportion) GetProportion() int64 {
+	if m != nil {
+		return m.Proportion
+	}
+	return 0
+}
+
+type DistributionProportions struct {
+	EcosystemProportion DistributionProportion `protobuf:"bytes,1,opt,name=EcosystemProportion,proto3" json:"EcosystemProportion" yaml:"ecosystem_proportion"`
+	TeamProportion      DistributionProportion `protobuf:"bytes,2,opt,name=TeamProportion,proto3" json:"TeamProportion" yaml:"team_proportion"`
+}
+
+func (m *DistributionProportions) Reset()         { *m = DistributionProportions{} }
+func (m *DistributionProportions) String() string { return proto.CompactTextString(m) }
+func (*DistributionProportions) ProtoMessage()    {}
+func (*DistributionProportions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cdae11692a018c3a, []int{1}
+}
+func (m *DistributionProportions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DistributionProportions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DistributionProportions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DistributionProportions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DistributionProportions.Merge(m, src)
+}
+func (m *DistributionProportions) XXX_Size() int {
+	return m.Size()
+}
+func (m *DistributionProportions) XXX_DiscardUnknown() {
+	xxx_messageInfo_DistributionProportions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DistributionProportions proto.InternalMessageInfo
+
+func (m *DistributionProportions) GetEcosystemProportion() DistributionProportion {
+	if m != nil {
+		return m.EcosystemProportion
+	}
+	return DistributionProportion{}
+}
+
+func (m *DistributionProportions) GetTeamProportion() DistributionProportion {
+	if m != nil {
+		return m.TeamProportion
+	}
+	return DistributionProportion{}
+}
+
 // Params defines the parameters for the module.
 type Params struct {
-	NextInflationTime time.Time `protobuf:"bytes,1,opt,name=nextInflationTime,proto3,stdtime" json:"nextInflationTime" yaml:"next_inflation_time"`
+	NextInflationTime       time.Time               `protobuf:"bytes,1,opt,name=NextInflationTime,proto3,stdtime" json:"NextInflationTime" yaml:"next_inflation_time"`
+	DistributionProportions DistributionProportions `protobuf:"bytes,2,opt,name=DistributionProportions,proto3" json:"DistributionProportions" yaml:"distribution_proportions"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
 func (*Params) ProtoMessage() {}
 func (*Params) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cdae11692a018c3a, []int{0}
+	return fileDescriptor_cdae11692a018c3a, []int{2}
 }
 func (m *Params) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -71,29 +176,128 @@ func (m *Params) GetNextInflationTime() time.Time {
 	return time.Time{}
 }
 
+func (m *Params) GetDistributionProportions() DistributionProportions {
+	if m != nil {
+		return m.DistributionProportions
+	}
+	return DistributionProportions{}
+}
+
 func init() {
+	proto.RegisterType((*DistributionProportion)(nil), "gitopia.gitopia.gitopia.DistributionProportion")
+	proto.RegisterType((*DistributionProportions)(nil), "gitopia.gitopia.gitopia.DistributionProportions")
 	proto.RegisterType((*Params)(nil), "gitopia.gitopia.gitopia.Params")
 }
 
 func init() { proto.RegisterFile("gitopia/params.proto", fileDescriptor_cdae11692a018c3a) }
 
 var fileDescriptor_cdae11692a018c3a = []byte{
-	// 237 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x49, 0xcf, 0x2c, 0xc9,
-	0x2f, 0xc8, 0x4c, 0xd4, 0x2f, 0x48, 0x2c, 0x4a, 0xcc, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9,
-	0x17, 0x12, 0x87, 0x8a, 0xea, 0xa1, 0xd1, 0x52, 0x22, 0xe9, 0xf9, 0xe9, 0xf9, 0x60, 0x35, 0xfa,
-	0x20, 0x16, 0x44, 0xb9, 0x94, 0x7c, 0x7a, 0x7e, 0x7e, 0x7a, 0x4e, 0xaa, 0x3e, 0x98, 0x97, 0x54,
-	0x9a, 0xa6, 0x5f, 0x92, 0x99, 0x9b, 0x5a, 0x5c, 0x92, 0x98, 0x5b, 0x00, 0x51, 0xa0, 0xd4, 0xc0,
-	0xc8, 0xc5, 0x16, 0x00, 0xb6, 0x40, 0xa8, 0x80, 0x4b, 0x30, 0x2f, 0xb5, 0xa2, 0xc4, 0x33, 0x2f,
-	0x2d, 0x27, 0xb1, 0x24, 0x33, 0x3f, 0x2f, 0x24, 0x33, 0x37, 0x55, 0x82, 0x51, 0x81, 0x51, 0x83,
-	0xdb, 0x48, 0x4a, 0x0f, 0x62, 0x8e, 0x1e, 0xcc, 0x1c, 0xbd, 0x10, 0x98, 0x39, 0x4e, 0x6a, 0x27,
-	0xee, 0xc9, 0x33, 0x7c, 0xba, 0x27, 0x2f, 0x55, 0x99, 0x98, 0x9b, 0x63, 0xa5, 0x04, 0x32, 0x22,
-	0x3e, 0x13, 0x66, 0x46, 0x3c, 0xc8, 0x3e, 0xa5, 0x09, 0xf7, 0xe5, 0x19, 0x83, 0x30, 0x0d, 0xb7,
-	0x62, 0x99, 0xb1, 0x40, 0x9e, 0xc1, 0xc9, 0xe5, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4, 0x18,
-	0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf0, 0x58, 0x8e, 0xe1, 0xc2, 0x63, 0x39, 0x86, 0x1b, 0x8f, 0xe5,
-	0x18, 0xa2, 0xb4, 0xd2, 0x33, 0x4b, 0x32, 0x4a, 0x93, 0xf4, 0x92, 0xf3, 0x73, 0xf5, 0x61, 0xa1,
-	0x01, 0xa3, 0x2b, 0xe0, 0xac, 0x92, 0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0xb0, 0xd3, 0x8c, 0x01,
-	0x01, 0x00, 0x00, 0xff, 0xff, 0xa9, 0xce, 0xb1, 0xe1, 0x37, 0x01, 0x00, 0x00,
+	// 426 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x41, 0x8b, 0xd3, 0x40,
+	0x18, 0x86, 0x33, 0x51, 0x56, 0x1c, 0x61, 0x61, 0xc7, 0x75, 0x77, 0x89, 0x90, 0x59, 0x46, 0xd0,
+	0x45, 0x64, 0x22, 0x8a, 0x97, 0x1e, 0x43, 0x3d, 0x78, 0x91, 0x12, 0x7a, 0xf2, 0x52, 0x26, 0xed,
+	0x34, 0x0e, 0x34, 0x9d, 0x21, 0x33, 0xc5, 0xf6, 0xe0, 0xd5, 0x73, 0x41, 0x10, 0xc1, 0x8b, 0x3f,
+	0xa7, 0xc7, 0x1e, 0x3d, 0x45, 0x69, 0xff, 0x41, 0x7f, 0x81, 0x24, 0x93, 0xb4, 0xb1, 0xb6, 0x07,
+	0x3d, 0xcd, 0x24, 0xdf, 0x3b, 0xdf, 0xfb, 0xcc, 0xf7, 0x26, 0xf0, 0x3c, 0x11, 0x46, 0x2a, 0xc1,
+	0x02, 0xc5, 0x32, 0x96, 0x6a, 0xaa, 0x32, 0x69, 0x24, 0xba, 0xac, 0xde, 0xd2, 0xbd, 0xd5, 0x3b,
+	0x4f, 0x64, 0x22, 0x4b, 0x4d, 0x50, 0xec, 0xac, 0xdc, 0xc3, 0x89, 0x94, 0xc9, 0x88, 0x07, 0xe5,
+	0x53, 0x3c, 0x19, 0x06, 0x46, 0xa4, 0x5c, 0x1b, 0x96, 0x2a, 0x2b, 0x20, 0x1f, 0xe1, 0x45, 0x5b,
+	0x68, 0x93, 0x89, 0x78, 0x62, 0x84, 0x1c, 0x77, 0x32, 0xa9, 0x64, 0x56, 0xec, 0xd0, 0x33, 0x78,
+	0x87, 0x0d, 0x06, 0x19, 0xd7, 0xfa, 0x0a, 0x5c, 0x83, 0x9b, 0xbb, 0x21, 0xda, 0xe4, 0xf8, 0x74,
+	0xc6, 0xd2, 0x51, 0x8b, 0x54, 0x05, 0x12, 0xd5, 0x12, 0xf4, 0x0a, 0x42, 0xb5, 0x3d, 0x7b, 0xe5,
+	0x5e, 0x83, 0x9b, 0x5b, 0xe1, 0x83, 0x4d, 0x8e, 0xcf, 0xec, 0x81, 0x5d, 0x8d, 0x44, 0x0d, 0x21,
+	0xf9, 0xe6, 0xc2, 0xcb, 0xc3, 0xfe, 0x1a, 0x7d, 0x02, 0xf0, 0xfe, 0xeb, 0xbe, 0xd4, 0x33, 0x6d,
+	0x78, 0xba, 0x2b, 0x94, 0x34, 0xf7, 0x5e, 0x04, 0xf4, 0xc8, 0x24, 0xe8, 0xe1, 0x7e, 0xe1, 0xa3,
+	0x45, 0x8e, 0x9d, 0x4d, 0x8e, 0x1f, 0x5a, 0x22, 0x5e, 0x77, 0xee, 0x35, 0xd9, 0x0e, 0x19, 0xa2,
+	0x0f, 0xf0, 0xb4, 0xcb, 0x59, 0x13, 0xc1, 0xfd, 0x3f, 0x04, 0xbf, 0x42, 0xb8, 0xb0, 0x08, 0x86,
+	0xb3, 0x3f, 0xdd, 0xf7, 0x6c, 0xc8, 0x17, 0x17, 0x9e, 0x74, 0xca, 0xf4, 0x91, 0x82, 0x67, 0x6f,
+	0xf9, 0xd4, 0xbc, 0x19, 0x0f, 0x47, 0xac, 0xa8, 0x75, 0x45, 0xca, 0xab, 0x49, 0x78, 0xd4, 0x86,
+	0x4c, 0xeb, 0x90, 0x69, 0xb7, 0x0e, 0x39, 0x7c, 0x5c, 0x39, 0x7a, 0xd6, 0x71, 0xcc, 0xa7, 0xa6,
+	0x27, 0xea, 0x1e, 0xbd, 0xe2, 0x63, 0x20, 0xf3, 0x9f, 0x18, 0x44, 0x7f, 0x37, 0x47, 0x9f, 0xc1,
+	0xd1, 0x68, 0xaa, 0xfb, 0x3f, 0xff, 0xc7, 0xfb, 0xeb, 0xf0, 0x49, 0x85, 0x83, 0x2d, 0xce, 0xa0,
+	0x21, 0x6b, 0x0c, 0x42, 0x93, 0xe8, 0x98, 0x73, 0xeb, 0xf6, 0xd7, 0xef, 0xd8, 0x09, 0xdb, 0x8b,
+	0x95, 0x0f, 0x96, 0x2b, 0x1f, 0xfc, 0x5a, 0xf9, 0x60, 0xbe, 0xf6, 0x9d, 0xe5, 0xda, 0x77, 0x7e,
+	0xac, 0x7d, 0xe7, 0xdd, 0xd3, 0x44, 0x98, 0xf7, 0x93, 0x98, 0xf6, 0x65, 0x1a, 0xd4, 0x3f, 0x50,
+	0xbd, 0x4e, 0xb7, 0x3b, 0x33, 0x53, 0x5c, 0xc7, 0x27, 0xe5, 0xc0, 0x5e, 0xfe, 0x0e, 0x00, 0x00,
+	0xff, 0xff, 0x11, 0xf7, 0x90, 0x35, 0x6a, 0x03, 0x00, 0x00,
+}
+
+func (m *DistributionProportion) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DistributionProportion) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DistributionProportion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Proportion != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.Proportion))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DistributionProportions) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DistributionProportions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DistributionProportions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.TeamProportion.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	{
+		size, err := m.EcosystemProportion.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -116,12 +320,22 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.NextInflationTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.NextInflationTime):])
-	if err1 != nil {
-		return 0, err1
+	{
+		size, err := m.DistributionProportions.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
-	i -= n1
-	i = encodeVarintParams(dAtA, i, uint64(n1))
+	i--
+	dAtA[i] = 0x12
+	n4, err4 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.NextInflationTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.NextInflationTime):])
+	if err4 != nil {
+		return 0, err4
+	}
+	i -= n4
+	i = encodeVarintParams(dAtA, i, uint64(n4))
 	i--
 	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
@@ -138,6 +352,35 @@ func encodeVarintParams(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *DistributionProportion) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovParams(uint64(l))
+	}
+	if m.Proportion != 0 {
+		n += 1 + sovParams(uint64(m.Proportion))
+	}
+	return n
+}
+
+func (m *DistributionProportions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.EcosystemProportion.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.TeamProportion.Size()
+	n += 1 + l + sovParams(uint64(l))
+	return n
+}
+
 func (m *Params) Size() (n int) {
 	if m == nil {
 		return 0
@@ -145,6 +388,8 @@ func (m *Params) Size() (n int) {
 	var l int
 	_ = l
 	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.NextInflationTime)
+	n += 1 + l + sovParams(uint64(l))
+	l = m.DistributionProportions.Size()
 	n += 1 + l + sovParams(uint64(l))
 	return n
 }
@@ -154,6 +399,223 @@ func sovParams(x uint64) (n int) {
 }
 func sozParams(x uint64) (n int) {
 	return sovParams(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *DistributionProportion) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowParams
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DistributionProportion: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DistributionProportion: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Proportion", wireType)
+			}
+			m.Proportion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Proportion |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipParams(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthParams
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DistributionProportions) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowParams
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DistributionProportions: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DistributionProportions: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EcosystemProportion", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.EcosystemProportion.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TeamProportion", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.TeamProportion.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipParams(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthParams
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *Params) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -214,6 +676,39 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.NextInflationTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DistributionProportions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.DistributionProportions.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
