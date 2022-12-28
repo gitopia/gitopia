@@ -12,11 +12,11 @@ message DistributionProportion {
 }
 
 message DistributionProportions {
-  DistributionProportion EcosystemProportion = 1[
+  DistributionProportion ecosystem_proportion = 1[
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"ecosystem_proportion\""
   ];
-  DistributionProportion TeamProportion = 2[
+  DistributionProportion team_proportion = 2[
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"team_proportion\""
   ];
@@ -25,12 +25,12 @@ message DistributionProportions {
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
-  google.protobuf.Timestamp NextInflationTime = 1 [
+  google.protobuf.Timestamp next_inflation_time = 1 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"next_inflation_time\""
   ];
-  DistributionProportions DistributionProportions = 2 [
+  DistributionProportions distribution_proportions = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"distribution_proportions\""
   ];
