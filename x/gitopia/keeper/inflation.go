@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 )
@@ -12,6 +14,7 @@ const (
 func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, params minttypes.Params, bondedRatio sdk.Dec) sdk.Dec {
 	gitopiaParams := k.GetParams(ctx)
 
+	fmt.Println("heelo")
 	if ctx.BlockTime().After(gitopiaParams.NextInflationTime) {
 		minter.Inflation = minter.Inflation.Quo(sdk.NewDec(2))
 		params.InflationMax = params.InflationMax.Quo(sdk.NewDec(2))
