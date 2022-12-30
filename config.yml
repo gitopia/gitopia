@@ -12,12 +12,15 @@ accounts:
 - name: node1
   coins:
   - 100000000utlore
+  address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
 - name: node2
   coins:
   - 100000000utlore
+  address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
 - name: node3
   coins:
   - 50000000utlore
+  address: gitopia1gqacec5zhz6js5nlwfmsfcx8qkghf0y5na4q5a
 - name: faucet
   coins:
   - 100000000utlore
@@ -65,9 +68,19 @@ genesis:
     staking:
       params:
         bond_denom: utlore
+    distribution:
+      params:
+        community_tax: "0.05"
     gitopia:
       params:
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
+        distribution_proportions:
+          ecosystem_proportion:
+            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+            proportion: 40
+          team_proportion:
+            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+            proportion: 25
 validators:
 - name: node0
   bonded: 100000000utlore
