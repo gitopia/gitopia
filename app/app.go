@@ -165,6 +165,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		gitopiatypes.MinterAccountName: {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -351,7 +352,7 @@ func NewGitopiaApp(
 		&stakingKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
-		authtypes.FeeCollectorName,
+		gitopiatypes.MinterAccountName,
 	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -453,7 +454,7 @@ func NewGitopiaApp(
 		appCodec,
 		keys[gitopiatypes.StoreKey],
 		keys[gitopiatypes.MemStoreKey],
-		authtypes.FeeCollectorName,
+		gitopiatypes.MinterAccountName,
 		app.AccountKeeper,
 		app.AuthzKeeper,
 		app.BankKeeper,
