@@ -77,6 +77,7 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		codec.NewProtoCodec(registry),
 		storeKey,
 		memStoreKey,
+		types.MinterAccountName,
 		authtypes.FeeCollectorName,
 		ak,
 		&authzKeeper,

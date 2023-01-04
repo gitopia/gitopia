@@ -455,6 +455,7 @@ func NewGitopiaApp(
 		keys[gitopiatypes.StoreKey],
 		keys[gitopiatypes.MemStoreKey],
 		gitopiatypes.MinterAccountName,
+		authtypes.FeeCollectorName,
 		app.AccountKeeper,
 		app.AuthzKeeper,
 		app.BankKeeper,
