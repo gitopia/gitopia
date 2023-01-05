@@ -15,6 +15,9 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 	remainingMintedCoins := mintedCoins
 	for _, d := range gitopiaParams.DistributionProportions {
 		coins := mintedCoins.MulInt(math.NewInt(d.Proportion)).QuoInt(sdk.NewInt(100))
+		if coins.IsZero() {
+			continue
+		}
 		addr, err := sdk.AccAddressFromBech32(d.Address)
 		if err != nil {
 			ctx.Logger().Error(fmt.Sprintf("bad address %v", err))
