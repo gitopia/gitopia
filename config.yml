@@ -70,17 +70,17 @@ genesis:
         bond_denom: utlore
     distribution:
       params:
-        community_tax: "0.05"
+        community_tax: "0"
     gitopia:
       params:
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
         distribution_proportions:
-          ecosystem_proportion:
-            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
-            proportion: 40
-          team_proportion:
-            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
-            proportion: 25
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # ecosystem
+          proportion: 40
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # team
+          proportion: 25
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # community
+          proportion: 5
 validators:
 - name: node0
   bonded: 100000000utlore

@@ -13,34 +13,19 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAccount.GetAddress())
 
 	remainingMintedCoins := mintedCoins
-	if gitopiaParams.DistributionProportions.EcosystemProportion.Proportion > 0 {
-		ecosystemCoins := mintedCoins.MulInt(math.NewInt(gitopiaParams.DistributionProportions.EcosystemProportion.Proportion)).QuoInt(sdk.NewInt(100))
-		addr, err := sdk.AccAddressFromBech32(gitopiaParams.DistributionProportions.EcosystemProportion.Address)
+	for _, d := range gitopiaParams.DistributionProportions {
+		coins := mintedCoins.MulInt(math.NewInt(d.Proportion)).QuoInt(sdk.NewInt(100))
+		addr, err := sdk.AccAddressFromBech32(d.Address)
 		if err != nil {
 			ctx.Logger().Error(fmt.Sprintf("bad address %v", err))
 			panic(err)
 		}
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.minterAccountName, addr, ecosystemCoins)
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.minterAccountName, addr, coins)
 		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("error distributing ecosystem proportion %v", err))
+			ctx.Logger().Error(fmt.Sprintf("error distributing proportion %v", err))
 			panic(err)
 		}
-		remainingMintedCoins = remainingMintedCoins.Sub(ecosystemCoins...)
-	}
-
-	if gitopiaParams.DistributionProportions.TeamProportion.Proportion > 0 {
-		teamCoins := mintedCoins.MulInt(math.NewInt(gitopiaParams.DistributionProportions.TeamProportion.Proportion)).QuoInt(sdk.NewInt(100))
-		addr, err := sdk.AccAddressFromBech32(gitopiaParams.DistributionProportions.TeamProportion.Address)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("bad address %v", err))
-			panic(err)
-		}
-		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, k.minterAccountName, addr, teamCoins)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("error distributing team proportion %v", err))
-			panic(err)
-		}
-		remainingMintedCoins = remainingMintedCoins.Sub(teamCoins...)
+		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
 
 	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins)
