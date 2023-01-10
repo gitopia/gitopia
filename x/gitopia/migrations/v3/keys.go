@@ -12,7 +12,7 @@ func GetIDBytes(id uint64) []byte {
 	return bz
 }
 
-func CreateIssueKey(repositoryId uint64, issueIid uint64) []byte {
+func CreateNewKey(repositoryId uint64, iid uint64) []byte {
 	repositoryPrefix := strconv.FormatUint(repositoryId, 10) + "-"
-	return append([]byte(repositoryPrefix), GetIDBytes(issueIid)...)
+	return append([]byte(repositoryPrefix), GetIDBytes(iid)...)
 }

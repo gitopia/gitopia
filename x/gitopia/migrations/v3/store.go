@@ -9,7 +9,6 @@ import (
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-// migrateRepository migrates
 func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 	repositoryStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.RepositoryKey))
 
@@ -93,7 +92,6 @@ func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 	}
 }
 
-// migrateIssue migrates
 func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
 	issueStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.IssueKey))
 
@@ -124,9 +122,52 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
 		}
 
 		// Set the new key
-		issueStore.Set(CreateIssueKey(issue.RepositoryId, issue.Iid), cdc.MustMarshal(&issue))
+		issueStore.Set(CreateNewKey(issue.RepositoryId, issue.Iid), cdc.MustMarshal(&issue))
 		// Delete the old key
 		issueStore.Delete(issueKey)
+	}
+}
+
+func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
+	pullRequestStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.PullRequestKey))
+
+	pullRequestStoreIter := pullRequestStore.Iterator(nil, nil)
+	defer pullRequestStoreIter.Close()
+
+	for ; pullRequestStoreIter.Valid(); pullRequestStoreIter.Next() {
+		var oldPullRequest v2.PullRequest
+		pullRequestKey := pullRequestStoreIter.Key()
+		cdc.MustUnmarshal(pullRequestStore.Get(pullRequestKey), &oldPullRequest)
+
+		pullRequest := gitopiatypes.PullRequest{
+			Creator:             oldPullRequest.Creator,
+			Id:                  oldPullRequest.Id,
+			Iid:                 oldPullRequest.Iid,
+			Title:               oldPullRequest.Title,
+			State:               gitopiatypes.PullRequest_State(oldPullRequest.State),
+			Description:         oldPullRequest.Description,
+			Locked:              oldPullRequest.Locked,
+			CommentsCount:       oldPullRequest.CommentsCount,
+			Labels:              oldPullRequest.Labels,
+			Assignees:           oldPullRequest.Assignees,
+			Reviewers:           oldPullRequest.Reviewers,
+			Draft:               oldPullRequest.Draft,
+			CreatedAt:           oldPullRequest.CreatedAt,
+			UpdatedAt:           oldPullRequest.UpdatedAt,
+			ClosedAt:            oldPullRequest.ClosedAt,
+			ClosedBy:            oldPullRequest.ClosedBy,
+			MergedAt:            oldPullRequest.MergedAt,
+			MergedBy:            oldPullRequest.MergedBy,
+			MergeCommitSha:      oldPullRequest.MergeCommitSha,
+			MaintainerCanModify: oldPullRequest.MaintainerCanModify,
+			Head:                (*gitopiatypes.PullRequestHead)(oldPullRequest.Head),
+			Base:                (*gitopiatypes.PullRequestBase)(oldPullRequest.Base),
+		}
+
+		// Set the new key
+		pullRequestStore.Set(CreateNewKey(pullRequest.Base.RepositoryId, pullRequest.Iid), cdc.MustMarshal(&pullRequest))
+		// Delete the old key
+		pullRequestStore.Delete(pullRequestKey)
 	}
 }
 
@@ -143,6 +184,8 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 	migrateRepository(store, cdc)
 
 	migrateIssue(store, cdc)
+
+	migratePullRequest(store, cdc)
 
 	return nil
 }
