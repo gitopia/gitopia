@@ -5,6 +5,17 @@ import (
 	"strconv"
 )
 
+func KeyPrefix(p string) []byte {
+	return []byte(p)
+}
+
+const (
+	RepositoryKey  = "Repository-value-"
+	IssueKey       = "Issue-value-"
+	PullRequestKey = "PullRequest-value-"
+	CommentKey     = "Comment-value-"
+)
+
 // GetIDBytes returns the byte representation of the ID
 func GetIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)

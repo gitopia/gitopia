@@ -6,11 +6,10 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	v2 "github.com/gitopia/gitopia/x/gitopia/migrations/v2"
-	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 )
 
 func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
-	repositoryStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.RepositoryKey))
+	repositoryStore := prefix.NewStore(store, KeyPrefix(RepositoryKey))
 
 	repositoryStoreIter := repositoryStore.Iterator(nil, nil)
 	defer repositoryStoreIter.Close()
@@ -20,13 +19,13 @@ func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 		repositoryKey := repositoryStoreIter.Key()
 		cdc.MustUnmarshal(repositoryStore.Get(repositoryKey), &oldRepository)
 
-		var labels []*gitopiatypes.RepositoryLabel
-		var releases []*gitopiatypes.RepositoryRelease
-		var collaborators []*gitopiatypes.RepositoryCollaborator
-		var backups []*gitopiatypes.RepositoryBackup
+		var labels []*RepositoryLabel
+		var releases []*RepositoryRelease
+		var collaborators []*RepositoryCollaborator
+		var backups []*RepositoryBackup
 
 		for _, oldLabel := range oldRepository.Labels {
-			labels = append(labels, &gitopiatypes.RepositoryLabel{
+			labels = append(labels, &RepositoryLabel{
 				Id:          oldLabel.Id,
 				Name:        oldLabel.Name,
 				Color:       oldLabel.Color,
@@ -35,33 +34,33 @@ func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 		}
 
 		for _, oldRelease := range oldRepository.Releases {
-			releases = append(releases, &gitopiatypes.RepositoryRelease{
+			releases = append(releases, &RepositoryRelease{
 				Id:      oldRelease.Id,
 				TagName: oldRelease.TagName,
 			})
 		}
 
 		for _, oldCollaborator := range oldRepository.Collaborators {
-			collaborators = append(collaborators, &gitopiatypes.RepositoryCollaborator{
+			collaborators = append(collaborators, &RepositoryCollaborator{
 				Id:         oldCollaborator.Id,
-				Permission: gitopiatypes.RepositoryCollaborator_Permission(oldCollaborator.Permission),
+				Permission: RepositoryCollaborator_Permission(oldCollaborator.Permission),
 			})
 		}
 
 		for _, oldBackup := range oldRepository.Backups {
-			backups = append(backups, &gitopiatypes.RepositoryBackup{
-				Store: gitopiatypes.RepositoryBackup_Store(oldBackup.Store),
+			backups = append(backups, &RepositoryBackup{
+				Store: RepositoryBackup_Store(oldBackup.Store),
 				Refs:  oldBackup.Refs,
 			})
 		}
 
-		repository := gitopiatypes.Repository{
+		repository := Repository{
 			Creator: oldRepository.Creator,
 			Id:      oldRepository.Id,
 			Name:    oldRepository.Name,
-			Owner: &gitopiatypes.RepositoryOwner{
+			Owner: &RepositoryOwner{
 				Id:   oldRepository.Owner.Id,
-				Type: gitopiatypes.OwnerType(oldRepository.Owner.Type),
+				Type: OwnerType(oldRepository.Owner.Type),
 			},
 			Description:         oldRepository.Description,
 			Forks:               oldRepository.Forks,
@@ -93,7 +92,7 @@ func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 }
 
 func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
-	issueStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.IssueKey))
+	issueStore := prefix.NewStore(store, KeyPrefix(IssueKey))
 
 	issueStoreIter := issueStore.Iterator(nil, nil)
 	defer issueStoreIter.Close()
@@ -103,12 +102,12 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
 		issueKey := issueStoreIter.Key()
 		cdc.MustUnmarshal(issueStore.Get(issueKey), &oldIssue)
 
-		issue := gitopiatypes.Issue{
+		issue := Issue{
 			Creator:       oldIssue.Creator,
 			Id:            oldIssue.Id,
 			Iid:           oldIssue.Iid,
 			Title:         oldIssue.Title,
-			State:         gitopiatypes.Issue_State(oldIssue.State),
+			State:         Issue_State(oldIssue.State),
 			Description:   oldIssue.Description,
 			CommentsCount: oldIssue.CommentsCount,
 			RepositoryId:  oldIssue.RepositoryId,
@@ -129,7 +128,7 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
 }
 
 func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
-	pullRequestStore := prefix.NewStore(store, gitopiatypes.KeyPrefix(gitopiatypes.PullRequestKey))
+	pullRequestStore := prefix.NewStore(store, KeyPrefix(PullRequestKey))
 
 	pullRequestStoreIter := pullRequestStore.Iterator(nil, nil)
 	defer pullRequestStoreIter.Close()
@@ -139,12 +138,12 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
 		pullRequestKey := pullRequestStoreIter.Key()
 		cdc.MustUnmarshal(pullRequestStore.Get(pullRequestKey), &oldPullRequest)
 
-		pullRequest := gitopiatypes.PullRequest{
+		pullRequest := PullRequest{
 			Creator:             oldPullRequest.Creator,
 			Id:                  oldPullRequest.Id,
 			Iid:                 oldPullRequest.Iid,
 			Title:               oldPullRequest.Title,
-			State:               gitopiatypes.PullRequest_State(oldPullRequest.State),
+			State:               PullRequest_State(oldPullRequest.State),
 			Description:         oldPullRequest.Description,
 			Locked:              oldPullRequest.Locked,
 			CommentsCount:       oldPullRequest.CommentsCount,
@@ -160,8 +159,8 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
 			MergedBy:            oldPullRequest.MergedBy,
 			MergeCommitSha:      oldPullRequest.MergeCommitSha,
 			MaintainerCanModify: oldPullRequest.MaintainerCanModify,
-			Head:                (*gitopiatypes.PullRequestHead)(oldPullRequest.Head),
-			Base:                (*gitopiatypes.PullRequestBase)(oldPullRequest.Base),
+			Head:                (*PullRequestHead)(oldPullRequest.Head),
+			Base:                (*PullRequestBase)(oldPullRequest.Base),
 		}
 
 		// Set the new key
