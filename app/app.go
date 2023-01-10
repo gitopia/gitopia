@@ -26,7 +26,7 @@ import (
 	"github.com/gitopia/gitopia/app/keepers"
 	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/app/upgrades"
-	v2 "github.com/gitopia/gitopia/app/upgrades/v2"
+	v3 "github.com/gitopia/gitopia/app/upgrades/v3"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -44,7 +44,7 @@ var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 
-	Upgrades = []upgrades.Upgrade{v2.Upgrade}
+	Upgrades = []upgrades.Upgrade{v3.Upgrade}
 )
 
 var (
