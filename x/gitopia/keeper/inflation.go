@@ -5,10 +5,6 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 )
 
-const (
-	MAX_TOTAL_SUPPLY = 1711136433
-)
-
 func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, params minttypes.Params, bondedRatio sdk.Dec) sdk.Dec {
 	gitopiaParams := k.GetParams(ctx)
 
@@ -22,9 +18,5 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, params min
 		k.SetParams(ctx, gitopiaParams)
 	}
 
-	// TODO: stop minting after max total supply is reached
-	// if k.mintKeeper.StakingTokenSupply(ctx).GTE(math.NewInt(MAX_TOTAL_SUPPLY)) {
-
-	// }
 	return minter.NextInflationRate(params, bondedRatio)
 }
