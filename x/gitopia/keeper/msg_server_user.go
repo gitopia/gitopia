@@ -64,6 +64,8 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeUserUsernameKey, user.Username),
 			sdk.NewAttribute(types.EventAttributeUserNameKey, user.Name),
+			sdk.NewAttribute(types.EventAttributeAvatarUrl, user.AvatarUrl),
+			sdk.NewAttribute(types.EventAttributeUserBio, user.Bio),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(user.CreatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
 		),
@@ -174,6 +176,7 @@ func (k msgServer) UpdateUserBio(goCtx context.Context, msg *types.MsgUpdateUser
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserBioEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeUserBio, user.Bio),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
 		),
 	)
@@ -200,6 +203,7 @@ func (k msgServer) UpdateUserAvatar(goCtx context.Context, msg *types.MsgUpdateU
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserAvatarEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeAvatarUrl, user.AvatarUrl),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
 		),
 	)

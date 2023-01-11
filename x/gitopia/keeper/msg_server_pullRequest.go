@@ -146,6 +146,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestTitleKey, pullRequest.Title),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
 			sdk.NewAttribute(types.EventAttributePullRequestDraftKey, strconv.FormatBool(pullRequest.Draft)),
 			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
@@ -277,6 +278,7 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
 		),
 	)
@@ -882,13 +884,13 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
 	}
 
-	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
 
 	if msg.Creator != pullRequest.Creator {
-		if !k.HavePermission(ctx, msg.Creator, headRepository, types.LinkPullRequestIssuePermission) {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.LinkPullRequestIssuePermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	}
@@ -964,6 +966,20 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 	k.SetPullRequest(ctx, pullRequest)
 	k.SetIssue(ctx, issue)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.LinkPullRequestIssueByIidEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgLinkPullRequestIssueByIidResponse{}, nil
 }
 
@@ -980,13 +996,13 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
 	}
 
-	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
 
 	if msg.Creator != pullRequest.Creator {
-		if !k.HavePermission(ctx, msg.Creator, headRepository, types.LinkPullRequestIssuePermission) {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.LinkPullRequestIssuePermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	}
@@ -1055,6 +1071,20 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 	)
 	k.SetPullRequest(ctx, pullRequest)
 	k.SetIssue(ctx, issue)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UnlinkPullRequestIssueByIidEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUnlinkPullRequestIssueByIidResponse{}, nil
 }
