@@ -23,7 +23,22 @@ func GetIDBytes(id uint64) []byte {
 	return bz
 }
 
-func CreateNewKey(repositoryId uint64, iid uint64) []byte {
+func CreateNewIssueKey(repositoryId, issueIid uint64) []byte {
 	repositoryPrefix := strconv.FormatUint(repositoryId, 10) + "-"
-	return append([]byte(repositoryPrefix), GetIDBytes(iid)...)
+	return append([]byte(repositoryPrefix), GetIDBytes(issueIid)...)
+}
+
+func CreateNewPullRequestKey(repositoryId, pullRequestIid uint64) []byte {
+	repositoryPrefix := strconv.FormatUint(repositoryId, 10) + "-"
+	return append([]byte(repositoryPrefix), GetIDBytes(pullRequestIid)...)
+}
+
+func CreateNewIssueCommentKey(repositoryId, issueIid, commentIid uint64) []byte {
+	repositoryIssuePrefix := strconv.FormatUint(repositoryId, 10) + "-issue-" + strconv.FormatUint(issueIid, 10) + "-"
+	return append([]byte(repositoryIssuePrefix), GetIDBytes(commentIid)...)
+}
+
+func CreateNewPullRequestCommentKey(repositoryId, pullRequestIid, commentIid uint64) []byte {
+	repositoryPullRequestPrefix := strconv.FormatUint(repositoryId, 10) + "-pr-" + strconv.FormatUint(pullRequestIid, 10) + "-"
+	return append([]byte(repositoryPullRequestPrefix), GetIDBytes(commentIid)...)
 }

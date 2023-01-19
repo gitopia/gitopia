@@ -1,12 +1,30 @@
 package v3
 
 import (
+	"encoding/json"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	v2 "github.com/gitopia/gitopia/x/gitopia/migrations/v2"
 )
+
+var oldCommentMap map[uint64]v2.Comment
+
+func CreateCommentLookupMap(store sdk.KVStore, cdc codec.BinaryCodec) {
+	commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
+	commentStoreIter := commentStore.Iterator(nil, nil)
+	oldCommentMap := make(map[uint64]v2.Comment)
+
+	for ; commentStoreIter.Valid(); commentStoreIter.Next() {
+		var oldComment v2.Comment
+		cdc.MustUnmarshal(commentStore.Get(commentStoreIter.Key()), &oldComment)
+
+		oldCommentMap[oldComment.Id] = oldComment
+	}
+}
 
 func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 	repositoryStore := prefix.NewStore(store, KeyPrefix(RepositoryKey))
@@ -91,7 +109,7 @@ func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 	}
 }
 
-func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
+func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	issueStore := prefix.NewStore(store, KeyPrefix(IssueKey))
 
 	issueStoreIter := issueStore.Iterator(nil, nil)
@@ -120,14 +138,81 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) {
 			ClosedBy:      oldIssue.ClosedBy,
 		}
 
-		// Set the new key
-		issueStore.Set(CreateNewKey(issue.RepositoryId, issue.Iid), cdc.MustMarshal(&issue))
-		// Delete the old key
+		// Migrate comments
+		for _, commentId := range oldIssue.Comments {
+			oldComment := oldCommentMap[commentId]
+
+			var attachments []*Attachment
+
+			for _, attachmentStr := range oldComment.Attachments {
+				var attachment Attachment
+				if err := json.Unmarshal([]byte(attachmentStr), &attachment); err != nil {
+					return err
+				}
+
+				attachments = append(attachments, &attachment)
+			}
+
+			var commentType CommentType
+
+			// Set comment type in case of system comment
+			if oldComment.System {
+				if strings.Contains(oldComment.Body, "assigned to") {
+					commentType = CommentTypeAddAssignees
+				} else if strings.Contains(oldComment.Body, "unassigned") {
+					commentType = CommentTypeRemoveAssignees
+				} else if strings.Contains(oldComment.Body, "added") {
+					commentType = CommentTypeAddLabels
+				} else if strings.Contains(oldComment.Body, "remove") {
+					commentType = CommentTypeRemoveLabels
+				} else if strings.Contains(oldComment.Body, "changed title from") {
+					commentType = CommentTypeModifiedTitle
+				} else if strings.Contains(oldComment.Body, "changed the description") {
+					commentType = CommentTypeModifiedDescription
+				} else if strings.Contains(oldComment.Body, "reopened") {
+					commentType = CommentTypeIssueOpened
+				} else if strings.Contains(oldComment.Body, "closed") {
+					commentType = CommentTypeIssueClosed
+				}
+			}
+
+			comment := Comment{
+				Creator:           oldComment.Creator,
+				Id:                oldComment.Id,
+				RepositoryId:      issue.RepositoryId,
+				ParentIid:         issue.Iid,
+				Parent:            CommentParentIssue,
+				CommentIid:        oldComment.CommentIid,
+				Body:              oldComment.Body,
+				Attachments:       attachments,
+				DiffHunk:          oldComment.DiffHunk,
+				Path:              oldComment.Path,
+				System:            oldComment.System,
+				AuthorAssociation: oldComment.AuthorAssociation,
+				CreatedAt:         oldComment.CreatedAt,
+				UpdatedAt:         oldComment.UpdatedAt,
+				CommentType:       commentType,
+			}
+
+			commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
+
+			// Set the new comment key
+			commentStore.Set(CreateNewIssueCommentKey(comment.RepositoryId, comment.ParentIid, comment.CommentIid), cdc.MustMarshal(&comment))
+
+			// Delete the old comment key
+			commentStore.Delete(GetIDBytes(oldComment.Id))
+		}
+
+		// Set the new issue key
+		issueStore.Set(CreateNewIssueKey(issue.RepositoryId, issue.Iid), cdc.MustMarshal(&issue))
+		// Delete the old issue key
 		issueStore.Delete(issueKey)
 	}
+
+	return nil
 }
 
-func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
+func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) error {
 	pullRequestStore := prefix.NewStore(store, KeyPrefix(PullRequestKey))
 
 	pullRequestStoreIter := pullRequestStore.Iterator(nil, nil)
@@ -163,11 +248,84 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) {
 			Base:                (*PullRequestBase)(oldPullRequest.Base),
 		}
 
+		// Migrate comments
+		for _, commentId := range oldPullRequest.Comments {
+			oldComment := oldCommentMap[commentId]
+
+			var attachments []*Attachment
+
+			for _, attachmentStr := range oldComment.Attachments {
+				var attachment Attachment
+				if err := json.Unmarshal([]byte(attachmentStr), &attachment); err != nil {
+					return err
+				}
+
+				attachments = append(attachments, &attachment)
+			}
+
+			var commentType CommentType
+
+			// Set comment type in case of system comment
+			if oldComment.System {
+				if strings.Contains(oldComment.Body, "assigned to") {
+					commentType = CommentTypeAddAssignees
+				} else if strings.Contains(oldComment.Body, "unassigned") {
+					commentType = CommentTypeRemoveAssignees
+				} else if strings.Contains(oldComment.Body, "added") {
+					commentType = CommentTypeAddLabels
+				} else if strings.Contains(oldComment.Body, "remove") {
+					commentType = CommentTypeRemoveLabels
+				} else if strings.Contains(oldComment.Body, "changed title from") {
+					commentType = CommentTypeModifiedTitle
+				} else if strings.Contains(oldComment.Body, "changed the description") {
+					commentType = CommentTypeModifiedDescription
+				} else if strings.Contains(oldComment.Body, "reopened") {
+					commentType = CommentTypePullRequestOpened
+				} else if strings.Contains(oldComment.Body, "closed") {
+					commentType = CommentTypePullRequestClosed
+				} else if strings.Contains(oldComment.Body, "merged") {
+					commentType = CommentTypePullRequestMerged
+				} else if strings.Contains(oldComment.Body, "requested review from") {
+					commentType = CommentTypeAddReviewers
+				} else if strings.Contains(oldComment.Body, "removed review request for") {
+					commentType = CommentTypeRemoveReviewers
+				}
+			}
+
+			comment := Comment{
+				Creator:           oldComment.Creator,
+				Id:                oldComment.Id,
+				RepositoryId:      pullRequest.Base.RepositoryId,
+				ParentIid:         pullRequest.Iid,
+				Parent:            CommentParentIssue,
+				CommentIid:        oldComment.CommentIid,
+				Body:              oldComment.Body,
+				Attachments:       attachments,
+				DiffHunk:          oldComment.DiffHunk,
+				Path:              oldComment.Path,
+				System:            oldComment.System,
+				AuthorAssociation: oldComment.AuthorAssociation,
+				CreatedAt:         oldComment.CreatedAt,
+				UpdatedAt:         oldComment.UpdatedAt,
+				CommentType:       commentType,
+			}
+
+			commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
+
+			// Set the new comment key
+			commentStore.Set(CreateNewPullRequestCommentKey(comment.RepositoryId, comment.ParentIid, comment.CommentIid), cdc.MustMarshal(&comment))
+
+			// Delete the old comment key
+			commentStore.Delete(GetIDBytes(oldComment.Id))
+		}
+
 		// Set the new key
-		pullRequestStore.Set(CreateNewKey(pullRequest.Base.RepositoryId, pullRequest.Iid), cdc.MustMarshal(&pullRequest))
+		pullRequestStore.Set(CreateNewPullRequestKey(pullRequest.Base.RepositoryId, pullRequest.Iid), cdc.MustMarshal(&pullRequest))
 		// Delete the old key
 		pullRequestStore.Delete(pullRequestKey)
 	}
+
+	return nil
 }
 
 // MigrateStore performs in-place store migrations from v1.2.0 to v2.0.0. The
@@ -182,9 +340,15 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 
 	migrateRepository(store, cdc)
 
-	migrateIssue(store, cdc)
+	CreateCommentLookupMap(store, cdc)
 
-	migratePullRequest(store, cdc)
+	if err := migrateIssue(store, cdc); err != nil {
+		return err
+	}
+
+	if err := migratePullRequest(store, cdc); err != nil {
+		return err
+	}
 
 	return nil
 }
