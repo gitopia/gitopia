@@ -306,3 +306,12 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 
 	return &types.MsgMultiDeleteBranchResponse{}, nil
 }
+
+func (k msgServer) ToggleForcePush(goCtx context.Context,  msg *types.MsgToggleForcePush) (*types.MsgToggleForcePushResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+    // TODO: Handling the message
+    _ = ctx
+
+	return &types.MsgToggleForcePushResponse{}, nil
+}
