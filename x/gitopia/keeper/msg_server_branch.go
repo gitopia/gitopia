@@ -341,5 +341,20 @@ func (k msgServer) ToggleForcePush(goCtx context.Context, msg *types.MsgToggleFo
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
+	branchJson, _ := json.Marshal(branch)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleForcePushToBranchEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(false)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgToggleForcePushResponse{}, nil
 }
