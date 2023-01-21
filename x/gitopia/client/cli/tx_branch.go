@@ -2,7 +2,7 @@ package cli
 
 import (
 	"strconv"
-	
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -112,13 +112,13 @@ func CmdDeleteBranch() *cobra.Command {
 
 func CmdToggleForcePush() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "toggle-force-push [id] [repository-id] [branch-name]",
+		Use:   "toggle-force-push [repository-id] [repository-name] [branch-name]",
 		Short: "configure restricted push access to branch",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-      		 argId := args[0]
-             argRepositoryId := args[1]
-             argBranchName := args[2]
+             argRepoId := args[0]
+             argRepoName := args[1]
+             argBranchName := args[1]
             
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -127,10 +127,8 @@ func CmdToggleForcePush() *cobra.Command {
 
 			msg := types.NewMsgToggleForcePush(
 				clientCtx.GetFromAddress().String(),
-				argId,
-				argRepositoryId,
+				types.RepositoryId{Id: argRepoId, Name: argRepoName},
 				argBranchName,
-				
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

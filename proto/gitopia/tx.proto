@@ -111,9 +111,8 @@ service Msg {
 
 message MsgToggleForcePush {
   string creator = 1;
-  string id = 2;
-  string repositoryId = 3;
-  string branchName = 4;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string branchName = 3;
 }
 
 message MsgToggleForcePushResponse {
