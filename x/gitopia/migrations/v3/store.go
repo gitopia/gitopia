@@ -11,21 +11,6 @@ import (
 	v2 "github.com/gitopia/gitopia/x/gitopia/migrations/v2"
 )
 
-var oldCommentMap map[uint64]v2.Comment
-
-func CreateCommentLookupMap(store sdk.KVStore, cdc codec.BinaryCodec) {
-	commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
-	commentStoreIter := commentStore.Iterator(nil, nil)
-	oldCommentMap := make(map[uint64]v2.Comment)
-
-	for ; commentStoreIter.Valid(); commentStoreIter.Next() {
-		var oldComment v2.Comment
-		cdc.MustUnmarshal(commentStore.Get(commentStoreIter.Key()), &oldComment)
-
-		oldCommentMap[oldComment.Id] = oldComment
-	}
-}
-
 func migrateRepository(store sdk.KVStore, cdc codec.BinaryCodec) {
 	repositoryStore := prefix.NewStore(store, KeyPrefix(RepositoryKey))
 
@@ -139,8 +124,11 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		// Migrate comments
+		commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
+
 		for _, commentId := range oldIssue.Comments {
-			oldComment := oldCommentMap[commentId]
+			var oldComment v2.Comment
+			cdc.MustUnmarshal(commentStore.Get(GetIDBytes(commentId)), &oldComment)
 
 			var attachments []*Attachment
 
@@ -193,8 +181,6 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				UpdatedAt:         oldComment.UpdatedAt,
 				CommentType:       commentType,
 			}
-
-			commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
 
 			// Set the new comment key
 			commentStore.Set(CreateNewIssueCommentKey(comment.RepositoryId, comment.ParentIid, comment.CommentIid), cdc.MustMarshal(&comment))
@@ -249,8 +235,11 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) error {
 		}
 
 		// Migrate comments
+		commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
+
 		for _, commentId := range oldPullRequest.Comments {
-			oldComment := oldCommentMap[commentId]
+			var oldComment v2.Comment
+			cdc.MustUnmarshal(commentStore.Get(GetIDBytes(commentId)), &oldComment)
 
 			var attachments []*Attachment
 
@@ -297,7 +286,7 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				Id:                oldComment.Id,
 				RepositoryId:      pullRequest.Base.RepositoryId,
 				ParentIid:         pullRequest.Iid,
-				Parent:            CommentParentIssue,
+				Parent:            CommentParentPullRequest,
 				CommentIid:        oldComment.CommentIid,
 				Body:              oldComment.Body,
 				Attachments:       attachments,
@@ -309,8 +298,6 @@ func migratePullRequest(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				UpdatedAt:         oldComment.UpdatedAt,
 				CommentType:       commentType,
 			}
-
-			commentStore := prefix.NewStore(store, KeyPrefix(CommentKey))
 
 			// Set the new comment key
 			commentStore.Set(CreateNewPullRequestCommentKey(comment.RepositoryId, comment.ParentIid, comment.CommentIid), cdc.MustMarshal(&comment))
@@ -339,8 +326,6 @@ func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.Binar
 	store := ctx.KVStore(storeKey)
 
 	migrateRepository(store, cdc)
-
-	CreateCommentLookupMap(store, cdc)
 
 	if err := migrateIssue(store, cdc); err != nil {
 		return err
