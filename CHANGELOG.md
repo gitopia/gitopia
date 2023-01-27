@@ -12,6 +12,8 @@ All notable changes will be documented here.
 - Removed queries to get a issue, pullrequest and comment by id.
 - PullRequestMergePermission query also takes `repositoryId`
 - Add queries RepositoryIssue, RepositoryIssueAll, RepositoryPullRequest, RepositoryPullRequestAll ,IssueComment, PullRequestComment, IssueCommentAll and PullRequestCommentAll.
+- In place store migration for store changes
+- Refactored app.go
 
 ## [v1.2.0] - 2022-11-07
 
