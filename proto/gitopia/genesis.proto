@@ -16,11 +16,14 @@ import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
+import "gitopia/params.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
+		// params defines all the paramaters of the module.
+		Params params = 29 [(gogoproto.nullable) = false];
 		repeated Bounty bountyList = 27 [(gogoproto.nullable) = false];
   		uint64 bountyCount = 28;
 		repeated UserDao userDaoList = 25 [(gogoproto.nullable) = false];
