@@ -148,12 +148,21 @@ const (
 	AddPullRequestLabelsEventKey         = "AddPullRequestLabels"
 	RemovePullRequestLabelsEventKey      = "RemovePullRequestLabels"
 	DeletePullRequestEventKey            = "DeletePullRequest"
+	LinkPullRequestIssueByIidEventKey    = "LinkPullRequestIssueByIid"
+	UnlinkPullRequestIssueByIidEventKey  = "UnlinkPullRequestIssueByIid"
 )
 
 const (
 	CreateReleaseEventKey = "CreateRelease"
 	UpdateReleaseEventKey = "UpdateRelease"
 	DeleteReleaseEventKey = "DeleteRelease"
+)
+
+const (
+	CreateBountyEventKey       = "CreateBounty"
+	UpdateBountyExpiryEventKey = "UpdateBountyExpiry"
+	CloseBountyEventKey        = "CloseBounty"
+	DeleteBountyEventKey       = "DeleteBounty"
 )
 
 const (
@@ -175,12 +184,17 @@ const (
 	EventAttributeUserIdKey       = "UserId"
 	EventAttributeUserUsernameKey = "UserUsername"
 	EventAttributeUserNameKey     = "UserName"
+	EventAttributeUserBio         = "UserBio"
+	EventAttributeAvatarUrl       = "AvatarUrl"
 )
 
 const (
 	EventAttributeDaoIdKey            = "DaoId"
 	EventAttributeDaoAddressKey       = "DaoAddress"
 	EventAttributeDaoNameKey          = "DaoName"
+	EventAttributeDaoDescription      = "DaoDescription"
+	EventAttributeDaoLocation         = "DaoLocation"
+	EventAttributeDaoWebsite          = "DaoWebsite"
 	EventAttributeDaoMemberAddressKey = "DaoMemberAddress"
 	EventAttributeDaoMemberRoleKey    = "DaoMemberRole"
 )
@@ -190,7 +204,7 @@ const (
 	EventAttributeRepoIdKey                  = "RepositoryId"
 	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
 	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"
-	EventAttributeRepoCollaboratorKey        = "RepositoryCollaboratorKey"
+	EventAttributeRepoCollaboratorKey        = "RepositoryCollaborator"
 	EventAttributeRepoLabelIdKey             = "RepositoryLabelId"
 	EventAttributeRepoLabelNameKey           = "RepositoryLabelName"
 	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"
@@ -203,11 +217,12 @@ const (
 )
 
 const (
-	EventAttributeIssueIdKey    = "IssueId"
-	EventAttributeIssueIidKey   = "IssueIid"
-	EventAttributeIssueTitleKey = "IssueTitle"
-	EventAttributeIssueStateKey = "IssueState"
-	EventAttributeClosedByKey   = "ClosedBy"
+	EventAttributeIssueIdKey          = "IssueId"
+	EventAttributeIssueIidKey         = "IssueIid"
+	EventAttributeIssueTitleKey       = "IssueTitle"
+	EventAttributeIssueStateKey       = "IssueState"
+	EventAttributeIssueDescriptionKey = "IssueDescription"
+	EventAttributeClosedByKey         = "ClosedBy"
 )
 
 const (
@@ -215,6 +230,7 @@ const (
 	EventAttributePullRequestStateKey          = "PullRequestState"
 	EventAttributePullRequestIidKey            = "PullRequestIid"
 	EventAttributePullRequestTitleKey          = "PullRequestTitle"
+	EventAttributePullRequestDescriptionKey    = "PullRequestDescription"
 	EventAttributePullRequestDraftKey          = "PullRequestDraft"
 	EventAttributePullRequestHeadKey           = "PullRequestHead"
 	EventAttributePullRequestBaseKey           = "PullRequestBase"
@@ -225,11 +241,21 @@ const (
 )
 
 const (
-	EventAttributeReleaseIdKey         = "ReleaseId"
-	EventAttributeReleaseTagNameKey    = "ReleaseTagName"
-	EventAttributeReleaseNameKey       = "ReleaseName"
-	EventAttributeReleaseDraftKey      = "ReleaseDraft"
-	EventAttributeReleasePreReleaseKey = "ReleasePreRelease"
+	EventAttributeReleaseIdKey          = "ReleaseId"
+	EventAttributeReleaseTagNameKey     = "ReleaseTagName"
+	EventAttributeReleaseNameKey        = "ReleaseName"
+	EventAttributeReleaseDescriptionKey = "ReleaseDescription"
+	EventAttributeReleaseDraftKey       = "ReleaseDraft"
+	EventAttributeReleasePreReleaseKey  = "ReleasePreRelease"
+)
+
+const (
+	EventAttributeBountyIdKey        = "BountyId"
+	EventAttributeBountyAmountKey    = "BountyAmount"
+	EventAttributeBountyStateKey     = "BountyState"
+	EventAttributeBountyParentKey    = "BountyParent"
+	EventAttributeBountyParentIidKey = "BountyParentIid"
+	EventAttributeBountyExpiry       = "BountyExpiry"
 )
 
 const (

@@ -3,8 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,9 +10,8 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	v010 "github.com/gitopia/gitopia/x/gitopia/migrations/v010"
-
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/tendermint/tendermint/libs/log"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )
 
@@ -63,19 +60,4 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
-}
-
-// Migrator is a struct for handling in-place store migrations.
-type Migrator struct {
-	keeper Keeper
-}
-
-// NewMigrator returns a new Migrator.
-func NewMigrator(keeper Keeper) Migrator {
-	return Migrator{keeper: keeper}
-}
-
-// Migrate1to2 migrates from version 1 to 2.
-func (m Migrator) Migrate1to2(ctx sdk.Context) error {
-	return v010.MigrateStore(ctx, m.keeper.storeKey, m.keeper.cdc)
 }

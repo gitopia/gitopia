@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -98,6 +100,25 @@ func (k msgServer) CreateBounty(goCtx context.Context, msg *types.MsgCreateBount
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
 	}
 
+	bountyAmountJson, _ := json.Marshal(bounty.Amount)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateBountyEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyAmountKey, string(bountyAmountJson)),
+			sdk.NewAttribute(types.EventAttributeBountyStateKey, bounty.State.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentKey, bounty.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentIidKey, strconv.FormatUint(bounty.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyExpiry, strconv.FormatInt(bounty.ExpireAt, 10)),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(bounty.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(bounty.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreateBountyResponse{
 		Id: id,
 	}, nil
@@ -177,6 +198,20 @@ func (k msgServer) UpdateBountyExpiry(goCtx context.Context, msg *types.MsgUpdat
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
 	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateBountyExpiryEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyIdKey, strconv.FormatUint(bounty.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyParentKey, bounty.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentIidKey, strconv.FormatUint(bounty.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyExpiry, strconv.FormatInt(bounty.ExpireAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(bounty.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgUpdateBountyExpiryResponse{}, nil
 }
@@ -269,6 +304,21 @@ func (k msgServer) CloseBounty(goCtx context.Context, msg *types.MsgCloseBounty)
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
 	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CloseBountyEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyIdKey, strconv.FormatUint(bounty.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyStateKey, bounty.State.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentKey, bounty.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentIidKey, strconv.FormatUint(bounty.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyExpiry, strconv.FormatInt(bounty.ExpireAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(bounty.UpdatedAt, 10)),
+		),
+	)
 
 	return &types.MsgCloseBountyResponse{}, nil
 }
@@ -363,6 +413,18 @@ func (k msgServer) DeleteBounty(goCtx context.Context, msg *types.MsgDeleteBount
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "invalid bounty parent")
 	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteBountyEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(issue.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyIdKey, strconv.FormatUint(bounty.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeBountyParentKey, bounty.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeBountyParentIidKey, strconv.FormatUint(bounty.ParentIid, 10)),
+		),
+	)
 
 	return &types.MsgDeleteBountyResponse{}, nil
 }

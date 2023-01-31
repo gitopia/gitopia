@@ -71,7 +71,7 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 
 	mintKeeper := mintkeeper.NewKeeper(
 		appCodec, storeKey, ss, nil, nil,
-		bankKeeper, authtypes.FeeCollectorName)
+		bankKeeper, types.MinterAccountName)
 
 	k := keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
