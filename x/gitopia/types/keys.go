@@ -210,6 +210,8 @@ const (
 	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"
 	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
 	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
+	EventAttributeForkRepoNameKey            = "ForkRepositoryName"
+	EventAttributeForkRepoBranchKey          = "ForkRepositoryBranch"
 	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
 	EventAttributeRepoBranchKey              = "RepositoryBranch"
 	EventAttributeRepoTagKey                 = "RepositoryTag"

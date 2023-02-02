@@ -188,8 +188,9 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		return nil, err
 	}
 
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.RepositoryId.Name); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
+	// Check if the user already has a repository with the same name
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
@@ -209,7 +210,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		}},
 		types.RepositoryCollaborator_ADMIN,
 	) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "cannot create repository")
 	}
 
 	id := k.AppendTask(ctx, types.Task{
@@ -227,6 +228,8 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
+			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
 			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
@@ -247,8 +250,9 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, err
 	}
 
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.RepositoryId.Name); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
+	// Check if the user already has a repository with the same name
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
@@ -260,6 +264,11 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
 	}
 
+	// Check branch exists
+	if _, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch); !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
+	}
+
 	_, found = k.GetTask(ctx, msg.TaskId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
@@ -267,7 +276,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	var forkRepository = types.Repository{
 		Creator: msg.Creator,
-		Name:    repository.Name,
+		Name:    msg.ForkRepositoryName,
 		Owner: &types.RepositoryOwner{
 			Id:   ownerAddress.address,
 			Type: ownerAddress.ownerType,
@@ -292,10 +301,16 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	)
 
 	// Copy branches to forked repository
-	branches := k.GetAllRepositoryBranch(ctx, repository.Id)
-	for _, branch := range branches {
-		branch.RepositoryId = id
+	if msg.Branch != "" {
+		branch, _ := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch)
+		branch.Id = id
 		k.AppendBranch(ctx, branch)
+	} else {
+		branches := k.GetAllRepositoryBranch(ctx, repository.Id)
+		for _, branch := range branches {
+			branch.RepositoryId = id
+			k.AppendBranch(ctx, branch)
+		}
 	}
 
 	// Update parent repository forks

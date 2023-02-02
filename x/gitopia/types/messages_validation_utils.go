@@ -1,14 +1,27 @@
 package types
 
 import (
+	"encoding/base64"
 	"fmt"
 	"regexp"
-
-	"encoding/base64"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ipfs/go-cid"
 )
+
+func ValidateRepositoryName(name string) error {
+	if len(name) < 3 {
+		return fmt.Errorf("Repository name must be at least 3 characters long")
+	} else if len(name) > 100 {
+		return fmt.Errorf("Repository name exceeds limit: 100")
+	}
+	sanitized := IsNameSanitized(name)
+	if !sanitized {
+		return fmt.Errorf("repository name is not sanitized")
+	}
+
+	return nil
+}
 
 func ValidateRepositoryId(repositoryId RepositoryId) error {
 	_, err := sdk.AccAddressFromBech32(repositoryId.Id)
@@ -27,14 +40,21 @@ func ValidateRepositoryId(repositoryId RepositoryId) error {
 		}
 	}
 
-	if len(repositoryId.Name) < 3 {
-		return fmt.Errorf("Repository name must be at least 3 characters long")
-	} else if len(repositoryId.Name) > 100 {
-		return fmt.Errorf("Repository name exceeds limit: 100")
+	if err := ValidateRepositoryName(repositoryId.Name); err != nil {
+		return err
 	}
-	sanitized := IsNameSanitized(repositoryId.Name)
-	if !sanitized {
-		return fmt.Errorf("repository name is not sanitized")
+
+	return nil
+}
+
+func ValidateBranchName(name string) error {
+	if len(name) > 255 {
+		return fmt.Errorf("branch length exceeds limit: 255")
+	} else if len(name) < 1 {
+		return fmt.Errorf("branch name can't be empty")
+	}
+	if valid, err := IsValidRefname(name); !valid {
+		return err
 	}
 
 	return nil

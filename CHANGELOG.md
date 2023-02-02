@@ -15,6 +15,7 @@ All notable changes will be documented here.
 - Add queries RepositoryIssue, RepositoryIssueAll, RepositoryPullRequest, RepositoryPullRequestAll ,IssueComment, PullRequestComment, IssueCommentAll and PullRequestCommentAll.
 - In place store migration for store changes
 - Refactored app.go
+- InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
 
 ## [v1.2.0] - 2022-11-07
 

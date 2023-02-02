@@ -1,8 +1,6 @@
 package types
 
 import (
-	"regexp"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -57,56 +55,12 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = sdk.AccAddressFromBech32(msg.HeadRepositoryId.Id)
-	if err != nil {
-		if len(msg.HeadRepositoryId.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id must consist minimum 3 chars")
-		} else if len(msg.HeadRepositoryId.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.HeadRepositoryId.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid head id (%v)", msg.HeadRepositoryId.Id)
-		}
+	if err := ValidateRepositoryId(msg.HeadRepositoryId); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.HeadRepositoryId.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name must be at least 3 characters long")
-	} else if len(msg.HeadRepositoryId.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name exceeds limit: 100")
-	}
-	sanitized := IsNameSanitized(msg.HeadRepositoryId.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "head repository name is not sanitized")
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.BaseRepositoryId.Id)
-	if err != nil {
-		if len(msg.BaseRepositoryId.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id must consist minimum 3 chars")
-		} else if len(msg.BaseRepositoryId.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.BaseRepositoryId.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid base id (%v)", msg.BaseRepositoryId.Id)
-		}
-	}
-
-	if len(msg.BaseRepositoryId.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name must be at least 3 characters long")
-	} else if len(msg.BaseRepositoryId.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name exceeds limit: 100")
-	}
-	sanitized = IsNameSanitized(msg.BaseRepositoryId.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base repository name is not sanitized")
+	if err := ValidateRepositoryId(msg.BaseRepositoryId); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Title) > 255 {

@@ -707,8 +707,10 @@ message MsgCreateRepositoryResponse {
 message MsgInvokeForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  string provider = 4;
+  string forkRepositoryName = 3;
+  string branch = 4;
+  string owner = 5;
+  string provider = 6;
 }
 
 message MsgInvokeForkRepositoryResponse {}
@@ -716,8 +718,10 @@ message MsgInvokeForkRepositoryResponse {}
 message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  uint64 taskId = 4;
+  string forkRepositoryName = 3;
+  string branch = 4;
+  string owner = 5;
+  uint64 taskId = 6;
 }
 
 message MsgForkRepositoryResponse {
