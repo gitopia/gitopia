@@ -60,6 +60,16 @@ func ValidateBranchName(name string) error {
 	return nil
 }
 
+func ValidateCommentBody(body string) error {
+	if len(body) < 1 {
+		return fmt.Errorf("empty comment not allowed")
+	} else if len(body) > 20000 {
+		return fmt.Errorf("comment exceeds limit: 20000")
+	}
+
+	return nil
+}
+
 func ValidateIpfsCid(ipfsCid string) error {
 	// if len(ipfsCid) != 46 {
 	// 	return fmt.Errorf("invalid IPFS cid (%s)", ipfsCid)

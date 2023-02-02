@@ -65,10 +65,8 @@ func (msg *MsgCreateComment) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
 	}
 
-	if len(msg.Body) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Empty comment not allowed")
-	} else if len(msg.Body) > 20000 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Comment exceeds limit: 20000")
+	if err := ValidateCommentBody(msg.Body); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Attachments) > 0 {
@@ -149,10 +147,8 @@ func (msg *MsgUpdateComment) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
 	}
 
-	if len(msg.Body) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Empty comment not allowed")
-	} else if len(msg.Body) > 20000 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Comment exceeds limit: 20000")
+	if err := ValidateCommentBody(msg.Body); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Attachments) > 0 {

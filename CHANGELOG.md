@@ -16,6 +16,7 @@ All notable changes will be documented here.
 - In place store migration for store changes
 - Refactored app.go
 - InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
+- ToggleIssueState now accepts comment body parameter for comment and close
 
 ## [v1.2.0] - 2022-11-07
 

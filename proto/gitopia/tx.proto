@@ -643,6 +643,7 @@ message MsgToggleIssueState {
   string creator = 1;
   uint64 repositoryId = 2;
   uint64 iid = 3;
+  string commentBody = 4;
 }
 
 message MsgToggleIssueStateResponse {
