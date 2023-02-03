@@ -33,6 +33,8 @@ faucet:
   host: 0.0.0.0:4500
   port: 4500
 client:
+  typescript:
+    path: ts-client
   vuex:
     path: vue/src/store
   openapi:
@@ -54,6 +56,19 @@ genesis:
     crisis:
       constant_fee:
         denom: utlore
+    distribution:
+      params:
+        community_tax: "0"
+    gitopia:
+      params:
+        distribution_proportions:
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+          proportion: 40
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+          proportion: 25
+        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+          proportion: 5
+        next_inflation_time: "2024-12-28T05:33:18.234521Z"
     gov:
       deposit_params:
         max_deposit_period: 60s
@@ -68,19 +83,6 @@ genesis:
     staking:
       params:
         bond_denom: utlore
-    distribution:
-      params:
-        community_tax: "0"
-    gitopia:
-      params:
-        next_inflation_time: "2024-12-28T05:33:18.234521Z"
-        distribution_proportions:
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # ecosystem
-          proportion: 40
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # team
-          proportion: 25
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm # community
-          proportion: 5
 validators:
 - name: node0
   bonded: 100000000utlore
