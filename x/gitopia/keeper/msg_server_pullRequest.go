@@ -447,18 +447,24 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			if issue.State != types.Issue_OPEN {
 				continue
 			}
-			if len(issue.Assignees) != 1 {
+			if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] { // continue when pull request creator is not the only assignee
 				continue
 			}
+
+			// close issue
+			issue.State = types.Issue_CLOSED
+			issue.ClosedBy = msg.Creator
+			issue.ClosedAt = blockTime
+			issue.UpdatedAt = blockTime
+			k.SetIssue(ctx, issue)
+
+			// reward bounties to pull request creator
 			for _, bountyId := range issue.Bounties {
 				bounty, found := k.GetBounty(ctx, bountyId)
 				if !found {
 					continue
 				}
 				if bounty.State != types.BountyStateSRCDEBITTED {
-					continue
-				}
-				if pullRequest.Creator != issue.Assignees[0] {
 					continue
 				}
 				rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)

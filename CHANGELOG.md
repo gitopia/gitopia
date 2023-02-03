@@ -17,6 +17,7 @@ All notable changes will be documented here.
 - Refactored app.go
 - InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
 - ToggleIssueState now accepts comment body parameter for comment and close
+- Close linked issue automatically when pr is merged and the issue is only assigned to the pr creator
 
 ## [v1.2.0] - 2022-11-07
 
