@@ -13,6 +13,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
+
 func TestTokenDistributionSucess(t *testing.T){
 	app := simapp.New(app.DefaultNodeHome)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})

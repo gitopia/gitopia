@@ -16,7 +16,7 @@ import (
 )
 
 // New creates application instance with in-memory database and disabled logging.
-func New(dir string) app.GitopiaApp {
+func New(dir string) *app.GitopiaApp {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
@@ -32,7 +32,7 @@ func New(dir string) app.GitopiaApp {
 		AppStateBytes:   []byte("{}"),
 	})
 	
-	return *a
+	return a
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{
