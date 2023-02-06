@@ -15,8 +15,8 @@ import (
 	"github.com/gitopia/gitopia/app"
 )
 
-// New creates application instance with in-memory database and disabled logging.
-func New(dir string) *app.GitopiaApp {
+// setup creates application instance with in-memory database and disabled logging.
+func setup(dir string) *app.GitopiaApp {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
@@ -26,12 +26,12 @@ func New(dir string) *app.GitopiaApp {
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
 		simapp.EmptyAppOptions{})
 	// InitChain updates deliverState which is required when app.NewContext is called
-	a.InitChain(abci.RequestInitChain{
-		Validators:      []abci.ValidatorUpdate{},
-		ConsensusParams: defaultConsensusParams,
-		AppStateBytes:   []byte("{}"),
-	})
-	
+	// a.InitChain(abci.RequestInitChain{
+	// 	Validators:      []abci.ValidatorUpdate{},
+	// 	ConsensusParams: defaultConsensusParams,
+	// 	AppStateBytes:   []byte("{}"),
+	// })
+
 	return a
 }
 

@@ -89,7 +89,7 @@ func NewSimappWithCustomOptions(t *testing.T, isCheckTx bool, options SetupOptio
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
 	}
 
-	app := New(app.DefaultNodeHome)
+	app := setup(app.DefaultNodeHome)
 	genesisState := gitopiaApp.NewDefaultGenesisState(app.AppCodec())
 	genesisState = *genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
 
@@ -112,7 +112,7 @@ func NewSimappWithCustomOptions(t *testing.T, isCheckTx bool, options SetupOptio
 }
 
 // Setup initializes a new SimApp. A Nop logger is set in SimApp.
-func Setup(t *testing.T, isCheckTx bool) *app.GitopiaApp {
+func Setup(t *testing.T) *app.GitopiaApp {
 	t.Helper()
 
 	privVal := mock.NewPV()
@@ -207,7 +207,7 @@ func genesisStateWithValSet(t *testing.T,
 func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.GitopiaApp {
 	t.Helper()
 
-	app := New(app.DefaultNodeHome)
+	app := setup(app.DefaultNodeHome)
 	genesisState := gitopiaApp.NewDefaultGenesisState(app.AppCodec())
 	genesisState = *genesisStateWithValSet(t, app, genesisState, valSet, genAccs, balances...)
 

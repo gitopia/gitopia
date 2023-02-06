@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/gitopia/gitopia/app"
 	"github.com/gitopia/gitopia/testutil/simapp"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,7 @@ import (
 
 
 func TestTokenDistributionSucess(t *testing.T){
-	app := simapp.New(app.DefaultNodeHome)
+	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.DefaultParams()
 	minter := gitopiatypes.MinterAccountName
