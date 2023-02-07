@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	"github.com/gitopia/gitopia/testutil/simapp"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
@@ -13,22 +14,25 @@ import (
 )
 
 
-func TestTokenDistributionSucess(t *testing.T){
+func TestTokenDistributionSucessWithNoDistributionProportion(t *testing.T){
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
-	gParams := gitopiatypes.DefaultParams()
+	gParams := gitopiatypes.Params{
+		DistributionProportions: []gitopiatypes.DistributionProportion{},
+	}
 	minter := gitopiatypes.MinterAccountName
 	feeCollector :=	authtypes.FeeCollectorName
 	gitopiaKeeper := app.GitopiaKeeper
 	bankKeeper := app.BankKeeper
 	accountKeeper := app.AccountKeeper
+	mintAddr := accountKeeper.GetModuleAddress(minter)
+	feeCollectorAddr := accountKeeper.GetModuleAddress(feeCollector)
 
 	// setup
-	bankKeeper.MintCoins(ctx, minter, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(50))))
+	testutil.FundAccount(bankKeeper, ctx, mintAddr, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(50))))
 	gitopiaKeeper.SetParams(ctx, gParams)
 
 	gitopiaKeeper.BeginBlocker(ctx)
-
-	addr := accountKeeper.GetModuleAddress(feeCollector)
-	assert.Equal(t, 10, bankKeeper.GetBalance(ctx, addr, "utlore"))
+	
+	assert.Equal(t, sdk.NewCoin("utlore", sdk.NewInt(50)), bankKeeper.GetBalance(ctx, feeCollectorAddr, "utlore"))
 }

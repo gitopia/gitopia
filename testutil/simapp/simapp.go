@@ -25,6 +25,7 @@ func setup(dir string) *app.GitopiaApp {
 	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
 		simapp.EmptyAppOptions{})
+	// https://github.com/cosmos/cosmos-sdk/issues/8961. EDIT: DO NOT init chain
 	// InitChain updates deliverState which is required when app.NewContext is called
 	// a.InitChain(abci.RequestInitChain{
 	// 	Validators:      []abci.ValidatorUpdate{},
