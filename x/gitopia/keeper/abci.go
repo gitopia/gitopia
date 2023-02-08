@@ -9,8 +9,8 @@ import (
 
 func (k Keeper) BeginBlocker(ctx sdk.Context) {
 	gitopiaParams := k.GetParams(ctx)
-	minterAccount := k.accountKeeper.GetModuleAccount(ctx, k.minterAccountName)
-	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAccount.GetAddress())
+	minterAddress := k.accountKeeper.GetModuleAddress(k.minterAccountName)
+	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
 
 	remainingMintedCoins := mintedCoins
 	for _, d := range gitopiaParams.DistributionProportions {

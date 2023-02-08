@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/simapp"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
@@ -25,14 +26,14 @@ func TestTokenDistributionSucessWithNoDistributionProportion(t *testing.T){
 	gitopiaKeeper := app.GitopiaKeeper
 	bankKeeper := app.BankKeeper
 	accountKeeper := app.AccountKeeper
-	mintAddr := accountKeeper.GetModuleAddress(minter)
-	feeCollectorAddr := accountKeeper.GetModuleAddress(feeCollector)
 
 	// setup
-	testutil.FundAccount(bankKeeper, ctx, mintAddr, sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(50))))
+	err := testutil.FundModuleAccount(bankKeeper, ctx, minter, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50))))
+	assert.NoError(t, err)
 	gitopiaKeeper.SetParams(ctx, gParams)
 
 	gitopiaKeeper.BeginBlocker(ctx)
 	
-	assert.Equal(t, sdk.NewCoin("utlore", sdk.NewInt(50)), bankKeeper.GetBalance(ctx, feeCollectorAddr, "utlore"))
-}
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
+} 
+

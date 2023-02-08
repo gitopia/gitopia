@@ -58,7 +58,7 @@ var maccPerms = map[string][]string{
 	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	govtypes.ModuleName:            {authtypes.Burner},
 	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	gitopiatypes.MinterAccountName: {authtypes.Minter},
+	gitopiatypes.MinterAccountName: nil,
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
