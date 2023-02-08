@@ -31,8 +31,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
 
-	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins)
-	if err != nil {
+	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins); err != nil {
 		ctx.Logger().Error(fmt.Sprintf("error distributing team proportion %v", err))
 		panic(err)
 	}
