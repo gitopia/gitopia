@@ -34,6 +34,7 @@ func TestTokenDistributionSucessWithNoDistributionProportion(t *testing.T) {
 	gitopiaKeeper.BeginBlocker(ctx)
 
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
 }
 
 func TestTokenDistributionSucess(t *testing.T) {
@@ -60,6 +61,8 @@ func TestTokenDistributionSucess(t *testing.T) {
 	gitopiaKeeper.BeginBlocker(ctx)
 	
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(16)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
+
 	accAdrr, _ := sdk.AccAddressFromBech32("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm")
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(20)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
 	accAdrr, _ = sdk.AccAddressFromBech32("gitopia1njn3grh5ar4ccapyp4uehuq28wpk2sk5heu7ac")
@@ -78,6 +81,7 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 			{Address: "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm", Proportion: 40},
 		},
 	}
+	minter := gitopiatypes.MinterAccountName
 	feeCollector := authtypes.FeeCollectorName
 	gitopiaKeeper := app.GitopiaKeeper
 	bankKeeper := app.BankKeeper
@@ -88,6 +92,8 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	gitopiaKeeper.BeginBlocker(ctx)
 	
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
+
 	accAdrr, _ := sdk.AccAddressFromBech32("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm")
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
 }
