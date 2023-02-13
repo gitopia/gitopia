@@ -31,7 +31,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
 
-	// move validator and community incentives into fee collector account,
+	// move validator and delegator incentives into fee collector account,
 	// to be distributed by cosmos-sdk distribution module.
 	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins); err != nil {
 		ctx.Logger().Error(fmt.Sprintf("error distributing team proportion %v", err))
