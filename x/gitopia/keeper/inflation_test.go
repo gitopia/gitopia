@@ -250,15 +250,16 @@ func TestInflationFnHalvesOverYearsSuccess(t *testing.T) {
 
 }
 
-func TestInflationZeroAtMaxSupplySuccess(t *testing.T){
+func TestInflationFnZeroAtMaxSupplySuccess(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Time: time.Now()})
 
 	gitopiaKeeper := app.GitopiaKeeper
+	mintKeeper := app.MintKeeper
 	bankKeeper := app.BankKeeper
 	minter := minttypes.Minter{Inflation: sdk.NewDecWithPrec(35, 2)} // current inflation. doesnt matter
 
-	inflationTime := time.Now().UTC().Add(10 * time.Second)// do not trigger inflation
+	inflationTime := time.Now().UTC().Add(10 * time.Second) // do not trigger inflation
 	gitopiaParams := types.Params{NextInflationTime: inflationTime}
 	gitopiaKeeper.SetParams(ctx, gitopiaParams)
 	mintParams := minttypes.Params{
@@ -269,11 +270,94 @@ func TestInflationZeroAtMaxSupplySuccess(t *testing.T){
 		BlocksPerYear:       10,            // doesnt matter
 		MintDenom:           "utlore",
 	}
+	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 
+	// mint max supply
 	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin("utlore", sdk.NewInt(1711136433))))
 	assert.NoError(t, err)
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
 
+	// inflation doesnt halve anymore after max supply
 	assert.Equal(t, sdk.NewDec(0), inflation)
+	// no more changes to inflation params
+	assert.Equal(t, inflationTime, gitopiaKeeper.GetParams(ctx).NextInflationTime)
+	assert.Equal(t, sdk.NewDecWithPrec(45, 2), mintKeeper.GetParams(ctx).InflationMax)
+	assert.Equal(t, sdk.NewDecWithPrec(25, 2), mintKeeper.GetParams(ctx).InflationMin)
+}
+
+func TestInflationFnZeroAtMaxSupplyWhenInflationTimePassesSuccess(t *testing.T) {
+	app := simapp.Setup(t)
+	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Time: time.Now()})
+
+	gitopiaKeeper := app.GitopiaKeeper
+	mintKeeper := app.MintKeeper
+	bankKeeper := app.BankKeeper
+
+	// inflation params at year 10.
+	// ********************************************************
+	// ** these are the min values of the params of all time **
+	// ********************************************************
+
+	INFLATION := sdk.NewDecWithPrec(109375, 7)     // 1.09375% or 0.0109375
+	MIN_INFLATION := sdk.NewDecWithPrec(78125, 7)  // 0.78125% or 0.0078125
+	MAX_INFLATION := sdk.NewDecWithPrec(140625, 7) // 1.40625% or 0.0140625
+	minter := minttypes.Minter{Inflation: INFLATION}
+
+	inflationTime := time.Now().UTC().Add(-10 * time.Second) // trigger inflation
+	gitopiaParams := types.Params{NextInflationTime: inflationTime}
+	gitopiaKeeper.SetParams(ctx, gitopiaParams)
+	mintParams := minttypes.Params{
+		GoalBonded:          sdk.NewDecWithPrec(67, 2),
+		InflationMax:        MAX_INFLATION,
+		InflationMin:        MIN_INFLATION,
+		InflationRateChange: sdk.NewDec(0), // no additional change
+		BlocksPerYear:       10,            // doesnt matter
+		MintDenom:           "utlore",
+	}
+	mintKeeper.SetParams(ctx, mintParams)
+	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
+
+	// mint max supply
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin("utlore", sdk.NewInt(1711136433))))
+	assert.NoError(t, err)
+	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
+
+	// inflation doesnt halve anymore after max supply
+	assert.Equal(t, sdk.NewDec(0), inflation) // should have actually been 0.546875% or 0.00564875
+	// no more changes to inflation params
+	assert.Equal(t, inflationTime, gitopiaKeeper.GetParams(ctx).NextInflationTime) // should have been inflation time + 2 years
+	assert.Equal(t, MAX_INFLATION, mintKeeper.GetParams(ctx).InflationMax) 
+	assert.Equal(t, MIN_INFLATION, mintKeeper.GetParams(ctx).InflationMin)
+}
+
+// tests inflation and inflation params dont change if minting has stopped(zero inflation) eventhough next inflation time passes
+func TestInflationFnNoChangeSuccess(t *testing.T) {
+	app := simapp.Setup(t)
+	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Time: time.Now()})
+
+	gitopiaKeeper := app.GitopiaKeeper
+	mintKeeper := app.MintKeeper
+	minter := minttypes.Minter{Inflation: sdk.NewDec(0)} // current inflation
+
+	inflationTime := time.Now().UTC().Add(-10 * time.Second) // trigger inflation
+	gitopiaParams := types.Params{NextInflationTime: inflationTime}
+	gitopiaKeeper.SetParams(ctx, gitopiaParams)
+	mintParams := minttypes.Params{
+		GoalBonded:          sdk.NewDecWithPrec(67, 2),
+		InflationMax:        sdk.NewDecWithPrec(45, 2),
+		InflationMin:        sdk.NewDecWithPrec(25, 2),
+		InflationRateChange: sdk.NewDec(0), // no additional change
+		BlocksPerYear:       10,            // doesnt matter
+		MintDenom:           "utlore",
+	}
+	mintKeeper.SetParams(ctx, mintParams)
+	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
+
+	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
+
+	assert.Equal(t, sdk.NewDec(0), inflation)
+	assert.Equal(t, inflationTime, gitopiaKeeper.GetParams(ctx).NextInflationTime)
+	assert.Equal(t, sdk.NewDecWithPrec(45, 2), mintKeeper.GetParams(ctx).InflationMax)
+	assert.Equal(t, sdk.NewDecWithPrec(25, 2), mintKeeper.GetParams(ctx).InflationMin)
 }
