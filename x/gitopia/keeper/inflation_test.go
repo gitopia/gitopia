@@ -249,3 +249,31 @@ func TestInflationFnHalvesOverYearsSuccess(t *testing.T) {
 	}
 
 }
+
+func TestInflationZeroAtMaxSupplySuccess(t *testing.T){
+	app := simapp.Setup(t)
+	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Time: time.Now()})
+
+	gitopiaKeeper := app.GitopiaKeeper
+	bankKeeper := app.BankKeeper
+	minter := minttypes.Minter{Inflation: sdk.NewDecWithPrec(35, 2)} // current inflation. doesnt matter
+
+	inflationTime := time.Now().UTC().Add(10 * time.Second)// do not trigger inflation
+	gitopiaParams := types.Params{NextInflationTime: inflationTime}
+	gitopiaKeeper.SetParams(ctx, gitopiaParams)
+	mintParams := minttypes.Params{
+		GoalBonded:          sdk.NewDecWithPrec(67, 2),
+		InflationMax:        sdk.NewDecWithPrec(45, 2),
+		InflationMin:        sdk.NewDecWithPrec(25, 2),
+		InflationRateChange: sdk.NewDec(0), // no additional change
+		BlocksPerYear:       10,            // doesnt matter
+		MintDenom:           "utlore",
+	}
+	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
+
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin("utlore", sdk.NewInt(1711136433))))
+	assert.NoError(t, err)
+	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
+
+	assert.Equal(t, sdk.NewDec(0), inflation)
+}
