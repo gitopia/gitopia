@@ -241,7 +241,6 @@ func (app *GitopiaApp) BlockedModuleAccountAddrs() map[string]bool {
 	// TODO: Blocked on updating to v0.46.x
 	// delete(modAccAddrs, authtypes.NewModuleAddress(grouptypes.ModuleName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-	delete(modAccAddrs, authtypes.NewModuleAddress(authtypes.FeeCollectorName).String())
 
 	return modAccAddrs
 }
