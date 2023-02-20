@@ -62,8 +62,8 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 	}
 	resAllRepositoryIssue := k.GetAllRepositoryIssue(ctx, repository.Id)
 	var allRepositoryIssue []*types.Issue
-	for _, i := range resAllRepositoryIssue {
-		allRepositoryIssue = append(allRepositoryIssue, &i)
+	for i := 0; i < len(resAllRepositoryIssue); i++ {
+		allRepositoryIssue = append(allRepositoryIssue, &resAllRepositoryIssue[i])
 	}
 
 	var issues []*types.Issue
