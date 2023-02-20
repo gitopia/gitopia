@@ -106,11 +106,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		issue,
 	)
 
-	if len(msg.BountyAmount) > 0 {
-		bounty, _ := k.GetBounty(ctx, bountyId)
-		k.SetBounty(ctx, bounty)
-	}
-
 	k.SetRepository(ctx, repository)
 
 	assigneesJson, _ := json.Marshal(issue.Assignees)
