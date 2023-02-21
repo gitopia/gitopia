@@ -9,8 +9,8 @@ import (
 
 func (k Keeper) BeginBlocker(ctx sdk.Context) {
 	gitopiaParams := k.GetParams(ctx)
-	minterAccount := k.accountKeeper.GetModuleAccount(ctx, k.minterAccountName)
-	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAccount.GetAddress())
+	minterAddress := k.accountKeeper.GetModuleAddress(k.minterAccountName)
+	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
 
 	remainingMintedCoins := mintedCoins
 	for _, d := range gitopiaParams.DistributionProportions {
@@ -31,8 +31,9 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
 
-	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins)
-	if err != nil {
+	// move validator and delegator incentives into fee collector account,
+	// to be distributed by cosmos-sdk distribution module.
+	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins); err != nil {
 		ctx.Logger().Error(fmt.Sprintf("error distributing team proportion %v", err))
 		panic(err)
 	}

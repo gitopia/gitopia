@@ -152,9 +152,15 @@ require (
 require github.com/ipfs/go-cid v0.3.2
 
 require (
+	github.com/ghodss/yaml v1.0.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0 // indirect
+)
+
+require (
 	cloud.google.com/go/compute/metadata v0.2.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
+	github.com/cosmos/ibc-go v1.5.0
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.4 // indirect
 	github.com/manifoldco/promptui v0.9.0 // indirect

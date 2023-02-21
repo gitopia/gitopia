@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	gitopiaappparams "github.com/gitopia/gitopia/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/app/params"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -15,22 +15,25 @@ import (
 	"github.com/gitopia/gitopia/app"
 )
 
-// New creates application instance with in-memory database and disabled logging.
-func New(dir string) app.GitopiaApp {
+// setup creates application instance with in-memory database and disabled logging.
+func setup(dir string) *app.GitopiaApp {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
-	encoding := gitopiaappparams.EncodingConfig(app.MakeEncodingConfig())
+	encoding := gitopiaparams.EncodingConfig(app.MakeEncodingConfig())
 
 	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
 		simapp.EmptyAppOptions{})
+	// https://github.com/cosmos/cosmos-sdk/issues/8961. EDIT: DO NOT init chain
 	// InitChain updates deliverState which is required when app.NewContext is called
-	a.InitChain(abci.RequestInitChain{
-		ConsensusParams: defaultConsensusParams,
-		AppStateBytes:   []byte("{}"),
-	})
-	return *a
+	// a.InitChain(abci.RequestInitChain{
+	// 	Validators:      []abci.ValidatorUpdate{},
+	// 	ConsensusParams: defaultConsensusParams,
+	// 	AppStateBytes:   []byte("{}"),
+	// })
+
+	return a
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{

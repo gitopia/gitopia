@@ -13,7 +13,6 @@ func (k Keeper) GetParams(ctx sdk.Context) ( p types.Params) {
 		return p
 	}
 
-	// note for reviewer: panics on error
 	k.cdc.MustUnmarshal(bz, &p)
 	return p
 }
@@ -21,7 +20,6 @@ func (k Keeper) GetParams(ctx sdk.Context) ( p types.Params) {
 // SetParams set the params
 func (k Keeper) SetParams(ctx sdk.Context, p types.Params) {
 	store := ctx.KVStore(k.storeKey)
-	// note for reviewer: panics on error
 	bz := k.cdc.MustMarshal(&p)
 	store.Set(types.ParamsKey, bz)
 }
