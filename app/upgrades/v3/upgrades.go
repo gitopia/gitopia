@@ -5,7 +5,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gitopia/gitopia/app/keepers"
-	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 )
 
 func CreateUpgradeHandler(
@@ -14,7 +13,6 @@ func CreateUpgradeHandler(
 	keepers *keepers.AppKeepers,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
-		vm[gitopiatypes.ModuleName] = mm.Modules[gitopiatypes.ModuleName].ConsensusVersion()
 		ctx.Logger().Info("start to run module migrations...")
 
 		vm, err := mm.RunMigrations(ctx, configurator, vm)
@@ -23,7 +21,6 @@ func CreateUpgradeHandler(
 		}
 
 		ctx.Logger().Info("upgrade complete")
-
 		return vm, err
 	}
 }
