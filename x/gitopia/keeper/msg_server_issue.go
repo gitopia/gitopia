@@ -87,7 +87,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		if err != nil {
 			return nil, err
 		}
-		bountyAddress := GetBountyAddress(k.GetBountyCount(ctx) + 1)
+		bountyAddress := GetBountyAddress(k.GetBountyCount(ctx))
 		err = k.bankKeeper.SendCoins(ctx, creatorAccAddress, bountyAddress, msg.BountyAmount)
 		if err != nil {
 			return nil, err
@@ -105,11 +105,6 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		ctx,
 		issue,
 	)
-
-	if len(msg.BountyAmount) > 0 {
-		bounty, _ := k.GetBounty(ctx, bountyId)
-		k.SetBounty(ctx, bounty)
-	}
 
 	k.SetRepository(ctx, repository)
 
