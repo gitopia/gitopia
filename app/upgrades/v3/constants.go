@@ -4,7 +4,6 @@ import (
 	store "github.com/cosmos/cosmos-sdk/store/types"
 
 	"github.com/gitopia/gitopia/app/upgrades"
-	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 )
 
 const (
@@ -16,8 +15,7 @@ var Upgrade = upgrades.Upgrade{
 	UpgradeName:          UpgradeName,
 	CreateUpgradeHandler: CreateUpgradeHandler,
 	StoreUpgrades: store.StoreUpgrades{
-		Added: []string{
-			gitopiatypes.ModuleName,
-		},
+		Added:   []string{},
+		Deleted: []string{},
 	},
 }
