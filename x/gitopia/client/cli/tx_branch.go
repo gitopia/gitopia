@@ -118,7 +118,7 @@ func CmdToggleForcePush() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
              argRepoId := args[0]
              argRepoName := args[1]
-             argBranchName := args[1]
+             argBranchName := args[2]
             
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
