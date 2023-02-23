@@ -24,6 +24,7 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
+  rpc ToggleForcePush(MsgToggleForcePush) returns (MsgToggleForcePushResponse);
   rpc RevokeProviderPermission(MsgRevokeProviderPermission) returns (MsgRevokeProviderPermissionResponse);
   rpc AuthorizeProvider(MsgAuthorizeProvider) returns (MsgAuthorizeProviderResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
@@ -106,6 +107,15 @@ service Msg {
   // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
+}
+
+message MsgToggleForcePush {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string branchName = 3;
+}
+
+message MsgToggleForcePushResponse {
 }
 
 enum ProviderPermission {

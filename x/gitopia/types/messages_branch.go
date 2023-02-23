@@ -291,3 +291,44 @@ func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
 	}
 	return nil
 }
+
+const TypeMsgToggleForcePush = "toggle_force_push"
+
+var _ sdk.Msg = &MsgToggleForcePush{}
+
+func NewMsgToggleForcePush(creator string, repositoryId RepositoryId, branchName string) *MsgToggleForcePush {
+	return &MsgToggleForcePush{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		BranchName:   branchName,
+	}
+}
+
+func (msg *MsgToggleForcePush) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgToggleForcePush) Type() string {
+	return TypeMsgToggleForcePush
+}
+
+func (msg *MsgToggleForcePush) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgToggleForcePush) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgToggleForcePush) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
