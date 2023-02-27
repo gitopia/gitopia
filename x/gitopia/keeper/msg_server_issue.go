@@ -117,7 +117,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateIssueEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issueId, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeIssueTitleKey, issue.Title),
 			sdk.NewAttribute(types.EventAttributeIssueDescriptionKey, issue.Description),
