@@ -33,6 +33,11 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	// Set default branch if this is the first branch
+	if len(k.GetAllRepositoryBranch(ctx, repository.Id)) == 0 {
+		repository.DefaultBranch = msg.Branch.Name
+	}
+
 	branch, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch.Name)
 	if found {
 		branch.Sha = msg.Branch.Sha
@@ -96,6 +101,11 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushBranchPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	// Set default branch if this is the first branch
+	if len(k.GetAllRepositoryBranch(ctx, repository.Id)) == 0 {
+		repository.DefaultBranch = msg.Branches[0].Name
 	}
 
 	var updatedBranches []types.Branch

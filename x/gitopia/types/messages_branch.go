@@ -167,6 +167,10 @@ func (msg *MsgMultiSetBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
+	if len(msg.Branches) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "atleast one branch should be set")
+	}
+
 	for _, branch := range msg.Branches {
 		if len(branch.Name) > 255 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
@@ -277,6 +281,10 @@ func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
 	err = ValidateRepositoryId(msg.RepositoryId)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	}
+
+	if len(msg.Branches) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "atleast one branch should be set")
 	}
 
 	for _, branch := range msg.Branches {
