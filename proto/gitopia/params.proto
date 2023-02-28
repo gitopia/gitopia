@@ -1,0 +1,26 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+message DistributionProportion {
+  string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  int64 proportion = 2 [(gogoproto.moretags) = "yaml:\"proportion\""];
+}
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  google.protobuf.Timestamp next_inflation_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"next_inflation_time\""
+  ];
+  repeated DistributionProportion distribution_proportions = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"distribution_proportions\""
+  ];
+}

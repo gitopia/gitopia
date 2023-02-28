@@ -62,8 +62,8 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 	}
 	resAllRepositoryPullRequest := k.GetAllRepositoryPullRequest(ctx, repository.Id)
 	var allRepositoryPullRequest []*types.PullRequest
-	for _, pr := range resAllRepositoryPullRequest {
-		allRepositoryPullRequest = append(allRepositoryPullRequest, &pr)
+	for i := 0; i < len(resAllRepositoryPullRequest); i++ {
+		allRepositoryPullRequest = append(allRepositoryPullRequest, &resAllRepositoryPullRequest[i])
 	}
 
 	var pullRequests []*types.PullRequest

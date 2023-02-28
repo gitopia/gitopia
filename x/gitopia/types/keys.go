@@ -18,10 +18,16 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_gitopia"
 
+	MinterAccountName = "minter"
+
 	// this line is used by starport scaffolding # ibc/keys/name
 )
 
 // this line is used by starport scaffolding # ibc/keys/port
+
+var (
+	ParamsKey = []byte{0x00}
+)
 
 func KeyPrefix(p string) []byte {
 	return []byte(p)

@@ -123,6 +123,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set whois count
 	k.SetWhoisCount(ctx, genState.WhoisCount)
 
+	k.SetParams(ctx, genState.Params)
 }
 
 // ExportGenesis returns the capability module's exported genesis.
@@ -177,6 +178,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	// Get all whois
 	genesis.WhoisList = k.GetAllWhois(ctx)
 	genesis.WhoisCount = k.GetWhoisCount(ctx)
+
+	genesis.Params = k.GetParams(ctx)
 
 	// this line is used by starport scaffolding # ibc/genesis/export
 
