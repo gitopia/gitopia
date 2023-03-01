@@ -221,12 +221,11 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeMergePullRequest{}
 
-func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, commentBody string, provider string) *MsgInvokeMergePullRequest {
+func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string) *MsgInvokeMergePullRequest {
 	return &MsgInvokeMergePullRequest{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Iid:          iid,
-		CommentBody:  commentBody,
 		Provider:     provider,
 	}
 }
@@ -261,10 +260,6 @@ func (msg *MsgInvokeMergePullRequest) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Provider)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
-	}
-
-	if err := ValidateCommentBody(msg.CommentBody); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil

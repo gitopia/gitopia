@@ -146,7 +146,7 @@ func CmdUpdatePullRequestDescription() *cobra.Command {
 
 func CmdInvokeMergePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "invoke-merge-pullrequest [repository-id] [iid] [comment-body] [provider]",
+		Use:   "invoke-merge-pullrequest [repository-id] [iid] [provider]",
 		Short: "Emits an event for git-server to merge a Pull Request",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -158,11 +158,7 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsCommentBody, err := cast.ToStringE(args[2])
-			if err != nil {
-				return err
-			}
-			argsProvider, err := cast.ToStringE(args[3])
+			argsProvider, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
@@ -172,7 +168,7 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsCommentBody), string(argsProvider))
+			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsProvider))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

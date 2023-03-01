@@ -408,8 +408,7 @@ message MsgInvokeMergePullRequest {
   string creator = 1;
   uint64 repositoryId = 2;
   uint64 iid = 3;
-  string commentBody = 4;
-  string provider = 5;
+  string provider = 4;
 }
 
 message MsgInvokeMergePullRequestResponse { }
