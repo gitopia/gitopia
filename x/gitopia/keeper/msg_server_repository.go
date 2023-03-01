@@ -229,6 +229,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
+			sdk.NewAttribute(types.EventAttributeForkRepoDescriptionKey, msg.ForkRepositoryDescription),
 			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
 			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
@@ -281,7 +282,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			Id:   ownerAddress.address,
 			Type: ownerAddress.ownerType,
 		},
-		Description:   repository.Description,
+		Description:   msg.ForkRepositoryDescription,
 		DefaultBranch: repository.DefaultBranch,
 		CreatedAt:     ctx.BlockTime().Unix(),
 		UpdatedAt:     ctx.BlockTime().Unix(),
@@ -289,6 +290,11 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		Parent:        repository.Id,
 		License:       repository.License,
 		Commits:       repository.Commits,
+	}
+
+	// If only a particular branch is copied to the fork repository, set that as default branch
+	if msg.Branch != "" {
+		forkRepository.DefaultBranch = msg.Branch
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, forkRepository, types.RepositoryCollaborator_ADMIN) {
@@ -323,7 +329,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, forkRepository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(forkRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, forkRepository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, forkRepository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(forkRepository.Parent, 10)),

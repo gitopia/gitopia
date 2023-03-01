@@ -221,11 +221,12 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeMergePullRequest{}
 
-func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string) *MsgInvokeMergePullRequest {
+func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, commentBody string, provider string) *MsgInvokeMergePullRequest {
 	return &MsgInvokeMergePullRequest{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Iid:          iid,
+		CommentBody:  commentBody,
 		Provider:     provider,
 	}
 }
@@ -256,22 +257,30 @@ func (msg *MsgInvokeMergePullRequest) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	_, err = sdk.AccAddressFromBech32(msg.Provider)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
 	}
+
+	if err := ValidateCommentBody(msg.CommentBody); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgSetPullRequestState{}
 
-func NewMsgSetPullRequestState(creator string, repositoryId uint64, iid uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
+func NewMsgSetPullRequestState(creator string, repositoryId uint64, iid uint64, state string, mergeCommitSha string, commentBody string, taskId uint64) *MsgSetPullRequestState {
 	return &MsgSetPullRequestState{
 		Creator:        creator,
 		RepositoryId:   repositoryId,
 		Iid:            iid,
 		State:          state,
 		MergeCommitSha: mergeCommitSha,
+		CommentBody:    commentBody,
+		TaskId:         taskId,
 	}
 }
 
@@ -301,10 +310,16 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	_, exists := PullRequest_State_value[msg.State]
 	if !exists {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state (%s)", msg.State)
 	}
+
+	if err := ValidateCommentBody(msg.CommentBody); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	return nil
 }
 

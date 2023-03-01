@@ -46,14 +46,17 @@ func CmdCreateRepository() *cobra.Command {
 
 func CmdInvokeForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "invoke-fork-repository [id] [repository-name] [owner-id] [provider]",
+		Use:   "invoke-fork-repository [id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [owner-id] [provider]",
 		Short: "Emits an event for git-server to fork an existing repository",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argid := args[0]
 			argRepositoryName := args[1]
-			argOwnerId := args[2]
-			argProvider := args[3]
+			argForkRepositoryName := args[2]
+			argForkRepositoryDescription := args[3]
+			argBranch := args[4]
+			argOwnerId := args[5]
+			argProvider := args[6]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -66,6 +69,9 @@ func CmdInvokeForkRepository() *cobra.Command {
 					Id:   argid,
 					Name: argRepositoryName,
 				},
+				argForkRepositoryName,
+				argForkRepositoryDescription,
+				argBranch,
 				argOwnerId,
 				argProvider,
 			)
@@ -83,15 +89,18 @@ func CmdInvokeForkRepository() *cobra.Command {
 
 func CmdForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fork-repository [owner-id] [repository-name] [fork-owner-id] [task-id]",
+		Use:   "fork-repository [owner-id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [fork-owner-id] [task-id]",
 		Short: "Fork existing repository",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argid := args[0]
 			argRepositoryName := args[1]
-			argOwnerId := args[2]
+			argForkRepositoryName := args[2]
+			argForkRepositoryDescription := args[3]
+			argBranch := args[4]
+			argOwnerId := args[5]
 
-			argsTaskId, err := strconv.ParseUint(args[4], 10, 64)
+			argsTaskId, err := strconv.ParseUint(args[6], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -104,6 +113,9 @@ func CmdForkRepository() *cobra.Command {
 			msg := types.NewMsgForkRepository(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argid, Name: argRepositoryName},
+				argForkRepositoryName,
+				argForkRepositoryDescription,
+				argBranch,
 				argOwnerId,
 				argsTaskId,
 			)

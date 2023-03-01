@@ -8,7 +8,7 @@ build:
 accounts:
 - name: node0
   coins:
-  - 100000000utlore
+  - 200000000utlore
 - name: node1
   coins:
   - 100000000utlore

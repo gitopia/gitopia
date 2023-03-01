@@ -408,7 +408,8 @@ message MsgInvokeMergePullRequest {
   string creator = 1;
   uint64 repositoryId = 2;
   uint64 iid = 3;
-  string provider = 4;
+  string commentBody = 4;
+  string provider = 5;
 }
 
 message MsgInvokeMergePullRequestResponse { }
@@ -419,7 +420,8 @@ message MsgSetPullRequestState {
   uint64 iid = 3;
   string state = 4;
   string mergeCommitSha = 5;
-  uint64 taskId = 6;
+  string commentBody = 6;
+  uint64 taskId = 7;
 }
 
 message MsgSetPullRequestStateResponse {
@@ -709,9 +711,10 @@ message MsgInvokeForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string forkRepositoryName = 3;
-  string branch = 4;
-  string owner = 5;
-  string provider = 6;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  string provider = 7;
 }
 
 message MsgInvokeForkRepositoryResponse {}
@@ -720,9 +723,10 @@ message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   string forkRepositoryName = 3;
-  string branch = 4;
-  string owner = 5;
-  uint64 taskId = 6;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  uint64 taskId = 7;
 }
 
 message MsgForkRepositoryResponse {

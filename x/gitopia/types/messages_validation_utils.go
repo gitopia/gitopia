@@ -23,6 +23,14 @@ func ValidateRepositoryName(name string) error {
 	return nil
 }
 
+func ValidateRepositoryDescription(description string) error {
+	if len(description) > 255 {
+		return fmt.Errorf("description length exceeds limit: 255")
+	}
+
+	return nil
+}
+
 func ValidateRepositoryId(repositoryId RepositoryId) error {
 	_, err := sdk.AccAddressFromBech32(repositoryId.Id)
 	if err != nil {

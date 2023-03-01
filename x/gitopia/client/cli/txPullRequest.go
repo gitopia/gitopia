@@ -146,7 +146,7 @@ func CmdUpdatePullRequestDescription() *cobra.Command {
 
 func CmdInvokeMergePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "invoke-merge-pullrequest [repository-id] [iid] [provider]",
+		Use:   "invoke-merge-pullrequest [repository-id] [iid] [comment-body] [provider]",
 		Short: "Emits an event for git-server to merge a Pull Request",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -158,7 +158,11 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argsProvider, err := cast.ToStringE(args[2])
+			argsCommentBody, err := cast.ToStringE(args[2])
+			if err != nil {
+				return err
+			}
+			argsProvider, err := cast.ToStringE(args[3])
 			if err != nil {
 				return err
 			}
@@ -168,7 +172,7 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsProvider))
+			msg := types.NewMsgInvokeMergePullRequest(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsCommentBody), string(argsProvider))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -183,7 +187,7 @@ func CmdInvokeMergePullRequest() *cobra.Command {
 
 func CmdSetPullRequestState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set-pullrequest-state [repository-id] [iid] [state] [merge_commit_sha]",
+		Use:   "set-pullrequest-state [repository-id] [iid] [state] [merge-commit-sha] [comment-body] [task-id]",
 		Short: "Set pullrequest state",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -203,13 +207,28 @@ func CmdSetPullRequestState() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsCommentBody, err := cast.ToStringE(args[4])
+			if err != nil {
+				return err
+			}
+			argsTaskId, err := strconv.ParseUint(args[5], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgSetPullRequestState(clientCtx.GetFromAddress().String(), argsRepositoryId, argsIid, string(argsState), string(argsMergeCommitSha))
+			msg := types.NewMsgSetPullRequestState(clientCtx.GetFromAddress().String(),
+				argsRepositoryId,
+				argsIid,
+				string(argsState),
+				string(argsMergeCommitSha),
+				string(argsCommentBody),
+				argsTaskId,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

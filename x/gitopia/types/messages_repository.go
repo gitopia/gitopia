@@ -95,8 +95,8 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		}
 	}
 
-	if len(msg.Description) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
+	if err := ValidateRepositoryDescription(msg.Description); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -104,12 +104,15 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeForkRepository{}
 
-func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, owner string, provider string) *MsgInvokeForkRepository {
+func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, provider string) *MsgInvokeForkRepository {
 	return &MsgInvokeForkRepository{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Owner:        owner,
-		Provider:     provider,
+		Creator:                   creator,
+		RepositoryId:              repositoryId,
+		ForkRepositoryName:        forkRepositoryName,
+		ForkRepositoryDescription: forkRepositoryDescription,
+		Branch:                    branch,
+		Owner:                     owner,
+		Provider:                  provider,
 	}
 }
 
@@ -148,6 +151,10 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
+	if err := ValidateRepositoryDescription(msg.ForkRepositoryDescription); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	if err := ValidateBranchName(msg.Branch); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
@@ -178,12 +185,15 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId RepositoryId, owner string, taskId uint64) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, taskId uint64) *MsgForkRepository {
 	return &MsgForkRepository{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Owner:        owner,
-		TaskId:       taskId,
+		Creator:                   creator,
+		RepositoryId:              repositoryId,
+		ForkRepositoryName:        forkRepositoryName,
+		ForkRepositoryDescription: forkRepositoryDescription,
+		Branch:                    branch,
+		Owner:                     owner,
+		TaskId:                    taskId,
 	}
 }
 
@@ -219,6 +229,10 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 	}
 
 	if err := ValidateRepositoryName(msg.ForkRepositoryName); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateRepositoryDescription(msg.ForkRepositoryDescription); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 

@@ -493,6 +493,22 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 				k.SetBounty(ctx, bounty)
 			}
 		}
+
+		if msg.CommentBody != "" {
+			pullRequest.CommentsCount += 1
+
+			k.AppendComment(ctx, types.Comment{
+				Creator:      msg.Creator,
+				RepositoryId: msg.RepositoryId,
+				ParentIid:    pullRequest.Iid,
+				Parent:       types.CommentParentPullRequest,
+				CommentIid:   pullRequest.CommentsCount,
+				Body:         msg.CommentBody,
+				CreatedAt:    ctx.BlockTime().Unix(),
+				UpdatedAt:    ctx.BlockTime().Unix(),
+				CommentType:  types.CommentTypeNone,
+			})
+		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}

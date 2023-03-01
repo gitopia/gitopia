@@ -211,6 +211,7 @@ const (
 	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
 	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
 	EventAttributeForkRepoNameKey            = "ForkRepositoryName"
+	EventAttributeForkRepoDescriptionKey     = "ForkRepositoryDescription"
 	EventAttributeForkRepoBranchKey          = "ForkRepositoryBranch"
 	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
 	EventAttributeRepoBranchKey              = "RepositoryBranch"
