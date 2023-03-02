@@ -311,7 +311,7 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state (%s)", msg.State)
 	}
 
-	if err := ValidateCommentBody(msg.CommentBody); err != nil {
+	if err := ValidateOptionalCommentBody(msg.CommentBody); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
