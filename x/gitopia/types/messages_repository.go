@@ -155,7 +155,7 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if err := ValidateBranchName(msg.Branch); err != nil {
+	if err := ValidateOptionalBranchName(msg.Branch); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
@@ -236,7 +236,7 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if err := ValidateBranchName(msg.Branch); err != nil {
+	if err := ValidateOptionalBranchName(msg.Branch); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 

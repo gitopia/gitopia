@@ -55,6 +55,17 @@ func ValidateRepositoryId(repositoryId RepositoryId) error {
 	return nil
 }
 
+func ValidateOptionalBranchName(name string) error {
+	if len(name) > 255 {
+		return fmt.Errorf("branch length exceeds limit: 255")
+	}
+	if valid, err := IsValidRefname(name); !valid {
+		return err
+	}
+
+	return nil
+}
+
 func ValidateBranchName(name string) error {
 	if len(name) > 255 {
 		return fmt.Errorf("branch length exceeds limit: 255")
