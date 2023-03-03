@@ -309,7 +309,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	// Copy branches to forked repository
 	if msg.Branch != "" {
 		branch, _ := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch)
-		branch.Id = id
+		branch.RepositoryId = id
 		k.AppendBranch(ctx, branch)
 	} else {
 		branches := k.GetAllRepositoryBranch(ctx, repository.Id)
