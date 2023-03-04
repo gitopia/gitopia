@@ -266,8 +266,10 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	}
 
 	// Check branch exists
-	if _, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch); !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
+	if msg.Branch != "" {
+		if _, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch); !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
+		}
 	}
 
 	_, found = k.GetTask(ctx, msg.TaskId)

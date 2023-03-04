@@ -127,22 +127,22 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 	}{
 		{
 			desc:    "Repository Not Exists",
-			request: &types.MsgForkRepository{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, ForkRepositoryName: "name", Owner: users[2], TaskId: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Repository Already Exists",
-			request: &types.MsgForkRepository{Creator: users[1], RepositoryId: repositoryId, Owner: users[1], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[1], RepositoryId: repositoryId, ForkRepositoryName: repositoryId.Name, Owner: users[1], TaskId: 0},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Forking is not allowed",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: types.RepositoryId{Id: users[1], Name: "repository"}, Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: types.RepositoryId{Id: users[1], Name: "repository"}, ForkRepositoryName: "repository", Owner: users[2], TaskId: 0},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "forkrepository", Owner: users[2], TaskId: 0},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
