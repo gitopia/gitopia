@@ -115,6 +115,11 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 	require.NoError(t, err)
 	_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: users[1], Name: "repository", Owner: users[1]})
 	require.NoError(t, err)
+	_, err = srv.MultiSetBranch(ctx, &types.MsgMultiSetBranch{Creator: repositoryId.Id, RepositoryId: repositoryId, Branches: []types.MsgMultiSetBranch_Branch{
+		{Name: "master", Sha: "e1976762da05b6b4896eda4ab0d5d1508b808327"},
+		{Name: "dev", Sha: "e1976762da05b6b4896eda4ab0d5d1508b808327"},
+	}})
+	require.NoError(t, err)
 	_, err = srv.ToggleRepositoryForking(ctx, &types.MsgToggleRepositoryForking{Creator: users[0], RepositoryId: repositoryId})
 	require.NoError(t, err)
 	_, err = srv.CreateTask(ctx, &types.MsgCreateTask{Creator: users[2], TaskType: types.TaskType(0), Provider: users[0]})
@@ -141,8 +146,17 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
-			desc:    "Completed",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "forkrepository", Owner: users[2], TaskId: 0},
+			desc:    "Fork with all branches",
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork1", Owner: users[2], TaskId: 0},
+		},
+		{
+			desc:    "Fork only a particular branch",
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork2", Branch: "dev", Owner: users[2], TaskId: 0},
+		},
+		{
+			desc:    "Branch does not exist",
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork", Branch: "test", Owner: users[2], TaskId: 0},
+			err:     sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
