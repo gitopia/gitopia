@@ -12,6 +12,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -52,6 +53,8 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
+	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
+
 	registry := codectypes.NewInterfaceRegistry()
 	appCodec := codec.NewProtoCodec(registry)
 
@@ -79,13 +82,20 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		ak,
 	)
 
+	bankParamsSubspace := typesparams.NewSubspace(appCodec,
+		amino,
+		storeKey,
+		memStoreKey,
+		"bank",
+	)
 	bankKeeper := bankkeeper.NewBaseKeeper(
 		appCodec,
 		storeKey,
 		ak,
-		ss,
+		bankParamsSubspace,
 		nil,
 	)
+	bankKeeper.SetParams(ctx, banktypes.DefaultParams())
 
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec,
@@ -111,6 +121,5 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		mintKeeper,
 	)
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
 	return k, ctx
 }

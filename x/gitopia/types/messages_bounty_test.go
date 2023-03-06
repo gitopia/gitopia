@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/stretchr/testify/require"
@@ -20,11 +21,22 @@ func TestMsgCreateBounty_ValidateBasic(t *testing.T) {
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
+		},
+		{
 			name: "valid address",
 			msg: MsgCreateBounty{
 				Creator: sample.AccAddress(),
+				Amount: []sdk.Coin{
+					{Denom: "utlore", Amount: sdk.NewInt(1000)},
+				},
 			},
+		},
+		{
+			name: "empty amount",
+			msg: MsgCreateBounty{
+				Creator: sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {

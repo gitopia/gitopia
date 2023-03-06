@@ -1,7 +1,6 @@
 package types
 
 import (
-	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -15,7 +14,7 @@ const (
 
 var _ sdk.Msg = &MsgCreateBounty{}
 
-func NewMsgCreateBounty(creator string, amount []cosmosTypes.Coin, expiry int64, repositoryId uint64, parentIid uint64, parent BountyParent) *MsgCreateBounty {
+func NewMsgCreateBounty(creator string, amount []sdk.Coin, expiry int64, repositoryId uint64, parentIid uint64, parent BountyParent) *MsgCreateBounty {
 	return &MsgCreateBounty{
 		Creator:      creator,
 		Amount:       amount,
@@ -52,8 +51,11 @@ func (msg *MsgCreateBounty) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Amount) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty amount")
+	}
 	if err := msg.Amount.Validate(); err != nil {
-		return err
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 	if msg.Expiry < 0 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")

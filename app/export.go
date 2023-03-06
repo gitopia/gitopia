@@ -183,3 +183,7 @@ func (app *GitopiaApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddr
 		},
 	)
 }
+
+func (app *GitopiaApp) ExportState(ctx sdk.Context) map[string]json.RawMessage {
+	return app.mm.ExportGenesis(ctx, app.AppCodec())
+}
