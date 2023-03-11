@@ -127,12 +127,6 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		}
 	}
 
-	id := k.AppendPullRequest(
-		ctx,
-		pullRequest,
-	)
-	pullRequest.Id = id
-
 	// Link issue(s)
 	for _, issueIid := range msg.IssueIids {
 		issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid)
@@ -152,7 +146,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		pullRequest.Issues = append(pullRequest.Issues, issueIid)
 
 		issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
-			Id:  pullRequest.Id,
+			Id:  k.GetPullRequestCount(ctx),
 			Iid: pullRequest.Iid,
 		})
 		issue.UpdatedAt = createdAt
@@ -160,7 +154,10 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		k.SetIssue(ctx, issue)
 	}
 
-	k.SetPullRequest(ctx, pullRequest)
+	id := k.AppendPullRequest(
+		ctx,
+		pullRequest,
+	)
 
 	k.SetRepository(ctx, baseRepository)
 
