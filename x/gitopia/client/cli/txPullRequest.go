@@ -15,9 +15,9 @@ import (
 
 func CmdCreatePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId] [reviewers] [assignees] [labelIds]",
+		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId] [reviewers] [assignees] [labelIds] [issueIids]",
 		Short: "Create a new pullRequest",
-		Args:  cobra.ExactArgs(9),
+		Args:  cobra.ExactArgs(10),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argTitle := args[0]
 			argDescription := args[1]
@@ -40,6 +40,11 @@ func CmdCreatePullRequest() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argIssueIids := strings.Split(args[9], ",")
+			issueIids, err := utils.SliceAtoi(argIssueIids)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -57,6 +62,7 @@ func CmdCreatePullRequest() *cobra.Command {
 				argReviewers,
 				argAssignees,
 				labelIds,
+				issueIids,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

@@ -131,6 +131,36 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		ctx,
 		pullRequest,
 	)
+	pullRequest.Id = id
+
+	// Link issue(s)
+	for _, issueIid := range msg.IssueIids {
+		issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issueIid))
+		}
+
+		if _, exists := utils.IssueIidExists(pullRequest.Issues, issueIid); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", issueIid))
+		}
+
+		issueIid := &types.IssueIid{
+			Iid: issue.Iid,
+			Id:  issue.Id,
+		}
+
+		pullRequest.Issues = append(pullRequest.Issues, issueIid)
+
+		issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
+			Id:  pullRequest.Id,
+			Iid: pullRequest.Iid,
+		})
+		issue.UpdatedAt = createdAt
+
+		k.SetIssue(ctx, issue)
+	}
+
+	k.SetPullRequest(ctx, pullRequest)
 
 	k.SetRepository(ctx, baseRepository)
 
@@ -924,7 +954,7 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 
 	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, msg.IssueIid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issue.Iid))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.IssueIid))
 	}
 
 	if _, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
@@ -933,7 +963,7 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 
 	issueIid := &types.IssueIid{
 		Iid: issue.Iid,
-		Id:  issue.Iid,
+		Id:  issue.Id,
 	}
 
 	pullRequest.Issues = append(pullRequest.Issues, issueIid)

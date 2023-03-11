@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/base64"
 	"fmt"
+	"reflect"
 	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -119,4 +120,20 @@ func ValidateArweaveTxId(arweaveTxId string) error {
 	}
 
 	return nil
+}
+
+func allUnique(slice interface{}) bool {
+	seen := make(map[interface{}]bool)
+	v := reflect.ValueOf(slice)
+	if v.Kind() != reflect.Slice {
+		panic("allUnique: not a slice")
+	}
+	for i := 0; i < v.Len(); i++ {
+		val := v.Index(i).Interface()
+		if seen[val] {
+			return false
+		}
+		seen[val] = true
+	}
+	return true
 }

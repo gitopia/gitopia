@@ -13,7 +13,7 @@ func (pr PullRequestList) Swap(i, j int)      { pr[i], pr[j] = pr[j], pr[i] }
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepositoryId RepositoryId, baseBranch string, baseRepositoryId RepositoryId, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepositoryId RepositoryId, baseBranch string, baseRepositoryId RepositoryId, reviewers []string, assignees []string, labelIds []uint64, issueIids []uint64) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
 		Creator:          creator,
 		Title:            title,
@@ -25,6 +25,7 @@ func NewMsgCreatePullRequest(creator string, title string, description string, h
 		Reviewers:        reviewers,
 		Assignees:        assignees,
 		LabelIds:         labelIds,
+		IssueIids:        issueIids,
 	}
 }
 
@@ -118,16 +119,19 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 			}
 		}
 	}
-	if len(msg.LabelIds) > 0 {
-		unique := make(map[uint64]bool, len(msg.LabelIds))
-		for _, labelId := range msg.LabelIds {
-			if !unique[labelId] {
-				unique[labelId] = true
-			} else {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", labelId)
-			}
-		}
+
+	if !allUnique(msg.LabelIds) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate labelIds (%v)", msg.LabelIds)
 	}
+
+	if len(msg.IssueIids) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 linked issues")
+	}
+
+	if !allUnique(msg.IssueIids) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate issueIids (%v)", msg.IssueIids)
+	}
+
 	return nil
 }
 

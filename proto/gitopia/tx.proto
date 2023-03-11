@@ -379,6 +379,7 @@ message MsgCreatePullRequest {
   repeated string reviewers = 8;
   repeated string assignees = 9;
   repeated uint64 labelIds = 10;
+  repeated uint64 issueIids = 11;
 }
 
 message MsgCreatePullRequestResponse {
