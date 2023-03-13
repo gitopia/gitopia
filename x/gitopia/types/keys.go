@@ -121,6 +121,7 @@ const (
 	MultiDeleteRepositoryBranchEventKey  = "MultiDeleteRepositoryBranch"
 	DeleteRepositoryTagEventKey          = "DeleteRepositoryTag"
 	MultiDeleteRepositoryTagEventKey     = "MultiDeleteRepositoryTag"
+	ToggleForcePushToBranchEventKey      = "ToggleForcePushToBranch"
 )
 
 const (

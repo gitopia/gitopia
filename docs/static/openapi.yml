@@ -76439,6 +76439,8 @@ definitions:
     properties:
       enableArweaveBackup:
         type: boolean
+  gitopia.gitopia.gitopia.MsgToggleForcePushResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgToggleIssueStateResponse:
     type: object
     properties:
