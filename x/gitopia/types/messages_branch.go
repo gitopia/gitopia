@@ -330,5 +330,20 @@ func (msg *MsgToggleForcePush) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	err = ValidateRepositoryId(msg.RepositoryId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	}
+
+	if len(msg.BranchName) > 255 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
+	} else if len(msg.BranchName) < 1 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	}
+	if valid, err := IsValidRefname(msg.BranchName); !valid {
+		return err
+	}
+
 	return nil
 }
