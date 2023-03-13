@@ -63,3 +63,16 @@ func ValidateArweaveTxId(arweaveTxId string) error {
 
 	return nil
 }
+
+func ValidateBranchName(name string) error {
+	if len(name) > 255 {
+		return fmt.Errorf("branch length exceeds limit: 255")
+	} else if len(name) < 1 {
+		return fmt.Errorf("branch name can't be empty")
+	}
+	if valid, err := IsValidRefname(name); !valid {
+		return err
+	}
+
+	return nil
+}
