@@ -113,6 +113,10 @@ func (msg *MsgMultiSetTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
 	}
 
+	if len(msg.Tags) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "atleast one tag should be set")
+	}
+
 	for _, tag := range msg.Tags {
 		if len(tag.Name) > 255 {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "tag length exceeds limit: 255")
@@ -223,6 +227,10 @@ func (msg *MsgMultiDeleteTag) ValidateBasic() error {
 	err = ValidateRepositoryId(msg.RepositoryId)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	}
+
+	if len(msg.Tags) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "atleast one tag should be set")
 	}
 
 	for _, tag := range msg.Tags {
