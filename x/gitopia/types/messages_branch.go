@@ -330,5 +330,16 @@ func (msg *MsgToggleForcePush) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	err = ValidateRepositoryId(msg.RepositoryId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	}
+
+	err = ValidateBranchName(msg.BranchName)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.BranchName)
+	}
+
 	return nil
 }

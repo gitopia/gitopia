@@ -1,16 +1,12 @@
 package cli
 
 import (
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cobra"
 )
-
-var _ = strconv.Itoa(0)
 
 func CmdSetBranch() *cobra.Command {
 	cmd := &cobra.Command{
@@ -113,13 +109,13 @@ func CmdDeleteBranch() *cobra.Command {
 func CmdToggleForcePush() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "toggle-force-push [repository-id] [repository-name] [branch-name]",
-		Short: "configure restricted push access to branch",
+		Short: "Configure restricted push access to branch",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-             argRepoId := args[0]
-             argRepoName := args[1]
-             argBranchName := args[2]
-            
+			argRepoId := args[0]
+			argRepoName := args[1]
+			argBranchName := args[2]
+
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -139,5 +135,5 @@ func CmdToggleForcePush() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }

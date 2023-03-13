@@ -115,8 +115,7 @@ message MsgToggleForcePush {
   string branchName = 3;
 }
 
-message MsgToggleForcePushResponse {
-}
+message MsgToggleForcePushResponse {}
 
 enum ProviderPermission {
   GIT_SERVER = 0;
@@ -172,8 +171,7 @@ message MsgUpdateRepositoryBackupRef {
   string ref = 4;
 }
 
-message MsgUpdateRepositoryBackupRefResponse {
-}
+message MsgUpdateRepositoryBackupRefResponse {}
 
 message MsgAddRepositoryBackupRef {
   string creator = 1;
@@ -182,8 +180,7 @@ message MsgAddRepositoryBackupRef {
   string ref = 4;
 }
 
-message MsgAddRepositoryBackupRefResponse {
-}
+message MsgAddRepositoryBackupRefResponse {}
 
 message MsgDeleteTaskResponse {}
 message MsgDeleteStorageProviderResponse {}
