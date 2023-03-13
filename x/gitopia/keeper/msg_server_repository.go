@@ -190,7 +190,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 
 	// Check if the user already has a repository with the same name
 	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
@@ -253,7 +253,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	// Check if the user already has a repository with the same name
 	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
@@ -268,7 +268,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	// Check branch exists
 	if msg.Branch != "" {
 		if _, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch); !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
 		}
 	}
 
