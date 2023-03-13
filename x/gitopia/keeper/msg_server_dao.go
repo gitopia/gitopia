@@ -80,6 +80,10 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoDescription, dao.Description),
+			sdk.NewAttribute(types.EventAttributeAvatarUrl, dao.AvatarUrl),
+			sdk.NewAttribute(types.EventAttributeDaoLocation, dao.Location),
+			sdk.NewAttribute(types.EventAttributeDaoWebsite, dao.Website),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(dao.CreatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
 		),
@@ -206,6 +210,7 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoDescription, dao.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
 		),
 	)
@@ -251,6 +256,7 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoWebsite, dao.Website),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
 		),
 	)
@@ -297,6 +303,7 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoLocation, dao.Location),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
 		),
 	)
@@ -343,6 +350,7 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeAvatarUrl, dao.AvatarUrl),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
 		),
 	)
