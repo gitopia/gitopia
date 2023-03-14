@@ -317,7 +317,7 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 				Body:         msg.CommentBody,
 				CreatedAt:    ctx.BlockTime().Unix(),
 				UpdatedAt:    ctx.BlockTime().Unix(),
-				CommentType:  types.CommentTypeNone,
+				CommentType:  types.CommentTypeReply,
 			})
 		}
 

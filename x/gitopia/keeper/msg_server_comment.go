@@ -21,7 +21,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	var issue types.Issue
 	var pullRequest types.PullRequest
 	var found bool
-	commentType := types.CommentTypeNone
+	commentType := types.CommentTypeReply
 
 	if msg.Parent == types.CommentParentIssue {
 		issue, found = k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.ParentIid)

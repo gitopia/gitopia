@@ -438,7 +438,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 				Body:         msg.CommentBody,
 				CreatedAt:    ctx.BlockTime().Unix(),
 				UpdatedAt:    ctx.BlockTime().Unix(),
-				CommentType:  types.CommentTypeNone,
+				CommentType:  types.CommentTypeReply,
 			})
 		}
 

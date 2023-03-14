@@ -5301,7 +5301,7 @@ func (m *MsgCreateComment) GetParent() CommentParent {
 	if m != nil {
 		return m.Parent
 	}
-	return CommentParentIssue
+	return CommentParentNone
 }
 
 func (m *MsgCreateComment) GetBody() string {
@@ -5444,7 +5444,7 @@ func (m *MsgUpdateComment) GetParent() CommentParent {
 	if m != nil {
 		return m.Parent
 	}
-	return CommentParentIssue
+	return CommentParentNone
 }
 
 func (m *MsgUpdateComment) GetCommentIid() uint64 {
@@ -5570,7 +5570,7 @@ func (m *MsgDeleteComment) GetParent() CommentParent {
 	if m != nil {
 		return m.Parent
 	}
-	return CommentParentIssue
+	return CommentParentNone
 }
 
 func (m *MsgDeleteComment) GetCommentIid() uint64 {
