@@ -2,7 +2,18 @@
 
 All notable changes will be documented here.
 
-## [v1.3.0] - 20XX-XX-XX
+## [v1.4.0] - UNRELEASED
+
+- Upgrade cosmos-sdk version to v0.46.10 and tendermint version to v0.34.26
+- Set default branch on first push
+- Fork tx now accepts name, description and branch
+- Close issue and close pull request accepts comment
+- Close issue automatically when a linked PR is merged
+- Branch protection: New transaction to toggle allowForcePush value of branch
+- Default null values for comment type and parent
+- Add issueIids param in create PR tx
+
+## [v1.3.0] - 2023-02-22
 
 - Bump cosmos-sdk version to v0.46.7 and tendermint version to v0.34.24
 - KV changes for issue, pullrequest and comment. 
