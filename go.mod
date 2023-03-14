@@ -3,7 +3,7 @@ module github.com/gitopia/gitopia
 go 1.18
 
 require (
-	cosmossdk.io/errors v1.0.0-beta.7 // indirect
+	cosmossdk.io/errors v1.0.0-beta.7
 	github.com/cosmos/cosmos-sdk v0.46.10
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/gogo/protobuf v1.3.3
@@ -145,7 +145,10 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-require github.com/ipfs/go-cid v0.3.2
+require (
+	github.com/ipfs/go-cid v0.3.2
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
+)
 
 require github.com/zondax/ledger-go v0.14.1 // indirect
 
@@ -168,7 +171,6 @@ require (
 	github.com/multiformats/go-varint v0.0.6 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tidwall/btree v1.5.0 // indirect
-	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

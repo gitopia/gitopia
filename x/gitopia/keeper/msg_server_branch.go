@@ -33,6 +33,11 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	// Set default branch if this is the first branch
+	if len(k.GetAllRepositoryBranch(ctx, repository.Id)) == 0 {
+		repository.DefaultBranch = msg.Branch.Name
+	}
+
 	branch, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch.Name)
 	if found {
 		branch.Sha = msg.Branch.Sha
@@ -96,6 +101,11 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushBranchPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	// Set default branch if this is the first branch
+	if len(k.GetAllRepositoryBranch(ctx, repository.Id)) == 0 {
+		repository.DefaultBranch = msg.Branches[0].Name
 	}
 
 	var updatedBranches []types.Branch
@@ -184,6 +194,8 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.SetRepositoryDefaultBranchEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchJson)),
@@ -236,6 +248,8 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryBranchEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchJson)),
@@ -295,6 +309,8 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.MultiDeleteRepositoryBranchEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchesJson)),
@@ -305,4 +321,58 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 	)
 
 	return &types.MsgMultiDeleteBranchResponse{}, nil
+}
+
+func (k msgServer) ToggleForcePush(goCtx context.Context, msg *types.MsgToggleForcePush) (*types.MsgToggleForcePushResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.ToggleForcePushToBranchPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	branch, found := k.GetRepositoryBranch(ctx, repository.Id, msg.BranchName)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch (%v) doesn't exist", msg.BranchName))
+	}
+
+	branch.AllowForcePush = !branch.AllowForcePush
+	branch.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepositoryBranch(ctx, branch)
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
+
+	branchJson, _ := json.Marshal(branch)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleForcePushToBranchEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(branchJson)),
+			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(false)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgToggleForcePushResponse{}, nil
 }
