@@ -101,12 +101,14 @@ export interface GitopiaComment {
 }
 
 export enum GitopiaCommentParent {
+  COMMENT_PARENT_NONE = "COMMENT_PARENT_NONE",
   COMMENT_PARENT_ISSUE = "COMMENT_PARENT_ISSUE",
   COMMENT_PARENT_PULL_REQUEST = "COMMENT_PARENT_PULL_REQUEST",
 }
 
 export enum GitopiaCommentType {
   COMMENT_TYPE_NONE = "COMMENT_TYPE_NONE",
+  COMMENT_TYPE_REPLY = "COMMENT_TYPE_REPLY",
   COMMENT_TYPE_ADD_LABELS = "COMMENT_TYPE_ADD_LABELS",
   COMMENT_TYPE_REMOVE_LABELS = "COMMENT_TYPE_REMOVE_LABELS",
   COMMENT_TYPE_ADD_ASSIGNEES = "COMMENT_TYPE_ADD_ASSIGNEES",
@@ -406,6 +408,8 @@ export interface GitopiaMsgSetTagTag {
 export interface GitopiaMsgToggleArweaveBackupResponse {
   enableArweaveBackup?: boolean;
 }
+
+export type GitopiaMsgToggleForcePushResponse = object;
 
 export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;

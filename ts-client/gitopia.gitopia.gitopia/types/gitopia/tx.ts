@@ -49,6 +49,15 @@ export function providerPermissionToJSON(object: ProviderPermission): string {
   }
 }
 
+export interface MsgToggleForcePush {
+  creator: string;
+  repositoryId: RepositoryId | undefined;
+  branchName: string;
+}
+
+export interface MsgToggleForcePushResponse {
+}
+
 export interface MsgRevokeProviderPermission {
   creator: string;
   granter: string;
@@ -341,6 +350,7 @@ export interface MsgCreatePullRequest {
   reviewers: string[];
   assignees: string[];
   labelIds: number[];
+  issueIids: number[];
 }
 
 export interface MsgCreatePullRequestResponse {
@@ -384,6 +394,7 @@ export interface MsgSetPullRequestState {
   iid: number;
   state: string;
   mergeCommitSha: string;
+  commentBody: string;
   taskId: number;
 }
 
@@ -697,6 +708,7 @@ export interface MsgInvokeForkRepository {
   creator: string;
   repositoryId: RepositoryId | undefined;
   forkRepositoryName: string;
+  forkRepositoryDescription: string;
   branch: string;
   owner: string;
   provider: string;
@@ -709,6 +721,7 @@ export interface MsgForkRepository {
   creator: string;
   repositoryId: RepositoryId | undefined;
   forkRepositoryName: string;
+  forkRepositoryDescription: string;
   branch: string;
   owner: string;
   taskId: number;
@@ -884,6 +897,115 @@ export interface MsgDeleteUser {
 
 export interface MsgDeleteUserResponse {
 }
+
+function createBaseMsgToggleForcePush(): MsgToggleForcePush {
+  return { creator: "", repositoryId: undefined, branchName: "" };
+}
+
+export const MsgToggleForcePush = {
+  encode(message: MsgToggleForcePush, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.repositoryId !== undefined) {
+      RepositoryId.encode(message.repositoryId, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.branchName !== "") {
+      writer.uint32(26).string(message.branchName);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgToggleForcePush {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgToggleForcePush();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.repositoryId = RepositoryId.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.branchName = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgToggleForcePush {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      repositoryId: isSet(object.repositoryId) ? RepositoryId.fromJSON(object.repositoryId) : undefined,
+      branchName: isSet(object.branchName) ? String(object.branchName) : "",
+    };
+  },
+
+  toJSON(message: MsgToggleForcePush): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.repositoryId !== undefined
+      && (obj.repositoryId = message.repositoryId ? RepositoryId.toJSON(message.repositoryId) : undefined);
+    message.branchName !== undefined && (obj.branchName = message.branchName);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgToggleForcePush>, I>>(object: I): MsgToggleForcePush {
+    const message = createBaseMsgToggleForcePush();
+    message.creator = object.creator ?? "";
+    message.repositoryId = (object.repositoryId !== undefined && object.repositoryId !== null)
+      ? RepositoryId.fromPartial(object.repositoryId)
+      : undefined;
+    message.branchName = object.branchName ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgToggleForcePushResponse(): MsgToggleForcePushResponse {
+  return {};
+}
+
+export const MsgToggleForcePushResponse = {
+  encode(_: MsgToggleForcePushResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgToggleForcePushResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgToggleForcePushResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgToggleForcePushResponse {
+    return {};
+  },
+
+  toJSON(_: MsgToggleForcePushResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgToggleForcePushResponse>, I>>(_: I): MsgToggleForcePushResponse {
+    const message = createBaseMsgToggleForcePushResponse();
+    return message;
+  },
+};
 
 function createBaseMsgRevokeProviderPermission(): MsgRevokeProviderPermission {
   return { creator: "", granter: "", provider: "", permission: 0 };
@@ -4207,6 +4329,7 @@ function createBaseMsgCreatePullRequest(): MsgCreatePullRequest {
     reviewers: [],
     assignees: [],
     labelIds: [],
+    issueIids: [],
   };
 }
 
@@ -4241,6 +4364,11 @@ export const MsgCreatePullRequest = {
     }
     writer.uint32(82).fork();
     for (const v of message.labelIds) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
+    writer.uint32(90).fork();
+    for (const v of message.issueIids) {
       writer.uint64(v);
     }
     writer.ldelim();
@@ -4291,6 +4419,16 @@ export const MsgCreatePullRequest = {
             message.labelIds.push(longToNumber(reader.uint64() as Long));
           }
           break;
+        case 11:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.issueIids.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.issueIids.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -4311,6 +4449,7 @@ export const MsgCreatePullRequest = {
       reviewers: Array.isArray(object?.reviewers) ? object.reviewers.map((e: any) => String(e)) : [],
       assignees: Array.isArray(object?.assignees) ? object.assignees.map((e: any) => String(e)) : [],
       labelIds: Array.isArray(object?.labelIds) ? object.labelIds.map((e: any) => Number(e)) : [],
+      issueIids: Array.isArray(object?.issueIids) ? object.issueIids.map((e: any) => Number(e)) : [],
     };
   },
 
@@ -4340,6 +4479,11 @@ export const MsgCreatePullRequest = {
     } else {
       obj.labelIds = [];
     }
+    if (message.issueIids) {
+      obj.issueIids = message.issueIids.map((e) => Math.round(e));
+    } else {
+      obj.issueIids = [];
+    }
     return obj;
   },
 
@@ -4359,6 +4503,7 @@ export const MsgCreatePullRequest = {
     message.reviewers = object.reviewers?.map((e) => e) || [];
     message.assignees = object.assignees?.map((e) => e) || [];
     message.labelIds = object.labelIds?.map((e) => e) || [];
+    message.issueIids = object.issueIids?.map((e) => e) || [];
     return message;
   },
 };
@@ -4772,7 +4917,7 @@ export const MsgInvokeMergePullRequestResponse = {
 };
 
 function createBaseMsgSetPullRequestState(): MsgSetPullRequestState {
-  return { creator: "", repositoryId: 0, iid: 0, state: "", mergeCommitSha: "", taskId: 0 };
+  return { creator: "", repositoryId: 0, iid: 0, state: "", mergeCommitSha: "", commentBody: "", taskId: 0 };
 }
 
 export const MsgSetPullRequestState = {
@@ -4792,8 +4937,11 @@ export const MsgSetPullRequestState = {
     if (message.mergeCommitSha !== "") {
       writer.uint32(42).string(message.mergeCommitSha);
     }
+    if (message.commentBody !== "") {
+      writer.uint32(50).string(message.commentBody);
+    }
     if (message.taskId !== 0) {
-      writer.uint32(48).uint64(message.taskId);
+      writer.uint32(56).uint64(message.taskId);
     }
     return writer;
   },
@@ -4821,6 +4969,9 @@ export const MsgSetPullRequestState = {
           message.mergeCommitSha = reader.string();
           break;
         case 6:
+          message.commentBody = reader.string();
+          break;
+        case 7:
           message.taskId = longToNumber(reader.uint64() as Long);
           break;
         default:
@@ -4838,6 +4989,7 @@ export const MsgSetPullRequestState = {
       iid: isSet(object.iid) ? Number(object.iid) : 0,
       state: isSet(object.state) ? String(object.state) : "",
       mergeCommitSha: isSet(object.mergeCommitSha) ? String(object.mergeCommitSha) : "",
+      commentBody: isSet(object.commentBody) ? String(object.commentBody) : "",
       taskId: isSet(object.taskId) ? Number(object.taskId) : 0,
     };
   },
@@ -4849,6 +5001,7 @@ export const MsgSetPullRequestState = {
     message.iid !== undefined && (obj.iid = Math.round(message.iid));
     message.state !== undefined && (obj.state = message.state);
     message.mergeCommitSha !== undefined && (obj.mergeCommitSha = message.mergeCommitSha);
+    message.commentBody !== undefined && (obj.commentBody = message.commentBody);
     message.taskId !== undefined && (obj.taskId = Math.round(message.taskId));
     return obj;
   },
@@ -4860,6 +5013,7 @@ export const MsgSetPullRequestState = {
     message.iid = object.iid ?? 0;
     message.state = object.state ?? "";
     message.mergeCommitSha = object.mergeCommitSha ?? "";
+    message.commentBody = object.commentBody ?? "";
     message.taskId = object.taskId ?? 0;
     return message;
   },
@@ -8495,7 +8649,15 @@ export const MsgCreateRepositoryResponse = {
 };
 
 function createBaseMsgInvokeForkRepository(): MsgInvokeForkRepository {
-  return { creator: "", repositoryId: undefined, forkRepositoryName: "", branch: "", owner: "", provider: "" };
+  return {
+    creator: "",
+    repositoryId: undefined,
+    forkRepositoryName: "",
+    forkRepositoryDescription: "",
+    branch: "",
+    owner: "",
+    provider: "",
+  };
 }
 
 export const MsgInvokeForkRepository = {
@@ -8509,14 +8671,17 @@ export const MsgInvokeForkRepository = {
     if (message.forkRepositoryName !== "") {
       writer.uint32(26).string(message.forkRepositoryName);
     }
+    if (message.forkRepositoryDescription !== "") {
+      writer.uint32(34).string(message.forkRepositoryDescription);
+    }
     if (message.branch !== "") {
-      writer.uint32(34).string(message.branch);
+      writer.uint32(42).string(message.branch);
     }
     if (message.owner !== "") {
-      writer.uint32(42).string(message.owner);
+      writer.uint32(50).string(message.owner);
     }
     if (message.provider !== "") {
-      writer.uint32(50).string(message.provider);
+      writer.uint32(58).string(message.provider);
     }
     return writer;
   },
@@ -8538,12 +8703,15 @@ export const MsgInvokeForkRepository = {
           message.forkRepositoryName = reader.string();
           break;
         case 4:
-          message.branch = reader.string();
+          message.forkRepositoryDescription = reader.string();
           break;
         case 5:
-          message.owner = reader.string();
+          message.branch = reader.string();
           break;
         case 6:
+          message.owner = reader.string();
+          break;
+        case 7:
           message.provider = reader.string();
           break;
         default:
@@ -8559,6 +8727,9 @@ export const MsgInvokeForkRepository = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       repositoryId: isSet(object.repositoryId) ? RepositoryId.fromJSON(object.repositoryId) : undefined,
       forkRepositoryName: isSet(object.forkRepositoryName) ? String(object.forkRepositoryName) : "",
+      forkRepositoryDescription: isSet(object.forkRepositoryDescription)
+        ? String(object.forkRepositoryDescription)
+        : "",
       branch: isSet(object.branch) ? String(object.branch) : "",
       owner: isSet(object.owner) ? String(object.owner) : "",
       provider: isSet(object.provider) ? String(object.provider) : "",
@@ -8571,6 +8742,8 @@ export const MsgInvokeForkRepository = {
     message.repositoryId !== undefined
       && (obj.repositoryId = message.repositoryId ? RepositoryId.toJSON(message.repositoryId) : undefined);
     message.forkRepositoryName !== undefined && (obj.forkRepositoryName = message.forkRepositoryName);
+    message.forkRepositoryDescription !== undefined
+      && (obj.forkRepositoryDescription = message.forkRepositoryDescription);
     message.branch !== undefined && (obj.branch = message.branch);
     message.owner !== undefined && (obj.owner = message.owner);
     message.provider !== undefined && (obj.provider = message.provider);
@@ -8584,6 +8757,7 @@ export const MsgInvokeForkRepository = {
       ? RepositoryId.fromPartial(object.repositoryId)
       : undefined;
     message.forkRepositoryName = object.forkRepositoryName ?? "";
+    message.forkRepositoryDescription = object.forkRepositoryDescription ?? "";
     message.branch = object.branch ?? "";
     message.owner = object.owner ?? "";
     message.provider = object.provider ?? "";
@@ -8631,7 +8805,15 @@ export const MsgInvokeForkRepositoryResponse = {
 };
 
 function createBaseMsgForkRepository(): MsgForkRepository {
-  return { creator: "", repositoryId: undefined, forkRepositoryName: "", branch: "", owner: "", taskId: 0 };
+  return {
+    creator: "",
+    repositoryId: undefined,
+    forkRepositoryName: "",
+    forkRepositoryDescription: "",
+    branch: "",
+    owner: "",
+    taskId: 0,
+  };
 }
 
 export const MsgForkRepository = {
@@ -8645,14 +8827,17 @@ export const MsgForkRepository = {
     if (message.forkRepositoryName !== "") {
       writer.uint32(26).string(message.forkRepositoryName);
     }
+    if (message.forkRepositoryDescription !== "") {
+      writer.uint32(34).string(message.forkRepositoryDescription);
+    }
     if (message.branch !== "") {
-      writer.uint32(34).string(message.branch);
+      writer.uint32(42).string(message.branch);
     }
     if (message.owner !== "") {
-      writer.uint32(42).string(message.owner);
+      writer.uint32(50).string(message.owner);
     }
     if (message.taskId !== 0) {
-      writer.uint32(48).uint64(message.taskId);
+      writer.uint32(56).uint64(message.taskId);
     }
     return writer;
   },
@@ -8674,12 +8859,15 @@ export const MsgForkRepository = {
           message.forkRepositoryName = reader.string();
           break;
         case 4:
-          message.branch = reader.string();
+          message.forkRepositoryDescription = reader.string();
           break;
         case 5:
-          message.owner = reader.string();
+          message.branch = reader.string();
           break;
         case 6:
+          message.owner = reader.string();
+          break;
+        case 7:
           message.taskId = longToNumber(reader.uint64() as Long);
           break;
         default:
@@ -8695,6 +8883,9 @@ export const MsgForkRepository = {
       creator: isSet(object.creator) ? String(object.creator) : "",
       repositoryId: isSet(object.repositoryId) ? RepositoryId.fromJSON(object.repositoryId) : undefined,
       forkRepositoryName: isSet(object.forkRepositoryName) ? String(object.forkRepositoryName) : "",
+      forkRepositoryDescription: isSet(object.forkRepositoryDescription)
+        ? String(object.forkRepositoryDescription)
+        : "",
       branch: isSet(object.branch) ? String(object.branch) : "",
       owner: isSet(object.owner) ? String(object.owner) : "",
       taskId: isSet(object.taskId) ? Number(object.taskId) : 0,
@@ -8707,6 +8898,8 @@ export const MsgForkRepository = {
     message.repositoryId !== undefined
       && (obj.repositoryId = message.repositoryId ? RepositoryId.toJSON(message.repositoryId) : undefined);
     message.forkRepositoryName !== undefined && (obj.forkRepositoryName = message.forkRepositoryName);
+    message.forkRepositoryDescription !== undefined
+      && (obj.forkRepositoryDescription = message.forkRepositoryDescription);
     message.branch !== undefined && (obj.branch = message.branch);
     message.owner !== undefined && (obj.owner = message.owner);
     message.taskId !== undefined && (obj.taskId = Math.round(message.taskId));
@@ -8720,6 +8913,7 @@ export const MsgForkRepository = {
       ? RepositoryId.fromPartial(object.repositoryId)
       : undefined;
     message.forkRepositoryName = object.forkRepositoryName ?? "";
+    message.forkRepositoryDescription = object.forkRepositoryDescription ?? "";
     message.branch = object.branch ?? "";
     message.owner = object.owner ?? "";
     message.taskId = object.taskId ?? 0;
@@ -10785,6 +10979,7 @@ export const MsgDeleteUserResponse = {
 /** Msg defines the Msg service. */
 export interface Msg {
   /** this line is used by starport scaffolding # proto/tx/rpc */
+  ToggleForcePush(request: MsgToggleForcePush): Promise<MsgToggleForcePushResponse>;
   RevokeProviderPermission(request: MsgRevokeProviderPermission): Promise<MsgRevokeProviderPermissionResponse>;
   AuthorizeProvider(request: MsgAuthorizeProvider): Promise<MsgAuthorizeProviderResponse>;
   CreateTask(request: MsgCreateTask): Promise<MsgCreateTaskResponse>;
@@ -10879,6 +11074,7 @@ export class MsgClientImpl implements Msg {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.ToggleForcePush = this.ToggleForcePush.bind(this);
     this.RevokeProviderPermission = this.RevokeProviderPermission.bind(this);
     this.AuthorizeProvider = this.AuthorizeProvider.bind(this);
     this.CreateTask = this.CreateTask.bind(this);
@@ -10960,6 +11156,12 @@ export class MsgClientImpl implements Msg {
     this.UpdateRepositoryBackupRef = this.UpdateRepositoryBackupRef.bind(this);
     this.AddRepositoryBackupRef = this.AddRepositoryBackupRef.bind(this);
   }
+  ToggleForcePush(request: MsgToggleForcePush): Promise<MsgToggleForcePushResponse> {
+    const data = MsgToggleForcePush.encode(request).finish();
+    const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "ToggleForcePush", data);
+    return promise.then((data) => MsgToggleForcePushResponse.decode(new _m0.Reader(data)));
+  }
+
   RevokeProviderPermission(request: MsgRevokeProviderPermission): Promise<MsgRevokeProviderPermissionResponse> {
     const data = MsgRevokeProviderPermission.encode(request).finish();
     const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "RevokeProviderPermission", data);

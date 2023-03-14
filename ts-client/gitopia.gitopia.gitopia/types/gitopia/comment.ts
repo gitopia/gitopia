@@ -8,23 +8,24 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 
 export enum CommentType {
   COMMENT_TYPE_NONE = 0,
-  COMMENT_TYPE_ADD_LABELS = 1,
-  COMMENT_TYPE_REMOVE_LABELS = 2,
-  COMMENT_TYPE_ADD_ASSIGNEES = 3,
-  COMMENT_TYPE_REMOVE_ASSIGNEES = 4,
-  COMMENT_TYPE_ADD_REVIEWERS = 5,
-  COMMENT_TYPE_REMOVE_REVIEWERS = 6,
-  COMMENT_TYPE_MODIFIED_TITLE = 7,
-  COMMENT_TYPE_MODIFIED_DESCRIPTION = 8,
-  COMMENT_TYPE_ISSUE_CLOSED = 9,
-  COMMENT_TYPE_ISSUE_OPENED = 10,
-  COMMENT_TYPE_PULL_REQUEST_CLOSED = 11,
-  COMMENT_TYPE_PULL_REQUEST_OPENED = 12,
-  COMMENT_TYPE_PULL_REQUEST_MERGED = 13,
-  COMMENT_TYPE_REVIEW = 14,
-  COMMENT_TYPE_ADD_BOUNTY = 15,
-  COMMENT_TYPE_MODIFIED_BOUNTY = 16,
-  COMMENT_TYPE_CLOSED_BOUNTY = 17,
+  COMMENT_TYPE_REPLY = 1,
+  COMMENT_TYPE_ADD_LABELS = 2,
+  COMMENT_TYPE_REMOVE_LABELS = 3,
+  COMMENT_TYPE_ADD_ASSIGNEES = 4,
+  COMMENT_TYPE_REMOVE_ASSIGNEES = 5,
+  COMMENT_TYPE_ADD_REVIEWERS = 6,
+  COMMENT_TYPE_REMOVE_REVIEWERS = 7,
+  COMMENT_TYPE_MODIFIED_TITLE = 8,
+  COMMENT_TYPE_MODIFIED_DESCRIPTION = 9,
+  COMMENT_TYPE_ISSUE_CLOSED = 10,
+  COMMENT_TYPE_ISSUE_OPENED = 11,
+  COMMENT_TYPE_PULL_REQUEST_CLOSED = 12,
+  COMMENT_TYPE_PULL_REQUEST_OPENED = 13,
+  COMMENT_TYPE_PULL_REQUEST_MERGED = 14,
+  COMMENT_TYPE_REVIEW = 15,
+  COMMENT_TYPE_ADD_BOUNTY = 16,
+  COMMENT_TYPE_MODIFIED_BOUNTY = 17,
+  COMMENT_TYPE_CLOSED_BOUNTY = 18,
   UNRECOGNIZED = -1,
 }
 
@@ -34,54 +35,57 @@ export function commentTypeFromJSON(object: any): CommentType {
     case "COMMENT_TYPE_NONE":
       return CommentType.COMMENT_TYPE_NONE;
     case 1:
+    case "COMMENT_TYPE_REPLY":
+      return CommentType.COMMENT_TYPE_REPLY;
+    case 2:
     case "COMMENT_TYPE_ADD_LABELS":
       return CommentType.COMMENT_TYPE_ADD_LABELS;
-    case 2:
+    case 3:
     case "COMMENT_TYPE_REMOVE_LABELS":
       return CommentType.COMMENT_TYPE_REMOVE_LABELS;
-    case 3:
+    case 4:
     case "COMMENT_TYPE_ADD_ASSIGNEES":
       return CommentType.COMMENT_TYPE_ADD_ASSIGNEES;
-    case 4:
+    case 5:
     case "COMMENT_TYPE_REMOVE_ASSIGNEES":
       return CommentType.COMMENT_TYPE_REMOVE_ASSIGNEES;
-    case 5:
+    case 6:
     case "COMMENT_TYPE_ADD_REVIEWERS":
       return CommentType.COMMENT_TYPE_ADD_REVIEWERS;
-    case 6:
+    case 7:
     case "COMMENT_TYPE_REMOVE_REVIEWERS":
       return CommentType.COMMENT_TYPE_REMOVE_REVIEWERS;
-    case 7:
+    case 8:
     case "COMMENT_TYPE_MODIFIED_TITLE":
       return CommentType.COMMENT_TYPE_MODIFIED_TITLE;
-    case 8:
+    case 9:
     case "COMMENT_TYPE_MODIFIED_DESCRIPTION":
       return CommentType.COMMENT_TYPE_MODIFIED_DESCRIPTION;
-    case 9:
+    case 10:
     case "COMMENT_TYPE_ISSUE_CLOSED":
       return CommentType.COMMENT_TYPE_ISSUE_CLOSED;
-    case 10:
+    case 11:
     case "COMMENT_TYPE_ISSUE_OPENED":
       return CommentType.COMMENT_TYPE_ISSUE_OPENED;
-    case 11:
+    case 12:
     case "COMMENT_TYPE_PULL_REQUEST_CLOSED":
       return CommentType.COMMENT_TYPE_PULL_REQUEST_CLOSED;
-    case 12:
+    case 13:
     case "COMMENT_TYPE_PULL_REQUEST_OPENED":
       return CommentType.COMMENT_TYPE_PULL_REQUEST_OPENED;
-    case 13:
+    case 14:
     case "COMMENT_TYPE_PULL_REQUEST_MERGED":
       return CommentType.COMMENT_TYPE_PULL_REQUEST_MERGED;
-    case 14:
+    case 15:
     case "COMMENT_TYPE_REVIEW":
       return CommentType.COMMENT_TYPE_REVIEW;
-    case 15:
+    case 16:
     case "COMMENT_TYPE_ADD_BOUNTY":
       return CommentType.COMMENT_TYPE_ADD_BOUNTY;
-    case 16:
+    case 17:
     case "COMMENT_TYPE_MODIFIED_BOUNTY":
       return CommentType.COMMENT_TYPE_MODIFIED_BOUNTY;
-    case 17:
+    case 18:
     case "COMMENT_TYPE_CLOSED_BOUNTY":
       return CommentType.COMMENT_TYPE_CLOSED_BOUNTY;
     case -1:
@@ -95,6 +99,8 @@ export function commentTypeToJSON(object: CommentType): string {
   switch (object) {
     case CommentType.COMMENT_TYPE_NONE:
       return "COMMENT_TYPE_NONE";
+    case CommentType.COMMENT_TYPE_REPLY:
+      return "COMMENT_TYPE_REPLY";
     case CommentType.COMMENT_TYPE_ADD_LABELS:
       return "COMMENT_TYPE_ADD_LABELS";
     case CommentType.COMMENT_TYPE_REMOVE_LABELS:
@@ -136,17 +142,21 @@ export function commentTypeToJSON(object: CommentType): string {
 }
 
 export enum CommentParent {
-  COMMENT_PARENT_ISSUE = 0,
-  COMMENT_PARENT_PULL_REQUEST = 1,
+  COMMENT_PARENT_NONE = 0,
+  COMMENT_PARENT_ISSUE = 1,
+  COMMENT_PARENT_PULL_REQUEST = 2,
   UNRECOGNIZED = -1,
 }
 
 export function commentParentFromJSON(object: any): CommentParent {
   switch (object) {
     case 0:
+    case "COMMENT_PARENT_NONE":
+      return CommentParent.COMMENT_PARENT_NONE;
+    case 1:
     case "COMMENT_PARENT_ISSUE":
       return CommentParent.COMMENT_PARENT_ISSUE;
-    case 1:
+    case 2:
     case "COMMENT_PARENT_PULL_REQUEST":
       return CommentParent.COMMENT_PARENT_PULL_REQUEST;
     case -1:
@@ -158,6 +168,8 @@ export function commentParentFromJSON(object: any): CommentParent {
 
 export function commentParentToJSON(object: CommentParent): string {
   switch (object) {
+    case CommentParent.COMMENT_PARENT_NONE:
+      return "COMMENT_PARENT_NONE";
     case CommentParent.COMMENT_PARENT_ISSUE:
       return "COMMENT_PARENT_ISSUE";
     case CommentParent.COMMENT_PARENT_PULL_REQUEST:
