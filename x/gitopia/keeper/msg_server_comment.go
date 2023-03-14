@@ -52,6 +52,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		Attachments:  msg.Attachments,
 		DiffHunk:     msg.DiffHunk,
 		Path:         msg.Path,
+		Position:     msg.Position,
 		CreatedAt:    ctx.BlockTime().Unix(),
 		UpdatedAt:    ctx.BlockTime().Unix(),
 		CommentType:  commentType,

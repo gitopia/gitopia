@@ -50,13 +50,14 @@ message Comment {
   repeated Attachment attachments = 8; 
   string diffHunk = 9; 
   string path = 10; 
-  bool system = 11;
-  string authorAssociation = 12;
-  int64 createdAt = 13;
-  int64 updatedAt = 14;
-  CommentType commentType = 15;
-  bool resolved = 16;
-  repeated uint64 replies = 17;
-  repeated Reaction reactions = 18;
-  bool hidden = 19;
+  uint64 position = 11;
+  bool system = 12;
+  string authorAssociation = 13;
+  int64 createdAt = 14;
+  int64 updatedAt = 15;
+  CommentType commentType = 16;
+  bool resolved = 17;
+  repeated uint64 replies = 18;
+  repeated Reaction reactions = 19;
+  bool hidden = 20;
 }
