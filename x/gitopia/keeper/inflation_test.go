@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/simapp"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestInflationFnConstantInflationSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
@@ -60,7 +61,7 @@ func TestInflationFnMaxSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
@@ -89,7 +90,7 @@ func TestInflationFnMinSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
@@ -119,7 +120,7 @@ func TestInflationFnChangePerBondedRatioSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDecWithPrec(100, 2), // change in inflation rate when bonded ratio is not equal to goal bonded
 		BlocksPerYear:       1,                          // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := sdk.NewDecWithPrec(50, 2)
@@ -149,7 +150,7 @@ func TestInflationFnHalvesSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
@@ -236,7 +237,7 @@ func TestInflationFnHalvesOverYearsSuccess(t *testing.T) {
 				InflationMin:        inflationTimeline[i-1].minInflation,
 				InflationRateChange: sdk.NewDec(0), // no additional change
 				BlocksPerYear:       1,             // doesnt matter
-				MintDenom:           "utlore",
+				MintDenom:           params.BaseCoinUnit,
 			}
 			bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 			inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
@@ -268,13 +269,13 @@ func TestInflationFnZeroAtMaxSupplySuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 
 	// mint max supply
-	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin("utlore", sdk.NewInt(1711136433))))
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433))))
 	assert.NoError(t, err)
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
 
@@ -313,13 +314,13 @@ func TestInflationFnZeroAtMaxSupplyWhenInflationTimePassesSuccess(t *testing.T) 
 		InflationMin:        MIN_INFLATION,
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 
 	// mint max supply
-	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin("utlore", sdk.NewInt(1711136433))))
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433))))
 	assert.NoError(t, err)
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
 
@@ -327,7 +328,7 @@ func TestInflationFnZeroAtMaxSupplyWhenInflationTimePassesSuccess(t *testing.T) 
 	assert.Equal(t, sdk.NewDec(0), inflation) // should have actually been 0.546875% or 0.00564875
 	// no more changes to inflation params
 	assert.Equal(t, inflationTime, gitopiaKeeper.GetParams(ctx).NextInflationTime) // should have been inflation time + 2 years
-	assert.Equal(t, MAX_INFLATION, mintKeeper.GetParams(ctx).InflationMax) 
+	assert.Equal(t, MAX_INFLATION, mintKeeper.GetParams(ctx).InflationMax)
 	assert.Equal(t, MIN_INFLATION, mintKeeper.GetParams(ctx).InflationMin)
 }
 
@@ -349,7 +350,7 @@ func TestInflationFnNoChangeSuccess(t *testing.T) {
 		InflationMin:        sdk.NewDecWithPrec(25, 2),
 		InflationRateChange: sdk.NewDec(0), // no additional change
 		BlocksPerYear:       10,            // doesnt matter
-		MintDenom:           "utlore",
+		MintDenom:           params.BaseCoinUnit,
 	}
 	mintKeeper.SetParams(ctx, mintParams)
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio

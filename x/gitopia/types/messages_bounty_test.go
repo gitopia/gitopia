@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
@@ -27,7 +28,7 @@ func TestMsgCreateBounty_ValidateBasic(t *testing.T) {
 			msg: MsgCreateBounty{
 				Creator: sample.AccAddress(),
 				Amount: []sdk.Coin{
-					{Denom: "utlore", Amount: sdk.NewInt(1000)},
+					{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)},
 				},
 			},
 		},
