@@ -6,9 +6,10 @@ All notable changes will be documented here.
 
 - Upgrade cosmos-sdk version to v0.46.10 and tendermint version to v0.34.26
 - Set default branch on first push
-- Fork tx now accepts name, description and branch
-- Close issue and close pull request accepts comment
-- Close issue automatically when a linked PR is merged
+- InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
+- ToggleIssueState now accepts comment body parameter for comment and close
+- SetPullRequestState now accepts comment body parameter for comment and close
+- Close linked issue automatically when pr is merged and the issue is only assigned to the pr creator
 - Branch protection: New transaction to toggle allowForcePush value of branch
 - Default null values for comment type and parent
 - Add issueIids param in create PR tx
@@ -26,9 +27,6 @@ All notable changes will be documented here.
 - Add queries RepositoryIssue, RepositoryIssueAll, RepositoryPullRequest, RepositoryPullRequestAll ,IssueComment, PullRequestComment, IssueCommentAll and PullRequestCommentAll.
 - In place store migration for store changes
 - Refactored app.go
-- InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
-- ToggleIssueState now accepts comment body parameter for comment and close
-- Close linked issue automatically when pr is merged and the issue is only assigned to the pr creator
 
 ## [v1.2.0] - 2022-11-07
 
