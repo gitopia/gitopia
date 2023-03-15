@@ -1,5 +1,11 @@
 package cmd
 
+import "github.com/spf13/cobra"
+
+/*
+
+TODO: Fix Migrations
+
 import (
 	"encoding/json"
 	"fmt"
@@ -657,5 +663,18 @@ func MigrateCmd() *cobra.Command {
 	cmd.Flags().String(flagGenesisTime, "", "set genesis time")
 	cmd.Flags().Int64(flagInitialHeight, 1, "set the initial height")
 
+	return &cmd
+}
+*/
+
+func MigrateCmd() *cobra.Command {
+	cmd := cobra.Command{
+		Use:   "migrate-denom [genesis-file]",
+		Short: "Migrate Genesis file",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+	}
 	return &cmd
 }

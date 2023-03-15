@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -21,25 +21,27 @@ export interface Dao {
   updatedAt: number;
 }
 
-const baseDao: object = {
-  creator: "",
-  id: 0,
-  address: "",
-  name: "",
-  avatarUrl: "",
-  followers: "",
-  following: "",
-  teams: 0,
-  location: "",
-  website: "",
-  verified: false,
-  description: "",
-  createdAt: 0,
-  updatedAt: 0,
-};
+function createBaseDao(): Dao {
+  return {
+    creator: "",
+    id: 0,
+    address: "",
+    name: "",
+    avatarUrl: "",
+    followers: [],
+    following: [],
+    teams: [],
+    location: "",
+    website: "",
+    verified: false,
+    description: "",
+    createdAt: 0,
+    updatedAt: 0,
+  };
+}
 
 export const Dao = {
-  encode(message: Dao, writer: Writer = Writer.create()): Writer {
+  encode(message: Dao, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
@@ -87,13 +89,10 @@ export const Dao = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Dao {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Dao {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseDao } as Dao;
-    message.followers = [];
-    message.following = [];
-    message.teams = [];
+    const message = createBaseDao();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -155,87 +154,28 @@ export const Dao = {
   },
 
   fromJSON(object: any): Dao {
-    const message = { ...baseDao } as Dao;
-    message.followers = [];
-    message.following = [];
-    message.teams = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.avatarUrl !== undefined && object.avatarUrl !== null) {
-      message.avatarUrl = String(object.avatarUrl);
-    } else {
-      message.avatarUrl = "";
-    }
-    if (object.followers !== undefined && object.followers !== null) {
-      for (const e of object.followers) {
-        message.followers.push(String(e));
-      }
-    }
-    if (object.following !== undefined && object.following !== null) {
-      for (const e of object.following) {
-        message.following.push(String(e));
-      }
-    }
-    if (object.teams !== undefined && object.teams !== null) {
-      for (const e of object.teams) {
-        message.teams.push(Number(e));
-      }
-    }
-    if (object.location !== undefined && object.location !== null) {
-      message.location = String(object.location);
-    } else {
-      message.location = "";
-    }
-    if (object.website !== undefined && object.website !== null) {
-      message.website = String(object.website);
-    } else {
-      message.website = "";
-    }
-    if (object.verified !== undefined && object.verified !== null) {
-      message.verified = Boolean(object.verified);
-    } else {
-      message.verified = false;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = Number(object.createdAt);
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = Number(object.updatedAt);
-    } else {
-      message.updatedAt = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      address: isSet(object.address) ? String(object.address) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+      avatarUrl: isSet(object.avatarUrl) ? String(object.avatarUrl) : "",
+      followers: Array.isArray(object?.followers) ? object.followers.map((e: any) => String(e)) : [],
+      following: Array.isArray(object?.following) ? object.following.map((e: any) => String(e)) : [],
+      teams: Array.isArray(object?.teams) ? object.teams.map((e: any) => Number(e)) : [],
+      location: isSet(object.location) ? String(object.location) : "",
+      website: isSet(object.website) ? String(object.website) : "",
+      verified: isSet(object.verified) ? Boolean(object.verified) : false,
+      description: isSet(object.description) ? String(object.description) : "",
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+    };
   },
 
   toJSON(message: Dao): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.address !== undefined && (obj.address = message.address);
     message.name !== undefined && (obj.name = message.name);
     message.avatarUrl !== undefined && (obj.avatarUrl = message.avatarUrl);
@@ -250,119 +190,68 @@ export const Dao = {
       obj.following = [];
     }
     if (message.teams) {
-      obj.teams = message.teams.map((e) => e);
+      obj.teams = message.teams.map((e) => Math.round(e));
     } else {
       obj.teams = [];
     }
     message.location !== undefined && (obj.location = message.location);
     message.website !== undefined && (obj.website = message.website);
     message.verified !== undefined && (obj.verified = message.verified);
-    message.description !== undefined &&
-      (obj.description = message.description);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+    message.description !== undefined && (obj.description = message.description);
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.updatedAt !== undefined && (obj.updatedAt = Math.round(message.updatedAt));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Dao>): Dao {
-    const message = { ...baseDao } as Dao;
-    message.followers = [];
-    message.following = [];
-    message.teams = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.avatarUrl !== undefined && object.avatarUrl !== null) {
-      message.avatarUrl = object.avatarUrl;
-    } else {
-      message.avatarUrl = "";
-    }
-    if (object.followers !== undefined && object.followers !== null) {
-      for (const e of object.followers) {
-        message.followers.push(e);
-      }
-    }
-    if (object.following !== undefined && object.following !== null) {
-      for (const e of object.following) {
-        message.following.push(e);
-      }
-    }
-    if (object.teams !== undefined && object.teams !== null) {
-      for (const e of object.teams) {
-        message.teams.push(e);
-      }
-    }
-    if (object.location !== undefined && object.location !== null) {
-      message.location = object.location;
-    } else {
-      message.location = "";
-    }
-    if (object.website !== undefined && object.website !== null) {
-      message.website = object.website;
-    } else {
-      message.website = "";
-    }
-    if (object.verified !== undefined && object.verified !== null) {
-      message.verified = object.verified;
-    } else {
-      message.verified = false;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Dao>, I>>(object: I): Dao {
+    const message = createBaseDao();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.address = object.address ?? "";
+    message.name = object.name ?? "";
+    message.avatarUrl = object.avatarUrl ?? "";
+    message.followers = object.followers?.map((e) => e) || [];
+    message.following = object.following?.map((e) => e) || [];
+    message.teams = object.teams?.map((e) => e) || [];
+    message.location = object.location ?? "";
+    message.website = object.website ?? "";
+    message.verified = object.verified ?? false;
+    message.description = object.description ?? "";
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -371,7 +260,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

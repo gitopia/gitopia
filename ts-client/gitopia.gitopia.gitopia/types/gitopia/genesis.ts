@@ -1,33 +1,39 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
-import { BaseRepositoryKey, Repository } from "../gitopia/repository";
-import { UserDao, User } from "../gitopia/user";
-import { Task } from "../gitopia/task";
-import { Branch } from "../gitopia/branch";
-import { Tag } from "../gitopia/tag";
-import { Member } from "../gitopia/member";
-import { Release } from "../gitopia/release";
-import { PullRequest } from "../gitopia/pullRequest";
-import { Dao } from "../gitopia/dao";
-import { Comment } from "../gitopia/comment";
-import { Issue } from "../gitopia/issue";
-import { Whois } from "../gitopia/whois";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { Bounty } from "./bounty";
+import { Branch } from "./branch";
+import { Comment } from "./comment";
+import { Dao } from "./dao";
+import { Issue } from "./issue";
+import { Member } from "./member";
+import { Params } from "./params";
+import { PullRequest } from "./pullRequest";
+import { Release } from "./release";
+import { BaseRepositoryKey, Repository } from "./repository";
+import { Tag } from "./tag";
+import { Task } from "./task";
+import { User, UserDao } from "./user";
+import { Whois } from "./whois";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
-  baseRepositoryKeyList: BaseRepositoryKey[];
+  /** params defines all the paramaters of the module. */
+  params: Params | undefined;
+  bountyList: Bounty[];
+  bountyCount: number;
   userDaoList: UserDao[];
-  taskList: Task[];
-  taskCount: number;
-  branchList: Branch[];
-  branchCount: number;
-  tagList: Tag[];
-  tagCount: number;
+  baseRepositoryKeyList: BaseRepositoryKey[];
   memberList: Member[];
   memberCount: number;
+  tagList: Tag[];
+  tagCount: number;
+  branchList: Branch[];
+  branchCount: number;
+  taskList: Task[];
+  taskCount: number;
   /** this line is used by starport scaffolding # genesis/proto/state */
   releaseList: Release[];
   releaseCount: number;
@@ -48,40 +54,62 @@ export interface GenesisState {
   whoisCount: number;
 }
 
-const baseGenesisState: object = {
-  taskCount: 0,
-  branchCount: 0,
-  tagCount: 0,
-  memberCount: 0,
-  releaseCount: 0,
-  pullRequestCount: 0,
-  daoCount: 0,
-  commentCount: 0,
-  issueCount: 0,
-  repositoryCount: 0,
-  userCount: 0,
-  whoisCount: 0,
-};
+function createBaseGenesisState(): GenesisState {
+  return {
+    params: undefined,
+    bountyList: [],
+    bountyCount: 0,
+    userDaoList: [],
+    baseRepositoryKeyList: [],
+    memberList: [],
+    memberCount: 0,
+    tagList: [],
+    tagCount: 0,
+    branchList: [],
+    branchCount: 0,
+    taskList: [],
+    taskCount: 0,
+    releaseList: [],
+    releaseCount: 0,
+    pullRequestList: [],
+    pullRequestCount: 0,
+    daoList: [],
+    daoCount: 0,
+    commentList: [],
+    commentCount: 0,
+    issueList: [],
+    issueCount: 0,
+    repositoryList: [],
+    repositoryCount: 0,
+    userList: [],
+    userCount: 0,
+    whoisList: [],
+    whoisCount: 0,
+  };
+}
 
 export const GenesisState = {
-  encode(message: GenesisState, writer: Writer = Writer.create()): Writer {
-    for (const v of message.baseRepositoryKeyList) {
-      BaseRepositoryKey.encode(v!, writer.uint32(210).fork()).ldelim();
+  encode(message: GenesisState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.params !== undefined) {
+      Params.encode(message.params, writer.uint32(234).fork()).ldelim();
+    }
+    for (const v of message.bountyList) {
+      Bounty.encode(v!, writer.uint32(218).fork()).ldelim();
+    }
+    if (message.bountyCount !== 0) {
+      writer.uint32(224).uint64(message.bountyCount);
     }
     for (const v of message.userDaoList) {
       UserDao.encode(v!, writer.uint32(202).fork()).ldelim();
     }
-    for (const v of message.taskList) {
-      Task.encode(v!, writer.uint32(138).fork()).ldelim();
+    for (const v of message.baseRepositoryKeyList) {
+      BaseRepositoryKey.encode(v!, writer.uint32(210).fork()).ldelim();
     }
-    if (message.taskCount !== 0) {
-      writer.uint32(144).uint64(message.taskCount);
+    for (const v of message.memberList) {
+      Member.encode(v!, writer.uint32(186).fork()).ldelim();
     }
-    for (const v of message.branchList) {
-      Branch.encode(v!, writer.uint32(154).fork()).ldelim();
-    }
-    if (message.branchCount !== 0) {
-      writer.uint32(160).uint64(message.branchCount);
+    if (message.memberCount !== 0) {
+      writer.uint32(192).uint64(message.memberCount);
     }
     for (const v of message.tagList) {
       Tag.encode(v!, writer.uint32(170).fork()).ldelim();
@@ -89,11 +117,17 @@ export const GenesisState = {
     if (message.tagCount !== 0) {
       writer.uint32(176).uint64(message.tagCount);
     }
-    for (const v of message.memberList) {
-      Member.encode(v!, writer.uint32(186).fork()).ldelim();
+    for (const v of message.branchList) {
+      Branch.encode(v!, writer.uint32(154).fork()).ldelim();
     }
-    if (message.memberCount !== 0) {
-      writer.uint32(192).uint64(message.memberCount);
+    if (message.branchCount !== 0) {
+      writer.uint32(160).uint64(message.branchCount);
+    }
+    for (const v of message.taskList) {
+      Task.encode(v!, writer.uint32(138).fork()).ldelim();
+    }
+    if (message.taskCount !== 0) {
+      writer.uint32(144).uint64(message.taskCount);
     }
     for (const v of message.releaseList) {
       Release.encode(v!, writer.uint32(122).fork()).ldelim();
@@ -146,46 +180,33 @@ export const GenesisState = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): GenesisState {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): GenesisState {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseGenesisState } as GenesisState;
-    message.baseRepositoryKeyList = [];
-    message.userDaoList = [];
-    message.taskList = [];
-    message.branchList = [];
-    message.tagList = [];
-    message.memberList = [];
-    message.releaseList = [];
-    message.pullRequestList = [];
-    message.daoList = [];
-    message.commentList = [];
-    message.issueList = [];
-    message.repositoryList = [];
-    message.userList = [];
-    message.whoisList = [];
+    const message = createBaseGenesisState();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
-        case 26:
-          message.baseRepositoryKeyList.push(
-            BaseRepositoryKey.decode(reader, reader.uint32())
-          );
+        case 29:
+          message.params = Params.decode(reader, reader.uint32());
+          break;
+        case 27:
+          message.bountyList.push(Bounty.decode(reader, reader.uint32()));
+          break;
+        case 28:
+          message.bountyCount = longToNumber(reader.uint64() as Long);
           break;
         case 25:
           message.userDaoList.push(UserDao.decode(reader, reader.uint32()));
           break;
-        case 17:
-          message.taskList.push(Task.decode(reader, reader.uint32()));
+        case 26:
+          message.baseRepositoryKeyList.push(BaseRepositoryKey.decode(reader, reader.uint32()));
           break;
-        case 18:
-          message.taskCount = longToNumber(reader.uint64() as Long);
+        case 23:
+          message.memberList.push(Member.decode(reader, reader.uint32()));
           break;
-        case 19:
-          message.branchList.push(Branch.decode(reader, reader.uint32()));
-          break;
-        case 20:
-          message.branchCount = longToNumber(reader.uint64() as Long);
+        case 24:
+          message.memberCount = longToNumber(reader.uint64() as Long);
           break;
         case 21:
           message.tagList.push(Tag.decode(reader, reader.uint32()));
@@ -193,11 +214,17 @@ export const GenesisState = {
         case 22:
           message.tagCount = longToNumber(reader.uint64() as Long);
           break;
-        case 23:
-          message.memberList.push(Member.decode(reader, reader.uint32()));
+        case 19:
+          message.branchList.push(Branch.decode(reader, reader.uint32()));
           break;
-        case 24:
-          message.memberCount = longToNumber(reader.uint64() as Long);
+        case 20:
+          message.branchCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 17:
+          message.taskList.push(Task.decode(reader, reader.uint32()));
+          break;
+        case 18:
+          message.taskCount = longToNumber(reader.uint64() as Long);
           break;
         case 15:
           message.releaseList.push(Release.decode(reader, reader.uint32()));
@@ -206,9 +233,7 @@ export const GenesisState = {
           message.releaseCount = longToNumber(reader.uint64() as Long);
           break;
         case 13:
-          message.pullRequestList.push(
-            PullRequest.decode(reader, reader.uint32())
-          );
+          message.pullRequestList.push(PullRequest.decode(reader, reader.uint32()));
           break;
         case 14:
           message.pullRequestCount = longToNumber(reader.uint64() as Long);
@@ -232,9 +257,7 @@ export const GenesisState = {
           message.issueCount = longToNumber(reader.uint64() as Long);
           break;
         case 5:
-          message.repositoryList.push(
-            Repository.decode(reader, reader.uint32())
-          );
+          message.repositoryList.push(Repository.decode(reader, reader.uint32()));
           break;
         case 6:
           message.repositoryCount = longToNumber(reader.uint64() as Long);
@@ -260,465 +283,205 @@ export const GenesisState = {
   },
 
   fromJSON(object: any): GenesisState {
-    const message = { ...baseGenesisState } as GenesisState;
-    message.baseRepositoryKeyList = [];
-    message.userDaoList = [];
-    message.taskList = [];
-    message.branchList = [];
-    message.tagList = [];
-    message.memberList = [];
-    message.releaseList = [];
-    message.pullRequestList = [];
-    message.daoList = [];
-    message.commentList = [];
-    message.issueList = [];
-    message.repositoryList = [];
-    message.userList = [];
-    message.whoisList = [];
-    if (
-      object.baseRepositoryKeyList !== undefined &&
-      object.baseRepositoryKeyList !== null
-    ) {
-      for (const e of object.baseRepositoryKeyList) {
-        message.baseRepositoryKeyList.push(BaseRepositoryKey.fromJSON(e));
-      }
-    }
-    if (object.userDaoList !== undefined && object.userDaoList !== null) {
-      for (const e of object.userDaoList) {
-        message.userDaoList.push(UserDao.fromJSON(e));
-      }
-    }
-    if (object.taskList !== undefined && object.taskList !== null) {
-      for (const e of object.taskList) {
-        message.taskList.push(Task.fromJSON(e));
-      }
-    }
-    if (object.taskCount !== undefined && object.taskCount !== null) {
-      message.taskCount = Number(object.taskCount);
-    } else {
-      message.taskCount = 0;
-    }
-    if (object.branchList !== undefined && object.branchList !== null) {
-      for (const e of object.branchList) {
-        message.branchList.push(Branch.fromJSON(e));
-      }
-    }
-    if (object.branchCount !== undefined && object.branchCount !== null) {
-      message.branchCount = Number(object.branchCount);
-    } else {
-      message.branchCount = 0;
-    }
-    if (object.tagList !== undefined && object.tagList !== null) {
-      for (const e of object.tagList) {
-        message.tagList.push(Tag.fromJSON(e));
-      }
-    }
-    if (object.tagCount !== undefined && object.tagCount !== null) {
-      message.tagCount = Number(object.tagCount);
-    } else {
-      message.tagCount = 0;
-    }
-    if (object.memberList !== undefined && object.memberList !== null) {
-      for (const e of object.memberList) {
-        message.memberList.push(Member.fromJSON(e));
-      }
-    }
-    if (object.memberCount !== undefined && object.memberCount !== null) {
-      message.memberCount = Number(object.memberCount);
-    } else {
-      message.memberCount = 0;
-    }
-    if (object.releaseList !== undefined && object.releaseList !== null) {
-      for (const e of object.releaseList) {
-        message.releaseList.push(Release.fromJSON(e));
-      }
-    }
-    if (object.releaseCount !== undefined && object.releaseCount !== null) {
-      message.releaseCount = Number(object.releaseCount);
-    } else {
-      message.releaseCount = 0;
-    }
-    if (
-      object.pullRequestList !== undefined &&
-      object.pullRequestList !== null
-    ) {
-      for (const e of object.pullRequestList) {
-        message.pullRequestList.push(PullRequest.fromJSON(e));
-      }
-    }
-    if (
-      object.pullRequestCount !== undefined &&
-      object.pullRequestCount !== null
-    ) {
-      message.pullRequestCount = Number(object.pullRequestCount);
-    } else {
-      message.pullRequestCount = 0;
-    }
-    if (object.daoList !== undefined && object.daoList !== null) {
-      for (const e of object.daoList) {
-        message.daoList.push(Dao.fromJSON(e));
-      }
-    }
-    if (object.daoCount !== undefined && object.daoCount !== null) {
-      message.daoCount = Number(object.daoCount);
-    } else {
-      message.daoCount = 0;
-    }
-    if (object.commentList !== undefined && object.commentList !== null) {
-      for (const e of object.commentList) {
-        message.commentList.push(Comment.fromJSON(e));
-      }
-    }
-    if (object.commentCount !== undefined && object.commentCount !== null) {
-      message.commentCount = Number(object.commentCount);
-    } else {
-      message.commentCount = 0;
-    }
-    if (object.issueList !== undefined && object.issueList !== null) {
-      for (const e of object.issueList) {
-        message.issueList.push(Issue.fromJSON(e));
-      }
-    }
-    if (object.issueCount !== undefined && object.issueCount !== null) {
-      message.issueCount = Number(object.issueCount);
-    } else {
-      message.issueCount = 0;
-    }
-    if (object.repositoryList !== undefined && object.repositoryList !== null) {
-      for (const e of object.repositoryList) {
-        message.repositoryList.push(Repository.fromJSON(e));
-      }
-    }
-    if (
-      object.repositoryCount !== undefined &&
-      object.repositoryCount !== null
-    ) {
-      message.repositoryCount = Number(object.repositoryCount);
-    } else {
-      message.repositoryCount = 0;
-    }
-    if (object.userList !== undefined && object.userList !== null) {
-      for (const e of object.userList) {
-        message.userList.push(User.fromJSON(e));
-      }
-    }
-    if (object.userCount !== undefined && object.userCount !== null) {
-      message.userCount = Number(object.userCount);
-    } else {
-      message.userCount = 0;
-    }
-    if (object.whoisList !== undefined && object.whoisList !== null) {
-      for (const e of object.whoisList) {
-        message.whoisList.push(Whois.fromJSON(e));
-      }
-    }
-    if (object.whoisCount !== undefined && object.whoisCount !== null) {
-      message.whoisCount = Number(object.whoisCount);
-    } else {
-      message.whoisCount = 0;
-    }
-    return message;
+    return {
+      params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
+      bountyList: Array.isArray(object?.bountyList) ? object.bountyList.map((e: any) => Bounty.fromJSON(e)) : [],
+      bountyCount: isSet(object.bountyCount) ? Number(object.bountyCount) : 0,
+      userDaoList: Array.isArray(object?.userDaoList) ? object.userDaoList.map((e: any) => UserDao.fromJSON(e)) : [],
+      baseRepositoryKeyList: Array.isArray(object?.baseRepositoryKeyList)
+        ? object.baseRepositoryKeyList.map((e: any) => BaseRepositoryKey.fromJSON(e))
+        : [],
+      memberList: Array.isArray(object?.memberList) ? object.memberList.map((e: any) => Member.fromJSON(e)) : [],
+      memberCount: isSet(object.memberCount) ? Number(object.memberCount) : 0,
+      tagList: Array.isArray(object?.tagList) ? object.tagList.map((e: any) => Tag.fromJSON(e)) : [],
+      tagCount: isSet(object.tagCount) ? Number(object.tagCount) : 0,
+      branchList: Array.isArray(object?.branchList) ? object.branchList.map((e: any) => Branch.fromJSON(e)) : [],
+      branchCount: isSet(object.branchCount) ? Number(object.branchCount) : 0,
+      taskList: Array.isArray(object?.taskList) ? object.taskList.map((e: any) => Task.fromJSON(e)) : [],
+      taskCount: isSet(object.taskCount) ? Number(object.taskCount) : 0,
+      releaseList: Array.isArray(object?.releaseList) ? object.releaseList.map((e: any) => Release.fromJSON(e)) : [],
+      releaseCount: isSet(object.releaseCount) ? Number(object.releaseCount) : 0,
+      pullRequestList: Array.isArray(object?.pullRequestList)
+        ? object.pullRequestList.map((e: any) => PullRequest.fromJSON(e))
+        : [],
+      pullRequestCount: isSet(object.pullRequestCount) ? Number(object.pullRequestCount) : 0,
+      daoList: Array.isArray(object?.daoList) ? object.daoList.map((e: any) => Dao.fromJSON(e)) : [],
+      daoCount: isSet(object.daoCount) ? Number(object.daoCount) : 0,
+      commentList: Array.isArray(object?.commentList) ? object.commentList.map((e: any) => Comment.fromJSON(e)) : [],
+      commentCount: isSet(object.commentCount) ? Number(object.commentCount) : 0,
+      issueList: Array.isArray(object?.issueList) ? object.issueList.map((e: any) => Issue.fromJSON(e)) : [],
+      issueCount: isSet(object.issueCount) ? Number(object.issueCount) : 0,
+      repositoryList: Array.isArray(object?.repositoryList)
+        ? object.repositoryList.map((e: any) => Repository.fromJSON(e))
+        : [],
+      repositoryCount: isSet(object.repositoryCount) ? Number(object.repositoryCount) : 0,
+      userList: Array.isArray(object?.userList) ? object.userList.map((e: any) => User.fromJSON(e)) : [],
+      userCount: isSet(object.userCount) ? Number(object.userCount) : 0,
+      whoisList: Array.isArray(object?.whoisList) ? object.whoisList.map((e: any) => Whois.fromJSON(e)) : [],
+      whoisCount: isSet(object.whoisCount) ? Number(object.whoisCount) : 0,
+    };
   },
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
-    if (message.baseRepositoryKeyList) {
-      obj.baseRepositoryKeyList = message.baseRepositoryKeyList.map((e) =>
-        e ? BaseRepositoryKey.toJSON(e) : undefined
-      );
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    if (message.bountyList) {
+      obj.bountyList = message.bountyList.map((e) => e ? Bounty.toJSON(e) : undefined);
     } else {
-      obj.baseRepositoryKeyList = [];
+      obj.bountyList = [];
     }
+    message.bountyCount !== undefined && (obj.bountyCount = Math.round(message.bountyCount));
     if (message.userDaoList) {
-      obj.userDaoList = message.userDaoList.map((e) =>
-        e ? UserDao.toJSON(e) : undefined
-      );
+      obj.userDaoList = message.userDaoList.map((e) => e ? UserDao.toJSON(e) : undefined);
     } else {
       obj.userDaoList = [];
     }
-    if (message.taskList) {
-      obj.taskList = message.taskList.map((e) =>
-        e ? Task.toJSON(e) : undefined
-      );
+    if (message.baseRepositoryKeyList) {
+      obj.baseRepositoryKeyList = message.baseRepositoryKeyList.map((e) => e ? BaseRepositoryKey.toJSON(e) : undefined);
     } else {
-      obj.taskList = [];
+      obj.baseRepositoryKeyList = [];
     }
-    message.taskCount !== undefined && (obj.taskCount = message.taskCount);
-    if (message.branchList) {
-      obj.branchList = message.branchList.map((e) =>
-        e ? Branch.toJSON(e) : undefined
-      );
-    } else {
-      obj.branchList = [];
-    }
-    message.branchCount !== undefined &&
-      (obj.branchCount = message.branchCount);
-    if (message.tagList) {
-      obj.tagList = message.tagList.map((e) => (e ? Tag.toJSON(e) : undefined));
-    } else {
-      obj.tagList = [];
-    }
-    message.tagCount !== undefined && (obj.tagCount = message.tagCount);
     if (message.memberList) {
-      obj.memberList = message.memberList.map((e) =>
-        e ? Member.toJSON(e) : undefined
-      );
+      obj.memberList = message.memberList.map((e) => e ? Member.toJSON(e) : undefined);
     } else {
       obj.memberList = [];
     }
-    message.memberCount !== undefined &&
-      (obj.memberCount = message.memberCount);
+    message.memberCount !== undefined && (obj.memberCount = Math.round(message.memberCount));
+    if (message.tagList) {
+      obj.tagList = message.tagList.map((e) => e ? Tag.toJSON(e) : undefined);
+    } else {
+      obj.tagList = [];
+    }
+    message.tagCount !== undefined && (obj.tagCount = Math.round(message.tagCount));
+    if (message.branchList) {
+      obj.branchList = message.branchList.map((e) => e ? Branch.toJSON(e) : undefined);
+    } else {
+      obj.branchList = [];
+    }
+    message.branchCount !== undefined && (obj.branchCount = Math.round(message.branchCount));
+    if (message.taskList) {
+      obj.taskList = message.taskList.map((e) => e ? Task.toJSON(e) : undefined);
+    } else {
+      obj.taskList = [];
+    }
+    message.taskCount !== undefined && (obj.taskCount = Math.round(message.taskCount));
     if (message.releaseList) {
-      obj.releaseList = message.releaseList.map((e) =>
-        e ? Release.toJSON(e) : undefined
-      );
+      obj.releaseList = message.releaseList.map((e) => e ? Release.toJSON(e) : undefined);
     } else {
       obj.releaseList = [];
     }
-    message.releaseCount !== undefined &&
-      (obj.releaseCount = message.releaseCount);
+    message.releaseCount !== undefined && (obj.releaseCount = Math.round(message.releaseCount));
     if (message.pullRequestList) {
-      obj.pullRequestList = message.pullRequestList.map((e) =>
-        e ? PullRequest.toJSON(e) : undefined
-      );
+      obj.pullRequestList = message.pullRequestList.map((e) => e ? PullRequest.toJSON(e) : undefined);
     } else {
       obj.pullRequestList = [];
     }
-    message.pullRequestCount !== undefined &&
-      (obj.pullRequestCount = message.pullRequestCount);
+    message.pullRequestCount !== undefined && (obj.pullRequestCount = Math.round(message.pullRequestCount));
     if (message.daoList) {
-      obj.daoList = message.daoList.map((e) => (e ? Dao.toJSON(e) : undefined));
+      obj.daoList = message.daoList.map((e) => e ? Dao.toJSON(e) : undefined);
     } else {
       obj.daoList = [];
     }
-    message.daoCount !== undefined && (obj.daoCount = message.daoCount);
+    message.daoCount !== undefined && (obj.daoCount = Math.round(message.daoCount));
     if (message.commentList) {
-      obj.commentList = message.commentList.map((e) =>
-        e ? Comment.toJSON(e) : undefined
-      );
+      obj.commentList = message.commentList.map((e) => e ? Comment.toJSON(e) : undefined);
     } else {
       obj.commentList = [];
     }
-    message.commentCount !== undefined &&
-      (obj.commentCount = message.commentCount);
+    message.commentCount !== undefined && (obj.commentCount = Math.round(message.commentCount));
     if (message.issueList) {
-      obj.issueList = message.issueList.map((e) =>
-        e ? Issue.toJSON(e) : undefined
-      );
+      obj.issueList = message.issueList.map((e) => e ? Issue.toJSON(e) : undefined);
     } else {
       obj.issueList = [];
     }
-    message.issueCount !== undefined && (obj.issueCount = message.issueCount);
+    message.issueCount !== undefined && (obj.issueCount = Math.round(message.issueCount));
     if (message.repositoryList) {
-      obj.repositoryList = message.repositoryList.map((e) =>
-        e ? Repository.toJSON(e) : undefined
-      );
+      obj.repositoryList = message.repositoryList.map((e) => e ? Repository.toJSON(e) : undefined);
     } else {
       obj.repositoryList = [];
     }
-    message.repositoryCount !== undefined &&
-      (obj.repositoryCount = message.repositoryCount);
+    message.repositoryCount !== undefined && (obj.repositoryCount = Math.round(message.repositoryCount));
     if (message.userList) {
-      obj.userList = message.userList.map((e) =>
-        e ? User.toJSON(e) : undefined
-      );
+      obj.userList = message.userList.map((e) => e ? User.toJSON(e) : undefined);
     } else {
       obj.userList = [];
     }
-    message.userCount !== undefined && (obj.userCount = message.userCount);
+    message.userCount !== undefined && (obj.userCount = Math.round(message.userCount));
     if (message.whoisList) {
-      obj.whoisList = message.whoisList.map((e) =>
-        e ? Whois.toJSON(e) : undefined
-      );
+      obj.whoisList = message.whoisList.map((e) => e ? Whois.toJSON(e) : undefined);
     } else {
       obj.whoisList = [];
     }
-    message.whoisCount !== undefined && (obj.whoisCount = message.whoisCount);
+    message.whoisCount !== undefined && (obj.whoisCount = Math.round(message.whoisCount));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<GenesisState>): GenesisState {
-    const message = { ...baseGenesisState } as GenesisState;
-    message.baseRepositoryKeyList = [];
-    message.userDaoList = [];
-    message.taskList = [];
-    message.branchList = [];
-    message.tagList = [];
-    message.memberList = [];
-    message.releaseList = [];
-    message.pullRequestList = [];
-    message.daoList = [];
-    message.commentList = [];
-    message.issueList = [];
-    message.repositoryList = [];
-    message.userList = [];
-    message.whoisList = [];
-    if (
-      object.baseRepositoryKeyList !== undefined &&
-      object.baseRepositoryKeyList !== null
-    ) {
-      for (const e of object.baseRepositoryKeyList) {
-        message.baseRepositoryKeyList.push(BaseRepositoryKey.fromPartial(e));
-      }
-    }
-    if (object.userDaoList !== undefined && object.userDaoList !== null) {
-      for (const e of object.userDaoList) {
-        message.userDaoList.push(UserDao.fromPartial(e));
-      }
-    }
-    if (object.taskList !== undefined && object.taskList !== null) {
-      for (const e of object.taskList) {
-        message.taskList.push(Task.fromPartial(e));
-      }
-    }
-    if (object.taskCount !== undefined && object.taskCount !== null) {
-      message.taskCount = object.taskCount;
-    } else {
-      message.taskCount = 0;
-    }
-    if (object.branchList !== undefined && object.branchList !== null) {
-      for (const e of object.branchList) {
-        message.branchList.push(Branch.fromPartial(e));
-      }
-    }
-    if (object.branchCount !== undefined && object.branchCount !== null) {
-      message.branchCount = object.branchCount;
-    } else {
-      message.branchCount = 0;
-    }
-    if (object.tagList !== undefined && object.tagList !== null) {
-      for (const e of object.tagList) {
-        message.tagList.push(Tag.fromPartial(e));
-      }
-    }
-    if (object.tagCount !== undefined && object.tagCount !== null) {
-      message.tagCount = object.tagCount;
-    } else {
-      message.tagCount = 0;
-    }
-    if (object.memberList !== undefined && object.memberList !== null) {
-      for (const e of object.memberList) {
-        message.memberList.push(Member.fromPartial(e));
-      }
-    }
-    if (object.memberCount !== undefined && object.memberCount !== null) {
-      message.memberCount = object.memberCount;
-    } else {
-      message.memberCount = 0;
-    }
-    if (object.releaseList !== undefined && object.releaseList !== null) {
-      for (const e of object.releaseList) {
-        message.releaseList.push(Release.fromPartial(e));
-      }
-    }
-    if (object.releaseCount !== undefined && object.releaseCount !== null) {
-      message.releaseCount = object.releaseCount;
-    } else {
-      message.releaseCount = 0;
-    }
-    if (
-      object.pullRequestList !== undefined &&
-      object.pullRequestList !== null
-    ) {
-      for (const e of object.pullRequestList) {
-        message.pullRequestList.push(PullRequest.fromPartial(e));
-      }
-    }
-    if (
-      object.pullRequestCount !== undefined &&
-      object.pullRequestCount !== null
-    ) {
-      message.pullRequestCount = object.pullRequestCount;
-    } else {
-      message.pullRequestCount = 0;
-    }
-    if (object.daoList !== undefined && object.daoList !== null) {
-      for (const e of object.daoList) {
-        message.daoList.push(Dao.fromPartial(e));
-      }
-    }
-    if (object.daoCount !== undefined && object.daoCount !== null) {
-      message.daoCount = object.daoCount;
-    } else {
-      message.daoCount = 0;
-    }
-    if (object.commentList !== undefined && object.commentList !== null) {
-      for (const e of object.commentList) {
-        message.commentList.push(Comment.fromPartial(e));
-      }
-    }
-    if (object.commentCount !== undefined && object.commentCount !== null) {
-      message.commentCount = object.commentCount;
-    } else {
-      message.commentCount = 0;
-    }
-    if (object.issueList !== undefined && object.issueList !== null) {
-      for (const e of object.issueList) {
-        message.issueList.push(Issue.fromPartial(e));
-      }
-    }
-    if (object.issueCount !== undefined && object.issueCount !== null) {
-      message.issueCount = object.issueCount;
-    } else {
-      message.issueCount = 0;
-    }
-    if (object.repositoryList !== undefined && object.repositoryList !== null) {
-      for (const e of object.repositoryList) {
-        message.repositoryList.push(Repository.fromPartial(e));
-      }
-    }
-    if (
-      object.repositoryCount !== undefined &&
-      object.repositoryCount !== null
-    ) {
-      message.repositoryCount = object.repositoryCount;
-    } else {
-      message.repositoryCount = 0;
-    }
-    if (object.userList !== undefined && object.userList !== null) {
-      for (const e of object.userList) {
-        message.userList.push(User.fromPartial(e));
-      }
-    }
-    if (object.userCount !== undefined && object.userCount !== null) {
-      message.userCount = object.userCount;
-    } else {
-      message.userCount = 0;
-    }
-    if (object.whoisList !== undefined && object.whoisList !== null) {
-      for (const e of object.whoisList) {
-        message.whoisList.push(Whois.fromPartial(e));
-      }
-    }
-    if (object.whoisCount !== undefined && object.whoisCount !== null) {
-      message.whoisCount = object.whoisCount;
-    } else {
-      message.whoisCount = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<GenesisState>, I>>(object: I): GenesisState {
+    const message = createBaseGenesisState();
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
+    message.bountyList = object.bountyList?.map((e) => Bounty.fromPartial(e)) || [];
+    message.bountyCount = object.bountyCount ?? 0;
+    message.userDaoList = object.userDaoList?.map((e) => UserDao.fromPartial(e)) || [];
+    message.baseRepositoryKeyList = object.baseRepositoryKeyList?.map((e) => BaseRepositoryKey.fromPartial(e)) || [];
+    message.memberList = object.memberList?.map((e) => Member.fromPartial(e)) || [];
+    message.memberCount = object.memberCount ?? 0;
+    message.tagList = object.tagList?.map((e) => Tag.fromPartial(e)) || [];
+    message.tagCount = object.tagCount ?? 0;
+    message.branchList = object.branchList?.map((e) => Branch.fromPartial(e)) || [];
+    message.branchCount = object.branchCount ?? 0;
+    message.taskList = object.taskList?.map((e) => Task.fromPartial(e)) || [];
+    message.taskCount = object.taskCount ?? 0;
+    message.releaseList = object.releaseList?.map((e) => Release.fromPartial(e)) || [];
+    message.releaseCount = object.releaseCount ?? 0;
+    message.pullRequestList = object.pullRequestList?.map((e) => PullRequest.fromPartial(e)) || [];
+    message.pullRequestCount = object.pullRequestCount ?? 0;
+    message.daoList = object.daoList?.map((e) => Dao.fromPartial(e)) || [];
+    message.daoCount = object.daoCount ?? 0;
+    message.commentList = object.commentList?.map((e) => Comment.fromPartial(e)) || [];
+    message.commentCount = object.commentCount ?? 0;
+    message.issueList = object.issueList?.map((e) => Issue.fromPartial(e)) || [];
+    message.issueCount = object.issueCount ?? 0;
+    message.repositoryList = object.repositoryList?.map((e) => Repository.fromPartial(e)) || [];
+    message.repositoryCount = object.repositoryCount ?? 0;
+    message.userList = object.userList?.map((e) => User.fromPartial(e)) || [];
+    message.userCount = object.userCount ?? 0;
+    message.whoisList = object.whoisList?.map((e) => Whois.fromPartial(e)) || [];
+    message.whoisCount = object.whoisCount ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -727,7 +490,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

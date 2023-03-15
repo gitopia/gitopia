@@ -2,6 +2,32 @@
 
 All notable changes will be documented here.
 
+## [v1.4.0] - UNRELEASED
+
+- Upgrade cosmos-sdk version to v0.46.10 and tendermint version to v0.34.26
+- Set default branch on first push
+- InvokeForkRepository and ForkRepository transaction now accepts name and branch parameters
+- ToggleIssueState now accepts comment body parameter for comment and close
+- SetPullRequestState now accepts comment body parameter for comment and close
+- Close linked issue automatically when pr is merged and the issue is only assigned to the pr creator
+- Branch protection: New transaction to toggle allowForcePush value of branch
+- Default null values for comment type and parent
+- Add issueIids param in create PR tx
+
+## [v1.3.0] - 2023-02-22
+
+- Bump cosmos-sdk version to v0.46.7 and tendermint version to v0.34.24
+- KV changes for issue, pullrequest and comment. 
+- Removed `issues` and `pullRequests` from Repository proto
+- UpdateIssueTitle, UpdateIssueDescription, ToggleIssueState, AddIssueAssignees, RemoveIssueAssignees, AddIssueLabels, RemoveIssueLabels, DeleteIssue, UpdatePullRequestTitle, UpdatePullRequestDescription, InvokeMergePullRequest, SetPullRequestState, AddPullRequestReviewers, RemovePullRequestReviewers, AddPullRequestAssignees, RemovePullRequestAssignees, LinkPullRequestIssueByIid, UnlinkPullRequestIssueByIid, AddPullRequestLabels, RemovePullRequestLabels, and DeletePullRequest tx takes `repositoryId` and `iid` instead of `id`.
+- Add `repositoryId` in Comment and Bounty proto
+- Modified comment structure - Parent: issue and pull; various comment types like label, assignees etc; reactions; replies; resolved/unresolved
+- Removed queries to get a issue, pullrequest and comment by id.
+- PullRequestMergePermission query also takes `repositoryId`
+- Add queries RepositoryIssue, RepositoryIssueAll, RepositoryPullRequest, RepositoryPullRequestAll ,IssueComment, PullRequestComment, IssueCommentAll and PullRequestCommentAll.
+- In place store migration for store changes
+- Refactored app.go
+
 ## [v1.2.0] - 2022-11-07
 
 - Upgrade cosmos-sdk version to v0.46.4 and iavl version to v0.19.4

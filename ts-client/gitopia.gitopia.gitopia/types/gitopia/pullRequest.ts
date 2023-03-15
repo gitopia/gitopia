@@ -1,6 +1,7 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { IssueIid } from "./repository";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -12,9 +13,8 @@ export interface PullRequest {
   state: PullRequest_State;
   description: string;
   locked: boolean;
-  comments: number[];
   commentsCount: number;
-  issues: number[];
+  issues: IssueIid[];
   labels: number[];
   assignees: string[];
   reviewers: string[];
@@ -64,8 +64,9 @@ export function pullRequest_StateToJSON(object: PullRequest_State): string {
       return "CLOSED";
     case PullRequest_State.MERGED:
       return "MERGED";
+    case PullRequest_State.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -81,33 +82,36 @@ export interface PullRequestBase {
   commitSha: string;
 }
 
-const basePullRequest: object = {
-  creator: "",
-  id: 0,
-  iid: 0,
-  title: "",
-  state: 0,
-  description: "",
-  locked: false,
-  comments: 0,
-  commentsCount: 0,
-  issues: 0,
-  labels: 0,
-  assignees: "",
-  reviewers: "",
-  draft: false,
-  createdAt: 0,
-  updatedAt: 0,
-  closedAt: 0,
-  closedBy: "",
-  mergedAt: 0,
-  mergedBy: "",
-  mergeCommitSha: "",
-  maintainerCanModify: false,
-};
+function createBasePullRequest(): PullRequest {
+  return {
+    creator: "",
+    id: 0,
+    iid: 0,
+    title: "",
+    state: 0,
+    description: "",
+    locked: false,
+    commentsCount: 0,
+    issues: [],
+    labels: [],
+    assignees: [],
+    reviewers: [],
+    draft: false,
+    createdAt: 0,
+    updatedAt: 0,
+    closedAt: 0,
+    closedBy: "",
+    mergedAt: 0,
+    mergedBy: "",
+    mergeCommitSha: "",
+    maintainerCanModify: false,
+    head: undefined,
+    base: undefined,
+  };
+}
 
 export const PullRequest = {
-  encode(message: PullRequest, writer: Writer = Writer.create()): Writer {
+  encode(message: PullRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
@@ -129,75 +133,63 @@ export const PullRequest = {
     if (message.locked === true) {
       writer.uint32(56).bool(message.locked);
     }
-    writer.uint32(66).fork();
-    for (const v of message.comments) {
-      writer.uint64(v);
-    }
-    writer.ldelim();
     if (message.commentsCount !== 0) {
-      writer.uint32(72).uint64(message.commentsCount);
+      writer.uint32(64).uint64(message.commentsCount);
+    }
+    for (const v of message.issues) {
+      IssueIid.encode(v!, writer.uint32(74).fork()).ldelim();
     }
     writer.uint32(82).fork();
-    for (const v of message.issues) {
-      writer.uint64(v);
-    }
-    writer.ldelim();
-    writer.uint32(90).fork();
     for (const v of message.labels) {
       writer.uint64(v);
     }
     writer.ldelim();
     for (const v of message.assignees) {
-      writer.uint32(98).string(v!);
+      writer.uint32(90).string(v!);
     }
     for (const v of message.reviewers) {
-      writer.uint32(106).string(v!);
+      writer.uint32(98).string(v!);
     }
     if (message.draft === true) {
-      writer.uint32(112).bool(message.draft);
+      writer.uint32(104).bool(message.draft);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(120).int64(message.createdAt);
+      writer.uint32(112).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(128).int64(message.updatedAt);
+      writer.uint32(120).int64(message.updatedAt);
     }
     if (message.closedAt !== 0) {
-      writer.uint32(136).int64(message.closedAt);
+      writer.uint32(128).int64(message.closedAt);
     }
     if (message.closedBy !== "") {
-      writer.uint32(146).string(message.closedBy);
+      writer.uint32(138).string(message.closedBy);
     }
     if (message.mergedAt !== 0) {
-      writer.uint32(152).int64(message.mergedAt);
+      writer.uint32(144).int64(message.mergedAt);
     }
     if (message.mergedBy !== "") {
-      writer.uint32(162).string(message.mergedBy);
+      writer.uint32(154).string(message.mergedBy);
     }
     if (message.mergeCommitSha !== "") {
-      writer.uint32(170).string(message.mergeCommitSha);
+      writer.uint32(162).string(message.mergeCommitSha);
     }
     if (message.maintainerCanModify === true) {
-      writer.uint32(176).bool(message.maintainerCanModify);
+      writer.uint32(168).bool(message.maintainerCanModify);
     }
     if (message.head !== undefined) {
-      PullRequestHead.encode(message.head, writer.uint32(186).fork()).ldelim();
+      PullRequestHead.encode(message.head, writer.uint32(178).fork()).ldelim();
     }
     if (message.base !== undefined) {
-      PullRequestBase.encode(message.base, writer.uint32(202).fork()).ldelim();
+      PullRequestBase.encode(message.base, writer.uint32(186).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): PullRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): PullRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePullRequest } as PullRequest;
-    message.comments = [];
-    message.issues = [];
-    message.labels = [];
-    message.assignees = [];
-    message.reviewers = [];
+    const message = createBasePullRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -223,29 +215,12 @@ export const PullRequest = {
           message.locked = reader.bool();
           break;
         case 8:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.comments.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.comments.push(longToNumber(reader.uint64() as Long));
-          }
-          break;
-        case 9:
           message.commentsCount = longToNumber(reader.uint64() as Long);
           break;
-        case 10:
-          if ((tag & 7) === 2) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.issues.push(longToNumber(reader.uint64() as Long));
-            }
-          } else {
-            message.issues.push(longToNumber(reader.uint64() as Long));
-          }
+        case 9:
+          message.issues.push(IssueIid.decode(reader, reader.uint32()));
           break;
-        case 11:
+        case 10:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -255,43 +230,43 @@ export const PullRequest = {
             message.labels.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 12:
+        case 11:
           message.assignees.push(reader.string());
           break;
-        case 13:
+        case 12:
           message.reviewers.push(reader.string());
           break;
-        case 14:
+        case 13:
           message.draft = reader.bool();
           break;
-        case 15:
+        case 14:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 16:
+        case 15:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 16:
           message.closedAt = longToNumber(reader.int64() as Long);
           break;
-        case 18:
+        case 17:
           message.closedBy = reader.string();
           break;
-        case 19:
+        case 18:
           message.mergedAt = longToNumber(reader.int64() as Long);
           break;
-        case 20:
+        case 19:
           message.mergedBy = reader.string();
           break;
-        case 21:
+        case 20:
           message.mergeCommitSha = reader.string();
           break;
-        case 22:
+        case 21:
           message.maintainerCanModify = reader.bool();
           break;
-        case 23:
+        case 22:
           message.head = PullRequestHead.decode(reader, reader.uint32());
           break;
-        case 25:
+        case 23:
           message.base = PullRequestBase.decode(reader, reader.uint32());
           break;
         default:
@@ -303,163 +278,50 @@ export const PullRequest = {
   },
 
   fromJSON(object: any): PullRequest {
-    const message = { ...basePullRequest } as PullRequest;
-    message.comments = [];
-    message.issues = [];
-    message.labels = [];
-    message.assignees = [];
-    message.reviewers = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = Number(object.iid);
-    } else {
-      message.iid = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = String(object.title);
-    } else {
-      message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = pullRequest_StateFromJSON(object.state);
-    } else {
-      message.state = 0;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    if (object.locked !== undefined && object.locked !== null) {
-      message.locked = Boolean(object.locked);
-    } else {
-      message.locked = false;
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      for (const e of object.comments) {
-        message.comments.push(Number(e));
-      }
-    }
-    if (object.commentsCount !== undefined && object.commentsCount !== null) {
-      message.commentsCount = Number(object.commentsCount);
-    } else {
-      message.commentsCount = 0;
-    }
-    if (object.issues !== undefined && object.issues !== null) {
-      for (const e of object.issues) {
-        message.issues.push(Number(e));
-      }
-    }
-    if (object.labels !== undefined && object.labels !== null) {
-      for (const e of object.labels) {
-        message.labels.push(Number(e));
-      }
-    }
-    if (object.assignees !== undefined && object.assignees !== null) {
-      for (const e of object.assignees) {
-        message.assignees.push(String(e));
-      }
-    }
-    if (object.reviewers !== undefined && object.reviewers !== null) {
-      for (const e of object.reviewers) {
-        message.reviewers.push(String(e));
-      }
-    }
-    if (object.draft !== undefined && object.draft !== null) {
-      message.draft = Boolean(object.draft);
-    } else {
-      message.draft = false;
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = Number(object.createdAt);
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = Number(object.updatedAt);
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = Number(object.closedAt);
-    } else {
-      message.closedAt = 0;
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = String(object.closedBy);
-    } else {
-      message.closedBy = "";
-    }
-    if (object.mergedAt !== undefined && object.mergedAt !== null) {
-      message.mergedAt = Number(object.mergedAt);
-    } else {
-      message.mergedAt = 0;
-    }
-    if (object.mergedBy !== undefined && object.mergedBy !== null) {
-      message.mergedBy = String(object.mergedBy);
-    } else {
-      message.mergedBy = "";
-    }
-    if (object.mergeCommitSha !== undefined && object.mergeCommitSha !== null) {
-      message.mergeCommitSha = String(object.mergeCommitSha);
-    } else {
-      message.mergeCommitSha = "";
-    }
-    if (
-      object.maintainerCanModify !== undefined &&
-      object.maintainerCanModify !== null
-    ) {
-      message.maintainerCanModify = Boolean(object.maintainerCanModify);
-    } else {
-      message.maintainerCanModify = false;
-    }
-    if (object.head !== undefined && object.head !== null) {
-      message.head = PullRequestHead.fromJSON(object.head);
-    } else {
-      message.head = undefined;
-    }
-    if (object.base !== undefined && object.base !== null) {
-      message.base = PullRequestBase.fromJSON(object.base);
-    } else {
-      message.base = undefined;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      iid: isSet(object.iid) ? Number(object.iid) : 0,
+      title: isSet(object.title) ? String(object.title) : "",
+      state: isSet(object.state) ? pullRequest_StateFromJSON(object.state) : 0,
+      description: isSet(object.description) ? String(object.description) : "",
+      locked: isSet(object.locked) ? Boolean(object.locked) : false,
+      commentsCount: isSet(object.commentsCount) ? Number(object.commentsCount) : 0,
+      issues: Array.isArray(object?.issues) ? object.issues.map((e: any) => IssueIid.fromJSON(e)) : [],
+      labels: Array.isArray(object?.labels) ? object.labels.map((e: any) => Number(e)) : [],
+      assignees: Array.isArray(object?.assignees) ? object.assignees.map((e: any) => String(e)) : [],
+      reviewers: Array.isArray(object?.reviewers) ? object.reviewers.map((e: any) => String(e)) : [],
+      draft: isSet(object.draft) ? Boolean(object.draft) : false,
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+      closedAt: isSet(object.closedAt) ? Number(object.closedAt) : 0,
+      closedBy: isSet(object.closedBy) ? String(object.closedBy) : "",
+      mergedAt: isSet(object.mergedAt) ? Number(object.mergedAt) : 0,
+      mergedBy: isSet(object.mergedBy) ? String(object.mergedBy) : "",
+      mergeCommitSha: isSet(object.mergeCommitSha) ? String(object.mergeCommitSha) : "",
+      maintainerCanModify: isSet(object.maintainerCanModify) ? Boolean(object.maintainerCanModify) : false,
+      head: isSet(object.head) ? PullRequestHead.fromJSON(object.head) : undefined,
+      base: isSet(object.base) ? PullRequestBase.fromJSON(object.base) : undefined,
+    };
   },
 
   toJSON(message: PullRequest): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.iid !== undefined && (obj.iid = message.iid);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.iid !== undefined && (obj.iid = Math.round(message.iid));
     message.title !== undefined && (obj.title = message.title);
-    message.state !== undefined &&
-      (obj.state = pullRequest_StateToJSON(message.state));
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.state !== undefined && (obj.state = pullRequest_StateToJSON(message.state));
+    message.description !== undefined && (obj.description = message.description);
     message.locked !== undefined && (obj.locked = message.locked);
-    if (message.comments) {
-      obj.comments = message.comments.map((e) => e);
-    } else {
-      obj.comments = [];
-    }
-    message.commentsCount !== undefined &&
-      (obj.commentsCount = message.commentsCount);
+    message.commentsCount !== undefined && (obj.commentsCount = Math.round(message.commentsCount));
     if (message.issues) {
-      obj.issues = message.issues.map((e) => e);
+      obj.issues = message.issues.map((e) => e ? IssueIid.toJSON(e) : undefined);
     } else {
       obj.issues = [];
     }
     if (message.labels) {
-      obj.labels = message.labels.map((e) => e);
+      obj.labels = message.labels.map((e) => Math.round(e));
     } else {
       obj.labels = [];
     }
@@ -474,169 +336,58 @@ export const PullRequest = {
       obj.reviewers = [];
     }
     message.draft !== undefined && (obj.draft = message.draft);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.closedAt !== undefined && (obj.closedAt = message.closedAt);
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.updatedAt !== undefined && (obj.updatedAt = Math.round(message.updatedAt));
+    message.closedAt !== undefined && (obj.closedAt = Math.round(message.closedAt));
     message.closedBy !== undefined && (obj.closedBy = message.closedBy);
-    message.mergedAt !== undefined && (obj.mergedAt = message.mergedAt);
+    message.mergedAt !== undefined && (obj.mergedAt = Math.round(message.mergedAt));
     message.mergedBy !== undefined && (obj.mergedBy = message.mergedBy);
-    message.mergeCommitSha !== undefined &&
-      (obj.mergeCommitSha = message.mergeCommitSha);
-    message.maintainerCanModify !== undefined &&
-      (obj.maintainerCanModify = message.maintainerCanModify);
-    message.head !== undefined &&
-      (obj.head = message.head
-        ? PullRequestHead.toJSON(message.head)
-        : undefined);
-    message.base !== undefined &&
-      (obj.base = message.base
-        ? PullRequestBase.toJSON(message.base)
-        : undefined);
+    message.mergeCommitSha !== undefined && (obj.mergeCommitSha = message.mergeCommitSha);
+    message.maintainerCanModify !== undefined && (obj.maintainerCanModify = message.maintainerCanModify);
+    message.head !== undefined && (obj.head = message.head ? PullRequestHead.toJSON(message.head) : undefined);
+    message.base !== undefined && (obj.base = message.base ? PullRequestBase.toJSON(message.base) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PullRequest>): PullRequest {
-    const message = { ...basePullRequest } as PullRequest;
-    message.comments = [];
-    message.issues = [];
-    message.labels = [];
-    message.assignees = [];
-    message.reviewers = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = object.iid;
-    } else {
-      message.iid = 0;
-    }
-    if (object.title !== undefined && object.title !== null) {
-      message.title = object.title;
-    } else {
-      message.title = "";
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = object.state;
-    } else {
-      message.state = 0;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    if (object.locked !== undefined && object.locked !== null) {
-      message.locked = object.locked;
-    } else {
-      message.locked = false;
-    }
-    if (object.comments !== undefined && object.comments !== null) {
-      for (const e of object.comments) {
-        message.comments.push(e);
-      }
-    }
-    if (object.commentsCount !== undefined && object.commentsCount !== null) {
-      message.commentsCount = object.commentsCount;
-    } else {
-      message.commentsCount = 0;
-    }
-    if (object.issues !== undefined && object.issues !== null) {
-      for (const e of object.issues) {
-        message.issues.push(e);
-      }
-    }
-    if (object.labels !== undefined && object.labels !== null) {
-      for (const e of object.labels) {
-        message.labels.push(e);
-      }
-    }
-    if (object.assignees !== undefined && object.assignees !== null) {
-      for (const e of object.assignees) {
-        message.assignees.push(e);
-      }
-    }
-    if (object.reviewers !== undefined && object.reviewers !== null) {
-      for (const e of object.reviewers) {
-        message.reviewers.push(e);
-      }
-    }
-    if (object.draft !== undefined && object.draft !== null) {
-      message.draft = object.draft;
-    } else {
-      message.draft = false;
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.closedAt !== undefined && object.closedAt !== null) {
-      message.closedAt = object.closedAt;
-    } else {
-      message.closedAt = 0;
-    }
-    if (object.closedBy !== undefined && object.closedBy !== null) {
-      message.closedBy = object.closedBy;
-    } else {
-      message.closedBy = "";
-    }
-    if (object.mergedAt !== undefined && object.mergedAt !== null) {
-      message.mergedAt = object.mergedAt;
-    } else {
-      message.mergedAt = 0;
-    }
-    if (object.mergedBy !== undefined && object.mergedBy !== null) {
-      message.mergedBy = object.mergedBy;
-    } else {
-      message.mergedBy = "";
-    }
-    if (object.mergeCommitSha !== undefined && object.mergeCommitSha !== null) {
-      message.mergeCommitSha = object.mergeCommitSha;
-    } else {
-      message.mergeCommitSha = "";
-    }
-    if (
-      object.maintainerCanModify !== undefined &&
-      object.maintainerCanModify !== null
-    ) {
-      message.maintainerCanModify = object.maintainerCanModify;
-    } else {
-      message.maintainerCanModify = false;
-    }
-    if (object.head !== undefined && object.head !== null) {
-      message.head = PullRequestHead.fromPartial(object.head);
-    } else {
-      message.head = undefined;
-    }
-    if (object.base !== undefined && object.base !== null) {
-      message.base = PullRequestBase.fromPartial(object.base);
-    } else {
-      message.base = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<PullRequest>, I>>(object: I): PullRequest {
+    const message = createBasePullRequest();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.iid = object.iid ?? 0;
+    message.title = object.title ?? "";
+    message.state = object.state ?? 0;
+    message.description = object.description ?? "";
+    message.locked = object.locked ?? false;
+    message.commentsCount = object.commentsCount ?? 0;
+    message.issues = object.issues?.map((e) => IssueIid.fromPartial(e)) || [];
+    message.labels = object.labels?.map((e) => e) || [];
+    message.assignees = object.assignees?.map((e) => e) || [];
+    message.reviewers = object.reviewers?.map((e) => e) || [];
+    message.draft = object.draft ?? false;
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
+    message.closedAt = object.closedAt ?? 0;
+    message.closedBy = object.closedBy ?? "";
+    message.mergedAt = object.mergedAt ?? 0;
+    message.mergedBy = object.mergedBy ?? "";
+    message.mergeCommitSha = object.mergeCommitSha ?? "";
+    message.maintainerCanModify = object.maintainerCanModify ?? false;
+    message.head = (object.head !== undefined && object.head !== null)
+      ? PullRequestHead.fromPartial(object.head)
+      : undefined;
+    message.base = (object.base !== undefined && object.base !== null)
+      ? PullRequestBase.fromPartial(object.base)
+      : undefined;
     return message;
   },
 };
 
-const basePullRequestHead: object = {
-  repositoryId: 0,
-  branch: "",
-  commitSha: "",
-};
+function createBasePullRequestHead(): PullRequestHead {
+  return { repositoryId: 0, branch: "", commitSha: "" };
+}
 
 export const PullRequestHead = {
-  encode(message: PullRequestHead, writer: Writer = Writer.create()): Writer {
+  encode(message: PullRequestHead, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.repositoryId !== 0) {
       writer.uint32(8).uint64(message.repositoryId);
     }
@@ -649,10 +400,10 @@ export const PullRequestHead = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): PullRequestHead {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): PullRequestHead {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePullRequestHead } as PullRequestHead;
+    const message = createBasePullRequestHead();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -674,63 +425,36 @@ export const PullRequestHead = {
   },
 
   fromJSON(object: any): PullRequestHead {
-    const message = { ...basePullRequestHead } as PullRequestHead;
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = Number(object.repositoryId);
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.branch !== undefined && object.branch !== null) {
-      message.branch = String(object.branch);
-    } else {
-      message.branch = "";
-    }
-    if (object.commitSha !== undefined && object.commitSha !== null) {
-      message.commitSha = String(object.commitSha);
-    } else {
-      message.commitSha = "";
-    }
-    return message;
+    return {
+      repositoryId: isSet(object.repositoryId) ? Number(object.repositoryId) : 0,
+      branch: isSet(object.branch) ? String(object.branch) : "",
+      commitSha: isSet(object.commitSha) ? String(object.commitSha) : "",
+    };
   },
 
   toJSON(message: PullRequestHead): unknown {
     const obj: any = {};
-    message.repositoryId !== undefined &&
-      (obj.repositoryId = message.repositoryId);
+    message.repositoryId !== undefined && (obj.repositoryId = Math.round(message.repositoryId));
     message.branch !== undefined && (obj.branch = message.branch);
     message.commitSha !== undefined && (obj.commitSha = message.commitSha);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PullRequestHead>): PullRequestHead {
-    const message = { ...basePullRequestHead } as PullRequestHead;
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = object.repositoryId;
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.branch !== undefined && object.branch !== null) {
-      message.branch = object.branch;
-    } else {
-      message.branch = "";
-    }
-    if (object.commitSha !== undefined && object.commitSha !== null) {
-      message.commitSha = object.commitSha;
-    } else {
-      message.commitSha = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<PullRequestHead>, I>>(object: I): PullRequestHead {
+    const message = createBasePullRequestHead();
+    message.repositoryId = object.repositoryId ?? 0;
+    message.branch = object.branch ?? "";
+    message.commitSha = object.commitSha ?? "";
     return message;
   },
 };
 
-const basePullRequestBase: object = {
-  repositoryId: 0,
-  branch: "",
-  commitSha: "",
-};
+function createBasePullRequestBase(): PullRequestBase {
+  return { repositoryId: 0, branch: "", commitSha: "" };
+}
 
 export const PullRequestBase = {
-  encode(message: PullRequestBase, writer: Writer = Writer.create()): Writer {
+  encode(message: PullRequestBase, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.repositoryId !== 0) {
       writer.uint32(8).uint64(message.repositoryId);
     }
@@ -743,10 +467,10 @@ export const PullRequestBase = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): PullRequestBase {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): PullRequestBase {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePullRequestBase } as PullRequestBase;
+    const message = createBasePullRequestBase();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -768,75 +492,59 @@ export const PullRequestBase = {
   },
 
   fromJSON(object: any): PullRequestBase {
-    const message = { ...basePullRequestBase } as PullRequestBase;
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = Number(object.repositoryId);
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.branch !== undefined && object.branch !== null) {
-      message.branch = String(object.branch);
-    } else {
-      message.branch = "";
-    }
-    if (object.commitSha !== undefined && object.commitSha !== null) {
-      message.commitSha = String(object.commitSha);
-    } else {
-      message.commitSha = "";
-    }
-    return message;
+    return {
+      repositoryId: isSet(object.repositoryId) ? Number(object.repositoryId) : 0,
+      branch: isSet(object.branch) ? String(object.branch) : "",
+      commitSha: isSet(object.commitSha) ? String(object.commitSha) : "",
+    };
   },
 
   toJSON(message: PullRequestBase): unknown {
     const obj: any = {};
-    message.repositoryId !== undefined &&
-      (obj.repositoryId = message.repositoryId);
+    message.repositoryId !== undefined && (obj.repositoryId = Math.round(message.repositoryId));
     message.branch !== undefined && (obj.branch = message.branch);
     message.commitSha !== undefined && (obj.commitSha = message.commitSha);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PullRequestBase>): PullRequestBase {
-    const message = { ...basePullRequestBase } as PullRequestBase;
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = object.repositoryId;
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.branch !== undefined && object.branch !== null) {
-      message.branch = object.branch;
-    } else {
-      message.branch = "";
-    }
-    if (object.commitSha !== undefined && object.commitSha !== null) {
-      message.commitSha = object.commitSha;
-    } else {
-      message.commitSha = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<PullRequestBase>, I>>(object: I): PullRequestBase {
+    const message = createBasePullRequestBase();
+    message.repositoryId = object.repositoryId ?? 0;
+    message.branch = object.branch ?? "";
+    message.commitSha = object.commitSha ?? "";
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -845,7 +553,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

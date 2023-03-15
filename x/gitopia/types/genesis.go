@@ -12,6 +12,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
+		BountyList: []Bounty{},
 		// this line is used by starport scaffolding # genesis/types/default
 		TaskList:              []Task{},
 		BranchList:            []Branch{},
@@ -102,6 +103,20 @@ func (gs GenesisState) Validate() error {
 		memberMap[k] = false
 		memberIdMap[elem.Id] = true
 	}
+
+	// Check for duplicated ID in bounty
+	bountyIdMap := make(map[uint64]bool)
+	bountyCount := gs.GetBountyCount()
+	for _, elem := range gs.BountyList {
+		if _, ok := bountyIdMap[elem.Id]; ok {
+			return fmt.Errorf("duplicated id for bounty")
+		}
+		if elem.Id >= bountyCount {
+			return fmt.Errorf("bounty id should be lower or equal than the last id")
+		}
+		bountyIdMap[elem.Id] = true
+	}
+
 	// this line is used by starport scaffolding # genesis/types/validate
 	// Check for duplicated ID in release
 	releaseIdMap := make(map[uint64]bool)

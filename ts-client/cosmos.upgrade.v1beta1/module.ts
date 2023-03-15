@@ -7,17 +7,15 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgCancelUpgrade } from "./types/cosmos/upgrade/v1beta1/tx";
 import { MsgSoftwareUpgrade } from "./types/cosmos/upgrade/v1beta1/tx";
+import { MsgCancelUpgrade } from "./types/cosmos/upgrade/v1beta1/tx";
 
+import { Plan as typePlan} from "./types"
+import { SoftwareUpgradeProposal as typeSoftwareUpgradeProposal} from "./types"
+import { CancelSoftwareUpgradeProposal as typeCancelSoftwareUpgradeProposal} from "./types"
+import { ModuleVersion as typeModuleVersion} from "./types"
 
-export { MsgCancelUpgrade, MsgSoftwareUpgrade };
-
-type sendMsgCancelUpgradeParams = {
-  value: MsgCancelUpgrade,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgSoftwareUpgrade, MsgCancelUpgrade };
 
 type sendMsgSoftwareUpgradeParams = {
   value: MsgSoftwareUpgrade,
@@ -25,18 +23,36 @@ type sendMsgSoftwareUpgradeParams = {
   memo?: string
 };
 
-
-type msgCancelUpgradeParams = {
+type sendMsgCancelUpgradeParams = {
   value: MsgCancelUpgrade,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgSoftwareUpgradeParams = {
   value: MsgSoftwareUpgrade,
 };
 
+type msgCancelUpgradeParams = {
+  value: MsgCancelUpgrade,
+};
+
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -52,20 +68,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgCancelUpgrade({ value, fee, memo }: sendMsgCancelUpgradeParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCancelUpgrade: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCancelUpgrade({ value: MsgCancelUpgrade.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCancelUpgrade: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgSoftwareUpgrade({ value, fee, memo }: sendMsgSoftwareUpgradeParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgSoftwareUpgrade: Unable to sign Tx. Signer is not present.')
@@ -80,20 +82,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgCancelUpgrade({ value }: msgCancelUpgradeParams): EncodeObject {
-			try {
-				return { typeUrl: "/cosmos.upgrade.v1beta1.MsgCancelUpgrade", value: MsgCancelUpgrade.fromPartial( value ) }  
+		async sendMsgCancelUpgrade({ value, fee, memo }: sendMsgCancelUpgradeParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCancelUpgrade: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCancelUpgrade({ value: MsgCancelUpgrade.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCancelUpgrade: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgCancelUpgrade: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgSoftwareUpgrade({ value }: msgSoftwareUpgradeParams): EncodeObject {
 			try {
 				return { typeUrl: "/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade", value: MsgSoftwareUpgrade.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgSoftwareUpgrade: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCancelUpgrade({ value }: msgCancelUpgradeParams): EncodeObject {
+			try {
+				return { typeUrl: "/cosmos.upgrade.v1beta1.MsgCancelUpgrade", value: MsgCancelUpgrade.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCancelUpgrade: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -105,19 +121,41 @@ interface QueryClientOptions {
 }
 
 export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http://localhost:1317" }) => {
-  return new Api({ baseUrl: addr });
+  return new Api({ baseURL: addr });
 };
 
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
-	public registry: Array<[string, GeneratedType]>;
+	public structure: Record<string,unknown>;
+	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
-		this.query = queryClient({ addr: client.env.apiURL });
-		this.tx = txClient({ signer: client.signer, addr: client.env.rpcURL, prefix: client.env.prefix ?? "cosmos" });
+		this.query = queryClient({ addr: client.env.apiURL });		
+		this.updateTX(client);
+		this.structure =  {
+						Plan: getStructure(typePlan.fromPartial({})),
+						SoftwareUpgradeProposal: getStructure(typeSoftwareUpgradeProposal.fromPartial({})),
+						CancelSoftwareUpgradeProposal: getStructure(typeCancelSoftwareUpgradeProposal.fromPartial({})),
+						ModuleVersion: getStructure(typeModuleVersion.fromPartial({})),
+						
+		};
+		client.on('signer-changed',(signer) => {			
+		 this.updateTX(client);
+		})
+	}
+	updateTX(client: IgniteClient) {
+    const methods = txClient({
+        signer: client.signer,
+        addr: client.env.rpcURL,
+        prefix: client.env.prefix ?? "cosmos",
+    })
+	
+    this.tx = methods;
+    for (let m in methods) {
+        this.tx[m] = methods[m].bind(this.tx);
+    }
 	}
 };
 

@@ -51,7 +51,13 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdRemoveMember())
 	cmd.AddCommand(CmdUpdateRepositoryBackupRef())
 	cmd.AddCommand(CmdAddRepositoryBackupRef())
-	// this line is used by starport scaffolding # 1
+
+	cmd.AddCommand(CmdCreateBounty())
+	cmd.AddCommand(CmdUpdateBountyExpiry())
+	cmd.AddCommand(CmdCloseBounty())
+	cmd.AddCommand(CmdDeleteBounty())
+	cmd.AddCommand(CmdToggleForcePush())
+// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())
 	cmd.AddCommand(CmdUpdateRelease())
@@ -63,6 +69,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdInvokeMergePullRequest())
 	cmd.AddCommand(CmdSetPullRequestState())
 	cmd.AddCommand(CmdAddPullRequestAssignees())
+	cmd.AddCommand(CmdLinkPullRequestIssueByIid())
+	cmd.AddCommand(CmdUnlinkPullRequestIssueByIid())
 	cmd.AddCommand(CmdRemovePullRequestAssignees())
 	cmd.AddCommand(CmdAddPullRequestReviewers())
 	cmd.AddCommand(CmdRemovePullRequestReviewers())

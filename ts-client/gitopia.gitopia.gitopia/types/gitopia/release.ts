@@ -1,7 +1,7 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
-import { Attachment } from "../gitopia/repository";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { Attachment } from "./attachment";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -22,24 +22,27 @@ export interface Release {
   publishedAt: number;
 }
 
-const baseRelease: object = {
-  creator: "",
-  id: 0,
-  repositoryId: 0,
-  tagName: "",
-  target: "",
-  name: "",
-  description: "",
-  draft: false,
-  preRelease: false,
-  isTag: false,
-  createdAt: 0,
-  updatedAt: 0,
-  publishedAt: 0,
-};
+function createBaseRelease(): Release {
+  return {
+    creator: "",
+    id: 0,
+    repositoryId: 0,
+    tagName: "",
+    target: "",
+    name: "",
+    description: "",
+    attachments: [],
+    draft: false,
+    preRelease: false,
+    isTag: false,
+    createdAt: 0,
+    updatedAt: 0,
+    publishedAt: 0,
+  };
+}
 
 export const Release = {
-  encode(message: Release, writer: Writer = Writer.create()): Writer {
+  encode(message: Release, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
@@ -85,11 +88,10 @@ export const Release = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Release {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Release {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRelease } as Release;
-    message.attachments = [];
+    const message = createBaseRelease();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -144,206 +146,96 @@ export const Release = {
   },
 
   fromJSON(object: any): Release {
-    const message = { ...baseRelease } as Release;
-    message.attachments = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = Number(object.repositoryId);
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.tagName !== undefined && object.tagName !== null) {
-      message.tagName = String(object.tagName);
-    } else {
-      message.tagName = "";
-    }
-    if (object.target !== undefined && object.target !== null) {
-      message.target = String(object.target);
-    } else {
-      message.target = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    if (object.attachments !== undefined && object.attachments !== null) {
-      for (const e of object.attachments) {
-        message.attachments.push(Attachment.fromJSON(e));
-      }
-    }
-    if (object.draft !== undefined && object.draft !== null) {
-      message.draft = Boolean(object.draft);
-    } else {
-      message.draft = false;
-    }
-    if (object.preRelease !== undefined && object.preRelease !== null) {
-      message.preRelease = Boolean(object.preRelease);
-    } else {
-      message.preRelease = false;
-    }
-    if (object.isTag !== undefined && object.isTag !== null) {
-      message.isTag = Boolean(object.isTag);
-    } else {
-      message.isTag = false;
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = Number(object.createdAt);
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = Number(object.updatedAt);
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.publishedAt !== undefined && object.publishedAt !== null) {
-      message.publishedAt = Number(object.publishedAt);
-    } else {
-      message.publishedAt = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      repositoryId: isSet(object.repositoryId) ? Number(object.repositoryId) : 0,
+      tagName: isSet(object.tagName) ? String(object.tagName) : "",
+      target: isSet(object.target) ? String(object.target) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+      description: isSet(object.description) ? String(object.description) : "",
+      attachments: Array.isArray(object?.attachments) ? object.attachments.map((e: any) => Attachment.fromJSON(e)) : [],
+      draft: isSet(object.draft) ? Boolean(object.draft) : false,
+      preRelease: isSet(object.preRelease) ? Boolean(object.preRelease) : false,
+      isTag: isSet(object.isTag) ? Boolean(object.isTag) : false,
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+      publishedAt: isSet(object.publishedAt) ? Number(object.publishedAt) : 0,
+    };
   },
 
   toJSON(message: Release): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.repositoryId !== undefined &&
-      (obj.repositoryId = message.repositoryId);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.repositoryId !== undefined && (obj.repositoryId = Math.round(message.repositoryId));
     message.tagName !== undefined && (obj.tagName = message.tagName);
     message.target !== undefined && (obj.target = message.target);
     message.name !== undefined && (obj.name = message.name);
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.description !== undefined && (obj.description = message.description);
     if (message.attachments) {
-      obj.attachments = message.attachments.map((e) =>
-        e ? Attachment.toJSON(e) : undefined
-      );
+      obj.attachments = message.attachments.map((e) => e ? Attachment.toJSON(e) : undefined);
     } else {
       obj.attachments = [];
     }
     message.draft !== undefined && (obj.draft = message.draft);
     message.preRelease !== undefined && (obj.preRelease = message.preRelease);
     message.isTag !== undefined && (obj.isTag = message.isTag);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.publishedAt !== undefined &&
-      (obj.publishedAt = message.publishedAt);
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.updatedAt !== undefined && (obj.updatedAt = Math.round(message.updatedAt));
+    message.publishedAt !== undefined && (obj.publishedAt = Math.round(message.publishedAt));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Release>): Release {
-    const message = { ...baseRelease } as Release;
-    message.attachments = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = object.repositoryId;
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.tagName !== undefined && object.tagName !== null) {
-      message.tagName = object.tagName;
-    } else {
-      message.tagName = "";
-    }
-    if (object.target !== undefined && object.target !== null) {
-      message.target = object.target;
-    } else {
-      message.target = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    if (object.attachments !== undefined && object.attachments !== null) {
-      for (const e of object.attachments) {
-        message.attachments.push(Attachment.fromPartial(e));
-      }
-    }
-    if (object.draft !== undefined && object.draft !== null) {
-      message.draft = object.draft;
-    } else {
-      message.draft = false;
-    }
-    if (object.preRelease !== undefined && object.preRelease !== null) {
-      message.preRelease = object.preRelease;
-    } else {
-      message.preRelease = false;
-    }
-    if (object.isTag !== undefined && object.isTag !== null) {
-      message.isTag = object.isTag;
-    } else {
-      message.isTag = false;
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.publishedAt !== undefined && object.publishedAt !== null) {
-      message.publishedAt = object.publishedAt;
-    } else {
-      message.publishedAt = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Release>, I>>(object: I): Release {
+    const message = createBaseRelease();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.repositoryId = object.repositoryId ?? 0;
+    message.tagName = object.tagName ?? "";
+    message.target = object.target ?? "";
+    message.name = object.name ?? "";
+    message.description = object.description ?? "";
+    message.attachments = object.attachments?.map((e) => Attachment.fromPartial(e)) || [];
+    message.draft = object.draft ?? false;
+    message.preRelease = object.preRelease ?? false;
+    message.isTag = object.isTag ?? false;
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
+    message.publishedAt = object.publishedAt ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -352,7 +244,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

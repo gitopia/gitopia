@@ -7,17 +7,16 @@ import (
 
 var _ sdk.Msg = &MsgCreateComment{}
 
-func NewMsgCreateComment(creator string, parentId uint64, body string, attachments []string, diffHunk string, path string, system bool, authorAssociation string, commentType string) *MsgCreateComment {
+func NewMsgCreateComment(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, body string, attachments []*Attachment, diffHunk string, path string) *MsgCreateComment {
 	return &MsgCreateComment{
-		Creator:           creator,
-		ParentId:          parentId,
-		Body:              body,
-		Attachments:       attachments,
-		DiffHunk:          diffHunk,
-		Path:              path,
-		System:            system,
-		AuthorAssociation: authorAssociation,
-		CommentType:       commentType,
+		Creator:      creator,
+		RepositoryId: repositoryid,
+		ParentIid:    parentIid,
+		Parent:       parent,
+		Body:         body,
+		Attachments:  attachments,
+		DiffHunk:     diffHunk,
+		Path:         path,
 	}
 }
 
@@ -47,21 +46,70 @@ func (msg *MsgCreateComment) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	_, exists := Comment_Type_value[msg.CommentType]
-	if !exists {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid commentType (%s)", msg.CommentType)
+	switch msg.Parent {
+	case CommentParentIssue:
+		if len(msg.Path) > 0 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Cannot provide Path with comment parent issue")
+		}
+		if len(msg.DiffHunk) > 0 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Cannot provide DiffHunk with comment parent issue")
+		}
+	case CommentParentPullRequest:
+		if len(msg.Path) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Path exceeds limit: 255")
+		}
+		if len(msg.DiffHunk) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "DiffHunk exceeds limit: 255")
+		}
+	default:
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
 	}
+
+	if err := ValidateCommentBody(msg.Body); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if len(msg.Attachments) > 0 {
+		if len(msg.Attachments) > 20 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		}
+		unique := make(map[string]bool, len(msg.Attachments))
+		for _, attachment := range msg.Attachments {
+			if attachment.Size_ == 0 {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment size can't be 0")
+			}
+			if attachment.Name == "" {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment name can't be empty")
+			}
+			if attachment.Sha == "" {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment sha can't be empty")
+			}
+			_, err := sdk.AccAddressFromBech32(attachment.Uploader)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid uploader (%v)", attachment.Uploader)
+			}
+			if !unique[attachment.Name] {
+				unique[attachment.Name] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
+			}
+		}
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateComment{}
 
-func NewMsgUpdateComment(creator string, id uint64, body string, attachments []string) *MsgUpdateComment {
+func NewMsgUpdateComment(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, commentIid uint64, body string, attachments []*Attachment) *MsgUpdateComment {
 	return &MsgUpdateComment{
-		Id:          id,
-		Creator:     creator,
-		Body:        body,
-		Attachments: attachments,
+		Creator:      creator,
+		RepositoryId: repositoryid,
+		ParentIid:    parentIid,
+		Parent:       parent,
+		CommentIid:   commentIid,
+		Body:         body,
+		Attachments:  attachments,
 	}
 }
 
@@ -91,15 +139,57 @@ func (msg *MsgUpdateComment) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	switch msg.Parent {
+	case CommentParentIssue:
+	case CommentParentPullRequest:
+	default:
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
+	}
+
+	if err := ValidateCommentBody(msg.Body); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if len(msg.Attachments) > 0 {
+		if len(msg.Attachments) > 20 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachments exceeds limit: 20")
+		}
+		unique := make(map[string]bool, len(msg.Attachments))
+		for _, attachment := range msg.Attachments {
+			if attachment.Size_ == 0 {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment size can't be 0")
+			}
+			if attachment.Name == "" {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment name can't be empty")
+			}
+			if attachment.Sha == "" {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "attachment sha can't be empty")
+			}
+			_, err := sdk.AccAddressFromBech32(attachment.Uploader)
+			if err != nil {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid uploader (%v)", attachment.Uploader)
+			}
+			if !unique[attachment.Name] {
+				unique[attachment.Name] = true
+			} else {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate name (%s)", attachment.Name)
+			}
+		}
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgDeleteComment{}
 
-func NewMsgDeleteComment(creator string, id uint64) *MsgDeleteComment {
+func NewMsgDeleteComment(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, commentIid uint64) *MsgDeleteComment {
 	return &MsgDeleteComment{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryid,
+		ParentIid:    parentIid,
+		Parent:       parent,
+		CommentIid:   commentIid,
 	}
 }
 func (msg *MsgDeleteComment) Route() string {
@@ -127,6 +217,12 @@ func (msg *MsgDeleteComment) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	switch msg.Parent {
+	case CommentParentIssue:
+	case CommentParentPullRequest:
+	default:
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
 	}
 	return nil
 }

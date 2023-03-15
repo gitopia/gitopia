@@ -1,0 +1,36 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+
+enum BountyState {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  BOUNTY_STATE_SRCDEBITTED = 0 [(gogoproto.enumvalue_customname) = "BountyStateSRCDEBITTED"];
+  BOUNTY_STATE_DESTCREDITED = 1 [(gogoproto.enumvalue_customname) = "BountyStateDESTCREDITED"];
+  BOUNTY_STATE_REVERTEDBACK = 2 [(gogoproto.enumvalue_customname) = "BountyStateREVERTEDBACK"];
+}
+
+enum BountyParent {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  BOUNTY_PARENT_ISSUE = 0 [(gogoproto.enumvalue_customname) = "BountyParentIssue"];
+}
+
+message Bounty {
+  uint64 id = 1;
+  repeated cosmos.base.v1beta1.Coin amount = 2 
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  BountyState state = 3;
+  uint64 repositoryId = 4;
+  uint64 parentIid = 5;
+  BountyParent parent = 6;
+  int64 expireAt = 7;
+  string rewardedTo = 8;
+  int64 createdAt = 9;
+	int64 updatedAt = 10;
+  string creator = 11;
+}

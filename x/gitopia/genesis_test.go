@@ -100,12 +100,16 @@ func TestGenesis(t *testing.T) {
 
 		IssueList: []types.Issue{
 			{
-				Creator: sample.AccAddress(),
-				Id:      0,
+				Creator:      sample.AccAddress(),
+				RepositoryId: 0,
+				Id:           0,
+				Iid:          1,
 			},
 			{
-				Creator: sample.AccAddress(),
-				Id:      1,
+				Creator:      sample.AccAddress(),
+				Id:           1,
+				RepositoryId: 0,
+				Iid:          2,
 			},
 		},
 		IssueCount: 2,
@@ -113,23 +117,37 @@ func TestGenesis(t *testing.T) {
 		PullRequestList: []types.PullRequest{
 			{
 				Creator: sample.AccAddress(),
-				Id:      0,
+				Base: &types.PullRequestBase{
+					RepositoryId: 0,
+				},
+				Id:  0,
+				Iid: 1,
 			},
 			{
 				Creator: sample.AccAddress(),
-				Id:      1,
+				Base: &types.PullRequestBase{
+					RepositoryId: 0,
+				},
+				Id:  1,
+				Iid: 2,
 			},
 		},
 		PullRequestCount: 2,
 
 		CommentList: []types.Comment{
 			{
-				Creator: sample.AccAddress(),
-				Id:      0,
+				Creator:    sample.AccAddress(),
+				Id:         0,
+				ParentIid:  0,
+				Parent:     types.CommentParentIssue,
+				CommentIid: 1,
 			},
 			{
-				Creator: sample.AccAddress(),
-				Id:      1,
+				Creator:    sample.AccAddress(),
+				Id:         1,
+				ParentIid:  0,
+				Parent:     types.CommentParentIssue,
+				CommentIid: 2,
 			},
 		},
 		CommentCount: 2,
@@ -193,6 +211,15 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		MemberCount: 2,
+		BountyList: []types.Bounty{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		BountyCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -247,5 +274,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
 	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 
+	require.ElementsMatch(t, genesisState.BountyList, got.BountyList)
+	require.Equal(t, genesisState.BountyCount, got.BountyCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -188,8 +188,9 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		return nil, err
 	}
 
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.RepositoryId.Name); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
+	// Check if the user already has a repository with the same name
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
@@ -209,7 +210,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		}},
 		types.RepositoryCollaborator_ADMIN,
 	) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "cannot create repository")
 	}
 
 	id := k.AppendTask(ctx, types.Task{
@@ -227,7 +228,10 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
-			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.Address),
+			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
+			sdk.NewAttribute(types.EventAttributeForkRepoDescriptionKey, msg.ForkRepositoryDescription),
+			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
+			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
@@ -247,8 +251,9 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, err
 	}
 
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.RepositoryId.Name); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
+	// Check if the user already has a repository with the same name
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
@@ -260,6 +265,13 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
 	}
 
+	// Check branch exists
+	if msg.Branch != "" {
+		if _, found := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch); !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("branch %v not found in parent repository, id = %v", msg.Branch, repository.Id))
+		}
+	}
+
 	_, found = k.GetTask(ctx, msg.TaskId)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
@@ -267,12 +279,12 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	var forkRepository = types.Repository{
 		Creator: msg.Creator,
-		Name:    repository.Name,
+		Name:    msg.ForkRepositoryName,
 		Owner: &types.RepositoryOwner{
 			Id:   ownerAddress.Address,
 			Type: ownerAddress.OwnerType,
 		},
-		Description:   repository.Description,
+		Description:   msg.ForkRepositoryDescription,
 		DefaultBranch: repository.DefaultBranch,
 		CreatedAt:     ctx.BlockTime().Unix(),
 		UpdatedAt:     ctx.BlockTime().Unix(),
@@ -280,6 +292,11 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		Parent:        repository.Id,
 		License:       repository.License,
 		Commits:       repository.Commits,
+	}
+
+	// If only a particular branch is copied to the fork repository, set that as default branch
+	if msg.Branch != "" {
+		forkRepository.DefaultBranch = msg.Branch
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, forkRepository, types.RepositoryCollaborator_ADMIN) {
@@ -292,10 +309,16 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	)
 
 	// Copy branches to forked repository
-	branches := k.GetAllRepositoryBranch(ctx, repository.Id)
-	for _, branch := range branches {
+	if msg.Branch != "" {
+		branch, _ := k.GetRepositoryBranch(ctx, repository.Id, msg.Branch)
 		branch.RepositoryId = id
 		k.AppendBranch(ctx, branch)
+	} else {
+		branches := k.GetAllRepositoryBranch(ctx, repository.Id)
+		for _, branch := range branches {
+			branch.RepositoryId = id
+			k.AppendBranch(ctx, branch)
+		}
 	}
 
 	// Update parent repository forks
@@ -308,7 +331,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, forkRepository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(forkRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, forkRepository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, forkRepository.Owner.Type.String()),
 			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(forkRepository.Parent, 10)),
@@ -895,14 +918,14 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repositor
 		DecoupleForkRepository(ctx, k, fork)
 	}
 
-	for _, i := range repository.Issues {
-		issue, _ := k.GetIssue(ctx, i.Id)
-		DoRemoveIssue(ctx, k, issue, repository)
+	repositoryIssues := k.GetAllRepositoryIssue(ctx, repository.Id)
+	for _, i := range repositoryIssues {
+		DoRemoveIssue(ctx, k, i, repository)
 	}
 
-	for _, pr := range repository.PullRequests {
-		pullRequest, _ := k.GetPullRequest(ctx, pr.Id)
-		DoRemovePullRequest(ctx, k, pullRequest, repository)
+	repositoryPullRequests := k.GetAllRepositoryPullRequest(ctx, repository.Id)
+	for _, pr := range repositoryPullRequests {
+		DoRemovePullRequest(ctx, k, pr, repository)
 	}
 
 	for _, r := range repository.Releases {

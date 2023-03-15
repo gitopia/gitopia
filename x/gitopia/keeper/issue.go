@@ -43,9 +43,9 @@ func (k Keeper) AppendIssue(
 	// Set the ID of the appended value
 	issue.Id = count
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetIssueKeyForRepositoryId(issue.RepositoryId)))
 	appendedValue := k.cdc.MustMarshal(&issue)
-	store.Set(GetIssueIDBytes(issue.Id), appendedValue)
+	store.Set(GetIssueIDBytes(issue.Iid), appendedValue)
 
 	// Update issue count
 	k.SetIssueCount(ctx, count+1)
@@ -53,17 +53,23 @@ func (k Keeper) AppendIssue(
 	return count
 }
 
-// SetIssue set a specific issue in the store
+// SetIssue set a specific repository issue in the store
 func (k Keeper) SetIssue(ctx sdk.Context, issue types.Issue) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetIssueKeyForRepositoryId(issue.RepositoryId)),
+	)
 	b := k.cdc.MustMarshal(&issue)
-	store.Set(GetIssueIDBytes(issue.Id), b)
+	store.Set(GetIssueIDBytes(issue.Iid), b)
 }
 
-// GetIssue returns a issue from its id
-func (k Keeper) GetIssue(ctx sdk.Context, id uint64) (val types.Issue, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	b := store.Get(GetIssueIDBytes(id))
+// GetRepositoryIssue returns a repository issue from its id
+func (k Keeper) GetRepositoryIssue(ctx sdk.Context, repositoryId uint64, issueIid uint64) (val types.Issue, found bool) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetIssueKeyForRepositoryId(repositoryId)),
+	)
+	b := store.Get(GetIssueIDBytes(issueIid))
 	if b == nil {
 		return val, false
 	}
@@ -71,15 +77,40 @@ func (k Keeper) GetIssue(ctx sdk.Context, id uint64) (val types.Issue, found boo
 	return val, true
 }
 
-// RemoveIssue removes a issue from the store
-func (k Keeper) RemoveIssue(ctx sdk.Context, id uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
-	store.Delete(GetIssueIDBytes(id))
+// RemoveRepositoryIssue removes a repository issue from the store
+func (k Keeper) RemoveRepositoryIssue(ctx sdk.Context, repositoryId uint64, issueIid uint64) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetIssueKeyForRepositoryId(repositoryId)),
+	)
+	store.Delete(GetIssueIDBytes(issueIid))
+}
+
+// GetAllRepositoryIssue returns all repository issue
+func (k Keeper) GetAllRepositoryIssue(ctx sdk.Context, repositoryId uint64) (list []types.Issue) {
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.GetIssueKeyForRepositoryId(repositoryId)),
+	)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Issue
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
 }
 
 // GetAllIssue returns all issue
 func (k Keeper) GetAllIssue(ctx sdk.Context) (list []types.Issue) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.IssueKey))
+	store := prefix.NewStore(
+		ctx.KVStore(k.storeKey),
+		types.KeyPrefix(types.IssueKey),
+	)
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

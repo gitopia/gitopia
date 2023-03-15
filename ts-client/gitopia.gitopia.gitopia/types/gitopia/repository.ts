@@ -1,11 +1,7 @@
 /* eslint-disable */
-import {
-  OwnerType,
-  ownerTypeFromJSON,
-  ownerTypeToJSON,
-} from "../gitopia/whois";
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
+import { OwnerType, ownerTypeFromJSON, ownerTypeToJSON } from "./whois";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -18,8 +14,6 @@ export interface Repository {
   forks: number[];
   subscribers: string;
   commits: string;
-  issues: RepositoryIssue[];
-  pullRequests: RepositoryPullRequest[];
   issuesCount: number;
   pullsCount: number;
   labels: RepositoryLabel[];
@@ -56,12 +50,12 @@ export interface RepositoryOwner {
   type: OwnerType;
 }
 
-export interface RepositoryIssue {
+export interface IssueIid {
   iid: number;
   id: number;
 }
 
-export interface RepositoryPullRequest {
+export interface PullRequestIid {
   iid: number;
   id: number;
 }
@@ -80,9 +74,7 @@ export enum RepositoryCollaborator_Permission {
   UNRECOGNIZED = -1,
 }
 
-export function repositoryCollaborator_PermissionFromJSON(
-  object: any
-): RepositoryCollaborator_Permission {
+export function repositoryCollaborator_PermissionFromJSON(object: any): RepositoryCollaborator_Permission {
   switch (object) {
     case 0:
     case "READ":
@@ -106,9 +98,7 @@ export function repositoryCollaborator_PermissionFromJSON(
   }
 }
 
-export function repositoryCollaborator_PermissionToJSON(
-  object: RepositoryCollaborator_Permission
-): string {
+export function repositoryCollaborator_PermissionToJSON(object: RepositoryCollaborator_Permission): string {
   switch (object) {
     case RepositoryCollaborator_Permission.READ:
       return "READ";
@@ -120,8 +110,9 @@ export function repositoryCollaborator_PermissionToJSON(
       return "MAINTAIN";
     case RepositoryCollaborator_Permission.ADMIN:
       return "ADMIN";
+    case RepositoryCollaborator_Permission.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -137,13 +128,6 @@ export interface RepositoryRelease {
   tagName: string;
 }
 
-export interface Attachment {
-  name: string;
-  size: number;
-  sha: string;
-  uploader: string;
-}
-
 export interface RepositoryBackup {
   store: RepositoryBackup_Store;
   refs: string[];
@@ -155,9 +139,7 @@ export enum RepositoryBackup_Store {
   UNRECOGNIZED = -1,
 }
 
-export function repositoryBackup_StoreFromJSON(
-  object: any
-): RepositoryBackup_Store {
+export function repositoryBackup_StoreFromJSON(object: any): RepositoryBackup_Store {
   switch (object) {
     case 0:
     case "IPFS":
@@ -172,45 +154,51 @@ export function repositoryBackup_StoreFromJSON(
   }
 }
 
-export function repositoryBackup_StoreToJSON(
-  object: RepositoryBackup_Store
-): string {
+export function repositoryBackup_StoreToJSON(object: RepositoryBackup_Store): string {
   switch (object) {
     case RepositoryBackup_Store.IPFS:
       return "IPFS";
     case RepositoryBackup_Store.ARWEAVE:
       return "ARWEAVE";
+    case RepositoryBackup_Store.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
-const baseRepository: object = {
-  creator: "",
-  id: 0,
-  name: "",
-  description: "",
-  forks: 0,
-  subscribers: "",
-  commits: "",
-  issuesCount: 0,
-  pullsCount: 0,
-  labelsCount: 0,
-  createdAt: 0,
-  updatedAt: 0,
-  pushedAt: 0,
-  stargazers: 0,
-  archived: false,
-  license: "",
-  defaultBranch: "",
-  parent: 0,
-  fork: false,
-  allowForking: false,
-  enableArweaveBackup: false,
-};
+function createBaseRepository(): Repository {
+  return {
+    creator: "",
+    id: 0,
+    name: "",
+    owner: undefined,
+    description: "",
+    forks: [],
+    subscribers: "",
+    commits: "",
+    issuesCount: 0,
+    pullsCount: 0,
+    labels: [],
+    labelsCount: 0,
+    releases: [],
+    createdAt: 0,
+    updatedAt: 0,
+    pushedAt: 0,
+    stargazers: [],
+    archived: false,
+    license: "",
+    defaultBranch: "",
+    parent: 0,
+    fork: false,
+    collaborators: [],
+    allowForking: false,
+    backups: [],
+    enableArweaveBackup: false,
+  };
+}
 
 export const Repository = {
-  encode(message: Repository, writer: Writer = Writer.create()): Writer {
+  encode(message: Repository, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
@@ -237,83 +225,69 @@ export const Repository = {
     if (message.commits !== "") {
       writer.uint32(66).string(message.commits);
     }
-    for (const v of message.issues) {
-      RepositoryIssue.encode(v!, writer.uint32(74).fork()).ldelim();
-    }
-    for (const v of message.pullRequests) {
-      RepositoryPullRequest.encode(v!, writer.uint32(82).fork()).ldelim();
-    }
     if (message.issuesCount !== 0) {
-      writer.uint32(88).uint64(message.issuesCount);
+      writer.uint32(72).uint64(message.issuesCount);
     }
     if (message.pullsCount !== 0) {
-      writer.uint32(96).uint64(message.pullsCount);
+      writer.uint32(80).uint64(message.pullsCount);
     }
     for (const v of message.labels) {
-      RepositoryLabel.encode(v!, writer.uint32(106).fork()).ldelim();
+      RepositoryLabel.encode(v!, writer.uint32(90).fork()).ldelim();
     }
     if (message.labelsCount !== 0) {
-      writer.uint32(112).uint64(message.labelsCount);
+      writer.uint32(96).uint64(message.labelsCount);
     }
     for (const v of message.releases) {
-      RepositoryRelease.encode(v!, writer.uint32(122).fork()).ldelim();
+      RepositoryRelease.encode(v!, writer.uint32(106).fork()).ldelim();
     }
     if (message.createdAt !== 0) {
-      writer.uint32(128).int64(message.createdAt);
+      writer.uint32(112).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(136).int64(message.updatedAt);
+      writer.uint32(120).int64(message.updatedAt);
     }
     if (message.pushedAt !== 0) {
-      writer.uint32(144).int64(message.pushedAt);
+      writer.uint32(128).int64(message.pushedAt);
     }
-    writer.uint32(154).fork();
+    writer.uint32(138).fork();
     for (const v of message.stargazers) {
       writer.uint64(v);
     }
     writer.ldelim();
     if (message.archived === true) {
-      writer.uint32(160).bool(message.archived);
+      writer.uint32(144).bool(message.archived);
     }
     if (message.license !== "") {
-      writer.uint32(170).string(message.license);
+      writer.uint32(154).string(message.license);
     }
     if (message.defaultBranch !== "") {
-      writer.uint32(178).string(message.defaultBranch);
+      writer.uint32(162).string(message.defaultBranch);
     }
     if (message.parent !== 0) {
-      writer.uint32(184).uint64(message.parent);
+      writer.uint32(168).uint64(message.parent);
     }
     if (message.fork === true) {
-      writer.uint32(192).bool(message.fork);
+      writer.uint32(176).bool(message.fork);
     }
     for (const v of message.collaborators) {
-      RepositoryCollaborator.encode(v!, writer.uint32(202).fork()).ldelim();
+      RepositoryCollaborator.encode(v!, writer.uint32(186).fork()).ldelim();
     }
     if (message.allowForking === true) {
-      writer.uint32(208).bool(message.allowForking);
+      writer.uint32(192).bool(message.allowForking);
     }
     for (const v of message.backups) {
-      RepositoryBackup.encode(v!, writer.uint32(218).fork()).ldelim();
+      RepositoryBackup.encode(v!, writer.uint32(202).fork()).ldelim();
     }
     if (message.enableArweaveBackup === true) {
-      writer.uint32(224).bool(message.enableArweaveBackup);
+      writer.uint32(208).bool(message.enableArweaveBackup);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Repository {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Repository {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepository } as Repository;
-    message.forks = [];
-    message.issues = [];
-    message.pullRequests = [];
-    message.labels = [];
-    message.releases = [];
-    message.stargazers = [];
-    message.collaborators = [];
-    message.backups = [];
+    const message = createBaseRepository();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -349,40 +323,30 @@ export const Repository = {
           message.commits = reader.string();
           break;
         case 9:
-          message.issues.push(RepositoryIssue.decode(reader, reader.uint32()));
-          break;
-        case 10:
-          message.pullRequests.push(
-            RepositoryPullRequest.decode(reader, reader.uint32())
-          );
-          break;
-        case 11:
           message.issuesCount = longToNumber(reader.uint64() as Long);
           break;
-        case 12:
+        case 10:
           message.pullsCount = longToNumber(reader.uint64() as Long);
           break;
-        case 13:
+        case 11:
           message.labels.push(RepositoryLabel.decode(reader, reader.uint32()));
           break;
-        case 14:
+        case 12:
           message.labelsCount = longToNumber(reader.uint64() as Long);
           break;
-        case 15:
-          message.releases.push(
-            RepositoryRelease.decode(reader, reader.uint32())
-          );
+        case 13:
+          message.releases.push(RepositoryRelease.decode(reader, reader.uint32()));
           break;
-        case 16:
+        case 14:
           message.createdAt = longToNumber(reader.int64() as Long);
           break;
-        case 17:
+        case 15:
           message.updatedAt = longToNumber(reader.int64() as Long);
           break;
-        case 18:
+        case 16:
           message.pushedAt = longToNumber(reader.int64() as Long);
           break;
-        case 19:
+        case 17:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -392,35 +356,31 @@ export const Repository = {
             message.stargazers.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 20:
+        case 18:
           message.archived = reader.bool();
           break;
-        case 21:
+        case 19:
           message.license = reader.string();
           break;
-        case 22:
+        case 20:
           message.defaultBranch = reader.string();
           break;
-        case 23:
+        case 21:
           message.parent = longToNumber(reader.uint64() as Long);
           break;
-        case 24:
+        case 22:
           message.fork = reader.bool();
           break;
-        case 25:
-          message.collaborators.push(
-            RepositoryCollaborator.decode(reader, reader.uint32())
-          );
+        case 23:
+          message.collaborators.push(RepositoryCollaborator.decode(reader, reader.uint32()));
           break;
-        case 26:
+        case 24:
           message.allowForking = reader.bool();
           break;
-        case 27:
-          message.backups.push(
-            RepositoryBackup.decode(reader, reader.uint32())
-          );
+        case 25:
+          message.backups.push(RepositoryBackup.decode(reader, reader.uint32()));
           break;
-        case 28:
+        case 26:
           message.enableArweaveBackup = reader.bool();
           break;
         default:
@@ -432,409 +392,133 @@ export const Repository = {
   },
 
   fromJSON(object: any): Repository {
-    const message = { ...baseRepository } as Repository;
-    message.forks = [];
-    message.issues = [];
-    message.pullRequests = [];
-    message.labels = [];
-    message.releases = [];
-    message.stargazers = [];
-    message.collaborators = [];
-    message.backups = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = RepositoryOwner.fromJSON(object.owner);
-    } else {
-      message.owner = undefined;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    if (object.forks !== undefined && object.forks !== null) {
-      for (const e of object.forks) {
-        message.forks.push(Number(e));
-      }
-    }
-    if (object.subscribers !== undefined && object.subscribers !== null) {
-      message.subscribers = String(object.subscribers);
-    } else {
-      message.subscribers = "";
-    }
-    if (object.commits !== undefined && object.commits !== null) {
-      message.commits = String(object.commits);
-    } else {
-      message.commits = "";
-    }
-    if (object.issues !== undefined && object.issues !== null) {
-      for (const e of object.issues) {
-        message.issues.push(RepositoryIssue.fromJSON(e));
-      }
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      for (const e of object.pullRequests) {
-        message.pullRequests.push(RepositoryPullRequest.fromJSON(e));
-      }
-    }
-    if (object.issuesCount !== undefined && object.issuesCount !== null) {
-      message.issuesCount = Number(object.issuesCount);
-    } else {
-      message.issuesCount = 0;
-    }
-    if (object.pullsCount !== undefined && object.pullsCount !== null) {
-      message.pullsCount = Number(object.pullsCount);
-    } else {
-      message.pullsCount = 0;
-    }
-    if (object.labels !== undefined && object.labels !== null) {
-      for (const e of object.labels) {
-        message.labels.push(RepositoryLabel.fromJSON(e));
-      }
-    }
-    if (object.labelsCount !== undefined && object.labelsCount !== null) {
-      message.labelsCount = Number(object.labelsCount);
-    } else {
-      message.labelsCount = 0;
-    }
-    if (object.releases !== undefined && object.releases !== null) {
-      for (const e of object.releases) {
-        message.releases.push(RepositoryRelease.fromJSON(e));
-      }
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = Number(object.createdAt);
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = Number(object.updatedAt);
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.pushedAt !== undefined && object.pushedAt !== null) {
-      message.pushedAt = Number(object.pushedAt);
-    } else {
-      message.pushedAt = 0;
-    }
-    if (object.stargazers !== undefined && object.stargazers !== null) {
-      for (const e of object.stargazers) {
-        message.stargazers.push(Number(e));
-      }
-    }
-    if (object.archived !== undefined && object.archived !== null) {
-      message.archived = Boolean(object.archived);
-    } else {
-      message.archived = false;
-    }
-    if (object.license !== undefined && object.license !== null) {
-      message.license = String(object.license);
-    } else {
-      message.license = "";
-    }
-    if (object.defaultBranch !== undefined && object.defaultBranch !== null) {
-      message.defaultBranch = String(object.defaultBranch);
-    } else {
-      message.defaultBranch = "";
-    }
-    if (object.parent !== undefined && object.parent !== null) {
-      message.parent = Number(object.parent);
-    } else {
-      message.parent = 0;
-    }
-    if (object.fork !== undefined && object.fork !== null) {
-      message.fork = Boolean(object.fork);
-    } else {
-      message.fork = false;
-    }
-    if (object.collaborators !== undefined && object.collaborators !== null) {
-      for (const e of object.collaborators) {
-        message.collaborators.push(RepositoryCollaborator.fromJSON(e));
-      }
-    }
-    if (object.allowForking !== undefined && object.allowForking !== null) {
-      message.allowForking = Boolean(object.allowForking);
-    } else {
-      message.allowForking = false;
-    }
-    if (object.backups !== undefined && object.backups !== null) {
-      for (const e of object.backups) {
-        message.backups.push(RepositoryBackup.fromJSON(e));
-      }
-    }
-    if (
-      object.enableArweaveBackup !== undefined &&
-      object.enableArweaveBackup !== null
-    ) {
-      message.enableArweaveBackup = Boolean(object.enableArweaveBackup);
-    } else {
-      message.enableArweaveBackup = false;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      name: isSet(object.name) ? String(object.name) : "",
+      owner: isSet(object.owner) ? RepositoryOwner.fromJSON(object.owner) : undefined,
+      description: isSet(object.description) ? String(object.description) : "",
+      forks: Array.isArray(object?.forks) ? object.forks.map((e: any) => Number(e)) : [],
+      subscribers: isSet(object.subscribers) ? String(object.subscribers) : "",
+      commits: isSet(object.commits) ? String(object.commits) : "",
+      issuesCount: isSet(object.issuesCount) ? Number(object.issuesCount) : 0,
+      pullsCount: isSet(object.pullsCount) ? Number(object.pullsCount) : 0,
+      labels: Array.isArray(object?.labels) ? object.labels.map((e: any) => RepositoryLabel.fromJSON(e)) : [],
+      labelsCount: isSet(object.labelsCount) ? Number(object.labelsCount) : 0,
+      releases: Array.isArray(object?.releases) ? object.releases.map((e: any) => RepositoryRelease.fromJSON(e)) : [],
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+      pushedAt: isSet(object.pushedAt) ? Number(object.pushedAt) : 0,
+      stargazers: Array.isArray(object?.stargazers) ? object.stargazers.map((e: any) => Number(e)) : [],
+      archived: isSet(object.archived) ? Boolean(object.archived) : false,
+      license: isSet(object.license) ? String(object.license) : "",
+      defaultBranch: isSet(object.defaultBranch) ? String(object.defaultBranch) : "",
+      parent: isSet(object.parent) ? Number(object.parent) : 0,
+      fork: isSet(object.fork) ? Boolean(object.fork) : false,
+      collaborators: Array.isArray(object?.collaborators)
+        ? object.collaborators.map((e: any) => RepositoryCollaborator.fromJSON(e))
+        : [],
+      allowForking: isSet(object.allowForking) ? Boolean(object.allowForking) : false,
+      backups: Array.isArray(object?.backups) ? object.backups.map((e: any) => RepositoryBackup.fromJSON(e)) : [],
+      enableArweaveBackup: isSet(object.enableArweaveBackup) ? Boolean(object.enableArweaveBackup) : false,
+    };
   },
 
   toJSON(message: Repository): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.name !== undefined && (obj.name = message.name);
-    message.owner !== undefined &&
-      (obj.owner = message.owner
-        ? RepositoryOwner.toJSON(message.owner)
-        : undefined);
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.owner !== undefined && (obj.owner = message.owner ? RepositoryOwner.toJSON(message.owner) : undefined);
+    message.description !== undefined && (obj.description = message.description);
     if (message.forks) {
-      obj.forks = message.forks.map((e) => e);
+      obj.forks = message.forks.map((e) => Math.round(e));
     } else {
       obj.forks = [];
     }
-    message.subscribers !== undefined &&
-      (obj.subscribers = message.subscribers);
+    message.subscribers !== undefined && (obj.subscribers = message.subscribers);
     message.commits !== undefined && (obj.commits = message.commits);
-    if (message.issues) {
-      obj.issues = message.issues.map((e) =>
-        e ? RepositoryIssue.toJSON(e) : undefined
-      );
-    } else {
-      obj.issues = [];
-    }
-    if (message.pullRequests) {
-      obj.pullRequests = message.pullRequests.map((e) =>
-        e ? RepositoryPullRequest.toJSON(e) : undefined
-      );
-    } else {
-      obj.pullRequests = [];
-    }
-    message.issuesCount !== undefined &&
-      (obj.issuesCount = message.issuesCount);
-    message.pullsCount !== undefined && (obj.pullsCount = message.pullsCount);
+    message.issuesCount !== undefined && (obj.issuesCount = Math.round(message.issuesCount));
+    message.pullsCount !== undefined && (obj.pullsCount = Math.round(message.pullsCount));
     if (message.labels) {
-      obj.labels = message.labels.map((e) =>
-        e ? RepositoryLabel.toJSON(e) : undefined
-      );
+      obj.labels = message.labels.map((e) => e ? RepositoryLabel.toJSON(e) : undefined);
     } else {
       obj.labels = [];
     }
-    message.labelsCount !== undefined &&
-      (obj.labelsCount = message.labelsCount);
+    message.labelsCount !== undefined && (obj.labelsCount = Math.round(message.labelsCount));
     if (message.releases) {
-      obj.releases = message.releases.map((e) =>
-        e ? RepositoryRelease.toJSON(e) : undefined
-      );
+      obj.releases = message.releases.map((e) => e ? RepositoryRelease.toJSON(e) : undefined);
     } else {
       obj.releases = [];
     }
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
-    message.pushedAt !== undefined && (obj.pushedAt = message.pushedAt);
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.updatedAt !== undefined && (obj.updatedAt = Math.round(message.updatedAt));
+    message.pushedAt !== undefined && (obj.pushedAt = Math.round(message.pushedAt));
     if (message.stargazers) {
-      obj.stargazers = message.stargazers.map((e) => e);
+      obj.stargazers = message.stargazers.map((e) => Math.round(e));
     } else {
       obj.stargazers = [];
     }
     message.archived !== undefined && (obj.archived = message.archived);
     message.license !== undefined && (obj.license = message.license);
-    message.defaultBranch !== undefined &&
-      (obj.defaultBranch = message.defaultBranch);
-    message.parent !== undefined && (obj.parent = message.parent);
+    message.defaultBranch !== undefined && (obj.defaultBranch = message.defaultBranch);
+    message.parent !== undefined && (obj.parent = Math.round(message.parent));
     message.fork !== undefined && (obj.fork = message.fork);
     if (message.collaborators) {
-      obj.collaborators = message.collaborators.map((e) =>
-        e ? RepositoryCollaborator.toJSON(e) : undefined
-      );
+      obj.collaborators = message.collaborators.map((e) => e ? RepositoryCollaborator.toJSON(e) : undefined);
     } else {
       obj.collaborators = [];
     }
-    message.allowForking !== undefined &&
-      (obj.allowForking = message.allowForking);
+    message.allowForking !== undefined && (obj.allowForking = message.allowForking);
     if (message.backups) {
-      obj.backups = message.backups.map((e) =>
-        e ? RepositoryBackup.toJSON(e) : undefined
-      );
+      obj.backups = message.backups.map((e) => e ? RepositoryBackup.toJSON(e) : undefined);
     } else {
       obj.backups = [];
     }
-    message.enableArweaveBackup !== undefined &&
-      (obj.enableArweaveBackup = message.enableArweaveBackup);
+    message.enableArweaveBackup !== undefined && (obj.enableArweaveBackup = message.enableArweaveBackup);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Repository>): Repository {
-    const message = { ...baseRepository } as Repository;
-    message.forks = [];
-    message.issues = [];
-    message.pullRequests = [];
-    message.labels = [];
-    message.releases = [];
-    message.stargazers = [];
-    message.collaborators = [];
-    message.backups = [];
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = RepositoryOwner.fromPartial(object.owner);
-    } else {
-      message.owner = undefined;
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
-    if (object.forks !== undefined && object.forks !== null) {
-      for (const e of object.forks) {
-        message.forks.push(e);
-      }
-    }
-    if (object.subscribers !== undefined && object.subscribers !== null) {
-      message.subscribers = object.subscribers;
-    } else {
-      message.subscribers = "";
-    }
-    if (object.commits !== undefined && object.commits !== null) {
-      message.commits = object.commits;
-    } else {
-      message.commits = "";
-    }
-    if (object.issues !== undefined && object.issues !== null) {
-      for (const e of object.issues) {
-        message.issues.push(RepositoryIssue.fromPartial(e));
-      }
-    }
-    if (object.pullRequests !== undefined && object.pullRequests !== null) {
-      for (const e of object.pullRequests) {
-        message.pullRequests.push(RepositoryPullRequest.fromPartial(e));
-      }
-    }
-    if (object.issuesCount !== undefined && object.issuesCount !== null) {
-      message.issuesCount = object.issuesCount;
-    } else {
-      message.issuesCount = 0;
-    }
-    if (object.pullsCount !== undefined && object.pullsCount !== null) {
-      message.pullsCount = object.pullsCount;
-    } else {
-      message.pullsCount = 0;
-    }
-    if (object.labels !== undefined && object.labels !== null) {
-      for (const e of object.labels) {
-        message.labels.push(RepositoryLabel.fromPartial(e));
-      }
-    }
-    if (object.labelsCount !== undefined && object.labelsCount !== null) {
-      message.labelsCount = object.labelsCount;
-    } else {
-      message.labelsCount = 0;
-    }
-    if (object.releases !== undefined && object.releases !== null) {
-      for (const e of object.releases) {
-        message.releases.push(RepositoryRelease.fromPartial(e));
-      }
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = 0;
-    }
-    if (object.pushedAt !== undefined && object.pushedAt !== null) {
-      message.pushedAt = object.pushedAt;
-    } else {
-      message.pushedAt = 0;
-    }
-    if (object.stargazers !== undefined && object.stargazers !== null) {
-      for (const e of object.stargazers) {
-        message.stargazers.push(e);
-      }
-    }
-    if (object.archived !== undefined && object.archived !== null) {
-      message.archived = object.archived;
-    } else {
-      message.archived = false;
-    }
-    if (object.license !== undefined && object.license !== null) {
-      message.license = object.license;
-    } else {
-      message.license = "";
-    }
-    if (object.defaultBranch !== undefined && object.defaultBranch !== null) {
-      message.defaultBranch = object.defaultBranch;
-    } else {
-      message.defaultBranch = "";
-    }
-    if (object.parent !== undefined && object.parent !== null) {
-      message.parent = object.parent;
-    } else {
-      message.parent = 0;
-    }
-    if (object.fork !== undefined && object.fork !== null) {
-      message.fork = object.fork;
-    } else {
-      message.fork = false;
-    }
-    if (object.collaborators !== undefined && object.collaborators !== null) {
-      for (const e of object.collaborators) {
-        message.collaborators.push(RepositoryCollaborator.fromPartial(e));
-      }
-    }
-    if (object.allowForking !== undefined && object.allowForking !== null) {
-      message.allowForking = object.allowForking;
-    } else {
-      message.allowForking = false;
-    }
-    if (object.backups !== undefined && object.backups !== null) {
-      for (const e of object.backups) {
-        message.backups.push(RepositoryBackup.fromPartial(e));
-      }
-    }
-    if (
-      object.enableArweaveBackup !== undefined &&
-      object.enableArweaveBackup !== null
-    ) {
-      message.enableArweaveBackup = object.enableArweaveBackup;
-    } else {
-      message.enableArweaveBackup = false;
-    }
+  fromPartial<I extends Exact<DeepPartial<Repository>, I>>(object: I): Repository {
+    const message = createBaseRepository();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.name = object.name ?? "";
+    message.owner = (object.owner !== undefined && object.owner !== null)
+      ? RepositoryOwner.fromPartial(object.owner)
+      : undefined;
+    message.description = object.description ?? "";
+    message.forks = object.forks?.map((e) => e) || [];
+    message.subscribers = object.subscribers ?? "";
+    message.commits = object.commits ?? "";
+    message.issuesCount = object.issuesCount ?? 0;
+    message.pullsCount = object.pullsCount ?? 0;
+    message.labels = object.labels?.map((e) => RepositoryLabel.fromPartial(e)) || [];
+    message.labelsCount = object.labelsCount ?? 0;
+    message.releases = object.releases?.map((e) => RepositoryRelease.fromPartial(e)) || [];
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
+    message.pushedAt = object.pushedAt ?? 0;
+    message.stargazers = object.stargazers?.map((e) => e) || [];
+    message.archived = object.archived ?? false;
+    message.license = object.license ?? "";
+    message.defaultBranch = object.defaultBranch ?? "";
+    message.parent = object.parent ?? 0;
+    message.fork = object.fork ?? false;
+    message.collaborators = object.collaborators?.map((e) => RepositoryCollaborator.fromPartial(e)) || [];
+    message.allowForking = object.allowForking ?? false;
+    message.backups = object.backups?.map((e) => RepositoryBackup.fromPartial(e)) || [];
+    message.enableArweaveBackup = object.enableArweaveBackup ?? false;
     return message;
   },
 };
 
-const baseRepositoryId: object = { id: "", name: "" };
+function createBaseRepositoryId(): RepositoryId {
+  return { id: "", name: "" };
+}
 
 export const RepositoryId = {
-  encode(message: RepositoryId, writer: Writer = Writer.create()): Writer {
+  encode(message: RepositoryId, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
@@ -844,10 +528,10 @@ export const RepositoryId = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryId {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryId {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryId } as RepositoryId;
+    const message = createBaseRepositoryId();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -866,18 +550,7 @@ export const RepositoryId = {
   },
 
   fromJSON(object: any): RepositoryId {
-    const message = { ...baseRepositoryId } as RepositoryId;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
-    } else {
-      message.id = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    return message;
+    return { id: isSet(object.id) ? String(object.id) : "", name: isSet(object.name) ? String(object.name) : "" };
   },
 
   toJSON(message: RepositoryId): unknown {
@@ -887,26 +560,20 @@ export const RepositoryId = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryId>): RepositoryId {
-    const message = { ...baseRepositoryId } as RepositoryId;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryId>, I>>(object: I): RepositoryId {
+    const message = createBaseRepositoryId();
+    message.id = object.id ?? "";
+    message.name = object.name ?? "";
     return message;
   },
 };
 
-const baseBaseRepositoryKey: object = { id: 0, address: "", name: "" };
+function createBaseBaseRepositoryKey(): BaseRepositoryKey {
+  return { id: 0, address: "", name: "" };
+}
 
 export const BaseRepositoryKey = {
-  encode(message: BaseRepositoryKey, writer: Writer = Writer.create()): Writer {
+  encode(message: BaseRepositoryKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -919,10 +586,10 @@ export const BaseRepositoryKey = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): BaseRepositoryKey {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): BaseRepositoryKey {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseBaseRepositoryKey } as BaseRepositoryKey;
+    const message = createBaseBaseRepositoryKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -944,58 +611,36 @@ export const BaseRepositoryKey = {
   },
 
   fromJSON(object: any): BaseRepositoryKey {
-    const message = { ...baseBaseRepositoryKey } as BaseRepositoryKey;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      address: isSet(object.address) ? String(object.address) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
   },
 
   toJSON(message: BaseRepositoryKey): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.address !== undefined && (obj.address = message.address);
     message.name !== undefined && (obj.name = message.name);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<BaseRepositoryKey>): BaseRepositoryKey {
-    const message = { ...baseBaseRepositoryKey } as BaseRepositoryKey;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<BaseRepositoryKey>, I>>(object: I): BaseRepositoryKey {
+    const message = createBaseBaseRepositoryKey();
+    message.id = object.id ?? 0;
+    message.address = object.address ?? "";
+    message.name = object.name ?? "";
     return message;
   },
 };
 
-const baseRepositoryOwner: object = { id: "", type: 0 };
+function createBaseRepositoryOwner(): RepositoryOwner {
+  return { id: "", type: 0 };
+}
 
 export const RepositoryOwner = {
-  encode(message: RepositoryOwner, writer: Writer = Writer.create()): Writer {
+  encode(message: RepositoryOwner, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
@@ -1005,10 +650,10 @@ export const RepositoryOwner = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryOwner {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryOwner {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryOwner } as RepositoryOwner;
+    const message = createBaseRepositoryOwner();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1027,18 +672,10 @@ export const RepositoryOwner = {
   },
 
   fromJSON(object: any): RepositoryOwner {
-    const message = { ...baseRepositoryOwner } as RepositoryOwner;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
-    } else {
-      message.id = "";
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = ownerTypeFromJSON(object.type);
-    } else {
-      message.type = 0;
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      type: isSet(object.type) ? ownerTypeFromJSON(object.type) : 0,
+    };
   },
 
   toJSON(message: RepositoryOwner): unknown {
@@ -1048,26 +685,20 @@ export const RepositoryOwner = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryOwner>): RepositoryOwner {
-    const message = { ...baseRepositoryOwner } as RepositoryOwner;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = "";
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = object.type;
-    } else {
-      message.type = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryOwner>, I>>(object: I): RepositoryOwner {
+    const message = createBaseRepositoryOwner();
+    message.id = object.id ?? "";
+    message.type = object.type ?? 0;
     return message;
   },
 };
 
-const baseRepositoryIssue: object = { iid: 0, id: 0 };
+function createBaseIssueIid(): IssueIid {
+  return { iid: 0, id: 0 };
+}
 
-export const RepositoryIssue = {
-  encode(message: RepositoryIssue, writer: Writer = Writer.create()): Writer {
+export const IssueIid = {
+  encode(message: IssueIid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.iid !== 0) {
       writer.uint32(8).uint64(message.iid);
     }
@@ -1077,10 +708,10 @@ export const RepositoryIssue = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryIssue {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): IssueIid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryIssue } as RepositoryIssue;
+    const message = createBaseIssueIid();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1098,51 +729,31 @@ export const RepositoryIssue = {
     return message;
   },
 
-  fromJSON(object: any): RepositoryIssue {
-    const message = { ...baseRepositoryIssue } as RepositoryIssue;
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = Number(object.iid);
-    } else {
-      message.iid = 0;
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
+  fromJSON(object: any): IssueIid {
+    return { iid: isSet(object.iid) ? Number(object.iid) : 0, id: isSet(object.id) ? Number(object.id) : 0 };
   },
 
-  toJSON(message: RepositoryIssue): unknown {
+  toJSON(message: IssueIid): unknown {
     const obj: any = {};
-    message.iid !== undefined && (obj.iid = message.iid);
-    message.id !== undefined && (obj.id = message.id);
+    message.iid !== undefined && (obj.iid = Math.round(message.iid));
+    message.id !== undefined && (obj.id = Math.round(message.id));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryIssue>): RepositoryIssue {
-    const message = { ...baseRepositoryIssue } as RepositoryIssue;
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = object.iid;
-    } else {
-      message.iid = 0;
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<IssueIid>, I>>(object: I): IssueIid {
+    const message = createBaseIssueIid();
+    message.iid = object.iid ?? 0;
+    message.id = object.id ?? 0;
     return message;
   },
 };
 
-const baseRepositoryPullRequest: object = { iid: 0, id: 0 };
+function createBasePullRequestIid(): PullRequestIid {
+  return { iid: 0, id: 0 };
+}
 
-export const RepositoryPullRequest = {
-  encode(
-    message: RepositoryPullRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+export const PullRequestIid = {
+  encode(message: PullRequestIid, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.iid !== 0) {
       writer.uint32(8).uint64(message.iid);
     }
@@ -1152,10 +763,10 @@ export const RepositoryPullRequest = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryPullRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): PullRequestIid {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
+    const message = createBasePullRequestIid();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1173,53 +784,31 @@ export const RepositoryPullRequest = {
     return message;
   },
 
-  fromJSON(object: any): RepositoryPullRequest {
-    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = Number(object.iid);
-    } else {
-      message.iid = 0;
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    return message;
+  fromJSON(object: any): PullRequestIid {
+    return { iid: isSet(object.iid) ? Number(object.iid) : 0, id: isSet(object.id) ? Number(object.id) : 0 };
   },
 
-  toJSON(message: RepositoryPullRequest): unknown {
+  toJSON(message: PullRequestIid): unknown {
     const obj: any = {};
-    message.iid !== undefined && (obj.iid = message.iid);
-    message.id !== undefined && (obj.id = message.id);
+    message.iid !== undefined && (obj.iid = Math.round(message.iid));
+    message.id !== undefined && (obj.id = Math.round(message.id));
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<RepositoryPullRequest>
-  ): RepositoryPullRequest {
-    const message = { ...baseRepositoryPullRequest } as RepositoryPullRequest;
-    if (object.iid !== undefined && object.iid !== null) {
-      message.iid = object.iid;
-    } else {
-      message.iid = 0;
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<PullRequestIid>, I>>(object: I): PullRequestIid {
+    const message = createBasePullRequestIid();
+    message.iid = object.iid ?? 0;
+    message.id = object.id ?? 0;
     return message;
   },
 };
 
-const baseRepositoryCollaborator: object = { id: "", permission: 0 };
+function createBaseRepositoryCollaborator(): RepositoryCollaborator {
+  return { id: "", permission: 0 };
+}
 
 export const RepositoryCollaborator = {
-  encode(
-    message: RepositoryCollaborator,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: RepositoryCollaborator, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
@@ -1229,10 +818,10 @@ export const RepositoryCollaborator = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryCollaborator {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryCollaborator {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
+    const message = createBaseRepositoryCollaborator();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1251,59 +840,33 @@ export const RepositoryCollaborator = {
   },
 
   fromJSON(object: any): RepositoryCollaborator {
-    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
-    } else {
-      message.id = "";
-    }
-    if (object.permission !== undefined && object.permission !== null) {
-      message.permission = repositoryCollaborator_PermissionFromJSON(
-        object.permission
-      );
-    } else {
-      message.permission = 0;
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      permission: isSet(object.permission) ? repositoryCollaborator_PermissionFromJSON(object.permission) : 0,
+    };
   },
 
   toJSON(message: RepositoryCollaborator): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.permission !== undefined &&
-      (obj.permission = repositoryCollaborator_PermissionToJSON(
-        message.permission
-      ));
+    message.permission !== undefined && (obj.permission = repositoryCollaborator_PermissionToJSON(message.permission));
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<RepositoryCollaborator>
-  ): RepositoryCollaborator {
-    const message = { ...baseRepositoryCollaborator } as RepositoryCollaborator;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = "";
-    }
-    if (object.permission !== undefined && object.permission !== null) {
-      message.permission = object.permission;
-    } else {
-      message.permission = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryCollaborator>, I>>(object: I): RepositoryCollaborator {
+    const message = createBaseRepositoryCollaborator();
+    message.id = object.id ?? "";
+    message.permission = object.permission ?? 0;
     return message;
   },
 };
 
-const baseRepositoryLabel: object = {
-  id: 0,
-  name: "",
-  color: "",
-  description: "",
-};
+function createBaseRepositoryLabel(): RepositoryLabel {
+  return { id: 0, name: "", color: "", description: "" };
+}
 
 export const RepositoryLabel = {
-  encode(message: RepositoryLabel, writer: Writer = Writer.create()): Writer {
+  encode(message: RepositoryLabel, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -1319,10 +882,10 @@ export const RepositoryLabel = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryLabel {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryLabel {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryLabel } as RepositoryLabel;
+    const message = createBaseRepositoryLabel();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1347,70 +910,39 @@ export const RepositoryLabel = {
   },
 
   fromJSON(object: any): RepositoryLabel {
-    const message = { ...baseRepositoryLabel } as RepositoryLabel;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.color !== undefined && object.color !== null) {
-      message.color = String(object.color);
-    } else {
-      message.color = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = String(object.description);
-    } else {
-      message.description = "";
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      name: isSet(object.name) ? String(object.name) : "",
+      color: isSet(object.color) ? String(object.color) : "",
+      description: isSet(object.description) ? String(object.description) : "",
+    };
   },
 
   toJSON(message: RepositoryLabel): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.name !== undefined && (obj.name = message.name);
     message.color !== undefined && (obj.color = message.color);
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.description !== undefined && (obj.description = message.description);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryLabel>): RepositoryLabel {
-    const message = { ...baseRepositoryLabel } as RepositoryLabel;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.color !== undefined && object.color !== null) {
-      message.color = object.color;
-    } else {
-      message.color = "";
-    }
-    if (object.description !== undefined && object.description !== null) {
-      message.description = object.description;
-    } else {
-      message.description = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryLabel>, I>>(object: I): RepositoryLabel {
+    const message = createBaseRepositoryLabel();
+    message.id = object.id ?? 0;
+    message.name = object.name ?? "";
+    message.color = object.color ?? "";
+    message.description = object.description ?? "";
     return message;
   },
 };
 
-const baseRepositoryRelease: object = { id: 0, tagName: "" };
+function createBaseRepositoryRelease(): RepositoryRelease {
+  return { id: 0, tagName: "" };
+}
 
 export const RepositoryRelease = {
-  encode(message: RepositoryRelease, writer: Writer = Writer.create()): Writer {
+  encode(message: RepositoryRelease, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -1420,10 +952,10 @@ export const RepositoryRelease = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryRelease {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryRelease {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryRelease } as RepositoryRelease;
+    const message = createBaseRepositoryRelease();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1442,153 +974,33 @@ export const RepositoryRelease = {
   },
 
   fromJSON(object: any): RepositoryRelease {
-    const message = { ...baseRepositoryRelease } as RepositoryRelease;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.tagName !== undefined && object.tagName !== null) {
-      message.tagName = String(object.tagName);
-    } else {
-      message.tagName = "";
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      tagName: isSet(object.tagName) ? String(object.tagName) : "",
+    };
   },
 
   toJSON(message: RepositoryRelease): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.tagName !== undefined && (obj.tagName = message.tagName);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryRelease>): RepositoryRelease {
-    const message = { ...baseRepositoryRelease } as RepositoryRelease;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.tagName !== undefined && object.tagName !== null) {
-      message.tagName = object.tagName;
-    } else {
-      message.tagName = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryRelease>, I>>(object: I): RepositoryRelease {
+    const message = createBaseRepositoryRelease();
+    message.id = object.id ?? 0;
+    message.tagName = object.tagName ?? "";
     return message;
   },
 };
 
-const baseAttachment: object = { name: "", size: 0, sha: "", uploader: "" };
-
-export const Attachment = {
-  encode(message: Attachment, writer: Writer = Writer.create()): Writer {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
-    }
-    if (message.size !== 0) {
-      writer.uint32(16).uint64(message.size);
-    }
-    if (message.sha !== "") {
-      writer.uint32(26).string(message.sha);
-    }
-    if (message.uploader !== "") {
-      writer.uint32(34).string(message.uploader);
-    }
-    return writer;
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): Attachment {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseAttachment } as Attachment;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.name = reader.string();
-          break;
-        case 2:
-          message.size = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
-          message.sha = reader.string();
-          break;
-        case 4:
-          message.uploader = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Attachment {
-    const message = { ...baseAttachment } as Attachment;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.size !== undefined && object.size !== null) {
-      message.size = Number(object.size);
-    } else {
-      message.size = 0;
-    }
-    if (object.sha !== undefined && object.sha !== null) {
-      message.sha = String(object.sha);
-    } else {
-      message.sha = "";
-    }
-    if (object.uploader !== undefined && object.uploader !== null) {
-      message.uploader = String(object.uploader);
-    } else {
-      message.uploader = "";
-    }
-    return message;
-  },
-
-  toJSON(message: Attachment): unknown {
-    const obj: any = {};
-    message.name !== undefined && (obj.name = message.name);
-    message.size !== undefined && (obj.size = message.size);
-    message.sha !== undefined && (obj.sha = message.sha);
-    message.uploader !== undefined && (obj.uploader = message.uploader);
-    return obj;
-  },
-
-  fromPartial(object: DeepPartial<Attachment>): Attachment {
-    const message = { ...baseAttachment } as Attachment;
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.size !== undefined && object.size !== null) {
-      message.size = object.size;
-    } else {
-      message.size = 0;
-    }
-    if (object.sha !== undefined && object.sha !== null) {
-      message.sha = object.sha;
-    } else {
-      message.sha = "";
-    }
-    if (object.uploader !== undefined && object.uploader !== null) {
-      message.uploader = object.uploader;
-    } else {
-      message.uploader = "";
-    }
-    return message;
-  },
-};
-
-const baseRepositoryBackup: object = { store: 0, refs: "" };
+function createBaseRepositoryBackup(): RepositoryBackup {
+  return { store: 0, refs: [] };
+}
 
 export const RepositoryBackup = {
-  encode(message: RepositoryBackup, writer: Writer = Writer.create()): Writer {
+  encode(message: RepositoryBackup, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.store !== 0) {
       writer.uint32(8).int32(message.store);
     }
@@ -1598,11 +1010,10 @@ export const RepositoryBackup = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): RepositoryBackup {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): RepositoryBackup {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseRepositoryBackup } as RepositoryBackup;
-    message.refs = [];
+    const message = createBaseRepositoryBackup();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1621,25 +1032,15 @@ export const RepositoryBackup = {
   },
 
   fromJSON(object: any): RepositoryBackup {
-    const message = { ...baseRepositoryBackup } as RepositoryBackup;
-    message.refs = [];
-    if (object.store !== undefined && object.store !== null) {
-      message.store = repositoryBackup_StoreFromJSON(object.store);
-    } else {
-      message.store = 0;
-    }
-    if (object.refs !== undefined && object.refs !== null) {
-      for (const e of object.refs) {
-        message.refs.push(String(e));
-      }
-    }
-    return message;
+    return {
+      store: isSet(object.store) ? repositoryBackup_StoreFromJSON(object.store) : 0,
+      refs: Array.isArray(object?.refs) ? object.refs.map((e: any) => String(e)) : [],
+    };
   },
 
   toJSON(message: RepositoryBackup): unknown {
     const obj: any = {};
-    message.store !== undefined &&
-      (obj.store = repositoryBackup_StoreToJSON(message.store));
+    message.store !== undefined && (obj.store = repositoryBackup_StoreToJSON(message.store));
     if (message.refs) {
       obj.refs = message.refs.map((e) => e);
     } else {
@@ -1648,43 +1049,43 @@ export const RepositoryBackup = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<RepositoryBackup>): RepositoryBackup {
-    const message = { ...baseRepositoryBackup } as RepositoryBackup;
-    message.refs = [];
-    if (object.store !== undefined && object.store !== null) {
-      message.store = object.store;
-    } else {
-      message.store = 0;
-    }
-    if (object.refs !== undefined && object.refs !== null) {
-      for (const e of object.refs) {
-        message.refs.push(e);
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<RepositoryBackup>, I>>(object: I): RepositoryBackup {
+    const message = createBaseRepositoryBackup();
+    message.store = object.store ?? 0;
+    message.refs = object.refs?.map((e) => e) || [];
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -1693,7 +1094,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

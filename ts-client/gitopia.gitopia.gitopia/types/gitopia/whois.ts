@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -31,8 +31,9 @@ export function ownerTypeToJSON(object: OwnerType): string {
       return "USER";
     case OwnerType.DAO:
       return "DAO";
+    case OwnerType.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -44,16 +45,12 @@ export interface Whois {
   ownerType: OwnerType;
 }
 
-const baseWhois: object = {
-  creator: "",
-  id: 0,
-  name: "",
-  address: "",
-  ownerType: 0,
-};
+function createBaseWhois(): Whois {
+  return { creator: "", id: 0, name: "", address: "", ownerType: 0 };
+}
 
 export const Whois = {
-  encode(message: Whois, writer: Writer = Writer.create()): Writer {
+  encode(message: Whois, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
@@ -72,10 +69,10 @@ export const Whois = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Whois {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Whois {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseWhois } as Whois;
+    const message = createBaseWhois();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -103,97 +100,65 @@ export const Whois = {
   },
 
   fromJSON(object: any): Whois {
-    const message = { ...baseWhois } as Whois;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.ownerType !== undefined && object.ownerType !== null) {
-      message.ownerType = ownerTypeFromJSON(object.ownerType);
-    } else {
-      message.ownerType = 0;
-    }
-    return message;
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      name: isSet(object.name) ? String(object.name) : "",
+      address: isSet(object.address) ? String(object.address) : "",
+      ownerType: isSet(object.ownerType) ? ownerTypeFromJSON(object.ownerType) : 0,
+    };
   },
 
   toJSON(message: Whois): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.name !== undefined && (obj.name = message.name);
     message.address !== undefined && (obj.address = message.address);
-    message.ownerType !== undefined &&
-      (obj.ownerType = ownerTypeToJSON(message.ownerType));
+    message.ownerType !== undefined && (obj.ownerType = ownerTypeToJSON(message.ownerType));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Whois>): Whois {
-    const message = { ...baseWhois } as Whois;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.ownerType !== undefined && object.ownerType !== null) {
-      message.ownerType = object.ownerType;
-    } else {
-      message.ownerType = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Whois>, I>>(object: I): Whois {
+    const message = createBaseWhois();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.name = object.name ?? "";
+    message.address = object.address ?? "";
+    message.ownerType = object.ownerType ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -202,7 +167,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

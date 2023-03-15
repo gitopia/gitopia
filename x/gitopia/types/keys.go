@@ -18,10 +18,16 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_gitopia"
 
+	MinterAccountName = "minter"
+
 	// this line is used by starport scaffolding # ibc/keys/name
 )
 
 // this line is used by starport scaffolding # ibc/keys/port
+
+var (
+	ParamsKey = []byte{0x00}
+)
 
 func KeyPrefix(p string) []byte {
 	return []byte(p)
@@ -115,6 +121,7 @@ const (
 	MultiDeleteRepositoryBranchEventKey  = "MultiDeleteRepositoryBranch"
 	DeleteRepositoryTagEventKey          = "DeleteRepositoryTag"
 	MultiDeleteRepositoryTagEventKey     = "MultiDeleteRepositoryTag"
+	ToggleForcePushToBranchEventKey      = "ToggleForcePushToBranch"
 )
 
 const (
@@ -142,12 +149,21 @@ const (
 	AddPullRequestLabelsEventKey         = "AddPullRequestLabels"
 	RemovePullRequestLabelsEventKey      = "RemovePullRequestLabels"
 	DeletePullRequestEventKey            = "DeletePullRequest"
+	LinkPullRequestIssueByIidEventKey    = "LinkPullRequestIssueByIid"
+	UnlinkPullRequestIssueByIidEventKey  = "UnlinkPullRequestIssueByIid"
 )
 
 const (
 	CreateReleaseEventKey = "CreateRelease"
 	UpdateReleaseEventKey = "UpdateRelease"
 	DeleteReleaseEventKey = "DeleteRelease"
+)
+
+const (
+	CreateBountyEventKey       = "CreateBounty"
+	UpdateBountyExpiryEventKey = "UpdateBountyExpiry"
+	CloseBountyEventKey        = "CloseBounty"
+	DeleteBountyEventKey       = "DeleteBounty"
 )
 
 const (
@@ -169,12 +185,17 @@ const (
 	EventAttributeUserIdKey       = "UserId"
 	EventAttributeUserUsernameKey = "UserUsername"
 	EventAttributeUserNameKey     = "UserName"
+	EventAttributeUserBio         = "UserBio"
+	EventAttributeAvatarUrl       = "AvatarUrl"
 )
 
 const (
 	EventAttributeDaoIdKey            = "DaoId"
 	EventAttributeDaoAddressKey       = "DaoAddress"
 	EventAttributeDaoNameKey          = "DaoName"
+	EventAttributeDaoDescription      = "DaoDescription"
+	EventAttributeDaoLocation         = "DaoLocation"
+	EventAttributeDaoWebsite          = "DaoWebsite"
 	EventAttributeDaoMemberAddressKey = "DaoMemberAddress"
 	EventAttributeDaoMemberRoleKey    = "DaoMemberRole"
 )
@@ -184,12 +205,15 @@ const (
 	EventAttributeRepoIdKey                  = "RepositoryId"
 	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
 	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"
-	EventAttributeRepoCollaboratorKey        = "RepositoryCollaboratorKey"
+	EventAttributeRepoCollaboratorKey        = "RepositoryCollaborator"
 	EventAttributeRepoLabelIdKey             = "RepositoryLabelId"
 	EventAttributeRepoLabelNameKey           = "RepositoryLabelName"
 	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"
 	EventAttributeRepoAllowForkingKey        = "RepositoryAllowForking"
 	EventAttributeRepoEnableArweaveBackupKey = "RepositoryEnableArweaveBackup"
+	EventAttributeForkRepoNameKey            = "ForkRepositoryName"
+	EventAttributeForkRepoDescriptionKey     = "ForkRepositoryDescription"
+	EventAttributeForkRepoBranchKey          = "ForkRepositoryBranch"
 	EventAttributeForkRepoOwnerIdKey         = "ForkRepositoryOwnerId"
 	EventAttributeRepoBranchKey              = "RepositoryBranch"
 	EventAttributeRepoTagKey                 = "RepositoryTag"
@@ -197,11 +221,12 @@ const (
 )
 
 const (
-	EventAttributeIssueIdKey    = "IssueId"
-	EventAttributeIssueIidKey   = "IssueIid"
-	EventAttributeIssueTitleKey = "IssueTitle"
-	EventAttributeIssueStateKey = "IssueState"
-	EventAttributeClosedByKey   = "ClosedBy"
+	EventAttributeIssueIdKey          = "IssueId"
+	EventAttributeIssueIidKey         = "IssueIid"
+	EventAttributeIssueTitleKey       = "IssueTitle"
+	EventAttributeIssueStateKey       = "IssueState"
+	EventAttributeIssueDescriptionKey = "IssueDescription"
+	EventAttributeClosedByKey         = "ClosedBy"
 )
 
 const (
@@ -209,6 +234,7 @@ const (
 	EventAttributePullRequestStateKey          = "PullRequestState"
 	EventAttributePullRequestIidKey            = "PullRequestIid"
 	EventAttributePullRequestTitleKey          = "PullRequestTitle"
+	EventAttributePullRequestDescriptionKey    = "PullRequestDescription"
 	EventAttributePullRequestDraftKey          = "PullRequestDraft"
 	EventAttributePullRequestHeadKey           = "PullRequestHead"
 	EventAttributePullRequestBaseKey           = "PullRequestBase"
@@ -219,11 +245,21 @@ const (
 )
 
 const (
-	EventAttributeReleaseIdKey         = "ReleaseId"
-	EventAttributeReleaseTagNameKey    = "ReleaseTagName"
-	EventAttributeReleaseNameKey       = "ReleaseName"
-	EventAttributeReleaseDraftKey      = "ReleaseDraft"
-	EventAttributeReleasePreReleaseKey = "ReleasePreRelease"
+	EventAttributeReleaseIdKey          = "ReleaseId"
+	EventAttributeReleaseTagNameKey     = "ReleaseTagName"
+	EventAttributeReleaseNameKey        = "ReleaseName"
+	EventAttributeReleaseDescriptionKey = "ReleaseDescription"
+	EventAttributeReleaseDraftKey       = "ReleaseDraft"
+	EventAttributeReleasePreReleaseKey  = "ReleasePreRelease"
+)
+
+const (
+	EventAttributeBountyIdKey        = "BountyId"
+	EventAttributeBountyAmountKey    = "BountyAmount"
+	EventAttributeBountyStateKey     = "BountyState"
+	EventAttributeBountyParentKey    = "BountyParent"
+	EventAttributeBountyParentIidKey = "BountyParentIid"
+	EventAttributeBountyExpiry       = "BountyExpiry"
 )
 
 const (
@@ -251,6 +287,11 @@ const (
 	MemberCountKey = "Member-count-"
 )
 
+const (
+	BountyKey      = "Bounty-value-"
+	BountyCountKey = "Bounty-count-"
+)
+
 // GetRepositoryKeyForAddress returns Key from address
 func GetRepositoryKeyForAddress(address string) string {
 	return RepositoryKey + address + "-"
@@ -274,4 +315,24 @@ func GetMemberKeyForDaoAddress(daoAddress string) string {
 // GetDaoKeyForUserAddress returns Key from dao-address
 func GetUserDaoKeyForUserAddress(userAddress string) string {
 	return UserDaoKey + userAddress + "-"
+}
+
+// GetIssueKeyForRepositoryId returns Key from repository-id
+func GetIssueKeyForRepositoryId(repositoryId uint64) string {
+	return IssueKey + strconv.FormatUint(repositoryId, 10) + "-"
+}
+
+// GetPullRequestKeyForRepositoryId returns Key from repository-id
+func GetPullRequestKeyForRepositoryId(repositoryId uint64) string {
+	return PullRequestKey + strconv.FormatUint(repositoryId, 10) + "-"
+}
+
+// GetCommentKeyForIssue returns Key for repository issue
+func GetCommentKeyForIssue(repositoryId uint64, issueIid uint64) string {
+	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-issue-" + strconv.FormatUint(issueIid, 10) + "-"
+}
+
+// GetCommentKeyForPullRequest returns Key for repository pull request
+func GetCommentKeyForPullRequest(repositoryId uint64, pullRequestIid uint64) string {
+	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-pr-" + strconv.FormatUint(pullRequestIid, 10) + "-"
 }

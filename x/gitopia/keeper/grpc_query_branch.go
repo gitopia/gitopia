@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -97,12 +98,12 @@ func (k Keeper) RepositoryBranch(c context.Context, req *types.QueryGetRepositor
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound
+		return nil, errors.Wrap(sdkerrors.ErrKeyNotFound, "repository not found")
 	}
 
 	branch, found := k.GetRepositoryBranch(ctx, repository.Id, req.BranchName)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound
+		return nil, errors.Wrap(sdkerrors.ErrKeyNotFound, "branch not found")
 	}
 
 	return &types.QueryGetRepositoryBranchResponse{Branch: branch}, nil

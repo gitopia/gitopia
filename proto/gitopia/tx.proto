@@ -1,12 +1,13 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
+import "gogoproto/gogo.proto";
 import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
+import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # proto/tx/import
-import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
 import "gitopia/pullRequest.proto";
 import "gitopia/dao.proto";
@@ -14,12 +15,16 @@ import "gitopia/comment.proto";
 import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gitopia/attachment.proto";
+import "gitopia/reaction.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
+  rpc ToggleForcePush(MsgToggleForcePush) returns (MsgToggleForcePushResponse);
   rpc RevokeProviderPermission(MsgRevokeProviderPermission) returns (MsgRevokeProviderPermissionResponse);
   rpc AuthorizeProvider(MsgAuthorizeProvider) returns (MsgAuthorizeProviderResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
@@ -36,6 +41,10 @@ service Msg {
   rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
   rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
+  rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
+  rpc UpdateBountyExpiry(MsgUpdateBountyExpiry) returns (MsgUpdateBountyExpiryResponse);
+  rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
+  rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
@@ -49,6 +58,8 @@ service Msg {
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
   rpc AddPullRequestAssignees(MsgAddPullRequestAssignees) returns (MsgAddPullRequestAssigneesResponse);
   rpc RemovePullRequestAssignees(MsgRemovePullRequestAssignees) returns (MsgRemovePullRequestAssigneesResponse);
+  rpc LinkPullRequestIssueByIid(MsgLinkPullRequestIssueByIid) returns (MsgLinkPullRequestIssueByIidResponse);
+  rpc UnlinkPullRequestIssueByIid(MsgUnlinkPullRequestIssueByIid) returns (MsgUnlinkPullRequestIssueByIidResponse);
   rpc AddPullRequestLabels(MsgAddPullRequestLabels) returns (MsgAddPullRequestLabelsResponse);
   rpc RemovePullRequestLabels(MsgRemovePullRequestLabels) returns (MsgRemovePullRequestLabelsResponse);
   rpc DeletePullRequest(MsgDeletePullRequest) returns (MsgDeletePullRequestResponse);
@@ -97,6 +108,14 @@ service Msg {
   rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
+
+message MsgToggleForcePush {
+  string creator = 1;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string branchName = 3;
+}
+
+message MsgToggleForcePushResponse {}
 
 enum ProviderPermission {
   GIT_SERVER = 0;
@@ -152,8 +171,7 @@ message MsgUpdateRepositoryBackupRef {
   string ref = 4;
 }
 
-message MsgUpdateRepositoryBackupRefResponse {
-}
+message MsgUpdateRepositoryBackupRefResponse {}
 
 message MsgAddRepositoryBackupRef {
   string creator = 1;
@@ -162,8 +180,7 @@ message MsgAddRepositoryBackupRef {
   string ref = 4;
 }
 
-message MsgAddRepositoryBackupRefResponse {
-}
+message MsgAddRepositoryBackupRefResponse {}
 
 message MsgDeleteTaskResponse {}
 message MsgDeleteStorageProviderResponse {}
@@ -282,6 +299,42 @@ message MsgRemoveMember {
 
 message MsgRemoveMemberResponse { }
 
+message MsgCreateBounty {
+  string creator = 1;
+  repeated cosmos.base.v1beta1.Coin amount = 2
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  int64 expiry = 3;
+  uint64 repositoryId = 4;
+  uint64 parentIid = 5;
+  BountyParent parent = 6;
+}
+
+message MsgCreateBountyResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateBountyExpiry {
+  string creator = 1;
+  uint64 id = 2;
+  int64 expiry = 3;
+}
+
+message MsgUpdateBountyExpiryResponse {}
+
+message MsgCloseBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgCloseBountyResponse {}
+
+message MsgDeleteBounty {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteBountyResponse {}
+
 // this line is used by starport scaffolding # proto/tx/message
 message MsgCreateRelease {
   string creator = 1;
@@ -333,6 +386,7 @@ message MsgCreatePullRequest {
   repeated string reviewers = 8;
   repeated string assignees = 9;
   repeated uint64 labelIds = 10;
+  repeated uint64 issueIids = 11;
 }
 
 message MsgCreatePullRequestResponse {
@@ -342,34 +396,39 @@ message MsgCreatePullRequestResponse {
 
 message MsgUpdatePullRequestTitle {
   string creator = 1;
-  uint64 id = 2;
-  string title = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string title = 4;
 }
 
 message MsgUpdatePullRequestTitleResponse { }
 
 message MsgUpdatePullRequestDescription {
   string creator = 1;
-  uint64 id = 2;
-  string description = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string description = 4;
 }
 
 message MsgUpdatePullRequestDescriptionResponse { }
 
 message MsgInvokeMergePullRequest {
   string creator = 1;
-  uint64 id = 2;
-  string provider = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string provider = 4;
 }
 
 message MsgInvokeMergePullRequestResponse { }
 
 message MsgSetPullRequestState {
   string creator = 1;
-  uint64 id = 2;
-  string state = 3;
-  string mergeCommitSha = 4;
-  uint64 taskId = 5;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string state = 4;
+  string mergeCommitSha = 5;
+  string commentBody = 6;
+  uint64 taskId = 7;
 }
 
 message MsgSetPullRequestStateResponse {
@@ -378,55 +437,80 @@ message MsgSetPullRequestStateResponse {
 
 message MsgAddPullRequestReviewers {
   string creator = 1;
-  uint64 id = 2;
-  repeated string reviewers = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string reviewers = 4;
 }
 
 message MsgAddPullRequestReviewersResponse { }
 
 message MsgRemovePullRequestReviewers {
   string creator = 1;
-  uint64 id = 2;
-  repeated string reviewers = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string reviewers = 4;
 }
 
 message MsgRemovePullRequestReviewersResponse { }
 
 message MsgAddPullRequestAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgAddPullRequestAssigneesResponse { }
 
 message MsgRemovePullRequestAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgRemovePullRequestAssigneesResponse { }
 
+message MsgLinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 pullRequestIid = 3;
+  uint64 issueIid = 4;
+}
+
+message MsgLinkPullRequestIssueByIidResponse { }
+
+message MsgUnlinkPullRequestIssueByIid {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  uint64 pullRequestIid = 3;
+  uint64 issueIid = 4;
+}
+
+message MsgUnlinkPullRequestIssueByIidResponse { }
+
 message MsgAddPullRequestLabels {
   string creator = 1;
-  uint64 pullRequestId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgAddPullRequestLabelsResponse { }
 
 message MsgRemovePullRequestLabels {
   string creator = 1;
-  uint64 pullRequestId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgRemovePullRequestLabelsResponse { }
 
 message MsgDeletePullRequest {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
 }
 
 message MsgDeletePullRequestResponse { }
@@ -493,14 +577,13 @@ message MsgDeleteDaoResponse { }
 
 message MsgCreateComment {
   string creator = 1;
-  uint64 parentId = 2;
-  string body = 3;
-  repeated string attachments = 4;
-  string diffHunk = 5;
-  string path = 6;
-  bool system = 7;
-  string authorAssociation = 8;
-  string commentType = 9;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  string body = 5;
+  repeated Attachment attachments = 6; 
+  string diffHunk = 7;
+  string path = 8;
 }
 
 message MsgCreateCommentResponse {
@@ -509,16 +592,22 @@ message MsgCreateCommentResponse {
 
 message MsgUpdateComment {
   string creator = 1;
-  uint64 id = 2;
-  string body = 3;
-  repeated string attachments = 4;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  uint64 commentIid = 5;
+  string body = 6;
+  repeated Attachment attachments = 7;
 }
 
 message MsgUpdateCommentResponse { }
 
 message MsgDeleteComment {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 parentIid = 3;
+  CommentParent parent = 4;
+  uint64 commentIid = 5;
 }
 
 message MsgDeleteCommentResponse { }
@@ -531,6 +620,9 @@ message MsgCreateIssue {
   repeated uint64 labelIds = 5;
   uint64 weight = 6;
   repeated string assignees = 7;
+  repeated cosmos.base.v1beta1.Coin bountyAmount = 8
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  int64 bountyExpiry = 9;
 }
 
 message MsgCreateIssueResponse {
@@ -540,23 +632,27 @@ message MsgCreateIssueResponse {
 
 message MsgUpdateIssueTitle {
   string creator = 1;
-  uint64 id = 2;
-  string title = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string title = 4;
 }
 
 message MsgUpdateIssueTitleResponse { }
 
 message MsgUpdateIssueDescription {
   string creator = 1;
-  uint64 id = 2;
-  string description = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string description = 4;
 }
 
 message MsgUpdateIssueDescriptionResponse { }
 
 message MsgToggleIssueState {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string commentBody = 4;
 }
 
 message MsgToggleIssueStateResponse {
@@ -565,39 +661,44 @@ message MsgToggleIssueStateResponse {
 
 message MsgAddIssueAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgAddIssueAssigneesResponse { }
 
 message MsgRemoveIssueAssignees {
   string creator = 1;
-  uint64 id = 2;
-  repeated string assignees = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated string assignees = 4;
 }
 
 message MsgRemoveIssueAssigneesResponse { }
 
 message MsgAddIssueLabels {
   string creator = 1;
-  uint64 issueId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgAddIssueLabelsResponse { }
 
 message MsgRemoveIssueLabels {
   string creator = 1;
-  uint64 issueId = 2;
-  repeated uint64 labelIds = 3;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  repeated uint64 labelIds = 4;
 }
 
 message MsgRemoveIssueLabelsResponse { }
 
 message MsgDeleteIssue {
   string creator = 1;
-  uint64 id = 2;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
 }
 
 message MsgDeleteIssueResponse { }
@@ -616,8 +717,11 @@ message MsgCreateRepositoryResponse {
 message MsgInvokeForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  string provider = 4;
+  string forkRepositoryName = 3;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  string provider = 7;
 }
 
 message MsgInvokeForkRepositoryResponse {}
@@ -625,8 +729,11 @@ message MsgInvokeForkRepositoryResponse {}
 message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  uint64 taskId = 4;
+  string forkRepositoryName = 3;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  uint64 taskId = 7;
 }
 
 message MsgForkRepositoryResponse {

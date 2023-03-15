@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -31,8 +31,9 @@ export function memberRoleToJSON(object: MemberRole): string {
       return "MEMBER";
     case MemberRole.OWNER:
       return "OWNER";
+    case MemberRole.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -43,10 +44,12 @@ export interface Member {
   role: MemberRole;
 }
 
-const baseMember: object = { id: 0, address: "", daoAddress: "", role: 0 };
+function createBaseMember(): Member {
+  return { id: 0, address: "", daoAddress: "", role: 0 };
+}
 
 export const Member = {
-  encode(message: Member, writer: Writer = Writer.create()): Writer {
+  encode(message: Member, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -62,10 +65,10 @@ export const Member = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Member {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Member {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMember } as Member;
+    const message = createBaseMember();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -90,85 +93,62 @@ export const Member = {
   },
 
   fromJSON(object: any): Member {
-    const message = { ...baseMember } as Member;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address);
-    } else {
-      message.address = "";
-    }
-    if (object.daoAddress !== undefined && object.daoAddress !== null) {
-      message.daoAddress = String(object.daoAddress);
-    } else {
-      message.daoAddress = "";
-    }
-    if (object.role !== undefined && object.role !== null) {
-      message.role = memberRoleFromJSON(object.role);
-    } else {
-      message.role = 0;
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      address: isSet(object.address) ? String(object.address) : "",
+      daoAddress: isSet(object.daoAddress) ? String(object.daoAddress) : "",
+      role: isSet(object.role) ? memberRoleFromJSON(object.role) : 0,
+    };
   },
 
   toJSON(message: Member): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.address !== undefined && (obj.address = message.address);
     message.daoAddress !== undefined && (obj.daoAddress = message.daoAddress);
     message.role !== undefined && (obj.role = memberRoleToJSON(message.role));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Member>): Member {
-    const message = { ...baseMember } as Member;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address;
-    } else {
-      message.address = "";
-    }
-    if (object.daoAddress !== undefined && object.daoAddress !== null) {
-      message.daoAddress = object.daoAddress;
-    } else {
-      message.daoAddress = "";
-    }
-    if (object.role !== undefined && object.role !== null) {
-      message.role = object.role;
-    } else {
-      message.role = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Member>, I>>(object: I): Member {
+    const message = createBaseMember();
+    message.id = object.id ?? 0;
+    message.address = object.address ?? "";
+    message.daoAddress = object.daoAddress ?? "";
+    message.role = object.role ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -177,7 +157,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

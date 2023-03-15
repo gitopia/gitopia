@@ -23,45 +23,130 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type Comment_Type int32
+type CommentType int32
 
 const (
-	Comment_ISSUE       Comment_Type = 0
-	Comment_PULLREQUEST Comment_Type = 1
+	CommentTypeNone                CommentType = 0
+	CommentTypeReply               CommentType = 1
+	CommentTypeAddLabels           CommentType = 2
+	CommentTypeRemoveLabels        CommentType = 3
+	CommentTypeAddAssignees        CommentType = 4
+	CommentTypeRemoveAssignees     CommentType = 5
+	CommentTypeAddReviewers        CommentType = 6
+	CommentTypeRemoveReviewers     CommentType = 7
+	CommentTypeModifiedTitle       CommentType = 8
+	CommentTypeModifiedDescription CommentType = 9
+	CommentTypeIssueClosed         CommentType = 10
+	CommentTypeIssueOpened         CommentType = 11
+	CommentTypePullRequestClosed   CommentType = 12
+	CommentTypePullRequestOpened   CommentType = 13
+	CommentTypePullRequestMerged   CommentType = 14
+	CommentTypeReview              CommentType = 15
+	CommentTypeAddBounty           CommentType = 16
+	CommentTypeModifiedBounty      CommentType = 17
+	CommentTypeClosedBounty        CommentType = 18
 )
 
-var Comment_Type_name = map[int32]string{
-	0: "ISSUE",
-	1: "PULLREQUEST",
+var CommentType_name = map[int32]string{
+	0:  "COMMENT_TYPE_NONE",
+	1:  "COMMENT_TYPE_REPLY",
+	2:  "COMMENT_TYPE_ADD_LABELS",
+	3:  "COMMENT_TYPE_REMOVE_LABELS",
+	4:  "COMMENT_TYPE_ADD_ASSIGNEES",
+	5:  "COMMENT_TYPE_REMOVE_ASSIGNEES",
+	6:  "COMMENT_TYPE_ADD_REVIEWERS",
+	7:  "COMMENT_TYPE_REMOVE_REVIEWERS",
+	8:  "COMMENT_TYPE_MODIFIED_TITLE",
+	9:  "COMMENT_TYPE_MODIFIED_DESCRIPTION",
+	10: "COMMENT_TYPE_ISSUE_CLOSED",
+	11: "COMMENT_TYPE_ISSUE_OPENED",
+	12: "COMMENT_TYPE_PULL_REQUEST_CLOSED",
+	13: "COMMENT_TYPE_PULL_REQUEST_OPENED",
+	14: "COMMENT_TYPE_PULL_REQUEST_MERGED",
+	15: "COMMENT_TYPE_REVIEW",
+	16: "COMMENT_TYPE_ADD_BOUNTY",
+	17: "COMMENT_TYPE_MODIFIED_BOUNTY",
+	18: "COMMENT_TYPE_CLOSED_BOUNTY",
 }
 
-var Comment_Type_value = map[string]int32{
-	"ISSUE":       0,
-	"PULLREQUEST": 1,
+var CommentType_value = map[string]int32{
+	"COMMENT_TYPE_NONE":                 0,
+	"COMMENT_TYPE_REPLY":                1,
+	"COMMENT_TYPE_ADD_LABELS":           2,
+	"COMMENT_TYPE_REMOVE_LABELS":        3,
+	"COMMENT_TYPE_ADD_ASSIGNEES":        4,
+	"COMMENT_TYPE_REMOVE_ASSIGNEES":     5,
+	"COMMENT_TYPE_ADD_REVIEWERS":        6,
+	"COMMENT_TYPE_REMOVE_REVIEWERS":     7,
+	"COMMENT_TYPE_MODIFIED_TITLE":       8,
+	"COMMENT_TYPE_MODIFIED_DESCRIPTION": 9,
+	"COMMENT_TYPE_ISSUE_CLOSED":         10,
+	"COMMENT_TYPE_ISSUE_OPENED":         11,
+	"COMMENT_TYPE_PULL_REQUEST_CLOSED":  12,
+	"COMMENT_TYPE_PULL_REQUEST_OPENED":  13,
+	"COMMENT_TYPE_PULL_REQUEST_MERGED":  14,
+	"COMMENT_TYPE_REVIEW":               15,
+	"COMMENT_TYPE_ADD_BOUNTY":           16,
+	"COMMENT_TYPE_MODIFIED_BOUNTY":      17,
+	"COMMENT_TYPE_CLOSED_BOUNTY":        18,
 }
 
-func (x Comment_Type) String() string {
-	return proto.EnumName(Comment_Type_name, int32(x))
+func (x CommentType) String() string {
+	return proto.EnumName(CommentType_name, int32(x))
 }
 
-func (Comment_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_61a8a10ae7d09fb4, []int{0, 0}
+func (CommentType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_61a8a10ae7d09fb4, []int{0}
+}
+
+type CommentParent int32
+
+const (
+	CommentParentNone        CommentParent = 0
+	CommentParentIssue       CommentParent = 1
+	CommentParentPullRequest CommentParent = 2
+)
+
+var CommentParent_name = map[int32]string{
+	0: "COMMENT_PARENT_NONE",
+	1: "COMMENT_PARENT_ISSUE",
+	2: "COMMENT_PARENT_PULL_REQUEST",
+}
+
+var CommentParent_value = map[string]int32{
+	"COMMENT_PARENT_NONE":         0,
+	"COMMENT_PARENT_ISSUE":        1,
+	"COMMENT_PARENT_PULL_REQUEST": 2,
+}
+
+func (x CommentParent) String() string {
+	return proto.EnumName(CommentParent_name, int32(x))
+}
+
+func (CommentParent) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_61a8a10ae7d09fb4, []int{1}
 }
 
 type Comment struct {
-	Creator           string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Id                uint64       `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	ParentId          uint64       `protobuf:"varint,3,opt,name=parentId,proto3" json:"parentId,omitempty"`
-	CommentIid        uint64       `protobuf:"varint,4,opt,name=commentIid,proto3" json:"commentIid,omitempty"`
-	Body              string       `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
-	Attachments       []string     `protobuf:"bytes,6,rep,name=attachments,proto3" json:"attachments,omitempty"`
-	DiffHunk          string       `protobuf:"bytes,7,opt,name=diffHunk,proto3" json:"diffHunk,omitempty"`
-	Path              string       `protobuf:"bytes,8,opt,name=path,proto3" json:"path,omitempty"`
-	System            bool         `protobuf:"varint,9,opt,name=system,proto3" json:"system,omitempty"`
-	AuthorAssociation string       `protobuf:"bytes,10,opt,name=authorAssociation,proto3" json:"authorAssociation,omitempty"`
-	CreatedAt         int64        `protobuf:"varint,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt         int64        `protobuf:"varint,12,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	CommentType       Comment_Type `protobuf:"varint,13,opt,name=commentType,proto3,enum=gitopia.gitopia.gitopia.Comment_Type" json:"commentType,omitempty"`
+	Creator           string        `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Id                uint64        `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	RepositoryId      uint64        `protobuf:"varint,3,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
+	ParentIid         uint64        `protobuf:"varint,4,opt,name=parentIid,proto3" json:"parentIid,omitempty"`
+	Parent            CommentParent `protobuf:"varint,5,opt,name=parent,proto3,enum=gitopia.gitopia.gitopia.CommentParent" json:"parent,omitempty"`
+	CommentIid        uint64        `protobuf:"varint,6,opt,name=commentIid,proto3" json:"commentIid,omitempty"`
+	Body              string        `protobuf:"bytes,7,opt,name=body,proto3" json:"body,omitempty"`
+	Attachments       []*Attachment `protobuf:"bytes,8,rep,name=attachments,proto3" json:"attachments,omitempty"`
+	DiffHunk          string        `protobuf:"bytes,9,opt,name=diffHunk,proto3" json:"diffHunk,omitempty"`
+	Path              string        `protobuf:"bytes,10,opt,name=path,proto3" json:"path,omitempty"`
+	System            bool          `protobuf:"varint,11,opt,name=system,proto3" json:"system,omitempty"`
+	AuthorAssociation string        `protobuf:"bytes,12,opt,name=authorAssociation,proto3" json:"authorAssociation,omitempty"`
+	CreatedAt         int64         `protobuf:"varint,13,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt         int64         `protobuf:"varint,14,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	CommentType       CommentType   `protobuf:"varint,15,opt,name=commentType,proto3,enum=gitopia.gitopia.gitopia.CommentType" json:"commentType,omitempty"`
+	Resolved          bool          `protobuf:"varint,16,opt,name=resolved,proto3" json:"resolved,omitempty"`
+	Replies           []uint64      `protobuf:"varint,17,rep,packed,name=replies,proto3" json:"replies,omitempty"`
+	Reactions         []*Reaction   `protobuf:"bytes,18,rep,name=reactions,proto3" json:"reactions,omitempty"`
+	Hidden            bool          `protobuf:"varint,19,opt,name=hidden,proto3" json:"hidden,omitempty"`
 }
 
 func (m *Comment) Reset()         { *m = Comment{} }
@@ -111,11 +196,25 @@ func (m *Comment) GetId() uint64 {
 	return 0
 }
 
-func (m *Comment) GetParentId() uint64 {
+func (m *Comment) GetRepositoryId() uint64 {
 	if m != nil {
-		return m.ParentId
+		return m.RepositoryId
 	}
 	return 0
+}
+
+func (m *Comment) GetParentIid() uint64 {
+	if m != nil {
+		return m.ParentIid
+	}
+	return 0
+}
+
+func (m *Comment) GetParent() CommentParent {
+	if m != nil {
+		return m.Parent
+	}
+	return CommentParentNone
 }
 
 func (m *Comment) GetCommentIid() uint64 {
@@ -132,7 +231,7 @@ func (m *Comment) GetBody() string {
 	return ""
 }
 
-func (m *Comment) GetAttachments() []string {
+func (m *Comment) GetAttachments() []*Attachment {
 	if m != nil {
 		return m.Attachments
 	}
@@ -181,47 +280,113 @@ func (m *Comment) GetUpdatedAt() int64 {
 	return 0
 }
 
-func (m *Comment) GetCommentType() Comment_Type {
+func (m *Comment) GetCommentType() CommentType {
 	if m != nil {
 		return m.CommentType
 	}
-	return Comment_ISSUE
+	return CommentTypeNone
+}
+
+func (m *Comment) GetResolved() bool {
+	if m != nil {
+		return m.Resolved
+	}
+	return false
+}
+
+func (m *Comment) GetReplies() []uint64 {
+	if m != nil {
+		return m.Replies
+	}
+	return nil
+}
+
+func (m *Comment) GetReactions() []*Reaction {
+	if m != nil {
+		return m.Reactions
+	}
+	return nil
+}
+
+func (m *Comment) GetHidden() bool {
+	if m != nil {
+		return m.Hidden
+	}
+	return false
 }
 
 func init() {
-	proto.RegisterEnum("gitopia.gitopia.gitopia.Comment_Type", Comment_Type_name, Comment_Type_value)
+	proto.RegisterEnum("gitopia.gitopia.gitopia.CommentType", CommentType_name, CommentType_value)
+	proto.RegisterEnum("gitopia.gitopia.gitopia.CommentParent", CommentParent_name, CommentParent_value)
 	proto.RegisterType((*Comment)(nil), "gitopia.gitopia.gitopia.Comment")
 }
 
 func init() { proto.RegisterFile("gitopia/comment.proto", fileDescriptor_61a8a10ae7d09fb4) }
 
 var fileDescriptor_61a8a10ae7d09fb4 = []byte{
-	// 387 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0xdd, 0xea, 0xd3, 0x30,
-	0x14, 0x6f, 0xd6, 0xfe, 0xb7, 0xf5, 0x54, 0xe7, 0x0c, 0x7e, 0x84, 0x21, 0xa5, 0x0c, 0x84, 0x22,
-	0xd2, 0x81, 0x3e, 0xc1, 0xd4, 0xa1, 0x83, 0x5d, 0x68, 0xb7, 0xdd, 0x78, 0x97, 0x35, 0x5d, 0x1b,
-	0xa4, 0x4d, 0x69, 0x53, 0xb0, 0x6f, 0xe1, 0x43, 0x79, 0xe1, 0xe5, 0x2e, 0xbd, 0x94, 0xed, 0x45,
-	0x24, 0x69, 0x57, 0x87, 0xe2, 0xd5, 0xf9, 0x7d, 0x9d, 0x93, 0x36, 0x39, 0xf0, 0x38, 0xe1, 0x52,
-	0x14, 0x9c, 0x2e, 0x22, 0x91, 0x65, 0x71, 0x2e, 0x83, 0xa2, 0x14, 0x52, 0xe0, 0xa7, 0x9d, 0x1c,
-	0xfc, 0x55, 0x67, 0x8f, 0x12, 0x91, 0x08, 0x9d, 0x59, 0x28, 0xd4, 0xc6, 0xe7, 0xdf, 0x4d, 0x18,
-	0xbd, 0x6d, 0x07, 0x60, 0x02, 0xa3, 0xa8, 0x8c, 0xa9, 0x14, 0x25, 0x41, 0x1e, 0xf2, 0xed, 0xf0,
-	0x4a, 0xf1, 0x04, 0x06, 0x9c, 0x91, 0x81, 0x87, 0x7c, 0x2b, 0x1c, 0x70, 0x86, 0x67, 0x30, 0x2e,
-	0x68, 0x19, 0xe7, 0x72, 0xcd, 0x88, 0xa9, 0xd5, 0x9e, 0x63, 0x17, 0xa0, 0xfb, 0xa2, 0x35, 0x67,
-	0xc4, 0xd2, 0xee, 0x8d, 0x82, 0x31, 0x58, 0x07, 0xc1, 0x1a, 0x72, 0xa7, 0x8f, 0xd0, 0x18, 0x7b,
-	0xe0, 0x50, 0x29, 0x69, 0x94, 0xaa, 0x50, 0x45, 0x86, 0x9e, 0xe9, 0xdb, 0xe1, 0xad, 0xa4, 0x4e,
-	0x64, 0xfc, 0x78, 0xfc, 0x50, 0xe7, 0x5f, 0xc8, 0x48, 0x77, 0xf6, 0x5c, 0x4d, 0x2c, 0xa8, 0x4c,
-	0xc9, 0xb8, 0x9d, 0xa8, 0x30, 0x7e, 0x02, 0xc3, 0xaa, 0xa9, 0x64, 0x9c, 0x11, 0xdb, 0x43, 0xfe,
-	0x38, 0xec, 0x18, 0x7e, 0x09, 0x0f, 0x69, 0x2d, 0x53, 0x51, 0x2e, 0xab, 0x4a, 0x44, 0x9c, 0x4a,
-	0x2e, 0x72, 0x02, 0xba, 0xf1, 0x5f, 0x03, 0x3f, 0x03, 0x5b, 0x5f, 0x41, 0xcc, 0x96, 0x92, 0x38,
-	0x1e, 0xf2, 0xcd, 0xf0, 0x8f, 0xa0, 0xdc, 0xba, 0x60, 0x9d, 0x7b, 0xaf, 0x75, 0x7b, 0x01, 0xbf,
-	0x07, 0xa7, 0xfb, 0xeb, 0x5d, 0x53, 0xc4, 0xe4, 0xbe, 0x87, 0xfc, 0xc9, 0xab, 0xe7, 0xc1, 0x7f,
-	0x9e, 0x27, 0xe8, 0x1e, 0x21, 0x50, 0xe1, 0xf0, 0xb6, 0x73, 0x3e, 0x07, 0x4b, 0x55, 0x6c, 0xc3,
-	0xdd, 0x7a, 0xbb, 0xdd, 0xaf, 0xa6, 0x06, 0x7e, 0x00, 0xce, 0xc7, 0xfd, 0x66, 0x13, 0xae, 0x3e,
-	0xed, 0x57, 0xdb, 0xdd, 0x14, 0xbd, 0x79, 0xf7, 0xe3, 0xec, 0xa2, 0xd3, 0xd9, 0x45, 0xbf, 0xce,
-	0x2e, 0xfa, 0x76, 0x71, 0x8d, 0xd3, 0xc5, 0x35, 0x7e, 0x5e, 0x5c, 0xe3, 0xf3, 0x8b, 0x84, 0xcb,
-	0xb4, 0x3e, 0x04, 0x91, 0xc8, 0x16, 0xd7, 0x8d, 0xb9, 0xd6, 0xaf, 0x3d, 0x92, 0x4d, 0x11, 0x57,
-	0x87, 0xa1, 0xde, 0x89, 0xd7, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0x07, 0x17, 0x6f, 0xbd, 0x5b,
-	0x02, 0x00, 0x00,
+	// 986 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x56, 0xdb, 0x6e, 0xe3, 0x44,
+	0x18, 0xae, 0xdb, 0xf4, 0x90, 0x49, 0x0f, 0xee, 0xb4, 0xdb, 0xce, 0x7a, 0xbb, 0xd6, 0x6c, 0x41,
+	0x28, 0xaa, 0x56, 0x29, 0x5a, 0xc4, 0x05, 0x42, 0xb0, 0x72, 0xeb, 0xe9, 0x62, 0x29, 0x27, 0xec,
+	0x74, 0x51, 0xb9, 0x89, 0xdc, 0xcc, 0x34, 0xb5, 0x48, 0x32, 0xc6, 0x76, 0x0a, 0x79, 0x03, 0xe4,
+	0x2b, 0x5e, 0xc0, 0xdc, 0xf0, 0x0e, 0x48, 0xbc, 0x01, 0x97, 0x7b, 0xc9, 0x25, 0x6a, 0x5f, 0x04,
+	0xf9, 0x94, 0xd8, 0xa9, 0x53, 0xb8, 0x9a, 0xf9, 0xff, 0xf9, 0xbf, 0xef, 0x9b, 0xff, 0x30, 0x89,
+	0xc1, 0xb3, 0xbe, 0xe5, 0x71, 0xdb, 0x32, 0x4f, 0x7b, 0x7c, 0x38, 0x64, 0x23, 0xaf, 0x66, 0x3b,
+	0xdc, 0xe3, 0xf0, 0x30, 0x71, 0xd7, 0xe6, 0x56, 0x69, 0xbf, 0xcf, 0xfb, 0x3c, 0x8a, 0x39, 0x0d,
+	0x77, 0x71, 0xb8, 0x74, 0x90, 0xb2, 0x38, 0xcc, 0xec, 0x79, 0x16, 0x1f, 0x25, 0x7e, 0x94, 0xfa,
+	0x4d, 0xcf, 0x33, 0x7b, 0xb7, 0x33, 0x81, 0xe3, 0x3f, 0x57, 0xc1, 0xfa, 0x79, 0x2c, 0x09, 0x11,
+	0x58, 0xef, 0x39, 0xcc, 0xf4, 0xb8, 0x83, 0x04, 0x2c, 0x54, 0xcb, 0x7a, 0x6a, 0xc2, 0x6d, 0xb0,
+	0x6c, 0x51, 0xb4, 0x8c, 0x85, 0x6a, 0x49, 0x5f, 0xb6, 0x28, 0x3c, 0x06, 0x9b, 0x0e, 0xb3, 0xb9,
+	0x6b, 0x79, 0xdc, 0x99, 0x68, 0x14, 0xad, 0x44, 0x27, 0x39, 0x1f, 0x3c, 0x02, 0x65, 0xdb, 0x74,
+	0xd8, 0xc8, 0xd3, 0x2c, 0x8a, 0x4a, 0x51, 0xc0, 0xcc, 0x01, 0xbf, 0x06, 0x6b, 0xb1, 0x81, 0x56,
+	0xb1, 0x50, 0xdd, 0x7e, 0xf3, 0x49, 0x6d, 0x41, 0xa6, 0xb5, 0xe4, 0x76, 0xed, 0x28, 0x5a, 0x4f,
+	0x50, 0x50, 0x06, 0x20, 0xa9, 0x54, 0x48, 0xbf, 0x16, 0xd1, 0x67, 0x3c, 0x10, 0x82, 0xd2, 0x35,
+	0xa7, 0x13, 0xb4, 0x1e, 0x25, 0x12, 0xed, 0x21, 0x01, 0x95, 0x59, 0xfe, 0x2e, 0xda, 0xc0, 0x2b,
+	0xd5, 0xca, 0x9b, 0x8f, 0x16, 0x0a, 0x2b, 0xd3, 0x58, 0x3d, 0x8b, 0x83, 0x12, 0xd8, 0xa0, 0xd6,
+	0xcd, 0xcd, 0x37, 0xe3, 0xd1, 0x0f, 0xa8, 0x1c, 0xd1, 0x4f, 0xed, 0x50, 0xd6, 0x36, 0xbd, 0x5b,
+	0x04, 0x62, 0xd9, 0x70, 0x0f, 0x0f, 0xc0, 0x9a, 0x3b, 0x71, 0x3d, 0x36, 0x44, 0x15, 0x2c, 0x54,
+	0x37, 0xf4, 0xc4, 0x82, 0xaf, 0xc1, 0xae, 0x39, 0xf6, 0x6e, 0xb9, 0xa3, 0xb8, 0x2e, 0xef, 0x59,
+	0x66, 0xd8, 0x2f, 0xb4, 0x19, 0x01, 0x1f, 0x1f, 0x84, 0xe5, 0x8c, 0xba, 0xc1, 0xa8, 0xe2, 0xa1,
+	0x2d, 0x2c, 0x54, 0x57, 0xf4, 0x99, 0x23, 0x3c, 0x1d, 0xdb, 0x34, 0x39, 0xdd, 0x8e, 0x4f, 0xa7,
+	0x0e, 0x78, 0x01, 0x2a, 0x49, 0x69, 0x3a, 0x13, 0x9b, 0xa1, 0x9d, 0xa8, 0xe2, 0x1f, 0xff, 0x57,
+	0xc5, 0xc3, 0x58, 0x3d, 0x0b, 0x0c, 0x33, 0x77, 0x98, 0xcb, 0x07, 0x77, 0x8c, 0x22, 0x31, 0xca,
+	0x65, 0x6a, 0x87, 0xc3, 0xe3, 0x30, 0x7b, 0x60, 0x31, 0x17, 0xed, 0xe2, 0x95, 0x6a, 0x49, 0x4f,
+	0x4d, 0xf8, 0x16, 0x94, 0xd3, 0x71, 0x74, 0x11, 0x8c, 0x8a, 0xfe, 0x6a, 0xa1, 0xb6, 0x9e, 0x44,
+	0xea, 0x33, 0x4c, 0x58, 0xc0, 0x5b, 0x8b, 0x52, 0x36, 0x42, 0x7b, 0x71, 0x01, 0x63, 0xeb, 0xe4,
+	0xb7, 0x32, 0xa8, 0x64, 0xee, 0x0a, 0x4f, 0xc0, 0xee, 0x79, 0xab, 0xd1, 0x20, 0xcd, 0x4e, 0xb7,
+	0x73, 0xd5, 0x26, 0xdd, 0x66, 0xab, 0x49, 0xc4, 0x25, 0x69, 0xcf, 0x0f, 0xf0, 0x4e, 0x26, 0xae,
+	0xc9, 0x47, 0x0c, 0xbe, 0x06, 0x30, 0x17, 0xab, 0x93, 0x76, 0xfd, 0x4a, 0x14, 0xa4, 0x7d, 0x3f,
+	0xc0, 0x62, 0xb6, 0x00, 0xcc, 0x1e, 0x4c, 0xe0, 0xe7, 0xe0, 0x30, 0x17, 0xad, 0xa8, 0x6a, 0xb7,
+	0xae, 0x9c, 0x91, 0xba, 0x21, 0x2e, 0x4b, 0xc8, 0x0f, 0xf0, 0x7e, 0x06, 0xa2, 0x50, 0x5a, 0x37,
+	0xaf, 0xd9, 0xc0, 0x85, 0x5f, 0x02, 0x69, 0x4e, 0xa4, 0xd1, 0x7a, 0x4f, 0x52, 0xe4, 0x8a, 0xf4,
+	0xc2, 0x0f, 0xf0, 0x61, 0x4e, 0x6c, 0xc8, 0xef, 0xd8, 0x02, 0x70, 0xa8, 0xa9, 0x18, 0x86, 0xf6,
+	0xae, 0x49, 0x88, 0x21, 0x96, 0x1e, 0x81, 0x15, 0x4a, 0x15, 0xd7, 0xb5, 0xfa, 0x23, 0xc6, 0x5c,
+	0xa8, 0x80, 0x97, 0x45, 0xca, 0x33, 0xfc, 0xaa, 0x24, 0xfb, 0x01, 0x96, 0x1e, 0x89, 0xcf, 0x28,
+	0x8a, 0xf4, 0x75, 0xf2, 0x5e, 0x23, 0xdf, 0x11, 0xdd, 0x10, 0xd7, 0x8a, 0xf4, 0x75, 0x76, 0x67,
+	0xb1, 0x9f, 0x98, 0xb3, 0x50, 0x7f, 0x86, 0x5f, 0x5f, 0xa0, 0x3f, 0xa3, 0xf8, 0x0a, 0xbc, 0xc8,
+	0x51, 0x34, 0x5a, 0xaa, 0x76, 0xa1, 0x11, 0xb5, 0xdb, 0xd1, 0x3a, 0x75, 0x22, 0x6e, 0x48, 0x47,
+	0x7e, 0x80, 0x51, 0x86, 0xa0, 0xc1, 0xa9, 0x75, 0x63, 0x31, 0xda, 0xb1, 0xbc, 0x01, 0x83, 0x1a,
+	0x78, 0x55, 0x0c, 0x57, 0x89, 0x71, 0xae, 0x6b, 0xed, 0x8e, 0xd6, 0x6a, 0x8a, 0x65, 0xe9, 0xd8,
+	0x0f, 0xb0, 0x5c, 0x40, 0xa2, 0x32, 0xb7, 0xe7, 0x58, 0x76, 0xf4, 0xf4, 0xbe, 0x00, 0xcf, 0x73,
+	0x54, 0x9a, 0x61, 0x5c, 0x92, 0xee, 0x79, 0xbd, 0x65, 0x10, 0x55, 0x04, 0x92, 0xe4, 0x07, 0xf8,
+	0x20, 0x43, 0xa1, 0xb9, 0xee, 0x98, 0x9d, 0x0f, 0xb8, 0xcb, 0xe8, 0x02, 0x68, 0xab, 0x4d, 0x9a,
+	0x44, 0x15, 0x2b, 0xc5, 0xd0, 0x96, 0xcd, 0x46, 0x8c, 0xc2, 0x0b, 0x80, 0x73, 0xd0, 0xf6, 0x65,
+	0xbd, 0xde, 0xd5, 0xc9, 0xb7, 0x97, 0xc4, 0xe8, 0xa4, 0xe2, 0x9b, 0x12, 0xf6, 0x03, 0x7c, 0x94,
+	0x61, 0x68, 0x8f, 0x07, 0x03, 0x9d, 0xfd, 0x38, 0x66, 0xae, 0x97, 0x5c, 0xe1, 0x49, 0x9e, 0xe4,
+	0x26, 0x5b, 0x4f, 0xf1, 0xfc, 0x9f, 0xfb, 0x34, 0x88, 0xfe, 0x8e, 0xa8, 0xe2, 0xf6, 0x53, 0x3c,
+	0x0d, 0xe6, 0xf4, 0x19, 0x85, 0x35, 0xb0, 0x37, 0x37, 0x1a, 0xe1, 0x4c, 0x88, 0x3b, 0xd2, 0x33,
+	0x3f, 0xc0, 0xbb, 0xb9, 0x81, 0x08, 0x47, 0xa1, 0xf0, 0xed, 0x9d, 0xb5, 0x2e, 0x9b, 0x9d, 0x2b,
+	0x51, 0x2c, 0x7a, 0x7b, 0x67, 0x7c, 0x3c, 0xf2, 0x26, 0xf0, 0x2d, 0x38, 0x2a, 0xee, 0x7f, 0x82,
+	0xdd, 0x95, 0x5e, 0xfa, 0x01, 0x7e, 0x5e, 0xd0, 0xfa, 0x84, 0x60, 0x7e, 0xfe, 0xe3, 0x92, 0xa7,
+	0x70, 0xf8, 0x68, 0xfe, 0xe3, 0x72, 0xc7, 0x60, 0xa9, 0xf4, 0xcb, 0xef, 0xf2, 0xd2, 0xc9, 0x1f,
+	0x02, 0xd8, 0xca, 0xfd, 0x7d, 0x65, 0x93, 0x6f, 0x2b, 0x7a, 0xb8, 0x24, 0x3f, 0x52, 0xd9, 0xe4,
+	0xe3, 0xd8, 0xe8, 0x67, 0xea, 0x53, 0xb0, 0x3f, 0x17, 0x1f, 0x4d, 0x90, 0x28, 0x48, 0x07, 0x7e,
+	0x80, 0x61, 0x0e, 0x10, 0x0d, 0x4f, 0xf6, 0xd9, 0x24, 0x88, 0x6c, 0xa3, 0xc4, 0xe5, 0xdc, 0xb3,
+	0x89, 0x81, 0x99, 0x1e, 0xc5, 0x17, 0x3f, 0x53, 0xff, 0xba, 0x97, 0x85, 0x0f, 0xf7, 0xb2, 0xf0,
+	0xcf, 0xbd, 0x2c, 0xfc, 0xfa, 0x20, 0x2f, 0x7d, 0x78, 0x90, 0x97, 0xfe, 0x7e, 0x90, 0x97, 0xbe,
+	0x3f, 0xe9, 0x5b, 0xde, 0xed, 0xf8, 0xba, 0xd6, 0xe3, 0xc3, 0xd3, 0xf4, 0xa3, 0x22, 0x5d, 0x7f,
+	0x9e, 0xee, 0xbc, 0x89, 0xcd, 0xdc, 0xeb, 0xb5, 0xe8, 0x13, 0xe3, 0xb3, 0x7f, 0x03, 0x00, 0x00,
+	0xff, 0xff, 0x2d, 0xd1, 0x0e, 0x8d, 0xdc, 0x08, 0x00, 0x00,
 }
 
 func (m *Comment) Marshal() (dAtA []byte, err error) {
@@ -244,27 +409,87 @@ func (m *Comment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Hidden {
+		i--
+		if m.Hidden {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x98
+	}
+	if len(m.Reactions) > 0 {
+		for iNdEx := len(m.Reactions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Reactions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintComment(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1
+			i--
+			dAtA[i] = 0x92
+		}
+	}
+	if len(m.Replies) > 0 {
+		dAtA2 := make([]byte, len(m.Replies)*10)
+		var j1 int
+		for _, num := range m.Replies {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintComment(dAtA, i, uint64(j1))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
+	}
+	if m.Resolved {
+		i--
+		if m.Resolved {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x80
+	}
 	if m.CommentType != 0 {
 		i = encodeVarintComment(dAtA, i, uint64(m.CommentType))
 		i--
-		dAtA[i] = 0x68
+		dAtA[i] = 0x78
 	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintComment(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x60
+		dAtA[i] = 0x70
 	}
 	if m.CreatedAt != 0 {
 		i = encodeVarintComment(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x58
+		dAtA[i] = 0x68
 	}
 	if len(m.AuthorAssociation) > 0 {
 		i -= len(m.AuthorAssociation)
 		copy(dAtA[i:], m.AuthorAssociation)
 		i = encodeVarintComment(dAtA, i, uint64(len(m.AuthorAssociation)))
 		i--
-		dAtA[i] = 0x52
+		dAtA[i] = 0x62
 	}
 	if m.System {
 		i--
@@ -274,29 +499,34 @@ func (m *Comment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x48
+		dAtA[i] = 0x58
 	}
 	if len(m.Path) > 0 {
 		i -= len(m.Path)
 		copy(dAtA[i:], m.Path)
 		i = encodeVarintComment(dAtA, i, uint64(len(m.Path)))
 		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x52
 	}
 	if len(m.DiffHunk) > 0 {
 		i -= len(m.DiffHunk)
 		copy(dAtA[i:], m.DiffHunk)
 		i = encodeVarintComment(dAtA, i, uint64(len(m.DiffHunk)))
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x4a
 	}
 	if len(m.Attachments) > 0 {
 		for iNdEx := len(m.Attachments) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Attachments[iNdEx])
-			copy(dAtA[i:], m.Attachments[iNdEx])
-			i = encodeVarintComment(dAtA, i, uint64(len(m.Attachments[iNdEx])))
+			{
+				size, err := m.Attachments[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintComment(dAtA, i, uint64(size))
+			}
 			i--
-			dAtA[i] = 0x32
+			dAtA[i] = 0x42
 		}
 	}
 	if len(m.Body) > 0 {
@@ -304,15 +534,25 @@ func (m *Comment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Body)
 		i = encodeVarintComment(dAtA, i, uint64(len(m.Body)))
 		i--
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x3a
 	}
 	if m.CommentIid != 0 {
 		i = encodeVarintComment(dAtA, i, uint64(m.CommentIid))
 		i--
+		dAtA[i] = 0x30
+	}
+	if m.Parent != 0 {
+		i = encodeVarintComment(dAtA, i, uint64(m.Parent))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.ParentIid != 0 {
+		i = encodeVarintComment(dAtA, i, uint64(m.ParentIid))
+		i--
 		dAtA[i] = 0x20
 	}
-	if m.ParentId != 0 {
-		i = encodeVarintComment(dAtA, i, uint64(m.ParentId))
+	if m.RepositoryId != 0 {
+		i = encodeVarintComment(dAtA, i, uint64(m.RepositoryId))
 		i--
 		dAtA[i] = 0x18
 	}
@@ -355,8 +595,14 @@ func (m *Comment) Size() (n int) {
 	if m.Id != 0 {
 		n += 1 + sovComment(uint64(m.Id))
 	}
-	if m.ParentId != 0 {
-		n += 1 + sovComment(uint64(m.ParentId))
+	if m.RepositoryId != 0 {
+		n += 1 + sovComment(uint64(m.RepositoryId))
+	}
+	if m.ParentIid != 0 {
+		n += 1 + sovComment(uint64(m.ParentIid))
+	}
+	if m.Parent != 0 {
+		n += 1 + sovComment(uint64(m.Parent))
 	}
 	if m.CommentIid != 0 {
 		n += 1 + sovComment(uint64(m.CommentIid))
@@ -366,8 +612,8 @@ func (m *Comment) Size() (n int) {
 		n += 1 + l + sovComment(uint64(l))
 	}
 	if len(m.Attachments) > 0 {
-		for _, s := range m.Attachments {
-			l = len(s)
+		for _, e := range m.Attachments {
+			l = e.Size()
 			n += 1 + l + sovComment(uint64(l))
 		}
 	}
@@ -394,6 +640,25 @@ func (m *Comment) Size() (n int) {
 	}
 	if m.CommentType != 0 {
 		n += 1 + sovComment(uint64(m.CommentType))
+	}
+	if m.Resolved {
+		n += 3
+	}
+	if len(m.Replies) > 0 {
+		l = 0
+		for _, e := range m.Replies {
+			l += sovComment(uint64(e))
+		}
+		n += 2 + sovComment(uint64(l)) + l
+	}
+	if len(m.Reactions) > 0 {
+		for _, e := range m.Reactions {
+			l = e.Size()
+			n += 2 + l + sovComment(uint64(l))
+		}
+	}
+	if m.Hidden {
+		n += 3
 	}
 	return n
 }
@@ -486,9 +751,9 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 			}
 		case 3:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ParentId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
 			}
-			m.ParentId = 0
+			m.RepositoryId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowComment
@@ -498,12 +763,50 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ParentId |= uint64(b&0x7F) << shift
+				m.RepositoryId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentIid", wireType)
+			}
+			m.ParentIid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComment
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ParentIid |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Parent", wireType)
+			}
+			m.Parent = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComment
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Parent |= CommentParent(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CommentIid", wireType)
 			}
@@ -522,7 +825,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 5:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Body", wireType)
 			}
@@ -554,11 +857,11 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 			}
 			m.Body = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Attachments", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowComment
@@ -568,25 +871,27 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthComment
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthComment
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Attachments = append(m.Attachments, string(dAtA[iNdEx:postIndex]))
+			m.Attachments = append(m.Attachments, &Attachment{})
+			if err := m.Attachments[len(m.Attachments)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
-		case 7:
+		case 9:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DiffHunk", wireType)
 			}
@@ -618,7 +923,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 			}
 			m.DiffHunk = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 8:
+		case 10:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Path", wireType)
 			}
@@ -650,7 +955,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 			}
 			m.Path = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 9:
+		case 11:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field System", wireType)
 			}
@@ -670,7 +975,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.System = bool(v != 0)
-		case 10:
+		case 12:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AuthorAssociation", wireType)
 			}
@@ -702,7 +1007,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 			}
 			m.AuthorAssociation = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 11:
+		case 13:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
@@ -721,7 +1026,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 12:
+		case 14:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
@@ -740,7 +1045,7 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 13:
+		case 15:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CommentType", wireType)
 			}
@@ -754,11 +1059,161 @@ func (m *Comment) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CommentType |= Comment_Type(b&0x7F) << shift
+				m.CommentType |= CommentType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+		case 16:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Resolved", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComment
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Resolved = bool(v != 0)
+		case 17:
+			if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowComment
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Replies = append(m.Replies, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowComment
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthComment
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthComment
+				}
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA[iNdEx:postIndex] {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Replies) == 0 {
+					m.Replies = make([]uint64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowComment
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Replies = append(m.Replies, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Replies", wireType)
+			}
+		case 18:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reactions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComment
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthComment
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthComment
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reactions = append(m.Reactions, &Reaction{})
+			if err := m.Reactions[len(m.Reactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 19:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hidden", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowComment
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Hidden = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipComment(dAtA[iNdEx:])

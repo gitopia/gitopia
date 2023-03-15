@@ -5,6 +5,7 @@ import "gitopia/task.proto";
 import "gitopia/branch.proto";
 import "gitopia/tag.proto";
 import "gitopia/member.proto";
+import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 import "gitopia/release.proto";
@@ -15,21 +16,26 @@ import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
+import "gitopia/params.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
-		repeated BaseRepositoryKey baseRepositoryKeyList = 26 [(gogoproto.nullable) = false];
+		// params defines all the paramaters of the module.
+		Params params = 29 [(gogoproto.nullable) = false];
+		repeated Bounty bountyList = 27 [(gogoproto.nullable) = false];
+  		uint64 bountyCount = 28;
 		repeated UserDao userDaoList = 25 [(gogoproto.nullable) = false];
-    	repeated Task taskList = 17 [(gogoproto.nullable) = false];
-  		uint64 taskCount = 18;
-  		repeated Branch branchList = 19 [(gogoproto.nullable) = false];
-  		uint64 branchCount = 20;
-		repeated Tag tagList = 21 [(gogoproto.nullable) = false];
-		uint64 tagCount = 22;
+		repeated BaseRepositoryKey baseRepositoryKeyList = 26 [(gogoproto.nullable) = false];
 		repeated Member memberList = 23 [(gogoproto.nullable) = false];
 		uint64 memberCount = 24;
+		repeated Tag tagList = 21 [(gogoproto.nullable) = false];
+		uint64 tagCount = 22;
+		repeated Branch branchList = 19 [(gogoproto.nullable) = false];
+  		uint64 branchCount = 20;
+		repeated Task taskList = 17 [(gogoproto.nullable) = false];
+  		uint64 taskCount = 18;
   // this line is used by starport scaffolding # genesis/proto/state
 		repeated Release releaseList = 15 [(gogoproto.nullable) = false];
 		uint64 releaseCount = 16;

@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -13,17 +13,12 @@ export interface Tag {
   updatedAt: number;
 }
 
-const baseTag: object = {
-  id: 0,
-  repositoryId: 0,
-  name: "",
-  sha: "",
-  createdAt: 0,
-  updatedAt: 0,
-};
+function createBaseTag(): Tag {
+  return { id: 0, repositoryId: 0, name: "", sha: "", createdAt: 0, updatedAt: 0 };
+}
 
 export const Tag = {
-  encode(message: Tag, writer: Writer = Writer.create()): Writer {
+  encode(message: Tag, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -45,10 +40,10 @@ export const Tag = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Tag {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Tag {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseTag } as Tag;
+    const message = createBaseTag();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -79,108 +74,68 @@ export const Tag = {
   },
 
   fromJSON(object: any): Tag {
-    const message = { ...baseTag } as Tag;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = Number(object.repositoryId);
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name);
-    } else {
-      message.name = "";
-    }
-    if (object.sha !== undefined && object.sha !== null) {
-      message.sha = String(object.sha);
-    } else {
-      message.sha = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = Number(object.createdAt);
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = Number(object.updatedAt);
-    } else {
-      message.updatedAt = 0;
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      repositoryId: isSet(object.repositoryId) ? Number(object.repositoryId) : 0,
+      name: isSet(object.name) ? String(object.name) : "",
+      sha: isSet(object.sha) ? String(object.sha) : "",
+      createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
+      updatedAt: isSet(object.updatedAt) ? Number(object.updatedAt) : 0,
+    };
   },
 
   toJSON(message: Tag): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
-    message.repositoryId !== undefined &&
-      (obj.repositoryId = message.repositoryId);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.repositoryId !== undefined && (obj.repositoryId = Math.round(message.repositoryId));
     message.name !== undefined && (obj.name = message.name);
     message.sha !== undefined && (obj.sha = message.sha);
-    message.createdAt !== undefined && (obj.createdAt = message.createdAt);
-    message.updatedAt !== undefined && (obj.updatedAt = message.updatedAt);
+    message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
+    message.updatedAt !== undefined && (obj.updatedAt = Math.round(message.updatedAt));
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Tag>): Tag {
-    const message = { ...baseTag } as Tag;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.repositoryId !== undefined && object.repositoryId !== null) {
-      message.repositoryId = object.repositoryId;
-    } else {
-      message.repositoryId = 0;
-    }
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name;
-    } else {
-      message.name = "";
-    }
-    if (object.sha !== undefined && object.sha !== null) {
-      message.sha = object.sha;
-    } else {
-      message.sha = "";
-    }
-    if (object.createdAt !== undefined && object.createdAt !== null) {
-      message.createdAt = object.createdAt;
-    } else {
-      message.createdAt = 0;
-    }
-    if (object.updatedAt !== undefined && object.updatedAt !== null) {
-      message.updatedAt = object.updatedAt;
-    } else {
-      message.updatedAt = 0;
-    }
+  fromPartial<I extends Exact<DeepPartial<Tag>, I>>(object: I): Tag {
+    const message = createBaseTag();
+    message.id = object.id ?? 0;
+    message.repositoryId = object.repositoryId ?? 0;
+    message.name = object.name ?? "";
+    message.sha = object.sha ?? "";
+    message.createdAt = object.createdAt ?? 0;
+    message.updatedAt = object.updatedAt ?? 0;
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -189,7 +144,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

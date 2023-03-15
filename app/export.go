@@ -145,7 +145,7 @@ func (app *GitopiaApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddr
 
 	// Iterate through validators by power descending, reset bond heights, and
 	// update bond intra-tx counters.
-	store := ctx.KVStore(app.keys[stakingtypes.StoreKey])
+	store := ctx.KVStore(app.GetKey(stakingtypes.StoreKey))
 	iter := sdk.KVStoreReversePrefixIterator(store, stakingtypes.ValidatorsKey)
 	counter := int16(0)
 
@@ -182,4 +182,8 @@ func (app *GitopiaApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddr
 			return false
 		},
 	)
+}
+
+func (app *GitopiaApp) ExportState(ctx sdk.Context) map[string]json.RawMessage {
+	return app.mm.ExportGenesis(ctx, app.AppCodec())
 }

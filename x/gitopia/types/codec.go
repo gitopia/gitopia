@@ -32,6 +32,12 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgUpdateRepositoryBackupRef{}, "gitopia/UpdateRepositoryBackupRef", nil)
 	cdc.RegisterConcrete(&MsgAddRepositoryBackupRef{}, "gitopia/AddRepositoryBackupRef", nil)
+
+	cdc.RegisterConcrete(&MsgCreateBounty{}, "gitopia/CreateBounty", nil)
+	cdc.RegisterConcrete(&MsgUpdateBountyExpiry{}, "gitopia/UpdateBountyExpiry", nil)
+	cdc.RegisterConcrete(&MsgCloseBounty{}, "gitopia/CloseBounty", nil)
+	cdc.RegisterConcrete(&MsgDeleteBounty{}, "gitopia/DeleteBounty", nil)
+	cdc.RegisterConcrete(&MsgToggleForcePush{}, "gitopia/ToggleForcePush", nil)
 	// this line is used by starport scaffolding # 2
 	cdc.RegisterConcrete(&MsgCreateRelease{}, "gitopia/CreateRelease", nil)
 	cdc.RegisterConcrete(&MsgUpdateRelease{}, "gitopia/UpdateRelease", nil)
@@ -40,9 +46,12 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreatePullRequest{}, "gitopia/CreatePullRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestDescription{}, "gitopia/UpdatePullRequestDescription", nil)
+	cdc.RegisterConcrete(&MsgInvokeMergePullRequest{}, "gitopia/InvokeMergePullRequest", nil)
 	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestReviewers{}, "gitopia/AddPullRequestReviewers", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestReviewers{}, "gitopia/RemovePullRequestReviewers", nil)
+	cdc.RegisterConcrete(&MsgLinkPullRequestIssueByIid{}, "gitopia/LinkPullRequestIssueByIid", nil)
+	cdc.RegisterConcrete(&MsgUnlinkPullRequestIssueByIid{}, "gitopia/UnlinkPullRequestIssueByIid", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestAssignees{}, "gitopia/AddPullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestAssignees{}, "gitopia/RemovePullRequestAssignees", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestLabels{}, "gitopia/AddPullRequestLabels", nil)
@@ -72,6 +81,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteIssue{}, "gitopia/DeleteIssue", nil)
 
 	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
+	cdc.RegisterConcrete(&MsgInvokeForkRepository{}, "gitopia/InvokeForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepository{}, "gitopia/ForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
@@ -128,7 +138,17 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgAddRepositoryBackupRef{},
 		&MsgUpdateRepositoryBackupRef{},
 	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateBounty{},
+		&MsgUpdateBountyExpiry{},
+		&MsgCloseBounty{},
+		&MsgDeleteBounty{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgToggleForcePush{},
+	)
 	// this line is used by starport scaffolding # 3
+
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRelease{},
 		&MsgUpdateRelease{},
@@ -138,11 +158,14 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreatePullRequest{},
 		&MsgUpdatePullRequestTitle{},
 		&MsgUpdatePullRequestDescription{},
+		&MsgInvokeMergePullRequest{},
 		&MsgSetPullRequestState{},
 		&MsgAddPullRequestReviewers{},
 		&MsgRemovePullRequestReviewers{},
 		&MsgAddPullRequestAssignees{},
 		&MsgRemovePullRequestAssignees{},
+		&MsgLinkPullRequestIssueByIid{},
+		&MsgUnlinkPullRequestIssueByIid{},
 		&MsgAddPullRequestLabels{},
 		&MsgRemovePullRequestLabels{},
 		&MsgDeletePullRequest{},
@@ -174,6 +197,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRepository{},
+		&MsgInvokeForkRepository{},
 		&MsgForkRepository{},
 		&MsgForkRepositorySuccess{},
 		&MsgRenameRepository{},

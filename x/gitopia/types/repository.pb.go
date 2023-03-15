@@ -79,7 +79,7 @@ func (x RepositoryBackup_Store) String() string {
 }
 
 func (RepositoryBackup_Store) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_771033d6361900fa, []int{10, 0}
+	return fileDescriptor_771033d6361900fa, []int{9, 0}
 }
 
 type Repository struct {
@@ -91,26 +91,24 @@ type Repository struct {
 	Forks               []uint64                  `protobuf:"varint,6,rep,packed,name=forks,proto3" json:"forks,omitempty"`
 	Subscribers         string                    `protobuf:"bytes,7,opt,name=subscribers,proto3" json:"subscribers,omitempty"`
 	Commits             string                    `protobuf:"bytes,8,opt,name=commits,proto3" json:"commits,omitempty"`
-	Issues              []*RepositoryIssue        `protobuf:"bytes,9,rep,name=issues,proto3" json:"issues,omitempty"`
-	PullRequests        []*RepositoryPullRequest  `protobuf:"bytes,10,rep,name=pullRequests,proto3" json:"pullRequests,omitempty"`
-	IssuesCount         uint64                    `protobuf:"varint,11,opt,name=issuesCount,proto3" json:"issuesCount,omitempty"`
-	PullsCount          uint64                    `protobuf:"varint,12,opt,name=pullsCount,proto3" json:"pullsCount,omitempty"`
-	Labels              []*RepositoryLabel        `protobuf:"bytes,13,rep,name=labels,proto3" json:"labels,omitempty"`
-	LabelsCount         uint64                    `protobuf:"varint,14,opt,name=labelsCount,proto3" json:"labelsCount,omitempty"`
-	Releases            []*RepositoryRelease      `protobuf:"bytes,15,rep,name=releases,proto3" json:"releases,omitempty"`
-	CreatedAt           int64                     `protobuf:"varint,16,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt           int64                     `protobuf:"varint,17,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	PushedAt            int64                     `protobuf:"varint,18,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
-	Stargazers          []uint64                  `protobuf:"varint,19,rep,packed,name=stargazers,proto3" json:"stargazers,omitempty"`
-	Archived            bool                      `protobuf:"varint,20,opt,name=archived,proto3" json:"archived,omitempty"`
-	License             string                    `protobuf:"bytes,21,opt,name=license,proto3" json:"license,omitempty"`
-	DefaultBranch       string                    `protobuf:"bytes,22,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
-	Parent              uint64                    `protobuf:"varint,23,opt,name=parent,proto3" json:"parent,omitempty"`
-	Fork                bool                      `protobuf:"varint,24,opt,name=fork,proto3" json:"fork,omitempty"`
-	Collaborators       []*RepositoryCollaborator `protobuf:"bytes,25,rep,name=collaborators,proto3" json:"collaborators,omitempty"`
-	AllowForking        bool                      `protobuf:"varint,26,opt,name=allowForking,proto3" json:"allowForking,omitempty"`
-	Backups             []*RepositoryBackup       `protobuf:"bytes,27,rep,name=backups,proto3" json:"backups,omitempty"`
-	EnableArweaveBackup bool                      `protobuf:"varint,28,opt,name=enableArweaveBackup,proto3" json:"enableArweaveBackup,omitempty"`
+	IssuesCount         uint64                    `protobuf:"varint,9,opt,name=issuesCount,proto3" json:"issuesCount,omitempty"`
+	PullsCount          uint64                    `protobuf:"varint,10,opt,name=pullsCount,proto3" json:"pullsCount,omitempty"`
+	Labels              []*RepositoryLabel        `protobuf:"bytes,11,rep,name=labels,proto3" json:"labels,omitempty"`
+	LabelsCount         uint64                    `protobuf:"varint,12,opt,name=labelsCount,proto3" json:"labelsCount,omitempty"`
+	Releases            []*RepositoryRelease      `protobuf:"bytes,13,rep,name=releases,proto3" json:"releases,omitempty"`
+	CreatedAt           int64                     `protobuf:"varint,14,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt           int64                     `protobuf:"varint,15,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	PushedAt            int64                     `protobuf:"varint,16,opt,name=pushedAt,proto3" json:"pushedAt,omitempty"`
+	Stargazers          []uint64                  `protobuf:"varint,17,rep,packed,name=stargazers,proto3" json:"stargazers,omitempty"`
+	Archived            bool                      `protobuf:"varint,18,opt,name=archived,proto3" json:"archived,omitempty"`
+	License             string                    `protobuf:"bytes,19,opt,name=license,proto3" json:"license,omitempty"`
+	DefaultBranch       string                    `protobuf:"bytes,20,opt,name=defaultBranch,proto3" json:"defaultBranch,omitempty"`
+	Parent              uint64                    `protobuf:"varint,21,opt,name=parent,proto3" json:"parent,omitempty"`
+	Fork                bool                      `protobuf:"varint,22,opt,name=fork,proto3" json:"fork,omitempty"`
+	Collaborators       []*RepositoryCollaborator `protobuf:"bytes,23,rep,name=collaborators,proto3" json:"collaborators,omitempty"`
+	AllowForking        bool                      `protobuf:"varint,24,opt,name=allowForking,proto3" json:"allowForking,omitempty"`
+	Backups             []*RepositoryBackup       `protobuf:"bytes,25,rep,name=backups,proto3" json:"backups,omitempty"`
+	EnableArweaveBackup bool                      `protobuf:"varint,26,opt,name=enableArweaveBackup,proto3" json:"enableArweaveBackup,omitempty"`
 }
 
 func (m *Repository) Reset()         { *m = Repository{} }
@@ -200,20 +198,6 @@ func (m *Repository) GetCommits() string {
 		return m.Commits
 	}
 	return ""
-}
-
-func (m *Repository) GetIssues() []*RepositoryIssue {
-	if m != nil {
-		return m.Issues
-	}
-	return nil
-}
-
-func (m *Repository) GetPullRequests() []*RepositoryPullRequest {
-	if m != nil {
-		return m.PullRequests
-	}
-	return nil
 }
 
 func (m *Repository) GetIssuesCount() uint64 {
@@ -506,23 +490,23 @@ func (m *RepositoryOwner) GetType() OwnerType {
 	return OwnerType_USER
 }
 
-type RepositoryIssue struct {
+type IssueIid struct {
 	Iid uint64 `protobuf:"varint,1,opt,name=iid,proto3" json:"iid,omitempty"`
 	Id  uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (m *RepositoryIssue) Reset()         { *m = RepositoryIssue{} }
-func (m *RepositoryIssue) String() string { return proto.CompactTextString(m) }
-func (*RepositoryIssue) ProtoMessage()    {}
-func (*RepositoryIssue) Descriptor() ([]byte, []int) {
+func (m *IssueIid) Reset()         { *m = IssueIid{} }
+func (m *IssueIid) String() string { return proto.CompactTextString(m) }
+func (*IssueIid) ProtoMessage()    {}
+func (*IssueIid) Descriptor() ([]byte, []int) {
 	return fileDescriptor_771033d6361900fa, []int{4}
 }
-func (m *RepositoryIssue) XXX_Unmarshal(b []byte) error {
+func (m *IssueIid) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *RepositoryIssue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *IssueIid) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_RepositoryIssue.Marshal(b, m, deterministic)
+		return xxx_messageInfo_IssueIid.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -532,49 +516,49 @@ func (m *RepositoryIssue) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *RepositoryIssue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RepositoryIssue.Merge(m, src)
+func (m *IssueIid) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueIid.Merge(m, src)
 }
-func (m *RepositoryIssue) XXX_Size() int {
+func (m *IssueIid) XXX_Size() int {
 	return m.Size()
 }
-func (m *RepositoryIssue) XXX_DiscardUnknown() {
-	xxx_messageInfo_RepositoryIssue.DiscardUnknown(m)
+func (m *IssueIid) XXX_DiscardUnknown() {
+	xxx_messageInfo_IssueIid.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RepositoryIssue proto.InternalMessageInfo
+var xxx_messageInfo_IssueIid proto.InternalMessageInfo
 
-func (m *RepositoryIssue) GetIid() uint64 {
+func (m *IssueIid) GetIid() uint64 {
 	if m != nil {
 		return m.Iid
 	}
 	return 0
 }
 
-func (m *RepositoryIssue) GetId() uint64 {
+func (m *IssueIid) GetId() uint64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-type RepositoryPullRequest struct {
+type PullRequestIid struct {
 	Iid uint64 `protobuf:"varint,1,opt,name=iid,proto3" json:"iid,omitempty"`
 	Id  uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (m *RepositoryPullRequest) Reset()         { *m = RepositoryPullRequest{} }
-func (m *RepositoryPullRequest) String() string { return proto.CompactTextString(m) }
-func (*RepositoryPullRequest) ProtoMessage()    {}
-func (*RepositoryPullRequest) Descriptor() ([]byte, []int) {
+func (m *PullRequestIid) Reset()         { *m = PullRequestIid{} }
+func (m *PullRequestIid) String() string { return proto.CompactTextString(m) }
+func (*PullRequestIid) ProtoMessage()    {}
+func (*PullRequestIid) Descriptor() ([]byte, []int) {
 	return fileDescriptor_771033d6361900fa, []int{5}
 }
-func (m *RepositoryPullRequest) XXX_Unmarshal(b []byte) error {
+func (m *PullRequestIid) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *RepositoryPullRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *PullRequestIid) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_RepositoryPullRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_PullRequestIid.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -584,26 +568,26 @@ func (m *RepositoryPullRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *RepositoryPullRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RepositoryPullRequest.Merge(m, src)
+func (m *PullRequestIid) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PullRequestIid.Merge(m, src)
 }
-func (m *RepositoryPullRequest) XXX_Size() int {
+func (m *PullRequestIid) XXX_Size() int {
 	return m.Size()
 }
-func (m *RepositoryPullRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_RepositoryPullRequest.DiscardUnknown(m)
+func (m *PullRequestIid) XXX_DiscardUnknown() {
+	xxx_messageInfo_PullRequestIid.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_RepositoryPullRequest proto.InternalMessageInfo
+var xxx_messageInfo_PullRequestIid proto.InternalMessageInfo
 
-func (m *RepositoryPullRequest) GetIid() uint64 {
+func (m *PullRequestIid) GetIid() uint64 {
 	if m != nil {
 		return m.Iid
 	}
 	return 0
 }
 
-func (m *RepositoryPullRequest) GetId() uint64 {
+func (m *PullRequestIid) GetId() uint64 {
 	if m != nil {
 		return m.Id
 	}
@@ -782,74 +766,6 @@ func (m *RepositoryRelease) GetTagName() string {
 	return ""
 }
 
-type Attachment struct {
-	Name     string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Size_    uint64 `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
-	Sha      string `protobuf:"bytes,3,opt,name=sha,proto3" json:"sha,omitempty"`
-	Uploader string `protobuf:"bytes,4,opt,name=uploader,proto3" json:"uploader,omitempty"`
-}
-
-func (m *Attachment) Reset()         { *m = Attachment{} }
-func (m *Attachment) String() string { return proto.CompactTextString(m) }
-func (*Attachment) ProtoMessage()    {}
-func (*Attachment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_771033d6361900fa, []int{9}
-}
-func (m *Attachment) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Attachment) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Attachment.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Attachment) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Attachment.Merge(m, src)
-}
-func (m *Attachment) XXX_Size() int {
-	return m.Size()
-}
-func (m *Attachment) XXX_DiscardUnknown() {
-	xxx_messageInfo_Attachment.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Attachment proto.InternalMessageInfo
-
-func (m *Attachment) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *Attachment) GetSize_() uint64 {
-	if m != nil {
-		return m.Size_
-	}
-	return 0
-}
-
-func (m *Attachment) GetSha() string {
-	if m != nil {
-		return m.Sha
-	}
-	return ""
-}
-
-func (m *Attachment) GetUploader() string {
-	if m != nil {
-		return m.Uploader
-	}
-	return ""
-}
-
 type RepositoryBackup struct {
 	Store RepositoryBackup_Store `protobuf:"varint,1,opt,name=store,proto3,enum=gitopia.gitopia.gitopia.RepositoryBackup_Store" json:"store,omitempty"`
 	Refs  []string               `protobuf:"bytes,2,rep,name=refs,proto3" json:"refs,omitempty"`
@@ -859,7 +775,7 @@ func (m *RepositoryBackup) Reset()         { *m = RepositoryBackup{} }
 func (m *RepositoryBackup) String() string { return proto.CompactTextString(m) }
 func (*RepositoryBackup) ProtoMessage()    {}
 func (*RepositoryBackup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_771033d6361900fa, []int{10}
+	return fileDescriptor_771033d6361900fa, []int{9}
 }
 func (m *RepositoryBackup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -909,79 +825,73 @@ func init() {
 	proto.RegisterType((*RepositoryId)(nil), "gitopia.gitopia.gitopia.RepositoryId")
 	proto.RegisterType((*BaseRepositoryKey)(nil), "gitopia.gitopia.gitopia.BaseRepositoryKey")
 	proto.RegisterType((*RepositoryOwner)(nil), "gitopia.gitopia.gitopia.RepositoryOwner")
-	proto.RegisterType((*RepositoryIssue)(nil), "gitopia.gitopia.gitopia.RepositoryIssue")
-	proto.RegisterType((*RepositoryPullRequest)(nil), "gitopia.gitopia.gitopia.RepositoryPullRequest")
+	proto.RegisterType((*IssueIid)(nil), "gitopia.gitopia.gitopia.IssueIid")
+	proto.RegisterType((*PullRequestIid)(nil), "gitopia.gitopia.gitopia.PullRequestIid")
 	proto.RegisterType((*RepositoryCollaborator)(nil), "gitopia.gitopia.gitopia.RepositoryCollaborator")
 	proto.RegisterType((*RepositoryLabel)(nil), "gitopia.gitopia.gitopia.RepositoryLabel")
 	proto.RegisterType((*RepositoryRelease)(nil), "gitopia.gitopia.gitopia.RepositoryRelease")
-	proto.RegisterType((*Attachment)(nil), "gitopia.gitopia.gitopia.Attachment")
 	proto.RegisterType((*RepositoryBackup)(nil), "gitopia.gitopia.gitopia.RepositoryBackup")
 }
 
 func init() { proto.RegisterFile("gitopia/repository.proto", fileDescriptor_771033d6361900fa) }
 
 var fileDescriptor_771033d6361900fa = []byte{
-	// 954 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x6f, 0x23, 0x35,
-	0x14, 0xcf, 0xe4, 0x7f, 0x5e, 0xb3, 0xdd, 0xa9, 0xdb, 0xed, 0x9a, 0xb2, 0x8a, 0xa2, 0x11, 0x87,
-	0xb0, 0x87, 0x14, 0x75, 0x25, 0x24, 0x90, 0x40, 0x4c, 0xdb, 0x14, 0x45, 0xb0, 0xa5, 0x78, 0x0b,
-	0x2b, 0xf6, 0xe6, 0xcc, 0xb8, 0xc9, 0xa8, 0x93, 0x78, 0xb0, 0x3d, 0x5b, 0xba, 0xdf, 0x01, 0x89,
-	0x8f, 0xc5, 0x81, 0xc3, 0x1e, 0x39, 0xa2, 0xf6, 0x2b, 0xf0, 0x01, 0x90, 0xed, 0xc9, 0x64, 0x9a,
-	0x64, 0xa5, 0x70, 0x9a, 0xf7, 0xef, 0xf7, 0xde, 0xb3, 0xfd, 0xfc, 0xf3, 0x00, 0x1e, 0x47, 0x8a,
-	0x27, 0x11, 0x3d, 0x14, 0x2c, 0xe1, 0x32, 0x52, 0x5c, 0xdc, 0xf6, 0x13, 0xc1, 0x15, 0x47, 0x4f,
-	0x33, 0x4f, 0x7f, 0xe9, 0x7b, 0xb0, 0x37, 0xe6, 0x63, 0x6e, 0x62, 0x0e, 0xb5, 0x64, 0xc3, 0x0f,
-	0x76, 0xe7, 0x89, 0x6e, 0x26, 0x3c, 0x92, 0xd6, 0xe8, 0xfd, 0xdb, 0x04, 0x20, 0x79, 0x62, 0x84,
-	0xa1, 0x11, 0x08, 0x46, 0x15, 0x17, 0xd8, 0xe9, 0x3a, 0xbd, 0x16, 0x99, 0xab, 0x68, 0x1b, 0xca,
-	0x51, 0x88, 0xcb, 0x5d, 0xa7, 0x57, 0x25, 0xe5, 0x28, 0x44, 0x08, 0xaa, 0x33, 0x3a, 0x65, 0xb8,
-	0x62, 0xc2, 0x8c, 0x8c, 0xbe, 0x86, 0x1a, 0xbf, 0x99, 0x31, 0x81, 0xab, 0x5d, 0xa7, 0xb7, 0x75,
-	0xd4, 0xeb, 0x7f, 0xa0, 0xc1, 0xfe, 0xa2, 0xe2, 0x0f, 0x3a, 0x9e, 0x58, 0x18, 0xea, 0xc2, 0x56,
-	0xc8, 0x64, 0x20, 0xa2, 0x44, 0x45, 0x7c, 0x86, 0x6b, 0x26, 0x75, 0xd1, 0x84, 0xf6, 0xa0, 0x76,
-	0xc5, 0xc5, 0xb5, 0xc4, 0xf5, 0x6e, 0xa5, 0x57, 0x25, 0x56, 0xd1, 0x38, 0x99, 0x8e, 0x74, 0xd4,
-	0x88, 0x09, 0x89, 0x1b, 0x16, 0x57, 0x30, 0x99, 0x75, 0xf1, 0xe9, 0x34, 0x52, 0x12, 0x37, 0xb3,
-	0x75, 0x59, 0x15, 0x7d, 0x03, 0xf5, 0x48, 0xca, 0x94, 0x49, 0xdc, 0xea, 0x56, 0x36, 0x6c, 0x7a,
-	0xa8, 0x01, 0x24, 0xc3, 0x21, 0x02, 0xed, 0x24, 0x8d, 0x63, 0xc2, 0x7e, 0x4d, 0x99, 0x54, 0x12,
-	0x83, 0xc9, 0xd3, 0xdf, 0x20, 0xcf, 0xc5, 0x02, 0x46, 0x1e, 0xe4, 0xd0, 0x2b, 0xb2, 0xd9, 0x4f,
-	0x78, 0x3a, 0x53, 0x78, 0xcb, 0x6c, 0x7b, 0xd1, 0x84, 0x3a, 0x00, 0x1a, 0x91, 0x05, 0xb4, 0x4d,
-	0x40, 0xc1, 0xa2, 0xd7, 0x15, 0xd3, 0x11, 0x8b, 0x25, 0x7e, 0xb4, 0xf1, 0xba, 0xbe, 0xd7, 0x00,
-	0x92, 0xe1, 0x74, 0x0f, 0x56, 0xb2, 0x25, 0xb6, 0x6d, 0x0f, 0x05, 0x13, 0x3a, 0x83, 0xa6, 0x60,
-	0x31, 0xa3, 0x92, 0x49, 0xfc, 0xd8, 0x54, 0x79, 0xbe, 0x41, 0x15, 0x62, 0x21, 0x24, 0xc7, 0xa2,
-	0x67, 0xd0, 0x32, 0x63, 0xc6, 0x42, 0x5f, 0x61, 0xb7, 0xeb, 0xf4, 0x2a, 0x64, 0x61, 0xd0, 0xde,
-	0x34, 0x09, 0x33, 0xef, 0x8e, 0xf5, 0xe6, 0x06, 0x74, 0x00, 0xcd, 0x24, 0x95, 0x13, 0xe3, 0x44,
-	0xc6, 0x99, 0xeb, 0x7a, 0x8f, 0xa4, 0xa2, 0x62, 0x4c, 0xdf, 0xe9, 0xb1, 0xd8, 0x35, 0x23, 0x53,
-	0xb0, 0x68, 0x2c, 0x15, 0xc1, 0x24, 0x7a, 0xcb, 0x42, 0xbc, 0xd7, 0x75, 0x7a, 0x4d, 0x92, 0xeb,
-	0x7a, 0x62, 0xe2, 0x28, 0x60, 0x33, 0xc9, 0xf0, 0x13, 0x3b, 0x31, 0x99, 0x8a, 0x3e, 0x81, 0x47,
-	0x21, 0xbb, 0xa2, 0x69, 0xac, 0x8e, 0x05, 0x9d, 0x05, 0x13, 0xbc, 0x6f, 0xfc, 0x0f, 0x8d, 0x68,
-	0x1f, 0xea, 0x09, 0x15, 0x6c, 0xa6, 0xf0, 0x53, 0xb3, 0x71, 0x99, 0xa6, 0xef, 0x8d, 0x1e, 0x5a,
-	0x8c, 0x4d, 0x3d, 0x23, 0xa3, 0x9f, 0xe0, 0x51, 0xc0, 0xe3, 0x98, 0x8e, 0xb8, 0xd0, 0x77, 0x4d,
-	0xe2, 0x8f, 0xcc, 0x66, 0x1e, 0x6e, 0xb0, 0x99, 0x27, 0x05, 0x1c, 0x79, 0x98, 0x05, 0x79, 0xd0,
-	0xa6, 0x71, 0xcc, 0x6f, 0xce, 0xb8, 0xb8, 0x8e, 0x66, 0x63, 0x7c, 0x60, 0x4a, 0x3e, 0xb0, 0xa1,
-	0x13, 0x68, 0x8c, 0x68, 0x70, 0x9d, 0x26, 0x12, 0x7f, 0x6c, 0x8a, 0x7e, 0xba, 0x41, 0xd1, 0x63,
-	0x83, 0x20, 0x73, 0x24, 0xfa, 0x0c, 0x76, 0xd9, 0x8c, 0x8e, 0x62, 0xe6, 0x8b, 0x1b, 0x46, 0xdf,
-	0x32, 0xeb, 0xc7, 0xcf, 0x4c, 0xbd, 0x75, 0x2e, 0xef, 0x08, 0xda, 0x85, 0xeb, 0x14, 0x66, 0xec,
-	0x62, 0x29, 0xa7, 0xc8, 0x2e, 0xe5, 0x05, 0xbb, 0x78, 0x3f, 0xc2, 0xce, 0xb1, 0x9e, 0x9b, 0x1c,
-	0xf7, 0x1d, 0xbb, 0x2d, 0x00, 0x2d, 0x2d, 0x61, 0x68, 0xd0, 0x30, 0x14, 0x4c, 0xca, 0x0c, 0x3b,
-	0x57, 0xd7, 0x11, 0x96, 0xf7, 0x0b, 0x3c, 0x5e, 0xa2, 0xa2, 0x95, 0x4e, 0x3e, 0x87, 0xaa, 0xba,
-	0x4d, 0x6c, 0x27, 0xdb, 0x47, 0xde, 0x07, 0x77, 0xc7, 0xa0, 0x2f, 0x6f, 0x13, 0x46, 0x4c, 0xbc,
-	0xf7, 0xa2, 0x98, 0xda, 0x10, 0x06, 0x72, 0xa1, 0x12, 0xe5, 0xcd, 0x6a, 0x71, 0x99, 0x54, 0xbd,
-	0x2f, 0xe0, 0xc9, 0x5a, 0x76, 0xd8, 0x00, 0xfa, 0x97, 0x03, 0xfb, 0xeb, 0xc7, 0x62, 0x65, 0x49,
-	0x6f, 0x00, 0x12, 0x26, 0xa6, 0x91, 0x94, 0x9a, 0x65, 0xed, 0xc2, 0xbe, 0xfc, 0x9f, 0xb3, 0xd6,
-	0xbf, 0xc8, 0x33, 0x90, 0x42, 0x36, 0xef, 0x0c, 0x60, 0xe1, 0x41, 0x4d, 0xa8, 0x92, 0x81, 0x7f,
-	0xea, 0x96, 0x10, 0x40, 0xfd, 0x92, 0x0c, 0xfd, 0x6f, 0x07, 0xae, 0x83, 0x5a, 0x50, 0x7b, 0x4d,
-	0x86, 0x97, 0x03, 0xb7, 0x8c, 0xda, 0xd0, 0x7c, 0xe9, 0x0f, 0xcf, 0x2f, 0xfd, 0xe1, 0xb9, 0x5b,
-	0xd1, 0x0e, 0xff, 0xf4, 0xe5, 0xf0, 0xdc, 0xad, 0x7a, 0xd3, 0xe2, 0xf6, 0x19, 0x5e, 0x5a, 0x39,
-	0xea, 0x35, 0x33, 0xa2, 0xdf, 0x87, 0x80, 0xc7, 0x5c, 0x64, 0xa7, 0x6c, 0x95, 0xe5, 0x77, 0xa5,
-	0xba, 0xf2, 0xae, 0x78, 0x5f, 0xc1, 0xce, 0x0a, 0x41, 0xad, 0x9b, 0x2d, 0x45, 0xc7, 0xe7, 0x8b,
-	0x9a, 0x73, 0xd5, 0x1b, 0x01, 0xf8, 0x4a, 0xd1, 0x60, 0x32, 0xcd, 0xae, 0xb8, 0x69, 0xcc, 0x29,
-	0x34, 0x86, 0xa0, 0x2a, 0xa3, 0x77, 0x2c, 0x3b, 0x30, 0x23, 0xeb, 0x43, 0x95, 0x13, 0x9a, 0xb5,
-	0xaa, 0x45, 0x4d, 0x48, 0x69, 0x12, 0x73, 0x1a, 0x66, 0x6f, 0x68, 0x8b, 0xe4, 0xba, 0xf7, 0xbb,
-	0x03, 0xee, 0xf2, 0x15, 0x44, 0x03, 0xa8, 0x49, 0xc5, 0x85, 0xad, 0xb5, 0xbd, 0x11, 0x63, 0x58,
-	0x64, 0xff, 0x95, 0x86, 0x11, 0x8b, 0xd6, 0xdd, 0x09, 0x76, 0xa5, 0xaf, 0x4c, 0x45, 0x77, 0xac,
-	0x65, 0xaf, 0x03, 0x35, 0x13, 0xa3, 0x0f, 0x71, 0x78, 0x71, 0xf6, 0xca, 0x2d, 0xa1, 0x2d, 0x68,
-	0xf8, 0xe4, 0xf5, 0xc0, 0xff, 0x79, 0xe0, 0x3a, 0xc7, 0xa7, 0x7f, 0xde, 0x75, 0x9c, 0xf7, 0x77,
-	0x1d, 0xe7, 0x9f, 0xbb, 0x8e, 0xf3, 0xc7, 0x7d, 0xa7, 0xf4, 0xfe, 0xbe, 0x53, 0xfa, 0xfb, 0xbe,
-	0x53, 0x7a, 0xf3, 0x7c, 0x1c, 0xa9, 0x49, 0x3a, 0xea, 0x07, 0x7c, 0x7a, 0x38, 0xff, 0xe7, 0x98,
-	0x7f, 0x7f, 0xcb, 0x25, 0x7d, 0x4b, 0xe4, 0xa8, 0x6e, 0x7e, 0x43, 0x5e, 0xfc, 0x17, 0x00, 0x00,
-	0xff, 0xff, 0x56, 0xc8, 0x7c, 0x74, 0xe6, 0x08, 0x00, 0x00,
+	// 877 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0x4f, 0x6f, 0xe3, 0x44,
+	0x14, 0x8f, 0xf3, 0xbf, 0xaf, 0x6d, 0xd6, 0x9d, 0x96, 0xee, 0x50, 0xa1, 0x28, 0xb2, 0x38, 0x84,
+	0x15, 0x4a, 0x51, 0x91, 0x38, 0x20, 0x81, 0x70, 0xdb, 0x14, 0x59, 0xb0, 0xa5, 0xcc, 0x16, 0x56,
+	0xec, 0x6d, 0x62, 0x4f, 0x13, 0xab, 0x8e, 0xc7, 0xcc, 0xd8, 0x5b, 0xc2, 0x77, 0x40, 0xe2, 0x63,
+	0x71, 0xe0, 0xb0, 0x47, 0x4e, 0x08, 0xb5, 0x5f, 0x04, 0xcd, 0x8c, 0xe3, 0xb8, 0x49, 0x2a, 0x65,
+	0x4f, 0x7e, 0xff, 0x7e, 0xef, 0xcd, 0xfb, 0x6b, 0xc0, 0xe3, 0x30, 0xe5, 0x49, 0x48, 0x8f, 0x05,
+	0x4b, 0xb8, 0x0c, 0x53, 0x2e, 0x66, 0x83, 0x44, 0xf0, 0x94, 0xa3, 0xe7, 0xb9, 0x66, 0xb0, 0xf4,
+	0x3d, 0x3a, 0x18, 0xf3, 0x31, 0xd7, 0x36, 0xc7, 0x8a, 0x32, 0xe6, 0x47, 0xfb, 0x73, 0x47, 0x77,
+	0x13, 0x1e, 0x4a, 0x23, 0x74, 0xfe, 0x6d, 0x01, 0x90, 0xc2, 0x31, 0xc2, 0xd0, 0xf2, 0x05, 0xa3,
+	0x29, 0x17, 0xd8, 0xea, 0x59, 0xfd, 0x2d, 0x32, 0x67, 0x51, 0x07, 0xaa, 0x61, 0x80, 0xab, 0x3d,
+	0xab, 0x5f, 0x27, 0xd5, 0x30, 0x40, 0x08, 0xea, 0x31, 0x9d, 0x32, 0x5c, 0xd3, 0x66, 0x9a, 0x46,
+	0x5f, 0x43, 0x83, 0xdf, 0xc5, 0x4c, 0xe0, 0x7a, 0xcf, 0xea, 0x6f, 0x9f, 0xf4, 0x07, 0x4f, 0x3c,
+	0x70, 0xb0, 0x88, 0xf8, 0x83, 0xb2, 0x27, 0x06, 0x86, 0x7a, 0xb0, 0x1d, 0x30, 0xe9, 0x8b, 0x30,
+	0x49, 0x43, 0x1e, 0xe3, 0x86, 0x76, 0x5d, 0x16, 0xa1, 0x03, 0x68, 0xdc, 0x70, 0x71, 0x2b, 0x71,
+	0xb3, 0x57, 0xeb, 0xd7, 0x89, 0x61, 0x14, 0x4e, 0x66, 0x23, 0x65, 0x35, 0x62, 0x42, 0xe2, 0x96,
+	0xc1, 0x95, 0x44, 0x3a, 0x2f, 0x3e, 0x9d, 0x86, 0xa9, 0xc4, 0xed, 0x3c, 0x2f, 0xc3, 0x2a, 0x6c,
+	0x28, 0x65, 0xc6, 0xe4, 0x19, 0xcf, 0xe2, 0x14, 0x6f, 0xe9, 0x04, 0xcb, 0x22, 0xd4, 0x05, 0x48,
+	0xb2, 0x28, 0xca, 0x0d, 0x40, 0x1b, 0x94, 0x24, 0xe8, 0x1b, 0x68, 0x46, 0x74, 0xc4, 0x22, 0x89,
+	0xb7, 0x7b, 0xb5, 0x0d, 0xd3, 0xfe, 0x5e, 0x01, 0x48, 0x8e, 0x53, 0x6f, 0x30, 0x94, 0x09, 0xb1,
+	0x63, 0xde, 0x50, 0x12, 0xa1, 0x0b, 0x68, 0x0b, 0x16, 0x31, 0x2a, 0x99, 0xc4, 0xbb, 0x3a, 0xca,
+	0x8b, 0x0d, 0xa2, 0x10, 0x03, 0x21, 0x05, 0x16, 0x7d, 0x04, 0x5b, 0xba, 0xa1, 0x2c, 0x70, 0x53,
+	0xdc, 0xe9, 0x59, 0xfd, 0x1a, 0x59, 0x08, 0x94, 0x36, 0x4b, 0x82, 0x5c, 0xfb, 0xcc, 0x68, 0x0b,
+	0x01, 0x3a, 0x82, 0x76, 0x92, 0xc9, 0x89, 0x56, 0xda, 0x5a, 0x59, 0xf0, 0xaa, 0x46, 0x32, 0xa5,
+	0x62, 0x4c, 0x7f, 0x57, 0x0d, 0xd8, 0xd3, 0xcd, 0x29, 0x49, 0x14, 0x96, 0x0a, 0x7f, 0x12, 0xbe,
+	0x65, 0x01, 0x46, 0x3d, 0xab, 0xdf, 0x26, 0x05, 0xaf, 0x7a, 0x13, 0x85, 0x3e, 0x8b, 0x25, 0xc3,
+	0xfb, 0xa6, 0x37, 0x39, 0x8b, 0x3e, 0x86, 0xdd, 0x80, 0xdd, 0xd0, 0x2c, 0x4a, 0x4f, 0x05, 0x8d,
+	0xfd, 0x09, 0x3e, 0xd0, 0xfa, 0xc7, 0x42, 0x74, 0x08, 0xcd, 0x84, 0x0a, 0x16, 0xa7, 0xf8, 0x03,
+	0x5d, 0xb8, 0x9c, 0x53, 0x13, 0xaa, 0xc6, 0x03, 0x1f, 0xea, 0x78, 0x9a, 0x46, 0x3f, 0xc1, 0xae,
+	0xcf, 0xa3, 0x88, 0x8e, 0xb8, 0x50, 0x53, 0x2d, 0xf1, 0x73, 0x5d, 0xcc, 0xe3, 0x0d, 0x8a, 0x79,
+	0x56, 0xc2, 0x91, 0xc7, 0x5e, 0x90, 0x03, 0x3b, 0x34, 0x8a, 0xf8, 0xdd, 0x05, 0x17, 0xb7, 0x61,
+	0x3c, 0xc6, 0x58, 0x87, 0x7c, 0x24, 0x43, 0x67, 0xd0, 0x1a, 0x51, 0xff, 0x36, 0x4b, 0x24, 0xfe,
+	0x50, 0x07, 0xfd, 0x64, 0x83, 0xa0, 0xa7, 0x1a, 0x41, 0xe6, 0x48, 0xf4, 0x19, 0xec, 0xb3, 0x98,
+	0x8e, 0x22, 0xe6, 0x8a, 0x3b, 0x46, 0xdf, 0x32, 0xa3, 0xc7, 0x47, 0x3a, 0xde, 0x3a, 0x95, 0x73,
+	0x02, 0x3b, 0x0b, 0x77, 0x5e, 0x90, 0xef, 0xb1, 0x59, 0xee, 0xf2, 0x1e, 0x57, 0x17, 0x7b, 0xec,
+	0xfc, 0x08, 0x7b, 0xa7, 0x6a, 0x6e, 0x0a, 0xdc, 0x77, 0x6c, 0x56, 0x02, 0x9a, 0x03, 0x80, 0xa1,
+	0x45, 0x83, 0x40, 0x30, 0x29, 0x73, 0xec, 0x9c, 0x5d, 0x77, 0x1a, 0x9c, 0x5f, 0xe0, 0xd9, 0xd2,
+	0xd2, 0xaf, 0xbc, 0xe4, 0x0b, 0xa8, 0xa7, 0xb3, 0xc4, 0xbc, 0xa4, 0x73, 0xe2, 0x3c, 0x59, 0x1d,
+	0x8d, 0xbe, 0x9e, 0x25, 0x8c, 0x68, 0x7b, 0xe7, 0x53, 0x68, 0x7b, 0x6a, 0x5d, 0xbd, 0x30, 0x40,
+	0x36, 0xd4, 0xc2, 0xe2, 0x95, 0x8a, 0x5c, 0xbe, 0x5b, 0xce, 0x09, 0x74, 0xae, 0xb2, 0x28, 0x22,
+	0xec, 0xd7, 0x8c, 0xc9, 0x74, 0x33, 0xcc, 0xdf, 0x16, 0x1c, 0xae, 0x1f, 0x84, 0x95, 0x24, 0xde,
+	0x00, 0x24, 0x4c, 0x4c, 0x43, 0x29, 0xd5, 0x05, 0x33, 0xa9, 0x7c, 0xf9, 0x9e, 0xd3, 0x35, 0xb8,
+	0x2a, 0x3c, 0x90, 0x92, 0x37, 0xe7, 0x02, 0x60, 0xa1, 0x41, 0x6d, 0xa8, 0x93, 0xa1, 0x7b, 0x6e,
+	0x57, 0x10, 0x40, 0xf3, 0x9a, 0x78, 0xee, 0xb7, 0x43, 0xdb, 0x42, 0x5b, 0xd0, 0x78, 0x4d, 0xbc,
+	0xeb, 0xa1, 0x5d, 0x45, 0x3b, 0xd0, 0x7e, 0xe9, 0x7a, 0x97, 0xd7, 0xae, 0x77, 0x69, 0xd7, 0x94,
+	0xc2, 0x3d, 0x7f, 0xe9, 0x5d, 0xda, 0x75, 0x67, 0x5a, 0xee, 0x85, 0xbe, 0x44, 0x2b, 0xcd, 0x5d,
+	0x33, 0x15, 0xea, 0xf6, 0xfa, 0x3c, 0xe2, 0x22, 0xef, 0xab, 0x61, 0x96, 0x6f, 0x76, 0x7d, 0xe5,
+	0x66, 0x3b, 0x5f, 0xc1, 0xde, 0xca, 0x49, 0x5a, 0x37, 0x4d, 0x29, 0x1d, 0x5f, 0x2e, 0x62, 0xce,
+	0x59, 0xe7, 0x0f, 0x0b, 0xec, 0xe5, 0x85, 0x40, 0x43, 0x68, 0xc8, 0x94, 0x0b, 0xa6, 0x3d, 0x74,
+	0x36, 0xda, 0x5f, 0x83, 0x1c, 0xbc, 0x52, 0x30, 0x62, 0xd0, 0x2a, 0x4d, 0xc1, 0x6e, 0xd4, 0x00,
+	0xd7, 0x54, 0x9a, 0x8a, 0x76, 0xba, 0xd0, 0xd0, 0x36, 0xaa, 0xc0, 0xde, 0xd5, 0xc5, 0x2b, 0xbb,
+	0x82, 0xb6, 0xa1, 0xe5, 0x92, 0xd7, 0x43, 0xf7, 0xe7, 0xa1, 0x6d, 0x9d, 0x9e, 0xff, 0x75, 0xdf,
+	0xb5, 0xde, 0xdd, 0x77, 0xad, 0xff, 0xee, 0xbb, 0xd6, 0x9f, 0x0f, 0xdd, 0xca, 0xbb, 0x87, 0x6e,
+	0xe5, 0x9f, 0x87, 0x6e, 0xe5, 0xcd, 0x8b, 0x71, 0x98, 0x4e, 0xb2, 0xd1, 0xc0, 0xe7, 0xd3, 0xe3,
+	0xf9, 0xbf, 0x76, 0xfe, 0xfd, 0xad, 0xa0, 0xd4, 0xcc, 0xca, 0x51, 0x53, 0xff, 0x7e, 0x3f, 0xff,
+	0x3f, 0x00, 0x00, 0xff, 0xff, 0x3a, 0xe1, 0x9a, 0xa5, 0xde, 0x07, 0x00, 0x00,
 }
 
 func (m *Repository) Marshal() (dAtA []byte, err error) {
@@ -1014,7 +924,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xe0
+		dAtA[i] = 0xd0
 	}
 	if len(m.Backups) > 0 {
 		for iNdEx := len(m.Backups) - 1; iNdEx >= 0; iNdEx-- {
@@ -1029,7 +939,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i--
 			dAtA[i] = 0x1
 			i--
-			dAtA[i] = 0xda
+			dAtA[i] = 0xca
 		}
 	}
 	if m.AllowForking {
@@ -1042,7 +952,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xd0
+		dAtA[i] = 0xc0
 	}
 	if len(m.Collaborators) > 0 {
 		for iNdEx := len(m.Collaborators) - 1; iNdEx >= 0; iNdEx-- {
@@ -1057,7 +967,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i--
 			dAtA[i] = 0x1
 			i--
-			dAtA[i] = 0xca
+			dAtA[i] = 0xba
 		}
 	}
 	if m.Fork {
@@ -1070,14 +980,14 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xc0
+		dAtA[i] = 0xb0
 	}
 	if m.Parent != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.Parent))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xb8
+		dAtA[i] = 0xa8
 	}
 	if len(m.DefaultBranch) > 0 {
 		i -= len(m.DefaultBranch)
@@ -1086,7 +996,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xb2
+		dAtA[i] = 0xa2
 	}
 	if len(m.License) > 0 {
 		i -= len(m.License)
@@ -1095,7 +1005,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xaa
+		dAtA[i] = 0x9a
 	}
 	if m.Archived {
 		i--
@@ -1107,7 +1017,7 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xa0
+		dAtA[i] = 0x90
 	}
 	if len(m.Stargazers) > 0 {
 		dAtA2 := make([]byte, len(m.Stargazers)*10)
@@ -1127,28 +1037,24 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x9a
+		dAtA[i] = 0x8a
 	}
 	if m.PushedAt != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.PushedAt))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x90
+		dAtA[i] = 0x80
 	}
 	if m.UpdatedAt != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.UpdatedAt))
 		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x88
+		dAtA[i] = 0x78
 	}
 	if m.CreatedAt != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.CreatedAt))
 		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x80
+		dAtA[i] = 0x70
 	}
 	if len(m.Releases) > 0 {
 		for iNdEx := len(m.Releases) - 1; iNdEx >= 0; iNdEx-- {
@@ -1161,13 +1067,13 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintRepository(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x7a
+			dAtA[i] = 0x6a
 		}
 	}
 	if m.LabelsCount != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.LabelsCount))
 		i--
-		dAtA[i] = 0x70
+		dAtA[i] = 0x60
 	}
 	if len(m.Labels) > 0 {
 		for iNdEx := len(m.Labels) - 1; iNdEx >= 0; iNdEx-- {
@@ -1180,46 +1086,18 @@ func (m *Repository) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintRepository(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x6a
+			dAtA[i] = 0x5a
 		}
 	}
 	if m.PullsCount != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.PullsCount))
 		i--
-		dAtA[i] = 0x60
+		dAtA[i] = 0x50
 	}
 	if m.IssuesCount != 0 {
 		i = encodeVarintRepository(dAtA, i, uint64(m.IssuesCount))
 		i--
-		dAtA[i] = 0x58
-	}
-	if len(m.PullRequests) > 0 {
-		for iNdEx := len(m.PullRequests) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.PullRequests[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintRepository(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x52
-		}
-	}
-	if len(m.Issues) > 0 {
-		for iNdEx := len(m.Issues) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Issues[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintRepository(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x4a
-		}
+		dAtA[i] = 0x48
 	}
 	if len(m.Commits) > 0 {
 		i -= len(m.Commits)
@@ -1408,7 +1286,7 @@ func (m *RepositoryOwner) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *RepositoryIssue) Marshal() (dAtA []byte, err error) {
+func (m *IssueIid) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1418,12 +1296,12 @@ func (m *RepositoryIssue) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *RepositoryIssue) MarshalTo(dAtA []byte) (int, error) {
+func (m *IssueIid) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *RepositoryIssue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *IssueIid) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1441,7 +1319,7 @@ func (m *RepositoryIssue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *RepositoryPullRequest) Marshal() (dAtA []byte, err error) {
+func (m *PullRequestIid) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1451,12 +1329,12 @@ func (m *RepositoryPullRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *RepositoryPullRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *PullRequestIid) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *RepositoryPullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *PullRequestIid) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1593,55 +1471,6 @@ func (m *RepositoryRelease) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Attachment) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Attachment) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Attachment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Uploader) > 0 {
-		i -= len(m.Uploader)
-		copy(dAtA[i:], m.Uploader)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Uploader)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Sha) > 0 {
-		i -= len(m.Sha)
-		copy(dAtA[i:], m.Sha)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Sha)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Size_ != 0 {
-		i = encodeVarintRepository(dAtA, i, uint64(m.Size_))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Name) > 0 {
-		i -= len(m.Name)
-		copy(dAtA[i:], m.Name)
-		i = encodeVarintRepository(dAtA, i, uint64(len(m.Name)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *RepositoryBackup) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1730,18 +1559,6 @@ func (m *Repository) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
-	if len(m.Issues) > 0 {
-		for _, e := range m.Issues {
-			l = e.Size()
-			n += 1 + l + sovRepository(uint64(l))
-		}
-	}
-	if len(m.PullRequests) > 0 {
-		for _, e := range m.PullRequests {
-			l = e.Size()
-			n += 1 + l + sovRepository(uint64(l))
-		}
-	}
 	if m.IssuesCount != 0 {
 		n += 1 + sovRepository(uint64(m.IssuesCount))
 	}
@@ -1764,10 +1581,10 @@ func (m *Repository) Size() (n int) {
 		}
 	}
 	if m.CreatedAt != 0 {
-		n += 2 + sovRepository(uint64(m.CreatedAt))
+		n += 1 + sovRepository(uint64(m.CreatedAt))
 	}
 	if m.UpdatedAt != 0 {
-		n += 2 + sovRepository(uint64(m.UpdatedAt))
+		n += 1 + sovRepository(uint64(m.UpdatedAt))
 	}
 	if m.PushedAt != 0 {
 		n += 2 + sovRepository(uint64(m.PushedAt))
@@ -1870,7 +1687,7 @@ func (m *RepositoryOwner) Size() (n int) {
 	return n
 }
 
-func (m *RepositoryIssue) Size() (n int) {
+func (m *IssueIid) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1885,7 +1702,7 @@ func (m *RepositoryIssue) Size() (n int) {
 	return n
 }
 
-func (m *RepositoryPullRequest) Size() (n int) {
+func (m *PullRequestIid) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1950,30 +1767,6 @@ func (m *RepositoryRelease) Size() (n int) {
 		n += 1 + sovRepository(uint64(m.Id))
 	}
 	l = len(m.TagName)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
-	}
-	return n
-}
-
-func (m *Attachment) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
-	}
-	if m.Size_ != 0 {
-		n += 1 + sovRepository(uint64(m.Size_))
-	}
-	l = len(m.Sha)
-	if l > 0 {
-		n += 1 + l + sovRepository(uint64(l))
-	}
-	l = len(m.Uploader)
 	if l > 0 {
 		n += 1 + l + sovRepository(uint64(l))
 	}
@@ -2325,74 +2118,6 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			m.Commits = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Issues", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Issues = append(m.Issues, &RepositoryIssue{})
-			if err := m.Issues[len(m.Issues)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PullRequests", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PullRequests = append(m.PullRequests, &RepositoryPullRequest{})
-			if err := m.PullRequests[len(m.PullRequests)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 11:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IssuesCount", wireType)
 			}
@@ -2411,7 +2136,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 12:
+		case 10:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PullsCount", wireType)
 			}
@@ -2430,7 +2155,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 13:
+		case 11:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
 			}
@@ -2464,7 +2189,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 14:
+		case 12:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LabelsCount", wireType)
 			}
@@ -2483,7 +2208,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 15:
+		case 13:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Releases", wireType)
 			}
@@ -2517,7 +2242,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 16:
+		case 14:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
 			}
@@ -2536,7 +2261,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 17:
+		case 15:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
 			}
@@ -2555,7 +2280,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 18:
+		case 16:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PushedAt", wireType)
 			}
@@ -2574,7 +2299,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 19:
+		case 17:
 			if wireType == 0 {
 				var v uint64
 				for shift := uint(0); ; shift += 7 {
@@ -2650,7 +2375,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field Stargazers", wireType)
 			}
-		case 20:
+		case 18:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Archived", wireType)
 			}
@@ -2670,7 +2395,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Archived = bool(v != 0)
-		case 21:
+		case 19:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field License", wireType)
 			}
@@ -2702,7 +2427,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			}
 			m.License = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 22:
+		case 20:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultBranch", wireType)
 			}
@@ -2734,7 +2459,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 			}
 			m.DefaultBranch = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 23:
+		case 21:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Parent", wireType)
 			}
@@ -2753,7 +2478,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 24:
+		case 22:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Fork", wireType)
 			}
@@ -2773,7 +2498,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Fork = bool(v != 0)
-		case 25:
+		case 23:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Collaborators", wireType)
 			}
@@ -2807,7 +2532,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 26:
+		case 24:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AllowForking", wireType)
 			}
@@ -2827,7 +2552,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.AllowForking = bool(v != 0)
-		case 27:
+		case 25:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Backups", wireType)
 			}
@@ -2861,7 +2586,7 @@ func (m *Repository) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 28:
+		case 26:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field EnableArweaveBackup", wireType)
 			}
@@ -3250,7 +2975,7 @@ func (m *RepositoryOwner) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *RepositoryIssue) Unmarshal(dAtA []byte) error {
+func (m *IssueIid) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3273,10 +2998,10 @@ func (m *RepositoryIssue) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: RepositoryIssue: wiretype end group for non-group")
+			return fmt.Errorf("proto: IssueIid: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RepositoryIssue: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: IssueIid: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3338,7 +3063,7 @@ func (m *RepositoryIssue) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *RepositoryPullRequest) Unmarshal(dAtA []byte) error {
+func (m *PullRequestIid) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3361,10 +3086,10 @@ func (m *RepositoryPullRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: RepositoryPullRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: PullRequestIid: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: RepositoryPullRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: PullRequestIid: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3771,171 +3496,6 @@ func (m *RepositoryRelease) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.TagName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipRepository(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Attachment) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowRepository
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Attachment: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Attachment: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Name = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Size_", wireType)
-			}
-			m.Size_ = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Size_ |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sha", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sha = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Uploader", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRepository
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthRepository
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthRepository
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Uploader = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

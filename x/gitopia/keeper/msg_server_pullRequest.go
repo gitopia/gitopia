@@ -54,8 +54,8 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "operation not permitted")
 	}
 
-	for _, p := range baseRepository.PullRequests {
-		pullRequest, _ := k.GetPullRequest(ctx, p.Id)
+	pullRequests := k.GetAllRepositoryPullRequest(ctx, baseRepository.Id)
+	for _, pullRequest := range pullRequests {
 		if pullRequest.Head.RepositoryId == headRepository.Id &&
 			pullRequest.State == types.PullRequest_OPEN &&
 			pullRequest.Base.Branch == msg.BaseBranch &&
@@ -127,16 +127,37 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		}
 	}
 
+	// Link issue(s)
+	for _, issueIid := range msg.IssueIids {
+		issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issueIid))
+		}
+
+		if _, exists := utils.IssueIidExists(pullRequest.Issues, issueIid); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", issueIid))
+		}
+
+		issueIid := &types.IssueIid{
+			Iid: issue.Iid,
+			Id:  issue.Id,
+		}
+
+		pullRequest.Issues = append(pullRequest.Issues, issueIid)
+
+		issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
+			Id:  k.GetPullRequestCount(ctx),
+			Iid: pullRequest.Iid,
+		})
+		issue.UpdatedAt = createdAt
+
+		k.SetIssue(ctx, issue)
+	}
+
 	id := k.AppendPullRequest(
 		ctx,
 		pullRequest,
 	)
-
-	var repositoryPullRequest = types.RepositoryPullRequest{
-		Iid: baseRepository.PullsCount,
-		Id:  id,
-	}
-	baseRepository.PullRequests = append(baseRepository.PullRequests, &repositoryPullRequest)
 
 	k.SetRepository(ctx, baseRepository)
 
@@ -152,6 +173,7 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestTitleKey, pullRequest.Title),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
 			sdk.NewAttribute(types.EventAttributePullRequestDraftKey, strconv.FormatBool(pullRequest.Draft)),
 			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
@@ -177,9 +199,9 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if pullRequest.Title == msg.Title {
@@ -197,23 +219,22 @@ func (k msgServer) UpdatePullRequestTitle(goCtx context.Context, msg *types.MsgU
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UpdateTitleCommentBody(msg.Creator, oldTitle, pullRequest.Title),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeModifiedTitle,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	ctx.EventManager().EmitEvent(
@@ -240,9 +261,9 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if pullRequest.Description == msg.Description {
@@ -258,23 +279,22 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 	pullRequest.CommentsCount += 1
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.UpdateDescriptionCommentBody(msg.Creator),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UpdateDescriptionCommentBody(msg.Creator),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeModifiedDescription,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	ctx.EventManager().EmitEvent(
@@ -285,6 +305,7 @@ func (k msgServer) UpdatePullRequestDescription(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestDescriptionKey, pullRequest.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
 		),
 	)
@@ -300,9 +321,9 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -346,14 +367,14 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	task, _ = k.GetTask(ctx, msg.TaskId)
 
-	currentTime := ctx.BlockTime().Unix()
+	blockTime := ctx.BlockTime().Unix()
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
 	if !found {
@@ -404,7 +425,24 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		if pullRequest.State == types.PullRequest_CLOSED || pullRequest.State == types.PullRequest_MERGED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State.String()))
 		}
-		pullRequest.ClosedAt = currentTime
+
+		if msg.CommentBody != "" {
+			pullRequest.CommentsCount += 1
+
+			k.AppendComment(ctx, types.Comment{
+				Creator:      msg.Creator,
+				RepositoryId: msg.RepositoryId,
+				ParentIid:    pullRequest.Iid,
+				Parent:       types.CommentParentPullRequest,
+				CommentIid:   pullRequest.CommentsCount,
+				Body:         msg.CommentBody,
+				CreatedAt:    ctx.BlockTime().Unix(),
+				UpdatedAt:    ctx.BlockTime().Unix(),
+				CommentType:  types.CommentTypeReply,
+			})
+		}
+
+		pullRequest.ClosedAt = blockTime
 		pullRequest.ClosedBy = msg.Creator
 	case types.PullRequest_MERGED.String():
 		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
@@ -416,11 +454,10 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		baseBranch, found = k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
-
 		}
 		pullRequest.Base.CommitSha = baseBranch.Sha
 		baseBranch.Sha = msg.MergeCommitSha
-		baseBranch.UpdatedAt = currentTime
+		baseBranch.UpdatedAt = blockTime
 
 		headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
 		if !found {
@@ -433,7 +470,7 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", pullRequest.Head.Branch))
 		}
 
-		pullRequest.MergedAt = currentTime
+		pullRequest.MergedAt = blockTime
 		pullRequest.MergedBy = msg.Creator
 		pullRequest.MergeCommitSha = msg.MergeCommitSha
 
@@ -445,33 +482,100 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		task.State = types.StateSuccess
 		k.SetTask(ctx, task)
 		k.SetRepositoryBranch(ctx, baseBranch)
+
+		for _, issueIid := range pullRequest.Issues {
+			issue, found := k.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
+			if !found {
+				continue
+			}
+			if issue.State != types.Issue_OPEN {
+				continue
+			}
+			if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] { // continue when pull request creator is not the only assignee
+				continue
+			}
+
+			// close issue
+			issue.State = types.Issue_CLOSED
+			issue.ClosedBy = msg.Creator
+			issue.ClosedAt = blockTime
+			issue.UpdatedAt = blockTime
+			k.SetIssue(ctx, issue)
+
+			// reward bounties to pull request creator
+			for _, bountyId := range issue.Bounties {
+				bounty, found := k.GetBounty(ctx, bountyId)
+				if !found {
+					continue
+				}
+				if bounty.State != types.BountyStateSRCDEBITTED {
+					continue
+				}
+				rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
+				if err != nil {
+					continue
+				}
+
+				if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+					continue
+				}
+				if k.bankKeeper.BlockedAddr(rewardAccAddress) {
+					continue
+				}
+				bountyAddress := GetBountyAddress(bounty.Id)
+				if err := k.bankKeeper.SendCoins(
+					ctx, bountyAddress, rewardAccAddress, bounty.Amount,
+				); err != nil {
+					continue
+				}
+
+				bounty.State = types.BountyStateDESTCREDITED
+				bounty.RewardedTo = pullRequest.Creator
+				bounty.ExpireAt = time.Time{}.Unix()
+				bounty.UpdatedAt = blockTime
+
+				k.SetBounty(ctx, bounty)
+			}
+		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
 
 	pullRequest.State = types.PullRequest_State(types.PullRequest_State_value[msg.State])
-	pullRequest.UpdatedAt = currentTime
+	pullRequest.UpdatedAt = blockTime
 	pullRequest.CommentsCount += 1
 
-	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+	var commentType types.CommentType
+	switch pullRequest.State {
+	case types.PullRequest_MERGED:
+		commentType = types.CommentTypePullRequestMerged
+	case types.PullRequest_CLOSED:
+		commentType = types.CommentTypePullRequestClosed
+	case types.PullRequest_OPEN:
+		commentType = types.CommentTypePullRequestOpened
+	default:
+		commentType = types.CommentTypeNone
 	}
 
-	id := k.AppendComment(
+	var comment = types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  commentType,
+	}
+
+	k.AppendComment(
 		ctx,
 		comment,
 	)
 
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
-	baseRepository.UpdatedAt = currentTime
+	baseRepository.UpdatedAt = blockTime
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
 
@@ -523,9 +627,9 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -556,23 +660,22 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddReviewersCommentBody(msg.Creator, msg.Reviewers),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeAddReviewers,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	reviewersJson, _ := json.Marshal(msg.Reviewers)
@@ -601,9 +704,9 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -631,23 +734,22 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveReviewersCommentBody(msg.Creator, msg.Reviewers),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeRemoveReviewers,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	reviewersJson, _ := json.Marshal(msg.Reviewers)
@@ -676,9 +778,9 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -709,23 +811,22 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeAddAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -754,9 +855,9 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -784,23 +885,22 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.Id,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveAssigneesCommentBody(msg.Creator, msg.Assignees),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeRemoveAssignees,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	assigneesJson, _ := json.Marshal(msg.Assignees)
@@ -821,6 +921,224 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	return &types.MsgRemovePullRequestAssigneesResponse{}, nil
 }
 
+func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.MsgLinkPullRequestIssueByIid) (*types.MsgLinkPullRequestIssueByIidResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
+	}
+
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if msg.Creator != pullRequest.Creator {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.LinkPullRequestIssuePermission) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	}
+
+	if len(pullRequest.Issues)+1 > 10 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 linked issues")
+	}
+
+	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, msg.IssueIid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.IssueIid))
+	}
+
+	if _, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", msg.IssueIid))
+	}
+
+	issueIid := &types.IssueIid{
+		Iid: issue.Iid,
+		Id:  issue.Id,
+	}
+
+	pullRequest.Issues = append(pullRequest.Issues, issueIid)
+
+	blockTime := ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = blockTime
+
+	if _, exists := utils.PullRequestIidExists(issue.PullRequests, pullRequest.Iid); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pullRequest (%v) already linked in issue (%v)", pullRequest.Iid, issueIid.Iid))
+	}
+
+	issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
+		Id:  pullRequest.Id,
+		Iid: pullRequest.Iid,
+	})
+	issue.CommentsCount += 1
+	issue.UpdatedAt = blockTime
+
+	var pullRequestComment = types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.LinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.CommentTypeNone,
+	}
+	var issueComment = types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    issue.Iid,
+		Parent:       types.CommentParentIssue,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.LinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.CommentTypeNone,
+	}
+
+	k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+	k.AppendComment(
+		ctx,
+		issueComment,
+	)
+	k.SetPullRequest(ctx, pullRequest)
+	k.SetIssue(ctx, issue)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.LinkPullRequestIssueByIidEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgLinkPullRequestIssueByIidResponse{}, nil
+}
+
+func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types.MsgUnlinkPullRequestIssueByIid) (*types.MsgUnlinkPullRequestIssueByIidResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.PullRequestIid))
+	}
+
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	if msg.Creator != pullRequest.Creator {
+		if !k.HavePermission(ctx, msg.Creator, baseRepository, types.LinkPullRequestIssuePermission) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	}
+
+	if len(pullRequest.Issues) == 0 {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "pullRequest does not have any linked issues")
+	}
+
+	var issueIid *types.IssueIid
+	if i, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
+		issueIid = pullRequest.Issues[i]
+		pullRequest.Issues = append(pullRequest.Issues[:i], pullRequest.Issues[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue with iid (%v) isn't linked", msg.IssueIid))
+	}
+
+	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid.Iid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue id (%d) doesn't exist", issueIid.Iid))
+	}
+
+	blockTime := ctx.BlockTime().Unix()
+	pullRequest.CommentsCount += 1
+	pullRequest.UpdatedAt = blockTime
+
+	if i, exists := utils.PullRequestIidExists(issue.PullRequests, pullRequest.Iid); exists {
+		issue.PullRequests = append(issue.PullRequests[:i], issue.PullRequests[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pullRequest (%v) isn't linked in issue (%v)", pullRequest.Iid, issueIid.Iid))
+	}
+	issue.UpdatedAt = blockTime
+	issue.CommentsCount += 1
+
+	var pullRequestComment = types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.UnlinkIssueCommentBody(msg.Creator, msg.IssueIid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.CommentTypeNone,
+	}
+	var issueComment = types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: issue.RepositoryId,
+		ParentIid:    issue.Iid,
+		Parent:       types.CommentParentIssue,
+		CommentIid:   issue.CommentsCount,
+		Body:         utils.UnlinkPullRequestCommentBody(msg.Creator, pullRequest.Iid),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.CommentTypeNone,
+	}
+
+	k.AppendComment(
+		ctx,
+		pullRequestComment,
+	)
+	k.AppendComment(
+		ctx,
+		issueComment,
+	)
+	k.SetPullRequest(ctx, pullRequest)
+	k.SetIssue(ctx, issue)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UnlinkPullRequestIssueByIidEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIdKey, strconv.FormatUint(issue.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeIssueIidKey, strconv.FormatUint(issue.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUnlinkPullRequestIssueByIidResponse{}, nil
+}
+
 func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAddPullRequestLabels) (*types.MsgAddPullRequestLabelsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -829,9 +1147,9 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -866,23 +1184,22 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.PullRequestId,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.AddLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.AddLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeAddLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -911,9 +1228,9 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
 	}
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.PullRequestId)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.PullRequestId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
@@ -949,23 +1266,22 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 	pullRequest.UpdatedAt = ctx.BlockTime().Unix()
 
 	var comment = types.Comment{
-		Creator:     "GITOPIA",
-		ParentId:    msg.PullRequestId,
-		CommentIid:  pullRequest.CommentsCount,
-		Body:        utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
-		System:      true,
-		CreatedAt:   pullRequest.UpdatedAt,
-		UpdatedAt:   pullRequest.UpdatedAt,
-		CommentType: types.Comment_PULLREQUEST,
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.RemoveLabelsCommentBody(msg.Creator, labelNames),
+		System:       true,
+		CreatedAt:    pullRequest.UpdatedAt,
+		UpdatedAt:    pullRequest.UpdatedAt,
+		CommentType:  types.CommentTypeRemoveLabels,
 	}
 
-	id := k.AppendComment(
+	k.AppendComment(
 		ctx,
 		comment,
 	)
-
-	pullRequest.Comments = append(pullRequest.Comments, id)
-
 	k.SetPullRequest(ctx, pullRequest)
 
 	labelsJson, _ := json.Marshal(msg.LabelIds)
@@ -989,16 +1305,24 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDeletePullRequest) (*types.MsgDeletePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	pullRequest, found := k.GetPullRequest(ctx, msg.Id)
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest id (%d) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
 
 	if msg.Creator != pullRequest.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	k.RemovePullRequest(ctx, msg.Id)
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
+	}
+
+	DoRemovePullRequest(ctx, k, pullRequest, repository)
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -1015,16 +1339,10 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 }
 
 func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
-	for _, commentId := range pullRequest.Comments {
-		k.RemoveComment(ctx, commentId)
+	comments := k.GetAllPullRequestComment(ctx, repository.Id, pullRequest.Iid)
+	for _, comment := range comments {
+		k.RemovePullRequestComment(ctx, repository.Id, pullRequest.Iid, comment.CommentIid)
 	}
 
-	if i, exists := utils.RepositoryPullRequestExists(repository.PullRequests, pullRequest.Iid); exists {
-		repository.PullRequests = append(repository.PullRequests[:i], repository.PullRequests[i+1:]...)
-	}
-
-	repository.UpdatedAt = ctx.BlockTime().Unix()
-
-	k.SetRepository(ctx, repository)
-	k.RemovePullRequest(ctx, pullRequest.Id)
+	k.RemoveRepositoryPullRequest(ctx, repository.Id, pullRequest.Iid)
 }

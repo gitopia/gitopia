@@ -8,6 +8,8 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 
+import { Minter as typeMinter} from "./types"
+import { Params as typeParams} from "./types"
 
 export {  };
 
@@ -15,6 +17,18 @@ export {  };
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -39,19 +53,39 @@ interface QueryClientOptions {
 }
 
 export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http://localhost:1317" }) => {
-  return new Api({ baseUrl: addr });
+  return new Api({ baseURL: addr });
 };
 
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
-	public registry: Array<[string, GeneratedType]>;
+	public structure: Record<string,unknown>;
+	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
-		this.query = queryClient({ addr: client.env.apiURL });
-		this.tx = txClient({ signer: client.signer, addr: client.env.rpcURL, prefix: client.env.prefix ?? "cosmos" });
+		this.query = queryClient({ addr: client.env.apiURL });		
+		this.updateTX(client);
+		this.structure =  {
+						Minter: getStructure(typeMinter.fromPartial({})),
+						Params: getStructure(typeParams.fromPartial({})),
+						
+		};
+		client.on('signer-changed',(signer) => {			
+		 this.updateTX(client);
+		})
+	}
+	updateTX(client: IgniteClient) {
+    const methods = txClient({
+        signer: client.signer,
+        addr: client.env.rpcURL,
+        prefix: client.env.prefix ?? "cosmos",
+    })
+	
+    this.tx = methods;
+    for (let m in methods) {
+        this.tx[m] = methods[m].bind(this.tx);
+    }
 	}
 };
 

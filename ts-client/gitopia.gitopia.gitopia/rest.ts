@@ -31,6 +31,41 @@ export interface GitopiaAttachment {
   uploader?: string;
 }
 
+export interface GitopiaBounty {
+  /** @format uint64 */
+  id?: string;
+  amount?: V1Beta1Coin[];
+  state?: GitopiaBountyState;
+
+  /** @format uint64 */
+  repositoryId?: string;
+
+  /** @format uint64 */
+  parentIid?: string;
+  parent?: GitopiaBountyParent;
+
+  /** @format int64 */
+  expireAt?: string;
+  rewardedTo?: string;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+  creator?: string;
+}
+
+export enum GitopiaBountyParent {
+  BOUNTY_PARENT_ISSUE = "BOUNTY_PARENT_ISSUE",
+}
+
+export enum GitopiaBountyState {
+  BOUNTY_STATE_SRCDEBITTED = "BOUNTY_STATE_SRCDEBITTED",
+  BOUNTY_STATE_DESTCREDITED = "BOUNTY_STATE_DESTCREDITED",
+  BOUNTY_STATE_REVERTEDBACK = "BOUNTY_STATE_REVERTEDBACK",
+}
+
 export interface GitopiaComment {
   creator?: string;
 
@@ -38,12 +73,16 @@ export interface GitopiaComment {
   id?: string;
 
   /** @format uint64 */
-  parentId?: string;
+  repositoryId?: string;
+
+  /** @format uint64 */
+  parentIid?: string;
+  parent?: GitopiaCommentParent;
 
   /** @format uint64 */
   commentIid?: string;
   body?: string;
-  attachments?: string[];
+  attachments?: GitopiaAttachment[];
   diffHunk?: string;
   path?: string;
   system?: boolean;
@@ -55,11 +94,38 @@ export interface GitopiaComment {
   /** @format int64 */
   updatedAt?: string;
   commentType?: GitopiaCommentType;
+  resolved?: boolean;
+  replies?: string[];
+  reactions?: GitopiaReaction[];
+  hidden?: boolean;
+}
+
+export enum GitopiaCommentParent {
+  COMMENT_PARENT_NONE = "COMMENT_PARENT_NONE",
+  COMMENT_PARENT_ISSUE = "COMMENT_PARENT_ISSUE",
+  COMMENT_PARENT_PULL_REQUEST = "COMMENT_PARENT_PULL_REQUEST",
 }
 
 export enum GitopiaCommentType {
-  ISSUE = "ISSUE",
-  PULLREQUEST = "PULLREQUEST",
+  COMMENT_TYPE_NONE = "COMMENT_TYPE_NONE",
+  COMMENT_TYPE_REPLY = "COMMENT_TYPE_REPLY",
+  COMMENT_TYPE_ADD_LABELS = "COMMENT_TYPE_ADD_LABELS",
+  COMMENT_TYPE_REMOVE_LABELS = "COMMENT_TYPE_REMOVE_LABELS",
+  COMMENT_TYPE_ADD_ASSIGNEES = "COMMENT_TYPE_ADD_ASSIGNEES",
+  COMMENT_TYPE_REMOVE_ASSIGNEES = "COMMENT_TYPE_REMOVE_ASSIGNEES",
+  COMMENT_TYPE_ADD_REVIEWERS = "COMMENT_TYPE_ADD_REVIEWERS",
+  COMMENT_TYPE_REMOVE_REVIEWERS = "COMMENT_TYPE_REMOVE_REVIEWERS",
+  COMMENT_TYPE_MODIFIED_TITLE = "COMMENT_TYPE_MODIFIED_TITLE",
+  COMMENT_TYPE_MODIFIED_DESCRIPTION = "COMMENT_TYPE_MODIFIED_DESCRIPTION",
+  COMMENT_TYPE_ISSUE_CLOSED = "COMMENT_TYPE_ISSUE_CLOSED",
+  COMMENT_TYPE_ISSUE_OPENED = "COMMENT_TYPE_ISSUE_OPENED",
+  COMMENT_TYPE_PULL_REQUEST_CLOSED = "COMMENT_TYPE_PULL_REQUEST_CLOSED",
+  COMMENT_TYPE_PULL_REQUEST_OPENED = "COMMENT_TYPE_PULL_REQUEST_OPENED",
+  COMMENT_TYPE_PULL_REQUEST_MERGED = "COMMENT_TYPE_PULL_REQUEST_MERGED",
+  COMMENT_TYPE_REVIEW = "COMMENT_TYPE_REVIEW",
+  COMMENT_TYPE_ADD_BOUNTY = "COMMENT_TYPE_ADD_BOUNTY",
+  COMMENT_TYPE_MODIFIED_BOUNTY = "COMMENT_TYPE_MODIFIED_BOUNTY",
+  COMMENT_TYPE_CLOSED_BOUNTY = "COMMENT_TYPE_CLOSED_BOUNTY",
 }
 
 export interface GitopiaDao {
@@ -85,6 +151,11 @@ export interface GitopiaDao {
   updatedAt?: string;
 }
 
+export enum GitopiaEmoji {
+  EMOJI_THUMBS_UP = "EMOJI_THUMBS_UP",
+  EMOJI_THUMBS_DOWN = "EMOJI_THUMBS_DOWN",
+}
+
 export interface GitopiaIssue {
   creator?: string;
 
@@ -96,11 +167,10 @@ export interface GitopiaIssue {
   title?: string;
   state?: GitopiaIssueState;
   description?: string;
-  comments?: string[];
 
   /** @format uint64 */
   commentsCount?: string;
-  pullRequests?: string[];
+  pullRequests?: GitopiaPullRequestIid[];
 
   /** @format uint64 */
   repositoryId?: string;
@@ -109,6 +179,7 @@ export interface GitopiaIssue {
   /** @format uint64 */
   weight?: string;
   assignees?: string[];
+  bounties?: string[];
 
   /** @format int64 */
   createdAt?: string;
@@ -119,6 +190,14 @@ export interface GitopiaIssue {
   /** @format int64 */
   closedAt?: string;
   closedBy?: string;
+}
+
+export interface GitopiaIssueIid {
+  /** @format uint64 */
+  iid?: string;
+
+  /** @format uint64 */
+  id?: string;
 }
 
 export interface GitopiaIssueOptions {
@@ -173,6 +252,13 @@ export type GitopiaMsgAuthorizeProviderResponse = object;
 
 export type GitopiaMsgChangeOwnerResponse = object;
 
+export type GitopiaMsgCloseBountyResponse = object;
+
+export interface GitopiaMsgCreateBountyResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaMsgCreateCommentResponse {
   /** @format uint64 */
   id?: string;
@@ -221,6 +307,8 @@ export interface GitopiaMsgCreateUserResponse {
   id?: string;
 }
 
+export type GitopiaMsgDeleteBountyResponse = object;
+
 export type GitopiaMsgDeleteBranchResponse = object;
 
 export type GitopiaMsgDeleteCommentResponse = object;
@@ -256,6 +344,8 @@ export interface GitopiaMsgForkRepositorySuccessResponse {
 export type GitopiaMsgInvokeForkRepositoryResponse = object;
 
 export type GitopiaMsgInvokeMergePullRequestResponse = object;
+
+export type GitopiaMsgLinkPullRequestIssueByIidResponse = object;
 
 export type GitopiaMsgMultiDeleteBranchResponse = object;
 
@@ -319,6 +409,8 @@ export interface GitopiaMsgToggleArweaveBackupResponse {
   enableArweaveBackup?: boolean;
 }
 
+export type GitopiaMsgToggleForcePushResponse = object;
+
 export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;
 }
@@ -326,6 +418,10 @@ export interface GitopiaMsgToggleIssueStateResponse {
 export interface GitopiaMsgToggleRepositoryForkingResponse {
   allowForking?: boolean;
 }
+
+export type GitopiaMsgUnlinkPullRequestIssueByIidResponse = object;
+
+export type GitopiaMsgUpdateBountyExpiryResponse = object;
 
 export type GitopiaMsgUpdateCommentResponse = object;
 
@@ -389,11 +485,10 @@ export interface GitopiaPullRequest {
   state?: GitopiaPullRequestState;
   description?: string;
   locked?: boolean;
-  comments?: string[];
 
   /** @format uint64 */
   commentsCount?: string;
-  issues?: string[];
+  issues?: GitopiaIssueIid[];
   labels?: string[];
   assignees?: string[];
   reviewers?: string[];
@@ -432,6 +527,14 @@ export interface GitopiaPullRequestHead {
   commitSha?: string;
 }
 
+export interface GitopiaPullRequestIid {
+  /** @format uint64 */
+  iid?: string;
+
+  /** @format uint64 */
+  id?: string;
+}
+
 export interface GitopiaPullRequestOptions {
   createdBy?: string;
   state?: string;
@@ -457,6 +560,21 @@ export enum GitopiaPullRequestState {
 
 export interface GitopiaQueryAllAnyRepositoryResponse {
   Repository?: GitopiaRepository[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryAllBountyResponse {
+  Bounty?: GitopiaBounty[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -530,6 +648,21 @@ export interface GitopiaQueryAllDaoResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface GitopiaQueryAllIssueCommentResponse {
+  Comment?: GitopiaComment[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface GitopiaQueryAllIssueResponse {
   Issue?: GitopiaIssue[];
 
@@ -547,6 +680,21 @@ export interface GitopiaQueryAllIssueResponse {
 
 export interface GitopiaQueryAllMemberResponse {
   Member?: GitopiaMember[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface GitopiaQueryAllPullRequestCommentResponse {
+  Comment?: GitopiaComment[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -782,8 +930,8 @@ export interface GitopiaQueryGetAnyRepositoryResponse {
   Repository?: GitopiaRepository;
 }
 
-export interface GitopiaQueryGetCommentResponse {
-  Comment?: GitopiaComment;
+export interface GitopiaQueryGetBountyResponse {
+  Bounty?: GitopiaBounty;
 }
 
 export interface GitopiaQueryGetDaoMemberResponse {
@@ -794,20 +942,20 @@ export interface GitopiaQueryGetDaoResponse {
   dao?: GitopiaDao;
 }
 
-export interface GitopiaQueryGetIssueResponse {
-  Issue?: GitopiaIssue;
+export interface GitopiaQueryGetIssueCommentResponse {
+  Comment?: GitopiaComment;
 }
 
 export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
   Release?: GitopiaRelease;
 }
 
-export interface GitopiaQueryGetPullRequestMergePermissionResponse {
-  havePermission?: boolean;
+export interface GitopiaQueryGetPullRequestCommentResponse {
+  Comment?: GitopiaComment;
 }
 
-export interface GitopiaQueryGetPullRequestResponse {
-  PullRequest?: GitopiaPullRequest;
+export interface GitopiaQueryGetPullRequestMergePermissionResponse {
+  havePermission?: boolean;
 }
 
 export interface GitopiaQueryGetReleaseResponse {
@@ -858,6 +1006,11 @@ export interface GitopiaQueryGetWhoisResponse {
   Whois?: GitopiaWhois;
 }
 
+export interface GitopiaReaction {
+  address?: string;
+  emojis?: GitopiaEmoji[];
+}
+
 export interface GitopiaRelease {
   creator?: string;
 
@@ -896,8 +1049,6 @@ export interface GitopiaRepository {
   forks?: string[];
   subscribers?: string;
   commits?: string;
-  issues?: GitopiaRepositoryIssue[];
-  pullRequests?: GitopiaRepositoryPullRequest[];
 
   /** @format uint64 */
   issuesCount?: string;
@@ -969,14 +1120,6 @@ export interface GitopiaRepositoryId {
   name?: string;
 }
 
-export interface GitopiaRepositoryIssue {
-  /** @format uint64 */
-  iid?: string;
-
-  /** @format uint64 */
-  id?: string;
-}
-
 export interface GitopiaRepositoryLabel {
   /** @format uint64 */
   id?: string;
@@ -988,14 +1131,6 @@ export interface GitopiaRepositoryLabel {
 export interface GitopiaRepositoryOwner {
   id?: string;
   type?: GitopiaOwnerType;
-}
-
-export interface GitopiaRepositoryPullRequest {
-  /** @format uint64 */
-  iid?: string;
-
-  /** @format uint64 */
-  id?: string;
 }
 
 export interface GitopiaRepositoryRelease {
@@ -1103,6 +1238,17 @@ export interface RpcStatus {
 }
 
 /**
+* Coin defines a token with a denomination and an amount.
+
+NOTE: The amount field is an Int which implements the custom method
+signatures required by gogoproto.
+*/
+export interface V1Beta1Coin {
+  denom?: string;
+  amount?: string;
+}
+
+/**
 * message SomeRequest {
          Foo some_parameter = 1;
          PageRequest pagination = 2;
@@ -1166,14 +1312,19 @@ export interface V1Beta1PageResponse {
    */
   next_key?: string;
 
-  /** @format uint64 */
+  /**
+   * total is total number of results available if PageRequest.count_total
+   * was set, its value is undefined otherwise
+   * @format uint64
+   */
   total?: string;
 }
 
-export type QueryParamsType = Record<string | number, any>;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -1183,29 +1334,20 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: keyof Omit<Body, "body" | "bodyUsed">;
+  format?: ResponseType;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
 }
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType) => RequestParams | void;
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
@@ -1214,155 +1356,92 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
-  private securityData: SecurityDataType = null as any;
-  private securityWorker: null | ApiConfig<SecurityDataType>["securityWorker"] = null;
-  private abortControllers = new Map<CancelToken, AbortController>();
+  public instance: AxiosInstance;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private secure?: boolean;
+  private format?: ResponseType;
 
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
+  constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
   }
 
-  public setSecurityData = (data: SecurityDataType) => {
+  public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-
-    return (
-      encodeURIComponent(key) +
-      "=" +
-      encodeURIComponent(Array.isArray(value) ? value.join(",") : typeof value === "number" ? value : `${value}`)
-    );
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-    return keys
-      .map((key) =>
-        typeof query[key] === "object" && !Array.isArray(query[key])
-          ? this.toQueryString(query[key] as QueryParamsType)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  };
-
-  private mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  private mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     return {
-      ...this.baseApiParams,
+      ...this.instance.defaults,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
+        ...(this.instance.defaults.headers || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
     };
   }
 
-  private createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
+  private createFormData(input: Record<string, unknown>): FormData {
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      formData.append(
+        key,
+        property instanceof Blob
+          ? property
+          : typeof property === "object" && property !== null
+          ? JSON.stringify(property)
+          : `${property}`,
+      );
+      return formData;
+    }, new FormData());
+  }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
-
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = <T = any, E = any>({
-    body,
+  public request = async <T = any, _E = any>({
     secure,
     path,
     type,
     query,
-    format = "json",
-    baseUrl,
-    cancelToken,
+    format,
+    body,
     ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-    const secureParams = (secure && this.securityWorker && this.securityWorker(this.securityData)) || {};
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
+    const secureParams =
+      ((typeof secure === "boolean" ? secure : this.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = (format && this.format) || void 0;
 
-    return fetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+      requestParams.headers.common = { Accept: "*/*" };
+      requestParams.headers.post = {};
+      requestParams.headers.put = {};
+
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    return this.instance.request({
       ...requestParams,
       headers: {
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
         ...(requestParams.headers || {}),
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
-      r.data = (null as unknown) as T;
-      r.error = (null as unknown) as E;
-
-      const data = await response[format]()
-        .then((data) => {
-          if (r.ok) {
-            r.data = data;
-          } else {
-            r.error = data;
-          }
-          return r;
-        })
-        .catch((e) => {
-          r.error = e;
-          return r;
-        });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data;
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
     });
   };
 }
 
 /**
- * @title gitopia/branch.proto
+ * @title gitopia/attachment.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -1400,6 +1479,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryBountyAll
+   * @summary Queries a list of Bounty items.
+   * @request GET:/gitopia/gitopia/gitopia/bounty
+   */
+  queryBountyAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllBountyResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/bounty`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryBounty
+   * @summary Queries a Bounty by id.
+   * @request GET:/gitopia/gitopia/gitopia/bounty/{id}
+   */
+  queryBounty = (id: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetBountyResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/bounty/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryBranchAll
    * @summary Queries a list of Branch items.
    * @request GET:/gitopia/gitopia/gitopia/branch
@@ -1427,7 +1548,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryCommentAll
-   * @summary Queries a list of comment items.
+   * @summary Queries a list of comment.
    * @request GET:/gitopia/gitopia/gitopia/comment
    */
   queryCommentAll = (
@@ -1444,22 +1565,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/gitopia/gitopia/gitopia/comment`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryComment
-   * @summary Queries a comment by id.
-   * @request GET:/gitopia/gitopia/gitopia/comment/{id}
-   */
-  queryComment = (id: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetCommentResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/comment/${id}`,
-      method: "GET",
       format: "json",
       ...params,
     });
@@ -1579,22 +1684,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryIssue
-   * @summary Queries a issue by id.
-   * @request GET:/gitopia/gitopia/gitopia/issue/{id}
-   */
-  queryIssue = (id: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetIssueResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/issue/${id}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryMemberAll
    * @summary Queries a list of Member items.
    * @request GET:/gitopia/gitopia/gitopia/member
@@ -1622,11 +1711,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryPullRequestMergePermission
-   * @request GET:/gitopia/gitopia/gitopia/permissions/{userId}/pull/{pullId}/merge
+   * @request GET:/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge
    */
-  queryPullRequestMergePermission = (userId: string, pullId: string, params: RequestParams = {}) =>
+  queryPullRequestMergePermission = (
+    userId: string,
+    repositoryId: string,
+    pullIid: string,
+    params: RequestParams = {},
+  ) =>
     this.request<GitopiaQueryGetPullRequestMergePermissionResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/permissions/${userId}/pull/${pullId}/merge`,
+      path: `/gitopia/gitopia/gitopia/permissions/${userId}/repository/${repositoryId}/pull/${pullIid}/merge`,
       method: "GET",
       format: "json",
       ...params,
@@ -1654,22 +1748,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/gitopia/gitopia/gitopia/pullRequest`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryPullRequest
-   * @summary Queries a pullRequest by id.
-   * @request GET:/gitopia/gitopia/gitopia/pullRequest/{id}
-   */
-  queryPullRequest = (id: string, params: RequestParams = {}) =>
-    this.request<GitopiaQueryGetPullRequestResponse, RpcStatus>({
-      path: `/gitopia/gitopia/gitopia/pullRequest/${id}`,
-      method: "GET",
       format: "json",
       ...params,
     });
@@ -1753,6 +1831,99 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRepository = (id: string, params: RequestParams = {}) =>
     this.request<GitopiaQueryGetRepositoryResponse, RpcStatus>({
       path: `/gitopia/gitopia/gitopia/repository/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssueCommentAll
+   * @summary Queries a list of issue comment.
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment
+   */
+  queryIssueCommentAll = (
+    repositoryId: string,
+    issueIid: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllIssueCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/issue/${issueIid}/comment`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssueComment
+   * @summary Queries a issue comment.
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment/{commentIid}
+   */
+  queryIssueComment = (repositoryId: string, issueIid: string, commentIid: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryGetIssueCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/issue/${issueIid}/comment/${commentIid}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPullRequestCommentAll
+   * @summary Queries a list of pullrequest comment.
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment
+   */
+  queryPullRequestCommentAll = (
+    repositoryId: string,
+    pullRequestIid: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryAllPullRequestCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/pullrequest/${pullRequestIid}/comment`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryPullRequestComment
+   * @summary Queries a pullrequest comment.
+   * @request GET:/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment/{commentIid}
+   */
+  queryPullRequestComment = (
+    repositoryId: string,
+    pullRequestIid: string,
+    commentIid: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<GitopiaQueryGetPullRequestCommentResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/repository/${repositoryId}/pullrequest/${pullRequestIid}/comment/${commentIid}`,
       method: "GET",
       format: "json",
       ...params,
@@ -2188,7 +2359,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepositoryIssueAll
-   * @summary Queries a list of repository items.
+   * @summary Queries a list of repository issue.
    * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue
    */
   queryRepositoryIssueAll = (
@@ -2225,7 +2396,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepositoryIssue
-   * @summary Queries a repository by id.
+   * @summary Queries a repository issue by iid.
    * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}
    */
   queryRepositoryIssue = (id: string, repositoryName: string, issueIid: string, params: RequestParams = {}) =>
@@ -2241,6 +2412,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepositoryPullRequestAll
+   * @summary Queries a list of repository pullRequest.
    * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull
    */
   queryRepositoryPullRequestAll = (
@@ -2278,7 +2450,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    *
    * @tags Query
    * @name QueryRepositoryPullRequest
-   * @summary Queries a repository pullRequest by id.
+   * @summary Queries a repository pullRequest.
    * @request GET:/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}
    */
   queryRepositoryPullRequest = (id: string, repositoryName: string, pullIid: string, params: RequestParams = {}) =>

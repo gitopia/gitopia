@@ -70,9 +70,9 @@ ifeq (,$(findstring nostrip,$(GITOPIA_BUILD_OPTIONS)))
 endif
 
 build = GOOS=$(1) GOARCH=$(2) go build -mod=readonly $(BUILD_FLAGS) -o $(BUILDDIR) ./...
-tar = cd build && tar -cvzf $(APPNAME)_$(version)_$(1)_$(2).tar.gz $(APPNAME)$(3) && \
+tar = cd build && tar -cvzf $(APPNAME)_$(VERSION)_$(1)_$(2).tar.gz $(APPNAME)$(3) && \
     rm $(BUILDDIR)/$(APPNAME)$(3)
-zip = cd build && zip $(APPNAME)_$(version)_$(1)_$(2).zip $(APPNAME)$(3) && \
+zip = cd build && zip $(APPNAME)_$(VERSION)_$(1)_$(2).zip $(APPNAME)$(3) && \
     rm $(BUILDDIR)/$(APPNAME)$(3)
 
 .PHONY: build

@@ -17,21 +17,22 @@ func TestMsgCreateComment_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgCreateComment{
-				Creator:     "invalid_address",
-				CommentType: "ISSUE",
+				Creator: "invalid_address",
+				Parent:  CommentParentIssue,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgCreateComment{
-				Creator:     sample.AccAddress(),
-				CommentType: "ISSUE",
+				Creator: sample.AccAddress(),
+				Parent:  CommentParentIssue,
+				Body:    "comment",
 			},
 		}, {
 			name: "invalid comment type",
 			msg: MsgCreateComment{
-				Creator:     sample.AccAddress(),
-				CommentType: "invalid_type",
+				Creator: sample.AccAddress(),
+				Parent:  9,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
@@ -64,6 +65,8 @@ func TestMsgUpdateComment_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgUpdateComment{
 				Creator: sample.AccAddress(),
+				Parent:  CommentParentIssue,
+				Body:    "comment",
 			},
 		},
 	}
@@ -95,6 +98,7 @@ func TestMsgDeleteComment_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgDeleteComment{
 				Creator: sample.AccAddress(),
+				Parent:  CommentParentIssue,
 			},
 		},
 	}

@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
@@ -31,8 +31,9 @@ export function taskTypeToJSON(object: TaskType): string {
       return "TASK_TYPE_FORK_REPOSITORY";
     case TaskType.TASK_TYPE_SET_PULL_REQUEST_STATE:
       return "TASK_TYPE_SET_PULL_REQUEST_STATE";
+    case TaskType.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -69,8 +70,9 @@ export function taskStateToJSON(object: TaskState): string {
       return "TASK_STATE_SUCCESS";
     case TaskState.TASK_STATE_FAILURE:
       return "TASK_STATE_FAILURE";
+    case TaskState.UNRECOGNIZED:
     default:
-      return "UNKNOWN";
+      return "UNRECOGNIZED";
   }
 }
 
@@ -83,17 +85,12 @@ export interface Task {
   provider: string;
 }
 
-const baseTask: object = {
-  id: 0,
-  type: 0,
-  state: 0,
-  message: "",
-  creator: "",
-  provider: "",
-};
+function createBaseTask(): Task {
+  return { id: 0, type: 0, state: 0, message: "", creator: "", provider: "" };
+}
 
 export const Task = {
-  encode(message: Task, writer: Writer = Writer.create()): Writer {
+  encode(message: Task, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.id !== 0) {
       writer.uint32(8).uint64(message.id);
     }
@@ -115,10 +112,10 @@ export const Task = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Task {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Task {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseTask } as Task;
+    const message = createBaseTask();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -149,43 +146,19 @@ export const Task = {
   },
 
   fromJSON(object: any): Task {
-    const message = { ...baseTask } as Task;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = taskTypeFromJSON(object.type);
-    } else {
-      message.type = 0;
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = taskStateFromJSON(object.state);
-    } else {
-      message.state = 0;
-    }
-    if (object.message !== undefined && object.message !== null) {
-      message.message = String(object.message);
-    } else {
-      message.message = "";
-    }
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
-    } else {
-      message.creator = "";
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = String(object.provider);
-    } else {
-      message.provider = "";
-    }
-    return message;
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      type: isSet(object.type) ? taskTypeFromJSON(object.type) : 0,
+      state: isSet(object.state) ? taskStateFromJSON(object.state) : 0,
+      message: isSet(object.message) ? String(object.message) : "",
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      provider: isSet(object.provider) ? String(object.provider) : "",
+    };
   },
 
   toJSON(message: Task): unknown {
     const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
+    message.id !== undefined && (obj.id = Math.round(message.id));
     message.type !== undefined && (obj.type = taskTypeToJSON(message.type));
     message.state !== undefined && (obj.state = taskStateToJSON(message.state));
     message.message !== undefined && (obj.message = message.message);
@@ -194,62 +167,47 @@ export const Task = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Task>): Task {
-    const message = { ...baseTask } as Task;
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.type !== undefined && object.type !== null) {
-      message.type = object.type;
-    } else {
-      message.type = 0;
-    }
-    if (object.state !== undefined && object.state !== null) {
-      message.state = object.state;
-    } else {
-      message.state = 0;
-    }
-    if (object.message !== undefined && object.message !== null) {
-      message.message = object.message;
-    } else {
-      message.message = "";
-    }
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
-    } else {
-      message.creator = "";
-    }
-    if (object.provider !== undefined && object.provider !== null) {
-      message.provider = object.provider;
-    } else {
-      message.provider = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<Task>, I>>(object: I): Task {
+    const message = createBaseTask();
+    message.id = object.id ?? 0;
+    message.type = object.type ?? 0;
+    message.state = object.state ?? 0;
+    message.message = object.message ?? "";
+    message.creator = object.creator ?? "";
+    message.provider = object.provider ?? "";
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -258,7 +216,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

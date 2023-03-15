@@ -75,14 +75,8 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
-	} else if len(msg.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
-	}
-	sanitized := IsNameSanitized(msg.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
+	if err := ValidateRepositoryName(msg.Name); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Owner)
@@ -101,8 +95,8 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 		}
 	}
 
-	if len(msg.Description) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "description length exceeds limit: 255")
+	if err := ValidateRepositoryDescription(msg.Description); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -110,12 +104,15 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeForkRepository{}
 
-func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, owner string, provider string) *MsgInvokeForkRepository {
+func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, provider string) *MsgInvokeForkRepository {
 	return &MsgInvokeForkRepository{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Owner:        owner,
-		Provider:     provider,
+		Creator:                   creator,
+		RepositoryId:              repositoryId,
+		ForkRepositoryName:        forkRepositoryName,
+		ForkRepositoryDescription: forkRepositoryDescription,
+		Branch:                    branch,
+		Owner:                     owner,
+		Provider:                  provider,
 	}
 }
 
@@ -146,9 +143,20 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err = ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateRepositoryName(msg.ForkRepositoryName); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateRepositoryDescription(msg.ForkRepositoryDescription); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateOptionalBranchName(msg.Branch); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Owner)
@@ -177,12 +185,15 @@ func (msg *MsgInvokeForkRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId RepositoryId, owner string, taskId uint64) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, taskId uint64) *MsgForkRepository {
 	return &MsgForkRepository{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Owner:        owner,
-		TaskId:       taskId,
+		Creator:                   creator,
+		RepositoryId:              repositoryId,
+		ForkRepositoryName:        forkRepositoryName,
+		ForkRepositoryDescription: forkRepositoryDescription,
+		Branch:                    branch,
+		Owner:                     owner,
+		TaskId:                    taskId,
 	}
 }
 
@@ -213,9 +224,20 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateRepositoryName(msg.ForkRepositoryName); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateRepositoryDescription(msg.ForkRepositoryDescription); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	if err := ValidateOptionalBranchName(msg.Branch); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Owner)
@@ -274,9 +296,8 @@ func (msg *MsgForkRepositorySuccess) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -319,9 +340,8 @@ func (msg *MsgChangeOwner) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Owner)
@@ -381,9 +401,8 @@ func (msg *MsgUpdateRepositoryCollaborator) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err = ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
@@ -445,9 +464,8 @@ func (msg *MsgRemoveRepositoryCollaborator) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.User)
@@ -507,9 +525,8 @@ func (msg *MsgCreateRepositoryLabel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Name) > 63 {
@@ -568,9 +585,8 @@ func (msg *MsgUpdateRepositoryLabel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if msg.LabelId < 0 {
@@ -629,9 +645,8 @@ func (msg *MsgDeleteRepositoryLabel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if msg.LabelId < 0 {
@@ -672,25 +687,18 @@ func (msg *MsgRenameRepository) GetSignBytes() []byte {
 }
 
 func (msg *MsgRenameRepository) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
+	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name must be at least 3 characters long")
-	} else if len(msg.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Repository name exceeds limit: 100")
+	if err := ValidateRepositoryName(msg.Name); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	sanitized := IsNameSanitized(msg.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository name is not sanitized")
-	}
+
 	return nil
 }
 
@@ -731,9 +739,8 @@ func (msg *MsgUpdateRepositoryDescription) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Description) > 255 {
@@ -778,9 +785,8 @@ func (msg *MsgToggleRepositoryForking) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -822,9 +828,8 @@ func (msg *MsgToggleArweaveBackup) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil

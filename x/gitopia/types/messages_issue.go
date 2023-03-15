@@ -5,15 +5,15 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type RepositoryIssueSlice []*RepositoryIssue
+type IssueList []*Issue
 
-func (r RepositoryIssueSlice) Len() int           { return len(r) }
-func (r RepositoryIssueSlice) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
-func (r RepositoryIssueSlice) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (i IssueList) Len() int           { return len(i) }
+func (r IssueList) Less(i, j int) bool { return r[i].Iid < r[j].Iid }
+func (r IssueList) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 
 var _ sdk.Msg = &MsgCreateIssue{}
 
-func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, description string, labelIds []uint64, weight uint64, assignees []string) *MsgCreateIssue {
+func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, description string, labelIds []uint64, weight uint64, assignees []string, bountyAmount []sdk.Coin, bountyExpiry int64) *MsgCreateIssue {
 	return &MsgCreateIssue{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -22,6 +22,8 @@ func NewMsgCreateIssue(creator string, repositoryId RepositoryId, title string, 
 		LabelIds:     labelIds,
 		Weight:       weight,
 		Assignees:    assignees,
+		BountyAmount: bountyAmount,
+		BountyExpiry: bountyExpiry,
 	}
 }
 
@@ -93,16 +95,25 @@ func (msg *MsgCreateIssue) ValidateBasic() error {
 		}
 	}
 
+	if err := msg.BountyAmount.Validate(); err != nil {
+		return err
+	}
+
+	if msg.BountyExpiry < 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid expiry time")
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateIssueTitle{}
 
-func NewMsgUpdateIssueTitle(creator string, id uint64, title string) *MsgUpdateIssueTitle {
+func NewMsgUpdateIssueTitle(creator string, repositoryId uint64, iid uint64, title string) *MsgUpdateIssueTitle {
 	return &MsgUpdateIssueTitle{
-		Id:      id,
-		Creator: creator,
-		Title:   title,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Title:        title,
 	}
 }
 
@@ -142,11 +153,12 @@ func (msg *MsgUpdateIssueTitle) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateIssueDescription{}
 
-func NewMsgUpdateIssueDescription(creator string, id uint64, description string) *MsgUpdateIssueDescription {
+func NewMsgUpdateIssueDescription(creator string, repositoryId uint64, iid uint64, description string) *MsgUpdateIssueDescription {
 	return &MsgUpdateIssueDescription{
-		Id:          id,
-		Creator:     creator,
-		Description: description,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Description:  description,
 	}
 }
 
@@ -184,10 +196,11 @@ func (msg *MsgUpdateIssueDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgToggleIssueState{}
 
-func NewMsgToggleIssueState(creator string, id uint64) *MsgToggleIssueState {
+func NewMsgToggleIssueState(creator string, repositoryId uint64, iid uint64) *MsgToggleIssueState {
 	return &MsgToggleIssueState{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
 	}
 }
 
@@ -217,16 +230,22 @@ func (msg *MsgToggleIssueState) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if err := ValidateOptionalCommentBody(msg.CommentBody); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgAddIssueAssignees{}
 
-func NewMsgAddIssueAssignees(creator string, id uint64, assignees []string) *MsgAddIssueAssignees {
+func NewMsgAddIssueAssignees(creator string, repositoryId uint64, iid uint64, assignees []string) *MsgAddIssueAssignees {
 	return &MsgAddIssueAssignees{
-		Id:        id,
-		Creator:   creator,
-		Assignees: assignees,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Assignees:    assignees,
 	}
 }
 
@@ -280,11 +299,12 @@ func (msg *MsgAddIssueAssignees) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemoveIssueAssignees{}
 
-func NewMsgRemoveIssueAssignees(creator string, id uint64, assignees []string) *MsgRemoveIssueAssignees {
+func NewMsgRemoveIssueAssignees(creator string, repositoryId uint64, iid uint64, assignees []string) *MsgRemoveIssueAssignees {
 	return &MsgRemoveIssueAssignees{
-		Id:        id,
-		Creator:   creator,
-		Assignees: assignees,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		Assignees:    assignees,
 	}
 }
 
@@ -338,11 +358,12 @@ func (msg *MsgRemoveIssueAssignees) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgAddIssueLabels{}
 
-func NewMsgAddIssueLabels(creator string, issueId uint64, labelIds []uint64) *MsgAddIssueLabels {
+func NewMsgAddIssueLabels(creator string, repositoryId uint64, iid uint64, labelIds []uint64) *MsgAddIssueLabels {
 	return &MsgAddIssueLabels{
-		IssueId:  issueId,
-		Creator:  creator,
-		LabelIds: labelIds,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		LabelIds:     labelIds,
 	}
 }
 
@@ -392,11 +413,12 @@ func (msg *MsgAddIssueLabels) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgRemoveIssueLabels{}
 
-func NewMsgRemoveIssueLabels(creator string, issueId uint64, labelIds []uint64) *MsgRemoveIssueLabels {
+func NewMsgRemoveIssueLabels(creator string, repositoryId uint64, iid uint64, labelIds []uint64) *MsgRemoveIssueLabels {
 	return &MsgRemoveIssueLabels{
-		IssueId:  issueId,
-		Creator:  creator,
-		LabelIds: labelIds,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
+		LabelIds:     labelIds,
 	}
 }
 
@@ -446,10 +468,11 @@ func (msg *MsgRemoveIssueLabels) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteIssue{}
 
-func NewMsgDeleteIssue(creator string, id uint64) *MsgDeleteIssue {
+func NewMsgDeleteIssue(creator string, repositoryId uint64, iid uint64) *MsgDeleteIssue {
 	return &MsgDeleteIssue{
-		Id:      id,
-		Creator: creator,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Iid:          iid,
 	}
 }
 func (msg *MsgDeleteIssue) Route() string {
