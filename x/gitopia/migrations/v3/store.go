@@ -141,7 +141,7 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				attachments = append(attachments, &attachment)
 			}
 
-			var commentType CommentType
+			commentType := CommentTypeNone
 
 			// Set comment type in case of system comment
 			if oldComment.System {
@@ -162,6 +162,8 @@ func migrateIssue(store sdk.KVStore, cdc codec.BinaryCodec) error {
 				} else if strings.Contains(oldComment.Body, "closed") {
 					commentType = CommentTypeIssueClosed
 				}
+			} else {
+				commentType = CommentTypeReply
 			}
 
 			comment := Comment{
