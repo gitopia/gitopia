@@ -61,14 +61,25 @@ genesis:
         community_tax: "0"
     gitopia:
       params:
+        next_inflation_time: "2024-12-28T05:33:18.234521Z"
         distribution_proportions:
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+        - address: gitopia1k9pvyj845y9a4m4vuxx8sjq5q28yxym520fh2x
           proportion: 40
         - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
           proportion: 25
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+        - address: gitopia1jvlqaxc4r0s6lj4zcucux8m0epdd906ecjwlk5
           proportion: 5
-        next_inflation_time: "2024-12-28T05:33:18.234521Z"
+        developer_distribution:
+          pool_address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+          distribution_proportions:
+          - address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
+            proportion: 25
+          - address: gitopia1pdczuuqajw3n7zea9j6h9gtdgfpnzkkucjz8tn
+            proportion: 24
+          - address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
+            proportion: 45
+          - address: gitopia19nve7zztd3nf9hazfv7lsx0ajdv3kfjdx83dtg
+            proportion: 6
     gov:
       deposit_params:
         max_deposit_period: 60s

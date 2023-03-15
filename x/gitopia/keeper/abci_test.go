@@ -31,7 +31,7 @@ func TestTokenDistributionSucessWithNoDistributionProportion(t *testing.T) {
 	assert.NoError(t, err)
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.BeginBlocker(ctx)
+	gitopiaKeeper.TokenDistribution(ctx)
 
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
@@ -58,8 +58,8 @@ func TestTokenDistributionSucess(t *testing.T) {
 	assert.NoError(t, err)
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.BeginBlocker(ctx)
-	
+	gitopiaKeeper.TokenDistribution(ctx)
+
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(16)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
 
@@ -89,8 +89,8 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.BeginBlocker(ctx)
-	
+	gitopiaKeeper.TokenDistribution(ctx)
+
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
 
