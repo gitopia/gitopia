@@ -51,9 +51,8 @@ func (msg *MsgSetTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Tag.Name) > 255 {
@@ -108,9 +107,8 @@ func (msg *MsgMultiSetTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Tags) == 0 {
@@ -171,9 +169,8 @@ func (msg *MsgDeleteTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Tag) > 255 {
@@ -224,9 +221,8 @@ func (msg *MsgMultiDeleteTag) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Tags) == 0 {

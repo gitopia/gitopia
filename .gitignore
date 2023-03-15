@@ -3,5 +3,4 @@ vue/dist
 secret.yml
 build
 launch.json
-ts-client
 cmd/gitopiad/__debug_bin

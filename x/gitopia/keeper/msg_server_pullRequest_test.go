@@ -59,6 +59,27 @@ func TestPullRequestMsgServerCreate(t *testing.T) {
 			request: &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
+		{
+			desc: "IssueIid does not exist",
+			request: &types.MsgCreatePullRequest{Creator: users[0],
+				HeadRepositoryId: repositoryId,
+				HeadBranch:       branches[0],
+				BaseRepositoryId: repositoryId,
+				BaseBranch:       branches[2],
+				IssueIids:        []uint64{2},
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "Link issue",
+			request: &types.MsgCreatePullRequest{Creator: users[0],
+				HeadRepositoryId: repositoryId,
+				HeadBranch:       branches[0],
+				BaseRepositoryId: repositoryId,
+				BaseBranch:       branches[2],
+				IssueIids:        []uint64{1},
+			},
+		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			_, err := srv.CreatePullRequest(ctx, tc.request)
@@ -575,7 +596,7 @@ func setupPrePullRequest(ctx context.Context, t *testing.T, srv types.MsgServer)
 		Id:   users[0],
 		Name: "repository",
 	}
-	branches = append(branches, "branch-X", "branch-Y")
+	branches = append(branches, "branch-X", "branch-Y", "branch-Z")
 
 	for _, user := range users {
 		_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
@@ -596,5 +617,14 @@ func setupPrePullRequest(ctx context.Context, t *testing.T, srv types.MsgServer)
 		})
 		require.NoError(t, err)
 	}
+
+	_, err = srv.CreateIssue(ctx,
+		&types.MsgCreateIssue{Creator: users[0],
+			RepositoryId: repositoryId,
+			Title:        "title",
+			Description:  "description",
+		})
+	require.NoError(t, err)
+
 	return users, repositoryId, branches
 }

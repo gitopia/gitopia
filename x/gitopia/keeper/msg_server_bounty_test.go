@@ -1,14 +1,59 @@
 package keeper_test
 
-/* Needs Fix
+import (
+	"testing"
+	"time"
 
-func TestBountyMsgServerCreate(t *testing.T) {
-	srv, ctx := setupMsgServer(t)
-	creator := "A"
-	for i := 0; i < 5; i++ {
-		resp, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{Creator: creator})
-		require.NoError(t, err)
-		require.Equal(t, i, int(resp.Id))
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/stretchr/testify/require"
+)
+
+func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
+	suite.SetupValidator(stakingtypes.Bonded)
+	suite.SetupTest()
+	_, _, issueIid, _ := suite.setupPreBounty()
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgCreateBounty
+		err     error
+	}{
+		{
+			desc: "Invalid repository id or issue iid",
+			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
+				Expiry: time.Now().Add(time.Hour * 24).Unix(),
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "Invalid expiry",
+			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
+				Amount:       []sdk.Coin{{Denom: "utlore", Amount: sdk.NewInt(1000)}},
+				Expiry:       time.Time{}.Unix(),
+				RepositoryId: 0,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			desc: "Success",
+			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
+				Amount:    []sdk.Coin{{Denom: "utlore", Amount: sdk.NewInt(1000)}},
+				Expiry:    time.Now().Add(time.Hour * 24).Unix(),
+				ParentIid: issueIid,
+			},
+		},
+	} {
+		suite.Run(tc.desc, func() {
+			_, err := suite.msgServer.CreateBounty(suite.Ctx, tc.request)
+			if tc.err != nil {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+			}
+		})
 	}
 }
 
@@ -88,8 +133,10 @@ func TestBountyMsgServerDelete(t *testing.T) {
 	}
 }
 
-func setupPreBounty(ctx context.Context, t *testing.T, srv types.MsgServer) (users []string, repositoryId types.RepositoryId, issueId uint64, pullRequestId uint64) {
-	users = append(users, "A", "B")
+func (suite *KeeperTestSuite) setupPreBounty() (users []string, repositoryId types.RepositoryId, issueId uint64, pullRequestId uint64) {
+	users = append(users,
+		string(suite.TestAccs[0]),
+		string(suite.TestAccs[1]))
 	repositoryId = types.RepositoryId{
 		Id:   users[0],
 		Name: "repository",
@@ -97,31 +144,29 @@ func setupPreBounty(ctx context.Context, t *testing.T, srv types.MsgServer) (use
 	branches := []string{"branch-X", "branch-Y"}
 
 	for _, user := range users {
-		_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
-		require.NoError(t, err)
-
+		_, err := suite.msgServer.CreateUser(suite.Ctx, &types.MsgCreateUser{Creator: user, Username: user})
+		suite.Require().NoError(err)
 	}
 
-	_, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: users[0], Name: "repository", Owner: users[0]})
-	require.NoError(t, err)
+	_, err := suite.msgServer.CreateRepository(suite.Ctx, &types.MsgCreateRepository{Creator: users[0], Name: "repository", Owner: users[0]})
+	suite.Require().NoError(err)
 
 	for _, branch := range branches {
-		_, err = srv.SetBranch(ctx, &types.MsgSetBranch{
+		_, err = suite.msgServer.SetBranch(suite.Ctx, &types.MsgSetBranch{
 			Creator:      users[0],
 			RepositoryId: repositoryId,
 			Branch: types.MsgSetBranch_Branch{
 				Name: branch,
 			},
 		})
-		require.NoError(t, err)
+		suite.Require().NoError(err)
 	}
 
-	issue, err := srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: users[0], RepositoryId: repositoryId})
-	require.NoError(t, err)
+	issue, err := suite.msgServer.CreateIssue(suite.Ctx, &types.MsgCreateIssue{Creator: users[0], RepositoryId: repositoryId, Title: "issue"})
+	suite.Require().NoError(err)
 
-	pullRequest, err := srv.CreatePullRequest(ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
-	require.NoError(t, err)
+	pullRequest, err := suite.msgServer.CreatePullRequest(suite.Ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
+	suite.Require().NoError(err)
 
-	return users, repositoryId, issue.Id, pullRequest.Id
+	return users, repositoryId, issue.Iid, pullRequest.Id
 }
-*/

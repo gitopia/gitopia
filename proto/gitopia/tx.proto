@@ -386,6 +386,7 @@ message MsgCreatePullRequest {
   repeated string reviewers = 8;
   repeated string assignees = 9;
   repeated uint64 labelIds = 10;
+  repeated uint64 issueIids = 11;
 }
 
 message MsgCreatePullRequestResponse {
@@ -426,7 +427,8 @@ message MsgSetPullRequestState {
   uint64 iid = 3;
   string state = 4;
   string mergeCommitSha = 5;
-  uint64 taskId = 6;
+  string commentBody = 6;
+  uint64 taskId = 7;
 }
 
 message MsgSetPullRequestStateResponse {
@@ -650,6 +652,7 @@ message MsgToggleIssueState {
   string creator = 1;
   uint64 repositoryId = 2;
   uint64 iid = 3;
+  string commentBody = 4;
 }
 
 message MsgToggleIssueStateResponse {
@@ -714,8 +717,11 @@ message MsgCreateRepositoryResponse {
 message MsgInvokeForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  string provider = 4;
+  string forkRepositoryName = 3;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  string provider = 7;
 }
 
 message MsgInvokeForkRepositoryResponse {}
@@ -723,8 +729,11 @@ message MsgInvokeForkRepositoryResponse {}
 message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string owner = 3;
-  uint64 taskId = 4;
+  string forkRepositoryName = 3;
+  string forkRepositoryDescription = 4;
+  string branch = 5;
+  string owner = 6;
+  uint64 taskId = 7;
 }
 
 message MsgForkRepositoryResponse {

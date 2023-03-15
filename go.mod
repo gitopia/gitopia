@@ -17,7 +17,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.26
 	github.com/tendermint/tm-db v0.6.7
-	google.golang.org/genproto v0.0.0-20230221151758-ace64dc21148
+	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
 	google.golang.org/grpc v1.53.0
 )
 
@@ -145,7 +145,10 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-require github.com/ipfs/go-cid v0.3.2
+require (
+	github.com/ipfs/go-cid v0.3.2
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
+)
 
 require github.com/zondax/ledger-go v0.14.1 // indirect
 
@@ -168,7 +171,6 @@ require (
 	github.com/multiformats/go-varint v0.0.6 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tidwall/btree v1.5.0 // indirect
-	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

@@ -52,23 +52,19 @@ func (msg *MsgSetBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.Branch.Name) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Branch.Name) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	if err := ValidateBranchName(msg.Branch.Name); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	if valid, err := IsValidRefname(msg.Branch.Name); !valid {
-		return err
-	}
+
 	isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", msg.Branch.Sha)
 	if !isShaValid {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid sha")
 	}
+
 	return nil
 }
 
@@ -109,19 +105,14 @@ func (msg *MsgSetDefaultBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.Branch) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Branch) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	if err := ValidateBranchName(msg.Branch); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	if valid, err := IsValidRefname(msg.Branch); !valid {
-		return err
-	}
+
 	return nil
 }
 
@@ -162,9 +153,8 @@ func (msg *MsgMultiSetBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Branches) == 0 {
@@ -172,13 +162,8 @@ func (msg *MsgMultiSetBranch) ValidateBasic() error {
 	}
 
 	for _, branch := range msg.Branches {
-		if len(branch.Name) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-		} else if len(branch.Name) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-		}
-		if valid, err := IsValidRefname(branch.Name); !valid {
-			return err
+		if err := ValidateBranchName(branch.Name); err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 		isShaValid, _ := regexp.MatchString("^([0-9a-f]{40}|[0-9a-f]{64})$", branch.Sha)
 		if !isShaValid {
@@ -225,19 +210,14 @@ func (msg *MsgDeleteBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.Branch) > 255 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-	} else if len(msg.Branch) < 1 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
+	if err := ValidateBranchName(msg.Branch); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	if valid, err := IsValidRefname(msg.Branch); !valid {
-		return err
-	}
+
 	return nil
 }
 
@@ -278,9 +258,8 @@ func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Branches) == 0 {
@@ -288,13 +267,8 @@ func (msg *MsgMultiDeleteBranch) ValidateBasic() error {
 	}
 
 	for _, branch := range msg.Branches {
-		if len(branch) > 255 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch length exceeds limit: 255")
-		} else if len(branch) < 1 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "branch name can't be empty")
-		}
-		if valid, err := IsValidRefname(branch); !valid {
-			return err
+		if err := ValidateBranchName(branch); err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 		}
 	}
 	return nil

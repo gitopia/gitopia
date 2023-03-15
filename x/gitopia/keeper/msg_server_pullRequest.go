@@ -127,6 +127,33 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 		}
 	}
 
+	// Link issue(s)
+	for _, issueIid := range msg.IssueIids {
+		issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, issueIid)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issueIid))
+		}
+
+		if _, exists := utils.IssueIidExists(pullRequest.Issues, issueIid); exists {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("issue (%v) already linked", issueIid))
+		}
+
+		issueIid := &types.IssueIid{
+			Iid: issue.Iid,
+			Id:  issue.Id,
+		}
+
+		pullRequest.Issues = append(pullRequest.Issues, issueIid)
+
+		issue.PullRequests = append(issue.PullRequests, &types.PullRequestIid{
+			Id:  k.GetPullRequestCount(ctx),
+			Iid: pullRequest.Iid,
+		})
+		issue.UpdatedAt = createdAt
+
+		k.SetIssue(ctx, issue)
+	}
+
 	id := k.AppendPullRequest(
 		ctx,
 		pullRequest,
@@ -398,6 +425,23 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		if pullRequest.State == types.PullRequest_CLOSED || pullRequest.State == types.PullRequest_MERGED {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't close (%v) pullRequest", pullRequest.State.String()))
 		}
+
+		if msg.CommentBody != "" {
+			pullRequest.CommentsCount += 1
+
+			k.AppendComment(ctx, types.Comment{
+				Creator:      msg.Creator,
+				RepositoryId: msg.RepositoryId,
+				ParentIid:    pullRequest.Iid,
+				Parent:       types.CommentParentPullRequest,
+				CommentIid:   pullRequest.CommentsCount,
+				Body:         msg.CommentBody,
+				CreatedAt:    ctx.BlockTime().Unix(),
+				UpdatedAt:    ctx.BlockTime().Unix(),
+				CommentType:  types.CommentTypeReply,
+			})
+		}
+
 		pullRequest.ClosedAt = blockTime
 		pullRequest.ClosedBy = msg.Creator
 	case types.PullRequest_MERGED.String():
@@ -447,18 +491,24 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			if issue.State != types.Issue_OPEN {
 				continue
 			}
-			if len(issue.Assignees) != 1 {
+			if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] { // continue when pull request creator is not the only assignee
 				continue
 			}
+
+			// close issue
+			issue.State = types.Issue_CLOSED
+			issue.ClosedBy = msg.Creator
+			issue.ClosedAt = blockTime
+			issue.UpdatedAt = blockTime
+			k.SetIssue(ctx, issue)
+
+			// reward bounties to pull request creator
 			for _, bountyId := range issue.Bounties {
 				bounty, found := k.GetBounty(ctx, bountyId)
 				if !found {
 					continue
 				}
 				if bounty.State != types.BountyStateSRCDEBITTED {
-					continue
-				}
-				if pullRequest.Creator != issue.Assignees[0] {
 					continue
 				}
 				rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
@@ -901,7 +951,7 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 
 	issue, found := k.GetRepositoryIssue(ctx, pullRequest.Base.RepositoryId, msg.IssueIid)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", issue.Iid))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.IssueIid))
 	}
 
 	if _, exists := utils.IssueIidExists(pullRequest.Issues, msg.IssueIid); exists {
@@ -910,7 +960,7 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 
 	issueIid := &types.IssueIid{
 		Iid: issue.Iid,
-		Id:  issue.Iid,
+		Id:  issue.Id,
 	}
 
 	pullRequest.Issues = append(pullRequest.Issues, issueIid)

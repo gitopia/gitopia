@@ -48,9 +48,8 @@ func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	switch msg.Store {
@@ -107,9 +106,8 @@ func (msg *MsgUpdateRepositoryBackupRef) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	err = ValidateRepositoryId(msg.RepositoryId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "%v (%v)", err, msg.RepositoryId.Id)
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	switch msg.Store {

@@ -304,9 +304,27 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "can't close issue with OPEN linked pull request")
 			}
 		}
+
+		if msg.CommentBody != "" {
+			issue.CommentsCount += 1
+
+			k.AppendComment(ctx, types.Comment{
+				Creator:      msg.Creator,
+				RepositoryId: msg.RepositoryId,
+				ParentIid:    issue.Iid,
+				Parent:       types.CommentParentIssue,
+				CommentIid:   issue.CommentsCount,
+				Body:         msg.CommentBody,
+				CreatedAt:    ctx.BlockTime().Unix(),
+				UpdatedAt:    ctx.BlockTime().Unix(),
+				CommentType:  types.CommentTypeReply,
+			})
+		}
+
 		issue.State = types.Issue_CLOSED
 		issue.ClosedBy = msg.Creator
 		issue.ClosedAt = blockTime
+
 		for _, bountyId := range issue.Bounties {
 			bounty, found := k.GetBounty(ctx, bountyId)
 			if !found {

@@ -1,8 +1,6 @@
 package types
 
 import (
-	"regexp"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -15,7 +13,7 @@ func (pr PullRequestList) Swap(i, j int)      { pr[i], pr[j] = pr[j], pr[i] }
 
 var _ sdk.Msg = &MsgCreatePullRequest{}
 
-func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepositoryId RepositoryId, baseBranch string, baseRepositoryId RepositoryId, reviewers []string, assignees []string, labelIds []uint64) *MsgCreatePullRequest {
+func NewMsgCreatePullRequest(creator string, title string, description string, headBranch string, headRepositoryId RepositoryId, baseBranch string, baseRepositoryId RepositoryId, reviewers []string, assignees []string, labelIds []uint64, issueIids []uint64) *MsgCreatePullRequest {
 	return &MsgCreatePullRequest{
 		Creator:          creator,
 		Title:            title,
@@ -27,6 +25,7 @@ func NewMsgCreatePullRequest(creator string, title string, description string, h
 		Reviewers:        reviewers,
 		Assignees:        assignees,
 		LabelIds:         labelIds,
+		IssueIids:        issueIids,
 	}
 }
 
@@ -57,56 +56,12 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = sdk.AccAddressFromBech32(msg.HeadRepositoryId.Id)
-	if err != nil {
-		if len(msg.HeadRepositoryId.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id must consist minimum 3 chars")
-		} else if len(msg.HeadRepositoryId.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head id limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.HeadRepositoryId.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid head id (%v)", msg.HeadRepositoryId.Id)
-		}
+	if err := ValidateRepositoryId(msg.HeadRepositoryId); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	if len(msg.HeadRepositoryId.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name must be at least 3 characters long")
-	} else if len(msg.HeadRepositoryId.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "head repository name exceeds limit: 100")
-	}
-	sanitized := IsNameSanitized(msg.HeadRepositoryId.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "head repository name is not sanitized")
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.BaseRepositoryId.Id)
-	if err != nil {
-		if len(msg.BaseRepositoryId.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id must consist minimum 3 chars")
-		} else if len(msg.BaseRepositoryId.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base id limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.BaseRepositoryId.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid base id (%v)", msg.BaseRepositoryId.Id)
-		}
-	}
-
-	if len(msg.BaseRepositoryId.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name must be at least 3 characters long")
-	} else if len(msg.BaseRepositoryId.Name) > 100 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "base repository name exceeds limit: 100")
-	}
-	sanitized = IsNameSanitized(msg.BaseRepositoryId.Name)
-	if !sanitized {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "base repository name is not sanitized")
+	if err := ValidateRepositoryId(msg.BaseRepositoryId); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Title) > 255 {
@@ -164,16 +119,19 @@ func (msg *MsgCreatePullRequest) ValidateBasic() error {
 			}
 		}
 	}
-	if len(msg.LabelIds) > 0 {
-		unique := make(map[uint64]bool, len(msg.LabelIds))
-		for _, labelId := range msg.LabelIds {
-			if !unique[labelId] {
-				unique[labelId] = true
-			} else {
-				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate label (%v)", labelId)
-			}
-		}
+
+	if !allUnique(msg.LabelIds) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate labelIds (%v)", msg.LabelIds)
 	}
+
+	if len(msg.IssueIids) > 10 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "pullRequest can't have more than 10 linked issues")
+	}
+
+	if !allUnique(msg.IssueIids) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate issueIids (%v)", msg.IssueIids)
+	}
+
 	return nil
 }
 
@@ -302,22 +260,26 @@ func (msg *MsgInvokeMergePullRequest) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	_, err = sdk.AccAddressFromBech32(msg.Provider)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
 	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgSetPullRequestState{}
 
-func NewMsgSetPullRequestState(creator string, repositoryId uint64, iid uint64, state string, mergeCommitSha string) *MsgSetPullRequestState {
+func NewMsgSetPullRequestState(creator string, repositoryId uint64, iid uint64, state string, mergeCommitSha string, commentBody string, taskId uint64) *MsgSetPullRequestState {
 	return &MsgSetPullRequestState{
 		Creator:        creator,
 		RepositoryId:   repositoryId,
 		Iid:            iid,
 		State:          state,
 		MergeCommitSha: mergeCommitSha,
+		CommentBody:    commentBody,
+		TaskId:         taskId,
 	}
 }
 
@@ -347,10 +309,16 @@ func (msg *MsgSetPullRequestState) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
 	_, exists := PullRequest_State_value[msg.State]
 	if !exists {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state (%s)", msg.State)
 	}
+
+	if err := ValidateOptionalCommentBody(msg.CommentBody); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	return nil
 }
 

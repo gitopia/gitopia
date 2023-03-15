@@ -65,6 +65,7 @@ func TestMsgUpdateComment_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgUpdateComment{
 				Creator: sample.AccAddress(),
+				Parent:  CommentParentIssue,
 				Body:    "comment",
 			},
 		},
@@ -97,6 +98,7 @@ func TestMsgDeleteComment_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgDeleteComment{
 				Creator: sample.AccAddress(),
+				Parent:  CommentParentIssue,
 			},
 		},
 	}
