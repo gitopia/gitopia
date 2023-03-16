@@ -27,6 +27,7 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/app/upgrades"
 	v3 "github.com/gitopia/gitopia/app/upgrades/v3"
+	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -241,6 +242,7 @@ func (app *GitopiaApp) BlockedModuleAccountAddrs() map[string]bool {
 	// TODO: Blocked on updating to v0.46.x
 	// delete(modAccAddrs, authtypes.NewModuleAddress(grouptypes.ModuleName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.TeamAccountName).String())
 
 	return modAccAddrs
 }

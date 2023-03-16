@@ -18,7 +18,8 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_gitopia"
 
-	MinterAccountName = "minter"
+	MinterAccountName    = "minter"
+	TeamAccountName      = "team"
 
 	// this line is used by starport scaffolding # ibc/keys/name
 )
