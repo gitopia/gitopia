@@ -16,7 +16,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
-func TestPoolDistributionSucessNoDistribution(t *testing.T) {
+func TestTokenDistributionSucessNoDistribution(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{}
@@ -31,13 +31,13 @@ func TestPoolDistributionSucessNoDistribution(t *testing.T) {
 	assert.NoError(t, err)
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.PoolDistribution(ctx)
+	gitopiaKeeper.TokenDistribution(ctx)
 
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
 }
 
-func TestPoolDistributionSucessWithBadEcosystemAddress(t *testing.T) {
+func TestTokenDistributionSucessWithBadEcosystemAddress(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
@@ -51,11 +51,11 @@ func TestPoolDistributionSucessWithBadEcosystemAddress(t *testing.T) {
 	gitopiaKeeper.SetParams(ctx, gParams)
 
 	require.Panics(t, func() {
-		gitopiaKeeper.PoolDistribution(ctx)
+		gitopiaKeeper.TokenDistribution(ctx)
 	})
 }
 
-func TestPoolDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
+func TestTokenDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
@@ -69,18 +69,18 @@ func TestPoolDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
 	gitopiaKeeper.SetParams(ctx, gParams)
 
 	require.Panics(t, func() {
-		gitopiaKeeper.PoolDistribution(ctx)
+		gitopiaKeeper.TokenDistribution(ctx)
 	})
 }
 
-func TestPoolDistributionSucess(t *testing.T) {
+func TestTokenDistributionSucess(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
 		PoolProportions: types.PoolProportions{
 			Ecosystem: &types.DistributionProportion{
 				Proportion: 40,
-				Address: "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
+				Address:    "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
 			},
 			Team: &types.DistributionProportion{
 				Proportion: 25,
@@ -98,7 +98,7 @@ func TestPoolDistributionSucess(t *testing.T) {
 	assert.NoError(t, err)
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.PoolDistribution(ctx)
+	gitopiaKeeper.TokenDistribution(ctx)
 
 	// NOTE: 65% of 100 is 32.5. 50-32 = 18
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(18)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
@@ -111,14 +111,14 @@ func TestPoolDistributionSucess(t *testing.T) {
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(12)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
 }
 
-func TestPoolDistributionSucessWhenNoTokenMinted(t *testing.T) {
+func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
 		PoolProportions: types.PoolProportions{
 			Ecosystem: &types.DistributionProportion{
 				Proportion: 40,
-				Address: "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
+				Address:    "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
 			},
 			Team: &types.DistributionProportion{
 				Proportion: 25,
@@ -133,7 +133,7 @@ func TestPoolDistributionSucessWhenNoTokenMinted(t *testing.T) {
 
 	gitopiaKeeper.SetParams(ctx, gParams)
 
-	gitopiaKeeper.PoolDistribution(ctx)
+	gitopiaKeeper.TokenDistribution(ctx)
 
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))

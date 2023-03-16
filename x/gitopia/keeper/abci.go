@@ -27,7 +27,7 @@ func (k Keeper) TransferProportion(
 	return coins, nil
 }
 
-func (k Keeper) PoolDistribution(ctx sdk.Context) {
+func (k Keeper) TokenDistribution(ctx sdk.Context) {
 	gitopiaParams := k.GetParams(ctx)
 	minterAddress := k.accountKeeper.GetModuleAddress(k.minterAccountName)
 	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
@@ -69,13 +69,4 @@ func (k Keeper) PoolDistribution(ctx sdk.Context) {
 		ctx.Logger().Error(fmt.Sprintf("error distributing community and staking proportion %v", err))
 		panic(err)
 	}
-}
-
-func (k Keeper) DeveloperDistribution(ctx sdk.Context) {
-
-}
-
-func (k Keeper) TokenDistribution(ctx sdk.Context) {
-	k.PoolDistribution(ctx)
-	k.DeveloperDistribution(ctx)
 }
