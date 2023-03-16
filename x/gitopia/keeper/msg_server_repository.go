@@ -189,7 +189,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 	}
 
 	// Check if the user already has a repository with the same name
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.ForkRepositoryName); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
@@ -231,7 +231,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
 			sdk.NewAttribute(types.EventAttributeForkRepoDescriptionKey, msg.ForkRepositoryDescription),
 			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
-			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
+			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.Address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
@@ -252,7 +252,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	}
 
 	// Check if the user already has a repository with the same name
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.ForkRepositoryName); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
