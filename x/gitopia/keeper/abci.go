@@ -44,6 +44,7 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 			gitopiaParams.PoolProportions.Ecosystem.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())
+			panic(err)
 		}
 		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
