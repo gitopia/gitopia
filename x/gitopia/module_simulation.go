@@ -53,6 +53,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgToggleForcePush int = 100
 
+	opWeightMsgExercise = "op_weight_msg_exercise"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgExercise int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -181,6 +185,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgToggleForcePush,
 		gitopiasimulation.SimulateMsgToggleForcePush(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgExercise int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgExercise, &weightMsgExercise, nil,
+		func(_ *rand.Rand) {
+			weightMsgExercise = defaultWeightMsgExercise
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgExercise,
+		gitopiasimulation.SimulateMsgExercise(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

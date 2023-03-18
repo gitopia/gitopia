@@ -46,6 +46,7 @@ service Msg {
   rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
   rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
+  rpc Exercise(MsgExercise) returns (MsgExerciseResponse);
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
@@ -108,6 +109,14 @@ service Msg {
   rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
+
+message MsgExercise {
+  string creator = 1;
+  string coins = 2;
+  string to = 3;
+}
+
+message MsgExerciseResponse {}
 
 message MsgToggleForcePush {
   string creator = 1;
