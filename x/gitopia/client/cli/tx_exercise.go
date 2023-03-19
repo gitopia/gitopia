@@ -15,11 +15,11 @@ var _ = strconv.Itoa(0)
 
 func CmdExercise() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "exercise [coins] [to]",
-		Short: "Broadcast message exercise",
+		Use:   "exercise [amount] [to]",
+		Short: "exercise team vesting balance",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argCoins, err := cosmostypes.ParseCoinsNormalized(args[0])
+			argAmount, err := cosmostypes.ParseCoinsNormalized(args[0])
 			if err != nil {
 				return err
 			}
@@ -33,7 +33,7 @@ func CmdExercise() *cobra.Command {
 
 			msg := types.NewMsgExercise(
 				clientCtx.GetFromAddress().String(),
-				argCoins,
+				argAmount,
 				argTo,
 			)
 			if err := msg.ValidateBasic(); err != nil {
