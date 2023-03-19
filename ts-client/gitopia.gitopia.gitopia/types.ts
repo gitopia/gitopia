@@ -6,6 +6,7 @@ import { Dao } from "./types/gitopia/dao"
 import { Issue } from "./types/gitopia/issue"
 import { Member } from "./types/gitopia/member"
 import { DistributionProportion } from "./types/gitopia/params"
+import { PoolProportions } from "./types/gitopia/params"
 import { Params } from "./types/gitopia/params"
 import { PullRequest } from "./types/gitopia/pullRequest"
 import { PullRequestHead } from "./types/gitopia/pullRequest"
@@ -48,6 +49,7 @@ export {
     Issue,
     Member,
     DistributionProportion,
+    PoolProportions,
     Params,
     PullRequest,
     PullRequestHead,

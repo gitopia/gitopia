@@ -9,40 +9,45 @@ const TypeMsgExercise = "exercise"
 
 var _ sdk.Msg = &MsgExercise{}
 
-func NewMsgExercise(creator string, coins string, to string) *MsgExercise {
-  return &MsgExercise{
+func NewMsgExercise(creator string, coins sdk.Coins, to string) *MsgExercise {
+	return &MsgExercise{
 		Creator: creator,
-    Coins: coins,
-    To: to,
+		Coins:   coins,
+		To:      to,
 	}
 }
 
 func (msg *MsgExercise) Route() string {
-  return RouterKey
+	return RouterKey
 }
 
 func (msg *MsgExercise) Type() string {
-  return TypeMsgExercise
+	return TypeMsgExercise
 }
 
 func (msg *MsgExercise) GetSigners() []sdk.AccAddress {
-  creator, err := sdk.AccAddressFromBech32(msg.Creator)
-  if err != nil {
-    panic(err)
-  }
-  return []sdk.AccAddress{creator}
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgExercise) GetSignBytes() []byte {
-  bz := ModuleCdc.MustMarshalJSON(msg)
-  return sdk.MustSortJSON(bz)
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
 }
 
 func (msg *MsgExercise) ValidateBasic() error {
-  _, err := sdk.AccAddressFromBech32(msg.Creator)
-  	if err != nil {
-  		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-  	}
-  return nil
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if len(msg.Coins) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty amount")
+	}
+	if err := msg.Coins.Validate(); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	return nil
 }
-

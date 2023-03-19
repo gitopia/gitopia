@@ -1,13 +1,14 @@
 package cli
 
 import (
-    "strconv"
-	
-	"github.com/spf13/cobra"
-    "github.com/cosmos/cosmos-sdk/client"
+	"strconv"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	cosmostypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
@@ -18,9 +19,13 @@ func CmdExercise() *cobra.Command {
 		Short: "Broadcast message exercise",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-      		 argCoins := args[0]
-             argTo := args[1]
-            
+			argCoins, err := cosmostypes.ParseCoinsNormalized(args[0])
+			if err != nil {
+				return err
+			}
+
+			argTo := args[1]
+
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -30,7 +35,6 @@ func CmdExercise() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argCoins,
 				argTo,
-				
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -41,5 +45,5 @@ func CmdExercise() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }

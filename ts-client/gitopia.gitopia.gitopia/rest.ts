@@ -331,6 +331,8 @@ export type GitopiaMsgDeleteTaskResponse = object;
 
 export type GitopiaMsgDeleteUserResponse = object;
 
+export type GitopiaMsgExerciseResponse = object;
+
 export interface GitopiaMsgForkRepositoryResponse {
   /** @format uint64 */
   id?: string;

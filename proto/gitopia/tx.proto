@@ -112,7 +112,8 @@ service Msg {
 
 message MsgExercise {
   string creator = 1;
-  string coins = 2;
+  repeated cosmos.base.v1beta1.Coin coins = 2
+    [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
   string to = 3;
 }
 
