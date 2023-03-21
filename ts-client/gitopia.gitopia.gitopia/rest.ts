@@ -85,6 +85,9 @@ export interface GitopiaComment {
   attachments?: GitopiaAttachment[];
   diffHunk?: string;
   path?: string;
+
+  /** @format uint64 */
+  position?: string;
   system?: boolean;
   authorAssociation?: string;
 

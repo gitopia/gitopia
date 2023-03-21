@@ -191,6 +191,7 @@ export interface Comment {
   attachments: Attachment[];
   diffHunk: string;
   path: string;
+  position: number;
   system: boolean;
   authorAssociation: string;
   createdAt: number;
@@ -214,6 +215,7 @@ function createBaseComment(): Comment {
     attachments: [],
     diffHunk: "",
     path: "",
+    position: 0,
     system: false,
     authorAssociation: "",
     createdAt: 0,
@@ -258,34 +260,37 @@ export const Comment = {
     if (message.path !== "") {
       writer.uint32(82).string(message.path);
     }
+    if (message.position !== 0) {
+      writer.uint32(88).uint64(message.position);
+    }
     if (message.system === true) {
-      writer.uint32(88).bool(message.system);
+      writer.uint32(96).bool(message.system);
     }
     if (message.authorAssociation !== "") {
-      writer.uint32(98).string(message.authorAssociation);
+      writer.uint32(106).string(message.authorAssociation);
     }
     if (message.createdAt !== 0) {
-      writer.uint32(104).int64(message.createdAt);
+      writer.uint32(112).int64(message.createdAt);
     }
     if (message.updatedAt !== 0) {
-      writer.uint32(112).int64(message.updatedAt);
+      writer.uint32(120).int64(message.updatedAt);
     }
     if (message.commentType !== 0) {
-      writer.uint32(120).int32(message.commentType);
+      writer.uint32(128).int32(message.commentType);
     }
     if (message.resolved === true) {
-      writer.uint32(128).bool(message.resolved);
+      writer.uint32(136).bool(message.resolved);
     }
-    writer.uint32(138).fork();
+    writer.uint32(146).fork();
     for (const v of message.replies) {
       writer.uint64(v);
     }
     writer.ldelim();
     for (const v of message.reactions) {
-      Reaction.encode(v!, writer.uint32(146).fork()).ldelim();
+      Reaction.encode(v!, writer.uint32(154).fork()).ldelim();
     }
     if (message.hidden === true) {
-      writer.uint32(152).bool(message.hidden);
+      writer.uint32(160).bool(message.hidden);
     }
     return writer;
   },
@@ -328,24 +333,27 @@ export const Comment = {
           message.path = reader.string();
           break;
         case 11:
-          message.system = reader.bool();
+          message.position = longToNumber(reader.uint64() as Long);
           break;
         case 12:
-          message.authorAssociation = reader.string();
+          message.system = reader.bool();
           break;
         case 13:
-          message.createdAt = longToNumber(reader.int64() as Long);
+          message.authorAssociation = reader.string();
           break;
         case 14:
-          message.updatedAt = longToNumber(reader.int64() as Long);
+          message.createdAt = longToNumber(reader.int64() as Long);
           break;
         case 15:
-          message.commentType = reader.int32() as any;
+          message.updatedAt = longToNumber(reader.int64() as Long);
           break;
         case 16:
-          message.resolved = reader.bool();
+          message.commentType = reader.int32() as any;
           break;
         case 17:
+          message.resolved = reader.bool();
+          break;
+        case 18:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -355,10 +363,10 @@ export const Comment = {
             message.replies.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 18:
+        case 19:
           message.reactions.push(Reaction.decode(reader, reader.uint32()));
           break;
-        case 19:
+        case 20:
           message.hidden = reader.bool();
           break;
         default:
@@ -381,6 +389,7 @@ export const Comment = {
       attachments: Array.isArray(object?.attachments) ? object.attachments.map((e: any) => Attachment.fromJSON(e)) : [],
       diffHunk: isSet(object.diffHunk) ? String(object.diffHunk) : "",
       path: isSet(object.path) ? String(object.path) : "",
+      position: isSet(object.position) ? Number(object.position) : 0,
       system: isSet(object.system) ? Boolean(object.system) : false,
       authorAssociation: isSet(object.authorAssociation) ? String(object.authorAssociation) : "",
       createdAt: isSet(object.createdAt) ? Number(object.createdAt) : 0,
@@ -409,6 +418,7 @@ export const Comment = {
     }
     message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
     message.path !== undefined && (obj.path = message.path);
+    message.position !== undefined && (obj.position = Math.round(message.position));
     message.system !== undefined && (obj.system = message.system);
     message.authorAssociation !== undefined && (obj.authorAssociation = message.authorAssociation);
     message.createdAt !== undefined && (obj.createdAt = Math.round(message.createdAt));
@@ -441,6 +451,7 @@ export const Comment = {
     message.attachments = object.attachments?.map((e) => Attachment.fromPartial(e)) || [];
     message.diffHunk = object.diffHunk ?? "";
     message.path = object.path ?? "";
+    message.position = object.position ?? 0;
     message.system = object.system ?? false;
     message.authorAssociation = object.authorAssociation ?? "";
     message.createdAt = object.createdAt ?? 0;

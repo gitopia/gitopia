@@ -584,6 +584,7 @@ message MsgCreateComment {
   repeated Attachment attachments = 6; 
   string diffHunk = 7;
   string path = 8;
+  uint64 position = 9;
 }
 
 message MsgCreateCommentResponse {
