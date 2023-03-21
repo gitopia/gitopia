@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
@@ -31,7 +32,7 @@ func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
 		{
 			desc: "Invalid expiry",
 			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
-				Amount:       []sdk.Coin{{Denom: "utlore", Amount: sdk.NewInt(1000)}},
+				Amount:       []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
 				Expiry:       time.Time{}.Unix(),
 				RepositoryId: 0,
 			},
@@ -40,7 +41,7 @@ func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
 		{
 			desc: "Success",
 			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
-				Amount:    []sdk.Coin{{Denom: "utlore", Amount: sdk.NewInt(1000)}},
+				Amount:    []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
 				Expiry:    time.Now().Add(time.Hour * 24).Unix(),
 				ParentIid: issueIid,
 			},
