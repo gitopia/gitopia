@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -17,10 +16,11 @@ import (
 
 type (
 	Keeper struct {
+		// these fields are unused and maybe uninitialized
+		// the auto generated code is left behind for future!
 		cdc        codec.BinaryCodec
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
 
 		gitopiaKeeper *gitopiakeeper.Keeper
 		stakingKeeper stakingkeeper.Keeper
@@ -32,7 +32,6 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
-	ps paramtypes.Subspace,
 	gk *gitopiakeeper.Keeper,
 	sk stakingkeeper.Keeper,
 	gok govkeeper.Keeper,
@@ -43,7 +42,6 @@ func NewKeeper(
 		cdc:           cdc,
 		storeKey:      storeKey,
 		memKey:        memKey,
-		paramstore:    ps,
 		gitopiaKeeper: gk,
 		stakingKeeper: sk,
 		GovKeeper:     gok,

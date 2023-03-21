@@ -48,6 +48,8 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/rewards"
+	rewardtypes "github.com/gitopia/gitopia/x/rewards/types"
 )
 
 var maccPerms = map[string][]string{
@@ -129,6 +131,7 @@ func appModules(
 		params.NewAppModule(app.ParamsKeeper),
 		app.TransferModule,
 		app.GitopiaModule,
+		rewards.NewAppModule(appCodec, app.RewardKeeper, app.AccountKeeper, app.BankKeeper),
 	}
 }
 
@@ -159,6 +162,7 @@ func orderBeginBlockers() []string {
 		authz.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }
 
@@ -184,6 +188,7 @@ func orderEndBlockers() []string {
 		group.ModuleName,
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }
 
@@ -209,5 +214,6 @@ func orderInitBlockers() []string {
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
 		authz.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }

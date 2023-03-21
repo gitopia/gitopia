@@ -20,6 +20,7 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	rewardtypes "github.com/gitopia/gitopia/x/rewards/types"
 )
 
 func (appKeepers *AppKeepers) GenerateKeys() {
@@ -31,7 +32,7 @@ func (appKeepers *AppKeepers) GenerateKeys() {
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey,
 		upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey,
 		ibctransfertypes.StoreKey, capabilitytypes.StoreKey, authzkeeper.StoreKey,
-		group.StoreKey, gitopiatypes.StoreKey,
+		group.StoreKey, gitopiatypes.StoreKey, rewardtypes.StoreKey,
 	)
 
 	// Define transient store keys
