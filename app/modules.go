@@ -96,6 +96,7 @@ var ModuleBasics = module.NewBasicManager(
 	transfer.AppModuleBasic{},
 	vesting.AppModuleBasic{},
 	gitopia.AppModule{},
+	rewards.AppModule{},
 )
 
 func appModules(
