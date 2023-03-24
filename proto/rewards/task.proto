@@ -16,4 +16,5 @@ enum taskType {
 message Task {
   taskType type  = 1;
   bool isComplete  = 2;
+  int32 weight = 3;
 }

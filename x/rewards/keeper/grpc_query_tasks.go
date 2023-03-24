@@ -11,6 +11,18 @@ import (
 	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
+var (
+	// NOTE: sum of all task claim percent should not exceed 100
+	taskWeights = map[types.TaskType]int32{
+		types.TaskType_CREATE_NON_EMPTY_REPO:      10,
+		types.TaskType_CREATE_NON_EMPTY_DAO_REPO:  10,
+		types.TaskType_PR_TO_VERIFIED_REPO:        20, // remove
+		types.TaskType_PR_TO_VERIFIED_REPO_MERGED: 20,
+		types.TaskType_LORE_STAKED:                20,
+		types.TaskType_VOTE_PROPOSAL:              20,
+	}
+)
+
 func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.QueryTasksResponse, error) {
 	if req == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid request")
@@ -37,6 +49,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_CREATE_NON_EMPTY_REPO,
 		IsComplete: taskComplete,
+		Weight:     taskWeights[types.TaskType_CREATE_NON_EMPTY_REPO],
 	})
 
 	// non empty DAO repo
@@ -49,7 +62,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		if dao.Creator == req.Address {
 			res, err := k.gitopiaKeeper.AnyRepositoryAll(ctx, &gTypes.QueryAllAnyRepositoryRequest{Id: dao.Address})
 			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error fetching DAO repos for address " + dao.Address)
+				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error fetching DAO repos for address "+dao.Address)
 			}
 			for _, repo := range res.Repository {
 				branches := k.gitopiaKeeper.GetAllRepositoryBranch(ctx, repo.Id)
@@ -66,6 +79,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_CREATE_NON_EMPTY_DAO_REPO,
 		IsComplete: taskComplete,
+		Weight:     taskWeights[types.TaskType_CREATE_NON_EMPTY_DAO_REPO],
 	})
 
 	prCreated := false
@@ -88,11 +102,13 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_PR_TO_VERIFIED_REPO,
 		IsComplete: prCreated,
+		Weight: taskWeights[types.TaskType_PR_TO_VERIFIED_REPO],
 	})
 
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
 		IsComplete: prMerged,
+		Weight: taskWeights[types.TaskType_PR_TO_VERIFIED_REPO_MERGED],
 	})
 
 	accAddr, err := sdk.AccAddressFromBech32(req.Address)
@@ -110,6 +126,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_LORE_STAKED,
 		IsComplete: taskComplete,
+		Weight: taskWeights[types.TaskType_LORE_STAKED],
 	})
 
 	// proposal voting
@@ -123,6 +140,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_VOTE_PROPOSAL,
 		IsComplete: taskComplete,
+		Weight: taskWeights[types.TaskType_VOTE_PROPOSAL],
 	})
 
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
