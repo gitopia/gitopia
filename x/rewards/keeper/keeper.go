@@ -9,6 +9,7 @@ import (
 	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
@@ -18,13 +19,14 @@ type (
 	Keeper struct {
 		// these fields are unused and maybe uninitialized
 		// the auto generated code is left behind for future!
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
+		cdc      codec.BinaryCodec
+		storeKey storetypes.StoreKey
+		memKey   storetypes.StoreKey
 
 		gitopiaKeeper *gitopiakeeper.Keeper
 		stakingKeeper stakingkeeper.Keeper
 		GovKeeper     govkeeper.Keeper
+		bankKeeper    bankkeeper.Keeper
 	}
 )
 
@@ -35,6 +37,7 @@ func NewKeeper(
 	gk *gitopiakeeper.Keeper,
 	sk stakingkeeper.Keeper,
 	gok govkeeper.Keeper,
+	bk bankkeeper.Keeper,
 ) *Keeper {
 
 	return &Keeper{
@@ -45,6 +48,7 @@ func NewKeeper(
 		gitopiaKeeper: gk,
 		stakingKeeper: sk,
 		GovKeeper:     gok,
+		bankKeeper:    bk,
 	}
 }
 

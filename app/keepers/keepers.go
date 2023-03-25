@@ -316,6 +316,7 @@ func NewAppKeeper(
 		&appKeepers.GitopiaKeeper, 
 		appKeepers.StakingKeeper, 
 		appKeepers.GovKeeper,
+		appKeepers.BankKeeper,
 	)
 
 	return appKeepers

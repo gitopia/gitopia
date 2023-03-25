@@ -113,6 +113,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		gitopiaKeeper,
 		stakingKeeper,
 		govkeeper.Keeper{},
+		bankKeeper,
 	)
 
 
