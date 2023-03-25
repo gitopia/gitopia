@@ -32,6 +32,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgSettle int = 100
 
+	opWeightMsgGrant = "op_weight_msg_grant"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgGrant int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -64,6 +68,17 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
+	var weightMsgGrant int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgGrant, &weightMsgGrant, nil,
+		func(_ *rand.Rand) {
+			weightMsgGrant = defaultWeightMsgGrant
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgGrant,
+		rewardssimulation.SimulateMsgGrant(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
