@@ -1,6 +1,9 @@
 syntax = "proto3";
 package gitopia.gitopia.rewards;
 
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
@@ -13,7 +16,8 @@ service Msg {
 
 message MsgGrant {
   string creator = 1;
-  string coins = 2;
+  repeated cosmos.base.v1beta1.Coin amount = 8
+      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
   string to = 3;
 }
 

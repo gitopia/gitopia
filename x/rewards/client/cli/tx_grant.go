@@ -7,6 +7,7 @@ import (
     "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
@@ -18,7 +19,10 @@ func CmdGrant() *cobra.Command {
 		Short: "grant reward",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-      		 argCoins := args[0]
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
+			if err != nil {
+				return err
+			}
              argTo := args[1]
             
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -28,9 +32,8 @@ func CmdGrant() *cobra.Command {
 
 			msg := types.NewMsgGrant(
 				clientCtx.GetFromAddress().String(),
-				argCoins,
+				argAmount,
 				argTo,
-				
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
