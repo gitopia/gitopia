@@ -14,12 +14,16 @@ import (
 var (
 	// NOTE: sum of all task claim percent should not exceed 100
 	taskWeights = map[types.TaskType]int32{
-		types.TaskType_CREATE_NON_EMPTY_REPO:      10,
-		types.TaskType_CREATE_NON_EMPTY_DAO_REPO:  10,
-		types.TaskType_PR_TO_VERIFIED_REPO:        20, // remove
-		types.TaskType_PR_TO_VERIFIED_REPO_MERGED: 20,
-		types.TaskType_LORE_STAKED:                20,
-		types.TaskType_VOTE_PROPOSAL:              20,
+		types.TaskType_CREATE_USER:                            5,
+		types.TaskType_CREATE_NON_EMPTY_REPO:                  10,
+		types.TaskType_PR_TO_REPO_MERGED:                      20,
+		types.TaskType_PR_TO_VERIFIED_REPO_MERGED:             10,
+		types.TaskType_PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY: 10,
+		types.TaskType_CREATE_ISSUE:                           5,
+		types.TaskType_CREATE_ISSUE_WITH_BOUNTY:               10,
+		types.TaskType_CREATE_ISSUE_WITH_BOUNTY_VERIFIED:      10,
+		types.TaskType_LORE_STAKED:                            10,
+		types.TaskType_VOTE_PROPOSAL:                          10,
 	}
 )
 
@@ -30,11 +34,18 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	ctx := sdk.UnwrapSDKContext(c)
 	var tasks []types.Task
 
-	user, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
+	_, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
 	if !found {
 		// DAOs cannot claim rewards
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user %s not found", req.Address))
 	}
+
+	tasks = append(tasks, types.Task{
+		Type:       types.TaskType_CREATE_USER,
+		IsComplete: true,
+		Weight:     taskWeights[types.TaskType_CREATE_USER],
+	})
+
 	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
 
 	taskComplete := false
@@ -52,63 +63,85 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		Weight:     taskWeights[types.TaskType_CREATE_NON_EMPTY_REPO],
 	})
 
-	// non empty DAO repo
-	taskComplete = false
-	daos, err := k.gitopiaKeeper.GetAllUserDao(ctx, req.Address)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "unable to get user dao")
-	}
-	for _, dao := range daos {
-		if dao.Creator == req.Address {
-			res, err := k.gitopiaKeeper.AnyRepositoryAll(ctx, &gTypes.QueryAllAnyRepositoryRequest{Id: dao.Address})
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error fetching DAO repos for address "+dao.Address)
-			}
-			for _, repo := range res.Repository {
-				branches := k.gitopiaKeeper.GetAllRepositoryBranch(ctx, repo.Id)
-				// the repo must be created by the dao owner only, who is also the requested user
-				if repo.Creator == req.Address && len(branches) > 0 {
-					taskComplete = true
-					break
+	issueCreated := false
+	issueCreatedWithBounty := false
+	issueCreatedWithBountyVerified := false
+
+	issues := k.gitopiaKeeper.GetAllIssue(ctx)
+
+	for _, issue := range issues {
+		if issue.Creator == req.Address {
+			issueCreated = true
+
+			if len(issue.Bounties) > 0 {
+				issueCreatedWithBounty = true
+
+				repo, f := k.gitopiaKeeper.GetRepositoryById(ctx, issue.RepositoryId)
+				if f && repo.Owner.Type == gTypes.OwnerType_DAO {
+					issueCreatedWithBountyVerified = true
 				}
 			}
 		}
-
 	}
 
 	tasks = append(tasks, types.Task{
-		Type:       types.TaskType_CREATE_NON_EMPTY_DAO_REPO,
-		IsComplete: taskComplete,
-		Weight:     taskWeights[types.TaskType_CREATE_NON_EMPTY_DAO_REPO],
+		Type:       types.TaskType_CREATE_ISSUE,
+		IsComplete: issueCreated,
+		Weight:     taskWeights[types.TaskType_CREATE_ISSUE],
+	}, types.Task{
+		Type:       types.TaskType_CREATE_ISSUE_WITH_BOUNTY,
+		IsComplete: issueCreatedWithBounty,
+		Weight:     taskWeights[types.TaskType_CREATE_ISSUE_WITH_BOUNTY],
+	}, types.Task{
+		Type:       types.TaskType_CREATE_ISSUE_WITH_BOUNTY_VERIFIED,
+		IsComplete: issueCreatedWithBountyVerified,
+		Weight:     taskWeights[types.TaskType_CREATE_ISSUE_WITH_BOUNTY_VERIFIED],
 	})
 
-	prCreated := false
 	prMerged := false
-	// PR to verified repos
+	prMergedVerified := false
+	prMergedWithBountyVerified := false
 
-	if user.Verified {
-		prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
+	prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
 
-		for _, pr := range prs {
-			if pr.Creator == req.Address {
-				prCreated = true
-				if pr.State == gTypes.PullRequest_MERGED {
-					prMerged = true
-					break
+	for _, pr := range prs {
+		if pr.Creator == req.Address && pr.State == gTypes.PullRequest_MERGED {
+			prMerged = true
+
+			baseRepo, f := k.gitopiaKeeper.GetRepositoryById(ctx, pr.Base.RepositoryId)
+			if f && baseRepo.Owner.Type == gTypes.OwnerType_DAO {
+				dao, f := k.gitopiaKeeper.GetDao(ctx, baseRepo.Owner.Id)
+				if f && dao.Verified {
+					prMergedVerified = true
+
+					for _, i := range pr.Issues {
+						issue, f := k.gitopiaKeeper.GetRepositoryIssue(ctx, baseRepo.Id, i.Iid)
+						if f {
+							for _, bountyId := range issue.Bounties {
+								bounty, f := k.gitopiaKeeper.GetBounty(ctx, bountyId)
+								if f && bounty.RewardedTo == pr.Creator {
+									prMergedWithBountyVerified = true
+								}
+							}
+						}
+					}
 				}
 			}
 		}
 	}
-	tasks = append(tasks, types.Task{
-		Type:       types.TaskType_PR_TO_VERIFIED_REPO,
-		IsComplete: prCreated,
-		Weight: taskWeights[types.TaskType_PR_TO_VERIFIED_REPO],
-	})
 
 	tasks = append(tasks, types.Task{
-		Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
+		Type:       types.TaskType_PR_TO_REPO_MERGED,
 		IsComplete: prMerged,
-		Weight: taskWeights[types.TaskType_PR_TO_VERIFIED_REPO_MERGED],
+		Weight:     taskWeights[types.TaskType_PR_TO_REPO_MERGED],
+	}, types.Task{
+		Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED,
+		IsComplete: prMergedVerified,
+		Weight:     taskWeights[types.TaskType_PR_TO_VERIFIED_REPO_MERGED],
+	}, types.Task{
+		Type:       types.TaskType_PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY,
+		IsComplete: prMergedWithBountyVerified,
+		Weight:     taskWeights[types.TaskType_PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY],
 	})
 
 	accAddr, err := sdk.AccAddressFromBech32(req.Address)
@@ -126,7 +159,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_LORE_STAKED,
 		IsComplete: taskComplete,
-		Weight: taskWeights[types.TaskType_LORE_STAKED],
+		Weight:     taskWeights[types.TaskType_LORE_STAKED],
 	})
 
 	// proposal voting
@@ -140,7 +173,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_VOTE_PROPOSAL,
 		IsComplete: taskComplete,
-		Weight: taskWeights[types.TaskType_VOTE_PROPOSAL],
+		Weight:     taskWeights[types.TaskType_VOTE_PROPOSAL],
 	})
 
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
