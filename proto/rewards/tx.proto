@@ -10,18 +10,15 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc Grant(MsgGrant) returns (MsgGrantResponse);
+      rpc Claim(MsgClaim) returns (MsgClaimResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
-message MsgGrant {
+message MsgClaim {
   string creator = 1;
-  repeated cosmos.base.v1beta1.Coin amount = 8
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  string to = 3;
 }
 
-message MsgGrantResponse {
+message MsgClaimResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

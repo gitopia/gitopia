@@ -1,39 +1,30 @@
 package cli
 
 import (
-    "strconv"
-	
-	"github.com/spf13/cobra"
-    "github.com/cosmos/cosmos-sdk/client"
+	"strconv"
+
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdGrant() *cobra.Command {
+func CmdClaim() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "grant [coins] [to]",
-		Short: "grant reward",
-		Args:  cobra.ExactArgs(2),
+		Use:   "claim",
+		Short: "claim reward",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
-			if err != nil {
-				return err
-			}
-             argTo := args[1]
-            
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgGrant(
+			msg := types.NewMsgClaim(
 				clientCtx.GetFromAddress().String(),
-				argAmount,
-				argTo,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -44,5 +35,5 @@ func CmdGrant() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }

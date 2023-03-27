@@ -69,6 +69,8 @@ genesis:
         - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
           proportion: 5
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
+    rewards: 
+      evaluator_address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
     gov:
       deposit_params:
         max_deposit_period: 60s

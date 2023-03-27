@@ -7,7 +7,7 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // Params defines the parameters for the module.
 message Params {
-  string airdrop_address = 1 [
-    (gogoproto.moretags) = "yaml:\"airdrop_address\""
+  string evaluator_address = 1 [
+    (gogoproto.moretags) = "yaml:\"evaluator_address\""
   ];
 }

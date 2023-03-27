@@ -3,14 +3,14 @@ package simulation
 import (
 	"math/rand"
 
-	"github.com/gitopia/gitopia/x/rewards/keeper"
-	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/gitopia/gitopia/x/rewards/keeper"
+	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
-func SimulateMsgGrant(
+func SimulateMsgClaim(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	k keeper.Keeper,
@@ -18,12 +18,12 @@ func SimulateMsgGrant(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgGrant{
+		msg := &types.MsgClaim{
 			Creator: simAccount.Address.String(),
 		}
 
-		// TODO: Handling the Grant simulation
+		// TODO: Handling the Claim simulation
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "Grant simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "Claim simulation not implemented"), nil, nil
 	}
 }

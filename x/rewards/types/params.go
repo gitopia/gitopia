@@ -1,9 +1,9 @@
 package types
 
 // NewParams creates a new Params instance
-func NewParams(airdropAddress string) Params {
+func NewParams(evaluatorAddress string) Params {
 	return Params{
-		AirdropAddress: airdropAddress,
+		EvaluatorAddress: evaluatorAddress,
 	}
 }
 
