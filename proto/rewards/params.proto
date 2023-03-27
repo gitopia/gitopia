@@ -1,0 +1,13 @@
+syntax = "proto3";
+package gitopia.gitopia.rewards;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+
+// Params defines the parameters for the module.
+message Params {
+  string airdrop_address = 1 [
+    (gogoproto.moretags) = "yaml:\"airdrop_address\""
+  ];
+}
