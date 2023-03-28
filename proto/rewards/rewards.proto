@@ -11,5 +11,7 @@ message Reward {
   repeated cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
   string creator = 3;
+  repeated cosmos.base.v1beta1.Coin claimedAmount = 4
+    [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
 }
 

@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (k msgServer) GetClaimableReward(ctx sdk.Context, addr string, totalReward sdk.Coins) (sdk.Coins, error) {
+func (k msgServer) GetClaimableAmount(ctx sdk.Context, addr string, totalReward sdk.Coins) (sdk.Coins, error) {
 	tasks, err := k.getTasks(ctx, addr)
 	if err != nil {
 		return nil, err
@@ -48,16 +48,29 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "(%s) address not eligible for reward ", msg.Creator)
 	}
 
-	// if reward.TotalAmount == reward.ClaimedAmount {
-	// 	return http.StatusBadRequest, errors.New("reward already claimed")
-	// }
+	if reward.Amount.IsEqual(reward.ClaimedAmount) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already claimed by address "+msg.Creator)
+	}
 
-	claimableReward, err := k.GetClaimableReward(ctx, msg.Creator, reward.Amount)
+	claimableAmount, err := k.GetClaimableAmount(ctx, msg.Creator, reward.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.AirdropAccountName, toAddr, claimableReward)
+	if reward.ClaimedAmount.IsEqual(claimableAmount) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed. must complete more tasks")
+	}
+
+	// should not happen!
+	if reward.ClaimedAmount.IsAnyGT(claimableAmount) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wallet rewarded more than eligible amount")
+	}
+
+	balance := claimableAmount.Sub(reward.ClaimedAmount...)
+	reward.ClaimedAmount = claimableAmount
+	k.SetReward(ctx, reward)
+
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.AirdropAccountName, toAddr, balance)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error transfering reward")
 	}
