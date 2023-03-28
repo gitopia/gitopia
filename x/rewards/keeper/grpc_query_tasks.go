@@ -27,26 +27,15 @@ var (
 	}
 )
 
-func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.QueryTasksResponse, error) {
-	if req == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid request")
-	}
-	ctx := sdk.UnwrapSDKContext(c)
+func(k Keeper) getTasks(ctx sdk.Context, addr string) ([]types.Task, error){
 	var tasks []types.Task
-
-	_, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
-	if !found {
-		// DAOs cannot claim rewards
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user %s not found", req.Address))
-	}
-
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_CREATE_USER,
 		IsComplete: true,
 		Weight:     taskWeights[types.TaskType_CREATE_USER],
 	})
 
-	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, req.GetAddress())
+	repos := k.gitopiaKeeper.GetAllAddressRepository(ctx, addr)
 
 	taskComplete := false
 	for _, repo := range repos {
@@ -70,7 +59,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	issues := k.gitopiaKeeper.GetAllIssue(ctx)
 
 	for _, issue := range issues {
-		if issue.Creator == req.Address {
+		if issue.Creator == addr {
 			issueCreated = true
 
 			if len(issue.Bounties) > 0 {
@@ -105,7 +94,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	prs := k.gitopiaKeeper.GetAllPullRequest(ctx)
 
 	for _, pr := range prs {
-		if pr.Creator == req.Address && pr.State == gTypes.PullRequest_MERGED {
+		if pr.Creator == addr && pr.State == gTypes.PullRequest_MERGED {
 			prMerged = true
 
 			baseRepo, f := k.gitopiaKeeper.GetRepositoryById(ctx, pr.Base.RepositoryId)
@@ -144,7 +133,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		Weight:     taskWeights[types.TaskType_PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY],
 	})
 
-	accAddr, err := sdk.AccAddressFromBech32(req.Address)
+	accAddr, err := sdk.AccAddressFromBech32(addr)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, err.Error())
 	}
@@ -166,7 +155,7 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 	taskComplete = false
 	votes := k.GovKeeper.GetAllVotes(ctx)
 	for _, vote := range votes {
-		if vote.Voter == req.Address {
+		if vote.Voter == addr {
 			taskComplete = true
 		}
 	}
@@ -175,6 +164,26 @@ func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.Q
 		IsComplete: taskComplete,
 		Weight:     taskWeights[types.TaskType_VOTE_PROPOSAL],
 	})
+
+	return tasks, nil
+}
+
+func (k Keeper) Tasks(c context.Context, req *types.QueryTasksRequest) (*types.QueryTasksResponse, error) {
+	if req == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(c)
+
+	_, found := k.gitopiaKeeper.GetUser(ctx, req.Address)
+	if !found {
+		// DAOs cannot claim rewards
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user %s not found", req.Address))
+	}
+
+	tasks, err := k.getTasks(ctx, req.GetAddress())
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryTasksResponse{Tasks: tasks}, nil
 }
