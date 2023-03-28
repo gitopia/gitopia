@@ -16,19 +16,19 @@ func (k Keeper) RewardsAll(c context.Context, req *types.QueryAllRewardsRequest)
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	var rewardss []types.Reward
+	var rewards []types.Reward
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
 	rewardsStore := prefix.NewStore(store, types.KeyPrefix(types.RewardsKeyPrefix))
 
 	pageRes, err := query.Paginate(rewardsStore, req.Pagination, func(key []byte, value []byte) error {
-		var rewards types.Reward
-		if err := k.cdc.Unmarshal(value, &rewards); err != nil {
+		var reward types.Reward
+		if err := k.cdc.Unmarshal(value, &reward); err != nil {
 			return err
 		}
 
-		rewardss = append(rewardss, rewards)
+		rewards = append(rewards, reward)
 		return nil
 	})
 
@@ -36,10 +36,10 @@ func (k Keeper) RewardsAll(c context.Context, req *types.QueryAllRewardsRequest)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllRewardsResponse{Rewards: rewardss, Pagination: pageRes}, nil
+	return &types.QueryAllRewardsResponse{Rewards: rewards, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Rewards(c context.Context, req *types.QueryGetRewardsRequest) (*types.QueryGetRewardsResponse, error) {
+func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardsRequest) (*types.QueryGetRewardsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -50,7 +50,7 @@ func (k Keeper) Rewards(c context.Context, req *types.QueryGetRewardsRequest) (*
 		req.Recipient,
 	)
 	if !found {
-		return nil, status.Error(codes.NotFound, "not found")
+		return nil, status.Error(codes.NotFound, "reward not found")
 	}
 
 	return &types.QueryGetRewardsResponse{Rewards: val}, nil

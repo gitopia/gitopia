@@ -58,7 +58,7 @@ func TestRewardsQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Rewards(wctx, tc.request)
+			response, err := keeper.Reward(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

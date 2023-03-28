@@ -18,7 +18,7 @@ service Query {
 	}
 
 // Queries a Rewards by index.
-	rpc Rewards(QueryGetRewardsRequest) returns (QueryGetRewardsResponse) {
+	rpc Reward(QueryGetRewardsRequest) returns (QueryGetRewardsResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards/{recipient}";
 	}
 

@@ -59,7 +59,7 @@ func CmdShowRewards() *cobra.Command {
                 
             }
 
-            res, err := queryClient.Rewards(context.Background(), params)
+            res, err := queryClient.Reward(context.Background(), params)
             if err != nil {
                 return err
             }

@@ -1,4 +1,3 @@
-/// <reference path="./types.d.ts" />
 import {
   GeneratedType,
   OfflineSigner,
@@ -21,7 +20,7 @@ const defaultFee = {
 export class IgniteClient extends EventEmitter {
 	static plugins: Module[] = [];
   env: Env;
-  signer?: OfflineSigner;
+  signer: OfflineSigner;
   registry: Array<[string, GeneratedType]> = [];
   static plugin<T extends Module | Module[]>(plugin: T) {
     const currentPlugins = this.plugins;
@@ -32,11 +31,11 @@ export class IgniteClient extends EventEmitter {
 
     if (Array.isArray(plugin)) {
       type Extension = UnionToIntersection<Return<T>['module']>
-      return AugmentedClient as typeof IgniteClient & Constructor<Extension>;  
+      return AugmentedClient as typeof AugmentedClient & Constructor<Extension>;  
     }
 
     type Extension = Return<T>['module']
-    return AugmentedClient as typeof IgniteClient & Constructor<Extension>;
+    return AugmentedClient as typeof AugmentedClient & Constructor<Extension>;
   }
 
   async signAndBroadcast(msgs: EncodeObject[], fee: StdFee, memo: string) {
@@ -63,12 +62,8 @@ export class IgniteClient extends EventEmitter {
       }
 		});		
   }
-  useSigner(signer: OfflineSigner) {    
+  async useSigner(signer: OfflineSigner) {    
       this.signer = signer;
-      this.emit("signer-changed", this.signer);
-  }
-  removeSigner() {    
-      this.signer = undefined;
       this.emit("signer-changed", this.signer);
   }
   async useKeplr(keplrChainInfo: Partial<ChainInfo> = {}) {
