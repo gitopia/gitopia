@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "rewards/task.proto";
+import "rewards/rewards.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
@@ -16,9 +17,18 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/rewards/tasks/{address}";
 	}
 
+// Queries a Rewards by index.
+	rpc Rewards(QueryGetRewardsRequest) returns (QueryGetRewardsResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards/{recipient}";
+	}
+
+	// Queries a list of Rewards items.
+	rpc RewardsAll(QueryAllRewardsRequest) returns (QueryAllRewardsResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/rewards/rewards";
+	}
+
 // this line is used by starport scaffolding # 2
 }
-
 message QueryTasksRequest {
 	string address = 1;
 }
@@ -26,4 +36,23 @@ message QueryTasksRequest {
 message QueryTasksResponse {
 	repeated Task tasks = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryGetRewardsRequest {
+	  string recipient = 1;
+
+}
+
+message QueryGetRewardsResponse {
+	Reward rewards = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRewardsRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRewardsResponse {
+	repeated Reward rewards = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
 // this line is used by starport scaffolding # 3

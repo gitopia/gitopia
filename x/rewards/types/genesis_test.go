@@ -19,9 +19,17 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				RewardsList: []types.Reward{
+					{
+						Recipient: "0",
+					},
+					{
+						Recipient: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -30,6 +38,34 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc:     "duplicated rewards",
 			genState: &types.GenesisState{},
 			valid:    false,
+		},
+		{
+			desc: "duplicated rewards",
+			genState: &types.GenesisState{
+				RewardsList: []types.Reward{
+					{
+						Recipient: "0",
+					},
+					{
+						Recipient: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated rewards",
+			genState: &types.GenesisState{
+				RewardsList: []types.Reward{
+					{
+						Recipient: "0",
+					},
+					{
+						Recipient: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

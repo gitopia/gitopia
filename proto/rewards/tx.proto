@@ -2,6 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
+import "rewards/rewards.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
@@ -10,10 +11,19 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc Claim(MsgClaim) returns (MsgClaimResponse);
-      rpc Grant(MsgGrant) returns (MsgGrantResponse);
+  rpc Claim(MsgClaim) returns (MsgClaimResponse);
+  rpc CreateReward(MsgCreateReward) returns (MsgCreateRewardResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
+
+message MsgCreateReward {
+  string creator = 1;
+  string recipient = 2;
+
+  repeated cosmos.base.v1beta1.Coin amount = 3
+  [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+}
+message MsgCreateRewardResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 message MsgClaim {
@@ -21,15 +31,5 @@ message MsgClaim {
 }
 
 message MsgClaimResponse {
-}
-
-message MsgGrant {
-  string creator = 1;
-  repeated cosmos.base.v1beta1.Coin amount = 2
-  [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  string to = 3;
-}
-
-message MsgGrantResponse {
 }
 

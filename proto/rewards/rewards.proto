@@ -1,0 +1,15 @@
+syntax = "proto3";
+package gitopia.gitopia.rewards;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+
+message Reward {
+  string recipient = 1; 
+  repeated cosmos.base.v1beta1.Coin amount = 2
+    [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  string creator = 3;
+}
+

@@ -8,21 +8,21 @@ import (
 	"github.com/gitopia/gitopia/testutil/sample"
 )
 
-func TestMsgGrant_ValidateBasic(t *testing.T) {
+func TestMsgCreateRewards_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgGrant
+		msg  MsgCreateReward
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgGrant{
+			msg: MsgCreateReward{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgGrant{
+			msg: MsgCreateReward{
 				Creator: sample.AccAddress(),
 			},
 		},

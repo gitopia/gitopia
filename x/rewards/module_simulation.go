@@ -24,21 +24,13 @@ var (
 )
 
 const (
-	opWeightMsgCreateReward = "op_weight_msg_reward"
-	// TODO: Determine the simulation weight value
-	defaultWeightMsgCreateReward int = 100
-
-	opWeightMsgSettle = "op_weight_msg_settle"
-	// TODO: Determine the simulation weight value
-	defaultWeightMsgSettle int = 100
-
 	opWeightMsgClaim = "op_weight_msg_claim"
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgClaim int = 100
 
-	opWeightMsgGrant = "op_weight_msg_grant"
+	opWeightMsgCreateRewards = "op_weight_msg_rewards"
 	// TODO: Determine the simulation weight value
-	defaultWeightMsgGrant int = 100
+	defaultWeightMsgCreateRewards int = 100
 
 	// this line is used by starport scaffolding # simapp/module/const
 )
@@ -50,6 +42,16 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 		accs[i] = acc.Address.String()
 	}
 	rewardsGenesis := types.GenesisState{
+		RewardsList: []types.Reward{
+			{
+				Creator:   sample.AccAddress(),
+				Recipient: "0",
+			},
+			{
+				Creator:   sample.AccAddress(),
+				Recipient: "1",
+			},
+		},
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&rewardsGenesis)
@@ -83,17 +85,16 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		rewardssimulation.SimulateMsgClaim(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
-	var weightMsgGrant int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgGrant, &weightMsgGrant, nil,
+	var weightMsgCreateRewards int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateRewards, &weightMsgCreateRewards, nil,
 		func(_ *rand.Rand) {
-			weightMsgGrant = defaultWeightMsgGrant
+			weightMsgCreateRewards = defaultWeightMsgCreateRewards
 		},
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgGrant,
-		rewardssimulation.SimulateMsgGrant(am.accountKeeper, am.bankKeeper, am.keeper),
+		weightMsgCreateRewards,
+		rewardssimulation.SimulateMsgCreateRewards(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
-
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations

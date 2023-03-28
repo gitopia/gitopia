@@ -3,12 +3,16 @@ package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
 import "rewards/params.proto";
+import "rewards/rewards.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 // GenesisState defines the rewards module's genesis state.
 message GenesisState {
+  repeated Reward rewardsList = 2 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
   Params params = 1 [(gogoproto.nullable) = false];
 }

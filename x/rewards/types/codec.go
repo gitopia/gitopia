@@ -9,7 +9,7 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgClaim{}, "rewards/Claim", nil)
-	cdc.RegisterConcrete(&MsgGrant{}, "rewards/Grant", nil)
+	cdc.RegisterConcrete(&MsgCreateReward{}, "rewards/CreateRewards", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -19,11 +19,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgClaim{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgGrant{},
+		&MsgCreateReward{},
 	)
 	// this line is used by starport scaffolding # 3
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
