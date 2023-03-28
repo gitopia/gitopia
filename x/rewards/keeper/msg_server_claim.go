@@ -11,18 +11,17 @@ import (
 func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.MsgClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-
-	fromAddr, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "bad address "+msg.Creator)
-	}
-
 	toAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "bad address "+msg.Creator)
 	}
 
-	err = k.bankKeeper.SendCoins(ctx, fromAddr, toAddr, sdk.Coins{})
+	reward, found := k.GetReward(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward not found for address "+msg.Creator)
+	}
+
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.AirdropAccountName, toAddr, reward.Amount)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error transfering reward")
 	}
