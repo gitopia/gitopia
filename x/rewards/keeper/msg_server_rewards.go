@@ -11,6 +11,12 @@ import (
 func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateReward) (*types.MsgCreateRewardResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	params := k.GetParams(ctx)
+
+	if params.EvaluatorAddress != msg.Creator {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "user (%v) doesn't have permission to perform this operation", msg.Creator)
+	}
+
 	// Check if the value already exists
 	_, isFound := k.GetReward(
 		ctx,
