@@ -1,0 +1,49 @@
+package cli
+
+import (
+	"strconv"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/spf13/cobra"
+)
+
+var _ = strconv.Itoa(0)
+
+func CmdGrant() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "grant [amount] [to]",
+		Short: "Broadcast message grant",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
+			if err != nil {
+				return err
+			}
+			argTo := args[1]
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgGrant(
+				clientCtx.GetFromAddress().String(),
+				argAmount,
+				argTo,
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
