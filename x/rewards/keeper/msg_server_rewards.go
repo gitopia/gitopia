@@ -12,25 +12,6 @@ const (
 	SERIES_ONE = 1
 )
 
-func getSeries(rss []*types.RewardSeries, series int32) (*types.RewardSeries, error) {
-	for _, rs := range rss {
-		if rs.Series == series {
-			return rs, nil
-		}
-	}
-	return nil, sdkerrors.Wrapf(sdkerrors.ErrLogic, "series %d reward pool not found", series)
-}
-
-func addSeries(rss []*types.RewardSeries, series int32, s *types.RewardSeries) ([]*types.RewardSeries, error) {
-	for _, rs := range rss {
-		if rs.Series == series {
-			*rs = *s
-			return rss, nil
-		}
-	}
-	return nil, sdkerrors.Wrapf(sdkerrors.ErrLogic, "series %d reward pool not found", series)
-}
-
 func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateReward) (*types.MsgCreateRewardResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -40,18 +21,19 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "user (%v) doesn't have permission to perform this operation", msg.Creator)
 	}
 
-	rs, err := getSeries(params.RewardSeries, SERIES_ONE)
-	if err != nil {
-		return nil, err
+	if _, ok := params.RewardSeries[SERIES_ONE]; !ok {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrLogic, "series %d reward pool not found", SERIES_ONE)
 	}
 
-	if rs.RewardPoolClaimed.IsEqual(rs.RewardPool) {
+	rewardpool := params.RewardSeries[SERIES_ONE]
+	if rewardpool.ClaimedAmount.IsEqual(rewardpool.TotalAmount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool claimed")
 	}
 
-	availablePoolBal := rs.RewardPool.Sub(rs.RewardPoolClaimed...)
+	availablePoolBal := rewardpool.TotalAmount.Sub(rewardpool.ClaimedAmount...)
 	amount := msg.Amount
 	if availablePoolBal.IsAllLT(msg.Amount) {
+		// reward whatever is left in the reward pool
 		amount = availablePoolBal
 	}
 
@@ -75,11 +57,8 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		reward,
 	)
 
-	rs.RewardPoolClaimed = rs.RewardPoolClaimed.Add(amount...)
-	params.RewardSeries, err = addSeries(params.RewardSeries, SERIES_ONE, rs)
-	if err != nil {
-		return nil, err
-	}
+	rewardpool.ClaimedAmount = rewardpool.ClaimedAmount.Add(amount...)
+	params.RewardSeries[SERIES_ONE] = rewardpool
 	k.SetParams(ctx, params)
 
 	return &types.MsgCreateRewardResponse{

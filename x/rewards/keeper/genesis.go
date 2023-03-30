@@ -9,7 +9,7 @@ import (
 func (k Keeper) CreateRewardsModuleAccount(ctx sdk.Context, params types.Params) error {
 	amount := sdk.NewCoins()
 	for _, series := range params.RewardSeries{
-		amount = amount.Add(series.RewardPool...)
+		amount = amount.Add(series.TotalAmount...)
 	}
 
 	if amount.IsZero(){

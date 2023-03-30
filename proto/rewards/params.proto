@@ -6,15 +6,13 @@ import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
-message RewardSeries {
-  int32 series = 1[
-    (gogoproto.moretags) = "yaml:\"series\""
-  ];
-  repeated cosmos.base.v1beta1.Coin reward_pool = 2 [
-    (gogoproto.moretags) = "yaml:\"reward_pool\"",
+
+message RewardPool {
+  repeated cosmos.base.v1beta1.Coin total_amount = 1 [
+    (gogoproto.moretags) = "yaml:\"total_amount\"",
     (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  repeated cosmos.base.v1beta1.Coin reward_pool_claimed = 3 [
-      (gogoproto.moretags) = "yaml:\"reward_pool_claimed\"",
+  repeated cosmos.base.v1beta1.Coin claimed_amount = 2 [
+      (gogoproto.moretags) = "yaml:\"claimed_amount\"",
       (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
 }
 
@@ -23,7 +21,7 @@ message Params {
   string evaluator_address = 1 [
     (gogoproto.moretags) = "yaml:\"evaluator_address\""
   ];
-  repeated RewardSeries reward_series = 2 [
+  map<int32, RewardPool> reward_series = 2 [
     (gogoproto.moretags) = "yaml:\"reward_series\""
   ];
 }
