@@ -3,33 +3,12 @@ package keeper
 import (
 	"context"
 
-	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/x/rewards/types"
-	"github.com/pkg/errors"
 )
 
-func (k msgServer) GetClaimableAmount(ctx sdk.Context, addr string, totalReward sdk.Coins) (sdk.Coins, error) {
-	tasks, err := k.getTasks(ctx, addr)
-	if err != nil {
-		return nil, err
-	}
 
-	totalClaimablePercent := int64(0)
-	for _, task := range tasks {
-		if task.IsComplete {
-			totalClaimablePercent += (int64)(task.Weight)
-			if totalClaimablePercent > 100 {
-				return nil, errors.New("cannot reward more than 100 percent!")
-			}
-		}
-	}
-
-	// rounded
-	totalClaimableAmount := totalReward.MulInt(math.NewInt(totalClaimablePercent)).QuoInt(math.NewInt(100))
-	return totalClaimableAmount, nil
-}
 
 func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.MsgClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)

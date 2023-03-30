@@ -39,13 +39,13 @@ func (k Keeper) RewardsAll(c context.Context, req *types.QueryAllRewardsRequest)
 	return &types.QueryAllRewardsResponse{Rewards: rewards, Pagination: pageRes}, nil
 }
 
-func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardsRequest) (*types.QueryGetRewardsResponse, error) {
+func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*types.QueryGetRewardResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, found := k.GetReward(
+	reward, found := k.GetReward(
 		ctx,
 		req.Recipient,
 	)
@@ -53,5 +53,13 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardsRequest) (*t
 		return nil, status.Error(codes.NotFound, "reward not found")
 	}
 
-	return &types.QueryGetRewardsResponse{Rewards: val}, nil
+	amount, err := k.GetClaimableAmount(ctx, req.Recipient, reward.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryGetRewardResponse{
+		Reward:                reward,
+		ClaimableRewardAmount: amount,
+	}, nil
 }

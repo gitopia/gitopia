@@ -54,7 +54,7 @@ func CmdShowRewards() *cobra.Command {
 
              argRecipient := args[0]
             
-            params := &types.QueryGetRewardsRequest{
+            params := &types.QueryGetRewardRequest{
                 Recipient: argRecipient,
                 
             }

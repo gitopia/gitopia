@@ -84,12 +84,12 @@ func TestShowRewards(t *testing.T) {
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetRewardsResponse
+				var resp types.QueryGetRewardResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.Rewards)
+				require.NotNil(t, resp.Reward)
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.Rewards),
+					nullify.Fill(&resp.Reward),
 				)
 			}
 		})

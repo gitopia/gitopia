@@ -18,35 +18,35 @@ import (
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
-func TestRewardsQuerySingle(t *testing.T) {
+func TestRewardQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.RewardsKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRewards(keeper, ctx, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetRewardsRequest
-		response *types.QueryGetRewardsResponse
+		request  *types.QueryGetRewardRequest
+		response *types.QueryGetRewardResponse
 		err      error
 	}{
 		{
 			desc:     "First",
-			request:  &types.QueryGetRewardsRequest{
+			request:  &types.QueryGetRewardRequest{
 			    Recipient: msgs[0].Recipient,
                 
 			},
-			response: &types.QueryGetRewardsResponse{Rewards: msgs[0]},
+			response: &types.QueryGetRewardResponse{Reward: msgs[0]},
 		},
 		{
 			desc:     "Second",
-			request:  &types.QueryGetRewardsRequest{
+			request:  &types.QueryGetRewardRequest{
 			    Recipient: msgs[1].Recipient,
                 
 			},
-			response: &types.QueryGetRewardsResponse{Rewards: msgs[1]},
+			response: &types.QueryGetRewardResponse{Reward: msgs[1]},
 		},
 		{
 			desc:    "KeyNotFound",
-			request: &types.QueryGetRewardsRequest{
+			request: &types.QueryGetRewardRequest{
 			    Recipient:strconv.Itoa(100000),
                 
 			},
@@ -72,7 +72,7 @@ func TestRewardsQuerySingle(t *testing.T) {
 	}
 }
 
-func TestRewardsQueryPaginated(t *testing.T) {
+func TestRewardQueryPaginated(t *testing.T) {
 	keeper, ctx := keepertest.RewardsKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRewards(keeper, ctx, 5)
