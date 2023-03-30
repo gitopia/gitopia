@@ -59,7 +59,7 @@ genesis:
         denom: utlore
     distribution:
       params:
-        community_tax: 0.05
+        community_tax: "0.05"
     gitopia:
       params:
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
