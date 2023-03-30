@@ -2,12 +2,25 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+
+message RewardSeries {
+  int32 series = 1[
+    (gogoproto.moretags) = "yaml:\"series\""
+  ];
+  repeated cosmos.base.v1beta1.Coin reward_pool = 2 [
+    (gogoproto.moretags) = "yaml:\"reward_pool\"",
+    (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+}
 
 // Params defines the parameters for the module.
 message Params {
   string evaluator_address = 1 [
     (gogoproto.moretags) = "yaml:\"evaluator_address\""
+  ];
+  repeated RewardSeries reward_series = 2 [
+    (gogoproto.moretags) = "yaml:\"reward_series\""
   ];
 }

@@ -1,12 +1,12 @@
 package cli
 
 import (
-    "context"
-	
-    "github.com/spf13/cobra"
+	"context"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-    "github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/spf13/cobra"
 )
 
 func CmdListRewards() *cobra.Command {

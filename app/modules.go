@@ -61,6 +61,7 @@ var maccPerms = map[string][]string{
 	govtypes.ModuleName:            {authtypes.Burner},
 	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	gitopiatypes.MinterAccountName: nil,
+	rewardtypes.RewardsAccountName: {authtypes.Minter},
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,

@@ -16,3 +16,4 @@ message GenesisState {
   // this line is used by starport scaffolding # genesis/proto/state
   Params params = 1 [(gogoproto.nullable) = false];
 }
+ 

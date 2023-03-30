@@ -20,7 +20,7 @@ func CmdCreateRewards() *cobra.Command {
          indexRecipient := args[0]
         
             // Get value arguments
-			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[0])
+			argAmount, err := cosmosTypes.ParseCoinsNormalized(args[1])
 			if err != nil {
 				return err
 			}

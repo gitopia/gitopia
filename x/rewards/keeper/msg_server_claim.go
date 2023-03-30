@@ -70,9 +70,9 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	reward.ClaimedAmount = claimableAmount
 	k.SetReward(ctx, reward)
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.AirdropAccountName, toAddr, balance)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsAccountName, toAddr, balance)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "error transfering reward")
+		return nil, err
 	}
 
 	return &types.MsgClaimResponse{}, nil

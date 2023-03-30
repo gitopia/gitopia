@@ -13,15 +13,13 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_rewards"
 
-	AirdropAccountName = "airdrop"
+	RewardsAccountName = "rewards_account"
 )
 
 var (
 	ParamsKey = []byte{0x00}
 )
 
-
-
 func KeyPrefix(p string) []byte {
-    return []byte(p)
+	return []byte(p)
 }
