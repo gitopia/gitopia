@@ -13,6 +13,9 @@ message RewardSeries {
   repeated cosmos.base.v1beta1.Coin reward_pool = 2 [
     (gogoproto.moretags) = "yaml:\"reward_pool\"",
     (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  repeated cosmos.base.v1beta1.Coin reward_pool_claimed = 3 [
+      (gogoproto.moretags) = "yaml:\"reward_pool_claimed\"",
+      (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
 }
 
 // Params defines the parameters for the module.
