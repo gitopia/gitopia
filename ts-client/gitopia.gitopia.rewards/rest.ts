@@ -15,7 +15,10 @@ export interface ProtobufAny {
 
 export type RewardsMsgClaimResponse = object;
 
-export type RewardsMsgCreateRewardResponse = object;
+export interface RewardsMsgCreateRewardResponse {
+  /** actual granted amount */
+  amount?: V1Beta1Coin[];
+}
 
 export interface RewardsQueryAllRewardsResponse {
   rewards?: RewardsReward[];
@@ -32,8 +35,20 @@ export interface RewardsQueryAllRewardsResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface RewardsQueryGetRewardsResponse {
-  rewards?: RewardsReward;
+export interface RewardsQueryGetRewardResponse {
+  reward?: RewardsQueryGetRewardResponseReward;
+}
+
+export interface RewardsQueryGetRewardResponseReward {
+  recipient?: string;
+  amount?: V1Beta1Coin[];
+
+  /**
+   * not required in the response
+   * string creator = 3;
+   */
+  claimedAmount?: V1Beta1Coin[];
+  claimableRewardAmount?: V1Beta1Coin[];
 }
 
 export interface RewardsQueryTasksResponse {
@@ -319,7 +334,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/gitopia/gitopia/rewards/rewards/{recipient}
    */
   queryReward = (recipient: string, params: RequestParams = {}) =>
-    this.request<RewardsQueryGetRewardsResponse, RpcStatus>({
+    this.request<RewardsQueryGetRewardResponse, RpcStatus>({
       path: `/gitopia/gitopia/rewards/rewards/${recipient}`,
       method: "GET",
       format: "json",

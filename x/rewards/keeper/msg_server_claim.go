@@ -8,8 +8,6 @@ import (
 	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
-
-
 func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.MsgClaimResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -31,7 +29,7 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already claimed by address "+msg.Creator)
 	}
 
-	claimableAmount, err := k.GetClaimableAmount(ctx, msg.Creator, reward.Amount)
+	claimableAmount, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
 	if err != nil {
 		return nil, err
 	}

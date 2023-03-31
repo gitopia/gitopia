@@ -11,6 +11,8 @@ export interface MsgCreateReward {
 }
 
 export interface MsgCreateRewardResponse {
+  /** actual granted amount */
+  amount: Coin[];
 }
 
 /** this line is used by starport scaffolding # proto/tx/message */
@@ -93,11 +95,14 @@ export const MsgCreateReward = {
 };
 
 function createBaseMsgCreateRewardResponse(): MsgCreateRewardResponse {
-  return {};
+  return { amount: [] };
 }
 
 export const MsgCreateRewardResponse = {
-  encode(_: MsgCreateRewardResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: MsgCreateRewardResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.amount) {
+      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -108,6 +113,9 @@ export const MsgCreateRewardResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.amount.push(Coin.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -116,17 +124,23 @@ export const MsgCreateRewardResponse = {
     return message;
   },
 
-  fromJSON(_: any): MsgCreateRewardResponse {
-    return {};
+  fromJSON(object: any): MsgCreateRewardResponse {
+    return { amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [] };
   },
 
-  toJSON(_: MsgCreateRewardResponse): unknown {
+  toJSON(message: MsgCreateRewardResponse): unknown {
     const obj: any = {};
+    if (message.amount) {
+      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
+    } else {
+      obj.amount = [];
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<MsgCreateRewardResponse>, I>>(_: I): MsgCreateRewardResponse {
+  fromPartial<I extends Exact<DeepPartial<MsgCreateRewardResponse>, I>>(object: I): MsgCreateRewardResponse {
     const message = createBaseMsgCreateRewardResponse();
+    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };

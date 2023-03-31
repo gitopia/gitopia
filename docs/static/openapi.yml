@@ -40298,7 +40298,7 @@ paths:
           schema:
             type: object
             properties:
-              rewards:
+              reward:
                 type: object
                 properties:
                   recipient:
@@ -40320,9 +40320,27 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
-                  creator:
-                    type: string
                   claimedAmount:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    title: |-
+                      not required in the response
+                      string creator = 3;
+                  claimableRewardAmount:
                     type: array
                     items:
                       type: object
@@ -80539,6 +80557,22 @@ definitions:
     type: object
   gitopia.gitopia.rewards.MsgCreateRewardResponse:
     type: object
+    properties:
+      amount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: actual granted amount
   gitopia.gitopia.rewards.QueryAllRewardsResponse:
     type: object
     properties:
@@ -80611,10 +80645,10 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  gitopia.gitopia.rewards.QueryGetRewardsResponse:
+  gitopia.gitopia.rewards.QueryGetRewardResponse:
     type: object
     properties:
-      rewards:
+      reward:
         type: object
         properties:
           recipient:
@@ -80636,8 +80670,6 @@ definitions:
                 method
 
                 signatures required by gogoproto.
-          creator:
-            type: string
           claimedAmount:
             type: array
             items:
@@ -80655,6 +80687,76 @@ definitions:
                 method
 
                 signatures required by gogoproto.
+            title: |-
+              not required in the response
+              string creator = 3;
+          claimableRewardAmount:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+  gitopia.gitopia.rewards.QueryGetRewardResponseReward:
+    type: object
+    properties:
+      recipient:
+        type: string
+      amount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+      claimedAmount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+        title: |-
+          not required in the response
+          string creator = 3;
+      claimableRewardAmount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
   gitopia.gitopia.rewards.QueryTasksResponse:
     type: object
     properties:

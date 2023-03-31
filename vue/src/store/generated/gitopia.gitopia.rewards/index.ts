@@ -1,11 +1,13 @@
 import { Client, registry, MissingWalletError } from 'gitopia-gitopia-client-ts'
 
+import { RewardPool } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
 import { Params } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
+import { QueryGetRewardResponseReward } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
 import { Reward } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
 import { Task } from "gitopia-gitopia-client-ts/gitopia.gitopia.rewards/types"
 
 
-export { Params, Reward, Task };
+export { RewardPool, Params, QueryGetRewardResponseReward, Reward, Task };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -41,7 +43,9 @@ const getDefaultState = () => {
 				RewardsAll: {},
 				
 				_Structure: {
+						RewardPool: getStructure(RewardPool.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
+						QueryGetRewardResponseReward: getStructure(QueryGetRewardResponseReward.fromPartial({})),
 						Reward: getStructure(Reward.fromPartial({})),
 						Task: getStructure(Task.fromPartial({})),
 						

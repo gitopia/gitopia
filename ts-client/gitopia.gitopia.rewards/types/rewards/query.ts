@@ -1,6 +1,7 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
+import { Coin } from "../cosmos/base/v1beta1/coin";
 import { Reward } from "./rewards";
 import { Task } from "./task";
 
@@ -14,12 +15,23 @@ export interface QueryTasksResponse {
   tasks: Task[];
 }
 
-export interface QueryGetRewardsRequest {
+export interface QueryGetRewardRequest {
   recipient: string;
 }
 
-export interface QueryGetRewardsResponse {
-  rewards: Reward | undefined;
+export interface QueryGetRewardResponseReward {
+  recipient: string;
+  amount: Coin[];
+  /**
+   * not required in the response
+   * string creator = 3;
+   */
+  claimedAmount: Coin[];
+  claimableRewardAmount: Coin[];
+}
+
+export interface QueryGetRewardResponse {
+  reward: QueryGetRewardResponseReward | undefined;
 }
 
 export interface QueryAllRewardsRequest {
@@ -129,22 +141,22 @@ export const QueryTasksResponse = {
   },
 };
 
-function createBaseQueryGetRewardsRequest(): QueryGetRewardsRequest {
+function createBaseQueryGetRewardRequest(): QueryGetRewardRequest {
   return { recipient: "" };
 }
 
-export const QueryGetRewardsRequest = {
-  encode(message: QueryGetRewardsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+export const QueryGetRewardRequest = {
+  encode(message: QueryGetRewardRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.recipient !== "") {
       writer.uint32(10).string(message.recipient);
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetRewardsRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetRewardRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryGetRewardsRequest();
+    const message = createBaseQueryGetRewardRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -159,44 +171,62 @@ export const QueryGetRewardsRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetRewardsRequest {
+  fromJSON(object: any): QueryGetRewardRequest {
     return { recipient: isSet(object.recipient) ? String(object.recipient) : "" };
   },
 
-  toJSON(message: QueryGetRewardsRequest): unknown {
+  toJSON(message: QueryGetRewardRequest): unknown {
     const obj: any = {};
     message.recipient !== undefined && (obj.recipient = message.recipient);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryGetRewardsRequest>, I>>(object: I): QueryGetRewardsRequest {
-    const message = createBaseQueryGetRewardsRequest();
+  fromPartial<I extends Exact<DeepPartial<QueryGetRewardRequest>, I>>(object: I): QueryGetRewardRequest {
+    const message = createBaseQueryGetRewardRequest();
     message.recipient = object.recipient ?? "";
     return message;
   },
 };
 
-function createBaseQueryGetRewardsResponse(): QueryGetRewardsResponse {
-  return { rewards: undefined };
+function createBaseQueryGetRewardResponseReward(): QueryGetRewardResponseReward {
+  return { recipient: "", amount: [], claimedAmount: [], claimableRewardAmount: [] };
 }
 
-export const QueryGetRewardsResponse = {
-  encode(message: QueryGetRewardsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.rewards !== undefined) {
-      Reward.encode(message.rewards, writer.uint32(10).fork()).ldelim();
+export const QueryGetRewardResponseReward = {
+  encode(message: QueryGetRewardResponseReward, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.recipient !== "") {
+      writer.uint32(10).string(message.recipient);
+    }
+    for (const v of message.amount) {
+      Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    for (const v of message.claimedAmount) {
+      Coin.encode(v!, writer.uint32(34).fork()).ldelim();
+    }
+    for (const v of message.claimableRewardAmount) {
+      Coin.encode(v!, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetRewardsResponse {
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetRewardResponseReward {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseQueryGetRewardsResponse();
+    const message = createBaseQueryGetRewardResponseReward();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.rewards = Reward.decode(reader, reader.uint32());
+          message.recipient = reader.string();
+          break;
+        case 2:
+          message.amount.push(Coin.decode(reader, reader.uint32()));
+          break;
+        case 4:
+          message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
+          break;
+        case 5:
+          message.claimableRewardAmount.push(Coin.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -206,20 +236,93 @@ export const QueryGetRewardsResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetRewardsResponse {
-    return { rewards: isSet(object.rewards) ? Reward.fromJSON(object.rewards) : undefined };
+  fromJSON(object: any): QueryGetRewardResponseReward {
+    return {
+      recipient: isSet(object.recipient) ? String(object.recipient) : "",
+      amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [],
+      claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
+      claimableRewardAmount: Array.isArray(object?.claimableRewardAmount)
+        ? object.claimableRewardAmount.map((e: any) => Coin.fromJSON(e))
+        : [],
+    };
   },
 
-  toJSON(message: QueryGetRewardsResponse): unknown {
+  toJSON(message: QueryGetRewardResponseReward): unknown {
     const obj: any = {};
-    message.rewards !== undefined && (obj.rewards = message.rewards ? Reward.toJSON(message.rewards) : undefined);
+    message.recipient !== undefined && (obj.recipient = message.recipient);
+    if (message.amount) {
+      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
+    } else {
+      obj.amount = [];
+    }
+    if (message.claimedAmount) {
+      obj.claimedAmount = message.claimedAmount.map((e) => e ? Coin.toJSON(e) : undefined);
+    } else {
+      obj.claimedAmount = [];
+    }
+    if (message.claimableRewardAmount) {
+      obj.claimableRewardAmount = message.claimableRewardAmount.map((e) => e ? Coin.toJSON(e) : undefined);
+    } else {
+      obj.claimableRewardAmount = [];
+    }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryGetRewardsResponse>, I>>(object: I): QueryGetRewardsResponse {
-    const message = createBaseQueryGetRewardsResponse();
-    message.rewards = (object.rewards !== undefined && object.rewards !== null)
-      ? Reward.fromPartial(object.rewards)
+  fromPartial<I extends Exact<DeepPartial<QueryGetRewardResponseReward>, I>>(object: I): QueryGetRewardResponseReward {
+    const message = createBaseQueryGetRewardResponseReward();
+    message.recipient = object.recipient ?? "";
+    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
+    message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.claimableRewardAmount = object.claimableRewardAmount?.map((e) => Coin.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseQueryGetRewardResponse(): QueryGetRewardResponse {
+  return { reward: undefined };
+}
+
+export const QueryGetRewardResponse = {
+  encode(message: QueryGetRewardResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.reward !== undefined) {
+      QueryGetRewardResponseReward.encode(message.reward, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetRewardResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryGetRewardResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.reward = QueryGetRewardResponseReward.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetRewardResponse {
+    return { reward: isSet(object.reward) ? QueryGetRewardResponseReward.fromJSON(object.reward) : undefined };
+  },
+
+  toJSON(message: QueryGetRewardResponse): unknown {
+    const obj: any = {};
+    message.reward !== undefined
+      && (obj.reward = message.reward ? QueryGetRewardResponseReward.toJSON(message.reward) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryGetRewardResponse>, I>>(object: I): QueryGetRewardResponse {
+    const message = createBaseQueryGetRewardResponse();
+    message.reward = (object.reward !== undefined && object.reward !== null)
+      ? QueryGetRewardResponseReward.fromPartial(object.reward)
       : undefined;
     return message;
   },
@@ -345,7 +448,7 @@ export interface Query {
   /** Queries a list of tasks items. */
   Tasks(request: QueryTasksRequest): Promise<QueryTasksResponse>;
   /** Queries a Rewards by index. */
-  Reward(request: QueryGetRewardsRequest): Promise<QueryGetRewardsResponse>;
+  Reward(request: QueryGetRewardRequest): Promise<QueryGetRewardResponse>;
   /** Queries a list of Rewards items. */
   RewardsAll(request: QueryAllRewardsRequest): Promise<QueryAllRewardsResponse>;
 }
@@ -364,10 +467,10 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryTasksResponse.decode(new _m0.Reader(data)));
   }
 
-  Reward(request: QueryGetRewardsRequest): Promise<QueryGetRewardsResponse> {
-    const data = QueryGetRewardsRequest.encode(request).finish();
+  Reward(request: QueryGetRewardRequest): Promise<QueryGetRewardResponse> {
+    const data = QueryGetRewardRequest.encode(request).finish();
     const promise = this.rpc.request("gitopia.gitopia.rewards.Query", "Reward", data);
-    return promise.then((data) => QueryGetRewardsResponse.decode(new _m0.Reader(data)));
+    return promise.then((data) => QueryGetRewardResponse.decode(new _m0.Reader(data)));
   }
 
   RewardsAll(request: QueryAllRewardsRequest): Promise<QueryAllRewardsResponse> {
