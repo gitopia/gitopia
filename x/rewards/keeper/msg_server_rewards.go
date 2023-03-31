@@ -21,11 +21,7 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "user (%v) doesn't have permission to perform this operation", msg.Creator)
 	}
 
-	if _, ok := params.RewardSeries[SERIES_ONE]; !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrLogic, "series %d reward pool not found", SERIES_ONE)
-	}
-
-	rewardpool := params.RewardSeries[SERIES_ONE]
+	rewardpool := params.RewardSeries.SeriesOne
 	if rewardpool.ClaimedAmount.IsEqual(rewardpool.TotalAmount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool claimed")
 	}
@@ -58,7 +54,7 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	)
 
 	rewardpool.ClaimedAmount = rewardpool.ClaimedAmount.Add(amount...)
-	params.RewardSeries[SERIES_ONE] = rewardpool
+	params.RewardSeries.SeriesOne = rewardpool
 	k.SetParams(ctx, params)
 
 	return &types.MsgCreateRewardResponse{

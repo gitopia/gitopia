@@ -7,17 +7,11 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgClaim } from "./types/rewards/tx";
 import { MsgCreateReward } from "./types/rewards/tx";
+import { MsgClaim } from "./types/rewards/tx";
 
 
-export { MsgClaim, MsgCreateReward };
-
-type sendMsgClaimParams = {
-  value: MsgClaim,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgCreateReward, MsgClaim };
 
 type sendMsgCreateRewardParams = {
   value: MsgCreateReward,
@@ -25,13 +19,19 @@ type sendMsgCreateRewardParams = {
   memo?: string
 };
 
-
-type msgClaimParams = {
+type sendMsgClaimParams = {
   value: MsgClaim,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgCreateRewardParams = {
   value: MsgCreateReward,
+};
+
+type msgClaimParams = {
+  value: MsgClaim,
 };
 
 
@@ -52,20 +52,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgClaim({ value, fee, memo }: sendMsgClaimParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgClaim: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgClaim({ value: MsgClaim.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgClaim: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgCreateReward({ value, fee, memo }: sendMsgCreateRewardParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateReward: Unable to sign Tx. Signer is not present.')
@@ -80,20 +66,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgClaim({ value }: msgClaimParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.rewards.MsgClaim", value: MsgClaim.fromPartial( value ) }  
+		async sendMsgClaim({ value, fee, memo }: sendMsgClaimParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgClaim: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgClaim({ value: MsgClaim.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgClaim: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgClaim: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgCreateReward({ value }: msgCreateRewardParams): EncodeObject {
 			try {
 				return { typeUrl: "/gitopia.gitopia.rewards.MsgCreateReward", value: MsgCreateReward.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgCreateReward: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgClaim({ value }: msgClaimParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.rewards.MsgClaim", value: MsgClaim.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgClaim: Could not create message: ' + e.message)
 			}
 		},
 		

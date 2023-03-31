@@ -9,15 +9,20 @@ export interface RewardPool {
   claimedAmount: Coin[];
 }
 
+export interface RewardSeries {
+  seriesOne: RewardPool | undefined;
+  seriesTwo: RewardPool | undefined;
+  seriesThree: RewardPool | undefined;
+  seriesFour: RewardPool | undefined;
+  seriesFive: RewardPool | undefined;
+  seriesSix: RewardPool | undefined;
+  seriesSeven: RewardPool | undefined;
+}
+
 /** Params defines the parameters for the module. */
 export interface Params {
   evaluatorAddress: string;
-  rewardSeries: { [key: number]: RewardPool };
-}
-
-export interface Params_RewardSeriesEntry {
-  key: number;
-  value: RewardPool | undefined;
+  rewardSeries: RewardSeries | undefined;
 }
 
 function createBaseRewardPool(): RewardPool {
@@ -86,8 +91,140 @@ export const RewardPool = {
   },
 };
 
+function createBaseRewardSeries(): RewardSeries {
+  return {
+    seriesOne: undefined,
+    seriesTwo: undefined,
+    seriesThree: undefined,
+    seriesFour: undefined,
+    seriesFive: undefined,
+    seriesSix: undefined,
+    seriesSeven: undefined,
+  };
+}
+
+export const RewardSeries = {
+  encode(message: RewardSeries, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.seriesOne !== undefined) {
+      RewardPool.encode(message.seriesOne, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.seriesTwo !== undefined) {
+      RewardPool.encode(message.seriesTwo, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.seriesThree !== undefined) {
+      RewardPool.encode(message.seriesThree, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.seriesFour !== undefined) {
+      RewardPool.encode(message.seriesFour, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.seriesFive !== undefined) {
+      RewardPool.encode(message.seriesFive, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.seriesSix !== undefined) {
+      RewardPool.encode(message.seriesSix, writer.uint32(50).fork()).ldelim();
+    }
+    if (message.seriesSeven !== undefined) {
+      RewardPool.encode(message.seriesSeven, writer.uint32(58).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): RewardSeries {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRewardSeries();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.seriesOne = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.seriesTwo = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.seriesThree = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 4:
+          message.seriesFour = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 5:
+          message.seriesFive = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 6:
+          message.seriesSix = RewardPool.decode(reader, reader.uint32());
+          break;
+        case 7:
+          message.seriesSeven = RewardPool.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RewardSeries {
+    return {
+      seriesOne: isSet(object.seriesOne) ? RewardPool.fromJSON(object.seriesOne) : undefined,
+      seriesTwo: isSet(object.seriesTwo) ? RewardPool.fromJSON(object.seriesTwo) : undefined,
+      seriesThree: isSet(object.seriesThree) ? RewardPool.fromJSON(object.seriesThree) : undefined,
+      seriesFour: isSet(object.seriesFour) ? RewardPool.fromJSON(object.seriesFour) : undefined,
+      seriesFive: isSet(object.seriesFive) ? RewardPool.fromJSON(object.seriesFive) : undefined,
+      seriesSix: isSet(object.seriesSix) ? RewardPool.fromJSON(object.seriesSix) : undefined,
+      seriesSeven: isSet(object.seriesSeven) ? RewardPool.fromJSON(object.seriesSeven) : undefined,
+    };
+  },
+
+  toJSON(message: RewardSeries): unknown {
+    const obj: any = {};
+    message.seriesOne !== undefined
+      && (obj.seriesOne = message.seriesOne ? RewardPool.toJSON(message.seriesOne) : undefined);
+    message.seriesTwo !== undefined
+      && (obj.seriesTwo = message.seriesTwo ? RewardPool.toJSON(message.seriesTwo) : undefined);
+    message.seriesThree !== undefined
+      && (obj.seriesThree = message.seriesThree ? RewardPool.toJSON(message.seriesThree) : undefined);
+    message.seriesFour !== undefined
+      && (obj.seriesFour = message.seriesFour ? RewardPool.toJSON(message.seriesFour) : undefined);
+    message.seriesFive !== undefined
+      && (obj.seriesFive = message.seriesFive ? RewardPool.toJSON(message.seriesFive) : undefined);
+    message.seriesSix !== undefined
+      && (obj.seriesSix = message.seriesSix ? RewardPool.toJSON(message.seriesSix) : undefined);
+    message.seriesSeven !== undefined
+      && (obj.seriesSeven = message.seriesSeven ? RewardPool.toJSON(message.seriesSeven) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<RewardSeries>, I>>(object: I): RewardSeries {
+    const message = createBaseRewardSeries();
+    message.seriesOne = (object.seriesOne !== undefined && object.seriesOne !== null)
+      ? RewardPool.fromPartial(object.seriesOne)
+      : undefined;
+    message.seriesTwo = (object.seriesTwo !== undefined && object.seriesTwo !== null)
+      ? RewardPool.fromPartial(object.seriesTwo)
+      : undefined;
+    message.seriesThree = (object.seriesThree !== undefined && object.seriesThree !== null)
+      ? RewardPool.fromPartial(object.seriesThree)
+      : undefined;
+    message.seriesFour = (object.seriesFour !== undefined && object.seriesFour !== null)
+      ? RewardPool.fromPartial(object.seriesFour)
+      : undefined;
+    message.seriesFive = (object.seriesFive !== undefined && object.seriesFive !== null)
+      ? RewardPool.fromPartial(object.seriesFive)
+      : undefined;
+    message.seriesSix = (object.seriesSix !== undefined && object.seriesSix !== null)
+      ? RewardPool.fromPartial(object.seriesSix)
+      : undefined;
+    message.seriesSeven = (object.seriesSeven !== undefined && object.seriesSeven !== null)
+      ? RewardPool.fromPartial(object.seriesSeven)
+      : undefined;
+    return message;
+  },
+};
+
 function createBaseParams(): Params {
-  return { evaluatorAddress: "", rewardSeries: {} };
+  return { evaluatorAddress: "", rewardSeries: undefined };
 }
 
 export const Params = {
@@ -95,9 +232,9 @@ export const Params = {
     if (message.evaluatorAddress !== "") {
       writer.uint32(10).string(message.evaluatorAddress);
     }
-    Object.entries(message.rewardSeries).forEach(([key, value]) => {
-      Params_RewardSeriesEntry.encode({ key: key as any, value }, writer.uint32(18).fork()).ldelim();
-    });
+    if (message.rewardSeries !== undefined) {
+      RewardSeries.encode(message.rewardSeries, writer.uint32(18).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -112,10 +249,7 @@ export const Params = {
           message.evaluatorAddress = reader.string();
           break;
         case 2:
-          const entry2 = Params_RewardSeriesEntry.decode(reader, reader.uint32());
-          if (entry2.value !== undefined) {
-            message.rewardSeries[entry2.key] = entry2.value;
-          }
+          message.rewardSeries = RewardSeries.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -128,98 +262,23 @@ export const Params = {
   fromJSON(object: any): Params {
     return {
       evaluatorAddress: isSet(object.evaluatorAddress) ? String(object.evaluatorAddress) : "",
-      rewardSeries: isObject(object.rewardSeries)
-        ? Object.entries(object.rewardSeries).reduce<{ [key: number]: RewardPool }>((acc, [key, value]) => {
-          acc[Number(key)] = RewardPool.fromJSON(value);
-          return acc;
-        }, {})
-        : {},
+      rewardSeries: isSet(object.rewardSeries) ? RewardSeries.fromJSON(object.rewardSeries) : undefined,
     };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.evaluatorAddress !== undefined && (obj.evaluatorAddress = message.evaluatorAddress);
-    obj.rewardSeries = {};
-    if (message.rewardSeries) {
-      Object.entries(message.rewardSeries).forEach(([k, v]) => {
-        obj.rewardSeries[k] = RewardPool.toJSON(v);
-      });
-    }
+    message.rewardSeries !== undefined
+      && (obj.rewardSeries = message.rewardSeries ? RewardSeries.toJSON(message.rewardSeries) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
     message.evaluatorAddress = object.evaluatorAddress ?? "";
-    message.rewardSeries = Object.entries(object.rewardSeries ?? {}).reduce<{ [key: number]: RewardPool }>(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[Number(key)] = RewardPool.fromPartial(value);
-        }
-        return acc;
-      },
-      {},
-    );
-    return message;
-  },
-};
-
-function createBaseParams_RewardSeriesEntry(): Params_RewardSeriesEntry {
-  return { key: 0, value: undefined };
-}
-
-export const Params_RewardSeriesEntry = {
-  encode(message: Params_RewardSeriesEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.key !== 0) {
-      writer.uint32(8).int32(message.key);
-    }
-    if (message.value !== undefined) {
-      RewardPool.encode(message.value, writer.uint32(18).fork()).ldelim();
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Params_RewardSeriesEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseParams_RewardSeriesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.int32();
-          break;
-        case 2:
-          message.value = RewardPool.decode(reader, reader.uint32());
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Params_RewardSeriesEntry {
-    return {
-      key: isSet(object.key) ? Number(object.key) : 0,
-      value: isSet(object.value) ? RewardPool.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: Params_RewardSeriesEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = Math.round(message.key));
-    message.value !== undefined && (obj.value = message.value ? RewardPool.toJSON(message.value) : undefined);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Params_RewardSeriesEntry>, I>>(object: I): Params_RewardSeriesEntry {
-    const message = createBaseParams_RewardSeriesEntry();
-    message.key = object.key ?? 0;
-    message.value = (object.value !== undefined && object.value !== null)
-      ? RewardPool.fromPartial(object.value)
+    message.rewardSeries = (object.rewardSeries !== undefined && object.rewardSeries !== null)
+      ? RewardSeries.fromPartial(object.rewardSeries)
       : undefined;
     return message;
   },
@@ -235,10 +294,6 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
-
-function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
-}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

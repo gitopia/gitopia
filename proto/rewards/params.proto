@@ -16,12 +16,36 @@ message RewardPool {
       (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
 }
 
+message RewardSeries {
+  RewardPool series_one = 1 [
+    (gogoproto.moretags) = "yaml:\"series_one\""
+  ];
+  RewardPool series_two = 2 [
+    (gogoproto.moretags) = "yaml:\"series_two\""
+  ];
+  RewardPool series_three = 3 [
+    (gogoproto.moretags) = "yaml:\"series_three\""
+  ];
+  RewardPool series_four = 4 [
+    (gogoproto.moretags) = "yaml:\"series_four\""
+  ];
+  RewardPool series_five = 5 [
+    (gogoproto.moretags) = "yaml:\"series_five\""
+  ];
+  RewardPool series_six = 6 [
+    (gogoproto.moretags) = "yaml:\"series_six\""
+  ];
+  RewardPool series_seven = 7 [
+    (gogoproto.moretags) = "yaml:\"series_seven\""
+  ];
+}
+
 // Params defines the parameters for the module.
 message Params {
   string evaluator_address = 1 [
     (gogoproto.moretags) = "yaml:\"evaluator_address\""
   ];
-  map<int32, RewardPool> reward_series = 2 [
+  RewardSeries reward_series = 2 [
     (gogoproto.moretags) = "yaml:\"reward_series\""
   ];
 }
