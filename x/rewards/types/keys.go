@@ -13,7 +13,13 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_rewards"
 
-	RewardsAccountName = "rewards_account"
+	RewardsSeriesOneAccount   = "rewards_series_one_account"
+	RewardsSeriesTwoAccount   = "rewards_series_two_account"
+	RewardsSeriesThreeAccount = "rewards_series_three_account"
+	RewardsSeriesFourAccount  = "rewards_series_four_account"
+	RewardsSeriesFiveAccount  = "rewards_series_five_account"
+	RewardsSeriesSixAccount   = "rewards_series_six_account"
+	RewardsSeriesSevenAccount = "rewards_series_seven_account"
 )
 
 var (

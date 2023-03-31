@@ -52,7 +52,7 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	reward.ClaimedAmount = claimableAmount
 	k.SetReward(ctx, reward)
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsAccountName, toAddr, balance)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, balance)
 	if err != nil {
 		return nil, err
 	}

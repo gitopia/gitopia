@@ -10,48 +10,55 @@ func (k Keeper) CreateRewardsModuleAccount(ctx sdk.Context, params types.Params)
 	if params.RewardSeries == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series empty")
 	}
-	rs := params.RewardSeries
 
-	if rs.SeriesOne == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 1 empty")
-	}
-	amount := rs.SeriesOne.TotalAmount
-
-	if rs.SeriesTwo == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 2 empty")
-	}
-	amount = amount.Add(rs.SeriesTwo.TotalAmount...)
-
-	if rs.SeriesThree == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 3 empty")
-	}
-	amount = amount.Add(rs.SeriesThree.TotalAmount...)
-
-	if rs.SeriesFour == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 4 empty")
-	}
-	amount = amount.Add(rs.SeriesFour.TotalAmount...)
-
-	if rs.SeriesFive == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 5 empty")
-	}
-	amount = amount.Add(rs.SeriesFive.TotalAmount...)
-
-	if rs.SeriesSix == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 6 empty")
-	}
-	amount = amount.Add(rs.SeriesSix.TotalAmount...)
-
-	if rs.SeriesSeven == nil {
-		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward series 7 empty")
-	}
-	amount = amount.Add(rs.SeriesSeven.TotalAmount...)
-
-	if amount.IsZero(){
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "reward amount cannot be zero")
+	err := k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesOne)
+	if err != nil {
+		return err
 	}
 
-	err := k.bankKeeper.MintCoins(ctx, types.RewardsAccountName, amount)
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesTwo)
+	if err != nil {
+		return err
+	}
+
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesThree)
+	if err != nil {
+		return err
+	}
+
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesFour)
+	if err != nil {
+		return err
+	}
+
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesFive)
+	if err != nil {
+		return err
+	}
+
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesSix)
+	if err != nil {
+		return err
+	}
+
+	err = k.MintRewardsModuleAccount(ctx, params.RewardSeries.SeriesSeven)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (k Keeper) MintRewardsModuleAccount(ctx sdk.Context, rp *types.RewardPool)error{
+	if rp == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward pool empty")
+	}
+
+	if rp.TotalAmount.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "reward pool amount cannot be zero")
+	}
+
+	err := k.bankKeeper.MintCoins(ctx, types.RewardsSeriesOneAccount, rp.TotalAmount)
 	if err != nil {
 		return err
 	}

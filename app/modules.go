@@ -53,15 +53,21 @@ import (
 )
 
 var maccPerms = map[string][]string{
-	authtypes.FeeCollectorName:     nil,
-	distrtypes.ModuleName:          nil,
-	minttypes.ModuleName:           {authtypes.Minter},
-	stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-	govtypes.ModuleName:            {authtypes.Burner},
-	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	gitopiatypes.MinterAccountName: nil,
-	rewardtypes.RewardsAccountName: {authtypes.Minter},
+	authtypes.FeeCollectorName:            nil,
+	distrtypes.ModuleName:                 nil,
+	minttypes.ModuleName:                  {authtypes.Minter},
+	stakingtypes.BondedPoolName:           {authtypes.Burner, authtypes.Staking},
+	stakingtypes.NotBondedPoolName:        {authtypes.Burner, authtypes.Staking},
+	govtypes.ModuleName:                   {authtypes.Burner},
+	ibctransfertypes.ModuleName:           {authtypes.Minter, authtypes.Burner},
+	gitopiatypes.MinterAccountName:        nil,
+	rewardtypes.RewardsSeriesOneAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesTwoAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesThreeAccount: {authtypes.Minter},
+	rewardtypes.RewardsSeriesFourAccount:  {authtypes.Minter},
+	rewardtypes.RewardsSeriesFiveAccount:  {authtypes.Minter},
+	rewardtypes.RewardsSeriesSixAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesSevenAccount: {authtypes.Minter},
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
