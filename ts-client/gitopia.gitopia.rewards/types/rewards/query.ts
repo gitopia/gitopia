@@ -27,7 +27,7 @@ export interface QueryGetRewardResponseReward {
    * string creator = 3;
    */
   claimedAmount: Coin[];
-  claimableRewardAmount: Coin[];
+  claimableAmount: Coin[];
 }
 
 export interface QueryGetRewardResponse {
@@ -189,7 +189,7 @@ export const QueryGetRewardRequest = {
 };
 
 function createBaseQueryGetRewardResponseReward(): QueryGetRewardResponseReward {
-  return { recipient: "", amount: [], claimedAmount: [], claimableRewardAmount: [] };
+  return { recipient: "", amount: [], claimedAmount: [], claimableAmount: [] };
 }
 
 export const QueryGetRewardResponseReward = {
@@ -203,7 +203,7 @@ export const QueryGetRewardResponseReward = {
     for (const v of message.claimedAmount) {
       Coin.encode(v!, writer.uint32(34).fork()).ldelim();
     }
-    for (const v of message.claimableRewardAmount) {
+    for (const v of message.claimableAmount) {
       Coin.encode(v!, writer.uint32(42).fork()).ldelim();
     }
     return writer;
@@ -226,7 +226,7 @@ export const QueryGetRewardResponseReward = {
           message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
           break;
         case 5:
-          message.claimableRewardAmount.push(Coin.decode(reader, reader.uint32()));
+          message.claimableAmount.push(Coin.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -241,8 +241,8 @@ export const QueryGetRewardResponseReward = {
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
       amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [],
       claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
-      claimableRewardAmount: Array.isArray(object?.claimableRewardAmount)
-        ? object.claimableRewardAmount.map((e: any) => Coin.fromJSON(e))
+      claimableAmount: Array.isArray(object?.claimableAmount)
+        ? object.claimableAmount.map((e: any) => Coin.fromJSON(e))
         : [],
     };
   },
@@ -260,10 +260,10 @@ export const QueryGetRewardResponseReward = {
     } else {
       obj.claimedAmount = [];
     }
-    if (message.claimableRewardAmount) {
-      obj.claimableRewardAmount = message.claimableRewardAmount.map((e) => e ? Coin.toJSON(e) : undefined);
+    if (message.claimableAmount) {
+      obj.claimableAmount = message.claimableAmount.map((e) => e ? Coin.toJSON(e) : undefined);
     } else {
-      obj.claimableRewardAmount = [];
+      obj.claimableAmount = [];
     }
     return obj;
   },
@@ -273,7 +273,7 @@ export const QueryGetRewardResponseReward = {
     message.recipient = object.recipient ?? "";
     message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
     message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
-    message.claimableRewardAmount = object.claimableRewardAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.claimableAmount = object.claimableAmount?.map((e) => Coin.fromPartial(e)) || [];
     return message;
   },
 };

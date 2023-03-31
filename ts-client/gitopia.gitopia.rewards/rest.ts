@@ -48,7 +48,7 @@ export interface RewardsQueryGetRewardResponseReward {
    * string creator = 3;
    */
   claimedAmount?: V1Beta1Coin[];
-  claimableRewardAmount?: V1Beta1Coin[];
+  claimableAmount?: V1Beta1Coin[];
 }
 
 export interface RewardsQueryTasksResponse {

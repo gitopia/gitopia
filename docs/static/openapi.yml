@@ -40340,7 +40340,7 @@ paths:
                     title: |-
                       not required in the response
                       string creator = 3;
-                  claimableRewardAmount:
+                  claimableAmount:
                     type: array
                     items:
                       type: object
@@ -80690,7 +80690,7 @@ definitions:
             title: |-
               not required in the response
               string creator = 3;
-          claimableRewardAmount:
+          claimableAmount:
             type: array
             items:
               type: object
@@ -80743,7 +80743,7 @@ definitions:
         title: |-
           not required in the response
           string creator = 3;
-      claimableRewardAmount:
+      claimableAmount:
         type: array
         items:
           type: object

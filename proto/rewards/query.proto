@@ -51,7 +51,7 @@ message QueryGetRewardResponseReward {
   // string creator = 3;
   repeated cosmos.base.v1beta1.Coin claimedAmount = 4
     [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  repeated cosmos.base.v1beta1.Coin claimableRewardAmount = 5
+  repeated cosmos.base.v1beta1.Coin claimableAmount = 5
     [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
 }
 
