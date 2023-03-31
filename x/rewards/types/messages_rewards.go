@@ -50,5 +50,19 @@ func (msg *MsgCreateReward) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
+	}
+
+	if msg.Amount.Validate() != nil {
+		return err
+	}
+
+	if _, found := sdk.GetDenomUnit(msg.Amount.Denom); !found {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "invalid coin denom (%s)", msg.Amount.Denom)
+	}
+
 	return nil
 }
