@@ -34,7 +34,11 @@ func TestRewardQuerySingle(t *testing.T) {
 			    Recipient: msgs[0].Recipient,
                 
 			},
-			response: &types.QueryGetRewardResponse{Reward: msgs[0]},
+			response: &types.QueryGetRewardResponse{Reward: types.QueryGetRewardResponseReward{
+				Recipient: msgs[0].Recipient,
+				Amount: msgs[0].Amount,
+				ClaimedAmount: msgs[0].ClaimedAmount,
+			}},
 		},
 		{
 			desc:     "Second",
@@ -42,7 +46,11 @@ func TestRewardQuerySingle(t *testing.T) {
 			    Recipient: msgs[1].Recipient,
                 
 			},
-			response: &types.QueryGetRewardResponse{Reward: msgs[1]},
+			response: &types.QueryGetRewardResponse{Reward: types.QueryGetRewardResponseReward{
+				Recipient: msgs[1].Recipient,
+				Amount: msgs[1].Amount,
+				ClaimedAmount: msgs[1].ClaimedAmount,
+			}},
 		},
 		{
 			desc:    "KeyNotFound",

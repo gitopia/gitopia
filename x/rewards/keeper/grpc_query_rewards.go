@@ -53,13 +53,17 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 		return nil, status.Error(codes.NotFound, "reward not found")
 	}
 
-	amount, err := k.GetClaimableAmount(ctx, req.Recipient, reward.Amount)
+	claimableAmount, err := k.GetClaimableAmount(ctx, req.Recipient, reward.Amount)
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.QueryGetRewardResponse{
-		Reward:                reward,
-		ClaimableRewardAmount: amount,
+		Reward: types.QueryGetRewardResponseReward{
+			Recipient:             reward.Recipient,
+			Amount:                reward.Amount,
+			ClaimedAmount:         reward.ClaimedAmount,
+			ClaimableRewardAmount: claimableAmount,
+		},
 	}, nil
 }
