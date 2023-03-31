@@ -25,6 +25,7 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -106,6 +107,22 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		mintKeeper,
 	) 
 
+	distrParamsSubspace := typesparams.NewSubspace(cdc,
+		amino,
+		storeKey,
+		memStoreKey,
+		"distr",
+	)
+
+	distrKeeper := distrkeeper.NewKeeper(
+		cdc, 
+		storeKey, 
+		distrParamsSubspace, 
+		accountKeeper,
+		bankKeeper, 
+		stakingKeeper,
+		authtypes.FeeCollectorName)
+
 	k := keeper.NewKeeper(
 		cdc,
 		storeKey,
@@ -115,6 +132,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		govkeeper.Keeper{},
 		bankKeeper,
 		accountKeeper,
+		distrKeeper,
 	)
 
 

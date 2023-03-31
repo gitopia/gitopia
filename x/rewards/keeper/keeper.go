@@ -10,10 +10,11 @@ import (
 	"github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -32,6 +33,7 @@ type (
 		GovKeeper     govkeeper.Keeper
 		bankKeeper    bankkeeper.Keeper
 		accountKeeper authkeeper.AccountKeeper
+		distrKeeper   distrkeeper.Keeper
 	}
 )
 
@@ -44,6 +46,7 @@ func NewKeeper(
 	gok govkeeper.Keeper,
 	bk bankkeeper.Keeper,
 	ak authkeeper.AccountKeeper,
+	dk distrkeeper.Keeper,
 ) *Keeper {
 
 	return &Keeper{
@@ -56,6 +59,7 @@ func NewKeeper(
 		GovKeeper:     gok,
 		bankKeeper:    bk,
 		accountKeeper: ak,
+		distrKeeper:   dk,
 	}
 }
 

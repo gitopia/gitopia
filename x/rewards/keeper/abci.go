@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	disttypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
@@ -51,7 +50,7 @@ func (k Keeper) TransferRewardPoolBalance(ctx sdk.Context, rewardPool *types.Rew
 		rewardsModuleBalance := k.bankKeeper.GetAllBalances(ctx, rewardsModuleAddress)
 
 		if !rewardsModuleBalance.Empty() {
-			err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, moduleAcc, disttypes.ModuleName, rewardsModuleBalance)
+			err := k.distrKeeper.FundCommunityPool(ctx, rewardsModuleBalance, rewardsModuleAddress)
 			if err != nil {
 				return err
 			}
