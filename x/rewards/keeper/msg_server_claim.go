@@ -16,6 +16,11 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "bad address "+msg.Creator)
 	}
 
+	params := k.GetParams(ctx)
+	if params.RewardSeries.SeriesOne.Expiry.Before(ctx.BlockTime()) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
+	}
+
 	reward, found := k.GetReward(ctx, msg.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward not found for address "+msg.Creator)

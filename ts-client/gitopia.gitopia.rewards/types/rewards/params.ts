@@ -1,12 +1,14 @@
 /* eslint-disable */
 import _m0 from "protobufjs/minimal";
 import { Coin } from "../cosmos/base/v1beta1/coin";
+import { Timestamp } from "../google/protobuf/timestamp";
 
 export const protobufPackage = "gitopia.gitopia.rewards";
 
 export interface RewardPool {
   totalAmount: Coin[];
   claimedAmount: Coin[];
+  expiry: Date | undefined;
 }
 
 export interface RewardSeries {
@@ -26,7 +28,7 @@ export interface Params {
 }
 
 function createBaseRewardPool(): RewardPool {
-  return { totalAmount: [], claimedAmount: [] };
+  return { totalAmount: [], claimedAmount: [], expiry: undefined };
 }
 
 export const RewardPool = {
@@ -36,6 +38,9 @@ export const RewardPool = {
     }
     for (const v of message.claimedAmount) {
       Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.expiry !== undefined) {
+      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -53,6 +58,9 @@ export const RewardPool = {
         case 2:
           message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
           break;
+        case 3:
+          message.expiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -65,6 +73,7 @@ export const RewardPool = {
     return {
       totalAmount: Array.isArray(object?.totalAmount) ? object.totalAmount.map((e: any) => Coin.fromJSON(e)) : [],
       claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
+      expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
     };
   },
 
@@ -80,6 +89,7 @@ export const RewardPool = {
     } else {
       obj.claimedAmount = [];
     }
+    message.expiry !== undefined && (obj.expiry = message.expiry.toISOString());
     return obj;
   },
 
@@ -87,6 +97,7 @@ export const RewardPool = {
     const message = createBaseRewardPool();
     message.totalAmount = object.totalAmount?.map((e) => Coin.fromPartial(e)) || [];
     message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.expiry = object.expiry ?? undefined;
     return message;
   },
 };
@@ -294,6 +305,28 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function toTimestamp(date: Date): Timestamp {
+  const seconds = date.getTime() / 1_000;
+  const nanos = (date.getTime() % 1_000) * 1_000_000;
+  return { seconds, nanos };
+}
+
+function fromTimestamp(t: Timestamp): Date {
+  let millis = t.seconds * 1_000;
+  millis += t.nanos / 1_000_000;
+  return new Date(millis);
+}
+
+function fromJsonTimestamp(o: any): Date {
+  if (o instanceof Date) {
+    return o;
+  } else if (typeof o === "string") {
+    return new Date(o);
+  } else {
+    return fromTimestamp(Timestamp.fromJSON(o));
+  }
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

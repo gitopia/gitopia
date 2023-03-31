@@ -51,7 +51,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"GitopiaSubSpace",
 	)
 
-	ak := authkeeper.NewAccountKeeper(
+	accountKeeper := authkeeper.NewAccountKeeper(
 		cdc,
 		storeKey,
 		ss,
@@ -64,7 +64,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		cdc,
 		nil,
-		ak,
+		accountKeeper,
 	)
 
 	bankParamsSubspace := typesparams.NewSubspace(cdc,
@@ -76,7 +76,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	bankKeeper := bankkeeper.NewBaseKeeper(
 		cdc,
 		storeKey,
-		ak,
+		accountKeeper,
 		bankParamsSubspace,
 		nil,
 	)
@@ -85,13 +85,13 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stakingKeeper := stakingkeeper.NewKeeper(
 		cdc,
 		storeKey,
-		ak,
+		accountKeeper,
 		bankKeeper,
 		ss,
 	)
 
 	mintKeeper := mintkeeper.NewKeeper(
-		cdc, storeKey, ss, stakingKeeper, ak,
+		cdc, storeKey, ss, stakingKeeper, accountKeeper,
 		bankKeeper, types.MinterAccountName)
 
 	gitopiaKeeper := gitopiakeeper.NewKeeper(
@@ -100,7 +100,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		types.MinterAccountName,
 		authtypes.FeeCollectorName,
-		ak,
+		accountKeeper,
 		&authzKeeper,
 		bankKeeper,
 		mintKeeper,
@@ -114,6 +114,7 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		stakingKeeper,
 		govkeeper.Keeper{},
 		bankKeeper,
+		accountKeeper,
 	)
 
 

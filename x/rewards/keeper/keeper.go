@@ -13,6 +13,7 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -30,6 +31,7 @@ type (
 		stakingKeeper stakingkeeper.Keeper
 		GovKeeper     govkeeper.Keeper
 		bankKeeper    bankkeeper.Keeper
+		accountKeeper authkeeper.AccountKeeper
 	}
 )
 
@@ -41,6 +43,7 @@ func NewKeeper(
 	sk stakingkeeper.Keeper,
 	gok govkeeper.Keeper,
 	bk bankkeeper.Keeper,
+	ak authkeeper.AccountKeeper,
 ) *Keeper {
 
 	return &Keeper{
@@ -52,6 +55,7 @@ func NewKeeper(
 		stakingKeeper: sk,
 		GovKeeper:     gok,
 		bankKeeper:    bk,
+		accountKeeper: ak,
 	}
 }
 

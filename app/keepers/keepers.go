@@ -317,6 +317,7 @@ func NewAppKeeper(
 		appKeepers.StakingKeeper, 
 		appKeepers.GovKeeper,
 		appKeepers.BankKeeper,
+		appKeepers.AccountKeeper,
 	)
 
 	return appKeepers
