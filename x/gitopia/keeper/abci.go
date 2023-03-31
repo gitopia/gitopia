@@ -15,7 +15,7 @@ func (k Keeper) TransferProportion(
 	from string,
 	to sdk.AccAddress,
 	proportion int64) (sdk.Coins, error) {
-	coins := totalCoins.MulInt(math.NewInt(proportion)).QuoInt(sdk.NewInt(100))
+	coins := totalCoins.MulInt(math.NewInt(proportion)).QuoInt(math.NewInt(100))
 	if coins.IsZero() {
 		return nil, nil
 	}

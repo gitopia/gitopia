@@ -4,9 +4,9 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	cosmostypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	cosmostypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +19,7 @@ func CmdExercise() *cobra.Command {
 		Short: "exercise team vesting balance",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAmount, err := cosmostypes.ParseCoinsNormalized(args[0])
+			argAmount, err := cosmostypes.ParseCoinNormalized(args[0])
 			if err != nil {
 				return err
 			}

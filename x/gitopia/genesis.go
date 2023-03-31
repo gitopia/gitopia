@@ -123,6 +123,14 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set whois count
 	k.SetWhoisCount(ctx, genState.WhoisCount)
 
+	// Set all the exercised amount
+	for _, elem := range genState.ExercisedAmountList {
+		k.SetExercisedAmount(ctx, elem)
+	}
+
+	// Set exercised amount count
+	k.SetExercisedAmountCount(ctx, genState.ExercisedAmountCount)
+
 	k.SetParams(ctx, genState.Params)
 }
 
@@ -178,6 +186,10 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	// Get all whois
 	genesis.WhoisList = k.GetAllWhois(ctx)
 	genesis.WhoisCount = k.GetWhoisCount(ctx)
+
+	// Get all exercised amount
+	genesis.ExercisedAmountList = k.GetAllExercisedAmount(ctx)
+	genesis.ExercisedAmountCount = k.GetExercisedAmountCount(ctx)
 
 	genesis.Params = k.GetParams(ctx)
 

@@ -9,7 +9,7 @@ const TypeMsgExercise = "exercise"
 
 var _ sdk.Msg = &MsgExercise{}
 
-func NewMsgExercise(creator string, amount sdk.Coins, to string) *MsgExercise {
+func NewMsgExercise(creator string, amount sdk.Coin, to string) *MsgExercise {
 	return &MsgExercise{
 		Creator: creator,
 		Amount:  amount,
@@ -43,11 +43,19 @@ func (msg *MsgExercise) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	if len(msg.Amount) == 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "empty amount")
-	}
-	if err := msg.Amount.Validate(); err != nil {
+	coins := sdk.Coins{msg.Amount}
+	if err := coins.Validate(); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	if coins.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "amount cannot be zero")
+	}
+	if _, valid := sdk.GetDenomUnit(coins[0].Denom); !valid {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid denom (%s)", coins[0].Denom)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.To)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid to address (%s)", err)
 	}
 	return nil
 }

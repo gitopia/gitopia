@@ -24,13 +24,15 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"next_inflation_time\""
   ];
-  PoolProportions poolProportions = 2 [
+  PoolProportions pool_proportions = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"pool_proportions\""
   ];
-  repeated DistributionProportion teamProportions = 3 [
+  repeated DistributionProportion team_proportions = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"team_proportions\""
   ];
-  
+  int64 genesis_time = 4 [
+    (gogoproto.moretags) = "yaml:\"genesis_time\""
+  ];
 }
