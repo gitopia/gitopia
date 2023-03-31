@@ -21,13 +21,15 @@ export interface QueryGetRewardRequest {
 
 export interface QueryGetRewardResponseReward {
   recipient: string;
-  amount: Coin[];
+  amount:
+    | Coin
+    | undefined;
   /**
    * not required in the response
    * string creator = 3;
    */
-  claimedAmount: Coin[];
-  claimableAmount: Coin[];
+  claimedAmount: Coin | undefined;
+  claimableAmount: Coin | undefined;
 }
 
 export interface QueryGetRewardResponse {
@@ -189,7 +191,7 @@ export const QueryGetRewardRequest = {
 };
 
 function createBaseQueryGetRewardResponseReward(): QueryGetRewardResponseReward {
-  return { recipient: "", amount: [], claimedAmount: [], claimableAmount: [] };
+  return { recipient: "", amount: undefined, claimedAmount: undefined, claimableAmount: undefined };
 }
 
 export const QueryGetRewardResponseReward = {
@@ -197,14 +199,14 @@ export const QueryGetRewardResponseReward = {
     if (message.recipient !== "") {
       writer.uint32(10).string(message.recipient);
     }
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
     }
-    for (const v of message.claimedAmount) {
-      Coin.encode(v!, writer.uint32(34).fork()).ldelim();
+    if (message.claimedAmount !== undefined) {
+      Coin.encode(message.claimedAmount, writer.uint32(34).fork()).ldelim();
     }
-    for (const v of message.claimableAmount) {
-      Coin.encode(v!, writer.uint32(42).fork()).ldelim();
+    if (message.claimableAmount !== undefined) {
+      Coin.encode(message.claimableAmount, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -220,13 +222,13 @@ export const QueryGetRewardResponseReward = {
           message.recipient = reader.string();
           break;
         case 2:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
+          message.amount = Coin.decode(reader, reader.uint32());
           break;
         case 4:
-          message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
+          message.claimedAmount = Coin.decode(reader, reader.uint32());
           break;
         case 5:
-          message.claimableAmount.push(Coin.decode(reader, reader.uint32()));
+          message.claimableAmount = Coin.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -239,41 +241,35 @@ export const QueryGetRewardResponseReward = {
   fromJSON(object: any): QueryGetRewardResponseReward {
     return {
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
-      amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [],
-      claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
-      claimableAmount: Array.isArray(object?.claimableAmount)
-        ? object.claimableAmount.map((e: any) => Coin.fromJSON(e))
-        : [],
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      claimedAmount: isSet(object.claimedAmount) ? Coin.fromJSON(object.claimedAmount) : undefined,
+      claimableAmount: isSet(object.claimableAmount) ? Coin.fromJSON(object.claimableAmount) : undefined,
     };
   },
 
   toJSON(message: QueryGetRewardResponseReward): unknown {
     const obj: any = {};
     message.recipient !== undefined && (obj.recipient = message.recipient);
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.amount = [];
-    }
-    if (message.claimedAmount) {
-      obj.claimedAmount = message.claimedAmount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.claimedAmount = [];
-    }
-    if (message.claimableAmount) {
-      obj.claimableAmount = message.claimableAmount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.claimableAmount = [];
-    }
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.claimedAmount !== undefined
+      && (obj.claimedAmount = message.claimedAmount ? Coin.toJSON(message.claimedAmount) : undefined);
+    message.claimableAmount !== undefined
+      && (obj.claimableAmount = message.claimableAmount ? Coin.toJSON(message.claimableAmount) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<QueryGetRewardResponseReward>, I>>(object: I): QueryGetRewardResponseReward {
     const message = createBaseQueryGetRewardResponseReward();
     message.recipient = object.recipient ?? "";
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
-    message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
-    message.claimableAmount = object.claimableAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
+    message.claimedAmount = (object.claimedAmount !== undefined && object.claimedAmount !== null)
+      ? Coin.fromPartial(object.claimedAmount)
+      : undefined;
+    message.claimableAmount = (object.claimableAmount !== undefined && object.claimableAmount !== null)
+      ? Coin.fromPartial(object.claimableAmount)
+      : undefined;
     return message;
   },
 };

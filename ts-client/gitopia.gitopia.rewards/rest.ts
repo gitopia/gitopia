@@ -16,8 +16,14 @@ export interface ProtobufAny {
 export type RewardsMsgClaimResponse = object;
 
 export interface RewardsMsgCreateRewardResponse {
-  /** actual granted amount */
-  amount?: V1Beta1Coin[];
+  /**
+   * actual granted amount
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
 }
 
 export interface RewardsQueryAllRewardsResponse {
@@ -41,14 +47,32 @@ export interface RewardsQueryGetRewardResponse {
 
 export interface RewardsQueryGetRewardResponseReward {
   recipient?: string;
-  amount?: V1Beta1Coin[];
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
 
   /**
    * not required in the response
    * string creator = 3;
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
    */
-  claimedAmount?: V1Beta1Coin[];
-  claimableAmount?: V1Beta1Coin[];
+  claimedAmount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimableAmount?: V1Beta1Coin;
 }
 
 export interface RewardsQueryTasksResponse {
@@ -57,9 +81,23 @@ export interface RewardsQueryTasksResponse {
 
 export interface RewardsReward {
   recipient?: string;
-  amount?: V1Beta1Coin[];
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
   creator?: string;
-  claimedAmount?: V1Beta1Coin[];
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimedAmount?: V1Beta1Coin;
 }
 
 export interface RewardsTask {

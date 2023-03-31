@@ -6,13 +6,13 @@ export const protobufPackage = "gitopia.gitopia.rewards";
 
 export interface Reward {
   recipient: string;
-  amount: Coin[];
+  amount: Coin | undefined;
   creator: string;
-  claimedAmount: Coin[];
+  claimedAmount: Coin | undefined;
 }
 
 function createBaseReward(): Reward {
-  return { recipient: "", amount: [], creator: "", claimedAmount: [] };
+  return { recipient: "", amount: undefined, creator: "", claimedAmount: undefined };
 }
 
 export const Reward = {
@@ -20,14 +20,14 @@ export const Reward = {
     if (message.recipient !== "") {
       writer.uint32(10).string(message.recipient);
     }
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
     }
     if (message.creator !== "") {
       writer.uint32(26).string(message.creator);
     }
-    for (const v of message.claimedAmount) {
-      Coin.encode(v!, writer.uint32(34).fork()).ldelim();
+    if (message.claimedAmount !== undefined) {
+      Coin.encode(message.claimedAmount, writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -43,13 +43,13 @@ export const Reward = {
           message.recipient = reader.string();
           break;
         case 2:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
+          message.amount = Coin.decode(reader, reader.uint32());
           break;
         case 3:
           message.creator = reader.string();
           break;
         case 4:
-          message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
+          message.claimedAmount = Coin.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -62,35 +62,32 @@ export const Reward = {
   fromJSON(object: any): Reward {
     return {
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
-      amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [],
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
       creator: isSet(object.creator) ? String(object.creator) : "",
-      claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
+      claimedAmount: isSet(object.claimedAmount) ? Coin.fromJSON(object.claimedAmount) : undefined,
     };
   },
 
   toJSON(message: Reward): unknown {
     const obj: any = {};
     message.recipient !== undefined && (obj.recipient = message.recipient);
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.amount = [];
-    }
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.creator !== undefined && (obj.creator = message.creator);
-    if (message.claimedAmount) {
-      obj.claimedAmount = message.claimedAmount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.claimedAmount = [];
-    }
+    message.claimedAmount !== undefined
+      && (obj.claimedAmount = message.claimedAmount ? Coin.toJSON(message.claimedAmount) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Reward>, I>>(object: I): Reward {
     const message = createBaseReward();
     message.recipient = object.recipient ?? "";
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     message.creator = object.creator ?? "";
-    message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.claimedAmount = (object.claimedAmount !== undefined && object.claimedAmount !== null)
+      ? Coin.fromPartial(object.claimedAmount)
+      : undefined;
     return message;
   },
 };

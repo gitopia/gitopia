@@ -8,10 +8,12 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 message Reward {
   string recipient = 1; 
-  repeated cosmos.base.v1beta1.Coin amount = 2
-    [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  cosmos.base.v1beta1.Coin amount = 2
+    [(gogoproto.nullable) = false, 
+    (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
   string creator = 3;
-  repeated cosmos.base.v1beta1.Coin claimedAmount = 4
-    [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  cosmos.base.v1beta1.Coin claimedAmount = 4
+    [(gogoproto.nullable) = false, 
+    (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 

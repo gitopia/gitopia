@@ -14,7 +14,7 @@ var _ sdk.Msg = &MsgCreateReward{}
 func NewMsgCreateReward(
 	creator string,
 	recipient string,
-	amount sdk.Coins,
+	amount sdk.Coin,
 
 ) *MsgCreateReward {
 	return &MsgCreateReward{

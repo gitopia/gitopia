@@ -6,8 +6,8 @@ import { Timestamp } from "../google/protobuf/timestamp";
 export const protobufPackage = "gitopia.gitopia.rewards";
 
 export interface RewardPool {
-  totalAmount: Coin[];
-  claimedAmount: Coin[];
+  totalAmount: Coin | undefined;
+  claimedAmount: Coin | undefined;
   expiry: Date | undefined;
 }
 
@@ -28,16 +28,16 @@ export interface Params {
 }
 
 function createBaseRewardPool(): RewardPool {
-  return { totalAmount: [], claimedAmount: [], expiry: undefined };
+  return { totalAmount: undefined, claimedAmount: undefined, expiry: undefined };
 }
 
 export const RewardPool = {
   encode(message: RewardPool, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.totalAmount) {
-      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
+    if (message.totalAmount !== undefined) {
+      Coin.encode(message.totalAmount, writer.uint32(10).fork()).ldelim();
     }
-    for (const v of message.claimedAmount) {
-      Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    if (message.claimedAmount !== undefined) {
+      Coin.encode(message.claimedAmount, writer.uint32(18).fork()).ldelim();
     }
     if (message.expiry !== undefined) {
       Timestamp.encode(toTimestamp(message.expiry), writer.uint32(26).fork()).ldelim();
@@ -53,10 +53,10 @@ export const RewardPool = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.totalAmount.push(Coin.decode(reader, reader.uint32()));
+          message.totalAmount = Coin.decode(reader, reader.uint32());
           break;
         case 2:
-          message.claimedAmount.push(Coin.decode(reader, reader.uint32()));
+          message.claimedAmount = Coin.decode(reader, reader.uint32());
           break;
         case 3:
           message.expiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
@@ -71,32 +71,30 @@ export const RewardPool = {
 
   fromJSON(object: any): RewardPool {
     return {
-      totalAmount: Array.isArray(object?.totalAmount) ? object.totalAmount.map((e: any) => Coin.fromJSON(e)) : [],
-      claimedAmount: Array.isArray(object?.claimedAmount) ? object.claimedAmount.map((e: any) => Coin.fromJSON(e)) : [],
+      totalAmount: isSet(object.totalAmount) ? Coin.fromJSON(object.totalAmount) : undefined,
+      claimedAmount: isSet(object.claimedAmount) ? Coin.fromJSON(object.claimedAmount) : undefined,
       expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
     };
   },
 
   toJSON(message: RewardPool): unknown {
     const obj: any = {};
-    if (message.totalAmount) {
-      obj.totalAmount = message.totalAmount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.totalAmount = [];
-    }
-    if (message.claimedAmount) {
-      obj.claimedAmount = message.claimedAmount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.claimedAmount = [];
-    }
+    message.totalAmount !== undefined
+      && (obj.totalAmount = message.totalAmount ? Coin.toJSON(message.totalAmount) : undefined);
+    message.claimedAmount !== undefined
+      && (obj.claimedAmount = message.claimedAmount ? Coin.toJSON(message.claimedAmount) : undefined);
     message.expiry !== undefined && (obj.expiry = message.expiry.toISOString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<RewardPool>, I>>(object: I): RewardPool {
     const message = createBaseRewardPool();
-    message.totalAmount = object.totalAmount?.map((e) => Coin.fromPartial(e)) || [];
-    message.claimedAmount = object.claimedAmount?.map((e) => Coin.fromPartial(e)) || [];
+    message.totalAmount = (object.totalAmount !== undefined && object.totalAmount !== null)
+      ? Coin.fromPartial(object.totalAmount)
+      : undefined;
+    message.claimedAmount = (object.claimedAmount !== undefined && object.claimedAmount !== null)
+      ? Coin.fromPartial(object.claimedAmount)
+      : undefined;
     message.expiry = object.expiry ?? undefined;
     return message;
   },

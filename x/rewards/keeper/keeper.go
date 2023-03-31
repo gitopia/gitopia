@@ -67,10 +67,10 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalReward sdk.Coins) (sdk.Coins, error) {
+func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalReward sdk.Coin) (sdk.Coin, error) {
 	tasks, err := k.getTasks(ctx, addr)
 	if err != nil {
-		return nil, err
+		return sdk.Coin{}, err
 	}
 
 	totalClaimablePercent := int64(0)
@@ -78,12 +78,15 @@ func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalRewar
 		if task.IsComplete {
 			totalClaimablePercent += (int64)(task.Weight)
 			if totalClaimablePercent > 100 {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "cannot reward more than 100 percent!")
+				return sdk.Coin{}, sdkerrors.Wrap(sdkerrors.ErrLogic, "cannot reward more than 100 percent!")
 			}
 		}
 	}
 
+	totalClaimableAmount := sdk.Coin{
+		Amount: totalReward.Amount.Mul(math.NewInt(totalClaimablePercent)).Quo(math.NewInt(100)),
+		Denom: totalReward.Denom,
+	}
 	// rounded
-	totalClaimableAmount := totalReward.MulInt(math.NewInt(totalClaimablePercent)).QuoInt(math.NewInt(100))
 	return totalClaimableAmount, nil
 }

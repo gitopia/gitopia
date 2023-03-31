@@ -40146,43 +40146,37 @@ paths:
                     recipient:
                       type: string
                     amount:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          denom:
-                            type: string
-                          amount:
-                            type: string
-                        description: >-
-                          Coin defines a token with a denomination and an
-                          amount.
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
 
 
-                          NOTE: The amount field is an Int which implements the
-                          custom method
+                        NOTE: The amount field is an Int which implements the
+                        custom method
 
-                          signatures required by gogoproto.
+                        signatures required by gogoproto.
                     creator:
                       type: string
                     claimedAmount:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          denom:
-                            type: string
-                          amount:
-                            type: string
-                        description: >-
-                          Coin defines a token with a denomination and an
-                          amount.
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
 
 
-                          NOTE: The amount field is an Int which implements the
-                          custom method
+                        NOTE: The amount field is an Int which implements the
+                        custom method
 
-                          signatures required by gogoproto.
+                        signatures required by gogoproto.
               pagination:
                 type: object
                 properties:
@@ -40304,59 +40298,53 @@ paths:
                   recipient:
                     type: string
                   amount:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        denom:
-                          type: string
-                        amount:
-                          type: string
-                      description: >-
-                        Coin defines a token with a denomination and an amount.
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
 
 
-                        NOTE: The amount field is an Int which implements the
-                        custom method
+                      NOTE: The amount field is an Int which implements the
+                      custom method
 
-                        signatures required by gogoproto.
+                      signatures required by gogoproto.
                   claimedAmount:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        denom:
-                          type: string
-                        amount:
-                          type: string
-                      description: >-
-                        Coin defines a token with a denomination and an amount.
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
 
 
-                        NOTE: The amount field is an Int which implements the
-                        custom method
+                      NOTE: The amount field is an Int which implements the
+                      custom method
 
-                        signatures required by gogoproto.
+                      signatures required by gogoproto.
                     title: |-
                       not required in the response
                       string creator = 3;
                   claimableAmount:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        denom:
-                          type: string
-                        amount:
-                          type: string
-                      description: >-
-                        Coin defines a token with a denomination and an amount.
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
 
 
-                        NOTE: The amount field is an Int which implements the
-                        custom method
+                      NOTE: The amount field is an Int which implements the
+                      custom method
 
-                        signatures required by gogoproto.
+                      signatures required by gogoproto.
         default:
           description: An unexpected error response.
           schema:
@@ -80559,19 +80547,17 @@ definitions:
     type: object
     properties:
       amount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
         title: actual granted amount
   gitopia.gitopia.rewards.QueryAllRewardsResponse:
     type: object
@@ -80584,41 +80570,37 @@ definitions:
             recipient:
               type: string
             amount:
-              type: array
-              items:
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-                description: >-
-                  Coin defines a token with a denomination and an amount.
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
 
 
-                  NOTE: The amount field is an Int which implements the custom
-                  method
+                NOTE: The amount field is an Int which implements the custom
+                method
 
-                  signatures required by gogoproto.
+                signatures required by gogoproto.
             creator:
               type: string
             claimedAmount:
-              type: array
-              items:
-                type: object
-                properties:
-                  denom:
-                    type: string
-                  amount:
-                    type: string
-                description: >-
-                  Coin defines a token with a denomination and an amount.
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
 
 
-                  NOTE: The amount field is an Int which implements the custom
-                  method
+                NOTE: The amount field is an Int which implements the custom
+                method
 
-                  signatures required by gogoproto.
+                signatures required by gogoproto.
       pagination:
         type: object
         properties:
@@ -80654,109 +80636,97 @@ definitions:
           recipient:
             type: string
           amount:
-            type: array
-            items:
-              type: object
-              properties:
-                denom:
-                  type: string
-                amount:
-                  type: string
-              description: >-
-                Coin defines a token with a denomination and an amount.
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
 
 
-                NOTE: The amount field is an Int which implements the custom
-                method
+              NOTE: The amount field is an Int which implements the custom
+              method
 
-                signatures required by gogoproto.
+              signatures required by gogoproto.
           claimedAmount:
-            type: array
-            items:
-              type: object
-              properties:
-                denom:
-                  type: string
-                amount:
-                  type: string
-              description: >-
-                Coin defines a token with a denomination and an amount.
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
 
 
-                NOTE: The amount field is an Int which implements the custom
-                method
+              NOTE: The amount field is an Int which implements the custom
+              method
 
-                signatures required by gogoproto.
+              signatures required by gogoproto.
             title: |-
               not required in the response
               string creator = 3;
           claimableAmount:
-            type: array
-            items:
-              type: object
-              properties:
-                denom:
-                  type: string
-                amount:
-                  type: string
-              description: >-
-                Coin defines a token with a denomination and an amount.
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
 
 
-                NOTE: The amount field is an Int which implements the custom
-                method
+              NOTE: The amount field is an Int which implements the custom
+              method
 
-                signatures required by gogoproto.
+              signatures required by gogoproto.
   gitopia.gitopia.rewards.QueryGetRewardResponseReward:
     type: object
     properties:
       recipient:
         type: string
       amount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
       claimedAmount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
         title: |-
           not required in the response
           string creator = 3;
       claimableAmount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
   gitopia.gitopia.rewards.QueryTasksResponse:
     type: object
     properties:
@@ -80791,35 +80761,31 @@ definitions:
       recipient:
         type: string
       amount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
       creator:
         type: string
       claimedAmount:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
 
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
   gitopia.gitopia.rewards.Task:
     type: object
     properties:

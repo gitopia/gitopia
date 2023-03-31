@@ -7,12 +7,12 @@ export const protobufPackage = "gitopia.gitopia.rewards";
 export interface MsgCreateReward {
   creator: string;
   recipient: string;
-  amount: Coin[];
+  amount: Coin | undefined;
 }
 
 export interface MsgCreateRewardResponse {
   /** actual granted amount */
-  amount: Coin[];
+  amount: Coin | undefined;
 }
 
 /** this line is used by starport scaffolding # proto/tx/message */
@@ -24,7 +24,7 @@ export interface MsgClaimResponse {
 }
 
 function createBaseMsgCreateReward(): MsgCreateReward {
-  return { creator: "", recipient: "", amount: [] };
+  return { creator: "", recipient: "", amount: undefined };
 }
 
 export const MsgCreateReward = {
@@ -35,8 +35,8 @@ export const MsgCreateReward = {
     if (message.recipient !== "") {
       writer.uint32(18).string(message.recipient);
     }
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(26).fork()).ldelim();
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -55,7 +55,7 @@ export const MsgCreateReward = {
           message.recipient = reader.string();
           break;
         case 3:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
+          message.amount = Coin.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -69,7 +69,7 @@ export const MsgCreateReward = {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
-      amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [],
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
     };
   },
 
@@ -77,11 +77,7 @@ export const MsgCreateReward = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.recipient !== undefined && (obj.recipient = message.recipient);
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.amount = [];
-    }
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     return obj;
   },
 
@@ -89,19 +85,21 @@ export const MsgCreateReward = {
     const message = createBaseMsgCreateReward();
     message.creator = object.creator ?? "";
     message.recipient = object.recipient ?? "";
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     return message;
   },
 };
 
 function createBaseMsgCreateRewardResponse(): MsgCreateRewardResponse {
-  return { amount: [] };
+  return { amount: undefined };
 }
 
 export const MsgCreateRewardResponse = {
   encode(message: MsgCreateRewardResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    for (const v of message.amount) {
-      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -114,7 +112,7 @@ export const MsgCreateRewardResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.amount.push(Coin.decode(reader, reader.uint32()));
+          message.amount = Coin.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -125,22 +123,20 @@ export const MsgCreateRewardResponse = {
   },
 
   fromJSON(object: any): MsgCreateRewardResponse {
-    return { amount: Array.isArray(object?.amount) ? object.amount.map((e: any) => Coin.fromJSON(e)) : [] };
+    return { amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined };
   },
 
   toJSON(message: MsgCreateRewardResponse): unknown {
     const obj: any = {};
-    if (message.amount) {
-      obj.amount = message.amount.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.amount = [];
-    }
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<MsgCreateRewardResponse>, I>>(object: I): MsgCreateRewardResponse {
     const message = createBaseMsgCreateRewardResponse();
-    message.amount = object.amount?.map((e) => Coin.fromPartial(e)) || [];
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     return message;
   },
 };

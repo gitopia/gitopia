@@ -9,12 +9,14 @@ option go_package = "github.com/gitopia/gitopia/x/rewards/types";
 
 
 message RewardPool {
-  repeated cosmos.base.v1beta1.Coin total_amount = 1 [
+  cosmos.base.v1beta1.Coin total_amount = 1 [
     (gogoproto.moretags) = "yaml:\"total_amount\"",
-    (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
-  repeated cosmos.base.v1beta1.Coin claimed_amount = 2 [
+    (gogoproto.nullable) = false, 
+    (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+  cosmos.base.v1beta1.Coin claimed_amount = 2 [
       (gogoproto.moretags) = "yaml:\"claimed_amount\"",
-      (gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+      (gogoproto.nullable) = false, 
+      (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
   google.protobuf.Timestamp expiry = 3 [
     (gogoproto.stdtime) = true,
     (gogoproto.nullable) = false,

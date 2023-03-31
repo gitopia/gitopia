@@ -20,13 +20,15 @@ message MsgCreateReward {
   string creator = 1;
   string recipient = 2;
 
-  repeated cosmos.base.v1beta1.Coin amount = 3
-  [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  cosmos.base.v1beta1.Coin amount = 3
+  [(gogoproto.nullable) = false, 
+  (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 message MsgCreateRewardResponse {
   // actual granted amount
-  repeated cosmos.base.v1beta1.Coin amount = 1 
-  [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"]; 
+  cosmos.base.v1beta1.Coin amount = 1 
+  [(gogoproto.nullable) = false, 
+  (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 
 // this line is used by starport scaffolding # proto/tx/message

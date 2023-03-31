@@ -30,9 +30,9 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool claimed")
 	}
 
-	availablePoolBal := rewardpool.TotalAmount.Sub(rewardpool.ClaimedAmount...)
+	availablePoolBal := rewardpool.TotalAmount.Sub(rewardpool.ClaimedAmount)
 	amount := msg.Amount
-	if availablePoolBal.IsAllLT(msg.Amount) {
+	if availablePoolBal.IsLT(msg.Amount) {
 		// reward whatever is left in the reward pool
 		amount = availablePoolBal
 	}
@@ -57,7 +57,7 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		reward,
 	)
 
-	rewardpool.ClaimedAmount = rewardpool.ClaimedAmount.Add(amount...)
+	rewardpool.ClaimedAmount = rewardpool.ClaimedAmount.Add(amount)
 	params.RewardSeries.SeriesOne = rewardpool
 	k.SetParams(ctx, params)
 

@@ -58,7 +58,7 @@ func (k Keeper) MintRewardsModuleAccount(ctx sdk.Context, rp *types.RewardPool)e
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidCoins, "reward pool amount cannot be zero")
 	}
 
-	err := k.bankKeeper.MintCoins(ctx, types.RewardsSeriesOneAccount, rp.TotalAmount)
+	err := k.bankKeeper.MintCoins(ctx, types.RewardsSeriesOneAccount, sdk.Coins{rp.TotalAmount})
 	if err != nil {
 		return err
 	}

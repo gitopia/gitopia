@@ -44,15 +44,15 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	}
 
 	// should not happen!
-	if reward.ClaimedAmount.IsAnyGT(claimableAmount) {
+	if reward.ClaimedAmount.Amount.GT(claimableAmount.Amount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wallet rewarded more than eligible amount")
 	}
 
-	balance := claimableAmount.Sub(reward.ClaimedAmount...)
+	balance := claimableAmount.Sub(reward.ClaimedAmount)
 	reward.ClaimedAmount = claimableAmount
 	k.SetReward(ctx, reward)
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, balance)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, sdk.Coins{balance})
 	if err != nil {
 		return nil, err
 	}
