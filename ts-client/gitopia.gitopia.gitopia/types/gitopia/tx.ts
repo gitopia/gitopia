@@ -566,6 +566,7 @@ export interface MsgCreateComment {
   attachments: Attachment[];
   diffHunk: string;
   path: string;
+  position: number;
 }
 
 export interface MsgCreateCommentResponse {
@@ -6925,7 +6926,17 @@ export const MsgDeleteDaoResponse = {
 };
 
 function createBaseMsgCreateComment(): MsgCreateComment {
-  return { creator: "", repositoryId: 0, parentIid: 0, parent: 0, body: "", attachments: [], diffHunk: "", path: "" };
+  return {
+    creator: "",
+    repositoryId: 0,
+    parentIid: 0,
+    parent: 0,
+    body: "",
+    attachments: [],
+    diffHunk: "",
+    path: "",
+    position: 0,
+  };
 }
 
 export const MsgCreateComment = {
@@ -6953,6 +6964,9 @@ export const MsgCreateComment = {
     }
     if (message.path !== "") {
       writer.uint32(66).string(message.path);
+    }
+    if (message.position !== 0) {
+      writer.uint32(72).uint64(message.position);
     }
     return writer;
   },
@@ -6988,6 +7002,9 @@ export const MsgCreateComment = {
         case 8:
           message.path = reader.string();
           break;
+        case 9:
+          message.position = longToNumber(reader.uint64() as Long);
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -7006,6 +7023,7 @@ export const MsgCreateComment = {
       attachments: Array.isArray(object?.attachments) ? object.attachments.map((e: any) => Attachment.fromJSON(e)) : [],
       diffHunk: isSet(object.diffHunk) ? String(object.diffHunk) : "",
       path: isSet(object.path) ? String(object.path) : "",
+      position: isSet(object.position) ? Number(object.position) : 0,
     };
   },
 
@@ -7023,6 +7041,7 @@ export const MsgCreateComment = {
     }
     message.diffHunk !== undefined && (obj.diffHunk = message.diffHunk);
     message.path !== undefined && (obj.path = message.path);
+    message.position !== undefined && (obj.position = Math.round(message.position));
     return obj;
   },
 
@@ -7036,6 +7055,7 @@ export const MsgCreateComment = {
     message.attachments = object.attachments?.map((e) => Attachment.fromPartial(e)) || [];
     message.diffHunk = object.diffHunk ?? "";
     message.path = object.path ?? "";
+    message.position = object.position ?? 0;
     return message;
   },
 };

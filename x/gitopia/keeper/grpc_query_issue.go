@@ -125,7 +125,12 @@ func PaginateAllRepositoryIssue(
 	if option.CreatedBy != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if issue.Creator == option.CreatedBy {
+			address, err := k.ResolveAddress(ctx, option.CreatedBy)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if issue.Creator == address.address {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}
@@ -135,7 +140,12 @@ func PaginateAllRepositoryIssue(
 	if option.Assignee != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if _, exists := utils.AssigneeExists(issue.Assignees, option.Assignee); exists {
+			address, err := k.ResolveAddress(ctx, option.Assignee)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if _, exists := utils.AssigneeExists(issue.Assignees, address.address); exists {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}
@@ -220,7 +230,7 @@ func PaginateAllRepositoryIssue(
 	if option.Search != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if strings.Contains(issue.Title, option.Search) {
+			if strings.Contains(strings.ToLower(issue.Title), strings.ToLower(option.Search)) {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}

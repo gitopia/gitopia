@@ -107,7 +107,7 @@ func initAppConfig() (string, interface{}) {
 	srvCfg := serverconfig.DefaultConfig()
 	srvCfg.StateSync.SnapshotInterval = 1500
 	srvCfg.StateSync.SnapshotKeepRecent = 2
-	srvCfg.MinGasPrices = "0.001utlore"
+	srvCfg.MinGasPrices = "0.001" + params.BaseCoinUnit
 
 	GitopiaAppCfg := CustomAppConfig{Config: *srvCfg}
 

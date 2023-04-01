@@ -157,7 +157,12 @@ func PaginateAllRepositoryPullRequest(
 	if option.CreatedBy != "" {
 		var pullRequestBuffer []*types.PullRequest
 		for _, pullRequest := range pullRequests {
-			if pullRequest.Creator == option.CreatedBy {
+			address, err := k.ResolveAddress(ctx, option.CreatedBy)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if pullRequest.Creator == address.address {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -167,7 +172,12 @@ func PaginateAllRepositoryPullRequest(
 	if option.Assignee != "" {
 		var pullRequestBuffer []*types.PullRequest
 		for _, pullRequest := range pullRequests {
-			if _, exists := utils.AssigneeExists(pullRequest.Assignees, option.Assignee); exists {
+			address, err := k.ResolveAddress(ctx, option.Assignee)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if _, exists := utils.AssigneeExists(pullRequest.Assignees, address.address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -177,7 +187,12 @@ func PaginateAllRepositoryPullRequest(
 	if option.Reviewer != "" {
 		var pullRequestBuffer []*types.PullRequest
 		for _, pullRequest := range pullRequests {
-			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, option.Reviewer); exists {
+			address, err := k.ResolveAddress(ctx, option.Reviewer)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, address.address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -270,7 +285,7 @@ func PaginateAllRepositoryPullRequest(
 	if option.Search != "" {
 		var pullRequestBuffer []*types.PullRequest
 		for _, pullRequest := range pullRequests {
-			if strings.Contains(pullRequest.Title, option.Search) {
+			if strings.Contains(strings.ToLower(pullRequest.Title), strings.ToLower(option.Search)) {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}

@@ -8,18 +8,18 @@ build:
 accounts:
 - name: node0
   coins:
-  - 200000000utlore
+  - 200000000ulore
 - name: node1
   coins:
-  - 100000000utlore
+  - 100000000ulore
   address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
 - name: node2
   coins:
-  - 100000000utlore
+  - 100000000ulore
   address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
 - name: node3
   coins:
-  - 50000000utlore
+  - 50000000ulore
   address: gitopia1gqacec5zhz6js5nlwfmsfcx8qkghf0y5na4q5a
 - name: faucet
   coins:
@@ -31,9 +31,9 @@ accounts:
 faucet:
   name: faucet
   coins:
-  - 1000000utlore
+  - 1000000ulore
   coins_max:
-  - 3000000utlore
+  - 3000000ulore
   host: 0.0.0.0:4500
   port: 4500
 client:
@@ -47,19 +47,19 @@ genesis:
   app_state:
     bank:
       denom_metadata:
-      - base: utlore
+      - base: ulore
         denom_units:
-        - denom: utlore
+        - denom: ulore
           exponent: 0
-        - denom: tlore
+        - denom: lore
           exponent: 6
         description: The native staking token of the Gitopia Hub.
-        display: tlore
-        name: tlore
-        symbol: tlore
+        display: lore
+        name: lore
+        symbol: lore
     crisis:
       constant_fee:
-        denom: utlore
+        denom: ulore
     distribution:
       params:
         community_tax: "0"
@@ -110,15 +110,15 @@ genesis:
         max_deposit_period: 60s
         min_deposit:
         - amount: "10000000"
-          denom: utlore
+          denom: ulore
       voting_params:
         voting_period: 60s
     mint:
       params:
-        mint_denom: utlore
+        mint_denom: ulore
     staking:
       params:
-        bond_denom: utlore
+        bond_denom: ulore
 validators:
 - name: node0
-  bonded: 100000000utlore
+  bonded: 100000000ulore
