@@ -24,19 +24,21 @@ func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalRewar
 
 	totalClaimableAmount := sdk.Coin{
 		Amount: totalReward.Amount.Mul(math.NewInt(totalClaimablePercent)).Quo(math.NewInt(100)),
-		Denom: totalReward.Denom,
+		Denom:  totalReward.Denom,
 	}
 	// rounded
 	return totalClaimableAmount, nil
 }
 
-
 func (k Keeper) GetDecayedRewardAmount(ctx sdk.Context, totalReward sdk.Coin) (sdk.Coin, error) {
-	SERIES_ONE_REWARD_DECAY_PER_HOUR := 0.001
-	params := k.GetParams(ctx)	
+	SERIES_ONE_REWARD_DECAY_PER_DAY := 0.001
+	params := k.GetParams(ctx)
+	if ctx.BlockTime().After(params.RewardSeries.SeriesOne.EndTime) {
+		return sdk.Coin{}, nil
+	}
 	duration := ctx.BlockTime().Sub(params.RewardSeries.SeriesOne.StartTime)
-	decayedFactor := duration.Hours() * (1 - SERIES_ONE_REWARD_DECAY_PER_HOUR)
-	totalReward.Amount = totalReward.Amount.Mul(math.NewInt((int64)(decayedFactor*100))).Quo(math.NewInt(100))
+	decayedFactor := (duration.Hours() / 24) * (1 - SERIES_ONE_REWARD_DECAY_PER_DAY)
+	totalReward.Amount = totalReward.Amount.Mul(math.NewInt((int64)(decayedFactor * 100))).Quo(math.NewInt(100))
 
 	return totalReward, nil
 }
