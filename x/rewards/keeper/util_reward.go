@@ -31,7 +31,7 @@ func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalRewar
 }
 
 func (k Keeper) GetDecayedRewardAmount(ctx sdk.Context, totalReward sdk.Coin) (sdk.Coin, error) {
-	SERIES_ONE_REWARD_DECAY_PER_DAY := 0.001
+	SERIES_ONE_REWARD_DECAY_PER_DAY := 0.01
 	params := k.GetParams(ctx)
 	if ctx.BlockTime().After(params.RewardSeries.SeriesOne.EndTime) {
 		return sdk.Coin{}, nil
