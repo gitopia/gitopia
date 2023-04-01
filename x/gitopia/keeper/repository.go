@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -45,10 +46,11 @@ func (k Keeper) AppendRepository(
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetRepositoryKeyForAddress(repository.Owner.Id)))
 	appendedValue := k.cdc.MustMarshal(&repository)
-	store.Set([]byte(repository.Name), appendedValue)
+	lowercaseName := strings.ToLower(repository.Name)
+	store.Set([]byte(lowercaseName), appendedValue)
 	k.SetBaseRepositoryKey(
 		ctx,
-		types.BaseRepositoryKey{Id: repository.Id, Address: repository.Owner.Id, Name: repository.Name},
+		types.BaseRepositoryKey{Id: repository.Id, Address: repository.Owner.Id, Name: lowercaseName},
 	)
 
 	// Update repository count
@@ -87,7 +89,8 @@ func (k Keeper) SetRepository(ctx sdk.Context, repository types.Repository) {
 		types.KeyPrefix(types.GetRepositoryKeyForAddress(repository.Owner.Id)),
 	)
 	b := k.cdc.MustMarshal(&repository)
-	store.Set([]byte(repository.Name), b)
+	lowercaseName := strings.ToLower(repository.Name)
+	store.Set([]byte(lowercaseName), b)
 }
 
 // GetAddressRepository returns a repository by address
@@ -96,7 +99,8 @@ func (k Keeper) GetAddressRepository(ctx sdk.Context, address string, name strin
 		ctx.KVStore(k.storeKey),
 		types.KeyPrefix(types.GetRepositoryKeyForAddress(address)),
 	)
-	b := store.Get([]byte(name))
+	lowercaseName := strings.ToLower(name)
+	b := store.Get([]byte(lowercaseName))
 	if b == nil {
 		return val, false
 	}
@@ -137,7 +141,16 @@ func (k Keeper) RemoveAddressRepository(ctx sdk.Context, address string, name st
 		ctx.KVStore(k.storeKey),
 		types.KeyPrefix(types.GetRepositoryKeyForAddress(address)),
 	)
-	store.Delete([]byte(name))
+	lowercaseName := strings.ToLower(name)
+	store.Delete([]byte(lowercaseName))
+}
+
+func (k Keeper) RemoveBaseRepositoryKey(
+	ctx sdk.Context,
+	repositoryId uint64,
+) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
+	store.Delete(GetRepositoryIDBytes(repositoryId))
 }
 
 // GetAllRepository returns all repository
