@@ -45,7 +45,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 }
 
 func (k Keeper) TransferRewardPoolBalance(ctx sdk.Context, rewardPool *types.RewardPool, moduleAcc string) error {
-	if !rewardPool.Expiry.IsZero() && rewardPool.Expiry.Before(ctx.BlockTime()) {
+	if !rewardPool.EndTime.IsZero() && rewardPool.EndTime.Before(ctx.BlockTime()) {
 		rewardsModuleAddress := k.accountKeeper.GetModuleAddress(moduleAcc)
 		rewardsModuleBalance := k.bankKeeper.GetAllBalances(ctx, rewardsModuleAddress)
 

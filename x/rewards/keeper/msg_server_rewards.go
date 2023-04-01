@@ -22,7 +22,7 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	}
 
 	rewardpool := params.RewardSeries.SeriesOne
-	if rewardpool.Expiry.Before(ctx.BlockTime()) {
+	if rewardpool.EndTime.Before(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
 	}
 
