@@ -3,7 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,8 +15,6 @@ import (
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
-
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type (
@@ -65,28 +62,4 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
-}
-
-func (k Keeper) GetTotalClaimableAmount(ctx sdk.Context, addr string, totalReward sdk.Coin) (sdk.Coin, error) {
-	tasks, err := k.getTasks(ctx, addr)
-	if err != nil {
-		return sdk.Coin{}, err
-	}
-
-	totalClaimablePercent := int64(0)
-	for _, task := range tasks {
-		if task.IsComplete {
-			totalClaimablePercent += (int64)(task.Weight)
-			if totalClaimablePercent > 100 {
-				return sdk.Coin{}, sdkerrors.Wrap(sdkerrors.ErrLogic, "cannot reward more than 100 percent!")
-			}
-		}
-	}
-
-	totalClaimableAmount := sdk.Coin{
-		Amount: totalReward.Amount.Mul(math.NewInt(totalClaimablePercent)).Quo(math.NewInt(100)),
-		Denom: totalReward.Denom,
-	}
-	// rounded
-	return totalClaimableAmount, nil
 }

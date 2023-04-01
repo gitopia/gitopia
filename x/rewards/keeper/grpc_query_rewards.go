@@ -28,6 +28,11 @@ func (k Keeper) RewardsAll(c context.Context, req *types.QueryAllRewardsRequest)
 			return err
 		}
 
+		totalReward, err := k.GetDecayedRewardAmount(ctx, reward.Amount)
+		if err != nil {
+			return err
+		}
+		reward.Amount = totalReward
 		rewards = append(rewards, reward)
 		return nil
 	})
@@ -53,7 +58,12 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 		return nil, status.Error(codes.NotFound, "reward not found")
 	}
 
-	totalClaimableAmount, err := k.GetTotalClaimableAmount(ctx, req.Recipient, reward.Amount)
+	totalReward, err := k.GetDecayedRewardAmount(ctx, reward.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	totalClaimableAmount, err := k.GetTotalClaimableAmount(ctx, req.Recipient, totalReward)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +73,7 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 	return &types.QueryGetRewardResponse{
 		Reward: types.QueryGetRewardResponseReward{
 			Recipient:       reward.Recipient,
-			Amount:          reward.Amount,
+			Amount:          totalReward,
 			ClaimedAmount:   reward.ClaimedAmount,
 			ClaimableAmount: claimableAmount,
 		},
