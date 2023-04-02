@@ -162,7 +162,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if pullRequest.Creator == address.address {
+			if pullRequest.Creator == address.Address {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -177,7 +177,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if _, exists := utils.AssigneeExists(pullRequest.Assignees, address.address); exists {
+			if _, exists := utils.AssigneeExists(pullRequest.Assignees, address.Address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -192,7 +192,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, address.address); exists {
+			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, address.Address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}

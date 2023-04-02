@@ -130,7 +130,7 @@ func PaginateAllRepositoryIssue(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if issue.Creator == address.address {
+			if issue.Creator == address.Address {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}
@@ -145,7 +145,7 @@ func PaginateAllRepositoryIssue(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if _, exists := utils.AssigneeExists(issue.Assignees, address.address); exists {
+			if _, exists := utils.AssigneeExists(issue.Assignees, address.Address); exists {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}

@@ -30,38 +30,33 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "(%s) address not eligible for reward ", msg.Creator)
 	}
 
-	if reward.Amount.IsEqual(reward.ClaimedAmount) {
+	if reward.Amount.IsEqual(reward.ClaimedAmountWithoutDecay) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already claimed by address "+msg.Creator)
 	}
 
-	totalReward, err := k.GetDecayedRewardAmount(ctx, reward.Amount)
+	claimableAmountWithoutDecay, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	claimableAmount, err := k.GetTotalClaimableAmount(ctx, msg.Creator, totalReward)
-	if err != nil {
-		return nil, err
-	}
-
-	if reward.ClaimedAmount.IsEqual(claimableAmount) {
+	if reward.ClaimedAmountWithoutDecay.IsEqual(claimableAmountWithoutDecay) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed. must complete more tasks")
 	}
 
-	// wallet rewarded more than eligible amount. reward has decayed over time
-	// cannot claim any more tokens even by completing tasks
-	if reward.ClaimedAmount.Amount.GT(claimableAmount.Amount) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed")
+	balanceWithoutDecay := claimableAmountWithoutDecay.Sub(reward.ClaimedAmountWithoutDecay)
+	balance, err := k.GetDecayedRewardAmount(ctx, balanceWithoutDecay)
+	if err != nil {
+		return nil, err
 	}
-
-	balance := claimableAmount.Sub(reward.ClaimedAmount)
-	reward.ClaimedAmount = claimableAmount
-	k.SetReward(ctx, reward)
 
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, sdk.Coins{balance})
 	if err != nil {
 		return nil, err
 	}
+
+	reward.ClaimedAmount = reward.ClaimedAmount.Add(balance)
+	reward.ClaimedAmountWithoutDecay = claimableAmountWithoutDecay
+	k.SetReward(ctx, reward)
 
 	return &types.MsgClaimResponse{}, nil
 }
