@@ -113,7 +113,8 @@ func (k Keeper) GetAllDao(ctx sdk.Context) (list []types.Dao) {
 }
 
 // GetAllUserDao returns all user
-func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) (list []types.Dao) {
+func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) ([]types.Dao, error) {
+	var list []types.Dao
 	store := prefix.NewStore(
 		ctx.KVStore(k.storeKey),
 		types.KeyPrefix(types.GetUserDaoKeyForUserAddress(userAddress)),
@@ -123,13 +124,18 @@ func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) (list []types
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		dao, found := k.GetDao(ctx, string(iterator.Value()))
+		var userDao types.UserDao
+		if err := k.cdc.Unmarshal(iterator.Value(), &userDao); err != nil {
+			return []types.Dao{}, err
+		}
+
+		dao, found := k.GetDao(ctx, userDao.DaoAddress)
 		if found {
 			list = append(list, dao)
 		}
 	}
 
-	return
+	return list, nil
 }
 
 func NewDaoAddress(daoId uint64) sdk.AccAddress {

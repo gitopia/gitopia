@@ -52,6 +52,8 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/x/rewards/keeper"
+	rewardtypes "github.com/gitopia/gitopia/x/rewards/types"
 	tmos "github.com/tendermint/tendermint/libs/os"
 )
 
@@ -85,6 +87,7 @@ type AppKeepers struct {
 	GroupKeeper    groupkeeper.Keeper
 	AuthzKeeper    *authzkeeper.Keeper
 	GitopiaKeeper  gitopiakeeper.Keeper
+	RewardKeeper   rewardskeeper.Keeper
 
 	// Modules
 	TransferModule transfer.AppModule
@@ -305,6 +308,18 @@ func NewAppKeeper(
 	)
 
 	appKeepers.GitopiaModule = gitopia.NewAppModule(appCodec, appKeepers.GitopiaKeeper)
+
+	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
+		appCodec, 
+		appKeepers.keys[rewardtypes.StoreKey], 
+		appKeepers.keys[rewardtypes.MemStoreKey], 
+		&appKeepers.GitopiaKeeper, 
+		appKeepers.StakingKeeper, 
+		appKeepers.GovKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.AccountKeeper,
+		appKeepers.DistrKeeper,
+	)
 
 	return appKeepers
 }

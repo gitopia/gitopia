@@ -238,7 +238,7 @@ func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (
 }
 
 func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
-	daos := k.GetAllUserDao(ctx, user.Creator)
+	daos, _ := k.GetAllUserDao(ctx, user.Creator)
 	for _, dao := range daos {
 		DoRemoveDao(ctx, k, user, dao)
 		k.Keeper.RemoveWhois(

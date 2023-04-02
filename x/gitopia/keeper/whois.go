@@ -11,8 +11,8 @@ import (
 )
 
 type WhoisAddress struct {
-	address   string
-	ownerType types.OwnerType
+	Address   string
+	OwnerType types.OwnerType
 }
 
 // GetWhoisCount get the total number of whois
@@ -119,15 +119,15 @@ func (k Keeper) ResolveAddress(ctx sdk.Context, id string) (address *WhoisAddres
 		if !found {
 			return nil, errors.New("username or address not exists")
 		}
-		return &WhoisAddress{address: whois.Address, ownerType: whois.OwnerType}, nil
+		return &WhoisAddress{Address: whois.Address, OwnerType: whois.OwnerType}, nil
 	}
 
 	if _, found := k.GetUser(ctx, id); found {
-		return &WhoisAddress{address: id, ownerType: types.OwnerType_USER}, nil
+		return &WhoisAddress{Address: id, OwnerType: types.OwnerType_USER}, nil
 	}
 
 	if _, found := k.GetDao(ctx, id); found {
-		return &WhoisAddress{address: id, ownerType: types.OwnerType_DAO}, nil
+		return &WhoisAddress{Address: id, OwnerType: types.OwnerType_DAO}, nil
 	}
 
 	return nil, errors.New("username or address not exists")

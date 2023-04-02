@@ -23,7 +23,11 @@ accounts:
   address: gitopia1gqacec5zhz6js5nlwfmsfcx8qkghf0y5na4q5a
 - name: faucet
   coins:
-  - 100000000ulore
+  - 100000000utlore
+- name: evaluator
+  coins:
+  - 100000000utlore
+  address: gitopia1tfsvwp95023a64rnke7vxd3jjlp5fg4m46yx9j
 faucet:
   name: faucet
   coins:
@@ -69,6 +73,38 @@ genesis:
         - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
           proportion: 5
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
+    rewards: 
+      params:
+        evaluator_address: gitopia1tfsvwp95023a64rnke7vxd3jjlp5fg4m46yx9j
+        reward_series:
+          series_one: 
+            total_amount: 
+            - amount: "2000000"
+              denom: "utlore"
+          series_two: 
+            total_amount: 
+            - amount: "1700000"
+              denom: "utlore"
+          series_three: 
+            total_amount: 
+            - amount: "1400000"
+              denom: "utlore"
+          series_four: 
+            total_amount: 
+            - amount: "1100000"
+              denom: "utlore"
+          series_five: 
+            total_amount: 
+            - amount: "800000"
+              denom: "utlore"
+          series_six: 
+            total_amount: 
+            - amount: "500000"
+              denom: "utlore"
+          series_seven: 
+            total_amount: 
+            - amount: "250000"
+              denom: "utlore"
     gov:
       deposit_params:
         max_deposit_period: 60s

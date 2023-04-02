@@ -18,18 +18,18 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
 
-	switch address.ownerType {
+	switch address.OwnerType {
 	case types.OwnerType_USER:
 		if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryBackupPermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	case types.OwnerType_DAO:
-		if msg.Creator != address.address {
+		if msg.Creator != address.Address {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("dao (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	default:
@@ -60,18 +60,18 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
 
-	switch address.ownerType {
+	switch address.OwnerType {
 	case types.OwnerType_USER:
 		if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryBackupPermission) {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	case types.OwnerType_DAO:
-		if msg.Creator != address.address {
+		if msg.Creator != address.Address {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("dao (%v) doesn't have permission to perform this operation", msg.Creator))
 		}
 	default:

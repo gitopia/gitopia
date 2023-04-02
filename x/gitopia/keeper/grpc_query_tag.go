@@ -53,7 +53,7 @@ func (k Keeper) RepositoryTagAll(c context.Context, req *types.QueryAllRepositor
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -93,7 +93,7 @@ func (k Keeper) RepositoryTag(c context.Context, req *types.QueryGetRepositoryTa
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -117,7 +117,7 @@ func (k Keeper) RepositoryTagSha(c context.Context, req *types.QueryGetRepositor
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

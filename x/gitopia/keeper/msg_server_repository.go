@@ -28,7 +28,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
 	}
 
-	if _, found := k.GetAddressRepository(ctx, address.address, msg.Name); found {
+	if _, found := k.GetAddressRepository(ctx, address.Address, msg.Name); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exists", msg.Creator, msg.Name))
 	}
 
@@ -36,8 +36,8 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 		Creator: msg.Creator,
 		Name:    msg.Name,
 		Owner: &types.RepositoryOwner{
-			Id:   address.address,
-			Type: address.ownerType,
+			Id:   address.Address,
+			Type: address.OwnerType,
 		},
 		Description:   msg.Description,
 		DefaultBranch: "master",
@@ -89,7 +89,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -99,15 +99,15 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		return nil, err
 	}
 
-	if address.address == ownerAddress.address {
+	if address.Address == ownerAddress.Address {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "self transfer not allowed")
 	}
 
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.RepositoryId.Name); found {
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.RepositoryId.Name); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.RepositoryId.Name))
 	}
 
-	switch address.ownerType {
+	switch address.OwnerType {
 	case types.OwnerType_USER:
 		if msg.Creator != repository.Owner.Id {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
@@ -124,14 +124,14 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
 
-	switch ownerAddress.ownerType {
+	switch ownerAddress.OwnerType {
 	case types.OwnerType_USER:
-		_, found = k.GetUser(ctx, ownerAddress.address)
+		_, found = k.GetUser(ctx, ownerAddress.Address)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
 		}
 	case types.OwnerType_DAO:
-		dao, found := k.GetDao(ctx, ownerAddress.address)
+		dao, found := k.GetDao(ctx, ownerAddress.Address)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
 		}
@@ -147,12 +147,12 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	}
 
 	repository.Owner = &types.RepositoryOwner{
-		Id:   ownerAddress.address,
-		Type: ownerAddress.ownerType,
+		Id:   ownerAddress.Address,
+		Type: ownerAddress.OwnerType,
 	}
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 
-	k.RemoveAddressRepository(ctx, address.address, repository.Name)
+	k.RemoveAddressRepository(ctx, address.Address, repository.Name)
 	k.SetRepository(ctx, repository)
 	k.SetBaseRepositoryKey(ctx, types.BaseRepositoryKey{
 		Id:      repository.Id,
@@ -189,11 +189,11 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 	}
 
 	// Check if the user already has a repository with the same name
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.ForkRepositoryName); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -205,8 +205,8 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 	if !k.HavePermission(
 		ctx, msg.Creator,
 		types.Repository{Owner: &types.RepositoryOwner{
-			Id:   ownerAddress.address,
-			Type: ownerAddress.ownerType,
+			Id:   ownerAddress.Address,
+			Type: ownerAddress.OwnerType,
 		}},
 		types.RepositoryCollaborator_ADMIN,
 	) {
@@ -231,7 +231,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
 			sdk.NewAttribute(types.EventAttributeForkRepoDescriptionKey, msg.ForkRepositoryDescription),
 			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
-			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.address),
+			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.Address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 		),
 	)
@@ -252,11 +252,11 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	}
 
 	// Check if the user already has a repository with the same name
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.address, msg.ForkRepositoryName); found {
+	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.ForkRepositoryName); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -281,8 +281,8 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		Creator: msg.Creator,
 		Name:    msg.ForkRepositoryName,
 		Owner: &types.RepositoryOwner{
-			Id:   ownerAddress.address,
-			Type: ownerAddress.ownerType,
+			Id:   ownerAddress.Address,
+			Type: ownerAddress.OwnerType,
 		},
 		Description:   msg.ForkRepositoryDescription,
 		DefaultBranch: repository.DefaultBranch,
@@ -353,7 +353,7 @@ func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgFo
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -405,7 +405,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -414,7 +414,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("renaming with same name not allowed"))
 	}
 
-	if _, found := k.GetAddressRepository(ctx, address.address, msg.Name); found {
+	if _, found := k.GetAddressRepository(ctx, address.Address, msg.Name); found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) already exist", repository.Owner.Id, msg.Name))
 	}
 
@@ -422,7 +422,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	k.RemoveAddressRepository(ctx, address.address, repository.Name)
+	k.RemoveAddressRepository(ctx, address.Address, repository.Name)
 	repository.Name = msg.Name
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -459,7 +459,7 @@ func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -504,7 +504,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -514,12 +514,12 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, err
 	}
 
-	_, found = k.GetUser(ctx, userAddress.address)
+	_, found = k.GetUser(ctx, userAddress.Address)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
 	}
 
-	if msg.Creator == userAddress.address {
+	if msg.Creator == userAddress.Address {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "action not permittable")
 	}
 
@@ -532,11 +532,11 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission arg (%v)", msg.Role))
 	}
 
-	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.address); exists {
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.Address); exists {
 		repository.Collaborators[i].Permission = types.RepositoryCollaborator_Permission(permission)
 	} else {
 		repositoryCollaborator := types.RepositoryCollaborator{
-			Id:         userAddress.address,
+			Id:         userAddress.Address,
 			Permission: types.RepositoryCollaborator_Permission(permission),
 		}
 		repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
@@ -552,7 +552,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.address),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.Address),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
@@ -573,7 +573,7 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -587,7 +587,7 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.address); exists {
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.Address); exists {
 		repository.Collaborators = append(repository.Collaborators[:i], repository.Collaborators[i+1:]...)
 	} else {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("collaborators with id (%v) doesn't exists", msg.User))
@@ -603,7 +603,7 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.address),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.Address),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
@@ -624,7 +624,7 @@ func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCr
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -680,7 +680,7 @@ func (k msgServer) UpdateRepositoryLabel(goCtx context.Context, msg *types.MsgUp
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -738,7 +738,7 @@ func (k msgServer) DeleteRepositoryLabel(goCtx context.Context, msg *types.MsgDe
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -784,7 +784,7 @@ func (k msgServer) ToggleRepositoryForking(goCtx context.Context, msg *types.Msg
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -825,7 +825,7 @@ func (k msgServer) ToggleArweaveBackup(goCtx context.Context, msg *types.MsgTogg
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -889,7 +889,7 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}

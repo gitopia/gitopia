@@ -56,7 +56,7 @@ func (k Keeper) RepositoryPullRequestAll(c context.Context, req *types.QueryAllR
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -93,7 +93,7 @@ func (k Keeper) RepositoryPullRequest(c context.Context, req *types.QueryGetRepo
 
 	var pullRequest types.PullRequest
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -128,7 +128,7 @@ func (k Keeper) PullRequestMergePermission(c context.Context, req *types.QueryGe
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	if k.HavePermission(ctx, address.address, repository, types.PullRequestMergePermission) {
+	if k.HavePermission(ctx, address.Address, repository, types.PullRequestMergePermission) {
 		return &types.QueryGetPullRequestMergePermissionResponse{HavePermission: true}, nil
 	}
 
@@ -162,7 +162,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if pullRequest.Creator == address.address {
+			if pullRequest.Creator == address.Address {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -177,7 +177,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if _, exists := utils.AssigneeExists(pullRequest.Assignees, address.address); exists {
+			if _, exists := utils.AssigneeExists(pullRequest.Assignees, address.Address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}
@@ -192,7 +192,7 @@ func PaginateAllRepositoryPullRequest(
 				return nil, status.Error(codes.NotFound, err.Error())
 			}
 
-			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, address.address); exists {
+			if _, exists := utils.ReviewerExists(pullRequest.Reviewers, address.Address); exists {
 				pullRequestBuffer = append(pullRequestBuffer, pullRequest)
 			}
 		}

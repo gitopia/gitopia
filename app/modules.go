@@ -48,17 +48,26 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/rewards"
+	rewardtypes "github.com/gitopia/gitopia/x/rewards/types"
 )
 
 var maccPerms = map[string][]string{
-	authtypes.FeeCollectorName:     nil,
-	distrtypes.ModuleName:          nil,
-	minttypes.ModuleName:           {authtypes.Minter},
-	stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-	govtypes.ModuleName:            {authtypes.Burner},
-	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	gitopiatypes.MinterAccountName: nil,
+	authtypes.FeeCollectorName:            nil,
+	distrtypes.ModuleName:                 nil,
+	minttypes.ModuleName:                  {authtypes.Minter},
+	stakingtypes.BondedPoolName:           {authtypes.Burner, authtypes.Staking},
+	stakingtypes.NotBondedPoolName:        {authtypes.Burner, authtypes.Staking},
+	govtypes.ModuleName:                   {authtypes.Burner},
+	ibctransfertypes.ModuleName:           {authtypes.Minter, authtypes.Burner},
+	gitopiatypes.MinterAccountName:        nil,
+	rewardtypes.RewardsSeriesOneAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesTwoAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesThreeAccount: {authtypes.Minter},
+	rewardtypes.RewardsSeriesFourAccount:  {authtypes.Minter},
+	rewardtypes.RewardsSeriesFiveAccount:  {authtypes.Minter},
+	rewardtypes.RewardsSeriesSixAccount:   {authtypes.Minter},
+	rewardtypes.RewardsSeriesSevenAccount: {authtypes.Minter},
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
@@ -94,6 +103,7 @@ var ModuleBasics = module.NewBasicManager(
 	transfer.AppModuleBasic{},
 	vesting.AppModuleBasic{},
 	gitopia.AppModule{},
+	rewards.AppModule{},
 )
 
 func appModules(
@@ -129,6 +139,7 @@ func appModules(
 		params.NewAppModule(app.ParamsKeeper),
 		app.TransferModule,
 		app.GitopiaModule,
+		rewards.NewAppModule(appCodec, app.RewardKeeper, app.AccountKeeper, app.BankKeeper),
 	}
 }
 
@@ -159,6 +170,7 @@ func orderBeginBlockers() []string {
 		authz.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }
 
@@ -184,6 +196,7 @@ func orderEndBlockers() []string {
 		group.ModuleName,
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }
 
@@ -209,5 +222,6 @@ func orderInitBlockers() []string {
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
 		authz.ModuleName,
+		rewardtypes.ModuleName,
 	}
 }

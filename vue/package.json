@@ -39,10 +39,10 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "dev": "npm install && vue-cli-service serve",
+    "dev": "npm install \u0026\u0026 vue-cli-service serve",
     "lint": "vue-cli-service lint",
     "serve": "vue-cli-service serve",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Error: run tests from root\" \u0026\u0026 exit 1"
   },
   "version": "0.1.0"
 }
