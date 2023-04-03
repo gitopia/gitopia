@@ -64,6 +64,7 @@ func (k Keeper) SetBaseRepositoryKey(
 	repositoryKey types.BaseRepositoryKey,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BaseRepositoryKeyKey))
+	repositoryKey.Name = strings.ToLower(repositoryKey.Name)
 	appendedValue := k.cdc.MustMarshal(&repositoryKey)
 	store.Set(GetRepositoryIDBytes(repositoryKey.Id), appendedValue)
 }

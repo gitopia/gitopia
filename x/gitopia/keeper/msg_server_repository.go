@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -158,7 +157,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	k.SetBaseRepositoryKey(ctx, types.BaseRepositoryKey{
 		Id:      repository.Id,
 		Address: repository.Owner.Id,
-		Name:    strings.ToLower(repository.Name),
+		Name:    repository.Name,
 	})
 
 	ctx.EventManager().EmitEvent(
@@ -430,7 +429,7 @@ func (k msgServer) RenameRepository(goCtx context.Context, msg *types.MsgRenameR
 	k.SetBaseRepositoryKey(ctx, types.BaseRepositoryKey{
 		Id:      repository.Id,
 		Address: repository.Owner.Id,
-		Name:    strings.ToLower(repository.Name),
+		Name:    repository.Name,
 	})
 
 	ctx.EventManager().EmitEvent(
