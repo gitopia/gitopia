@@ -22,11 +22,11 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	}
 
 	rewardpool := params.RewardSeries.SeriesOne
-	if ctx.BlockTime().Before(rewardpool.StartTime) {
+	if !rewardpool.StartTime.IsZero() && ctx.BlockTime().Before(rewardpool.StartTime) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool not active")
 	}
 
-	if ctx.BlockTime().After(rewardpool.EndTime) {
+	if !rewardpool.StartTime.IsZero() && ctx.BlockTime().After(rewardpool.EndTime) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
 	}
 

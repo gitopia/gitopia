@@ -8,11 +8,18 @@ export interface Reward {
   recipient: string;
   amount: Coin | undefined;
   creator: string;
+  claimedAmountWithoutDecay: Coin | undefined;
   claimedAmount: Coin | undefined;
 }
 
 function createBaseReward(): Reward {
-  return { recipient: "", amount: undefined, creator: "", claimedAmount: undefined };
+  return {
+    recipient: "",
+    amount: undefined,
+    creator: "",
+    claimedAmountWithoutDecay: undefined,
+    claimedAmount: undefined,
+  };
 }
 
 export const Reward = {
@@ -26,8 +33,11 @@ export const Reward = {
     if (message.creator !== "") {
       writer.uint32(26).string(message.creator);
     }
+    if (message.claimedAmountWithoutDecay !== undefined) {
+      Coin.encode(message.claimedAmountWithoutDecay, writer.uint32(34).fork()).ldelim();
+    }
     if (message.claimedAmount !== undefined) {
-      Coin.encode(message.claimedAmount, writer.uint32(34).fork()).ldelim();
+      Coin.encode(message.claimedAmount, writer.uint32(42).fork()).ldelim();
     }
     return writer;
   },
@@ -49,6 +59,9 @@ export const Reward = {
           message.creator = reader.string();
           break;
         case 4:
+          message.claimedAmountWithoutDecay = Coin.decode(reader, reader.uint32());
+          break;
+        case 5:
           message.claimedAmount = Coin.decode(reader, reader.uint32());
           break;
         default:
@@ -64,6 +77,9 @@ export const Reward = {
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
       amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
       creator: isSet(object.creator) ? String(object.creator) : "",
+      claimedAmountWithoutDecay: isSet(object.claimedAmountWithoutDecay)
+        ? Coin.fromJSON(object.claimedAmountWithoutDecay)
+        : undefined,
       claimedAmount: isSet(object.claimedAmount) ? Coin.fromJSON(object.claimedAmount) : undefined,
     };
   },
@@ -73,6 +89,10 @@ export const Reward = {
     message.recipient !== undefined && (obj.recipient = message.recipient);
     message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.creator !== undefined && (obj.creator = message.creator);
+    message.claimedAmountWithoutDecay !== undefined
+      && (obj.claimedAmountWithoutDecay = message.claimedAmountWithoutDecay
+        ? Coin.toJSON(message.claimedAmountWithoutDecay)
+        : undefined);
     message.claimedAmount !== undefined
       && (obj.claimedAmount = message.claimedAmount ? Coin.toJSON(message.claimedAmount) : undefined);
     return obj;
@@ -85,6 +105,10 @@ export const Reward = {
       ? Coin.fromPartial(object.amount)
       : undefined;
     message.creator = object.creator ?? "";
+    message.claimedAmountWithoutDecay =
+      (object.claimedAmountWithoutDecay !== undefined && object.claimedAmountWithoutDecay !== null)
+        ? Coin.fromPartial(object.claimedAmountWithoutDecay)
+        : undefined;
     message.claimedAmount = (object.claimedAmount !== undefined && object.claimedAmount !== null)
       ? Coin.fromPartial(object.claimedAmount)
       : undefined;
