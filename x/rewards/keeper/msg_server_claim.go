@@ -17,7 +17,8 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	}
 
 	params := k.GetParams(ctx)
-	if params.RewardSeries.SeriesOne.EndTime.Before(ctx.BlockTime()) {
+	if !params.RewardSeries.SeriesOne.EndTime.IsZero() &&
+		params.RewardSeries.SeriesOne.EndTime.Before(ctx.BlockTime()) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
 	}
 

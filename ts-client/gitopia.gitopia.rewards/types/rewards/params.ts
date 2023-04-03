@@ -8,7 +8,8 @@ export const protobufPackage = "gitopia.gitopia.rewards";
 export interface RewardPool {
   totalAmount: Coin | undefined;
   claimedAmount: Coin | undefined;
-  expiry: Date | undefined;
+  startTime: Date | undefined;
+  endTime: Date | undefined;
 }
 
 export interface RewardSeries {
@@ -28,7 +29,7 @@ export interface Params {
 }
 
 function createBaseRewardPool(): RewardPool {
-  return { totalAmount: undefined, claimedAmount: undefined, expiry: undefined };
+  return { totalAmount: undefined, claimedAmount: undefined, startTime: undefined, endTime: undefined };
 }
 
 export const RewardPool = {
@@ -39,8 +40,11 @@ export const RewardPool = {
     if (message.claimedAmount !== undefined) {
       Coin.encode(message.claimedAmount, writer.uint32(18).fork()).ldelim();
     }
-    if (message.expiry !== undefined) {
-      Timestamp.encode(toTimestamp(message.expiry), writer.uint32(26).fork()).ldelim();
+    if (message.startTime !== undefined) {
+      Timestamp.encode(toTimestamp(message.startTime), writer.uint32(26).fork()).ldelim();
+    }
+    if (message.endTime !== undefined) {
+      Timestamp.encode(toTimestamp(message.endTime), writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -59,7 +63,10 @@ export const RewardPool = {
           message.claimedAmount = Coin.decode(reader, reader.uint32());
           break;
         case 3:
-          message.expiry = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.startTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
+        case 4:
+          message.endTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -73,7 +80,8 @@ export const RewardPool = {
     return {
       totalAmount: isSet(object.totalAmount) ? Coin.fromJSON(object.totalAmount) : undefined,
       claimedAmount: isSet(object.claimedAmount) ? Coin.fromJSON(object.claimedAmount) : undefined,
-      expiry: isSet(object.expiry) ? fromJsonTimestamp(object.expiry) : undefined,
+      startTime: isSet(object.startTime) ? fromJsonTimestamp(object.startTime) : undefined,
+      endTime: isSet(object.endTime) ? fromJsonTimestamp(object.endTime) : undefined,
     };
   },
 
@@ -83,7 +91,8 @@ export const RewardPool = {
       && (obj.totalAmount = message.totalAmount ? Coin.toJSON(message.totalAmount) : undefined);
     message.claimedAmount !== undefined
       && (obj.claimedAmount = message.claimedAmount ? Coin.toJSON(message.claimedAmount) : undefined);
-    message.expiry !== undefined && (obj.expiry = message.expiry.toISOString());
+    message.startTime !== undefined && (obj.startTime = message.startTime.toISOString());
+    message.endTime !== undefined && (obj.endTime = message.endTime.toISOString());
     return obj;
   },
 
@@ -95,7 +104,8 @@ export const RewardPool = {
     message.claimedAmount = (object.claimedAmount !== undefined && object.claimedAmount !== null)
       ? Coin.fromPartial(object.claimedAmount)
       : undefined;
-    message.expiry = object.expiry ?? undefined;
+    message.startTime = object.startTime ?? undefined;
+    message.endTime = object.endTime ?? undefined;
     return message;
   },
 };

@@ -200,19 +200,6 @@ export default {
 		},
 		
 		
-		async sendMsgCreateReward({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.GitopiaGitopiaRewards.tx.sendMsgCreateReward({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateReward:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateReward:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgClaim({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -226,20 +213,20 @@ export default {
 				}
 			}
 		},
-		
-		async MsgCreateReward({ rootGetters }, { value }) {
+		async sendMsgCreateReward({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.GitopiaGitopiaRewards.tx.msgCreateReward({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.GitopiaGitopiaRewards.tx.sendMsgCreateReward({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgCreateReward:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateReward:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgCreateReward:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgClaim({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -250,6 +237,19 @@ export default {
 					throw new Error('TxClient:MsgClaim:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgClaim:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateReward({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.GitopiaGitopiaRewards.tx.msgCreateReward({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateReward:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateReward:Create Could not create message: ' + e.message)
 				}
 			}
 		},

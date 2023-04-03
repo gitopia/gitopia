@@ -34477,6 +34477,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36345,6 +36348,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36571,6 +36577,9 @@ paths:
                     type: string
                   path:
                     type: string
+                  position:
+                    type: string
+                    format: uint64
                   system:
                     type: boolean
                   authorAssociation:
@@ -36720,6 +36729,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36946,6 +36958,9 @@ paths:
                     type: string
                   path:
                     type: string
+                  position:
+                    type: string
+                    format: uint64
                   system:
                     type: boolean
                   authorAssociation:
@@ -40162,7 +40177,22 @@ paths:
                         signatures required by gogoproto.
                     creator:
                       type: string
-                    claimedAmount:
+                    claimed_amount_without_decay:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    claimed_amount:
                       type: object
                       properties:
                         denom:
@@ -76290,6 +76320,9 @@ definitions:
         type: string
       path:
         type: string
+      position:
+        type: string
+        format: uint64
       system:
         type: boolean
       authorAssociation:
@@ -77322,6 +77355,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -77573,6 +77609,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -77849,6 +77888,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -79363,6 +79405,9 @@ definitions:
             type: string
           path:
             type: string
+          position:
+            type: string
+            format: uint64
           system:
             type: boolean
           authorAssociation:
@@ -79518,6 +79563,9 @@ definitions:
             type: string
           path:
             type: string
+          position:
+            type: string
+            format: uint64
           system:
             type: boolean
           authorAssociation:
@@ -80586,7 +80634,22 @@ definitions:
                 signatures required by gogoproto.
             creator:
               type: string
-            claimedAmount:
+            claimed_amount_without_decay:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            claimed_amount:
               type: object
               properties:
                 denom:
@@ -80774,7 +80837,19 @@ definitions:
           signatures required by gogoproto.
       creator:
         type: string
-      claimedAmount:
+      claimed_amount_without_decay:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      claimed_amount:
         type: object
         properties:
           denom:

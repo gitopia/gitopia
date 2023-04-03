@@ -97,7 +97,15 @@ export interface RewardsReward {
    * NOTE: The amount field is an Int which implements the custom method
    * signatures required by gogoproto.
    */
-  claimedAmount?: V1Beta1Coin;
+  claimed_amount_without_decay?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimed_amount?: V1Beta1Coin;
 }
 
 export interface RewardsTask {
