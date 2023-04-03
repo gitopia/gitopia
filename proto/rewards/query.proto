@@ -50,10 +50,13 @@ message QueryGetRewardResponseReward {
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
   // not required in the response
   // string creator = 3;
-  cosmos.base.v1beta1.Coin claimedAmount = 4
+  cosmos.base.v1beta1.Coin claimed_amount = 4
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  cosmos.base.v1beta1.Coin claimableAmount = 5
+  cosmos.base.v1beta1.Coin claimable_amount = 5
+    [(gogoproto.nullable) = false, 
+	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+  cosmos.base.v1beta1.Coin remaining_claimable_amount = 6
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }

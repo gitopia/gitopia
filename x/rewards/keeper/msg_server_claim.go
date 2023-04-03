@@ -30,32 +30,32 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "(%s) address not eligible for reward ", msg.Creator)
 	}
 
-	if reward.Amount.IsEqual(reward.ClaimedAmountWithoutDecay) {
+	if reward.Amount.IsEqual(reward.ClaimedAmount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already claimed by address "+msg.Creator)
 	}
 
-	claimableAmountWithoutDecay, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
+	claimableAmount, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	if reward.ClaimedAmountWithoutDecay.IsEqual(claimableAmountWithoutDecay) {
+	if reward.ClaimedAmount.IsEqual(claimableAmount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed. must complete more tasks")
 	}
 
-	balanceWithoutDecay := claimableAmountWithoutDecay.Sub(reward.ClaimedAmountWithoutDecay)
-	balance, err := k.GetDecayedRewardAmount(ctx, balanceWithoutDecay)
+	balance := claimableAmount.Sub(reward.ClaimedAmount)
+	balanceWithDecay, err := k.GetDecayedRewardAmount(ctx, balance)
 	if err != nil {
 		return nil, err
 	}
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, sdk.Coins{balance})
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, sdk.Coins{balanceWithDecay})
 	if err != nil {
 		return nil, err
 	}
 
-	reward.ClaimedAmount = reward.ClaimedAmount.Add(balance)
-	reward.ClaimedAmountWithoutDecay = claimableAmountWithoutDecay
+	reward.ClaimedAmountWithDecay = reward.ClaimedAmount.Add(balanceWithDecay)
+	reward.ClaimedAmount = claimableAmount
 	k.SetReward(ctx, reward)
 
 	return &types.MsgClaimResponse{}, nil
