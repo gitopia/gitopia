@@ -263,6 +263,9 @@ message QueryVestedAmountResponse {
 	cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false,
      (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+	cosmos.base.v1beta1.Coin exercisedAmount = 3
+	[(gogoproto.nullable) = false,
+	 (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 
 message QueryCheckStorageProviderAuthorizationRequest {

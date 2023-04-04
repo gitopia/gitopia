@@ -6,6 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -44,9 +45,15 @@ func (k Keeper) VestedAmount(c context.Context, req *types.QueryVestedAmountRequ
 		return nil, err
 	}
 
+	exercisedAmount, found := k.GetExercisedAmount(ctx, req.Address)
+	if !found{
+		exercisedAmount.Amount = sdk.Coin{Denom: params.BaseCoinUnit, Amount: math.NewInt(0)}
+	}
+
 	res := new(types.QueryVestedAmountResponse)
 	res.Address = req.Address
 	res.Amount = amount
+	res.ExercisedAmount = exercisedAmount.Amount
 
 	return res, nil
 }
