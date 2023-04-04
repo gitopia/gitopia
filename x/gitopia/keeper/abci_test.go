@@ -33,8 +33,8 @@ func TestTokenDistributionSucessNoDistribution(t *testing.T) {
 
 	gitopiaKeeper.TokenDistribution(ctx)
 
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), params.BaseCoinUnit))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), params.BaseCoinUnit))
 }
 
 func TestTokenDistributionSucessWithBadEcosystemAddress(t *testing.T) {

@@ -2,25 +2,11 @@ package types
 
 import (
 	time "time"
+	"gopkg.in/yaml.v2"
 
-	// paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
-	"gopkg.in/yaml.v2"
 )
-
-// var _ paramtypes.ParamSet = (*Params)(nil)
-
-var (
-	KeyNextInflationTime       = []byte("NextInflationTime")
-	KeyDistributionProportions = []byte("DistributionProportions")
-)
-
-// // ParamKeyTable the param key table for launch module
-// func ParamKeyTable() paramtypes.KeyTable {
-// 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
-// }
 
 // NewParams creates a new Params instance
 func NewParams(nextInflationTime time.Time, poolProportions PoolProportions, teamProportions []DistributionProportion) Params {

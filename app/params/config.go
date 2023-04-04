@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	HumanCoinUnit   = "tlore"
-	BaseCoinUnit    = "utlore"
+	HumanCoinUnit   = "lore"
+	BaseCoinUnit    = "ulore"
 	GitopiaExponent = 6
 
 	DefaultBondDenom = BaseCoinUnit

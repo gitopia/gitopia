@@ -56,7 +56,7 @@ func (k Keeper) RepositoryIssueAll(c context.Context, req *types.QueryAllReposit
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -90,7 +90,7 @@ func (k Keeper) RepositoryIssue(c context.Context, req *types.QueryGetRepository
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, req.RepositoryName)
+	repository, found := k.GetAddressRepository(ctx, address.Address, req.RepositoryName)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -125,7 +125,12 @@ func PaginateAllRepositoryIssue(
 	if option.CreatedBy != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if issue.Creator == option.CreatedBy {
+			address, err := k.ResolveAddress(ctx, option.CreatedBy)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if issue.Creator == address.Address {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}
@@ -135,7 +140,12 @@ func PaginateAllRepositoryIssue(
 	if option.Assignee != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if _, exists := utils.AssigneeExists(issue.Assignees, option.Assignee); exists {
+			address, err := k.ResolveAddress(ctx, option.Assignee)
+			if err != nil {
+				return nil, status.Error(codes.NotFound, err.Error())
+			}
+
+			if _, exists := utils.AssigneeExists(issue.Assignees, address.Address); exists {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}
@@ -220,7 +230,7 @@ func PaginateAllRepositoryIssue(
 	if option.Search != "" {
 		var issueBuffer []*types.Issue
 		for _, issue := range issues {
-			if strings.Contains(issue.Title, option.Search) {
+			if strings.Contains(strings.ToLower(issue.Title), strings.ToLower(option.Search)) {
 				issueBuffer = append(issueBuffer, issue)
 			}
 		}

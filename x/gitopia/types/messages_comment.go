@@ -7,7 +7,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateComment{}
 
-func NewMsgCreateComment(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, body string, attachments []*Attachment, diffHunk string, path string) *MsgCreateComment {
+func NewMsgCreateComment(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, body string, attachments []*Attachment, diffHunk string, path string, position uint64) *MsgCreateComment {
 	return &MsgCreateComment{
 		Creator:      creator,
 		RepositoryId: repositoryid,
@@ -17,6 +17,7 @@ func NewMsgCreateComment(creator string, repositoryid uint64, parentIid uint64, 
 		Attachments:  attachments,
 		DiffHunk:     diffHunk,
 		Path:         path,
+		Position:     position,
 	}
 }
 

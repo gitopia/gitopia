@@ -34477,6 +34477,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36345,6 +36348,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36571,6 +36577,9 @@ paths:
                     type: string
                   path:
                     type: string
+                  position:
+                    type: string
+                    format: uint64
                   system:
                     type: boolean
                   authorAssociation:
@@ -36720,6 +36729,9 @@ paths:
                       type: string
                     path:
                       type: string
+                    position:
+                      type: string
+                      format: uint64
                     system:
                       type: boolean
                     authorAssociation:
@@ -36946,6 +36958,9 @@ paths:
                     type: string
                   path:
                     type: string
+                  position:
+                    type: string
+                    format: uint64
                   system:
                     type: boolean
                   authorAssociation:
@@ -40126,6 +40141,323 @@ paths:
           required: true
           type: string
           format: uint64
+      tags:
+        - Query
+  /gitopia/gitopia/rewards/rewards:
+    get:
+      summary: Queries a list of Rewards items.
+      operationId: GitopiaGitopiaRewardsRewardsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rewards:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    recipient:
+                      type: string
+                    amount:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    creator:
+                      type: string
+                    claimed_amount_without_decay:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    claimed_amount:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /gitopia/gitopia/rewards/rewards/{recipient}:
+    get:
+      summary: Queries a Rewards by index.
+      operationId: GitopiaGitopiaRewardsReward
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              reward:
+                type: object
+                properties:
+                  recipient:
+                    type: string
+                  amount:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                  claimedAmount:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                    title: |-
+                      not required in the response
+                      string creator = 3;
+                  claimableAmount:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: recipient
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /gitopia/gitopia/rewards/tasks/{address}:
+    get:
+      summary: Queries a list of tasks items.
+      operationId: GitopiaGitopiaRewardsTasks
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              tasks:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - UNKNOWN
+                        - CREATE_USER
+                        - CREATE_NON_EMPTY_REPO
+                        - CREATE_ISSUE
+                        - CREATE_ISSUE_WITH_BOUNTY
+                        - CREATE_ISSUE_WITH_BOUNTY_VERIFIED
+                        - PR_TO_REPO_MERGED
+                        - PR_TO_VERIFIED_REPO_MERGED
+                        - PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY
+                        - LORE_STAKED
+                        - VOTE_PROPOSAL
+                      default: UNKNOWN
+                    isComplete:
+                      type: boolean
+                    weight:
+                      type: integer
+                      format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
       tags:
         - Query
   /ibc/apps/interchain_accounts/controller/v1/params:
@@ -75988,6 +76320,9 @@ definitions:
         type: string
       path:
         type: string
+      position:
+        type: string
+        format: uint64
       system:
         type: boolean
       authorAssociation:
@@ -77022,6 +77357,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -77273,6 +77611,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -77549,6 +77890,9 @@ definitions:
               type: string
             path:
               type: string
+            position:
+              type: string
+              format: uint64
             system:
               type: boolean
             authorAssociation:
@@ -79063,6 +79407,9 @@ definitions:
             type: string
           path:
             type: string
+          position:
+            type: string
+            format: uint64
           system:
             type: boolean
           authorAssociation:
@@ -79218,6 +79565,9 @@ definitions:
             type: string
           path:
             type: string
+          position:
+            type: string
+            format: uint64
           system:
             type: boolean
           authorAssociation:
@@ -80241,6 +80591,316 @@ definitions:
           - USER
           - DAO
         default: USER
+  gitopia.gitopia.rewards.MsgClaimResponse:
+    type: object
+  gitopia.gitopia.rewards.MsgCreateRewardResponse:
+    type: object
+    properties:
+      amount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: actual granted amount
+  gitopia.gitopia.rewards.QueryAllRewardsResponse:
+    type: object
+    properties:
+      rewards:
+        type: array
+        items:
+          type: object
+          properties:
+            recipient:
+              type: string
+            amount:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            creator:
+              type: string
+            claimed_amount_without_decay:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            claimed_amount:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  gitopia.gitopia.rewards.QueryGetRewardResponse:
+    type: object
+    properties:
+      reward:
+        type: object
+        properties:
+          recipient:
+            type: string
+          amount:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+          claimedAmount:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+            title: |-
+              not required in the response
+              string creator = 3;
+          claimableAmount:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+  gitopia.gitopia.rewards.QueryGetRewardResponseReward:
+    type: object
+    properties:
+      recipient:
+        type: string
+      amount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      claimedAmount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: |-
+          not required in the response
+          string creator = 3;
+      claimableAmount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+  gitopia.gitopia.rewards.QueryTasksResponse:
+    type: object
+    properties:
+      tasks:
+        type: array
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - UNKNOWN
+                - CREATE_USER
+                - CREATE_NON_EMPTY_REPO
+                - CREATE_ISSUE
+                - CREATE_ISSUE_WITH_BOUNTY
+                - CREATE_ISSUE_WITH_BOUNTY_VERIFIED
+                - PR_TO_REPO_MERGED
+                - PR_TO_VERIFIED_REPO_MERGED
+                - PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY
+                - LORE_STAKED
+                - VOTE_PROPOSAL
+              default: UNKNOWN
+            isComplete:
+              type: boolean
+            weight:
+              type: integer
+              format: int32
+  gitopia.gitopia.rewards.Reward:
+    type: object
+    properties:
+      recipient:
+        type: string
+      amount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      creator:
+        type: string
+      claimed_amount_without_decay:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      claimed_amount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+  gitopia.gitopia.rewards.Task:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - UNKNOWN
+          - CREATE_USER
+          - CREATE_NON_EMPTY_REPO
+          - CREATE_ISSUE
+          - CREATE_ISSUE_WITH_BOUNTY
+          - CREATE_ISSUE_WITH_BOUNTY_VERIFIED
+          - PR_TO_REPO_MERGED
+          - PR_TO_VERIFIED_REPO_MERGED
+          - PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY
+          - LORE_STAKED
+          - VOTE_PROPOSAL
+        default: UNKNOWN
+      isComplete:
+        type: boolean
+      weight:
+        type: integer
+        format: int32
+  gitopia.gitopia.rewards.taskType:
+    type: string
+    enum:
+      - UNKNOWN
+      - CREATE_USER
+      - CREATE_NON_EMPTY_REPO
+      - CREATE_ISSUE
+      - CREATE_ISSUE_WITH_BOUNTY
+      - CREATE_ISSUE_WITH_BOUNTY_VERIFIED
+      - PR_TO_REPO_MERGED
+      - PR_TO_VERIFIED_REPO_MERGED
+      - PR_TO_VERIFIED_REPO_MERGED_WITH_BOUNTY
+      - LORE_STAKED
+      - VOTE_PROPOSAL
+    default: UNKNOWN
   ibc.applications.interchain_accounts.controller.v1.Params:
     type: object
     properties:

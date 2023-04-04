@@ -52,7 +52,7 @@ func (k Keeper) UserDaoAll(c context.Context, req *types.QueryAllUserDaoRequest)
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	user, found := k.GetUser(ctx, address.address)
+	user, found := k.GetUser(ctx, address.Address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}
@@ -90,7 +90,7 @@ func (k Keeper) Dao(c context.Context, req *types.QueryGetDaoRequest) (*types.Qu
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	dao, found := k.GetDao(ctx, address.address)
+	dao, found := k.GetDao(ctx, address.Address)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

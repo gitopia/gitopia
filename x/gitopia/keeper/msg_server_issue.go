@@ -26,7 +26,7 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 		return nil, err
 	}
 
-	repository, found := k.GetAddressRepository(ctx, address.address, msg.RepositoryId.Name)
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -68,6 +68,10 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 
 	var bountyId uint64
 	if len(msg.BountyAmount) > 0 {
+		if msg.BountyExpiry < ctx.BlockTime().Unix() {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "expire time can't be less then current time")
+		}
+
 		var bounty = types.Bounty{
 			Creator:      msg.Creator,
 			RepositoryId: issue.RepositoryId,
