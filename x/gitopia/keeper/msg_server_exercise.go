@@ -44,7 +44,10 @@ func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*typ
 
 	var proportion int64
 	for _, p := range gitopiaParams.TeamProportions {
-		proportion = p.Proportion
+		if msg.Creator == p.Address{
+			proportion = p.Proportion
+			break
+		}
 	}
 
 	if proportion == 0 {
