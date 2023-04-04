@@ -2,6 +2,7 @@ package types
 
 import (
 	time "time"
+
 	"gopkg.in/yaml.v2"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,8 +22,8 @@ func NewParams(nextInflationTime time.Time, poolProportions PoolProportions, tea
 func DefaultParams() Params {
 	return NewParams(time.Now().AddDate(2, 0, 0),
 		PoolProportions{
-			Ecosystem: &DistributionProportion{40, "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm"},
-			Team:      &DistributionProportion{Proportion: 25},
+			Ecosystem: &DistributionProportion{Proportion: 30},
+			Team:      &DistributionProportion{Proportion: 28},
 		},
 		[]DistributionProportion{
 			{50, "gitopia1k9pvyj845y9a4m4vuxx8sjq5q28yxym520fh2x"},
@@ -58,17 +59,16 @@ func validateNextInflationTime(i time.Time) error {
 }
 
 func validatePoolProportions(pp PoolProportions) error {
-	_, err := sdk.AccAddressFromBech32(pp.Ecosystem.Address)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid address (%s)", err)
+	if pp.Ecosystem.Address != "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "ecosystem address must be empty. got %s", pp.Ecosystem.Address)
 	}
 
 	if pp.Team.Address != "" {
-		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "team address must be empty. got %d", pp.Team.Address)
+		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "team address must be empty. got %s", pp.Team.Address)
 	}
 
 	sum := pp.Ecosystem.Proportion + pp.Team.Proportion
-	if  sum > 100 {
+	if sum > 100 {
 		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "pool proportions must not exceed 100. got %d", sum)
 	}
 	return nil

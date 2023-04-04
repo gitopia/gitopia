@@ -12,7 +12,9 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # ibc/genesistype/default
-		BountyList: []Bounty{},
+		Params:              DefaultParams(),
+		ExercisedAmountList: []ExercisedAmount{},
+		BountyList:          []Bounty{},
 		// this line is used by starport scaffolding # genesis/types/default
 		TaskList:              []Task{},
 		BranchList:            []Branch{},

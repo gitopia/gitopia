@@ -34,13 +34,13 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 	remainingMintedCoins := mintedCoins
 
 	if gitopiaParams.PoolProportions.Ecosystem != nil {
-		addr, err := sdk.AccAddressFromBech32(gitopiaParams.PoolProportions.Ecosystem.Address)
-		if err != nil {
-			ctx.Logger().Error(errors.Wrap(err, "bad address").Error())
+		if gitopiaParams.PoolProportions.Ecosystem.Address != "" {
+			err := errors.New("ecosystem incentives address not empty")
+			ctx.Logger().Error(err.Error())
 			panic(err)
 		}
-
-		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, addr,
+		ecosystemIncentivesAddress := k.accountKeeper.GetModuleAddress(types.EcosystemIncentivesAccountName)
+		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, ecosystemIncentivesAddress,
 			gitopiaParams.PoolProportions.Ecosystem.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())

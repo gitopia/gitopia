@@ -6,7 +6,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -60,4 +62,20 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) createModuleAccount(ctx sdk.Context, name string, amount sdk.Coin) error {
+	if amount.IsNil() || amount.Amount.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrLogic, "amount cannot be nil or zero")
+	}
+
+	moduleAcc := authtypes.NewEmptyModuleAccount(
+		name, authtypes.Minter)
+	k.accountKeeper.SetModuleAccount(ctx, moduleAcc)
+
+	err := k.bankKeeper.MintCoins(ctx, name, sdk.NewCoins(amount))
+	if err != nil {
+		return err
+	}
+	return nil
 }

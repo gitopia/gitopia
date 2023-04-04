@@ -1,14 +1,21 @@
-package gitopia
+package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/x/gitopia/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+)
+
+const (
+	STRATEGIC_PARTNERS_AMOUNT           = 51_071_429_000_000
+	LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT = 30_000_000_000_000
+	ECOSYSTEM_INCENTIVES_AMOUNT         = 7_500_000_000_000
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
-func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 	// Set all the task
 	for _, elem := range genState.TaskList {
 		k.SetTask(ctx, elem)
@@ -135,12 +142,42 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	if err != nil {
 		panic(err)
 	}
-	
+
 	k.SetParams(ctx, genState.Params)
+
+	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.TeamAccountName)) {
+		teamModuleAcc := authtypes.NewEmptyModuleAccount(
+			types.TeamAccountName, authtypes.Minter)
+		k.accountKeeper.SetModuleAccount(ctx, teamModuleAcc)
+	}
+
+	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.StrategicPartnersAccountName)) {
+		totalStrategicPartnersCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))
+
+		if err := k.createModuleAccount(ctx, types.StrategicPartnersAccountName, totalStrategicPartnersCoins); err != nil {
+			panic(err)
+		}
+	}
+
+	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.LiquidityBootstrappingPoolAccountName)) {
+		totalLiquidityBootstrappingPoolCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT))
+
+		if err := k.createModuleAccount(ctx, types.LiquidityBootstrappingPoolAccountName, totalLiquidityBootstrappingPoolCoins); err != nil {
+			panic(err)
+		}
+	}
+
+	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.EcosystemIncentivesAccountName)) {
+		genesisEcosystemIncentivesCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(ECOSYSTEM_INCENTIVES_AMOUNT))
+
+		if err := k.createModuleAccount(ctx, types.EcosystemIncentivesAccountName, genesisEcosystemIncentivesCoins); err != nil {
+			panic(err)
+		}
+	}
 }
 
 // ExportGenesis returns the capability module's exported genesis.
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
+func ExportGenesis(ctx sdk.Context, k Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
 	genesis.TaskList = k.GetAllTask(ctx)
