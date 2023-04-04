@@ -3,8 +3,10 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	gitopiaparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
@@ -51,9 +53,11 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	}
 
 	var reward = types.Reward{
-		Creator:   msg.Creator,
-		Recipient: msg.Recipient,
-		Amount:    amount,
+		Creator:                msg.Creator,
+		Recipient:              msg.Recipient,
+		Amount:                 amount,
+		ClaimedAmount:          sdk.NewCoin(gitopiaparams.BaseCoinUnit, math.NewInt(0)),
+		ClaimedAmountWithDecay: sdk.NewCoin(gitopiaparams.BaseCoinUnit, math.NewInt(0)),
 	}
 
 	k.SetReward(
