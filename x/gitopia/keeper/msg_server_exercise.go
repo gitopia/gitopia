@@ -54,7 +54,7 @@ func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*typ
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "account (%v) doesn't have permission to perform this operation", msg.Creator)
 	}
 
-	vested := vestedTeamTokens(time.Unix(gitopiaParams.GenesisTime, 0), ctx.BlockTime())
+	vested := vestedTeamTokens(gitopiaParams.GenesisTime, ctx.BlockTime())
 	if vested.Amount.IsZero() {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "team tokens have not vested")
 	}

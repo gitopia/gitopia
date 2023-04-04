@@ -32,7 +32,9 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"team_proportions\""
   ];
-  int64 genesis_time = 4 [
+  google.protobuf.Timestamp genesis_time = 4 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"genesis_time\""
   ];
 }
