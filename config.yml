@@ -81,29 +81,50 @@ genesis:
             total_amount: 
               amount: "2000000"
               denom: "ulore"
+            claimed_amount:
+              amount: "0"
+              denom: "ulore"
           series_two: 
             total_amount: 
               amount: "1700000"
+              denom: "ulore"
+            claimed_amount:
+              amount: "0"
               denom: "ulore"
           series_three: 
             total_amount: 
               amount: "1400000"
               denom: "ulore"
+            claimed_amount:
+              amount: "0"
+              denom: "ulore"
           series_four: 
             total_amount: 
               amount: "1100000"
+              denom: "ulore"
+            claimed_amount:
+              amount: "0"
               denom: "ulore"
           series_five: 
             total_amount: 
               amount: "800000"
               denom: "ulore"
+            claimed_amount:
+              amount: "0"
+              denom: "ulore"
           series_six: 
             total_amount: 
               amount: "500000"
               denom: "ulore"
+            claimed_amount:
+              amount: "0"
+              denom: "ulore"
           series_seven: 
             total_amount: 
               amount: "250000"
+              denom: "ulore"
+            claimed_amount:
+              amount: "0"
               denom: "ulore"
     gov:
       deposit_params:
