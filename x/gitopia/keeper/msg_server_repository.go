@@ -900,6 +900,9 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 
 	DoRemoveRepository(ctx, k, repository)
 
+	// Remove the repository id -> owner address, repository name mapping
+	k.RemoveBaseRepositoryKey(ctx, repository.Id)
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
