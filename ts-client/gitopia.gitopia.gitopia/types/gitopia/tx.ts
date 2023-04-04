@@ -51,7 +51,7 @@ export function providerPermissionToJSON(object: ProviderPermission): string {
 
 export interface MsgExercise {
   creator: string;
-  coins: Coin[];
+  amount: Coin | undefined;
   to: string;
 }
 
@@ -908,7 +908,7 @@ export interface MsgDeleteUserResponse {
 }
 
 function createBaseMsgExercise(): MsgExercise {
-  return { creator: "", coins: [], to: "" };
+  return { creator: "", amount: undefined, to: "" };
 }
 
 export const MsgExercise = {
@@ -916,8 +916,8 @@ export const MsgExercise = {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    for (const v of message.coins) {
-      Coin.encode(v!, writer.uint32(18).fork()).ldelim();
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
     }
     if (message.to !== "") {
       writer.uint32(26).string(message.to);
@@ -936,7 +936,7 @@ export const MsgExercise = {
           message.creator = reader.string();
           break;
         case 2:
-          message.coins.push(Coin.decode(reader, reader.uint32()));
+          message.amount = Coin.decode(reader, reader.uint32());
           break;
         case 3:
           message.to = reader.string();
@@ -952,7 +952,7 @@ export const MsgExercise = {
   fromJSON(object: any): MsgExercise {
     return {
       creator: isSet(object.creator) ? String(object.creator) : "",
-      coins: Array.isArray(object?.coins) ? object.coins.map((e: any) => Coin.fromJSON(e)) : [],
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
       to: isSet(object.to) ? String(object.to) : "",
     };
   },
@@ -960,11 +960,7 @@ export const MsgExercise = {
   toJSON(message: MsgExercise): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    if (message.coins) {
-      obj.coins = message.coins.map((e) => e ? Coin.toJSON(e) : undefined);
-    } else {
-      obj.coins = [];
-    }
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
     message.to !== undefined && (obj.to = message.to);
     return obj;
   },
@@ -972,7 +968,9 @@ export const MsgExercise = {
   fromPartial<I extends Exact<DeepPartial<MsgExercise>, I>>(object: I): MsgExercise {
     const message = createBaseMsgExercise();
     message.creator = object.creator ?? "";
-    message.coins = object.coins?.map((e) => Coin.fromPartial(e)) || [];
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
     message.to = object.to ?? "";
     return message;
   },

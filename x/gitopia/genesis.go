@@ -131,6 +131,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set exercised amount count
 	k.SetExercisedAmountCount(ctx, genState.ExercisedAmountCount)
 
+	err := genState.Params.Validate()
+	if err != nil {
+		panic(err)
+	}
+	
 	k.SetParams(ctx, genState.Params)
 }
 

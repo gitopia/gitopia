@@ -3,6 +3,7 @@ import { Bounty } from "./types/gitopia/bounty"
 import { Branch } from "./types/gitopia/branch"
 import { Comment } from "./types/gitopia/comment"
 import { Dao } from "./types/gitopia/dao"
+import { ExercisedAmount } from "./types/gitopia/exercised_amount"
 import { Issue } from "./types/gitopia/issue"
 import { Member } from "./types/gitopia/member"
 import { DistributionProportion } from "./types/gitopia/params"
@@ -46,6 +47,7 @@ export {
     Branch,
     Comment,
     Dao,
+    ExercisedAmount,
     Issue,
     Member,
     DistributionProportion,

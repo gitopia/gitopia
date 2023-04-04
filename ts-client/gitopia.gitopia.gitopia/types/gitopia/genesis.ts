@@ -5,6 +5,7 @@ import { Bounty } from "./bounty";
 import { Branch } from "./branch";
 import { Comment } from "./comment";
 import { Dao } from "./dao";
+import { ExercisedAmount } from "./exercised_amount";
 import { Issue } from "./issue";
 import { Member } from "./member";
 import { Params } from "./params";
@@ -20,6 +21,8 @@ export const protobufPackage = "gitopia.gitopia.gitopia";
 
 /** GenesisState defines the gitopia module's genesis state. */
 export interface GenesisState {
+  exercisedAmountList: ExercisedAmount[];
+  exercisedAmountCount: number;
   /** params defines all the paramaters of the module. */
   params: Params | undefined;
   bountyList: Bounty[];
@@ -56,6 +59,8 @@ export interface GenesisState {
 
 function createBaseGenesisState(): GenesisState {
   return {
+    exercisedAmountList: [],
+    exercisedAmountCount: 0,
     params: undefined,
     bountyList: [],
     bountyCount: 0,
@@ -90,6 +95,12 @@ function createBaseGenesisState(): GenesisState {
 
 export const GenesisState = {
   encode(message: GenesisState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.exercisedAmountList) {
+      ExercisedAmount.encode(v!, writer.uint32(242).fork()).ldelim();
+    }
+    if (message.exercisedAmountCount !== 0) {
+      writer.uint32(248).uint64(message.exercisedAmountCount);
+    }
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(234).fork()).ldelim();
     }
@@ -187,6 +198,12 @@ export const GenesisState = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 30:
+          message.exercisedAmountList.push(ExercisedAmount.decode(reader, reader.uint32()));
+          break;
+        case 31:
+          message.exercisedAmountCount = longToNumber(reader.uint64() as Long);
+          break;
         case 29:
           message.params = Params.decode(reader, reader.uint32());
           break;
@@ -284,6 +301,10 @@ export const GenesisState = {
 
   fromJSON(object: any): GenesisState {
     return {
+      exercisedAmountList: Array.isArray(object?.exercisedAmountList)
+        ? object.exercisedAmountList.map((e: any) => ExercisedAmount.fromJSON(e))
+        : [],
+      exercisedAmountCount: isSet(object.exercisedAmountCount) ? Number(object.exercisedAmountCount) : 0,
       params: isSet(object.params) ? Params.fromJSON(object.params) : undefined,
       bountyList: Array.isArray(object?.bountyList) ? object.bountyList.map((e: any) => Bounty.fromJSON(e)) : [],
       bountyCount: isSet(object.bountyCount) ? Number(object.bountyCount) : 0,
@@ -324,6 +345,12 @@ export const GenesisState = {
 
   toJSON(message: GenesisState): unknown {
     const obj: any = {};
+    if (message.exercisedAmountList) {
+      obj.exercisedAmountList = message.exercisedAmountList.map((e) => e ? ExercisedAmount.toJSON(e) : undefined);
+    } else {
+      obj.exercisedAmountList = [];
+    }
+    message.exercisedAmountCount !== undefined && (obj.exercisedAmountCount = Math.round(message.exercisedAmountCount));
     message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     if (message.bountyList) {
       obj.bountyList = message.bountyList.map((e) => e ? Bounty.toJSON(e) : undefined);
@@ -418,6 +445,8 @@ export const GenesisState = {
 
   fromPartial<I extends Exact<DeepPartial<GenesisState>, I>>(object: I): GenesisState {
     const message = createBaseGenesisState();
+    message.exercisedAmountList = object.exercisedAmountList?.map((e) => ExercisedAmount.fromPartial(e)) || [];
+    message.exercisedAmountCount = object.exercisedAmountCount ?? 0;
     message.params = (object.params !== undefined && object.params !== null)
       ? Params.fromPartial(object.params)
       : undefined;

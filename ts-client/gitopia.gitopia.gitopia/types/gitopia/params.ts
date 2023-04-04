@@ -20,6 +20,7 @@ export interface Params {
   nextInflationTime: Date | undefined;
   poolProportions: PoolProportions | undefined;
   teamProportions: DistributionProportion[];
+  genesisTime: Date | undefined;
 }
 
 function createBaseDistributionProportion(): DistributionProportion {
@@ -144,7 +145,7 @@ export const PoolProportions = {
 };
 
 function createBaseParams(): Params {
-  return { nextInflationTime: undefined, poolProportions: undefined, teamProportions: [] };
+  return { nextInflationTime: undefined, poolProportions: undefined, teamProportions: [], genesisTime: undefined };
 }
 
 export const Params = {
@@ -157,6 +158,9 @@ export const Params = {
     }
     for (const v of message.teamProportions) {
       DistributionProportion.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.genesisTime !== undefined) {
+      Timestamp.encode(toTimestamp(message.genesisTime), writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -177,6 +181,9 @@ export const Params = {
         case 3:
           message.teamProportions.push(DistributionProportion.decode(reader, reader.uint32()));
           break;
+        case 4:
+          message.genesisTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -192,6 +199,7 @@ export const Params = {
       teamProportions: Array.isArray(object?.teamProportions)
         ? object.teamProportions.map((e: any) => DistributionProportion.fromJSON(e))
         : [],
+      genesisTime: isSet(object.genesisTime) ? fromJsonTimestamp(object.genesisTime) : undefined,
     };
   },
 
@@ -205,6 +213,7 @@ export const Params = {
     } else {
       obj.teamProportions = [];
     }
+    message.genesisTime !== undefined && (obj.genesisTime = message.genesisTime.toISOString());
     return obj;
   },
 
@@ -215,6 +224,7 @@ export const Params = {
       ? PoolProportions.fromPartial(object.poolProportions)
       : undefined;
     message.teamProportions = object.teamProportions?.map((e) => DistributionProportion.fromPartial(e)) || [];
+    message.genesisTime = object.genesisTime ?? undefined;
     return message;
   },
 };
