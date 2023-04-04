@@ -12,27 +12,27 @@ import (
 	"github.com/pkg/errors"
 )
 
-const teamVestingAmount = 339_118_201_000_000
+const (
+	TEAM_VESTING_AMOUNT = 339_118_201_000_000 // max team supply
+	CLIFF_PERIOD        = 12                  // 1 year cliff
+	VESTING_PERIOD      = 120                 // 10 years * 12 months
+)
 
 func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
-	const cliffPeriod = 12                   // 1 year cliff
-	const vestingPeriod = 120                // 10 years * 12 months
-	const monthlyVestingPercentage = 0.00834 // 0.834% per month
-
 	// Calculate the number of months between genesis time and current time
 	months := currentTime.Year()*12 + int(currentTime.Month()) - (startTime.Year()*12 + int(startTime.Month()))
 
-	if months <= cliffPeriod {
+	if months <= CLIFF_PERIOD {
 		return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)) // No vesting before the end of the cliff period
 	}
 
 	// Calculate the vested amount
-	vestedMonths := months - cliffPeriod
-	if vestedMonths > vestingPeriod {
-		vestedMonths = vestingPeriod
+	vestedMonths := months - CLIFF_PERIOD
+	if vestedMonths > VESTING_PERIOD {
+		vestedMonths = VESTING_PERIOD
 	}
 
-	vestedAmount := teamVestingAmount * (monthlyVestingPercentage * float64(vestedMonths))
+	vestedAmount := TEAM_VESTING_AMOUNT / VESTING_PERIOD * vestedMonths
 
 	return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(vestedAmount)))
 }
@@ -44,7 +44,7 @@ func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*typ
 
 	var proportion int64
 	for _, p := range gitopiaParams.TeamProportions {
-		if msg.Creator == p.Address{
+		if msg.Creator == p.Address {
 			proportion = p.Proportion
 			break
 		}
