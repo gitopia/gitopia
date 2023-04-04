@@ -11,16 +11,17 @@ accounts:
   - 200000000ulore
 - name: node1
   coins:
-  - 100000000ulore
-  address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+  - 100000000utlore
 - name: node2
   coins:
-  - 100000000ulore
-  address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
+  - 100000000utlore
 - name: node3
   coins:
-  - 50000000ulore
-  address: gitopia1gqacec5zhz6js5nlwfmsfcx8qkghf0y5na4q5a
+  - 50000000utlore
+- name: ecosystem
+  coins:
+  - 0utlore
+  address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
 - name: faucet
   coins:
   - 100000000ulore
@@ -62,17 +63,26 @@ genesis:
         denom: ulore
     distribution:
       params:
-        community_tax: "0"
+        community_tax: "0.05"
     gitopia:
       params:
-        distribution_proportions:
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
-          proportion: 40
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
-          proportion: 25
-        - address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
-          proportion: 5
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
+        pool_proportions:
+          ecosystem:
+            proportion: 40
+            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+          team:
+            proportion: 25
+        # remaining: community : 5% staking: 30%
+        team_proportions:
+        - proportion: 25
+          address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
+        - proportion: 24
+          address: gitopia1pdczuuqajw3n7zea9j6h9gtdgfpnzkkucjz8tn
+        - proportion: 6
+          address: gitopia19nve7zztd3nf9hazfv7lsx0ajdv3kfjdx83dtg
+        - proportion: 45
+          address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
     rewards: 
       params:
         evaluator_address: gitopia1tfsvwp95023a64rnke7vxd3jjlp5fg4m46yx9j

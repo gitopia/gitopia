@@ -18,7 +18,8 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_gitopia"
 
-	MinterAccountName  = "minter"
+	MinterAccountName = "minter"
+	TeamAccountName   = "team"
 
 	// this line is used by starport scaffolding # ibc/keys/name
 )
@@ -290,6 +291,11 @@ const (
 const (
 	BountyKey      = "Bounty-value-"
 	BountyCountKey = "Bounty-count-"
+)
+
+const (
+	ExercisedAmountKey      = "ExercisedAmount-value-"
+	ExercisedAmountCountKey = "ExercisedAmount-count-"
 )
 
 // GetRepositoryKeyForAddress returns Key from address

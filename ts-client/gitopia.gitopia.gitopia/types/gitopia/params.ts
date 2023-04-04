@@ -6,27 +6,34 @@ import { Timestamp } from "../google/protobuf/timestamp";
 export const protobufPackage = "gitopia.gitopia.gitopia";
 
 export interface DistributionProportion {
-  address: string;
   proportion: number;
+  address: string;
+}
+
+export interface PoolProportions {
+  ecosystem: DistributionProportion | undefined;
+  team: DistributionProportion | undefined;
 }
 
 /** Params defines the parameters for the module. */
 export interface Params {
   nextInflationTime: Date | undefined;
-  distributionProportions: DistributionProportion[];
+  poolProportions: PoolProportions | undefined;
+  teamProportions: DistributionProportion[];
+  genesisTime: Date | undefined;
 }
 
 function createBaseDistributionProportion(): DistributionProportion {
-  return { address: "", proportion: 0 };
+  return { proportion: 0, address: "" };
 }
 
 export const DistributionProportion = {
   encode(message: DistributionProportion, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.address !== "") {
-      writer.uint32(10).string(message.address);
-    }
     if (message.proportion !== 0) {
-      writer.uint32(16).int64(message.proportion);
+      writer.uint32(8).int64(message.proportion);
+    }
+    if (message.address !== "") {
+      writer.uint32(18).string(message.address);
     }
     return writer;
   },
@@ -39,10 +46,10 @@ export const DistributionProportion = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string();
+          message.proportion = longToNumber(reader.int64() as Long);
           break;
         case 2:
-          message.proportion = longToNumber(reader.int64() as Long);
+          message.address = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -54,28 +61,91 @@ export const DistributionProportion = {
 
   fromJSON(object: any): DistributionProportion {
     return {
-      address: isSet(object.address) ? String(object.address) : "",
       proportion: isSet(object.proportion) ? Number(object.proportion) : 0,
+      address: isSet(object.address) ? String(object.address) : "",
     };
   },
 
   toJSON(message: DistributionProportion): unknown {
     const obj: any = {};
-    message.address !== undefined && (obj.address = message.address);
     message.proportion !== undefined && (obj.proportion = Math.round(message.proportion));
+    message.address !== undefined && (obj.address = message.address);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<DistributionProportion>, I>>(object: I): DistributionProportion {
     const message = createBaseDistributionProportion();
-    message.address = object.address ?? "";
     message.proportion = object.proportion ?? 0;
+    message.address = object.address ?? "";
+    return message;
+  },
+};
+
+function createBasePoolProportions(): PoolProportions {
+  return { ecosystem: undefined, team: undefined };
+}
+
+export const PoolProportions = {
+  encode(message: PoolProportions, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.ecosystem !== undefined) {
+      DistributionProportion.encode(message.ecosystem, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.team !== undefined) {
+      DistributionProportion.encode(message.team, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): PoolProportions {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePoolProportions();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ecosystem = DistributionProportion.decode(reader, reader.uint32());
+          break;
+        case 2:
+          message.team = DistributionProportion.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): PoolProportions {
+    return {
+      ecosystem: isSet(object.ecosystem) ? DistributionProportion.fromJSON(object.ecosystem) : undefined,
+      team: isSet(object.team) ? DistributionProportion.fromJSON(object.team) : undefined,
+    };
+  },
+
+  toJSON(message: PoolProportions): unknown {
+    const obj: any = {};
+    message.ecosystem !== undefined
+      && (obj.ecosystem = message.ecosystem ? DistributionProportion.toJSON(message.ecosystem) : undefined);
+    message.team !== undefined && (obj.team = message.team ? DistributionProportion.toJSON(message.team) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<PoolProportions>, I>>(object: I): PoolProportions {
+    const message = createBasePoolProportions();
+    message.ecosystem = (object.ecosystem !== undefined && object.ecosystem !== null)
+      ? DistributionProportion.fromPartial(object.ecosystem)
+      : undefined;
+    message.team = (object.team !== undefined && object.team !== null)
+      ? DistributionProportion.fromPartial(object.team)
+      : undefined;
     return message;
   },
 };
 
 function createBaseParams(): Params {
-  return { nextInflationTime: undefined, distributionProportions: [] };
+  return { nextInflationTime: undefined, poolProportions: undefined, teamProportions: [], genesisTime: undefined };
 }
 
 export const Params = {
@@ -83,8 +153,14 @@ export const Params = {
     if (message.nextInflationTime !== undefined) {
       Timestamp.encode(toTimestamp(message.nextInflationTime), writer.uint32(10).fork()).ldelim();
     }
-    for (const v of message.distributionProportions) {
-      DistributionProportion.encode(v!, writer.uint32(18).fork()).ldelim();
+    if (message.poolProportions !== undefined) {
+      PoolProportions.encode(message.poolProportions, writer.uint32(18).fork()).ldelim();
+    }
+    for (const v of message.teamProportions) {
+      DistributionProportion.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.genesisTime !== undefined) {
+      Timestamp.encode(toTimestamp(message.genesisTime), writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -100,7 +176,13 @@ export const Params = {
           message.nextInflationTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 2:
-          message.distributionProportions.push(DistributionProportion.decode(reader, reader.uint32()));
+          message.poolProportions = PoolProportions.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.teamProportions.push(DistributionProportion.decode(reader, reader.uint32()));
+          break;
+        case 4:
+          message.genesisTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -113,30 +195,36 @@ export const Params = {
   fromJSON(object: any): Params {
     return {
       nextInflationTime: isSet(object.nextInflationTime) ? fromJsonTimestamp(object.nextInflationTime) : undefined,
-      distributionProportions: Array.isArray(object?.distributionProportions)
-        ? object.distributionProportions.map((e: any) => DistributionProportion.fromJSON(e))
+      poolProportions: isSet(object.poolProportions) ? PoolProportions.fromJSON(object.poolProportions) : undefined,
+      teamProportions: Array.isArray(object?.teamProportions)
+        ? object.teamProportions.map((e: any) => DistributionProportion.fromJSON(e))
         : [],
+      genesisTime: isSet(object.genesisTime) ? fromJsonTimestamp(object.genesisTime) : undefined,
     };
   },
 
   toJSON(message: Params): unknown {
     const obj: any = {};
     message.nextInflationTime !== undefined && (obj.nextInflationTime = message.nextInflationTime.toISOString());
-    if (message.distributionProportions) {
-      obj.distributionProportions = message.distributionProportions.map((e) =>
-        e ? DistributionProportion.toJSON(e) : undefined
-      );
+    message.poolProportions !== undefined
+      && (obj.poolProportions = message.poolProportions ? PoolProportions.toJSON(message.poolProportions) : undefined);
+    if (message.teamProportions) {
+      obj.teamProportions = message.teamProportions.map((e) => e ? DistributionProportion.toJSON(e) : undefined);
     } else {
-      obj.distributionProportions = [];
+      obj.teamProportions = [];
     }
+    message.genesisTime !== undefined && (obj.genesisTime = message.genesisTime.toISOString());
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Params>, I>>(object: I): Params {
     const message = createBaseParams();
     message.nextInflationTime = object.nextInflationTime ?? undefined;
-    message.distributionProportions = object.distributionProportions?.map((e) => DistributionProportion.fromPartial(e))
-      || [];
+    message.poolProportions = (object.poolProportions !== undefined && object.poolProportions !== null)
+      ? PoolProportions.fromPartial(object.poolProportions)
+      : undefined;
+    message.teamProportions = object.teamProportions?.map((e) => DistributionProportion.fromPartial(e)) || [];
+    message.genesisTime = object.genesisTime ?? undefined;
     return message;
   },
 };

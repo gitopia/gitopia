@@ -76698,6 +76698,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgDeleteUserResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgExerciseResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgForkRepositoryResponse:
     type: object
     properties:

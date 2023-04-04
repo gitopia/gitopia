@@ -49,6 +49,15 @@ export function providerPermissionToJSON(object: ProviderPermission): string {
   }
 }
 
+export interface MsgExercise {
+  creator: string;
+  amount: Coin | undefined;
+  to: string;
+}
+
+export interface MsgExerciseResponse {
+}
+
 export interface MsgToggleForcePush {
   creator: string;
   repositoryId: RepositoryId | undefined;
@@ -898,6 +907,114 @@ export interface MsgDeleteUser {
 
 export interface MsgDeleteUserResponse {
 }
+
+function createBaseMsgExercise(): MsgExercise {
+  return { creator: "", amount: undefined, to: "" };
+}
+
+export const MsgExercise = {
+  encode(message: MsgExercise, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.amount !== undefined) {
+      Coin.encode(message.amount, writer.uint32(18).fork()).ldelim();
+    }
+    if (message.to !== "") {
+      writer.uint32(26).string(message.to);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgExercise {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgExercise();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.amount = Coin.decode(reader, reader.uint32());
+          break;
+        case 3:
+          message.to = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgExercise {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      amount: isSet(object.amount) ? Coin.fromJSON(object.amount) : undefined,
+      to: isSet(object.to) ? String(object.to) : "",
+    };
+  },
+
+  toJSON(message: MsgExercise): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.amount !== undefined && (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.to !== undefined && (obj.to = message.to);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgExercise>, I>>(object: I): MsgExercise {
+    const message = createBaseMsgExercise();
+    message.creator = object.creator ?? "";
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Coin.fromPartial(object.amount)
+      : undefined;
+    message.to = object.to ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgExerciseResponse(): MsgExerciseResponse {
+  return {};
+}
+
+export const MsgExerciseResponse = {
+  encode(_: MsgExerciseResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgExerciseResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgExerciseResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgExerciseResponse {
+    return {};
+  },
+
+  toJSON(_: MsgExerciseResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgExerciseResponse>, I>>(_: I): MsgExerciseResponse {
+    const message = createBaseMsgExerciseResponse();
+    return message;
+  },
+};
 
 function createBaseMsgToggleForcePush(): MsgToggleForcePush {
   return { creator: "", repositoryId: undefined, branchName: "" };
@@ -11021,6 +11138,7 @@ export interface Msg {
   CloseBounty(request: MsgCloseBounty): Promise<MsgCloseBountyResponse>;
   DeleteBounty(request: MsgDeleteBounty): Promise<MsgDeleteBountyResponse>;
   /** this line is used by starport scaffolding # proto/tx/rpc */
+  Exercise(request: MsgExercise): Promise<MsgExerciseResponse>;
   CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse>;
   UpdateRelease(request: MsgUpdateRelease): Promise<MsgUpdateReleaseResponse>;
   DeleteRelease(request: MsgDeleteRelease): Promise<MsgDeleteReleaseResponse>;
@@ -11115,6 +11233,7 @@ export class MsgClientImpl implements Msg {
     this.UpdateBountyExpiry = this.UpdateBountyExpiry.bind(this);
     this.CloseBounty = this.CloseBounty.bind(this);
     this.DeleteBounty = this.DeleteBounty.bind(this);
+    this.Exercise = this.Exercise.bind(this);
     this.CreateRelease = this.CreateRelease.bind(this);
     this.UpdateRelease = this.UpdateRelease.bind(this);
     this.DeleteRelease = this.DeleteRelease.bind(this);
@@ -11300,6 +11419,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgDeleteBounty.encode(request).finish();
     const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "DeleteBounty", data);
     return promise.then((data) => MsgDeleteBountyResponse.decode(new _m0.Reader(data)));
+  }
+
+  Exercise(request: MsgExercise): Promise<MsgExerciseResponse> {
+    const data = MsgExercise.encode(request).finish();
+    const promise = this.rpc.request("gitopia.gitopia.gitopia.Msg", "Exercise", data);
+    return promise.then((data) => MsgExerciseResponse.decode(new _m0.Reader(data)));
   }
 
   CreateRelease(request: MsgCreateRelease): Promise<MsgCreateReleaseResponse> {

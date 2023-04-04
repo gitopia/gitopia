@@ -18,11 +18,17 @@ import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 // Query defines the gRPC querier service.
 service Query {
+	// query vested amount for developer address 
+	rpc VestedAmount(QueryVestedAmountRequest) returns (QueryVestedAmountResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/vestedAmount/{address}";
+	}
+
     // Queries a Task by id.
 	rpc Task(QueryGetTaskRequest) returns (QueryGetTaskResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/task/{id}";
@@ -246,6 +252,20 @@ service Query {
 	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
 	}
+}
+
+message QueryVestedAmountRequest{
+	string address = 1;
+}
+
+message QueryVestedAmountResponse {
+	string address = 1;
+	cosmos.base.v1beta1.Coin amount = 2
+    [(gogoproto.nullable) = false,
+     (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+	cosmos.base.v1beta1.Coin exercisedAmount = 3
+	[(gogoproto.nullable) = false,
+	 (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 
 message QueryCheckStorageProviderAuthorizationRequest {

@@ -61,6 +61,7 @@ var maccPerms = map[string][]string{
 	govtypes.ModuleName:                   {authtypes.Burner},
 	ibctransfertypes.ModuleName:           {authtypes.Minter, authtypes.Burner},
 	gitopiatypes.MinterAccountName:        nil,
+	gitopiatypes.TeamAccountName:          nil,
 	rewardtypes.RewardsSeriesOneAccount:   {authtypes.Minter},
 	rewardtypes.RewardsSeriesTwoAccount:   {authtypes.Minter},
 	rewardtypes.RewardsSeriesThreeAccount: {authtypes.Minter},
