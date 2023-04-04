@@ -9,5 +9,6 @@ option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 message ExercisedAmount {
   string address = 1; 
   cosmos.base.v1beta1.Coin amount = 2
-    [(gogoproto.nullable) = false]; 
+    [(gogoproto.nullable) = false,
+     (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }

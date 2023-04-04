@@ -40,34 +40,18 @@ func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*types.MsgExerciseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	gitopiaParams := k.GetParams(ctx)
-
-	var proportion int64
-	for _, p := range gitopiaParams.TeamProportions {
-		if msg.Creator == p.Address {
-			proportion = p.Proportion
-			break
-		}
+	vestedProportion, err := k.GetVestedAmount(ctx, msg.Creator)
+	if err != nil {
+		return nil, err
 	}
-
-	if proportion == 0 {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "account (%v) doesn't have permission to perform this operation", msg.Creator)
-	}
-
-	vested := vestedTeamTokens(gitopiaParams.GenesisTime, ctx.BlockTime())
-	if vested.Amount.IsZero() {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "team tokens have not vested")
-	}
-
-	vestedProportion := sdk.Coins{vested}.MulInt(math.NewInt(proportion)).QuoInt(math.NewInt(100))
 	exercisedAmount, f := k.GetExercisedAmount(ctx, msg.Creator)
 	amount := sdk.Coins{sdk.NormalizeCoin(msg.Amount)}
-	if amount.IsAllGT(vestedProportion.Sub(exercisedAmount.Amount)) {
+	if amount.IsAllGT(sdk.Coins{vestedProportion}.Sub(exercisedAmount.Amount)) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot exercise more than vested tokens")
 	}
 
 	to, _ := sdk.AccAddressFromBech32(msg.To)
-	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.TeamAccountName, to, amount)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.TeamAccountName, to, amount)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error sending coins from team vesting module account")
 	}
