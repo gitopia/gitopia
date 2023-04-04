@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const teamVestingAmount = 339_118_197_000_000
+const teamVestingAmount = 339_118_201_000_000
 
 func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 	const cliffPeriod = 12                   // 1 year cliff
