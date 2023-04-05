@@ -7,22 +7,22 @@ import (
 )
 
 // NewParams creates a new Params instance
-func NewParams(evaluatorAddress string) Params {
+func NewParams(evaluatorAddress string, rewardSeries *RewardSeries) Params {
 	return Params{
 		EvaluatorAddress: evaluatorAddress,
-		RewardSeries: &RewardSeries{
-			SeriesOne:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesTwo:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesThree: &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesFour:  &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesFive:  &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesSix:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-			SeriesSeven: &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
-		},
+		RewardSeries:     rewardSeries,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm")
+	return NewParams("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm", &RewardSeries{
+		SeriesOne:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesTwo:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesThree: &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesFour:  &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesFive:  &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesSix:   &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+		SeriesSeven: &RewardPool{TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))},
+	})
 }
