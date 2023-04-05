@@ -18,10 +18,6 @@ accounts:
 - name: node3
   coins:
   - 50000000utlore
-- name: ecosystem
-  coins:
-  - 0utlore
-  address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
 - name: faucet
   coins:
   - 100000000ulore
@@ -69,11 +65,10 @@ genesis:
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
         pool_proportions:
           ecosystem:
-            proportion: 40
-            address: gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm
+            proportion: 30
           team:
-            proportion: 25
-        # remaining: community : 5% staking: 30%
+            proportion: 28
+        # remaining: community : 5% staking: 37%
         team_proportions:
         - proportion: 25
           address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke

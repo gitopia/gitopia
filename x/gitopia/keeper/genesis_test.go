@@ -1,11 +1,11 @@
-package gitopia_test
+package keeper_test
 
 import (
 	"testing"
 
 	keepertest "github.com/gitopia/gitopia/testutil/keeper"
 	"github.com/gitopia/gitopia/testutil/sample"
-	"github.com/gitopia/gitopia/x/gitopia"
+	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
@@ -224,8 +224,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.GitopiaKeeper(t)
-	gitopia.InitGenesis(ctx, *k, genesisState)
-	got := gitopia.ExportGenesis(ctx, *k)
+	keeper.InitGenesis(ctx, *k, genesisState)
+	got := keeper.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
 	require.Len(t, got.WhoisList, len(genesisState.WhoisList))

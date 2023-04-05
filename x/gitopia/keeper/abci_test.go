@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/simapp"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,13 +37,13 @@ func TestTokenDistributionSucessNoDistribution(t *testing.T) {
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), params.BaseCoinUnit))
 }
 
-func TestTokenDistributionSucessWithBadEcosystemAddress(t *testing.T) {
+func TestTokenDistributionSucessWithNonEmptyEcosystemAddress(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
-		PoolProportions: types.PoolProportions{
-			Ecosystem: &types.DistributionProportion{
-				Address: "bad_addr",
+		PoolProportions: gitopiatypes.PoolProportions{
+			Ecosystem: &gitopiatypes.DistributionProportion{
+				Address: "addr",
 			},
 		},
 	}
@@ -59,8 +59,8 @@ func TestTokenDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
-		PoolProportions: types.PoolProportions{
-			Team: &types.DistributionProportion{
+		PoolProportions: gitopiatypes.PoolProportions{
+			Team: &gitopiatypes.DistributionProportion{
 				Address: "addr",
 			},
 		},
@@ -77,13 +77,12 @@ func TestTokenDistributionSucess(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
-		PoolProportions: types.PoolProportions{
-			Ecosystem: &types.DistributionProportion{
-				Proportion: 40,
-				Address:    "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
+		PoolProportions: gitopiatypes.PoolProportions{
+			Ecosystem: &gitopiatypes.DistributionProportion{
+				Proportion: 30,
 			},
-			Team: &types.DistributionProportion{
-				Proportion: 25,
+			Team: &gitopiatypes.DistributionProportion{
+				Proportion: 28,
 			},
 		},
 	}
@@ -100,28 +99,28 @@ func TestTokenDistributionSucess(t *testing.T) {
 
 	gitopiaKeeper.TokenDistribution(ctx)
 
-	// NOTE: 65% of 100 is 32.5. 50-32 = 18
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(18)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
+	// NOTE: 58% of 50 is 29. 50-29 = 21
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(21)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), params.BaseCoinUnit))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), params.BaseCoinUnit))
 
-	accAdrr, _ := sdk.AccAddressFromBech32("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm")
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(20)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
-	accAdrr = accountKeeper.GetModuleAddress(types.TeamAccountName)
-	// NOTE: 25% of 50 is 12.5
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(12)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
+	accAdrr := accountKeeper.GetModuleAddress(gitopiatypes.EcosystemIncentivesAccountName)
+	// NOTE: 30% of 50 is 15
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(keeper.ECOSYSTEM_INCENTIVES_AMOUNT+15)), bankKeeper.GetBalance(ctx, accAdrr, params.BaseCoinUnit))
+	accAdrr = accountKeeper.GetModuleAddress(gitopiatypes.TeamAccountName)
+	// NOTE: 28% of 50 is 12.5
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(14)), bankKeeper.GetBalance(ctx, accAdrr, params.BaseCoinUnit))
 }
 
 func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
 	gParams := gitopiatypes.Params{
-		PoolProportions: types.PoolProportions{
-			Ecosystem: &types.DistributionProportion{
-				Proportion: 40,
-				Address:    "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm",
+		PoolProportions: gitopiatypes.PoolProportions{
+			Ecosystem: &gitopiatypes.DistributionProportion{
+				Proportion: 30,
 			},
-			Team: &types.DistributionProportion{
-				Proportion: 25,
+			Team: &gitopiatypes.DistributionProportion{
+				Proportion: 28,
 			},
 		},
 	}
@@ -135,9 +134,9 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 
 	gitopiaKeeper.TokenDistribution(ctx)
 
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), "utlore"))
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), "utlore"))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), params.BaseCoinUnit))
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), params.BaseCoinUnit))
 
-	accAdrr, _ := sdk.AccAddressFromBech32("gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm")
-	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accAdrr, "utlore"))
+	accAdrr := accountKeeper.GetModuleAddress(gitopiatypes.EcosystemIncentivesAccountName)
+	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(keeper.ECOSYSTEM_INCENTIVES_AMOUNT)), bankKeeper.GetBalance(ctx, accAdrr, params.BaseCoinUnit))
 }

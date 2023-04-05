@@ -13,14 +13,14 @@ func (k Keeper) TransferProportion(
 	ctx sdk.Context,
 	totalCoins sdk.Coins,
 	from string,
-	to sdk.AccAddress,
+	to string,
 	proportion int64) (sdk.Coins, error) {
 	coins := totalCoins.MulInt(math.NewInt(proportion)).QuoInt(math.NewInt(100))
 	if coins.IsZero() {
 		return nil, nil
 	}
 
-	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, from, to, coins)
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, from, to, coins)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error distributing to %v", to)
 	}
@@ -34,13 +34,12 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 	remainingMintedCoins := mintedCoins
 
 	if gitopiaParams.PoolProportions.Ecosystem != nil {
-		addr, err := sdk.AccAddressFromBech32(gitopiaParams.PoolProportions.Ecosystem.Address)
-		if err != nil {
-			ctx.Logger().Error(errors.Wrap(err, "bad address").Error())
+		if gitopiaParams.PoolProportions.Ecosystem.Address != "" {
+			err := errors.New("ecosystem incentives address not empty")
+			ctx.Logger().Error(err.Error())
 			panic(err)
 		}
-
-		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, addr,
+		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, types.EcosystemIncentivesAccountName,
 			gitopiaParams.PoolProportions.Ecosystem.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())
@@ -55,8 +54,7 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 			ctx.Logger().Error(err.Error())
 			panic(err)
 		}
-		teamAddress := k.accountKeeper.GetModuleAddress(types.TeamAccountName)
-		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, teamAddress, gitopiaParams.PoolProportions.Team.Proportion)
+		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, types.TeamAccountName, gitopiaParams.PoolProportions.Team.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())
 			panic(err)
