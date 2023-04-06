@@ -46,7 +46,19 @@ const (
 	rewardsServiceAddress = "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm"
 )
 
-var commentMap map[uint64]v2.Comment
+func normalizeRepoName(name string) string {
+	return strings.ToLower(name)
+}
+
+func resolveRepoNameConflict(name string, repoNameMap map[string]int) string {
+	normalizedRepoName := normalizeRepoName(name)
+	count := repoNameMap[normalizedRepoName]
+	if count > 0 {
+		name = fmt.Sprintf("%s-%d", name, count)
+	}
+	repoNameMap[normalizedRepoName]++
+	return name
+}
 
 // migrateTestnetState performs type migrations from v1.2.0 to v1.4.0. The
 // migration includes:
@@ -231,15 +243,8 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 
 	gitopiaV3Genesis.WhoisCount = state.WhoisCount
 
-	for _, oldbaseRepositoryKey := range state.BaseRepositoryKeyList {
-		baseRepositoryKey := v3.BaseRepositoryKey{
-			Id:      oldbaseRepositoryKey.Id,
-			Address: oldbaseRepositoryKey.Address,
-			Name:    oldbaseRepositoryKey.Name,
-		}
-
-		gitopiaV3Genesis.BaseRepositoryKeyList = append(gitopiaV3Genesis.BaseRepositoryKeyList, baseRepositoryKey)
-	}
+	repoNameMap := make(map[string]map[string]int)
+	newRepoNameMap := make(map[string]string)
 
 	for _, oldRepository := range state.RepositoryList {
 		var labels []*v3.RepositoryLabel
@@ -277,10 +282,16 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			})
 		}
 
+		if _, ok := repoNameMap[oldRepository.Owner.Id]; !ok {
+			repoNameMap[oldRepository.Owner.Id] = make(map[string]int)
+		}
+		newRepoName := resolveRepoNameConflict(oldRepository.Name, repoNameMap[oldRepository.Owner.Id])
+		newRepoNameMap[oldRepository.Name] = newRepoName
+
 		repository := v3.Repository{
 			Creator: oldRepository.Creator,
 			Id:      oldRepository.Id,
-			Name:    oldRepository.Name,
+			Name:    newRepoName,
 			Owner: &v3.RepositoryOwner{
 				Id:   oldRepository.Owner.Id,
 				Type: v3.OwnerType(oldRepository.Owner.Type),
@@ -314,7 +325,17 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 
 	gitopiaV3Genesis.RepositoryCount = state.RepositoryCount
 
-	commentMap = make(map[uint64]v2.Comment)
+	for _, oldbaseRepositoryKey := range state.BaseRepositoryKeyList {
+		baseRepositoryKey := v3.BaseRepositoryKey{
+			Id:      oldbaseRepositoryKey.Id,
+			Address: oldbaseRepositoryKey.Address,
+			Name:    normalizeRepoName(newRepoNameMap[oldbaseRepositoryKey.Name]),
+		}
+
+		gitopiaV3Genesis.BaseRepositoryKeyList = append(gitopiaV3Genesis.BaseRepositoryKeyList, baseRepositoryKey)
+	}
+
+	commentMap := make(map[uint64]v2.Comment)
 	for _, comment := range state.CommentList {
 		commentMap[comment.Id] = comment
 	}
