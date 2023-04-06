@@ -154,7 +154,7 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.StrategicPartnersAccountName)) {
 		totalStrategicPartnersCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))
 
-		if err := k.createModuleAccount(ctx, types.StrategicPartnersAccountName, totalStrategicPartnersCoins); err != nil {
+ 		if err := k.createModuleAccount(ctx, types.StrategicPartnersAccountName, totalStrategicPartnersCoins); err != nil {
 			panic(err)
 		}
 	}

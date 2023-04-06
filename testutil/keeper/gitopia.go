@@ -13,14 +13,10 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
+	"github.com/gitopia/gitopia/app"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
@@ -30,16 +26,7 @@ import (
 	tmdb "github.com/tendermint/tm-db"
 )
 
-var maccPerms = map[string][]string{
-	authtypes.FeeCollectorName:     nil,
-	distrtypes.ModuleName:          nil,
-	minttypes.ModuleName:           {authtypes.Minter},
-	stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-	govtypes.ModuleName:            {authtypes.Burner},
-	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	gitopiatypes.MinterAccountName: nil,
-}
+
 
 func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	logger := log.NewNopLogger()
@@ -56,7 +43,8 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
 
 	registry := codectypes.NewInterfaceRegistry()
-	appCodec := codec.NewProtoCodec(registry)
+	encConfig := app.MakeEncodingConfig()
+	appCodec := encConfig.Codec
 
 	amino := codec.NewLegacyAmino()
 	ss := typesparams.NewSubspace(appCodec,
@@ -71,7 +59,7 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		ss,
 		nil,
-		maccPerms,
+		app.GetMaccPerms(),
 		"gitopia",
 	)
 

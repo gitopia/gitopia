@@ -66,6 +66,14 @@ func validateNextInflationTime(i time.Time) error {
 }
 
 func validatePoolProportions(pp PoolProportions) error {
+	if pp.Ecosystem == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrLogic, "ecosystem proportion is empty")
+	}
+
+	if pp.Team == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrLogic, "team proportion is empty")
+	}
+
 	if pp.Ecosystem.Address != "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "ecosystem address must be empty. got %s", pp.Ecosystem.Address)
 	}
