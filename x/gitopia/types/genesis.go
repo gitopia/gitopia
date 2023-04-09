@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	// this line is used by starport scaffolding # ibc/genesistype/import
 )
 
@@ -194,7 +195,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := repositoryIdMap[elem.Id]; ok {
 			return fmt.Errorf("duplicated id for repository")
 		}
-		k := elem.Owner.Id + elem.Name
+		k := elem.Owner.Id + strings.ToLower(elem.Name)
 		if _, ok := repositoryMap[k]; ok {
 			return fmt.Errorf("duplicated repository")
 		}

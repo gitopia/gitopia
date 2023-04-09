@@ -198,6 +198,9 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.DaoCount = state.DaoCount
 
 	for _, oldUser := range state.UserList {
+		if oldUser.Creator == "" {
+			continue
+		}
 		user := v3.User{
 			Creator:        oldUser.Creator,
 			Id:             oldUser.Id,
@@ -244,7 +247,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.WhoisCount = state.WhoisCount
 
 	repoNameMap := make(map[string]map[string]int)
-	newRepoNameMap := make(map[string]string)
+	newRepoNameMap := make(map[string]map[string]string)
 
 	for _, oldRepository := range state.RepositoryList {
 		var labels []*v3.RepositoryLabel
@@ -284,9 +287,10 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 
 		if _, ok := repoNameMap[oldRepository.Owner.Id]; !ok {
 			repoNameMap[oldRepository.Owner.Id] = make(map[string]int)
+			newRepoNameMap[oldRepository.Owner.Id] = make(map[string]string)
 		}
 		newRepoName := resolveRepoNameConflict(oldRepository.Name, repoNameMap[oldRepository.Owner.Id])
-		newRepoNameMap[oldRepository.Name] = newRepoName
+		newRepoNameMap[oldRepository.Owner.Id][oldRepository.Name] = newRepoName
 
 		repository := v3.Repository{
 			Creator: oldRepository.Creator,
@@ -329,7 +333,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		baseRepositoryKey := v3.BaseRepositoryKey{
 			Id:      oldbaseRepositoryKey.Id,
 			Address: oldbaseRepositoryKey.Address,
-			Name:    normalizeRepoName(newRepoNameMap[oldbaseRepositoryKey.Name]),
+			Name:    normalizeRepoName(newRepoNameMap[oldbaseRepositoryKey.Address][oldbaseRepositoryKey.Name]),
 		}
 
 		gitopiaV3Genesis.BaseRepositoryKeyList = append(gitopiaV3Genesis.BaseRepositoryKeyList, baseRepositoryKey)
@@ -532,7 +536,7 @@ func GenerateGenesisCmd() *cobra.Command {
 		Short: "Generate Mainnet Genesis file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var ctx = client.GetClientContextFromCmd(cmd)
+			ctx := client.GetClientContextFromCmd(cmd)
 
 			blob, err := ioutil.ReadFile(args[0])
 			if err != nil {
@@ -600,6 +604,8 @@ func GenerateGenesisCmd() *cobra.Command {
 			votingParams := govv1types.NewVotingParams(fourteenDays)
 			govGenesis.VotingParams = &votingParams
 
+			// Disable all transfers
+			bankGenesis.Params.DefaultSendEnabled = false
 			bankGenesis.DenomMetadata = []banktypes.Metadata{
 				{
 					Description: "The native staking token of the Gitopia Hub.",
@@ -624,6 +630,13 @@ func GenerateGenesisCmd() *cobra.Command {
 				InflationMin:        sdk.NewDecWithPrec(25, 2),
 				GoalBonded:          sdk.NewDecWithPrec(67, 2),
 				BlocksPerYear:       uint64(60 * 60 * 8766 / 1.5), // assuming 1.5 second block times
+			}
+
+			distributionGenesis.Params = distributiontypes.Params{
+				CommunityTax:        sdk.NewDecWithPrec(5, 2), // 5%
+				BaseProposerReward:  sdk.NewDecWithPrec(1, 2), // 1%
+				BonusProposerReward: sdk.NewDecWithPrec(4, 2), // 4%
+				WithdrawAddrEnabled: true,
 			}
 
 			stakingGenesis.Params = stakingtypes.NewParams(

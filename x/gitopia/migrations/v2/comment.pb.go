@@ -189,7 +189,7 @@ func (m *Comment) GetCommentType() Comment_Type {
 }
 
 func init() {
-	// proto.RegisterEnum("gitopia.gitopia.gitopia.Comment_Type", Comment_Type_name, Comment_Type_value)
+	proto.RegisterEnum("gitopia.gitopia.gitopia.Comment_Type", Comment_Type_name, Comment_Type_value)
 	// proto.RegisterType((*Comment)(nil), "gitopia.gitopia.gitopia.Comment")
 }
 
