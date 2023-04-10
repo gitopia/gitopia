@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
@@ -30,11 +29,6 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
-	now := ctx.BlockTime()
-	expiration := now.AddDate(1, 0, 0)
-	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
-	granter, _ := sdk.AccAddressFromBech32(msg.Granter)
-
 	if msg.Creator != msg.Granter { // DAO address
 		_, found := k.GetDao(ctx, msg.Granter)
 		if !found {
@@ -50,25 +44,11 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 		}
 	}
 
-	switch msg.Permission {
-	case types.ProviderPermission_GIT_SERVER:
-		for _, t := range gitServerTypeUrls {
-			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
-			}
-		}
-	case types.ProviderPermission_STORAGE:
-		for _, t := range storageTypeUrls {
-			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
-			}
-		}
-	default:
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission (%v)", msg.Permission))
+	now := ctx.BlockTime()
+	expiration := now.AddDate(1, 0, 0)
+	err := k.Keeper.AuthorizeProvider(ctx, msg.Provider, msg.Granter, &expiration, msg.Permission)
+	if err != nil {
+		return nil, err
 	}
 
 	return &types.MsgAuthorizeProviderResponse{}, nil
