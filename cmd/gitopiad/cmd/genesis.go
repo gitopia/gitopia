@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
@@ -43,7 +44,8 @@ const (
 )
 
 const (
-	rewardsServiceAddress = "gitopia1rrad3vleav3svu7tutqp9sqqv9mh4gex62vjvm"
+	rewardsServiceAddress   = ""
+	strategicReserveAddress = ""
 )
 
 func normalizeRepoName(name string) string {
@@ -76,9 +78,9 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			Team:      &v3.DistributionProportion{Proportion: 28},
 		},
 		TeamProportions: []v3.DistributionProportion{
-			{Proportion: 50, Address: "gitopia1k9pvyj845y9a4m4vuxx8sjq5q28yxym520fh2x"},
-			{Proportion: 35, Address: "gitopia1njn3grh5ar4ccapyp4uehuq28wpk2sk5heu7ac"},
-			{Proportion: 15, Address: "gitopia1d5r0ql0pg5d8xfs5t0pmn7dl72m2zj2wchkfq3"},
+			{Proportion: 50, Address: ""},
+			{Proportion: 35, Address: ""},
+			{Proportion: 15, Address: ""},
 		},
 	}
 
@@ -568,15 +570,39 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 
-			var gitopiaV2Genesis v2.GenesisState
+			var (
+				gitopiaV2Genesis v2.GenesisState
+				authGenesis      authtypes.GenesisState
+				authzGenesis     authz.GenesisState
+			)
+
 			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaV2Genesis)
 			gitopiaV3Genesis, err := migrateTestnetState(gitopiaV2Genesis)
 			if err != nil {
 				return err
 			}
 
+			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
+			ctx.Codec.MustUnmarshalJSON(state[authz.ModuleName], &authzGenesis)
+
+			var baseAccounts []*codectypes.Any
+			for i := range authGenesis.Accounts {
+				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
+					acc := authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI)
+					err = acc.SetSequence(0)
+					if err != nil {
+						return err
+					}
+					accAny, err := codectypes.NewAnyWithValue(acc)
+					if err != nil {
+						return err
+					}
+					baseAccounts = append(baseAccounts, accAny)
+				}
+			}
+			authGenesis.Accounts = baseAccounts
+
 			var (
-				authGenesis         = authtypes.DefaultGenesisState()
 				bankGenesis         = banktypes.DefaultGenesisState()
 				crisisGenesis       = crisistypes.DefaultGenesisState()
 				govGenesis          = govv1types.DefaultGenesisState()
@@ -586,7 +612,6 @@ func GenerateGenesisCmd() *cobra.Command {
 				slashingGenesis     = slashingtypes.DefaultGenesisState()
 				genutilGenesis      = genutiltypes.DefaultGenesisState()
 				stakingGenesis      = stakingtypes.DefaultGenesisState()
-				authzGenesis        = authz.DefaultGenesisState()
 				groupGenesis        = group.NewGenesisState()
 				capabilityGenesis   = capabilitytypes.DefaultGenesis()
 				evidenceGenesis     = evidencetypes.DefaultGenesisState()
@@ -619,6 +644,41 @@ func GenerateGenesisCmd() *cobra.Command {
 					Symbol:  params.HumanCoinUnit,
 				},
 			}
+			bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{
+				Address: strategicReserveAddress,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(250_000_000_000_000))), // 250M LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_000_000_000_000))), // 1M LORE of ecosystem incentives for feegrants
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(7_142_857_140_000))), // 7,142,857.14 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(8_571_428_570_000))), // 8,571,428.57 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_785_714_290_000))), // 1,785,714.29 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(17_857_142_860_000))), // 17,857,142.86 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(714_285_710_000))), // 714,285.71 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(892_857_140_000))), // 892,857.14 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(892_857_140_000))), // 892,857.14 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(14_285_714_290_000))), // 14,285,714.29 LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_785_714_290_000))), // 1,785,714.29 LORE
+			},
+			)
 
 			crisisGenesis.ConstantFee = sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1000))
 
@@ -679,7 +739,8 @@ func GenerateGenesisCmd() *cobra.Command {
 				},
 			})
 
-			state[authtypes.ModuleName] = ctx.Codec.MustMarshalJSON(authGenesis)
+			state[authtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&authGenesis)
+			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(&authzGenesis)
 			state[banktypes.ModuleName] = ctx.Codec.MustMarshalJSON(bankGenesis)
 			state[crisistypes.ModuleName] = ctx.Codec.MustMarshalJSON(crisisGenesis)
 			state[govtypes.ModuleName] = ctx.Codec.MustMarshalJSON(govGenesis)
@@ -689,7 +750,6 @@ func GenerateGenesisCmd() *cobra.Command {
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
 			state["ibc"] = ctx.Codec.MustMarshalJSON(ibcGenesis)
-			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(authzGenesis)
 			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&gitopiaV3Genesis)
 			state[group.ModuleName] = ctx.Codec.MustMarshalJSON(groupGenesis)
 			state[capabilitytypes.ModuleName] = ctx.Codec.MustMarshalJSON(capabilityGenesis)
