@@ -37,4 +37,10 @@ message Params {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"genesis_time\""
   ];
+  string git_server = 5 [
+    (gogoproto.moretags) = "yaml:\"git_server\""
+  ];
+  string storage_provider = 6 [
+    (gogoproto.moretags) = "yaml:\"storage_provider\""
+  ];
 }
