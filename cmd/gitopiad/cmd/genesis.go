@@ -748,9 +748,12 @@ func GenerateGenesisCmd() *cobra.Command {
 				Address: "gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(892_857_140_000))), // 892,857.14 LORE
 			}, banktypes.Balance{
+				Address: "gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(7_142_857_140_000))), // 7,142,857.14 LORE
+			}, banktypes.Balance{
 				Address: earlySupportersMultiSigAddress,
-				// 25,714,285.71 LORE
-				// 7,142,857.14 LORE + 17,857,142.86 LORE + 714,285.71 LORE
+				// 18,571,428.57 LORE
+				// 17,857,142.86 LORE + 714,285.71 LORE
 				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(25_714_285_710_000))),
 			}, banktypes.Balance{
 				Address: "gitopia1pjg7v8u604cry55zrtgtvt2wrmsyxjllc0nzv4",
@@ -759,7 +762,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				Address: "gitopia1645my8jzsr2r0zd0tn5defgyw28ev0hcj96k44",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
 			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia1y6x670mtd784xxp52tsuvlhmnusvy90z3dfnn5",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
 			}, banktypes.Balance{
 				Address: "",
