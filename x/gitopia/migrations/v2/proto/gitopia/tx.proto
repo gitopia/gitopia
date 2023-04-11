@@ -15,7 +15,7 @@ import "gitopia/issue.proto";
 import "gitopia/repository.proto";
 import "gitopia/whois.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2;types";
 
 // Msg defines the Msg service.
 service Msg {

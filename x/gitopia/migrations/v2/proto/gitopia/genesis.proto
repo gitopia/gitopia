@@ -16,7 +16,7 @@ import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2;types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {
