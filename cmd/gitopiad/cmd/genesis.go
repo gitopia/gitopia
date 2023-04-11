@@ -53,6 +53,7 @@ const (
 	strategicReserveAddress5       = ""
 	feegrantsAddress               = ""
 	earlySupportersMultiSigAddress = ""
+	advisorsMultiSigAddress        = ""
 )
 
 func normalizeRepoName(name string) string {
@@ -744,6 +745,30 @@ func GenerateGenesisCmd() *cobra.Command {
 				// 27499999.99
 				// 7,142,857.14 LORE + 17,857,142.86 LORE + 714,285.71 LORE + 892,857.14 LORE + 892,857.14 LORE
 				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(27_499_999_990_000))),
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(750_000_000_000))), // 750k LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
+			}, banktypes.Balance{
+				Address: "",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(750_000_000_000))), // 750k LORE
+			}, banktypes.Balance{
+				Address: advisorsMultiSigAddress,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(3_000_000_000_000))), // 3M LORE
 			},
 			)
 
