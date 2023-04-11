@@ -97,7 +97,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		},
 		TeamProportions: []v3.DistributionProportion{
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia14t0ta8vvv2nrcx86g87z888s7pqat4svuyw7ae"},
 			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1ps5vrjmhtrkyxrge7d0fwvzsf02lq49wq3xeau"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1g0nvcrrd59zef2r9jt56jvut3gf6040svuveaa"},
