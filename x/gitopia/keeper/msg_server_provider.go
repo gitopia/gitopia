@@ -9,14 +9,14 @@ import (
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-var gitServerTypeUrls = [4]string{
+var GitServerTypeUrls = [4]string{
 	sdk.MsgTypeURL(&types.MsgForkRepository{}),
 	sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}),
 	sdk.MsgTypeURL(&types.MsgSetPullRequestState{}),
 	sdk.MsgTypeURL(&types.MsgUpdateTask{}),
 }
 
-var storageTypeUrls = [2]string{
+var StorageTypeUrls = [2]string{
 	sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}),
 	sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}),
 }
@@ -82,14 +82,14 @@ func (k msgServer) RevokeProviderPermission(goCtx context.Context, msg *types.Ms
 
 	switch msg.Permission {
 	case types.ProviderPermission_GIT_SERVER:
-		for _, t := range gitServerTypeUrls {
+		for _, t := range GitServerTypeUrls {
 			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 			if authorization != nil {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		for _, t := range storageTypeUrls {
+		for _, t := range StorageTypeUrls {
 			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 			if authorization != nil {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)

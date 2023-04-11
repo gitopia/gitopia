@@ -29,6 +29,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
 	"github.com/gitopia/gitopia/app/params"
+	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	v2 "github.com/gitopia/gitopia/x/gitopia/migrations/v2"
 	v3 "github.com/gitopia/gitopia/x/gitopia/migrations/v3"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
@@ -50,6 +51,15 @@ const (
 
 func normalizeRepoName(name string) string {
 	return strings.ToLower(name)
+}
+
+func newAnyAuthorization(a authz.Authorization) *codectypes.Any {
+	any, err := codectypes.NewAnyWithValue(a)
+	if err != nil {
+		panic(err)
+	}
+
+	return any
 }
 
 func resolveRepoNameConflict(name string, repoNameMap map[string]int) string {
@@ -90,6 +100,8 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("6.5"), Address: ""},
 		},
+		GitServer:       "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
+		StorageProvider: "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
 	}
 
 	for _, oldTask := range state.TaskList {
@@ -581,7 +593,6 @@ func GenerateGenesisCmd() *cobra.Command {
 			var (
 				gitopiaV2Genesis v2.GenesisState
 				authGenesis      authtypes.GenesisState
-				authzGenesis     authz.GenesisState
 			)
 
 			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaV2Genesis)
@@ -591,7 +602,6 @@ func GenerateGenesisCmd() *cobra.Command {
 			}
 
 			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
-			ctx.Codec.MustUnmarshalJSON(state[authz.ModuleName], &authzGenesis)
 
 			var baseAccounts []*codectypes.Any
 			for i := range authGenesis.Accounts {
@@ -611,6 +621,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			authGenesis.Accounts = baseAccounts
 
 			var (
+				authzGenesis        = authz.DefaultGenesisState()
 				bankGenesis         = banktypes.DefaultGenesisState()
 				crisisGenesis       = crisistypes.DefaultGenesisState()
 				govGenesis          = govv1types.DefaultGenesisState()
@@ -626,6 +637,46 @@ func GenerateGenesisCmd() *cobra.Command {
 				feegrantGenesis     = feegranttypes.DefaultGenesisState()
 				rewardsGenesis      = rewardstypes.DefaultGenesis()
 			)
+
+			for _, user := range gitopiaV3Genesis.UserList {
+				for _, t := range keeper.GitServerTypeUrls {
+					a := authz.GrantAuthorization{
+						Granter:       user.Creator,
+						Grantee:       gitopiaV3Genesis.Params.GitServer,
+						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
+					}
+					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
+				}
+
+				for _, t := range keeper.StorageTypeUrls {
+					a := authz.GrantAuthorization{
+						Granter:       user.Creator,
+						Grantee:       gitopiaV3Genesis.Params.StorageProvider,
+						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
+					}
+					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
+				}
+			}
+
+			for _, dao := range gitopiaV3Genesis.DaoList {
+				for _, t := range keeper.GitServerTypeUrls {
+					a := authz.GrantAuthorization{
+						Granter:       dao.Address,
+						Grantee:       gitopiaV3Genesis.Params.GitServer,
+						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
+					}
+					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
+				}
+
+				for _, t := range keeper.StorageTypeUrls {
+					a := authz.GrantAuthorization{
+						Granter:       dao.Address,
+						Grantee:       gitopiaV3Genesis.Params.StorageProvider,
+						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
+					}
+					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
+				}
+			}
 
 			fourteenDays := 14 * 24 * time.Hour
 			depositParams := govv1types.NewDepositParams(
@@ -748,7 +799,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			})
 
 			state[authtypes.ModuleName] = ctx.Codec.MustMarshalJSON(&authGenesis)
-			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(&authzGenesis)
+			state[authz.ModuleName] = ctx.Codec.MustMarshalJSON(authzGenesis)
 			state[banktypes.ModuleName] = ctx.Codec.MustMarshalJSON(bankGenesis)
 			state[crisistypes.ModuleName] = ctx.Codec.MustMarshalJSON(crisisGenesis)
 			state[govtypes.ModuleName] = ctx.Codec.MustMarshalJSON(govGenesis)

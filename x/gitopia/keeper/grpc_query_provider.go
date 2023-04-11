@@ -19,7 +19,7 @@ func (k Keeper) CheckGitServerAuthorization(c context.Context, req *types.QueryC
 	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
 	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
 
-	for _, t := range gitServerTypeUrls {
+	for _, t := range GitServerTypeUrls {
 		authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 		if authorization == nil {
 			return &types.QueryCheckGitServerAuthorizationResponse{HaveAuthorization: false}, nil
@@ -39,7 +39,7 @@ func (k Keeper) CheckStorageProviderAuthorization(c context.Context, req *types.
 	grantee, _ := sdk.AccAddressFromBech32(req.ProviderAddress)
 	granter, _ := sdk.AccAddressFromBech32(req.UserAddress)
 
-	for _, t := range storageTypeUrls {
+	for _, t := range StorageTypeUrls {
 		authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 		if authorization == nil {
 			return &types.QueryCheckStorageProviderAuthorizationResponse{HaveAuthorization: false}, nil

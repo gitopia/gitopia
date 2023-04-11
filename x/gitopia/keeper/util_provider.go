@@ -23,7 +23,7 @@ func (k Keeper) AuthorizeProvider(
 
 	switch providerType {
 	case types.ProviderPermission_GIT_SERVER:
-		for _, t := range gitServerTypeUrls {
+		for _, t := range GitServerTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
 			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, expiry)
 			if err != nil {
@@ -31,7 +31,7 @@ func (k Keeper) AuthorizeProvider(
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		for _, t := range storageTypeUrls {
+		for _, t := range StorageTypeUrls {
 			authorization := authz.NewGenericAuthorization(t)
 			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, expiry)
 			if err != nil {
