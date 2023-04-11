@@ -45,8 +45,14 @@ const (
 )
 
 const (
-	rewardsServiceAddress   = ""
-	strategicReserveAddress = ""
+	rewardsServiceAddress          = ""
+	strategicReserveAddress1       = ""
+	strategicReserveAddress2       = ""
+	strategicReserveAddress3       = ""
+	strategicReserveAddress4       = ""
+	strategicReserveAddress5       = ""
+	feegrantsAddress               = ""
+	earlySupportersMultiSigAddress = ""
 )
 
 func normalizeRepoName(name string) string {
@@ -704,38 +710,40 @@ func GenerateGenesisCmd() *cobra.Command {
 				},
 			}
 			bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{
-				Address: strategicReserveAddress,
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(250_000_000_000_000))), // 250M LORE
+				Address: strategicReserveAddress1,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50_000_000_000_000))), // 50M LORE
 			}, banktypes.Balance{
-				Address: "",
+				Address: strategicReserveAddress2,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50_000_000_000_000))), // 50M LORE
+			}, banktypes.Balance{
+				Address: strategicReserveAddress3,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50_000_000_000_000))), // 50M LORE
+			}, banktypes.Balance{
+				Address: strategicReserveAddress4,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50_000_000_000_000))), // 50M LORE
+			}, banktypes.Balance{
+				Address: strategicReserveAddress5,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50_000_000_000_000))), // 50M LORE
+			}, banktypes.Balance{
+				Address: feegrantsAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_000_000_000_000))), // 1M LORE of ecosystem incentives for feegrants
 			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(7_142_857_140_000))), // 7,142,857.14 LORE
-			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(8_571_428_570_000))), // 8,571,428.57 LORE
 			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_785_714_290_000))), // 1,785,714.29 LORE
 			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(17_857_142_860_000))), // 17,857,142.86 LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(714_285_710_000))), // 714,285.71 LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(892_857_140_000))), // 892,857.14 LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(892_857_140_000))), // 892,857.14 LORE
-			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(14_285_714_290_000))), // 14,285,714.29 LORE
 			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_785_714_290_000))), // 1,785,714.29 LORE
+			}, banktypes.Balance{
+				Address: earlySupportersMultiSigAddress,
+				// 27499999.99
+				// 7,142,857.14 LORE + 17,857,142.86 LORE + 714,285.71 LORE + 892,857.14 LORE + 892,857.14 LORE
+				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(27_499_999_990_000))),
 			},
 			)
 
