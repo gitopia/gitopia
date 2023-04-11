@@ -35,7 +35,7 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 	gitopiaParams := k.GetParams(ctx)
 	minterAddress := k.accountKeeper.GetModuleAddress(k.minterAccountName)
 	mintedCoin := k.bankKeeper.GetBalance(ctx, minterAddress, params.BaseCoinUnit)
-	remainingMintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
+	remainingMintedCoins := sdk.Coins{mintedCoin}
 
 	if gitopiaParams.PoolProportions.Ecosystem != nil {
 		if gitopiaParams.PoolProportions.Ecosystem.Address != "" {
