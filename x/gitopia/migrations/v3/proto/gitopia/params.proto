@@ -4,7 +4,7 @@ package gitopia.gitopia.gitopia.v3;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3;types";
 
 message DistributionProportion {
   string proportion = 1 [

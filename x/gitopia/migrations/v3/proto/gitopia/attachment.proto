@@ -1,7 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia.v3;
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3;types";
 
 message Attachment {
     string name = 1;

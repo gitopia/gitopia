@@ -1,4 +1,4 @@
-package v3
+package types
 
 import (
 	"gopkg.in/yaml.v2"
