@@ -54,6 +54,7 @@ const (
 	feegrantsAddress               = ""
 	earlySupportersMultiSigAddress = ""
 	advisorsMultiSigAddress        = ""
+	teamMultiSigAddress            = ""
 )
 
 func normalizeRepoName(name string) string {
@@ -97,15 +98,15 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		TeamProportions: []v3.DistributionProportion{
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1ps5vrjmhtrkyxrge7d0fwvzsf02lq49wq3xeau"},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1g0nvcrrd59zef2r9jt56jvut3gf6040svuveaa"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("6.5"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("6.5"), Address: teamMultiSigAddress},
 		},
 		GitServer:       "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
 		StorageProvider: "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
@@ -746,10 +747,10 @@ func GenerateGenesisCmd() *cobra.Command {
 				// 7,142,857.14 LORE + 17,857,142.86 LORE + 714,285.71 LORE + 892,857.14 LORE + 892,857.14 LORE
 				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(27_499_999_990_000))),
 			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia1pjg7v8u604cry55zrtgtvt2wrmsyxjllc0nzv4",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
 			}, banktypes.Balance{
-				Address: "",
+				Address: "gitopia1645my8jzsr2r0zd0tn5defgyw28ev0hcj96k44",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
 			}, banktypes.Balance{
 				Address: "",
