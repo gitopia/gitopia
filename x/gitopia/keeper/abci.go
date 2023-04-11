@@ -3,22 +3,26 @@ package keeper
 import (
 	"fmt"
 
-	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/pkg/errors"
 )
 
 func (k Keeper) TransferProportion(
 	ctx sdk.Context,
-	totalCoins sdk.Coins,
+	totalCoin sdk.Coin,
 	from string,
 	to string,
-	proportion int64) (sdk.Coins, error) {
-	coins := totalCoins.MulInt(math.NewInt(proportion)).QuoInt(math.NewInt(100))
-	if coins.IsZero() {
+	proportion sdk.Dec) (sdk.Coins, error) {
+	dec := sdk.NewDec(totalCoin.Amount.Int64())
+	amount := dec.Mul(proportion).Quo(sdk.NewDec(100)).TruncateInt()
+	if amount.IsZero() {
 		return nil, nil
 	}
+
+	coin := sdk.NewCoin(params.BaseCoinUnit, amount)
+	coins := sdk.Coins{coin}
 
 	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, from, to, coins)
 	if err != nil {
@@ -30,8 +34,8 @@ func (k Keeper) TransferProportion(
 func (k Keeper) TokenDistribution(ctx sdk.Context) {
 	gitopiaParams := k.GetParams(ctx)
 	minterAddress := k.accountKeeper.GetModuleAddress(k.minterAccountName)
-	mintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
-	remainingMintedCoins := mintedCoins
+	mintedCoin := k.bankKeeper.GetBalance(ctx, minterAddress, params.BaseCoinUnit)
+	remainingMintedCoins := k.bankKeeper.GetAllBalances(ctx, minterAddress)
 
 	if gitopiaParams.PoolProportions.Ecosystem != nil {
 		if gitopiaParams.PoolProportions.Ecosystem.Address != "" {
@@ -39,7 +43,7 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 			ctx.Logger().Error(err.Error())
 			panic(err)
 		}
-		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, types.EcosystemIncentivesAccountName,
+		coins, err := k.TransferProportion(ctx, mintedCoin, k.minterAccountName, types.EcosystemIncentivesAccountName,
 			gitopiaParams.PoolProportions.Ecosystem.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())
@@ -54,7 +58,7 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 			ctx.Logger().Error(err.Error())
 			panic(err)
 		}
-		coins, err := k.TransferProportion(ctx, mintedCoins, k.minterAccountName, types.TeamAccountName, gitopiaParams.PoolProportions.Team.Proportion)
+		coins, err := k.TransferProportion(ctx, mintedCoin, k.minterAccountName, types.TeamAccountName, gitopiaParams.PoolProportions.Team.Proportion)
 		if err != nil {
 			ctx.Logger().Error(err.Error())
 			panic(err)

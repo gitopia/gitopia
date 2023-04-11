@@ -74,13 +74,21 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.Params = v3.Params{
 		NextInflationTime: time.Now().AddDate(2, 0, 0),
 		PoolProportions: v3.PoolProportions{
-			Ecosystem: &v3.DistributionProportion{Proportion: 30},
-			Team:      &v3.DistributionProportion{Proportion: 28},
+			Ecosystem: &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
+			Team:      &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
 		},
 		TeamProportions: []v3.DistributionProportion{
-			{Proportion: 50, Address: ""},
-			{Proportion: 35, Address: ""},
-			{Proportion: 15, Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("6.5"), Address: ""},
 		},
 	}
 

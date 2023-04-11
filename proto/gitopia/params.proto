@@ -7,7 +7,11 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 message DistributionProportion {
-  int64 proportion = 1 [(gogoproto.moretags) = "yaml:\"proportion\""];
+  string proportion = 1 [
+    (gogoproto.moretags) = "yaml:\"weight\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
   string address = 2 [ (gogoproto.moretags) = "yaml:\"address\"" ];
 }
 

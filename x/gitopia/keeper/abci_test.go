@@ -8,6 +8,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	"github.com/gitopia/gitopia/app/params"
+	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/gitopia/gitopia/testutil/simapp"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
@@ -76,14 +77,24 @@ func TestTokenDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
 func TestTokenDistributionSucess(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
+	ecosystemProportion, _ := sdk.NewDecFromStr("30.0")
+	teamProportion, _ := sdk.NewDecFromStr("28.0")
+	teamProportion1, _ := sdk.NewDecFromStr("7.5")
+	teamProportion2, _ := sdk.NewDecFromStr("92.5")
+	teamAddress1 := sample.AccAddress()
+	teamAddress2 := sample.AccAddress()
 	gParams := gitopiatypes.Params{
 		PoolProportions: gitopiatypes.PoolProportions{
 			Ecosystem: &gitopiatypes.DistributionProportion{
-				Proportion: 30,
+				Proportion: ecosystemProportion,
 			},
 			Team: &gitopiatypes.DistributionProportion{
-				Proportion: 28,
+				Proportion: teamProportion,
 			},
+		},
+		TeamProportions: []gitopiatypes.DistributionProportion{
+			{Proportion: teamProportion1, Address: teamAddress1},
+			{Proportion: teamProportion2, Address: teamAddress2},
 		},
 	}
 	minter := gitopiatypes.MinterAccountName
@@ -114,13 +125,15 @@ func TestTokenDistributionSucess(t *testing.T) {
 func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
+	ecosystemProportion, _ := sdk.NewDecFromStr("30.0")
+	teamProportion, _ := sdk.NewDecFromStr("28.0")
 	gParams := gitopiatypes.Params{
 		PoolProportions: gitopiatypes.PoolProportions{
 			Ecosystem: &gitopiatypes.DistributionProportion{
-				Proportion: 30,
+				Proportion: ecosystemProportion,
 			},
 			Team: &gitopiatypes.DistributionProportion{
-				Proportion: 28,
+				Proportion: teamProportion,
 			},
 		},
 	}
