@@ -1,0 +1,51 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+import "gitopia/task.proto";
+import "gitopia/branch.proto";
+import "gitopia/tag.proto";
+import "gitopia/member.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
+import "gitopia/release.proto";
+import "gitopia/pullRequest.proto";
+import "gitopia/dao.proto";
+import "gitopia/comment.proto";
+import "gitopia/issue.proto";
+import "gitopia/repository.proto";
+import "gitopia/user.proto";
+import "gitopia/whois.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2";
+
+// GenesisState defines the gitopia module's genesis state.
+message GenesisState {
+		repeated BaseRepositoryKey baseRepositoryKeyList = 26 [(gogoproto.nullable) = false];
+		repeated UserDao userDaoList = 25 [(gogoproto.nullable) = false];
+    	repeated Task taskList = 17 [(gogoproto.nullable) = false];
+  		uint64 taskCount = 18;
+  		repeated Branch branchList = 19 [(gogoproto.nullable) = false];
+  		uint64 branchCount = 20;
+		repeated Tag tagList = 21 [(gogoproto.nullable) = false];
+		uint64 tagCount = 22;
+		repeated Member memberList = 23 [(gogoproto.nullable) = false];
+		uint64 memberCount = 24;
+  // this line is used by starport scaffolding # genesis/proto/state
+		repeated Release releaseList = 15 [(gogoproto.nullable) = false];
+		uint64 releaseCount = 16;
+		repeated PullRequest pullRequestList = 13 [(gogoproto.nullable) = false];
+		uint64 pullRequestCount = 14;
+		repeated Dao daoList = 11 [(gogoproto.nullable) = false];
+		uint64 daoCount = 12;
+		repeated Comment commentList = 9 [(gogoproto.nullable) = false];
+		uint64 commentCount = 10;
+		repeated Issue issueList = 7 [(gogoproto.nullable) = false];
+		uint64 issueCount = 8;
+		repeated Repository repositoryList = 5 [(gogoproto.nullable) = false];
+		uint64 repositoryCount = 6;
+		repeated User userList = 3 [(gogoproto.nullable) = false];
+		uint64 userCount = 4;
+		repeated Whois whoisList = 1 [(gogoproto.nullable) = false];
+		uint64 whoisCount = 2;
+    // this line is used by starport scaffolding # ibc/genesis/proto
+}

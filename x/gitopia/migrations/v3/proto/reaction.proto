@@ -1,0 +1,18 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v3;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3";
+
+import "gogoproto/gogo.proto";
+
+message Reaction {
+    string address = 1;
+    repeated Emoji emojis = 2;
+}
+
+enum Emoji {
+    option (gogoproto.goproto_enum_prefix) = false;
+
+    EMOJI_THUMBS_UP = 0 [(gogoproto.enumvalue_customname) = "EmojiThumbsUp"];
+    EMOJI_THUMBS_DOWN = 1 [(gogoproto.enumvalue_customname) = "EmojiThumbsDown"];
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2";
+
+message Branch {
+  uint64 id = 1;
+  uint64 repositoryId = 2;
+  string name = 3; 
+  string sha = 4; 
+  bool allowForcePush= 5;
+  int64 createdAt = 6; 
+  int64 updatedAt = 7; 
+}

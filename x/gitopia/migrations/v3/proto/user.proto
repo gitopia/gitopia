@@ -1,0 +1,28 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v3;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3";
+
+import "gogoproto/gogo.proto";
+
+message User {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3;
+  string username = 4; 
+  string usernameGithub = 5; 
+  string avatarUrl = 6; 
+  repeated string followers = 7; 
+  repeated string following = 8;
+  repeated uint64 starred_repos = 9; 
+  string subscriptions = 10; 
+  string bio = 11; 
+  int64 createdAt = 12; 
+  int64 updatedAt = 13; 
+  bool verified = 14;
+}
+
+message UserDao {
+  string userAddress = 1;
+  string daoAddress = 2;
+}
