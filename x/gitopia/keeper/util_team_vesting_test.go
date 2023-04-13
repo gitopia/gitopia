@@ -1,4 +1,4 @@
-package keeper
+package keeper_test
 
 import (
 	"math/rand"
@@ -8,11 +8,18 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/app/params"
+	tkeeper "github.com/gitopia/gitopia/testutil/keeper"
+	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/gitopia/gitopia/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	VESTING_PER_MONTH = float64(2825985008333.3335)
+)
+
 func TestTeamVestingMonthlySuccess(t *testing.T) {
-	VESTING_PER_MONTH := float64(2825985008333.3335)
 	now := time.Now()
 
 	type testCase struct {
@@ -56,18 +63,18 @@ func TestTeamVestingMonthlySuccess(t *testing.T) {
 		{
 			name:         "max vesting at vesting period",
 			blockTime:    now.AddDate(11, 0, 0),
-			vestedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(TEAM_VESTING_AMOUNT)),
+			vestedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(keeper.TEAM_VESTING_AMOUNT)),
 		},
 		{
 			name:         "max vesting even after vesting period",
 			blockTime:    now.AddDate(11+rand.Intn(30), 0, 0),
-			vestedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(TEAM_VESTING_AMOUNT)),
+			vestedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(keeper.TEAM_VESTING_AMOUNT)),
 		},
 	}
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			coin := vestedTeamTokens(now, tc.blockTime)
+			coin := keeper.VestedTeamTokens(now, tc.blockTime)
 			assert.Equal(t, tc.vestedAmount, coin)
 		})
 	}
@@ -79,7 +86,7 @@ func TestTeamVestingSuccessInCalendarMonth(t *testing.T) {
 	// hardcoding date so that an hour before doesnt fall in previous calendar month
 	now := time.Date(2023, 04, 12, 0, 0, 0, 0, time.Now().Local().Location())
 
-	coin := vestedTeamTokens(now, now.AddDate(1, 1, 0).Add(time.Duration(-1)*time.Hour))
+	coin := keeper.VestedTeamTokens(now, now.AddDate(1, 1, 0).Add(time.Duration(-1)*time.Hour))
 	// not equal since team tokens have already vested even before completion of a month
 	assert.NotEqual(t, sdk.Coin{
 		Denom:  params.BaseCoinUnit,
@@ -92,10 +99,113 @@ func TestTeamVestingSuccessEveryMonth(t *testing.T) {
 	now := time.Date(2023, 04, 12, 0, 0, 0, 0, time.Now().Local().Location())
 	CLIFF_PERIOD := 1
 	// 1 month after cliff period
-	coin := vestedTeamTokens(now, now.AddDate(CLIFF_PERIOD, 1, 0))
+	coin := keeper.VestedTeamTokens(now, now.AddDate(CLIFF_PERIOD, 1, 0))
 	assert.True(t, coin.Amount.GTE(math.NewInt(2_000_000_000_000)))
 
 	// 2 months after cliff period
-	coin = vestedTeamTokens(now, now.AddDate(CLIFF_PERIOD, 2, 0))
+	coin = keeper.VestedTeamTokens(now, now.AddDate(CLIFF_PERIOD, 2, 0))
 	assert.True(t, coin.Amount.GTE(math.NewInt(2_000_000_000_000*2)))
 }
+
+func TestVestedDeveloperProportionSuccess(t *testing.T) {
+	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	now := time.Now()
+	ctx = ctx.WithBlockTime(now.AddDate(0, 1, 0)) // one month vesting
+	devAddr := sample.AccAddress()
+
+	gKeeper.SetParams(ctx, types.Params{
+		TeamProportions: []types.DistributionProportion{{
+			Proportion: sdk.NewDec(20),
+			Address:    devAddr,
+		}},
+		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	})
+
+	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+
+	assert.NoError(t, err)
+	assert.Equal(t, math.NewInt(int64(VESTING_PER_MONTH*20/100)), amount.Amount)
+}
+
+func TestVestedDeveloperProportionWithNoVesting(t *testing.T) {
+	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	now := time.Now()
+	ctx = ctx.WithBlockTime(now)
+	devAddr := sample.AccAddress()
+
+	gKeeper.SetParams(ctx, types.Params{
+		TeamProportions: []types.DistributionProportion{{
+			Proportion: sdk.NewDec(20),
+			Address:    devAddr,
+		}},
+		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	})
+
+	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+
+	assert.Equal(t, "team tokens have not vested: invalid request", err.Error())
+	assert.Equal(t, sdk.Coin{}, amount)
+}
+
+func TestVestedDeveloperUnauthorized(t *testing.T) {
+	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	now := time.Now()
+	ctx = ctx.WithBlockTime(now)
+	devAddr := sample.AccAddress()
+
+	gKeeper.SetParams(ctx, types.Params{
+		TeamProportions: []types.DistributionProportion{},
+		GenesisTime:     now.Add(time.Duration(-366*24) * time.Hour),
+	})
+
+	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+
+	assert.ErrorContains(t, err, "unauthorized")
+	assert.Equal(t, sdk.Coin{}, amount)
+}
+
+func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
+	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	now := time.Now()
+	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting
+	devAddr := sample.AccAddress()
+
+	gKeeper.SetParams(ctx, types.Params{
+		TeamProportions: []types.DistributionProportion{{
+			Proportion: sdk.NewDec(20),
+			Address:    devAddr,
+		}},
+		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	})
+
+	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+
+	assert.NoError(t, err)
+	assert.Equal(t, math.NewInt(int64(keeper.TEAM_VESTING_AMOUNT*20/100)), amount.Amount)
+}
+
+func TestFractionalVestedDeveloperProportion(t *testing.T) {
+	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	now := time.Now()
+	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting
+	devAddr := sample.AccAddress()
+
+	gKeeper.SetParams(ctx, types.Params{
+		TeamProportions: []types.DistributionProportion{{
+			Proportion: sdk.NewDecWithPrec(205, 1),
+			Address:    devAddr,
+		}},
+		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	})
+
+	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+
+	assert.NoError(t, err)
+	// 69,519,231,205,000
+	proportion := sdk.NewDecWithPrec(205, 3).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt64() 
+	assert.Equal(t, math.NewInt(proportion), amount.Amount)
+	// 67,823,640,200,000
+	roundedProportion := sdk.NewDecWithPrec(2, 1).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt64()
+	assert.NotEqual(t, math.NewInt(int64(roundedProportion)), amount.Amount)
+}
+ 

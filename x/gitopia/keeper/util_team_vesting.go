@@ -16,7 +16,7 @@ const (
 	VESTING_PERIOD      = 120                 // 10 years * 12 months
 )
 
-func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
+func VestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 	// Calculate the number of months between genesis time and current time
 	months := currentTime.Year()*12 + int(currentTime.Month()) - (startTime.Year()*12 + int(startTime.Month()))
 
@@ -38,7 +38,7 @@ func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 func (k Keeper) GetVestedAmount(ctx sdk.Context, address string) (sdk.Coin, error) {
 	gitopiaParams := k.GetParams(ctx)
 
-	var proportion sdk.Dec
+	proportion := sdk.NewDec(0)
 	for _, p := range gitopiaParams.TeamProportions {
 		if address == p.Address {
 			proportion = p.Proportion
@@ -46,11 +46,11 @@ func (k Keeper) GetVestedAmount(ctx sdk.Context, address string) (sdk.Coin, erro
 		}
 	}
 
-	if proportion.Equal(sdk.NewDec(0)) {
+	if proportion.IsZero() {
 		return sdk.Coin{}, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "account (%v) doesn't have permission to perform this operation", address)
 	}
 
-	vested := vestedTeamTokens(gitopiaParams.GenesisTime, ctx.BlockTime())
+	vested := VestedTeamTokens(gitopiaParams.GenesisTime, ctx.BlockTime())
 	if vested.Amount.IsZero() {
 		return sdk.Coin{}, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "team tokens have not vested")
 	}
