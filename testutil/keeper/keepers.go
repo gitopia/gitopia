@@ -42,11 +42,11 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 	keys := appKeepers.GetKVStoreKey()
 	mkeys := appKeepers.GetMemoryStoreKey()
 	for _, key := range keys {
-		stateStore.MountStoreWithDB(key, storetypes.StoreTypeMemory, nil)
+		stateStore.MountStoreWithDB(key, storetypes.StoreTypeIAVL, nil)
 	}
 
 	for _, key := range mkeys {
-		stateStore.MountStoreWithDB(key, storetypes.StoreTypeIAVL, db)
+		stateStore.MountStoreWithDB(key, storetypes.StoreTypeMemory, db)
 	}
 
 	require.NoError(t, stateStore.LoadLatestVersion())
