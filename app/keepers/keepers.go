@@ -49,7 +49,6 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v5/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v5/modules/core/keeper"
-	"github.com/gitopia/gitopia/x/gitopia"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	rewardskeeper "github.com/gitopia/gitopia/x/rewards/keeper"
@@ -88,10 +87,6 @@ type AppKeepers struct {
 	AuthzKeeper    *authzkeeper.Keeper
 	GitopiaKeeper  gitopiakeeper.Keeper
 	RewardKeeper   rewardskeeper.Keeper
-
-	// Modules
-	TransferModule transfer.AppModule
-	GitopiaModule  gitopia.AppModule
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -279,7 +274,6 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.ScopedTransferKeeper,
 	)
-	appKeepers.TransferModule = transfer.NewAppModule(appKeepers.TransferKeeper)
 	transferIBCModule := transfer.NewIBCModule(appKeepers.TransferKeeper)
 
 	// create static IBC router, add transfer route, then set and seal it
@@ -306,9 +300,6 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
 	)
-
-	appKeepers.GitopiaModule = gitopia.NewAppModule(appCodec, appKeepers.GitopiaKeeper)
-
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
 		appCodec, 
 		appKeepers.keys[rewardtypes.StoreKey], 

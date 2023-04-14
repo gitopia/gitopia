@@ -187,7 +187,7 @@ func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
 func TestFractionalVestedDeveloperProportion(t *testing.T) {
 	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
 	now := time.Now()
-	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting
+	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting. genesis 1 year ago
 	devAddr := sample.AccAddress()
 
 	gKeeper.SetParams(ctx, types.Params{
