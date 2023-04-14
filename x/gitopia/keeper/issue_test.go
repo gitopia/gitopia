@@ -21,7 +21,8 @@ func createNIssue(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Issue {
 }
 
 func TestIssueGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNIssue(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetRepositoryIssue(ctx, item.RepositoryId, item.Iid)
@@ -31,7 +32,8 @@ func TestIssueGet(t *testing.T) {
 }
 
 func TestIssueRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNIssue(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRepositoryIssue(ctx, item.RepositoryId, item.Iid)
@@ -41,13 +43,15 @@ func TestIssueRemove(t *testing.T) {
 }
 
 func TestIssueGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNIssue(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllIssue(ctx))
 }
 
 func TestIssueCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNIssue(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetIssueCount(ctx))

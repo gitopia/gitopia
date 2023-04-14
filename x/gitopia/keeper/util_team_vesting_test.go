@@ -108,7 +108,8 @@ func TestTeamVestingSuccessEveryMonth(t *testing.T) {
 }
 
 func TestVestedDeveloperProportionSuccess(t *testing.T) {
-	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	appKeepers, ctx := tkeeper.AppKeepers(t)
+	gKeeper := appKeepers.GitopiaKeeper
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now.AddDate(0, 1, 0)) // one month vesting
 	devAddr := sample.AccAddress()
@@ -128,7 +129,8 @@ func TestVestedDeveloperProportionSuccess(t *testing.T) {
 }
 
 func TestVestedDeveloperProportionWithNoVesting(t *testing.T) {
-	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	appKeepers, ctx := tkeeper.AppKeepers(t)
+	gKeeper := appKeepers.GitopiaKeeper
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now)
 	devAddr := sample.AccAddress()
@@ -148,7 +150,8 @@ func TestVestedDeveloperProportionWithNoVesting(t *testing.T) {
 }
 
 func TestVestedDeveloperUnauthorized(t *testing.T) {
-	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	appKeepers, ctx := tkeeper.AppKeepers(t)
+	gKeeper := appKeepers.GitopiaKeeper
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now)
 	devAddr := sample.AccAddress()
@@ -165,7 +168,8 @@ func TestVestedDeveloperUnauthorized(t *testing.T) {
 }
 
 func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
-	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	appKeepers, ctx := tkeeper.AppKeepers(t)
+	gKeeper := appKeepers.GitopiaKeeper
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting
 	devAddr := sample.AccAddress()
@@ -185,7 +189,8 @@ func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
 }
 
 func TestFractionalVestedDeveloperProportion(t *testing.T) {
-	gKeeper, ctx := tkeeper.GitopiaKeeper(t)
+	appKeepers, ctx := tkeeper.AppKeepers(t)
+	gKeeper := appKeepers.GitopiaKeeper
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting. genesis 1 year ago
 	devAddr := sample.AccAddress()
@@ -202,10 +207,9 @@ func TestFractionalVestedDeveloperProportion(t *testing.T) {
 
 	assert.NoError(t, err)
 	// 69,519,231,205,000
-	proportion := sdk.NewDecWithPrec(205, 3).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt64() 
+	proportion := sdk.NewDecWithPrec(205, 3).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt64()
 	assert.Equal(t, math.NewInt(proportion), amount.Amount)
 	// 67,823,640,200,000
 	roundedProportion := sdk.NewDecWithPrec(2, 1).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt64()
 	assert.NotEqual(t, math.NewInt(int64(roundedProportion)), amount.Amount)
 }
- 

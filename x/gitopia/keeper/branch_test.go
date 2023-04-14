@@ -23,7 +23,8 @@ func createNBranch(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Branch
 }
 
 func TestBranchGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBranch(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetRepositoryBranch(ctx, item.RepositoryId, item.Name)
@@ -36,7 +37,8 @@ func TestBranchGet(t *testing.T) {
 }
 
 func TestBranchRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBranch(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRepositoryBranch(ctx, item.RepositoryId, item.Name)
@@ -46,7 +48,8 @@ func TestBranchRemove(t *testing.T) {
 }
 
 func TestBranchGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBranch(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -55,7 +58,8 @@ func TestBranchGetAll(t *testing.T) {
 }
 
 func TestRepositoryBranchGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBranch(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -64,7 +68,8 @@ func TestRepositoryBranchGetAll(t *testing.T) {
 }
 
 func TestBranchCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBranch(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetBranchCount(ctx))

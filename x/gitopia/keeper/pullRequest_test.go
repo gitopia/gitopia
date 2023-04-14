@@ -23,7 +23,8 @@ func createNPullRequest(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.P
 }
 
 func TestPullRequestGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNPullRequest(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetRepositoryPullRequest(ctx, item.Base.RepositoryId, item.Iid)
@@ -33,7 +34,8 @@ func TestPullRequestGet(t *testing.T) {
 }
 
 func TestPullRequestRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNPullRequest(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRepositoryPullRequest(ctx, item.Base.RepositoryId, item.Iid)
@@ -43,13 +45,15 @@ func TestPullRequestRemove(t *testing.T) {
 }
 
 func TestPullRequestGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNPullRequest(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllPullRequest(ctx))
 }
 
 func TestPullRequestCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNPullRequest(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetPullRequestCount(ctx))

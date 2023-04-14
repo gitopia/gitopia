@@ -116,7 +116,8 @@ func TestRepositoryBranchQueryPaginated(t *testing.T) {
 }
 */
 func TestBranchQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBranch(keeper, ctx, 5)
 
