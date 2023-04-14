@@ -22,6 +22,11 @@ func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 	// Calculate the number of months between genesis time and current time
 	months := currentTime.Year()*12 + int(currentTime.Month()) - (startTime.Year()*12 + int(startTime.Month()))
 
+	// Check if the current day of the month is less than the start day, and if so, reduce the month count by 1
+	if currentTime.Day() < startTime.Day() {
+		months--
+	}
+
 	if months <= CLIFF_PERIOD {
 		return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)) // No vesting before the end of the cliff period
 	}

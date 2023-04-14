@@ -20,7 +20,6 @@ const (
 
 	MinterAccountName                     = "minter"
 	TeamAccountName                       = "team"
-	StrategicPartnersAccountName          = "strategicpartners"
 	LiquidityBootstrappingPoolAccountName = "liquiditybootstrappingpool"
 	EcosystemIncentivesAccountName        = "ecosystemincentives"
 

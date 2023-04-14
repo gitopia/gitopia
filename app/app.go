@@ -247,7 +247,6 @@ func (app *GitopiaApp) BlockedModuleAccountAddrs() map[string]bool {
 	// delete(modAccAddrs, authtypes.NewModuleAddress(grouptypes.ModuleName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.TeamAccountName).String())
-	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.StrategicPartnersAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.LiquidityBootstrappingPoolAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.EcosystemIncentivesAccountName).String())
 
