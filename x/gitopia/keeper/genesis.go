@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	STRATEGIC_PARTNERS_AMOUNT           = 51_071_429_000_000
 	LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT = 30_000_000_000_000
 	ECOSYSTEM_INCENTIVES_AMOUNT         = 7_500_000_000_000
 )
@@ -149,14 +148,6 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 		teamModuleAcc := authtypes.NewEmptyModuleAccount(
 			types.TeamAccountName, authtypes.Minter)
 		k.accountKeeper.SetModuleAccount(ctx, teamModuleAcc)
-	}
-
-	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.StrategicPartnersAccountName)) {
-		totalStrategicPartnersCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))
-
- 		if err := k.createModuleAccount(ctx, types.StrategicPartnersAccountName, totalStrategicPartnersCoins); err != nil {
-			panic(err)
-		}
 	}
 
 	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.LiquidityBootstrappingPoolAccountName)) {

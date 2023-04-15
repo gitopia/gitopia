@@ -45,16 +45,21 @@ const (
 )
 
 const (
-	rewardsServiceAddress          = ""
-	strategicReserveAddress1       = ""
-	strategicReserveAddress2       = ""
-	strategicReserveAddress3       = ""
-	strategicReserveAddress4       = ""
-	strategicReserveAddress5       = ""
-	feegrantsAddress               = ""
-	earlySupportersMultiSigAddress = ""
-	advisorsMultiSigAddress        = ""
-	teamMultiSigAddress            = ""
+	rewardsServiceAddress            = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
+	strategicReserveAddress1         = ""
+	strategicReserveAddress2         = ""
+	strategicReserveAddress3         = ""
+	strategicReserveAddress4         = ""
+	strategicReserveAddress5         = ""
+	feegrantsAddress                 = ""
+	earlySupportersMultiSigAddress   = ""
+	strategicPartnersMultiSigAddress = ""
+	advisorsMultiSigAddress          = ""
+	teamMultiSigAddress              = ""
+)
+
+const (
+	STRATEGIC_PARTNERS_AMOUNT = 51_071_429_000_000
 )
 
 func normalizeRepoName(name string) string {
@@ -101,12 +106,12 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1ps5vrjmhtrkyxrge7d0fwvzsf02lq49wq3xeau"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1g0nvcrrd59zef2r9jt56jvut3gf6040svuveaa"},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1kcnhjh9fkcc2w74g20s8edu6ue2eyamd3aqees"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("6.5"), Address: teamMultiSigAddress},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: "gitopia1fyztge5vhfdfhnghumssv7z5cca7ctyecq3fqf"},
+			// 6.5 + 1.0
+			{Proportion: sdk.MustNewDecFromStr("7.5"), Address: teamMultiSigAddress},
 		},
 		GitServer:       "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
 		StorageProvider: "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
@@ -755,6 +760,9 @@ func GenerateGenesisCmd() *cobra.Command {
 				// 18,571,428.57 LORE
 				// 17,857,142.86 LORE + 714,285.71 LORE
 				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(25_714_285_710_000))),
+			}, banktypes.Balance{
+				Address: strategicPartnersMultiSigAddress,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))),
 			}, banktypes.Balance{
 				Address: "gitopia1pjg7v8u604cry55zrtgtvt2wrmsyxjllc0nzv4",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
