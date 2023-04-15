@@ -14,12 +14,12 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/gitopia/gitopia/app"
 	"github.com/gitopia/gitopia/app/keepers"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
@@ -41,12 +41,17 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 
 	keys := appKeepers.GetKVStoreKey()
 	mkeys := appKeepers.GetMemoryStoreKey()
+	tkeys := appKeepers.GetTransientStoreKey()
 	for _, key := range keys {
 		stateStore.MountStoreWithDB(key, storetypes.StoreTypeIAVL, nil)
 	}
 
 	for _, key := range mkeys {
 		stateStore.MountStoreWithDB(key, storetypes.StoreTypeMemory, db)
+	}
+
+	for _, key := range tkeys {
+		stateStore.MountStoreWithDB(key, storetypes.StoreTypeTransient, nil)
 	}
 
 	require.NoError(t, stateStore.LoadLatestVersion())
@@ -59,12 +64,14 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 
 	amino := codec.NewLegacyAmino()
 
-	appKeepers.ParamsKeeper = paramskeeper.NewKeeper(appCodec, amino, keys[paramstypes.StoreKey], nil)
+	appKeepers.ParamsKeeper = paramskeeper.NewKeeper(
+		appCodec, amino, keys[paramstypes.StoreKey],
+		tkeys[paramstypes.TStoreKey])
 
 	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		keys[authtypes.StoreKey],
-		appKeepers.GetSubspace(authtypes.ModuleName),
+		appKeepers.ParamsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
 		"gitopia",
@@ -82,7 +89,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appCodec,
 		keys[banktypes.StoreKey],
 		appKeepers.AccountKeeper,
-		appKeepers.GetSubspace(banktypes.ModuleName),
+		appKeepers.ParamsKeeper.Subspace(banktypes.ModuleName),
 		nil,
 	)
 	appKeepers.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
@@ -92,12 +99,12 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		keys[stakingtypes.StoreKey],
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
-		appKeepers.GetSubspace(stakingtypes.ModuleName),
+		appKeepers.ParamsKeeper.Subspace(stakingtypes.ModuleName),
 	)
 
 	mintKeeper := mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], 
-		appKeepers.GetSubspace(minttypes.ModuleName), 
+		appCodec, keys[minttypes.StoreKey],
+		appKeepers.ParamsKeeper.Subspace(minttypes.ModuleName),
 		stakingKeeper, appKeepers.AccountKeeper,
 		appKeepers.BankKeeper, types.MinterAccountName)
 

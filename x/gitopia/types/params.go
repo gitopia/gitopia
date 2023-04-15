@@ -35,7 +35,7 @@ func DefaultParams() Params {
 	teamProportion2, _ := sdk.NewDecFromStr("35.0")
 	teamProportion3, _ := sdk.NewDecFromStr("15.0")
 
-	return NewParams(time.Now().AddDate(2, 0, 0),
+	return NewParams(time.Now().AddDate(2, 0, 0).UTC(),
 		PoolProportions{
 			Ecosystem: &DistributionProportion{Proportion: ecosystemProportion},
 			Team:      &DistributionProportion{Proportion: teamProportion},
@@ -45,7 +45,7 @@ func DefaultParams() Params {
 			{teamProportion2, "gitopia1njn3grh5ar4ccapyp4uehuq28wpk2sk5heu7ac"},
 			{teamProportion3, "gitopia1d5r0ql0pg5d8xfs5t0pmn7dl72m2zj2wchkfq3"},
 		},
-		time.Now().Add(time.Duration(-365*24)*time.Hour), // one year ago
+		time.Now().Add(time.Duration(-365*24)*time.Hour).UTC(), // one year ago
 		"gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke",
 		"gitopia1xp4e40rd4akt882h2pxl8cw8ygxjxndu23c5wn",
 	)
