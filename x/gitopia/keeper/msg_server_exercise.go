@@ -12,13 +12,18 @@ import (
 func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*types.MsgExerciseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	vestedAmount, err := k.GetVestedAmount(ctx, msg.Creator)
+	vestedAmount, err := k.GetVestedProportion(ctx, msg.Creator)
 	if err != nil {
 		return nil, err
 	}
 	exercisedAmount, f := k.GetExercisedAmount(ctx, msg.Creator)
+	balance := sdk.Coins{vestedAmount}
+	if f {
+		balance = sdk.Coins{vestedAmount}.Sub(exercisedAmount.Amount)
+	}
+
 	amount := sdk.Coins{sdk.NormalizeCoin(msg.Amount)}
-	if amount.IsAllGT(sdk.Coins{vestedAmount}.Sub(exercisedAmount.Amount)) {
+	if amount.IsAllGT(balance) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "cannot exercise more than vested tokens")
 	}
 

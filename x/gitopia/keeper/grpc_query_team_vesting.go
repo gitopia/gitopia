@@ -11,7 +11,7 @@ import (
 
 func (k Keeper) VestedAmount(c context.Context, req *types.QueryVestedAmountRequest) (*types.QueryVestedAmountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	amount, err := k.GetVestedAmount(ctx, req.Address)
+	amount, err := k.GetVestedProportion(ctx, req.Address)
 	if err != nil {
 		return nil, err
 	}

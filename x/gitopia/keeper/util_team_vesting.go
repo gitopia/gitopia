@@ -18,13 +18,14 @@ const (
 
 func VestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 	// Calculate the number of months between genesis time and current time
-	months := (currentTime.Year() -1) *12 + int(currentTime.Month()) - ((startTime.Year()-1)*12 + int(startTime.Month()))
+	months := (currentTime.Year()-1)*12 + int(currentTime.Month()) -
+		((startTime.Year()-1)*12 + int(startTime.Month()))
 
 	// Check if the current day of the month is less than the start day, and if so, reduce the month count by 1
 	if currentTime.Day() < startTime.Day() {
 		months--
 	}
-	
+
 	if months <= CLIFF_PERIOD {
 		return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)) // No vesting before the end of the cliff period
 	}
@@ -40,7 +41,7 @@ func VestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 	return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(vestedAmount)))
 }
 
-func (k Keeper) GetVestedAmount(ctx sdk.Context, address string) (sdk.Coin, error) {
+func (k Keeper) GetVestedProportion(ctx sdk.Context, address string) (sdk.Coin, error) {
 	gitopiaParams := k.GetParams(ctx)
 
 	proportion := sdk.NewDec(0)

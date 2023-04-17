@@ -35,7 +35,7 @@ func DefaultParams() Params {
 	teamProportion2, _ := sdk.NewDecFromStr("35.0")
 	teamProportion3, _ := sdk.NewDecFromStr("15.0")
 
-	return NewParams(time.Now().AddDate(2, 0, 0).UTC(),
+	return NewParams(time.Now().AddDate(2, 0, 0).UTC(), // two years from now
 		PoolProportions{
 			Ecosystem: &DistributionProportion{Proportion: ecosystemProportion},
 			Team:      &DistributionProportion{Proportion: teamProportion},

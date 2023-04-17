@@ -80,17 +80,21 @@ func TestTeamVestingMonthlySuccess(t *testing.T) {
 	}
 }
 
-// team vesting happens before completion of a month
-func TestTeamVestingSuccessInCalendarMonth(t *testing.T) {
-	// date of writing this test!!
-	// hardcoding date so that an hour before doesnt fall in previous calendar month
-	now := time.Date(2023, 04, 12, 0, 0, 0, 0, time.Now().Local().Location())
+func TestTeamVestingOnlyAfterCompletionOfAMonth(t *testing.T) {
+	now := time.Now()
 
-	coin := keeper.VestedTeamTokens(now, now.AddDate(1, 1, 0).Add(time.Duration(-1)*time.Hour))
-	// not equal since team tokens have already vested even before completion of a month
-	assert.NotEqual(t, sdk.Coin{
+	// not vested till the day before completion of vesting month
+	coin := keeper.VestedTeamTokens(now, now.AddDate(1, 1, 0).Add(time.Duration(-24)*time.Hour))
+	assert.Equal(t, sdk.Coin{
 		Denom:  params.BaseCoinUnit,
 		Amount: math.NewInt(0),
+	}.String(), coin.String())
+
+	// vested on the day of completion of vesting month
+	coin = keeper.VestedTeamTokens(now, now.AddDate(1, 1, 0))
+	assert.Equal(t, sdk.Coin{
+		Denom:  params.BaseCoinUnit,
+		Amount: math.NewInt(int64(VESTING_PER_MONTH)),
 	}, coin)
 }
 
@@ -122,7 +126,7 @@ func TestVestedDeveloperProportionSuccess(t *testing.T) {
 		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
 	})
 
-	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
 	assert.NoError(t, err)
 	assert.Equal(t, math.NewInt(int64(VESTING_PER_MONTH*20/100)), amount.Amount)
@@ -143,7 +147,7 @@ func TestVestedDeveloperProportionWithNoVesting(t *testing.T) {
 		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
 	})
 
-	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
 	assert.Equal(t, "team tokens have not vested: invalid request", err.Error())
 	assert.Equal(t, sdk.Coin{}, amount)
@@ -161,7 +165,7 @@ func TestVestedDeveloperUnauthorized(t *testing.T) {
 		GenesisTime:     now.Add(time.Duration(-366*24) * time.Hour),
 	})
 
-	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
 	assert.ErrorContains(t, err, "unauthorized")
 	assert.Equal(t, sdk.Coin{}, amount)
@@ -182,7 +186,7 @@ func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
 		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
 	})
 
-	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
 	assert.NoError(t, err)
 	assert.Equal(t, math.NewInt(int64(keeper.TEAM_VESTING_AMOUNT*20/100)), amount.Amount)
@@ -203,7 +207,7 @@ func TestFractionalVestedDeveloperProportion(t *testing.T) {
 		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
 	})
 
-	amount, err := gKeeper.GetVestedAmount(ctx, devAddr)
+	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
 	assert.NoError(t, err)
 	// 69,519,231,205,000
