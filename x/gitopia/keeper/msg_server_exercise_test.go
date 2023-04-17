@@ -301,7 +301,7 @@ func TestExerciseToAnotherAdddress(t *testing.T) {
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
 }
 
-// ideally, there should always be sufficient balance. see next TC
+// ideally, there should always be sufficient balance. see team vesting schedule TC
 func TestExerciseFailsOnInsufficientBalance(t *testing.T) {
 	srv, context, keepers := setupMsgServerWithKeepers(t)
 	ctx := sdk.UnwrapSDKContext(context)
@@ -327,8 +327,4 @@ func TestExerciseFailsOnInsufficientBalance(t *testing.T) {
 	assert.ErrorContains(t, err, "insufficient funds")
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
-}
-
-func TestTeamAccountEmissionAsPerTeamVestingSchedule(t *testing.T) {
-
 }

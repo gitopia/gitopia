@@ -6,6 +6,7 @@ import (
 	"github.com/gitopia/gitopia/app/params"
 )
 
+// https://github.com/cosmos/cosmos-sdk/issues/13308
 // total max supply in utlore
 const MAX_SUPPLY = 1711136433
 
