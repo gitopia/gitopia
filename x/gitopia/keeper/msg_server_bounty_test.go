@@ -4,18 +4,31 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
 	"github.com/gitopia/gitopia/app/params"
+	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
-func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
-	suite.SetupValidator(stakingtypes.Bonded)
-	suite.SetupTest()
-	_, _, issueIid, _ := suite.setupPreBounty()
+func TestBountyMsgServerCreate(t *testing.T) {
+	srv, context, keepers := setupMsgServerWithKeepers(t)
+	ctx := sdk.UnwrapSDKContext(context)
+	user := sample.AccAddress()
+	userAddr, err := sdk.AccAddressFromBech32(user)
+	assert.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
+	assert.NoError(t, err)
+	testutil.FundAccount(keepers.BankKeeper, ctx, userAddr, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))))
+
+	rRes, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: user, Name: "repository", Owner: user})
+	assert.NoError(t, err)
+
+	iRes, err := srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: user, RepositoryId: rRes.RepositoryId, Title: "issue"})
+	assert.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -24,14 +37,16 @@ func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
 	}{
 		{
 			desc: "Invalid repository id or issue iid",
-			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
-				Expiry: time.Now().Add(time.Hour * 24).Unix(),
+			request: &types.MsgCreateBounty{
+				Creator: user,
+				Expiry:  time.Now().Add(time.Hour * 24).Unix(),
 			},
 			err: sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc: "Invalid expiry",
-			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
+			request: &types.MsgCreateBounty{
+				Creator:      user,
 				Amount:       []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
 				Expiry:       time.Time{}.Unix(),
 				RepositoryId: 0,
@@ -40,26 +55,51 @@ func (suite *KeeperTestSuite) TestBountyMsgServerCreate() {
 		},
 		{
 			desc: "Success",
-			request: &types.MsgCreateBounty{Creator: string(suite.TestAccs[0]),
+			request: &types.MsgCreateBounty{
+				Creator:   user,
 				Amount:    []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
 				Expiry:    time.Now().Add(time.Hour * 24).Unix(),
-				ParentIid: issueIid,
+				ParentIid: iRes.Iid,
 			},
 		},
 	} {
-		suite.Run(tc.desc, func() {
-			_, err := suite.msgServer.CreateBounty(suite.Ctx, tc.request)
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err := srv.CreateBounty(ctx, tc.request)
 			if tc.err != nil {
-				suite.Require().Error(err)
+				assert.Error(t, err)
 			} else {
-				suite.Require().NoError(err)
+				assert.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestBountyMsgServerUpdate(t *testing.T) {
-	creator := "A"
+	srv, context, keepers := setupMsgServerWithKeepers(t)
+	ctx := sdk.UnwrapSDKContext(context)
+	user := sample.AccAddress()
+	userAddr, err := sdk.AccAddressFromBech32(user)
+	assert.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
+	assert.NoError(t, err)
+	testutil.FundAccount(keepers.BankKeeper, ctx, userAddr, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000))))
+	user2 := sample.AccAddress()
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user2, Username: user2})
+	assert.NoError(t, err)
+
+	rRes, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: user, Name: "repository", Owner: user})
+	assert.NoError(t, err)
+
+	iRes, err := srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: user, RepositoryId: rRes.RepositoryId, Title: "issue"})
+	assert.NoError(t, err)
+
+	bRes, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{
+		Creator:   user,
+		Amount:    []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
+		Expiry:    time.Now().Add(time.Hour * 24).Unix(),
+		ParentIid: iRes.Iid,
+	})
+	assert.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -67,37 +107,69 @@ func TestBountyMsgServerUpdate(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgUpdateBountyExpiry{Creator: creator},
+			desc: "Success",
+			request: &types.MsgUpdateBountyExpiry{
+				Creator: user,
+				Id:      bRes.Id,
+				Expiry:  time.Now().Add(time.Hour * 24 * 2).Unix(),
+			},
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdateBountyExpiry{Creator: "B"},
-			err:     sdkerrors.ErrUnauthorized,
+			desc: "Unauthorized",
+			request: &types.MsgUpdateBountyExpiry{
+				Creator: user2,
+				Id:      bRes.Id,
+				Expiry:  time.Now().Add(time.Hour * 24 * 2).Unix(),
+			},
+			err: sdkerrors.ErrUnauthorized,
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgUpdateBountyExpiry{Creator: creator, Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
+			desc: "not found",
+			request: &types.MsgUpdateBountyExpiry{
+				Creator: sample.AccAddress(),
+				Id:      10,
+			},
+			err: sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc: "past expiry",
+			request: &types.MsgUpdateBountyExpiry{
+				Creator: user,
+				Id:      bRes.Id,
+				Expiry:  time.Now().Add(time.Hour * -24).Unix(),
+			},
+			err: sdkerrors.ErrInvalidRequest,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-			_, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{Creator: creator})
-			require.NoError(t, err)
-
 			_, err = srv.UpdateBountyExpiry(ctx, tc.request)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				assert.ErrorIs(t, err, tc.err)
 			} else {
-				require.NoError(t, err)
+				assert.NoError(t, err)
 			}
 		})
 	}
 }
 
 func TestBountyMsgServerDelete(t *testing.T) {
-	creator := "A"
+	srv, context, keepers := setupMsgServerWithKeepers(t)
+	ctx := sdk.UnwrapSDKContext(context)
+	user := sample.AccAddress()
+	userAddr, err := sdk.AccAddressFromBech32(user)
+	assert.NoError(t, err)
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user, Username: user})
+	assert.NoError(t, err)
+	testutil.FundAccount(keepers.BankKeeper, ctx, userAddr, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10000))))
+	user2 := sample.AccAddress()
+	_, err = srv.CreateUser(ctx, &types.MsgCreateUser{Creator: user2, Username: user2})
+	assert.NoError(t, err)
+
+	rRes, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: user, Name: "repository", Owner: user})
+	assert.NoError(t, err)
+
+	iRes, err := srv.CreateIssue(ctx, &types.MsgCreateIssue{Creator: user, RepositoryId: rRes.RepositoryId, Title: "issue"})
+	assert.NoError(t, err)
 
 	for _, tc := range []struct {
 		desc    string
@@ -105,69 +177,44 @@ func TestBountyMsgServerDelete(t *testing.T) {
 		err     error
 	}{
 		{
-			desc:    "Completed",
-			request: &types.MsgDeleteBounty{Creator: creator},
+			desc: "Success",
+			request: &types.MsgDeleteBounty{
+				Creator: user,
+			},
 		},
 		{
-			desc:    "Unauthorized",
-			request: &types.MsgDeleteBounty{Creator: "B"},
-			err:     sdkerrors.ErrUnauthorized,
+			desc: "Unauthorized",
+			request: &types.MsgDeleteBounty{
+				Creator: user2,
+			},
+			err: sdkerrors.ErrUnauthorized,
 		},
 		{
-			desc:    "KeyNotFound",
-			request: &types.MsgDeleteBounty{Creator: creator, Id: 10},
-			err:     sdkerrors.ErrKeyNotFound,
+			desc: "KeyNotFound",
+			request: &types.MsgDeleteBounty{
+				Creator: user,
+				Id:      10,
+			},
+			err: sdkerrors.ErrKeyNotFound,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			srv, ctx := setupMsgServer(t)
-
-			_, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{Creator: creator})
-			require.NoError(t, err)
+			bRes, err := srv.CreateBounty(ctx, &types.MsgCreateBounty{
+				Creator:   user,
+				Amount:    []sdk.Coin{{Denom: params.BaseCoinUnit, Amount: sdk.NewInt(1000)}},
+				Expiry:    time.Now().Add(time.Hour * 24).Unix(),
+				ParentIid: iRes.Iid,
+			})
+			assert.NoError(t, err)
+			if tc.request.Id == 0 {
+				tc.request.Id = bRes.Id
+			}
 			_, err = srv.DeleteBounty(ctx, tc.request)
 			if tc.err != nil {
-				require.ErrorIs(t, err, tc.err)
+				assert.ErrorIs(t, err, tc.err)
 			} else {
-				require.NoError(t, err)
+				assert.NoError(t, err)
 			}
 		})
 	}
-}
-
-func (suite *KeeperTestSuite) setupPreBounty() (users []string, repositoryId types.RepositoryId, issueId uint64, pullRequestId uint64) {
-	users = append(users,
-		string(suite.TestAccs[0]),
-		string(suite.TestAccs[1]))
-	repositoryId = types.RepositoryId{
-		Id:   users[0],
-		Name: "repository",
-	}
-	branches := []string{"branch-X", "branch-Y"}
-
-	for _, user := range users {
-		_, err := suite.msgServer.CreateUser(suite.Ctx, &types.MsgCreateUser{Creator: user, Username: user})
-		suite.Require().NoError(err)
-	}
-
-	_, err := suite.msgServer.CreateRepository(suite.Ctx, &types.MsgCreateRepository{Creator: users[0], Name: "repository", Owner: users[0]})
-	suite.Require().NoError(err)
-
-	for _, branch := range branches {
-		_, err = suite.msgServer.SetBranch(suite.Ctx, &types.MsgSetBranch{
-			Creator:      users[0],
-			RepositoryId: repositoryId,
-			Branch: types.MsgSetBranch_Branch{
-				Name: branch,
-			},
-		})
-		suite.Require().NoError(err)
-	}
-
-	issue, err := suite.msgServer.CreateIssue(suite.Ctx, &types.MsgCreateIssue{Creator: users[0], RepositoryId: repositoryId, Title: "issue"})
-	suite.Require().NoError(err)
-
-	pullRequest, err := suite.msgServer.CreatePullRequest(suite.Ctx, &types.MsgCreatePullRequest{Creator: users[0], HeadRepositoryId: repositoryId, HeadBranch: branches[0], BaseRepositoryId: repositoryId, BaseBranch: branches[1]})
-	suite.Require().NoError(err)
-
-	return users, repositoryId, issue.Iid, pullRequest.Id
 }
