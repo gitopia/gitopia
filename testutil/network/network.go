@@ -38,7 +38,7 @@ func New(t *testing.T, configs ...network.Config) *network.Network {
 	} else {
 		cfg = configs[0]
 	}
-	net, err := network.New(t, "", cfg)
+	net, err := network.New(t, "./test", cfg)
 	if err != nil {
 		panic("cannot create a new Network for tests")
 	}

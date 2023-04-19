@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"google.golang.org/grpc/codes"
@@ -14,8 +15,9 @@ import (
 
 	"github.com/gitopia/gitopia/testutil/network"
 	"github.com/gitopia/gitopia/testutil/nullify"
+	"github.com/gitopia/gitopia/testutil/sample"
 	"github.com/gitopia/gitopia/x/rewards/client/cli"
-    "github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/x/rewards/types"
 )
 
 // Prevent strconv unused error
@@ -25,15 +27,14 @@ func networkWithRewardsObjects(t *testing.T, n int) (*network.Network, []types.R
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
-    require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
+	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
 	for i := 0; i < n; i++ {
-		rewards := types.Reward{
-			Recipient: strconv.Itoa(i),
-			
+		reward := types.Reward{
+			Recipient: sample.AccAddress(),
 		}
-		nullify.Fill(&rewards)
-		state.RewardsList = append(state.RewardsList, rewards)
+		nullify.Fill(&reward)
+		state.RewardsList = append(state.RewardsList, reward)
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
@@ -49,32 +50,31 @@ func TestShowRewards(t *testing.T) {
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc string
+		desc        string
 		idRecipient string
-        
+
 		args []string
 		err  error
 		obj  types.Reward
 	}{
 		{
-			desc: "found",
+			desc:        "found",
 			idRecipient: objs[0].Recipient,
-            
+
 			args: common,
 			obj:  objs[0],
 		},
 		{
-			desc: "not found",
+			desc:        "not found",
 			idRecipient: strconv.Itoa(100000),
-            
+
 			args: common,
 			err:  status.Error(codes.NotFound, "not found"),
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-			    tc.idRecipient,
-                
+				tc.idRecipient,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowRewards(), args)
@@ -87,10 +87,11 @@ func TestShowRewards(t *testing.T) {
 				var resp types.QueryGetRewardResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 				require.NotNil(t, resp.Reward)
-				require.Equal(t,
-					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.Reward),
-				)
+				nullify.Fill(&resp)
+				// query doesnt return reward as is. returns additional processed fields
+				assert.Equal(t, tc.obj.Recipient, resp.Reward.Recipient)
+				assert.Equal(t, tc.obj.Amount, resp.Reward.Amount)
+				assert.Equal(t, tc.obj.Creator, resp.Reward.Creator)
 			}
 		})
 	}
@@ -125,9 +126,9 @@ func TestListRewards(t *testing.T) {
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
-            	nullify.Fill(objs),
-            	nullify.Fill(resp.Rewards),
-            )
+				nullify.Fill(objs),
+				nullify.Fill(resp.Rewards),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -141,9 +142,9 @@ func TestListRewards(t *testing.T) {
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
-            	nullify.Fill(objs),
-            	nullify.Fill(resp.Rewards),
-            )
+				nullify.Fill(objs),
+				nullify.Fill(resp.Rewards),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})
@@ -153,7 +154,7 @@ func TestListRewards(t *testing.T) {
 		require.NoError(t, err)
 		var resp types.QueryAllRewardsResponse
 		require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-		require.NoError(t, err)
+
 		require.Equal(t, len(objs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
 			nullify.Fill(objs),

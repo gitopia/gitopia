@@ -210,6 +210,7 @@ func (app *GitopiaApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abc
 // InitChainer application update at chain initialization
 func (app *GitopiaApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
+	
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
