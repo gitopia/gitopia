@@ -16,8 +16,8 @@ import (
 var _ = strconv.IntSize
 
 func TestRewardsMsgServerCreate(t *testing.T) {
-	k, ctx := keepertest.RewardsKeeper(t)
-	srv := keeper.NewMsgServerImpl(*k)
+	keepers, ctx := keepertest.AppKeepers(t)
+	srv := keeper.NewMsgServerImpl(keepers.RewardKeeper)
 	wctx := sdk.WrapSDKContext(ctx)
 	creator := "A"
 	for i := 0; i < 5; i++ {
@@ -26,7 +26,7 @@ func TestRewardsMsgServerCreate(t *testing.T) {
 		}
 		_, err := srv.CreateReward(wctx, expected)
 		require.NoError(t, err)
-		rst, found := k.GetReward(ctx,
+		rst, found := keepers.RewardKeeper.GetReward(ctx,
 			expected.Recipient,
 		)
 		require.True(t, found)

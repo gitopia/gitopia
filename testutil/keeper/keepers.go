@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	bapp "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -14,6 +15,11 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -24,6 +30,8 @@ import (
 	"github.com/gitopia/gitopia/app/keepers"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/x/rewards/keeper"
+	rewardstypes "github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -94,7 +102,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 	)
 	appKeepers.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
 
-	stakingKeeper := stakingkeeper.NewKeeper(
+	appKeepers.StakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
 		keys[stakingtypes.StoreKey],
 		appKeepers.AccountKeeper,
@@ -102,22 +110,56 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.ParamsKeeper.Subspace(stakingtypes.ModuleName),
 	)
 
-	mintKeeper := mintkeeper.NewKeeper(
+	appKeepers.MintKeeper = mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey],
 		appKeepers.ParamsKeeper.Subspace(minttypes.ModuleName),
-		stakingKeeper, appKeepers.AccountKeeper,
+		appKeepers.StakingKeeper, appKeepers.AccountKeeper,
 		appKeepers.BankKeeper, types.MinterAccountName)
 
 	appKeepers.GitopiaKeeper = *keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		keys[types.StoreKey],
-		keys[types.MemStoreKey],
+		mkeys[types.MemStoreKey],
 		types.MinterAccountName,
 		authtypes.FeeCollectorName,
 		appKeepers.AccountKeeper,
 		appKeepers.AuthzKeeper,
 		appKeepers.BankKeeper,
-		mintKeeper,
+		appKeepers.MintKeeper,
+	)
+
+	appKeepers.DistrKeeper = distrkeeper.NewKeeper(
+		appCodec,
+		keys[distrtypes.StoreKey],
+		appKeepers.ParamsKeeper.Subspace(distrtypes.ModuleName),
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.StakingKeeper,
+		authtypes.FeeCollectorName,
+	)
+
+	appKeepers.GovKeeper = govkeeper.NewKeeper(
+		appCodec,
+		keys[govtypes.StoreKey],
+		appKeepers.ParamsKeeper.Subspace(govtypes.ModuleName),
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.StakingKeeper,
+		govv1beta1.NewRouter(),
+		bapp.NewMsgServiceRouter(),
+		govtypes.DefaultConfig(),
+	)
+
+	appKeepers.RewardKeeper =  *rewardskeeper.NewKeeper(
+		appCodec,
+		keys[rewardstypes.StoreKey],
+		mkeys[types.MemStoreKey],
+		&appKeepers.GitopiaKeeper,
+		appKeepers.StakingKeeper,
+		appKeepers.GovKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.AccountKeeper,
+		appKeepers.DistrKeeper,
 	)
 
 	return appKeepers, ctx
