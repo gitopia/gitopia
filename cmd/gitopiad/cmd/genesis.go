@@ -60,6 +60,7 @@ const (
 
 const (
 	STRATEGIC_PARTNERS_AMOUNT = 51_071_429_000_000
+	ADVISORS_AMOUNT           = 10_000_000_000_000
 )
 
 func normalizeRepoName(name string) string {
@@ -764,31 +765,9 @@ func GenerateGenesisCmd() *cobra.Command {
 				Address: strategicPartnersMultiSigAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))),
 			}, banktypes.Balance{
-				Address: "gitopia1pjg7v8u604cry55zrtgtvt2wrmsyxjllc0nzv4",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
-			}, banktypes.Balance{
-				Address: "gitopia1645my8jzsr2r0zd0tn5defgyw28ev0hcj96k44",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
-			}, banktypes.Balance{
-				Address: "gitopia1y6x670mtd784xxp52tsuvlhmnusvy90z3dfnn5",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(500_000_000_000))), // 500k LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(750_000_000_000))), // 750k LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1_500_000_000_000))), // 1.5M LORE
-			}, banktypes.Balance{
-				Address: "",
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(750_000_000_000))), // 750k LORE
-			}, banktypes.Balance{
 				Address: advisorsMultiSigAddress,
-				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(3_000_000_000_000))), // 3M LORE
-			},
-			)
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(ADVISORS_AMOUNT))),
+			})
 
 			crisisGenesis.ConstantFee = sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1000))
 
