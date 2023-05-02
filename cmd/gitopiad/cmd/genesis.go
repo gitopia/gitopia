@@ -708,7 +708,7 @@ func GenerateGenesisCmd() *cobra.Command {
 					Description: "The native staking token of the Gitopia Hub.",
 					DenomUnits: []*banktypes.DenomUnit{
 						{Denom: params.BaseCoinUnit, Exponent: uint32(0), Aliases: []string{"microlore"}},
-						{Denom: params.HumanCoinUnit, Exponent: uint32(6), Aliases: []string{}},
+						{Denom: params.CoinUnit, Exponent: uint32(6), Aliases: []string{}},
 					},
 					Base:    params.BaseCoinUnit,
 					Display: params.HumanCoinUnit,

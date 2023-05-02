@@ -275,7 +275,7 @@ func TestInflationFnZeroAtMaxSupplySuccess(t *testing.T) {
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 
 	// mint max supply
-	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433))))
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433000000))))
 	assert.NoError(t, err)
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
 
@@ -320,7 +320,7 @@ func TestInflationFnZeroAtMaxSupplyWhenInflationTimePassesSuccess(t *testing.T) 
 	bondedRatio := mintParams.GoalBonded // zero inflation change due to bonded ratio
 
 	// mint max supply
-	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433))))
+	err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1711136433000000))))
 	assert.NoError(t, err)
 	inflation := gitopiaKeeper.InflationFn(ctx, minter, mintParams, bondedRatio)
 

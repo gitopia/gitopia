@@ -37,7 +37,7 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	}
 
 	availablePoolBal := rewardpool.TotalAmount.Sub(rewardpool.ClaimedAmount)
-	amount := msg.Amount
+	amount := sdk.NormalizeCoin(msg.Amount)
 	if availablePoolBal.IsLT(msg.Amount) {
 		// reward whatever is left in the reward pool
 		amount = availablePoolBal

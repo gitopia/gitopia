@@ -107,6 +107,7 @@ func TestMsgForkRepository_ValidateBasic(t *testing.T) {
 			msg: MsgForkRepository{
 				Creator:      sample.AccAddress(),
 				RepositoryId: repositoryId,
+				ForkRepositoryName: "repo-name",
 				Owner:        sample.AccAddress(),
 			},
 		}, {
