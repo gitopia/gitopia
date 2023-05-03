@@ -19,12 +19,6 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams
 		return minter.Inflation
 	}
 
-	s := k.bankKeeper.GetSupply(ctx, params.BaseCoinUnit).String()
-	_  = s
-
-	o := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(MAX_SUPPLY)).String()
-	_ = o
-
 	// minting stops.
 	if k.bankKeeper.GetSupply(ctx, params.BaseCoinUnit).
 		IsGTE(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(MAX_SUPPLY))) {
