@@ -27,6 +27,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
 	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
 	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
@@ -838,7 +839,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			state[slashingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(slashingGenesis)
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
-			state["ibc"] = ctx.Codec.MustMarshalJSON(ibcGenesis)
+			state[ibchost.ModuleName] = ctx.Codec.MustMarshalJSON(ibcGenesis)
 			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&gitopiaV3Genesis)
 			state[group.ModuleName] = ctx.Codec.MustMarshalJSON(groupGenesis)
 			state[capabilitytypes.ModuleName] = ctx.Codec.MustMarshalJSON(capabilityGenesis)
