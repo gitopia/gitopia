@@ -82,22 +82,17 @@ func TestTeamVestingMonthlySuccess(t *testing.T) {
 
 func TestTeamVestingSchedule(t *testing.T) {
 	genesisTime := time.Now()
-	GENESIS_SUPPLY := int64(500_000_000)
-	// lowest possible inflation for lowest token supply
-	MIN_INFLATION := sdk.NewDecWithPrec(25, 2) 
-	BLOCKS_PER_YEAR := int64(60 * 60 * 8766 / 1.5) // 21,038,400
-	TEAM_PROPORTION := sdk.NewDecWithPrec(28, 2)
 
 	type vest struct {
 		name        string
 		blockTime   time.Time
-		teamSupply  math.Int // at worst case/ lowest inflation
-		teamVesting math.Int
+		teamSupply  math.Int // in ulore
+		teamVesting math.Int // in ulore
 	}
 
-	// compounded amount = principal * (1 + interest_rate/ no_of_times_compounded) pow (no_of_times_compounded * no_of_periods)
-	// tokens issued for t years =  genesis_supply * (1 + inflation_rate/blocks_per_year)^ (blocks_per_year * t)
-	// team supply = 28% of (tokens issued)
+	// NOTE: supply is estimated to be at inflation rate
+	// there is no guarantee the actual token supply will be same as the estimated supply
+	// team vesting will be affected if the actual supply is lower. the addresses claiming earlier will deficit the addresses claiming later
 	tcs := []vest{
 		{
 			name:        "0 years",
@@ -108,77 +103,73 @@ func TestTeamVestingSchedule(t *testing.T) {
 		{
 			name:        "1 years",
 			blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-			teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
+			teamSupply:  math.NewInt(48999994 * 1000000),
 			teamVesting: math.NewInt(0),
 		},
-		// {
-		// 	name:        "2 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12)),
-		// },
-		// {
-		// 	name:        "3 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 2)),
-		// },
-		// {
-		// 	name:        "4 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 3)),
-		// },
-		// {
-		// 	name:        "5 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 4)),
-		// },
-		// {
-		// 	name:        "6 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 5)),
-		// },
-		// {
-		// 	name:        "7 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 6)),
-		// },
-		// {
-		// 	name:        "8 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 7)),
-		// },
-		// {
-		// 	name:        "9 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 8)),
-		// },
-		// {
-		// 	name:        "10 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 9)),
-		// },
-		// {
-		// 	name:        "11 years",
-		// 	blockTime:   genesisTime.AddDate(1, 0, 0), // at cliff period
-		// 	teamSupply:  sdk.NewDec(GENESIS_SUPPLY).Mul(sdk.Dec(MIN_INFLATION).QuoInt64(BLOCKS_PER_YEAR).Add(sdk.NewDec(1)).Power(uint64(BLOCKS_PER_YEAR) * 1)).Mul(TEAM_PROPORTION).TruncateInt(),
-		// 	teamVesting: math.NewInt((int64)(VESTING_PER_MONTH*12 * 10)),
-		// },
-
+		{
+			name:        "2 years",
+			blockTime:   genesisTime.AddDate(2, 0, 0), 
+			teamSupply:  math.NewInt(115149998 * 1000000),
+			teamVesting: math.NewInt(33911820100000),
+		},
+		{
+			name:        "3 years",
+			blockTime:   genesisTime.AddDate(3, 0, 0), 
+			teamSupply:  math.NewInt(159801248 * 1000000),
+			teamVesting: math.NewInt(67823640200000),
+		},
+		{
+			name:        "4 years",
+			blockTime:   genesisTime.AddDate(4, 0, 0), 
+			teamSupply:  math.NewInt(212266466 * 1000000),
+			teamVesting: math.NewInt(101735460300000),
+		},
+		{
+			name:        "5 years",
+			blockTime:   genesisTime.AddDate(5, 0, 0),
+			teamSupply:  math.NewInt(243089782 * 1000000),
+			teamVesting: math.NewInt(135647280400000),
+		},
+		{
+			name:        "6 years",
+			blockTime:   genesisTime.AddDate(6, 0, 0), 
+			teamSupply:  math.NewInt(276610138 * 1000000),
+			teamVesting: math.NewInt(169559100500000),
+		},
+		{
+			name:        "7 years",
+			blockTime:   genesisTime.AddDate(7, 0, 0), 
+			teamSupply:  math.NewInt(294836831 * 1000000),
+			teamVesting: math.NewInt(203470920600000),
+		},
+		{
+			name:        "8 years",
+			blockTime:   genesisTime.AddDate(8, 0, 0), 
+			teamSupply:  math.NewInt(313860943 * 1000000),
+			teamVesting: math.NewInt(237382740700000),
+		},
+		{
+			name:        "9 years",
+			blockTime:   genesisTime.AddDate(9, 0, 0), 
+			teamSupply:  math.NewInt(323789151 * 1000000),
+			teamVesting: math.NewInt(271294560800000),
+		},
+		{
+			name:        "10 years",
+			blockTime:   genesisTime.AddDate(10, 0, 0),
+			teamSupply:  math.NewInt(333934538 * 1000000),
+			teamVesting: math.NewInt(305206380900000),
+		},
+		{
+			name:        "11 years",
+			blockTime:   genesisTime.AddDate(11, 0, 0), 
+			teamSupply:  math.NewInt(339118201 * 1000000),
+			teamVesting: math.NewInt(339118201000000),
+		},
 	}
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			// fmt.Println(tc.teamSupply.String())
-			// fmt.Println(tc.teamVesting.String())
-			// fmt.Println("**********************")
 			coin := keeper.VestedTeamTokens(genesisTime, tc.blockTime)
 			assert.Equal(t, tc.teamVesting, coin.Amount)
 			assert.True(t, tc.teamSupply.GTE(coin.Amount))
