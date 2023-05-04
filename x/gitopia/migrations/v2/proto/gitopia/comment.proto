@@ -1,0 +1,26 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2;types";
+
+import "gogoproto/gogo.proto";
+
+message Comment {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 parentId = 3; 
+  uint64 commentIid = 4; 
+  string body = 5; 
+  repeated string attachments = 6; 
+  string diffHunk = 7; 
+  string path = 8; 
+  bool system = 9;
+  string authorAssociation = 10;
+  int64 createdAt = 11;
+  int64 updatedAt = 12;
+  enum Type {
+    ISSUE = 0;
+	  PULLREQUEST = 1;
+  }
+  Type commentType = 13;
+}

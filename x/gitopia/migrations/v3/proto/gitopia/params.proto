@@ -1,0 +1,50 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v3;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v3;types";
+
+message DistributionProportion {
+  string proportion = 1 [
+    (gogoproto.moretags) = "yaml:\"proportion\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  string address = 2 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+}
+
+message PoolProportions {
+  DistributionProportion ecosystem = 1 [ (gogoproto.moretags) = "yaml:\"ecosystem\"" ];
+  DistributionProportion team = 2 [ (gogoproto.moretags) = "yaml:\"team\"" ];
+}
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  google.protobuf.Timestamp next_inflation_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"next_inflation_time\""
+  ];
+  PoolProportions pool_proportions = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"pool_proportions\""
+  ];
+  repeated DistributionProportion team_proportions = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"team_proportions\""
+  ];
+  google.protobuf.Timestamp genesis_time = 4 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"genesis_time\""
+  ];
+  string git_server = 5 [
+    (gogoproto.moretags) = "yaml:\"git_server\""
+  ];
+  string storage_provider = 6 [
+    (gogoproto.moretags) = "yaml:\"storage_provider\""
+  ];
+}

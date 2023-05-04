@@ -84,49 +84,49 @@ genesis:
         reward_series:
           series_one: 
             total_amount: 
-              amount: "2000000"
+              amount: "2000000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_two: 
             total_amount: 
-              amount: "1700000"
+              amount: "1700000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_three: 
             total_amount: 
-              amount: "1400000"
+              amount: "1400000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_four: 
             total_amount: 
-              amount: "1100000"
+              amount: "1100000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_five: 
             total_amount: 
-              amount: "800000"
+              amount: "800000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_six: 
             total_amount: 
-              amount: "500000"
+              amount: "500000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
           series_seven: 
             total_amount: 
-              amount: "250000"
+              amount: "250000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"

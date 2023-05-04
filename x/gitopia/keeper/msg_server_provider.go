@@ -6,18 +6,17 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 )
 
-var gitServerTypeUrls = [4]string{
+var GitServerTypeUrls = [4]string{
 	sdk.MsgTypeURL(&types.MsgForkRepository{}),
 	sdk.MsgTypeURL(&types.MsgForkRepositorySuccess{}),
 	sdk.MsgTypeURL(&types.MsgSetPullRequestState{}),
 	sdk.MsgTypeURL(&types.MsgUpdateTask{}),
 }
 
-var storageTypeUrls = [2]string{
+var StorageTypeUrls = [2]string{
 	sdk.MsgTypeURL(&types.MsgAddRepositoryBackupRef{}),
 	sdk.MsgTypeURL(&types.MsgUpdateRepositoryBackupRef{}),
 }
@@ -29,11 +28,6 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
-
-	now := ctx.BlockTime()
-	expiration := now.AddDate(1, 0, 0)
-	grantee, _ := sdk.AccAddressFromBech32(msg.Provider)
-	granter, _ := sdk.AccAddressFromBech32(msg.Granter)
 
 	if msg.Creator != msg.Granter { // DAO address
 		_, found := k.GetDao(ctx, msg.Granter)
@@ -50,25 +44,11 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 		}
 	}
 
-	switch msg.Permission {
-	case types.ProviderPermission_GIT_SERVER:
-		for _, t := range gitServerTypeUrls {
-			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
-			}
-		}
-	case types.ProviderPermission_STORAGE:
-		for _, t := range storageTypeUrls {
-			authorization := authz.NewGenericAuthorization(t)
-			err := k.authzKeeper.SaveGrant(ctx, grantee, granter, authorization, &expiration)
-			if err != nil {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "authz grant error")
-			}
-		}
-	default:
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission (%v)", msg.Permission))
+	now := ctx.BlockTime()
+	expiration := now.AddDate(1, 0, 0)
+	err := k.Keeper.AuthorizeProvider(ctx, msg.Provider, msg.Granter, &expiration, msg.Permission)
+	if err != nil {
+		return nil, err
 	}
 
 	return &types.MsgAuthorizeProviderResponse{}, nil
@@ -102,14 +82,14 @@ func (k msgServer) RevokeProviderPermission(goCtx context.Context, msg *types.Ms
 
 	switch msg.Permission {
 	case types.ProviderPermission_GIT_SERVER:
-		for _, t := range gitServerTypeUrls {
+		for _, t := range GitServerTypeUrls {
 			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 			if authorization != nil {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)
 			}
 		}
 	case types.ProviderPermission_STORAGE:
-		for _, t := range storageTypeUrls {
+		for _, t := range StorageTypeUrls {
 			authorization, _ := k.authzKeeper.GetAuthorization(ctx, grantee, granter, t)
 			if authorization != nil {
 				k.authzKeeper.DeleteGrant(ctx, grantee, granter, t)

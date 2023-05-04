@@ -126,7 +126,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 		InitCmd(gitopia.ModuleBasics, gitopia.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, gitopia.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
-		MigrateCmd(),
+		GenerateGenesisCmd(),
 		AddGenesisAccountCmd(gitopia.DefaultNodeHome),
 		genutilcli.GenTxCmd(gitopia.ModuleBasics, encodingConfig.TxConfig, banktypes.GenesisBalancesIterator{}, gitopia.DefaultNodeHome),
 		genutilcli.ValidateGenesisCmd(gitopia.ModuleBasics),

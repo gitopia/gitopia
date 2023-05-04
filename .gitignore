@@ -2,6 +2,5 @@ vue/node_modules
 vue/dist
 secret.yml
 build
-launch.json
 cmd/gitopiad/__debug_bin
 .DS_Store
