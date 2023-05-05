@@ -65,18 +65,18 @@ genesis:
         next_inflation_time: "2024-12-28T05:33:18.234521Z"
         pool_proportions:
           ecosystem:
-            proportion: 30
+            proportion: "30.0"
           team:
-            proportion: 28
+            proportion: "28.0"
         # remaining: community : 5% staking: 37%
         team_proportions:
-        - proportion: 25
+        - proportion: "25.0"
           address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
-        - proportion: 24
+        - proportion: "24.0"
           address: gitopia1pdczuuqajw3n7zea9j6h9gtdgfpnzkkucjz8tn
-        - proportion: 6
+        - proportion: "6.0"
           address: gitopia19nve7zztd3nf9hazfv7lsx0ajdv3kfjdx83dtg
-        - proportion: 45
+        - proportion: "45.0"
           address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
     rewards: 
       params:
