@@ -37,9 +37,9 @@ func vestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 		vestedMonths = VESTING_PERIOD
 	}
 
-	vestedAmount := TEAM_VESTING_AMOUNT / VESTING_PERIOD * vestedMonths
+	vestedAmount := math.NewInt(TEAM_VESTING_AMOUNT).Quo(math.NewInt(VESTING_PERIOD)).Mul(math.NewInt(int64(vestedMonths)))
 
-	return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(vestedAmount)))
+	return sdk.NewCoin(params.BaseCoinUnit, vestedAmount)
 }
 
 func (k msgServer) Exercise(goCtx context.Context, msg *types.MsgExercise) (*types.MsgExerciseResponse, error) {
