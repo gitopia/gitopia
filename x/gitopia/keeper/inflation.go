@@ -39,5 +39,5 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams
 		minter.Inflation = minter.Inflation.Quo(sdk.NewDec(2))
 	}
 
-	return minter.NextInflationRate(mintParams, bondedRatio)
+	return minter.Inflation
 }
