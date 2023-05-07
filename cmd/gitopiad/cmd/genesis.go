@@ -693,14 +693,14 @@ func GenerateGenesisCmd() *cobra.Command {
 				}
 			}
 
-			fourteenDays := 14 * 24 * time.Hour
+			twoDays := 2 * 24 * time.Hour
 			depositParams := govv1types.NewDepositParams(
-				sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10000000))),
-				fourteenDays,
+				sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000000000))),
+				twoDays,
 			)
 			govGenesis.DepositParams = &depositParams
 
-			votingParams := govv1types.NewVotingParams(fourteenDays)
+			votingParams := govv1types.NewVotingParams(twoDays)
 			govGenesis.VotingParams = &votingParams
 
 			// Disable all transfers
@@ -779,7 +779,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				InflationMax:        sdk.NewDecWithPrec(45, 2),
 				InflationMin:        sdk.NewDecWithPrec(25, 2),
 				GoalBonded:          sdk.NewDecWithPrec(67, 2),
-				BlocksPerYear:       uint64(60 * 60 * 8766 / 1.5), // assuming 1.5 second block times
+				BlocksPerYear:       19466666, // assuming 1.62s block time
 			}
 
 			distributionGenesis.Params = distributiontypes.Params{
@@ -796,6 +796,14 @@ func GenerateGenesisCmd() *cobra.Command {
 				stakingtypes.DefaultHistoricalEntries,
 				params.BaseCoinUnit,
 				stakingtypes.DefaultMinCommissionRate,
+			)
+
+			slashingGenesis.Params = slashingtypes.NewParams(
+				50000,
+				sdk.MustNewDecFromStr("0.05"),
+				60*10*time.Second,
+				sdk.MustNewDecFromStr("0.05"),
+				sdk.MustNewDecFromStr("0.0001"),
 			)
 
 			rewardsGenesis.Params = rewardstypes.NewParams(rewardsServiceAddress, &rewardstypes.RewardSeries{
