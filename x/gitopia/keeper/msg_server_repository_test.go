@@ -138,7 +138,7 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 		{
 			desc:    "Repository Already Exists",
 			request: &types.MsgForkRepository{Creator: users[1], RepositoryId: repositoryId, ForkRepositoryName: repositoryId.Name, Owner: users[1], TaskId: 0},
-			err:     sdkerrors.ErrKeyNotFound,
+			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Forking is not allowed",
@@ -156,7 +156,7 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 		{
 			desc:    "Branch does not exist",
 			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork", Branch: "test", Owner: users[2], TaskId: 0},
-			err:     sdkerrors.ErrKeyNotFound,
+			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {

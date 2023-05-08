@@ -8,6 +8,7 @@ import (
 
 const (
 	HumanCoinUnit   = "lore"
+	CoinUnit        = "lore"
 	BaseCoinUnit    = "ulore"
 	GitopiaExponent = 6
 
@@ -36,7 +37,7 @@ func init() {
 }
 
 func RegisterDenoms() {
-	err := sdk.RegisterDenom(HumanCoinUnit, sdk.OneDec())
+	err := sdk.RegisterDenom(CoinUnit, sdk.OneDec())
 	if err != nil {
 		panic(err)
 	}

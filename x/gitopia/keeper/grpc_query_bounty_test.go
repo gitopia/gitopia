@@ -16,7 +16,8 @@ import (
 )
 
 func TestBountyQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBounty(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -61,7 +62,8 @@ func TestBountyQuerySingle(t *testing.T) {
 }
 
 func TestBountyQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNBounty(keeper, ctx, 5)
 

@@ -23,7 +23,8 @@ func createNComment(keeper *keeper.Keeper, ctx sdk.Context, parent types.Comment
 }
 
 func TestCommentGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	issueItems := createNComment(keeper, ctx, types.CommentParentIssue, 10)
 	for _, item := range issueItems {
 		got, found := keeper.GetIssueComment(ctx, 0, 1, item.CommentIid)
@@ -39,7 +40,8 @@ func TestCommentGet(t *testing.T) {
 }
 
 func TestCommentRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	issueItems := createNComment(keeper, ctx, types.CommentParentIssue, 10)
 	for _, item := range issueItems {
 		keeper.RemoveIssueComment(ctx, 0, 1, item.CommentIid)
@@ -55,7 +57,8 @@ func TestCommentRemove(t *testing.T) {
 }
 
 func TestCommentGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	issueItems := createNComment(keeper, ctx, types.CommentParentIssue, 10)
 	pullRequestItems := createNComment(keeper, ctx, types.CommentParentPullRequest, 10)
 	items := append(issueItems, pullRequestItems...)
@@ -65,7 +68,8 @@ func TestCommentGetAll(t *testing.T) {
 }
 
 func TestCommentCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	issueItems := createNComment(keeper, ctx, types.CommentParentIssue, 10)
 	pullRequestItems := createNComment(keeper, ctx, types.CommentParentPullRequest, 10)
 	count := uint64(len(issueItems) + len(pullRequestItems))

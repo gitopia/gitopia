@@ -220,10 +220,13 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		BountyCount: 2,
+
+		Params: types.DefaultParams(),
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	k := &keepers.GitopiaKeeper
 	keeper.InitGenesis(ctx, *k, genesisState)
 	got := keeper.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)

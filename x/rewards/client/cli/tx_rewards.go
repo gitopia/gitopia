@@ -17,7 +17,7 @@ func CmdCreateRewards() *cobra.Command {
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
             // Get indexes
-         indexRecipient := args[0]
+         recipient := args[0]
         
             // Get value arguments
 			argAmount, err := cosmosTypes.ParseCoinNormalized(args[1])
@@ -32,7 +32,7 @@ func CmdCreateRewards() *cobra.Command {
 
 			msg := types.NewMsgCreateReward(
 			    clientCtx.GetFromAddress().String(),
-			    indexRecipient,
+			    recipient,
                 argAmount,
 			    )
 			if err := msg.ValidateBasic(); err != nil {

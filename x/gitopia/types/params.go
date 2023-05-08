@@ -10,11 +10,19 @@ import (
 )
 
 // NewParams creates a new Params instance
-func NewParams(nextInflationTime time.Time, poolProportions PoolProportions, teamProportions []DistributionProportion) Params {
+func NewParams(nextInflationTime time.Time,
+	poolProportions PoolProportions,
+	teamProportions []DistributionProportion,
+	genesisTime time.Time,
+	gitServer string,
+	storageProvider string) Params {
 	return Params{
 		NextInflationTime: nextInflationTime,
 		PoolProportions:   poolProportions,
 		TeamProportions:   teamProportions,
+		GenesisTime:       genesisTime,
+		GitServer:         gitServer,
+		StorageProvider:   storageProvider,
 	}
 }
 
@@ -27,7 +35,7 @@ func DefaultParams() Params {
 	teamProportion2, _ := sdk.NewDecFromStr("35.0")
 	teamProportion3, _ := sdk.NewDecFromStr("15.0")
 
-	return NewParams(time.Now().AddDate(2, 0, 0),
+	return NewParams(time.Now().AddDate(2, 0, 0).UTC(), // two years from now
 		PoolProportions{
 			Ecosystem: &DistributionProportion{Proportion: ecosystemProportion},
 			Team:      &DistributionProportion{Proportion: teamProportion},
@@ -36,7 +44,11 @@ func DefaultParams() Params {
 			{teamProportion1, "gitopia1k9pvyj845y9a4m4vuxx8sjq5q28yxym520fh2x"},
 			{teamProportion2, "gitopia1njn3grh5ar4ccapyp4uehuq28wpk2sk5heu7ac"},
 			{teamProportion3, "gitopia1d5r0ql0pg5d8xfs5t0pmn7dl72m2zj2wchkfq3"},
-		})
+		},
+		time.Now().Add(time.Duration(-365*24)*time.Hour).UTC(), // one year ago
+		"gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke",
+		"gitopia1xp4e40rd4akt882h2pxl8cw8ygxjxndu23c5wn",
+	)
 }
 
 // // ParamSetPairs get the params.ParamSet
@@ -66,6 +78,14 @@ func validateNextInflationTime(i time.Time) error {
 }
 
 func validatePoolProportions(pp PoolProportions) error {
+	if pp.Ecosystem == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrLogic, "ecosystem proportion is empty")
+	}
+
+	if pp.Team == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrLogic, "team proportion is empty")
+	}
+
 	if pp.Ecosystem.Address != "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrLogic, "ecosystem address must be empty. got %s", pp.Ecosystem.Address)
 	}
