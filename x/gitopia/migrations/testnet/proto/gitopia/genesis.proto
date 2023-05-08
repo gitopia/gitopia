@@ -1,5 +1,5 @@
 syntax = "proto3";
-package gitopia.gitopia.gitopia.v2;
+package gitopia.gitopia.gitopia.testnet;
 
 import "gitopia/task.proto";
 import "gitopia/branch.proto";
@@ -16,7 +16,7 @@ import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2;types";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/testnet;types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {

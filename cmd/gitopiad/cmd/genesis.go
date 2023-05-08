@@ -31,7 +31,7 @@ import (
 	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
 	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
-	testnettypes "github.com/gitopia/gitopia/x/gitopia/migrations/testnet/types"
+	testnettypes "github.com/gitopia/gitopia/x/gitopia/migrations/testnet"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/spf13/cobra"
