@@ -36,9 +36,9 @@ func VestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 		vestedMonths = VESTING_PERIOD
 	}
 
-	vestedAmount := TEAM_VESTING_AMOUNT * ((float64)(vestedMonths) / VESTING_PERIOD)
+	vestedAmount := math.NewInt(TEAM_VESTING_AMOUNT).Quo(math.NewInt(VESTING_PERIOD)).Mul(math.NewInt(int64(vestedMonths)))
 
-	return sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(vestedAmount)))
+	return sdk.NewCoin(params.BaseCoinUnit, vestedAmount)
 }
 
 func (k Keeper) GetVestedProportion(ctx sdk.Context, address string) (sdk.Coin, error) {
