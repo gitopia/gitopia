@@ -140,8 +140,8 @@ func appModules(
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
-		app.TransferModule,
-		app.GitopiaModule,
+		transfer.NewAppModule(app.TransferKeeper),
+		gitopia.NewAppModule(appCodec, app.GitopiaKeeper),
 		rewards.NewAppModule(appCodec, app.RewardKeeper, app.AccountKeeper, app.BankKeeper),
 	}
 }

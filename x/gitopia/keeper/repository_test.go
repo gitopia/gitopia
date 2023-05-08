@@ -25,7 +25,8 @@ func createNRepository(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Re
 }
 
 func TestAddressRepositoryGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRepository(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetAddressRepository(ctx, item.Owner.Id, item.Name)
@@ -37,7 +38,8 @@ func TestAddressRepositoryGet(t *testing.T) {
 }
 
 func TestAddressRepositoryRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRepository(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveAddressRepository(ctx, item.Owner.Id, item.Name)
@@ -47,19 +49,22 @@ func TestAddressRepositoryRemove(t *testing.T) {
 }
 
 func TestRepositoryGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRepository(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllRepository(ctx))
 }
 
 func TestAddressRepositoryGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRepository(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllAddressRepository(ctx, items[0].Owner.Id))
 }
 
 func TestRepositoryCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRepository(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetRepositoryCount(ctx))

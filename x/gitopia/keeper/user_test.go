@@ -21,7 +21,8 @@ func createNUser(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.User {
 }
 
 func TestUserGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNUser(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetUser(ctx, item.Creator)
@@ -31,7 +32,8 @@ func TestUserGet(t *testing.T) {
 }
 
 func TestUserRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNUser(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveUser(ctx, item.Creator)
@@ -41,13 +43,15 @@ func TestUserRemove(t *testing.T) {
 }
 
 func TestUserGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNUser(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllUser(ctx))
 }
 
 func TestUserCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNUser(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetUserCount(ctx))

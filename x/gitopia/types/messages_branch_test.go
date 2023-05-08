@@ -208,6 +208,11 @@ func TestMsgDeleteBranch_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgToggleForcePush_ValidateBasic(t *testing.T) {
+	addr := sample.AccAddress()
+	repositoryId := RepositoryId{
+		Id:   addr,
+		Name: "repository",
+	}
 	tests := []struct {
 		name string
 		msg  MsgToggleForcePush
@@ -222,7 +227,9 @@ func TestMsgToggleForcePush_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgToggleForcePush{
-				Creator: sample.AccAddress(),
+				Creator: addr,
+				RepositoryId: repositoryId,
+				BranchName: "branch",
 			},
 		},
 	}

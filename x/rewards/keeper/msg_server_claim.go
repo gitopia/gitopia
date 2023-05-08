@@ -40,6 +40,7 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, err
 	}
 
+	// claimedAmount cannot be greater than claimable amount
 	if reward.ClaimedAmount.IsEqual(claimableAmount) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed. must complete more tasks")
 	}

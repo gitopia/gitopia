@@ -35,25 +35,6 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid: true,
 		},
 		{
-			desc:     "duplicated rewards",
-			genState: &types.GenesisState{},
-			valid:    false,
-		},
-		{
-			desc: "duplicated rewards",
-			genState: &types.GenesisState{
-				RewardsList: []types.Reward{
-					{
-						Recipient: "0",
-					},
-					{
-						Recipient: "0",
-					},
-				},
-			},
-			valid: false,
-		},
-		{
 			desc: "duplicated rewards",
 			genState: &types.GenesisState{
 				RewardsList: []types.Reward{

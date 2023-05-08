@@ -23,7 +23,8 @@ func createNMember(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Member
 }
 
 func TestMemberGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetDaoMember(ctx, item.DaoAddress, item.Address)
@@ -36,7 +37,8 @@ func TestMemberGet(t *testing.T) {
 }
 
 func TestMemberRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNMember(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveDaoMember(ctx, item.DaoAddress, item.Address)
@@ -46,7 +48,8 @@ func TestMemberRemove(t *testing.T) {
 }
 
 func TestMemberGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNMember(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -55,7 +58,8 @@ func TestMemberGetAll(t *testing.T) {
 }
 
 func TestMemberCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNMember(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetMemberCount(ctx))

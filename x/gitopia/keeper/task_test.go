@@ -20,7 +20,8 @@ func createNTask(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Task {
 }
 
 func TestTaskGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTask(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetTask(ctx, item.Id)
@@ -33,7 +34,8 @@ func TestTaskGet(t *testing.T) {
 }
 
 func TestTaskRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTask(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveTask(ctx, item.Id)
@@ -43,7 +45,8 @@ func TestTaskRemove(t *testing.T) {
 }
 
 func TestTaskGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTask(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -52,7 +55,8 @@ func TestTaskGetAll(t *testing.T) {
 }
 
 func TestTaskCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTask(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetTaskCount(ctx))

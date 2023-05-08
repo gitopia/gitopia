@@ -20,7 +20,8 @@ func createNBounty(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Bounty
 }
 
 func TestBountyGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBounty(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetBounty(ctx, item.Id)
@@ -33,7 +34,8 @@ func TestBountyGet(t *testing.T) {
 }
 
 func TestBountyRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBounty(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveBounty(ctx, item.Id)
@@ -43,7 +45,8 @@ func TestBountyRemove(t *testing.T) {
 }
 
 func TestBountyGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBounty(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -52,7 +55,8 @@ func TestBountyGetAll(t *testing.T) {
 }
 
 func TestBountyCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNBounty(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetBountyCount(ctx))
