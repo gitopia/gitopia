@@ -31,8 +31,7 @@ import (
 	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
 	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/x/gitopia/keeper"
-	v2 "github.com/gitopia/gitopia/x/gitopia/migrations/v2"
-	v3 "github.com/gitopia/gitopia/x/gitopia/migrations/v3"
+	testnettypes "github.com/gitopia/gitopia/x/gitopia/migrations/testnet/types"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/x/rewards/types"
 	"github.com/spf13/cobra"
@@ -93,16 +92,16 @@ func resolveRepoNameConflict(name string, repoNameMap map[string]int) string {
 // - Removed `issues` and `pullRequests` from Repository.
 // - Add `repositoryId` in Comment and Bounty.
 // - Modified comment structure - Parent: issue and pull; various comment types like label, assignees etc; reactions; replies; resolved/unresolved
-func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
-	var gitopiaV3Genesis v3.GenesisState
+func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisState, error) {
+	var gitopiaV3Genesis gitopiatypes.GenesisState
 
-	gitopiaV3Genesis.Params = v3.Params{
+	gitopiaV3Genesis.Params = gitopiatypes.Params{
 		NextInflationTime: time.Now().AddDate(2, 0, 0),
-		PoolProportions: v3.PoolProportions{
-			Ecosystem: &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
-			Team:      &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
+		PoolProportions: gitopiatypes.PoolProportions{
+			Ecosystem: &gitopiatypes.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
+			Team:      &gitopiatypes.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
 		},
-		TeamProportions: []v3.DistributionProportion{
+		TeamProportions: []gitopiatypes.DistributionProportion{
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia14t0ta8vvv2nrcx86g87z888s7pqat4svuyw7ae"},
 			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
@@ -120,10 +119,10 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	}
 
 	for _, oldTask := range state.TaskList {
-		task := v3.Task{
+		task := gitopiatypes.Task{
 			Id:       oldTask.Id,
-			Type:     v3.TaskType(oldTask.Type),
-			State:    v3.TaskState(oldTask.State),
+			Type:     gitopiatypes.TaskType(oldTask.Type),
+			State:    gitopiatypes.TaskState(oldTask.State),
 			Message:  oldTask.Message,
 			Creator:  oldTask.Creator,
 			Provider: oldTask.Provider,
@@ -135,7 +134,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.TaskCount = state.TaskCount
 
 	for _, oldBranch := range state.BranchList {
-		branch := v3.Branch{
+		branch := gitopiatypes.Branch{
 			Id:             oldBranch.Id,
 			RepositoryId:   oldBranch.RepositoryId,
 			Name:           oldBranch.Name,
@@ -151,7 +150,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.BranchCount = state.BranchCount
 
 	for _, oldTag := range state.TagList {
-		tag := v3.Tag{
+		tag := gitopiatypes.Tag{
 			Id:           oldTag.Id,
 			RepositoryId: oldTag.RepositoryId,
 			Name:         oldTag.Name,
@@ -166,11 +165,11 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.TagCount = state.TagCount
 
 	for _, oldMember := range state.MemberList {
-		member := v3.Member{
+		member := gitopiatypes.Member{
 			Id:         oldMember.Id,
 			Address:    oldMember.Address,
 			DaoAddress: oldMember.DaoAddress,
-			Role:       v3.MemberRole(oldMember.Role),
+			Role:       gitopiatypes.MemberRole(oldMember.Role),
 		}
 
 		gitopiaV3Genesis.MemberList = append(gitopiaV3Genesis.MemberList, member)
@@ -179,9 +178,9 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.MemberCount = state.MemberCount
 
 	for _, oldRelease := range state.ReleaseList {
-		var attachments []*v3.Attachment
+		var attachments []*gitopiatypes.Attachment
 		for _, oldAttachment := range oldRelease.Attachments {
-			attachments = append(attachments, &v3.Attachment{
+			attachments = append(attachments, &gitopiatypes.Attachment{
 				Name:     oldAttachment.Name,
 				Size_:    oldAttachment.Size_,
 				Sha:      oldAttachment.Sha,
@@ -189,7 +188,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			})
 		}
 
-		release := v3.Release{
+		release := gitopiatypes.Release{
 			Creator:      oldRelease.Creator,
 			Id:           oldRelease.Id,
 			RepositoryId: oldRelease.RepositoryId,
@@ -212,7 +211,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.ReleaseCount = state.ReleaseCount
 
 	for _, oldDao := range state.DaoList {
-		dao := v3.Dao{
+		dao := gitopiatypes.Dao{
 			Creator:     oldDao.Creator,
 			Id:          oldDao.Id,
 			Address:     oldDao.Address,
@@ -238,7 +237,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		if oldUser.Creator == "" {
 			continue
 		}
-		user := v3.User{
+		user := gitopiatypes.User{
 			Creator:        oldUser.Creator,
 			Id:             oldUser.Id,
 			Name:           oldUser.Name,
@@ -261,7 +260,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.UserCount = state.UserCount
 
 	for _, oldUserDao := range state.UserDaoList {
-		userDao := v3.UserDao{
+		userDao := gitopiatypes.UserDao{
 			UserAddress: oldUserDao.UserAddress,
 			DaoAddress:  oldUserDao.DaoAddress,
 		}
@@ -270,12 +269,12 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	}
 
 	for _, oldWhois := range state.WhoisList {
-		whois := v3.Whois{
+		whois := gitopiatypes.Whois{
 			Creator:   oldWhois.Creator,
 			Id:        oldWhois.Id,
 			Name:      oldWhois.Name,
 			Address:   oldWhois.Address,
-			OwnerType: v3.OwnerType(oldWhois.OwnerType),
+			OwnerType: gitopiatypes.OwnerType(oldWhois.OwnerType),
 		}
 
 		gitopiaV3Genesis.WhoisList = append(gitopiaV3Genesis.WhoisList, whois)
@@ -287,13 +286,13 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	newRepoNameMap := make(map[string]map[string]string)
 
 	for _, oldRepository := range state.RepositoryList {
-		var labels []*v3.RepositoryLabel
-		var releases []*v3.RepositoryRelease
-		var collaborators []*v3.RepositoryCollaborator
-		var backups []*v3.RepositoryBackup
+		var labels []*gitopiatypes.RepositoryLabel
+		var releases []*gitopiatypes.RepositoryRelease
+		var collaborators []*gitopiatypes.RepositoryCollaborator
+		var backups []*gitopiatypes.RepositoryBackup
 
 		for _, oldLabel := range oldRepository.Labels {
-			labels = append(labels, &v3.RepositoryLabel{
+			labels = append(labels, &gitopiatypes.RepositoryLabel{
 				Id:          oldLabel.Id,
 				Name:        oldLabel.Name,
 				Color:       oldLabel.Color,
@@ -302,22 +301,22 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		}
 
 		for _, oldRelease := range oldRepository.Releases {
-			releases = append(releases, &v3.RepositoryRelease{
+			releases = append(releases, &gitopiatypes.RepositoryRelease{
 				Id:      oldRelease.Id,
 				TagName: oldRelease.TagName,
 			})
 		}
 
 		for _, oldCollaborator := range oldRepository.Collaborators {
-			collaborators = append(collaborators, &v3.RepositoryCollaborator{
+			collaborators = append(collaborators, &gitopiatypes.RepositoryCollaborator{
 				Id:         oldCollaborator.Id,
-				Permission: v3.RepositoryCollaborator_Permission(oldCollaborator.Permission),
+				Permission: gitopiatypes.RepositoryCollaborator_Permission(oldCollaborator.Permission),
 			})
 		}
 
 		for _, oldBackup := range oldRepository.Backups {
-			backups = append(backups, &v3.RepositoryBackup{
-				Store: v3.RepositoryBackup_Store(oldBackup.Store),
+			backups = append(backups, &gitopiatypes.RepositoryBackup{
+				Store: gitopiatypes.RepositoryBackup_Store(oldBackup.Store),
 				Refs:  oldBackup.Refs,
 			})
 		}
@@ -329,13 +328,13 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		newRepoName := resolveRepoNameConflict(oldRepository.Name, repoNameMap[oldRepository.Owner.Id])
 		newRepoNameMap[oldRepository.Owner.Id][oldRepository.Name] = newRepoName
 
-		repository := v3.Repository{
+		repository := gitopiatypes.Repository{
 			Creator: oldRepository.Creator,
 			Id:      oldRepository.Id,
 			Name:    newRepoName,
-			Owner: &v3.RepositoryOwner{
+			Owner: &gitopiatypes.RepositoryOwner{
 				Id:   oldRepository.Owner.Id,
-				Type: v3.OwnerType(oldRepository.Owner.Type),
+				Type: gitopiatypes.OwnerType(oldRepository.Owner.Type),
 			},
 			Description:         oldRepository.Description,
 			Forks:               oldRepository.Forks,
@@ -367,7 +366,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.RepositoryCount = state.RepositoryCount
 
 	for _, oldbaseRepositoryKey := range state.BaseRepositoryKeyList {
-		baseRepositoryKey := v3.BaseRepositoryKey{
+		baseRepositoryKey := gitopiatypes.BaseRepositoryKey{
 			Id:      oldbaseRepositoryKey.Id,
 			Address: oldbaseRepositoryKey.Address,
 			Name:    normalizeRepoName(newRepoNameMap[oldbaseRepositoryKey.Address][oldbaseRepositoryKey.Name]),
@@ -376,7 +375,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		gitopiaV3Genesis.BaseRepositoryKeyList = append(gitopiaV3Genesis.BaseRepositoryKeyList, baseRepositoryKey)
 	}
 
-	commentMap := make(map[uint64]v2.Comment)
+	commentMap := make(map[uint64]testnettypes.Comment)
 	for _, comment := range state.CommentList {
 		commentMap[comment.Id] = comment
 	}
@@ -384,12 +383,12 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.CommentCount = state.CommentCount
 
 	for _, oldIssue := range state.IssueList {
-		issue := v3.Issue{
+		issue := gitopiatypes.Issue{
 			Creator:       oldIssue.Creator,
 			Id:            oldIssue.Id,
 			Iid:           oldIssue.Iid,
 			Title:         oldIssue.Title,
-			State:         v3.Issue_State(oldIssue.State),
+			State:         gitopiatypes.Issue_State(oldIssue.State),
 			Description:   oldIssue.Description,
 			CommentsCount: oldIssue.CommentsCount,
 			RepositoryId:  oldIssue.RepositoryId,
@@ -406,48 +405,48 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 		for _, commentId := range oldIssue.Comments {
 			oldComment := commentMap[commentId]
 
-			var attachments []*v3.Attachment
+			var attachments []*gitopiatypes.Attachment
 
 			for _, attachmentStr := range oldComment.Attachments {
-				var attachment v3.Attachment
+				var attachment gitopiatypes.Attachment
 				if err := json.Unmarshal([]byte(attachmentStr), &attachment); err != nil {
-					return v3.GenesisState{}, err
+					return gitopiatypes.GenesisState{}, err
 				}
 
 				attachments = append(attachments, &attachment)
 			}
 
-			commentType := v3.CommentTypeNone
+			commentType := gitopiatypes.CommentTypeNone
 
 			// Set comment type in case of system comment
 			if oldComment.System {
 				if strings.Contains(oldComment.Body, "assigned to") {
-					commentType = v3.CommentTypeAddAssignees
+					commentType = gitopiatypes.CommentTypeAddAssignees
 				} else if strings.Contains(oldComment.Body, "unassigned") {
-					commentType = v3.CommentTypeRemoveAssignees
+					commentType = gitopiatypes.CommentTypeRemoveAssignees
 				} else if strings.Contains(oldComment.Body, "added") {
-					commentType = v3.CommentTypeAddLabels
+					commentType = gitopiatypes.CommentTypeAddLabels
 				} else if strings.Contains(oldComment.Body, "remove") {
-					commentType = v3.CommentTypeRemoveLabels
+					commentType = gitopiatypes.CommentTypeRemoveLabels
 				} else if strings.Contains(oldComment.Body, "changed title from") {
-					commentType = v3.CommentTypeModifiedTitle
+					commentType = gitopiatypes.CommentTypeModifiedTitle
 				} else if strings.Contains(oldComment.Body, "changed the description") {
-					commentType = v3.CommentTypeModifiedDescription
+					commentType = gitopiatypes.CommentTypeModifiedDescription
 				} else if strings.Contains(oldComment.Body, "reopened") {
-					commentType = v3.CommentTypeIssueOpened
+					commentType = gitopiatypes.CommentTypeIssueOpened
 				} else if strings.Contains(oldComment.Body, "closed") {
-					commentType = v3.CommentTypeIssueClosed
+					commentType = gitopiatypes.CommentTypeIssueClosed
 				}
 			} else {
-				commentType = v3.CommentTypeReply
+				commentType = gitopiatypes.CommentTypeReply
 			}
 
-			comment := v3.Comment{
+			comment := gitopiatypes.Comment{
 				Creator:           oldComment.Creator,
 				Id:                oldComment.Id,
 				RepositoryId:      issue.RepositoryId,
 				ParentIid:         issue.Iid,
-				Parent:            v3.CommentParentIssue,
+				Parent:            gitopiatypes.CommentParentIssue,
 				CommentIid:        oldComment.CommentIid,
 				Body:              oldComment.Body,
 				Attachments:       attachments,
@@ -469,12 +468,12 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	gitopiaV3Genesis.IssueCount = state.IssueCount
 
 	for _, oldPullRequest := range state.GetPullRequestList() {
-		pullRequest := v3.PullRequest{
+		pullRequest := gitopiatypes.PullRequest{
 			Creator:             oldPullRequest.Creator,
 			Id:                  oldPullRequest.Id,
 			Iid:                 oldPullRequest.Iid,
 			Title:               oldPullRequest.Title,
-			State:               v3.PullRequest_State(oldPullRequest.State),
+			State:               gitopiatypes.PullRequest_State(oldPullRequest.State),
 			Description:         oldPullRequest.Description,
 			Locked:              oldPullRequest.Locked,
 			CommentsCount:       oldPullRequest.CommentsCount,
@@ -490,60 +489,60 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			MergedBy:            oldPullRequest.MergedBy,
 			MergeCommitSha:      oldPullRequest.MergeCommitSha,
 			MaintainerCanModify: oldPullRequest.MaintainerCanModify,
-			Head:                (*v3.PullRequestHead)(oldPullRequest.Head),
-			Base:                (*v3.PullRequestBase)(oldPullRequest.Base),
+			Head:                (*gitopiatypes.PullRequestHead)(oldPullRequest.Head),
+			Base:                (*gitopiatypes.PullRequestBase)(oldPullRequest.Base),
 		}
 
 		// Migrate comments
 		for _, commentId := range oldPullRequest.Comments {
 			oldComment := commentMap[commentId]
 
-			var attachments []*v3.Attachment
+			var attachments []*gitopiatypes.Attachment
 
 			for _, attachmentStr := range oldComment.Attachments {
-				var attachment v3.Attachment
+				var attachment gitopiatypes.Attachment
 				if err := json.Unmarshal([]byte(attachmentStr), &attachment); err != nil {
-					return v3.GenesisState{}, err
+					return gitopiatypes.GenesisState{}, err
 				}
 
 				attachments = append(attachments, &attachment)
 			}
 
-			var commentType v3.CommentType
+			var commentType gitopiatypes.CommentType
 
 			// Set comment type in case of system comment
 			if oldComment.System {
 				if strings.Contains(oldComment.Body, "assigned to") {
-					commentType = v3.CommentTypeAddAssignees
+					commentType = gitopiatypes.CommentTypeAddAssignees
 				} else if strings.Contains(oldComment.Body, "unassigned") {
-					commentType = v3.CommentTypeRemoveAssignees
+					commentType = gitopiatypes.CommentTypeRemoveAssignees
 				} else if strings.Contains(oldComment.Body, "added") {
-					commentType = v3.CommentTypeAddLabels
+					commentType = gitopiatypes.CommentTypeAddLabels
 				} else if strings.Contains(oldComment.Body, "remove") {
-					commentType = v3.CommentTypeRemoveLabels
+					commentType = gitopiatypes.CommentTypeRemoveLabels
 				} else if strings.Contains(oldComment.Body, "changed title from") {
-					commentType = v3.CommentTypeModifiedTitle
+					commentType = gitopiatypes.CommentTypeModifiedTitle
 				} else if strings.Contains(oldComment.Body, "changed the description") {
-					commentType = v3.CommentTypeModifiedDescription
+					commentType = gitopiatypes.CommentTypeModifiedDescription
 				} else if strings.Contains(oldComment.Body, "reopened") {
-					commentType = v3.CommentTypePullRequestOpened
+					commentType = gitopiatypes.CommentTypePullRequestOpened
 				} else if strings.Contains(oldComment.Body, "closed") {
-					commentType = v3.CommentTypePullRequestClosed
+					commentType = gitopiatypes.CommentTypePullRequestClosed
 				} else if strings.Contains(oldComment.Body, "merged") {
-					commentType = v3.CommentTypePullRequestMerged
+					commentType = gitopiatypes.CommentTypePullRequestMerged
 				} else if strings.Contains(oldComment.Body, "requested review from") {
-					commentType = v3.CommentTypeAddReviewers
+					commentType = gitopiatypes.CommentTypeAddReviewers
 				} else if strings.Contains(oldComment.Body, "removed review request for") {
-					commentType = v3.CommentTypeRemoveReviewers
+					commentType = gitopiatypes.CommentTypeRemoveReviewers
 				}
 			}
 
-			comment := v3.Comment{
+			comment := gitopiatypes.Comment{
 				Creator:           oldComment.Creator,
 				Id:                oldComment.Id,
 				RepositoryId:      pullRequest.Base.RepositoryId,
 				ParentIid:         pullRequest.Iid,
-				Parent:            v3.CommentParentPullRequest,
+				Parent:            gitopiatypes.CommentParentPullRequest,
 				CommentIid:        oldComment.CommentIid,
 				Body:              oldComment.Body,
 				Attachments:       attachments,
@@ -606,7 +605,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			}
 
 			var (
-				gitopiaV2Genesis v2.GenesisState
+				gitopiaV2Genesis testnettypes.GenesisState
 				authGenesis      authtypes.GenesisState
 			)
 
