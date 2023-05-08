@@ -93,9 +93,9 @@ func resolveRepoNameConflict(name string, repoNameMap map[string]int) string {
 // - Add `repositoryId` in Comment and Bounty.
 // - Modified comment structure - Parent: issue and pull; various comment types like label, assignees etc; reactions; replies; resolved/unresolved
 func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisState, error) {
-	var gitopiaV3Genesis gitopiatypes.GenesisState
+	var genesisState gitopiatypes.GenesisState
 
-	gitopiaV3Genesis.Params = gitopiatypes.Params{
+	genesisState.Params = gitopiatypes.Params{
 		NextInflationTime: time.Now().AddDate(2, 0, 0),
 		PoolProportions: gitopiatypes.PoolProportions{
 			Ecosystem: &gitopiatypes.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
@@ -128,10 +128,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			Provider: oldTask.Provider,
 		}
 
-		gitopiaV3Genesis.TaskList = append(gitopiaV3Genesis.TaskList, task)
+		genesisState.TaskList = append(genesisState.TaskList, task)
 	}
 
-	gitopiaV3Genesis.TaskCount = state.TaskCount
+	genesisState.TaskCount = state.TaskCount
 
 	for _, oldBranch := range state.BranchList {
 		branch := gitopiatypes.Branch{
@@ -144,10 +144,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			UpdatedAt:      oldBranch.UpdatedAt,
 		}
 
-		gitopiaV3Genesis.BranchList = append(gitopiaV3Genesis.BranchList, branch)
+		genesisState.BranchList = append(genesisState.BranchList, branch)
 	}
 
-	gitopiaV3Genesis.BranchCount = state.BranchCount
+	genesisState.BranchCount = state.BranchCount
 
 	for _, oldTag := range state.TagList {
 		tag := gitopiatypes.Tag{
@@ -159,10 +159,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			UpdatedAt:    oldTag.UpdatedAt,
 		}
 
-		gitopiaV3Genesis.TagList = append(gitopiaV3Genesis.TagList, tag)
+		genesisState.TagList = append(genesisState.TagList, tag)
 	}
 
-	gitopiaV3Genesis.TagCount = state.TagCount
+	genesisState.TagCount = state.TagCount
 
 	for _, oldMember := range state.MemberList {
 		member := gitopiatypes.Member{
@@ -172,10 +172,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			Role:       gitopiatypes.MemberRole(oldMember.Role),
 		}
 
-		gitopiaV3Genesis.MemberList = append(gitopiaV3Genesis.MemberList, member)
+		genesisState.MemberList = append(genesisState.MemberList, member)
 	}
 
-	gitopiaV3Genesis.MemberCount = state.MemberCount
+	genesisState.MemberCount = state.MemberCount
 
 	for _, oldRelease := range state.ReleaseList {
 		var attachments []*gitopiatypes.Attachment
@@ -205,10 +205,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			PublishedAt:  oldRelease.PublishedAt,
 		}
 
-		gitopiaV3Genesis.ReleaseList = append(gitopiaV3Genesis.ReleaseList, release)
+		genesisState.ReleaseList = append(genesisState.ReleaseList, release)
 	}
 
-	gitopiaV3Genesis.ReleaseCount = state.ReleaseCount
+	genesisState.ReleaseCount = state.ReleaseCount
 
 	for _, oldDao := range state.DaoList {
 		dao := gitopiatypes.Dao{
@@ -228,10 +228,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			UpdatedAt:   oldDao.UpdatedAt,
 		}
 
-		gitopiaV3Genesis.DaoList = append(gitopiaV3Genesis.DaoList, dao)
+		genesisState.DaoList = append(genesisState.DaoList, dao)
 	}
 
-	gitopiaV3Genesis.DaoCount = state.DaoCount
+	genesisState.DaoCount = state.DaoCount
 
 	for _, oldUser := range state.UserList {
 		if oldUser.Creator == "" {
@@ -254,10 +254,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			Verified:       oldUser.Verified,
 		}
 
-		gitopiaV3Genesis.UserList = append(gitopiaV3Genesis.UserList, user)
+		genesisState.UserList = append(genesisState.UserList, user)
 	}
 
-	gitopiaV3Genesis.UserCount = state.UserCount
+	genesisState.UserCount = state.UserCount
 
 	for _, oldUserDao := range state.UserDaoList {
 		userDao := gitopiatypes.UserDao{
@@ -265,7 +265,7 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			DaoAddress:  oldUserDao.DaoAddress,
 		}
 
-		gitopiaV3Genesis.UserDaoList = append(gitopiaV3Genesis.UserDaoList, userDao)
+		genesisState.UserDaoList = append(genesisState.UserDaoList, userDao)
 	}
 
 	for _, oldWhois := range state.WhoisList {
@@ -277,10 +277,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			OwnerType: gitopiatypes.OwnerType(oldWhois.OwnerType),
 		}
 
-		gitopiaV3Genesis.WhoisList = append(gitopiaV3Genesis.WhoisList, whois)
+		genesisState.WhoisList = append(genesisState.WhoisList, whois)
 	}
 
-	gitopiaV3Genesis.WhoisCount = state.WhoisCount
+	genesisState.WhoisCount = state.WhoisCount
 
 	repoNameMap := make(map[string]map[string]int)
 	newRepoNameMap := make(map[string]map[string]string)
@@ -360,10 +360,10 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			EnableArweaveBackup: oldRepository.EnableArweaveBackup,
 		}
 
-		gitopiaV3Genesis.RepositoryList = append(gitopiaV3Genesis.RepositoryList, repository)
+		genesisState.RepositoryList = append(genesisState.RepositoryList, repository)
 	}
 
-	gitopiaV3Genesis.RepositoryCount = state.RepositoryCount
+	genesisState.RepositoryCount = state.RepositoryCount
 
 	for _, oldbaseRepositoryKey := range state.BaseRepositoryKeyList {
 		baseRepositoryKey := gitopiatypes.BaseRepositoryKey{
@@ -372,7 +372,7 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 			Name:    normalizeRepoName(newRepoNameMap[oldbaseRepositoryKey.Address][oldbaseRepositoryKey.Name]),
 		}
 
-		gitopiaV3Genesis.BaseRepositoryKeyList = append(gitopiaV3Genesis.BaseRepositoryKeyList, baseRepositoryKey)
+		genesisState.BaseRepositoryKeyList = append(genesisState.BaseRepositoryKeyList, baseRepositoryKey)
 	}
 
 	commentMap := make(map[uint64]testnettypes.Comment)
@@ -380,7 +380,7 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 		commentMap[comment.Id] = comment
 	}
 
-	gitopiaV3Genesis.CommentCount = state.CommentCount
+	genesisState.CommentCount = state.CommentCount
 
 	for _, oldIssue := range state.IssueList {
 		issue := gitopiatypes.Issue{
@@ -459,13 +459,13 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 				CommentType:       commentType,
 			}
 
-			gitopiaV3Genesis.CommentList = append(gitopiaV3Genesis.CommentList, comment)
+			genesisState.CommentList = append(genesisState.CommentList, comment)
 		}
 
-		gitopiaV3Genesis.IssueList = append(gitopiaV3Genesis.IssueList, issue)
+		genesisState.IssueList = append(genesisState.IssueList, issue)
 	}
 
-	gitopiaV3Genesis.IssueCount = state.IssueCount
+	genesisState.IssueCount = state.IssueCount
 
 	for _, oldPullRequest := range state.GetPullRequestList() {
 		pullRequest := gitopiatypes.PullRequest{
@@ -555,15 +555,15 @@ func migrateTestnetState(state testnettypes.GenesisState) (gitopiatypes.GenesisS
 				CommentType:       commentType,
 			}
 
-			gitopiaV3Genesis.CommentList = append(gitopiaV3Genesis.CommentList, comment)
+			genesisState.CommentList = append(genesisState.CommentList, comment)
 		}
 
-		gitopiaV3Genesis.PullRequestList = append(gitopiaV3Genesis.PullRequestList, pullRequest)
+		genesisState.PullRequestList = append(genesisState.PullRequestList, pullRequest)
 	}
 
-	gitopiaV3Genesis.PullRequestCount = state.PullRequestCount
+	genesisState.PullRequestCount = state.PullRequestCount
 
-	return gitopiaV3Genesis, nil
+	return genesisState, nil
 }
 
 func GenerateGenesisCmd() *cobra.Command {
@@ -605,12 +605,12 @@ func GenerateGenesisCmd() *cobra.Command {
 			}
 
 			var (
-				gitopiaV2Genesis testnettypes.GenesisState
+				testnetGenesis testnettypes.GenesisState
 				authGenesis      authtypes.GenesisState
 			)
 
-			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &gitopiaV2Genesis)
-			gitopiaV3Genesis, err := migrateTestnetState(gitopiaV2Genesis)
+			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &testnetGenesis)
+			genesisState, err := migrateTestnetState(testnetGenesis)
 			if err != nil {
 				return err
 			}
@@ -652,11 +652,11 @@ func GenerateGenesisCmd() *cobra.Command {
 				rewardsGenesis      = rewardstypes.DefaultGenesis()
 			)
 
-			for _, user := range gitopiaV3Genesis.UserList {
+			for _, user := range genesisState.UserList {
 				for _, t := range keeper.GitServerTypeUrls {
 					a := authz.GrantAuthorization{
 						Granter:       user.Creator,
-						Grantee:       gitopiaV3Genesis.Params.GitServer,
+						Grantee:       genesisState.Params.GitServer,
 						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
 					}
 					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
@@ -665,18 +665,18 @@ func GenerateGenesisCmd() *cobra.Command {
 				for _, t := range keeper.StorageTypeUrls {
 					a := authz.GrantAuthorization{
 						Granter:       user.Creator,
-						Grantee:       gitopiaV3Genesis.Params.StorageProvider,
+						Grantee:       genesisState.Params.StorageProvider,
 						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
 					}
 					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
 				}
 			}
 
-			for _, dao := range gitopiaV3Genesis.DaoList {
+			for _, dao := range genesisState.DaoList {
 				for _, t := range keeper.GitServerTypeUrls {
 					a := authz.GrantAuthorization{
 						Granter:       dao.Address,
-						Grantee:       gitopiaV3Genesis.Params.GitServer,
+						Grantee:       genesisState.Params.GitServer,
 						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
 					}
 					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
@@ -685,7 +685,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				for _, t := range keeper.StorageTypeUrls {
 					a := authz.GrantAuthorization{
 						Granter:       dao.Address,
-						Grantee:       gitopiaV3Genesis.Params.StorageProvider,
+						Grantee:       genesisState.Params.StorageProvider,
 						Authorization: newAnyAuthorization(authz.NewGenericAuthorization(t)),
 					}
 					authzGenesis.Authorization = append(authzGenesis.Authorization, a)
@@ -839,7 +839,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
 			state[ibchost.ModuleName] = ctx.Codec.MustMarshalJSON(ibcGenesis)
-			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&gitopiaV3Genesis)
+			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&genesisState)
 			state[group.ModuleName] = ctx.Codec.MustMarshalJSON(groupGenesis)
 			state[capabilitytypes.ModuleName] = ctx.Codec.MustMarshalJSON(capabilityGenesis)
 			state[evidencetypes.ModuleName] = ctx.Codec.MustMarshalJSON(evidenceGenesis)
