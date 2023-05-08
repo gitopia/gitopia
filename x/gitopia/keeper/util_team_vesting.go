@@ -36,7 +36,7 @@ func VestedTeamTokens(startTime, currentTime time.Time) sdk.Coin {
 		vestedMonths = VESTING_PERIOD
 	}
 
-	vestedAmount := math.NewInt(TEAM_VESTING_AMOUNT).Quo(math.NewInt(VESTING_PERIOD)).Mul(math.NewInt(int64(vestedMonths)))
+	vestedAmount := math.NewInt(TEAM_VESTING_AMOUNT).Mul(math.NewInt(int64(vestedMonths))).Quo(math.NewInt(VESTING_PERIOD))
 
 	return sdk.NewCoin(params.BaseCoinUnit, vestedAmount)
 }
