@@ -13,6 +13,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -47,22 +48,53 @@ const (
 
 const (
 	rewardsServiceAddress            = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
-	strategicReserveAddress1         = ""
-	strategicReserveAddress2         = ""
-	strategicReserveAddress3         = ""
-	strategicReserveAddress4         = ""
-	strategicReserveAddress5         = ""
-	feegrantsAddress                 = ""
-	earlySupportersMultiSigAddress   = ""
-	strategicPartnersMultiSigAddress = ""
-	advisorsMultiSigAddress          = ""
-	teamMultiSigAddress              = ""
+	strategicReserveAddress1         = "gitopia1ryv3840cdfjhknqrjkvuhyn6h4zylwvq9ekdv9"
+	strategicReserveAddress2         = "gitopia12lehgzv7w7k8x0vwu9nsu9fvj9e80evhsu3jpf"
+	strategicReserveAddress3         = "gitopia17505m7wwzh28sf6dud2a8rd8qztlp4xvz5nqca"
+	strategicReserveAddress4         = "gitopia17urengx7kxrsche82cfxu3qutxnng97k04vy9a"
+	strategicReserveAddress5         = "gitopia1hcq6ejnxmsxaqpee7vh7mqjysgw2kp8sf4g4xm"
+	feegrantsAddress                 = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
+	earlySupportersMultiSigAddress   = "gitopia1l8d76cnr6z5f02unp3hqayccqg789d9u0knxce"
+	strategicPartnersMultiSigAddress = "gitopia1mqltrqxy9p96lnehksxqgr0ma062zmklcqh2mj"
+	advisorsMultiSigAddress          = "gitopia1v43v8rhvk545fanfunpvn89anlf0zd9p7zwt34"
+	teamMultiSigAddress              = "gitopia199540csqt8wllnjcdgx5466gmc3jxxy9d8tgm9"
 )
 
 const (
 	STRATEGIC_PARTNERS_AMOUNT = 51_071_429_000_000
 	ADVISORS_AMOUNT           = 10_000_000_000_000
 )
+
+const (
+	period1Day     = 54000
+	period1Month   = period1Day * 31
+	VESTING_PERIOD = period1Month * 2
+	CLIFF_PERIOD   = period1Day * 365
+)
+
+func createEarlySupporterVestingAccount(address string, tokens int64) *authvesting.PeriodicVestingAccount {
+	addr, _ := sdk.AccAddressFromBech32(address)
+	baseAccount := authtypes.NewBaseAccountWithAddress(addr)
+
+	var periods []authvesting.Period
+
+	vestedTokens := math.NewInt(tokens).Mul(math.NewInt(5)).Quo(math.NewInt(100))
+
+	for i := 0; i < 20; i++ {
+		periods = append(periods, authvesting.Period{
+			Length: int64(VESTING_PERIOD),
+			Amount: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, vestedTokens)),
+		})
+	}
+
+	vestingAccount := authvesting.NewPeriodicVestingAccount(baseAccount,
+		sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(tokens))},
+		CLIFF_PERIOD,
+		periods,
+	)
+
+	return vestingAccount
+}
 
 func normalizeRepoName(name string) string {
 	return strings.ToLower(name)
@@ -103,14 +135,14 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			Team:      &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
 		},
 		TeamProportions: []v3.DistributionProportion{
-			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia1z5yl2nk5lp0czd965qg9xs9z45ymr305f4vhpg"},
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia14t0ta8vvv2nrcx86g87z888s7pqat4svuyw7ae"},
 			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1ps5vrjmhtrkyxrge7d0fwvzsf02lq49wq3xeau"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1g0nvcrrd59zef2r9jt56jvut3gf6040svuveaa"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1kcnhjh9fkcc2w74g20s8edu6ue2eyamd3aqees"},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1s0xhvlgg4mp5kkpj3tg0x0k48m5tcejnpusj8j"},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: "gitopia1385wjgxrtvk4yyhcvtwsjeycv28pny3tc2lgxr"},
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: "gitopia1fyztge5vhfdfhnghumssv7z5cca7ctyecq3fqf"},
 			// 6.5 + 1.0
 			{Proportion: sdk.MustNewDecFromStr("7.5"), Address: teamMultiSigAddress},
@@ -634,6 +666,63 @@ func GenerateGenesisCmd() *cobra.Command {
 				}
 			}
 			authGenesis.Accounts = baseAccounts
+
+			// early supporters vesting accounts
+			vestingAcc := createEarlySupporterVestingAccount("gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89",
+				8_571_428_570_000)
+			accAny, err := codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk",
+				1_785_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z",
+				14_285_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g",
+				1_785_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd",
+				892_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr",
+				892_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
+				7_142_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
 
 			var (
 				authzGenesis        = authz.DefaultGenesisState()
