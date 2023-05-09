@@ -1,7 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia.testnet;
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/testnet;types";
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/testnet/types;types";
 
 message Tag {
   uint64 id = 1;
