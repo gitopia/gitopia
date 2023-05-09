@@ -67,7 +67,7 @@ const (
 
 const (
 	period1Day     = 54000
-	period1Month   = period1Day * 31
+	period1Month   = period1Day * 30
 	VESTING_PERIOD = period1Month * 2
 	CLIFF_PERIOD   = period1Day * 365
 )
@@ -650,10 +650,26 @@ func GenerateGenesisCmd() *cobra.Command {
 
 			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
 
+			earlySupporters := map[string]struct{}{
+				"gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89": {},
+				"gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk": {},
+				"gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z": {},
+				"gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g": {},
+				"gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd": {},
+				"gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr": {},
+				"gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p": {},
+			}
+
 			var baseAccounts []*codectypes.Any
 			for i := range authGenesis.Accounts {
 				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
 					acc := authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI)
+
+					// skip early supporter accounts
+					if _, ok := earlySupporters[sdk.MustBech32ifyAddressBytes("gitopia", acc.GetAddress())]; ok {
+						continue
+					}
+
 					err = acc.SetSequence(0)
 					if err != nil {
 						return err
@@ -718,6 +734,14 @@ func GenerateGenesisCmd() *cobra.Command {
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
 				7_142_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu",
+				714_285_710_000)
 			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
 			if err != nil {
 				return err
@@ -847,10 +871,12 @@ func GenerateGenesisCmd() *cobra.Command {
 				Address: "gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(7_142_857_140_000))), // 7,142,857.14 LORE
 			}, banktypes.Balance{
+				Address: "gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(714_285_710_000))), // 714,285.71 LORE
+			}, banktypes.Balance{
 				Address: earlySupportersMultiSigAddress,
-				// 18,571,428.57 LORE
-				// 17,857,142.86 LORE + 714,285.71 LORE
-				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(25_714_285_710_000))),
+				// 17,857,142.86 LORE
+				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(17_857_142_860_000))),
 			}, banktypes.Balance{
 				Address: strategicPartnersMultiSigAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))),
