@@ -1,0 +1,50 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2/types;types";
+
+import "gogoproto/gogo.proto";
+import "gitopia/repository.proto";
+
+message PullRequest {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 iid = 3; 
+  string title = 4; 
+  enum State {
+    OPEN = 0;
+	  CLOSED = 1;
+    MERGED = 2;
+  }
+  State state = 5; 
+  string description = 6; 
+  bool locked = 7; 
+  uint64 commentsCount = 8;
+  repeated IssueIid issues = 9; 
+  repeated uint64 labels = 10;
+  repeated string assignees = 11; 
+  repeated string reviewers = 12; 
+  bool draft = 13; 
+  int64 createdAt = 14; 
+  int64 updatedAt = 15; 
+  int64 closedAt = 16; 
+  string closedBy = 17; 
+  int64 mergedAt = 18; 
+  string mergedBy = 19; 
+  string mergeCommitSha = 20; 
+  bool maintainerCanModify = 21; 
+  PullRequestHead head = 22;
+  PullRequestBase base = 23;
+}
+
+message PullRequestHead {
+  uint64 repositoryId = 1;
+  string branch = 2;
+  string commitSha = 3;
+}
+
+message PullRequestBase {
+  uint64 repositoryId = 1;
+  string branch = 2;
+  string commitSha = 3;
+}

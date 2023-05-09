@@ -1,0 +1,11 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2/types;types";
+
+message Attachment {
+    string name = 1;
+    uint64 size = 2;
+    string sha = 3;
+    string uploader = 4;
+} 
