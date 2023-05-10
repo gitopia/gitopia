@@ -11,6 +11,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -29,6 +30,7 @@ type (
 		authzKeeper   *authzkeeper.Keeper
 		bankKeeper    bankKeeper.Keeper
 		mintKeeper    mintkeeper.Keeper
+		distrKeeper   *distrkeeper.Keeper
 		// this line is used by starport scaffolding # ibc/keeper/attribute
 	}
 )
@@ -43,6 +45,7 @@ func NewKeeper(
 	authzKeeper *authzkeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
 	mintKeeper mintkeeper.Keeper,
+	distrKeeper *distrkeeper.Keeper,
 	// this line is used by starport scaffolding # ibc/keeper/parameter
 ) *Keeper {
 	return &Keeper{
@@ -56,6 +59,7 @@ func NewKeeper(
 		authzKeeper:   authzKeeper,
 		bankKeeper:    bankKeeper,
 		mintKeeper:    mintKeeper,
+		distrKeeper:   distrKeeper,
 		// this line is used by starport scaffolding # ibc/keeper/return
 	}
 }

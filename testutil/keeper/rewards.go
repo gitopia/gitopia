@@ -10,8 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/gitopia/gitopia/x/rewards/keeper"
 	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/x/rewards/keeper"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -20,12 +20,12 @@ import (
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/gitopia/gitopia/x/gitopia/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 )
 
 func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -95,6 +95,22 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		cdc, storeKey, ss, stakingKeeper, accountKeeper,
 		bankKeeper, types.MinterAccountName)
 
+	distrParamsSubspace := typesparams.NewSubspace(cdc,
+		amino,
+		storeKey,
+		memStoreKey,
+		"distr",
+	)
+
+	distrKeeper := distrkeeper.NewKeeper(
+		cdc,
+		storeKey,
+		distrParamsSubspace,
+		accountKeeper,
+		bankKeeper,
+		stakingKeeper,
+		authtypes.FeeCollectorName)
+
 	gitopiaKeeper := gitopiakeeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		storeKey,
@@ -105,23 +121,8 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		&authzKeeper,
 		bankKeeper,
 		mintKeeper,
-	) 
-
-	distrParamsSubspace := typesparams.NewSubspace(cdc,
-		amino,
-		storeKey,
-		memStoreKey,
-		"distr",
+		&distrKeeper,
 	)
-
-	distrKeeper := distrkeeper.NewKeeper(
-		cdc, 
-		storeKey, 
-		distrParamsSubspace, 
-		accountKeeper,
-		bankKeeper, 
-		stakingKeeper,
-		authtypes.FeeCollectorName)
 
 	k := keeper.NewKeeper(
 		cdc,
@@ -132,9 +133,8 @@ func RewardsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		govkeeper.Keeper{},
 		bankKeeper,
 		accountKeeper,
-		distrKeeper,
+		&distrKeeper,
 	)
-
 
 	// Initialize params
 

@@ -30,7 +30,7 @@ type (
 		GovKeeper     govkeeper.Keeper
 		bankKeeper    bankkeeper.Keeper
 		accountKeeper authkeeper.AccountKeeper
-		distrKeeper   distrkeeper.Keeper
+		distrKeeper   *distrkeeper.Keeper
 	}
 )
 
@@ -43,7 +43,7 @@ func NewKeeper(
 	gok govkeeper.Keeper,
 	bk bankkeeper.Keeper,
 	ak authkeeper.AccountKeeper,
-	dk distrkeeper.Keeper,
+	dk *distrkeeper.Keeper,
 ) *Keeper {
 
 	return &Keeper{

@@ -13,6 +13,7 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -109,6 +110,16 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		appCodec, storeKey, ss, stakingKeeper, ak,
 		bankKeeper, types.MinterAccountName)
 
+	distrKeeper := distrkeeper.NewKeeper(
+		appCodec,
+		storeKey,
+		ss,
+		ak,
+		bankKeeper,
+		&stakingKeeper,
+		authtypes.FeeCollectorName,
+	)
+
 	k := keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		storeKey,
@@ -119,6 +130,7 @@ func GitopiaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		&authzKeeper,
 		bankKeeper,
 		mintKeeper,
+		&distrKeeper,
 	)
 
 	return k, ctx
