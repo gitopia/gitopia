@@ -1,0 +1,104 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.testnet;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/testnet/types;types";
+
+import "gogoproto/gogo.proto";
+import "gitopia/whois.proto";
+
+message Repository {
+  string creator = 1;
+  uint64 id = 2;
+  string name = 3; 
+  RepositoryOwner owner = 4; 
+  string description = 5; 
+  repeated uint64 forks = 6; 
+  string subscribers = 7; 
+  string commits = 8;
+  repeated RepositoryIssue issues = 9;
+  repeated RepositoryPullRequest pullRequests = 10;
+  uint64 issuesCount = 11;
+  uint64 pullsCount = 12;
+  repeated RepositoryLabel labels = 13;
+  uint64 labelsCount = 14;
+  repeated RepositoryRelease releases = 15;
+  int64 createdAt = 16;
+  int64 updatedAt = 17;
+  int64 pushedAt = 18;
+  repeated uint64 stargazers = 19;
+  bool archived = 20;
+  string license = 21;
+  string defaultBranch = 22;
+  uint64 parent = 23;
+  bool fork = 24;
+  repeated RepositoryCollaborator collaborators = 25;
+  bool allowForking = 26;
+  repeated RepositoryBackup backups = 27;
+  bool enableArweaveBackup = 28;
+}
+
+message RepositoryId {
+  string id = 1;
+  string name = 2;
+}
+
+message BaseRepositoryKey {
+  uint64 id = 1;
+  string address = 2;
+  string name = 3;
+}
+
+message RepositoryOwner {
+  string id = 1;
+  OwnerType type = 2;
+}
+
+message RepositoryIssue {
+  uint64 iid = 1;
+  uint64 id = 2;
+}
+
+message RepositoryPullRequest {
+  uint64 iid = 1;
+  uint64 id = 2;
+} 
+
+message RepositoryCollaborator {
+  string id = 1;
+  enum Permission {
+    READ = 0;
+	  TRIAGE = 1;
+	  WRITE = 2;
+	  MAINTAIN = 3;
+	  ADMIN = 4;
+  }
+  Permission permission = 2;
+}
+
+message RepositoryLabel {
+  uint64 id = 1;
+  string name = 2;
+  string color = 3;
+  string description = 4;
+} 
+
+message RepositoryRelease {
+  uint64 id = 1;
+  string tagName = 2;
+}
+
+message Attachment {
+  string name = 1;
+  uint64 size = 2;
+  string sha = 3;
+  string uploader = 4;
+}
+
+message RepositoryBackup {
+  enum Store {
+    IPFS = 0;
+    ARWEAVE = 1;
+  }
+  Store store = 1;
+  repeated string refs = 2;
+}
