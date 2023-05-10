@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -47,30 +50,34 @@ const (
 )
 
 const (
-	rewardsServiceAddress            = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
+	rewardsServiceAddress            = "gitopia1r7mhw4f6x73lap55st3yxn4u7tj4yt6qqwmlv5"
 	strategicReserveAddress1         = "gitopia1ryv3840cdfjhknqrjkvuhyn6h4zylwvq9ekdv9"
 	strategicReserveAddress2         = "gitopia12lehgzv7w7k8x0vwu9nsu9fvj9e80evhsu3jpf"
 	strategicReserveAddress3         = "gitopia17505m7wwzh28sf6dud2a8rd8qztlp4xvz5nqca"
 	strategicReserveAddress4         = "gitopia17urengx7kxrsche82cfxu3qutxnng97k04vy9a"
 	strategicReserveAddress5         = "gitopia1hcq6ejnxmsxaqpee7vh7mqjysgw2kp8sf4g4xm"
-	feegrantsAddress                 = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
+	feegrantsAddress                 = "gitopia13ashgc6j5xle4m47kqyn5psavq0u3klmscfxql"
 	earlySupportersMultiSigAddress   = "gitopia1l8d76cnr6z5f02unp3hqayccqg789d9u0knxce"
 	strategicPartnersMultiSigAddress = "gitopia1mqltrqxy9p96lnehksxqgr0ma062zmklcqh2mj"
 	advisorsMultiSigAddress          = "gitopia1v43v8rhvk545fanfunpvn89anlf0zd9p7zwt34"
 	teamMultiSigAddress              = "gitopia199540csqt8wllnjcdgx5466gmc3jxxy9d8tgm9"
+	airdropMultiSigAddress           = "gitopia1jt78ze9c89lq43vkv2msf4vue3am07dfr9nglj"
 )
 
 const (
 	STRATEGIC_PARTNERS_AMOUNT = 51_071_429_000_000
 	ADVISORS_AMOUNT           = 10_000_000_000_000
+	AIRDROP_AMOUNT            = 50_407_937_671_500 // Chains & bounties airdrop + GOL delegation: 407937.671500 LORE
 )
 
 const (
-	period1Day     = 54000
-	period1Month   = period1Day * 30
-	VESTING_PERIOD = period1Month * 2
-	CLIFF_PERIOD   = period1Day * 365
+	BLOCKS_PER_DAY   = 53333
+	BLOCKS_PER_MONTH = BLOCKS_PER_DAY * 30
+	VESTING_PERIOD   = BLOCKS_PER_MONTH * 2
+	CLIFF_PERIOD     = BLOCKS_PER_DAY * 365
 )
+
+var GENESIS_TIME = time.Date(2023, 5, 17, 17, 5, 17, 517517517, time.UTC)
 
 func createEarlySupporterVestingAccount(address string, tokens int64) *authvesting.PeriodicVestingAccount {
 	addr, _ := sdk.AccAddressFromBech32(address)
@@ -129,7 +136,7 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 	var gitopiaV3Genesis v3.GenesisState
 
 	gitopiaV3Genesis.Params = v3.Params{
-		NextInflationTime: time.Now().AddDate(2, 0, 0),
+		NextInflationTime: GENESIS_TIME.AddDate(2, 0, 0),
 		PoolProportions: v3.PoolProportions{
 			Ecosystem: &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
 			Team:      &v3.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
@@ -147,8 +154,8 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 			// 6.5 + 1.0
 			{Proportion: sdk.MustNewDecFromStr("7.5"), Address: teamMultiSigAddress},
 		},
-		GitServer:       "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
-		StorageProvider: "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
+		GitServer:       "gitopia1hk75f7j7zseq2qljel4rxvh96g253y3gnuhwru",
+		StorageProvider: "gitopia10vdh4fdyvsd8tsy8egcpkucqjupw8jqknwnv8w",
 	}
 
 	for _, oldTask := range state.TaskList {
@@ -601,9 +608,9 @@ func migrateTestnetState(state v2.GenesisState) (v3.GenesisState, error) {
 
 func GenerateGenesisCmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "generate-genesis [exported-testnet-state]",
+		Use:   "generate-genesis [exported-testnet-state] [game-of-lore-airdrop]",
 		Short: "Generate Mainnet Genesis file",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := client.GetClientContextFromCmd(cmd)
 
@@ -658,6 +665,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				"gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd": {},
 				"gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr": {},
 				"gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p": {},
+				"gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu": {},
 			}
 
 			var baseAccounts []*codectypes.Any
@@ -883,7 +891,41 @@ func GenerateGenesisCmd() *cobra.Command {
 			}, banktypes.Balance{
 				Address: advisorsMultiSigAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(ADVISORS_AMOUNT))),
+			}, banktypes.Balance{
+				Address: airdropMultiSigAddress,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(AIRDROP_AMOUNT))),
 			})
+
+			// Game of Lore
+			file, err := os.Open(args[1])
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			reader := csv.NewReader(file)
+			reader.Read()
+			records, err := reader.ReadAll()
+			if err != nil {
+				return err
+			}
+
+			for _, record := range records {
+				f, err := strconv.ParseFloat(record[1], 64)
+				if err != nil {
+					return err
+				}
+
+				// skip early supporter accounts
+				if _, ok := earlySupporters[record[0]]; ok {
+					continue
+				}
+
+				bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{
+					Address: record[0],
+					Coins:   sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(f*1000000)))},
+				})
+			}
 
 			crisisGenesis.ConstantFee = sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1000))
 
@@ -1007,7 +1049,7 @@ func GenerateGenesisCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String(flags.FlagChainID, "gitopia", "set chain id")
-	cmd.Flags().String(flagGenesisTime, time.Now().UTC().Format(time.RFC3339Nano), "set genesis time")
+	cmd.Flags().String(flagGenesisTime, GENESIS_TIME.UTC().Format(time.RFC3339Nano), "set genesis time")
 	cmd.Flags().Int64(flagInitialHeight, 1, "set the initial height")
 
 	return &cmd

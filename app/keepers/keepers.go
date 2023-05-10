@@ -305,16 +305,17 @@ func NewAppKeeper(
 		appKeepers.AuthzKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
+		appKeepers.DistrKeeper,
 	)
 
 	appKeepers.GitopiaModule = gitopia.NewAppModule(appCodec, appKeepers.GitopiaKeeper)
 
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
-		appCodec, 
-		appKeepers.keys[rewardtypes.StoreKey], 
-		appKeepers.keys[rewardtypes.MemStoreKey], 
-		&appKeepers.GitopiaKeeper, 
-		appKeepers.StakingKeeper, 
+		appCodec,
+		appKeepers.keys[rewardtypes.StoreKey],
+		appKeepers.keys[rewardtypes.MemStoreKey],
+		&appKeepers.GitopiaKeeper,
+		appKeepers.StakingKeeper,
 		appKeepers.GovKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.AccountKeeper,

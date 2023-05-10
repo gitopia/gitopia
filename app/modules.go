@@ -64,6 +64,7 @@ var maccPerms = map[string][]string{
 	gitopiatypes.TeamAccountName:                       nil,
 	gitopiatypes.LiquidityBootstrappingPoolAccountName: {authtypes.Minter},
 	gitopiatypes.EcosystemIncentivesAccountName:        {authtypes.Minter},
+	gitopiatypes.CommunityPoolGenesisAccountName:       {authtypes.Minter},
 	rewardtypes.RewardsSeriesOneAccount:                {authtypes.Minter},
 	rewardtypes.RewardsSeriesTwoAccount:                {authtypes.Minter},
 	rewardtypes.RewardsSeriesThreeAccount:              {authtypes.Minter},
