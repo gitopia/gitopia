@@ -19,7 +19,8 @@ func createNRelease(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Relea
 }
 
 func TestReleaseGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRelease(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetRelease(ctx, item.Id)
@@ -29,7 +30,8 @@ func TestReleaseGet(t *testing.T) {
 }
 
 func TestReleaseRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRelease(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRelease(ctx, item.Id)
@@ -39,13 +41,15 @@ func TestReleaseRemove(t *testing.T) {
 }
 
 func TestReleaseGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRelease(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllRelease(ctx))
 }
 
 func TestReleaseCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNRelease(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetReleaseCount(ctx))

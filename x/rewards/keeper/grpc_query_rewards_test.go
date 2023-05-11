@@ -19,9 +19,12 @@ import (
 var _ = strconv.IntSize
 
 func TestRewardQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.RewardsKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNRewards(keeper, ctx, 2)
+
+	keepers.RewardKeeper.SetParams(ctx, types.DefaultParams())
+	msgs := createNRewards(&keepers.RewardKeeper, ctx, 2)
+
 	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetRewardRequest
@@ -58,7 +61,7 @@ func TestRewardQuerySingle(t *testing.T) {
 			    Recipient:strconv.Itoa(100000),
                 
 			},
-			err:     status.Error(codes.NotFound, "not found"),
+			err:     status.Error(codes.NotFound, "reward not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -66,7 +69,7 @@ func TestRewardQuerySingle(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.Reward(wctx, tc.request)
+			response, err := keepers.RewardKeeper.Reward(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -81,9 +84,11 @@ func TestRewardQuerySingle(t *testing.T) {
 }
 
 func TestRewardQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.RewardsKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	msgs := createNRewards(keeper, ctx, 5)
+
+	keepers.RewardKeeper.SetParams(ctx, types.DefaultParams())
+	msgs := createNRewards(&keepers.RewardKeeper, ctx, 5)
 
 	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllRewardsRequest {
 		return &types.QueryAllRewardsRequest{
@@ -98,7 +103,7 @@ func TestRewardQueryPaginated(t *testing.T) {
 	t.Run("ByOffset", func(t *testing.T) {
 		step := 2
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.RewardsAll(wctx, request(nil, uint64(i), uint64(step), false))
+			resp, err := keepers.RewardKeeper.RewardsAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
@@ -111,7 +116,7 @@ func TestRewardQueryPaginated(t *testing.T) {
 		step := 2
 		var next []byte
 		for i := 0; i < len(msgs); i += step {
-			resp, err := keeper.RewardsAll(wctx, request(next, 0, uint64(step), false))
+			resp, err := keepers.RewardKeeper.RewardsAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
@@ -122,7 +127,7 @@ func TestRewardQueryPaginated(t *testing.T) {
 		}
 	})
 	t.Run("Total", func(t *testing.T) {
-		resp, err := keeper.RewardsAll(wctx, request(nil, 0, 0, true))
+		resp, err := keepers.RewardKeeper.RewardsAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
 		require.ElementsMatch(t,
@@ -131,7 +136,7 @@ func TestRewardQueryPaginated(t *testing.T) {
 		)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
-		_, err := keeper.RewardsAll(wctx, nil)
+		_, err := keepers.RewardKeeper.RewardsAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }

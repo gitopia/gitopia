@@ -13,7 +13,8 @@ import (
 )
 
 func TestCommentQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNComment(keeper, ctx, types.CommentParentIssue, 2)
 	for _, tc := range []struct {

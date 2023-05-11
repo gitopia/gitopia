@@ -1,0 +1,752 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.v2;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gitopia/task.proto";
+import "gitopia/branch.proto";
+import "gitopia/tag.proto";
+import "gitopia/member.proto";
+import "gitopia/bounty.proto";
+// this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
+import "gitopia/release.proto";
+import "gitopia/pullRequest.proto";
+import "gitopia/dao.proto";
+import "gitopia/comment.proto";
+import "gitopia/issue.proto";
+import "gitopia/repository.proto";
+import "gitopia/user.proto";
+import "gitopia/whois.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/v2/types;types";
+
+// Query defines the gRPC querier service.
+service Query {
+	// query vested amount for developer address 
+	rpc VestedAmount(QueryVestedAmountRequest) returns (QueryVestedAmountResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/vestedAmount/{address}";
+	}
+
+    // Queries a Task by id.
+	rpc Task(QueryGetTaskRequest) returns (QueryGetTaskResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/task/{id}";
+	}
+
+	// Queries a list of Task items.
+	rpc TaskAll(QueryAllTaskRequest) returns (QueryAllTaskResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/task";
+	}
+
+	// Queries a list of Branch items.
+	rpc BranchAll(QueryAllBranchRequest) returns (QueryAllBranchResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/branch";
+	}
+
+	// Queries Repository Branch by name.
+	rpc RepositoryBranch(QueryGetRepositoryBranchRequest) returns (QueryGetRepositoryBranchResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch/{branchName}";
+	}
+
+	rpc RepositoryBranchSha(QueryGetRepositoryBranchShaRequest) returns (QueryGetRepositoryBranchShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch/{branchName}/sha";
+	}
+
+	// Queries a list of Repository Branch.
+	rpc RepositoryBranchAll(QueryAllRepositoryBranchRequest) returns (QueryAllRepositoryBranchResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/branch";
+	}
+
+	// Queries a list of Tag items.
+	rpc TagAll(QueryAllTagRequest) returns (QueryAllTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/tag";
+	}
+
+	// Queries a Repository Tag by id.
+	rpc RepositoryTag(QueryGetRepositoryTagRequest) returns (QueryGetRepositoryTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag/{tagName}";
+	}
+
+	rpc RepositoryTagSha(QueryGetRepositoryTagShaRequest) returns (QueryGetRepositoryTagShaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag/{tagName}/sha";
+	}
+
+	// Queries a list of Repository Tag.
+	rpc RepositoryTagAll(QueryAllRepositoryTagRequest) returns (QueryAllRepositoryTagResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag";
+	}
+
+	// Queries a Member by id.
+	rpc DaoMember(QueryGetDaoMemberRequest) returns (QueryGetDaoMemberResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao/{daoId}/member/{userId}";
+	}
+
+	// Queries a list of Dao Member.
+	rpc DaoMemberAll(QueryAllDaoMemberRequest) returns (QueryAllDaoMemberResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao/{daoId}/member";
+	}
+
+	// Queries a list of Member items.
+	rpc MemberAll(QueryAllMemberRequest) returns (QueryAllMemberResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/member";
+	}
+
+	// Queries a Bounty by id.
+	rpc Bounty(QueryGetBountyRequest) returns (QueryGetBountyResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/bounty/{id}";
+	}
+
+	// Queries a list of Bounty items.
+	rpc BountyAll(QueryAllBountyRequest) returns (QueryAllBountyResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/bounty";
+	}
+
+// this line is used by starport scaffolding # 2
+
+	// Queries a release by id.
+	rpc Release(QueryGetReleaseRequest) returns (QueryGetReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release/{id}";
+	}
+
+	// Queries a list of release items.
+	rpc ReleaseAll(QueryAllReleaseRequest) returns (QueryAllReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/release";
+	}
+
+	// Queries a list of pullRequest items.
+	rpc PullRequestAll(QueryAllPullRequestRequest) returns (QueryAllPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/pullRequest";
+	}
+
+	// Queries a Dao by id.
+	rpc Dao(QueryGetDaoRequest) returns (QueryGetDaoResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao/{id}";
+	}
+
+	// Queries a list of Dao items.
+	rpc DaoAll(QueryAllDaoRequest) returns (QueryAllDaoResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao";
+	}
+
+	// Queries a issue comment.
+	rpc IssueComment(QueryGetIssueCommentRequest) returns (QueryGetIssueCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment/{commentIid}";
+	}
+
+	// Queries a pullrequest comment.
+	rpc PullRequestComment(QueryGetPullRequestCommentRequest) returns (QueryGetPullRequestCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment/{commentIid}";
+	}
+
+	// Queries a list of comment.
+	rpc CommentAll(QueryAllCommentRequest) returns (QueryAllCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/comment";
+	}
+
+	// Queries a list of issue comment.
+	rpc IssueCommentAll(QueryAllIssueCommentRequest) returns (QueryAllIssueCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/issue/{issueIid}/comment";
+	}
+
+	// Queries a list of pullrequest comment.
+	rpc PullRequestCommentAll(QueryAllPullRequestCommentRequest) returns (QueryAllPullRequestCommentResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/pullrequest/{pullRequestIid}/comment";
+	}
+
+	// Queries a list of issue items.
+	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
+	}
+
+	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/latest";
+	}
+
+	rpc RepositoryRelease(QueryGetRepositoryReleaseRequest) returns (QueryGetRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/tag/{tagName}";
+	}
+
+	rpc RepositoryReleaseAll(QueryAllRepositoryReleaseRequest) returns (QueryAllRepositoryReleaseResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases";
+	}
+
+	// Queries a repository issue by iid.
+	rpc RepositoryIssue(QueryGetRepositoryIssueRequest) returns (QueryGetRepositoryIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue/{issueIid}";
+	}
+
+	// Queries a list of repository issue.
+	rpc RepositoryIssueAll(QueryAllRepositoryIssueRequest) returns (QueryAllRepositoryIssueResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/issue";
+	}
+
+	// Queries a repository pullRequest.
+	rpc RepositoryPullRequest(QueryGetRepositoryPullRequestRequest) returns (QueryGetRepositoryPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull/{pullIid}";
+	}
+
+	// Queries a list of repository pullRequest.
+	rpc RepositoryPullRequestAll(QueryAllRepositoryPullRequestRequest) returns (QueryAllRepositoryPullRequestResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/{repositoryName}/pull";
+	}
+
+	// Queries a repository by id.
+	rpc Repository(QueryGetRepositoryRequest) returns (QueryGetRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{id}";
+	}
+
+	// Queries a list of repository items.
+	rpc RepositoryAll(QueryAllRepositoryRequest) returns (QueryAllRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository";
+	}
+
+	// Queries a repository forks by id.
+	rpc ForkAll(QueryGetAllForkRequest) returns (QueryGetAllForkResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/forks";
+	}
+
+	// Queries a user by id.
+	rpc User(QueryGetUserRequest) returns (QueryGetUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}";
+	}
+
+	// Queries a list of User Dao.
+	rpc UserDaoAll(QueryAllUserDaoRequest) returns (QueryAllUserDaoResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{userId}/dao";
+	}
+
+	// Queries a list of user items.
+	rpc UserAll(QueryAllUserRequest) returns (QueryAllUserResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user";
+	}
+
+	// Queries a list of user repositories.
+	rpc AnyRepositoryAll(QueryAllAnyRepositoryRequest) returns (QueryAllAnyRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repository";
+	}
+
+	// Queries a repository by user id and repository name
+	rpc AnyRepository(QueryGetAnyRepositoryRequest) returns (QueryGetAnyRepositoryResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user/{id}/repository/{repositoryName}";
+	}
+
+	// Queries a whois by id.
+	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois/{name}";
+	}
+
+	// Queries a list of whois items.
+	rpc WhoisAll(QueryAllWhoisRequest) returns (QueryAllWhoisResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/whois";
+	}
+
+	rpc PullRequestMergePermission(QueryGetPullRequestMergePermissionRequest) returns (QueryGetPullRequestMergePermissionResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge";
+	}
+
+	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}";
+	}
+
+	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
+	}
+}
+
+message QueryVestedAmountRequest{
+	string address = 1;
+}
+
+message QueryVestedAmountResponse {
+	string address = 1;
+	cosmos.base.v1beta1.Coin amount = 2
+    [(gogoproto.nullable) = false,
+     (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+	cosmos.base.v1beta1.Coin exercisedAmount = 3
+	[(gogoproto.nullable) = false,
+	 (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+}
+
+message QueryCheckStorageProviderAuthorizationRequest {
+	string userAddress = 1;
+	string providerAddress = 2;
+}
+
+message QueryCheckStorageProviderAuthorizationResponse {
+	bool haveAuthorization = 1;
+}
+
+message QueryGetTaskRequest {
+	uint64 id = 1;
+}
+
+message QueryGetTaskResponse {
+	Task Task = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllTaskRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllTaskResponse {
+	repeated Task Task = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryCheckGitServerAuthorizationRequest {
+	string userAddress = 1;
+	string providerAddress = 2;
+}
+
+message QueryCheckGitServerAuthorizationResponse {
+	bool haveAuthorization = 1;
+}
+
+message QueryAllBranchRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllBranchResponse {
+	repeated Branch Branch = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryBranchRequest {
+	string id = 1;
+	string repositoryName = 2;
+	string branchName = 3;
+}
+
+message QueryGetRepositoryBranchResponse {
+	Branch Branch = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRepositoryBranchShaRequest {
+	string id = 1;
+	string repositoryName = 2;
+	string branchName = 3;
+}
+
+message QueryGetRepositoryBranchShaResponse {
+	string sha = 1;
+}
+
+message QueryAllRepositoryBranchRequest {
+	string id = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryBranchResponse {
+	repeated Branch Branch = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllTagRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllTagResponse {
+	repeated Tag Tag = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryTagRequest {
+	string id = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryTagResponse {
+	Tag Tag = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRepositoryTagShaRequest {
+	string id = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryTagShaResponse {
+	string sha = 1;
+}
+
+message QueryAllRepositoryTagRequest {
+	string id = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryTagResponse {
+	repeated Tag Tag = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDaoMemberRequest {
+	string daoId = 1;
+	string userId = 2;
+}
+
+message QueryGetDaoMemberResponse {
+	Member Member = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllDaoMemberRequest {
+	string daoId = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryAllDaoMemberResponse {
+	repeated Member Member = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllMemberRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllMemberResponse {
+	repeated Member Member = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetBountyRequest {
+	uint64 id = 1;
+}
+
+message QueryGetBountyResponse {
+	Bounty Bounty = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllBountyRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllBountyResponse {
+	repeated Bounty Bounty = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3
+message QueryGetPullRequestMergePermissionRequest {
+	string userId = 1;
+	uint64 repositoryId = 2;
+	uint64 pullIid = 3;
+}
+
+message QueryGetPullRequestMergePermissionResponse {
+	bool havePermission = 1;
+}
+
+// this line is used by starport scaffolding # 3
+message QueryGetReleaseRequest {
+	uint64 id = 1;
+}
+
+message QueryGetReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllReleaseRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetPullRequestRequest {
+	uint64 id = 1;
+}
+
+message QueryGetPullRequestResponse {
+	PullRequest PullRequest = 1;
+}
+
+message QueryAllPullRequestRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPullRequestResponse {
+	repeated PullRequest PullRequest = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDaoRequest {
+	string id = 1;
+}
+
+message QueryGetDaoResponse {
+	Dao dao = 1;
+}
+
+message QueryAllDaoRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDaoResponse {
+	repeated Dao dao = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetIssueCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 issueIid = 2;
+	uint64 commentIid = 3;
+}
+
+message QueryGetIssueCommentResponse {
+	Comment Comment = 1;
+}
+
+message QueryGetPullRequestCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 pullRequestIid = 2;
+	uint64 commentIid = 3;
+}
+
+message QueryGetPullRequestCommentResponse {
+	Comment Comment = 1;
+}
+
+message QueryAllCommentRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllIssueCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 issueIid = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllIssueCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllPullRequestCommentRequest {
+	uint64 repositoryId = 1;
+	uint64 pullRequestIid = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllPullRequestCommentResponse {
+	repeated Comment Comment = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllIssueRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllIssueResponse {
+	repeated Issue Issue = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetLatestRepositoryReleaseRequest { 
+	string id = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetLatestRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryGetRepositoryReleaseRequest { 
+	string id = 1;
+	string repositoryName = 2;
+	string tagName = 3;
+}
+
+message QueryGetRepositoryReleaseResponse {
+	Release Release = 1;
+}
+
+message QueryAllRepositoryReleaseRequest { 
+	string id = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryAllRepositoryReleaseResponse {
+	repeated Release Release = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryIssueRequest {
+	string id = 1;
+	string repositoryName = 2;
+	uint64 issueIid = 3;
+}
+
+message QueryGetRepositoryIssueResponse {
+	Issue Issue = 1;
+}
+
+message QueryGetRepositoryPullRequestRequest {
+	string id = 1;
+	string repositoryName = 2;
+	uint64 pullIid = 3;
+}
+
+message QueryGetRepositoryPullRequestResponse {
+	PullRequest PullRequest = 1;
+}
+
+message QueryAllRepositoryIssueRequest {
+	string id = 1;
+	string repositoryName = 2;
+	IssueOptions option = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message IssueOptions {
+	string createdBy = 1;
+	string state = 2;
+	string labels = 3;
+	string assignee = 4;
+	repeated uint64 labelIds = 5;
+	string sort = 6;
+	string search = 7;
+	int64 updatedAfter = 8;
+	int64 updatedBefore = 9;
+}
+
+message QueryAllRepositoryIssueResponse {
+	repeated Issue Issue = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllRepositoryPullRequestRequest {
+	string id = 1;
+	string repositoryName = 2;
+	PullRequestOptions option = 3;
+	cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+
+message PullRequestOptions {
+	string createdBy = 1;
+	string state = 2;
+	string labels = 3;
+	string assignee = 4;
+	string reviewer = 5;
+	repeated uint64 labelIds = 6;
+	string sort = 7;
+	string search = 8;
+	int64 updatedAfter = 9;
+	int64 updatedBefore = 10;
+}
+
+message QueryAllRepositoryPullRequestResponse {
+	repeated PullRequest PullRequest = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryRequest {
+	uint64 id = 1;
+}
+
+message QueryGetRepositoryResponse {
+	Repository Repository = 1;
+}
+
+message RepositoryFork {
+	string creator = 1;
+	uint64 id = 2;
+	string name = 3; 
+	RepositoryOwner owner = 4; 
+	string description = 5; 
+	uint64 parent = 6;
+	uint64 forksCount = 7; 
+	uint64 issuesCount = 8;
+	uint64 pullsCount = 9;
+}
+
+message QueryGetAllForkRequest {
+	string id = 1;
+	string repositoryName = 2;
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryGetAllForkResponse {
+	repeated RepositoryFork forks = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllRepositoryRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRepositoryResponse {
+	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryGetUserRequest {
+	string id = 1;
+}
+
+message QueryGetUserResponse {
+	User User = 1;
+}
+
+message QueryAllUserDaoRequest {
+	string userId = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryAllUserDaoResponse {
+	repeated Dao dao = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllUserRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllUserResponse {
+	repeated User User = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryAllAnyRepositoryRequest {
+	string id = 1;
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryAllAnyRepositoryResponse {
+	repeated Repository Repository = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetAnyRepositoryRequest {
+	string id = 1;
+	string repositoryName = 2;
+}
+
+message QueryGetAnyRepositoryResponse {
+	Repository Repository = 1;
+}
+
+message QueryGetWhoisRequest {
+	string name = 1;
+}
+
+message QueryGetWhoisResponse {
+	Whois Whois = 1;
+}
+
+message QueryAllWhoisRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllWhoisResponse {
+	repeated Whois Whois = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

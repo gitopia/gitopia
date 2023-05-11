@@ -1,0 +1,16 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia.testnet;
+
+option go_package = "github.com/gitopia/gitopia/x/gitopia/migrations/testnet/types;types";
+
+enum MemberRole {
+  MEMBER = 0;
+  OWNER = 1;
+}
+
+message Member {
+  uint64 id = 1;
+  string address = 2; 
+  string daoAddress = 3; 
+  MemberRole role = 4; 
+}

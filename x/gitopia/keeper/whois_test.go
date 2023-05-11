@@ -24,7 +24,8 @@ func createNWhois(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Whois {
 }
 
 func TestWhoisGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNWhois(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetWhois(ctx, item.Name)
@@ -34,7 +35,8 @@ func TestWhoisGet(t *testing.T) {
 }
 
 func TestWhoisRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNWhois(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveWhois(ctx, item.Name)
@@ -44,13 +46,15 @@ func TestWhoisRemove(t *testing.T) {
 }
 
 func TestWhoisGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNWhois(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllWhois(ctx))
 }
 
 func TestWhoisCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNWhois(keeper, ctx, 10)
 	count := uint64(len(items))
 	/* TODO: Need to be equal */

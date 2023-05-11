@@ -26,7 +26,6 @@ import (
 	"github.com/gitopia/gitopia/app/keepers"
 	gitopiaappparams "github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/app/upgrades"
-	v3 "github.com/gitopia/gitopia/app/upgrades/v3"
 	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -45,7 +44,7 @@ var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 
-	Upgrades = []upgrades.Upgrade{v3.Upgrade}
+	Upgrades = []upgrades.Upgrade{}
 )
 
 var (
@@ -210,6 +209,7 @@ func (app *GitopiaApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abc
 // InitChainer application update at chain initialization
 func (app *GitopiaApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
+	
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}

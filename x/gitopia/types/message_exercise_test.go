@@ -3,9 +3,12 @@ package types
 import (
 	"testing"
 
+	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/stretchr/testify/require"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMsgExercise_ValidateBasic(t *testing.T) {
@@ -21,10 +24,48 @@ func TestMsgExercise_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid amount",
 			msg: MsgExercise{
 				Creator: sample.AccAddress(),
 			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "bad amount denom",
+			msg: MsgExercise{
+				Creator: sample.AccAddress(),
+				Amount: sdk.Coin{"1lore", math.NewInt(10)},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},{
+			name: "negative amount ",
+			msg: MsgExercise{
+				Creator: sample.AccAddress(),
+				Amount: sdk.Coin{params.BaseCoinUnit, math.NewInt(-10)},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},{
+			name: "invalid amount denom ",
+			msg: MsgExercise{
+				Creator: sample.AccAddress(),
+				Amount: sdk.Coin{"hola", math.NewInt(10)},
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid to address",
+			msg: MsgExercise{
+				Creator: sample.AccAddress(),
+				Amount: sdk.Coin{params.BaseCoinUnit, math.NewInt(10)},
+				To: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid message",
+			msg: MsgExercise{
+				Creator: sample.AccAddress(),
+				Amount: sdk.Coin{params.BaseCoinUnit, math.NewInt(10)},
+				To: sample.AccAddress(),
+			},
+			err: nil,
 		},
 	}
 	for _, tt := range tests {

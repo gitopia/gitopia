@@ -48,8 +48,7 @@ message QueryGetRewardResponseReward {
   cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  // not required in the response
-  // string creator = 3;
+  string creator = 3;
   cosmos.base.v1beta1.Coin claimed_amount = 4
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 

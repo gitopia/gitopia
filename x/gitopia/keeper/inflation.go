@@ -6,8 +6,9 @@ import (
 	"github.com/gitopia/gitopia/app/params"
 )
 
-// total max supply in utlore
-const MAX_SUPPLY = 1711136433
+// https://github.com/cosmos/cosmos-sdk/issues/13308
+// total max supply in ulore
+const MAX_SUPPLY int64 = 1711136433 * 1000000
 
 func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams minttypes.Params, bondedRatio sdk.Dec) sdk.Dec {
 	gitopiaParams := k.GetParams(ctx)
@@ -19,8 +20,8 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams
 	}
 
 	// minting stops.
-	amount := k.bankKeeper.GetSupply(ctx, params.DefaultBondDenom)
-	if amount.IsGTE(sdk.NewCoin(params.DefaultBondDenom, sdk.NewInt(MAX_SUPPLY))) {
+	if k.bankKeeper.GetSupply(ctx, params.BaseCoinUnit).
+		IsGTE(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(MAX_SUPPLY))) {
 		return sdk.ZeroDec()
 	}
 

@@ -16,7 +16,8 @@ import (
 )
 
 func TestTaskQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTask(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -61,7 +62,8 @@ func TestTaskQuerySingle(t *testing.T) {
 }
 
 func TestTaskQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTask(keeper, ctx, 5)
 

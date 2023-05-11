@@ -78,6 +78,7 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 		Reward: types.QueryGetRewardResponseReward{
 			Recipient:                reward.Recipient,
 			Amount:                   reward.Amount,
+			Creator:                  reward.Creator,
 			ClaimedAmount:            reward.ClaimedAmountWithDecay,
 			ClaimableAmount:          claimableAmountWithDecay,
 			RemainingClaimableAmount: remainingClaimableAmountWithDecay,

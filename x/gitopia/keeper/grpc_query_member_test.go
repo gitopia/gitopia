@@ -62,7 +62,8 @@ func TestMemberQuerySingle(t *testing.T) {
 */
 
 func TestMemberQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNMember(keeper, ctx, 5)
 

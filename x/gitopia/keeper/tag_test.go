@@ -23,7 +23,8 @@ func createNTag(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Tag {
 }
 
 func TestTagGet(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTag(keeper, ctx, 10)
 	for _, item := range items {
 		got, found := keeper.GetRepositoryTag(ctx, item.RepositoryId, item.Name)
@@ -36,7 +37,8 @@ func TestTagGet(t *testing.T) {
 }
 
 func TestTagRemove(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTag(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRepositoryTag(ctx, item.RepositoryId, item.Name)
@@ -46,7 +48,8 @@ func TestTagRemove(t *testing.T) {
 }
 
 func TestTagGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTag(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -55,7 +58,8 @@ func TestTagGetAll(t *testing.T) {
 }
 
 func TestRepositoryTagGetAll(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTag(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
@@ -64,7 +68,8 @@ func TestRepositoryTagGetAll(t *testing.T) {
 }
 
 func TestTagCount(t *testing.T) {
-	keeper, ctx := keepertest.GitopiaKeeper(t)
+	keepers, ctx := keepertest.AppKeepers(t)
+	keeper := &keepers.GitopiaKeeper
 	items := createNTag(keeper, ctx, 10)
 	count := uint64(len(items))
 	require.Equal(t, count, keeper.GetTagCount(ctx))

@@ -3,9 +3,12 @@ package types
 import (
 	"testing"
 
+	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/stretchr/testify/require"
+	"github.com/gitopia/gitopia/app/params"
 	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMsgCreateRewards_ValidateBasic(t *testing.T) {
@@ -21,9 +24,11 @@ func TestMsgCreateRewards_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "valid",
 			msg: MsgCreateReward{
 				Creator: sample.AccAddress(),
+				Recipient: sample.AccAddress(),
+				Amount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
 			},
 		},
 	}
