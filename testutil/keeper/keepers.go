@@ -116,6 +116,17 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.StakingKeeper, appKeepers.AccountKeeper,
 		appKeepers.BankKeeper, types.MinterAccountName)
 
+	distrKeeper := distrkeeper.NewKeeper(
+		appCodec,
+		keys[distrtypes.StoreKey],
+		appKeepers.ParamsKeeper.Subspace(distrtypes.ModuleName),
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		appKeepers.StakingKeeper,
+		authtypes.FeeCollectorName,
+	)
+	appKeepers.DistrKeeper = &distrKeeper
+
 	appKeepers.GitopiaKeeper = *keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		keys[types.StoreKey],
@@ -126,16 +137,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.AuthzKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
-	)
-
-	appKeepers.DistrKeeper = distrkeeper.NewKeeper(
-		appCodec,
-		keys[distrtypes.StoreKey],
-		appKeepers.ParamsKeeper.Subspace(distrtypes.ModuleName),
-		appKeepers.AccountKeeper,
-		appKeepers.BankKeeper,
-		appKeepers.StakingKeeper,
-		authtypes.FeeCollectorName,
+		&distrKeeper,
 	)
 
 	appKeepers.GovKeeper = govkeeper.NewKeeper(
@@ -150,7 +152,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		govtypes.DefaultConfig(),
 	)
 
-	appKeepers.RewardKeeper =  *rewardskeeper.NewKeeper(
+	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
 		appCodec,
 		keys[rewardstypes.StoreKey],
 		mkeys[types.MemStoreKey],
