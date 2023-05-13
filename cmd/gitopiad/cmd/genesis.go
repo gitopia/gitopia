@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -614,7 +613,7 @@ func GenerateGenesisCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := client.GetClientContextFromCmd(cmd)
 
-			blob, err := ioutil.ReadFile(args[0])
+			blob, err := os.ReadFile(args[0])
 			if err != nil {
 				return err
 			}
@@ -668,13 +667,16 @@ func GenerateGenesisCmd() *cobra.Command {
 				"gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu": {},
 			}
 
+			oldAccounts := make(map[string]struct{})
+
 			var baseAccounts []*codectypes.Any
 			for i := range authGenesis.Accounts {
 				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
 					acc := authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI)
 
 					// skip early supporter accounts
-					if _, ok := earlySupporters[sdk.MustBech32ifyAddressBytes("gitopia", acc.GetAddress())]; ok {
+					addr := sdk.MustBech32ifyAddressBytes("gitopia", acc.GetAddress())
+					if _, ok := earlySupporters[addr]; ok {
 						continue
 					}
 
@@ -687,6 +689,7 @@ func GenerateGenesisCmd() *cobra.Command {
 						return err
 					}
 					baseAccounts = append(baseAccounts, accAny)
+					oldAccounts[addr] = struct{}{}
 				}
 			}
 			authGenesis.Accounts = baseAccounts
@@ -699,6 +702,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk",
 				1_785_714_290_000)
@@ -707,6 +711,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z",
 				14_285_714_290_000)
@@ -715,6 +720,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g",
 				1_785_714_290_000)
@@ -723,6 +729,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd",
 				892_857_140_000)
@@ -731,6 +738,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr",
 				892_857_140_000)
@@ -739,6 +747,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
 				7_142_857_140_000)
@@ -747,6 +756,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p"] = struct{}{}
 
 			vestingAcc = createEarlySupporterVestingAccount("gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu",
 				714_285_710_000)
@@ -755,6 +765,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				return err
 			}
 			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu"] = struct{}{}
 
 			var (
 				authzGenesis        = authz.DefaultGenesisState()
@@ -925,6 +936,19 @@ func GenerateGenesisCmd() *cobra.Command {
 					Address: record[0],
 					Coins:   sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(f*1000000)))},
 				})
+			}
+
+			// Create base accounts for new addresses
+			for _, balance := range bankGenesis.Balances {
+				if _, exists := oldAccounts[balance.Address]; !exists {
+					addr, _ := sdk.AccAddressFromBech32(balance.Address)
+					baseAccount := authtypes.NewBaseAccountWithAddress(addr)
+					accAny, err = codectypes.NewAnyWithValue(baseAccount)
+					if err != nil {
+						return err
+					}
+					authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+				}
 			}
 
 			crisisGenesis.ConstantFee = sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1000))
