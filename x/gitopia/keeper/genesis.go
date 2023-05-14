@@ -9,7 +9,8 @@ import (
 
 const (
 	LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT = 30_000_000_000_000
-	ECOSYSTEM_INCENTIVES_AMOUNT         = 7_500_000_000_000
+	ECOSYSTEM_INCENTIVES_AMOUNT         = 6_500_000_000_000
+	COMMUNITY_POOL_GENESIS_AMOUNT       = 37_500_000_000_000
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis
@@ -151,9 +152,17 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 	}
 
 	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.LiquidityBootstrappingPoolAccountName)) {
-		totalLiquidityBootstrappingPoolCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT))
+		coin := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(LIQUIDITY_BOOTSTRAPPING_POOL_AMOUNT))
 
-		if err := k.createModuleAccount(ctx, types.LiquidityBootstrappingPoolAccountName, totalLiquidityBootstrappingPoolCoins); err != nil {
+		if err := k.createModuleAccount(ctx, types.LiquidityBootstrappingPoolAccountName, coin); err != nil {
+			panic(err)
+		}
+
+		addr := k.accountKeeper.GetModuleAddress(types.LiquidityBootstrappingPoolAccountName)
+		balances := k.bankKeeper.GetAllBalances(ctx, addr)
+
+		err := k.distrKeeper.FundCommunityPool(ctx, balances, addr)
+		if err != nil {
 			panic(err)
 		}
 	}
@@ -162,6 +171,22 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 		genesisEcosystemIncentivesCoins := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(ECOSYSTEM_INCENTIVES_AMOUNT))
 
 		if err := k.createModuleAccount(ctx, types.EcosystemIncentivesAccountName, genesisEcosystemIncentivesCoins); err != nil {
+			panic(err)
+		}
+	}
+
+	if !k.accountKeeper.HasAccount(ctx, k.accountKeeper.GetModuleAddress(types.CommunityPoolGenesisAccountName)) {
+		coin := sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(COMMUNITY_POOL_GENESIS_AMOUNT))
+
+		if err := k.createModuleAccount(ctx, types.CommunityPoolGenesisAccountName, coin); err != nil {
+			panic(err)
+		}
+
+		addr := k.accountKeeper.GetModuleAddress(types.CommunityPoolGenesisAccountName)
+		balances := k.bankKeeper.GetAllBalances(ctx, addr)
+
+		err := k.distrKeeper.FundCommunityPool(ctx, balances, addr)
+		if err != nil {
 			panic(err)
 		}
 	}

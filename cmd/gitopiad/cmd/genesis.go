@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -13,6 +15,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -46,23 +49,58 @@ const (
 )
 
 const (
-	rewardsServiceAddress            = "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck"
-	strategicReserveAddress1         = ""
-	strategicReserveAddress2         = ""
-	strategicReserveAddress3         = ""
-	strategicReserveAddress4         = ""
-	strategicReserveAddress5         = ""
-	feegrantsAddress                 = ""
-	earlySupportersMultiSigAddress   = ""
-	strategicPartnersMultiSigAddress = ""
-	advisorsMultiSigAddress          = ""
-	teamMultiSigAddress              = ""
+	rewardsServiceAddress            = "gitopia1r7mhw4f6x73lap55st3yxn4u7tj4yt6qqwmlv5"
+	strategicReserveAddress1         = "gitopia1ryv3840cdfjhknqrjkvuhyn6h4zylwvq9ekdv9"
+	strategicReserveAddress2         = "gitopia12lehgzv7w7k8x0vwu9nsu9fvj9e80evhsu3jpf"
+	strategicReserveAddress3         = "gitopia17505m7wwzh28sf6dud2a8rd8qztlp4xvz5nqca"
+	strategicReserveAddress4         = "gitopia17urengx7kxrsche82cfxu3qutxnng97k04vy9a"
+	strategicReserveAddress5         = "gitopia1hcq6ejnxmsxaqpee7vh7mqjysgw2kp8sf4g4xm"
+	feegrantsAddress                 = "gitopia13ashgc6j5xle4m47kqyn5psavq0u3klmscfxql"
+	earlySupportersMultiSigAddress   = "gitopia1l8d76cnr6z5f02unp3hqayccqg789d9u0knxce"
+	strategicPartnersMultiSigAddress = "gitopia1mqltrqxy9p96lnehksxqgr0ma062zmklcqh2mj"
+	advisorsMultiSigAddress          = "gitopia1v43v8rhvk545fanfunpvn89anlf0zd9p7zwt34"
+	teamMultiSigAddress              = "gitopia199540csqt8wllnjcdgx5466gmc3jxxy9d8tgm9"
+	airdropMultiSigAddress           = "gitopia1jt78ze9c89lq43vkv2msf4vue3am07dfr9nglj"
 )
 
 const (
 	STRATEGIC_PARTNERS_AMOUNT = 51_071_429_000_000
 	ADVISORS_AMOUNT           = 10_000_000_000_000
+	AIRDROP_AMOUNT            = 50_407_937_671_500 // Chains & bounties airdrop + GOL delegation: 407937.671500 LORE
 )
+
+const (
+	VESTING_PERIOD_SECONDS = 86400 * 30 * 2 // 2 months
+)
+
+var (
+	GENESIS_TIME       = time.Date(2023, 5, 17, 17, 5, 17, 517517517, time.UTC)
+	VESTING_START_TIME = GENESIS_TIME.AddDate(1, 0, 0).Unix()
+)
+
+func createEarlySupporterVestingAccount(address string, tokens int64) *authvesting.PeriodicVestingAccount {
+	addr, _ := sdk.AccAddressFromBech32(address)
+	baseAccount := authtypes.NewBaseAccountWithAddress(addr)
+
+	var periods []authvesting.Period
+
+	vestedTokens := math.NewInt(tokens).Mul(math.NewInt(5)).Quo(math.NewInt(100))
+
+	for i := 0; i < 20; i++ {
+		periods = append(periods, authvesting.Period{
+			Length: int64(VESTING_PERIOD_SECONDS),
+			Amount: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, vestedTokens)),
+		})
+	}
+
+	vestingAccount := authvesting.NewPeriodicVestingAccount(baseAccount,
+		sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(tokens))},
+		VESTING_START_TIME,
+		periods,
+	)
+
+	return vestingAccount
+}
 
 func normalizeRepoName(name string) string {
 	return strings.ToLower(name)
@@ -97,26 +135,26 @@ func migrateTestnetState(state testnettypes.GenesisState) (v2types.GenesisState,
 	var genesisState v2types.GenesisState
 
 	genesisState.Params = v2types.Params{
-		NextInflationTime: time.Now().AddDate(2, 0, 0),
+		NextInflationTime: GENESIS_TIME.AddDate(2, 0, 0),
 		PoolProportions: v2types.PoolProportions{
 			Ecosystem: &v2types.DistributionProportion{Proportion: sdk.MustNewDecFromStr("30.0")},
 			Team:      &v2types.DistributionProportion{Proportion: sdk.MustNewDecFromStr("28.0")},
 		},
 		TeamProportions: []v2types.DistributionProportion{
-			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia1z5yl2nk5lp0czd965qg9xs9z45ymr305f4vhpg"},
 			{Proportion: sdk.MustNewDecFromStr("35.0"), Address: "gitopia14t0ta8vvv2nrcx86g87z888s7pqat4svuyw7ae"},
 			{Proportion: sdk.MustNewDecFromStr("12.5"), Address: "gitopia1gyldx4ysv8u97v7rnjuw06sq35d8khmvn28d9n"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1ps5vrjmhtrkyxrge7d0fwvzsf02lq49wq3xeau"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1g0nvcrrd59zef2r9jt56jvut3gf6040svuveaa"},
 			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1kcnhjh9fkcc2w74g20s8edu6ue2eyamd3aqees"},
-			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: ""},
-			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: ""},
+			{Proportion: sdk.MustNewDecFromStr("2.0"), Address: "gitopia1s0xhvlgg4mp5kkpj3tg0x0k48m5tcejnpusj8j"},
+			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: "gitopia1385wjgxrtvk4yyhcvtwsjeycv28pny3tc2lgxr"},
 			{Proportion: sdk.MustNewDecFromStr("1.0"), Address: "gitopia1fyztge5vhfdfhnghumssv7z5cca7ctyecq3fqf"},
 			// 6.5 + 1.0
 			{Proportion: sdk.MustNewDecFromStr("7.5"), Address: teamMultiSigAddress},
 		},
-		GitServer:       "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
-		StorageProvider: "gitopia1a875smmd9va45tsx398prdzjtm5fg23mlzzgck",
+		GitServer:       "gitopia1hk75f7j7zseq2qljel4rxvh96g253y3gnuhwru",
+		StorageProvider: "gitopia10vdh4fdyvsd8tsy8egcpkucqjupw8jqknwnv8w",
 	}
 
 	for _, oldTask := range state.TaskList {
@@ -569,13 +607,13 @@ func migrateTestnetState(state testnettypes.GenesisState) (v2types.GenesisState,
 
 func GenerateGenesisCmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "generate-genesis [exported-testnet-state]",
+		Use:   "generate-genesis [exported-testnet-state] [game-of-lore-airdrop]",
 		Short: "Generate Mainnet Genesis file",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := client.GetClientContextFromCmd(cmd)
 
-			blob, err := ioutil.ReadFile(args[0])
+			blob, err := os.ReadFile(args[0])
 			if err != nil {
 				return err
 			}
@@ -607,7 +645,7 @@ func GenerateGenesisCmd() *cobra.Command {
 
 			var (
 				testnetGenesis testnettypes.GenesisState
-				authGenesis      authtypes.GenesisState
+				authGenesis    authtypes.GenesisState
 			)
 
 			ctx.Codec.MustUnmarshalJSON(state[gitopiatypes.ModuleName], &testnetGenesis)
@@ -618,10 +656,30 @@ func GenerateGenesisCmd() *cobra.Command {
 
 			ctx.Codec.MustUnmarshalJSON(state[authtypes.ModuleName], &authGenesis)
 
+			earlySupporters := map[string]struct{}{
+				"gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89": {},
+				"gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk": {},
+				"gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z": {},
+				"gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g": {},
+				"gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd": {},
+				"gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr": {},
+				"gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p": {},
+				"gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu": {},
+			}
+
+			oldAccounts := make(map[string]struct{})
+
 			var baseAccounts []*codectypes.Any
 			for i := range authGenesis.Accounts {
 				if authGenesis.Accounts[i].TypeUrl == "/cosmos.auth.v1beta1.BaseAccount" {
 					acc := authGenesis.Accounts[i].GetCachedValue().(authtypes.AccountI)
+
+					// skip early supporter accounts
+					addr := sdk.MustBech32ifyAddressBytes("gitopia", acc.GetAddress())
+					if _, ok := earlySupporters[addr]; ok {
+						continue
+					}
+
 					err = acc.SetSequence(0)
 					if err != nil {
 						return err
@@ -631,9 +689,83 @@ func GenerateGenesisCmd() *cobra.Command {
 						return err
 					}
 					baseAccounts = append(baseAccounts, accAny)
+					oldAccounts[addr] = struct{}{}
 				}
 			}
 			authGenesis.Accounts = baseAccounts
+
+			// early supporters vesting accounts
+			vestingAcc := createEarlySupporterVestingAccount("gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89",
+				8_571_428_570_000)
+			accAny, err := codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1rtf8ddfa780h4za8j2dss65f7kccurmwktth89"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk",
+				1_785_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1l85lsrnzcfr3llsgs993ceddgqrnutm9ncymrk"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z",
+				14_285_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia12zu648n89ve3dg2qul7h28h8fkt6cqp4wt3l4z"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g",
+				1_785_714_290_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia159a98x95n8uwguhxnf8gnzpy6wj6reu2effl8g"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd",
+				892_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1vxh2drxeu5ef4zy8atp59s78shy9dqetn3jedd"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr",
+				892_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1agd5k6zpksxkw5ufdtf73npluk5nuqa5h5eenr"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
+				7_142_857_140_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p"] = struct{}{}
+
+			vestingAcc = createEarlySupporterVestingAccount("gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu",
+				714_285_710_000)
+			accAny, err = codectypes.NewAnyWithValue(vestingAcc)
+			if err != nil {
+				return err
+			}
+			authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+			oldAccounts["gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu"] = struct{}{}
 
 			var (
 				authzGenesis        = authz.DefaultGenesisState()
@@ -693,14 +825,14 @@ func GenerateGenesisCmd() *cobra.Command {
 				}
 			}
 
-			fourteenDays := 14 * 24 * time.Hour
+			twoDays := 2 * 24 * time.Hour
 			depositParams := govv1types.NewDepositParams(
-				sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10000000))),
-				fourteenDays,
+				sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000000000))),
+				twoDays,
 			)
 			govGenesis.DepositParams = &depositParams
 
-			votingParams := govv1types.NewVotingParams(fourteenDays)
+			votingParams := govv1types.NewVotingParams(twoDays)
 			govGenesis.VotingParams = &votingParams
 
 			// Disable all transfers
@@ -758,17 +890,66 @@ func GenerateGenesisCmd() *cobra.Command {
 				Address: "gitopia1za95wp6a7qhdyu099797dtfsxfmgs0tzwata9p",
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(7_142_857_140_000))), // 7,142,857.14 LORE
 			}, banktypes.Balance{
+				Address: "gitopia1ycj45mssxs6nnv9exu0atukxcdgcvcvfq5cqtu",
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(714_285_710_000))), // 714,285.71 LORE
+			}, banktypes.Balance{
 				Address: earlySupportersMultiSigAddress,
-				// 18,571,428.57 LORE
-				// 17,857,142.86 LORE + 714,285.71 LORE
-				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(25_714_285_710_000))),
+				// 17,857,142.86 LORE
+				Coins: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(17_857_142_860_000))),
 			}, banktypes.Balance{
 				Address: strategicPartnersMultiSigAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(STRATEGIC_PARTNERS_AMOUNT))),
 			}, banktypes.Balance{
 				Address: advisorsMultiSigAddress,
 				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(ADVISORS_AMOUNT))),
+			}, banktypes.Balance{
+				Address: airdropMultiSigAddress,
+				Coins:   sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(AIRDROP_AMOUNT))),
 			})
+
+			// Game of Lore
+			file, err := os.Open(args[1])
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			reader := csv.NewReader(file)
+			reader.Read()
+			records, err := reader.ReadAll()
+			if err != nil {
+				return err
+			}
+
+			for _, record := range records {
+				f, err := strconv.ParseFloat(record[1], 64)
+				if err != nil {
+					return err
+				}
+
+				// skip early supporter accounts
+				if _, ok := earlySupporters[record[0]]; ok {
+					continue
+				}
+
+				bankGenesis.Balances = append(bankGenesis.Balances, banktypes.Balance{
+					Address: record[0],
+					Coins:   sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(int64(f*1000000)))},
+				})
+			}
+
+			// Create base accounts for new addresses
+			for _, balance := range bankGenesis.Balances {
+				if _, exists := oldAccounts[balance.Address]; !exists {
+					addr, _ := sdk.AccAddressFromBech32(balance.Address)
+					baseAccount := authtypes.NewBaseAccountWithAddress(addr)
+					accAny, err = codectypes.NewAnyWithValue(baseAccount)
+					if err != nil {
+						return err
+					}
+					authGenesis.Accounts = append(authGenesis.Accounts, accAny)
+				}
+			}
 
 			crisisGenesis.ConstantFee = sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(1000))
 
@@ -779,7 +960,7 @@ func GenerateGenesisCmd() *cobra.Command {
 				InflationMax:        sdk.NewDecWithPrec(45, 2),
 				InflationMin:        sdk.NewDecWithPrec(25, 2),
 				GoalBonded:          sdk.NewDecWithPrec(67, 2),
-				BlocksPerYear:       uint64(60 * 60 * 8766 / 1.5), // assuming 1.5 second block times
+				BlocksPerYear:       19466666, // assuming 1.62s block time
 			}
 
 			distributionGenesis.Params = distributiontypes.Params{
@@ -796,6 +977,14 @@ func GenerateGenesisCmd() *cobra.Command {
 				stakingtypes.DefaultHistoricalEntries,
 				params.BaseCoinUnit,
 				stakingtypes.DefaultMinCommissionRate,
+			)
+
+			slashingGenesis.Params = slashingtypes.NewParams(
+				50000,
+				sdk.MustNewDecFromStr("0.05"),
+				60*10*time.Second,
+				sdk.MustNewDecFromStr("0.05"),
+				sdk.MustNewDecFromStr("0.0001"),
 			)
 
 			rewardsGenesis.Params = rewardstypes.NewParams(rewardsServiceAddress, &rewardstypes.RewardSeries{
@@ -884,7 +1073,7 @@ func GenerateGenesisCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String(flags.FlagChainID, "gitopia", "set chain id")
-	cmd.Flags().String(flagGenesisTime, time.Now().UTC().Format(time.RFC3339Nano), "set genesis time")
+	cmd.Flags().String(flagGenesisTime, GENESIS_TIME.UTC().Format(time.RFC3339Nano), "set genesis time")
 	cmd.Flags().Int64(flagInitialHeight, 1, "set the initial height")
 
 	return &cmd

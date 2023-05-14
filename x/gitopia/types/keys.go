@@ -22,6 +22,7 @@ const (
 	TeamAccountName                       = "team"
 	LiquidityBootstrappingPoolAccountName = "liquiditybootstrappingpool"
 	EcosystemIncentivesAccountName        = "ecosystemincentives"
+	CommunityPoolGenesisAccountName       = "communitypoolgenesis"
 
 	// this line is used by starport scaffolding # ibc/keys/name
 )

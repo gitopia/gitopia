@@ -73,7 +73,7 @@ type AppKeepers struct {
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
 	MintKeeper       mintkeeper.Keeper
-	DistrKeeper      distrkeeper.Keeper
+	DistrKeeper      *distrkeeper.Keeper
 	GovKeeper        govkeeper.Keeper
 	CrisisKeeper     crisiskeeper.Keeper
 	UpgradeKeeper    upgradekeeper.Keeper
@@ -197,7 +197,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		gitopiatypes.MinterAccountName,
 	)
-	appKeepers.DistrKeeper = distrkeeper.NewKeeper(
+	distrKeeper := distrkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[distrtypes.StoreKey],
 		appKeepers.GetSubspace(distrtypes.ModuleName),
@@ -206,6 +206,7 @@ func NewAppKeeper(
 		&stakingKeeper,
 		authtypes.FeeCollectorName,
 	)
+	appKeepers.DistrKeeper = &distrKeeper
 	appKeepers.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[slashingtypes.StoreKey],
@@ -243,7 +244,7 @@ func NewAppKeeper(
 	govRouter := govv1beta1.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(appKeepers.ParamsKeeper)).
-		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(appKeepers.DistrKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(*appKeepers.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(appKeepers.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(appKeepers.IBCKeeper.ClientKeeper))
 	govConfig := govtypes.DefaultConfig()
@@ -299,13 +300,14 @@ func NewAppKeeper(
 		appKeepers.AuthzKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
+		appKeepers.DistrKeeper,
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
-		appCodec, 
-		appKeepers.keys[rewardtypes.StoreKey], 
-		appKeepers.keys[rewardtypes.MemStoreKey], 
-		&appKeepers.GitopiaKeeper, 
-		appKeepers.StakingKeeper, 
+		appCodec,
+		appKeepers.keys[rewardtypes.StoreKey],
+		appKeepers.keys[rewardtypes.MemStoreKey],
+		&appKeepers.GitopiaKeeper,
+		appKeepers.StakingKeeper,
 		appKeepers.GovKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.AccountKeeper,
