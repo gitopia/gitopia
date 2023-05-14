@@ -70,13 +70,13 @@ const (
 )
 
 const (
-	BLOCKS_PER_DAY   = 53333
-	BLOCKS_PER_MONTH = BLOCKS_PER_DAY * 30
-	VESTING_PERIOD   = BLOCKS_PER_MONTH * 2
-	CLIFF_PERIOD     = BLOCKS_PER_DAY * 365
+	VESTING_PERIOD_SECONDS = 86400 * 30 * 2 // 2 months
 )
 
-var GENESIS_TIME = time.Date(2023, 5, 17, 17, 5, 17, 517517517, time.UTC)
+var (
+	GENESIS_TIME       = time.Date(2023, 5, 17, 17, 5, 17, 517517517, time.UTC)
+	VESTING_START_TIME = GENESIS_TIME.AddDate(1, 0, 0).Unix()
+)
 
 func createEarlySupporterVestingAccount(address string, tokens int64) *authvesting.PeriodicVestingAccount {
 	addr, _ := sdk.AccAddressFromBech32(address)
@@ -88,14 +88,14 @@ func createEarlySupporterVestingAccount(address string, tokens int64) *authvesti
 
 	for i := 0; i < 20; i++ {
 		periods = append(periods, authvesting.Period{
-			Length: int64(VESTING_PERIOD),
+			Length: int64(VESTING_PERIOD_SECONDS),
 			Amount: sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, vestedTokens)),
 		})
 	}
 
 	vestingAccount := authvesting.NewPeriodicVestingAccount(baseAccount,
 		sdk.Coins{sdk.NewCoin(params.BaseCoinUnit, math.NewInt(tokens))},
-		CLIFF_PERIOD,
+		VESTING_START_TIME,
 		periods,
 	)
 
