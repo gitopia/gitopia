@@ -1073,7 +1073,7 @@ func GenerateGenesisCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String(flags.FlagChainID, "gitopia", "set chain id")
-	cmd.Flags().String(flagGenesisTime, time.Now().UTC().Format(time.RFC3339Nano), "set genesis time")
+	cmd.Flags().String(flagGenesisTime, GENESIS_TIME.UTC().Format(time.RFC3339Nano), "set genesis time")
 	cmd.Flags().Int64(flagInitialHeight, 1, "set the initial height")
 
 	return &cmd
