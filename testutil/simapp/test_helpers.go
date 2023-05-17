@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
-	"github.com/gitopia/gitopia/app"
+	"github.com/gitopia/gitopia/v2/app"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -37,7 +37,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	gitopiaApp "github.com/gitopia/gitopia/app"
+	gitopiaApp "github.com/gitopia/gitopia/v2/app"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in

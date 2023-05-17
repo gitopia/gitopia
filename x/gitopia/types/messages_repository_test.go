@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 
@@ -105,10 +105,10 @@ func TestMsgForkRepository_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid MsgForkRepository",
 			msg: MsgForkRepository{
-				Creator:      sample.AccAddress(),
-				RepositoryId: repositoryId,
+				Creator:            sample.AccAddress(),
+				RepositoryId:       repositoryId,
 				ForkRepositoryName: "repo-name",
-				Owner:        sample.AccAddress(),
+				Owner:              sample.AccAddress(),
 			},
 		}, {
 			name: "invalid owner id",

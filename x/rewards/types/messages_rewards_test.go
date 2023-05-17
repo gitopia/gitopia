@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/app/params"
-	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,9 +26,9 @@ func TestMsgCreateRewards_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid",
 			msg: MsgCreateReward{
-				Creator: sample.AccAddress(),
+				Creator:   sample.AccAddress(),
 				Recipient: sample.AccAddress(),
-				Amount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
+				Amount:    sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
 			},
 		},
 	}

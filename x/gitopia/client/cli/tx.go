@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
 var (
@@ -58,7 +58,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdDeleteBounty())
 	cmd.AddCommand(CmdToggleForcePush())
 	cmd.AddCommand(CmdExercise())
-// this line is used by starport scaffolding # 1
+	// this line is used by starport scaffolding # 1
 
 	cmd.AddCommand(CmdCreateRelease())
 	cmd.AddCommand(CmdUpdateRelease())

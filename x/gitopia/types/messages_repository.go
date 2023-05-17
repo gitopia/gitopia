@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/x/gitopia/utils/revision"
+	"github.com/gitopia/gitopia/v2/x/gitopia/utils/revision"
 )
 
 type Owner struct {

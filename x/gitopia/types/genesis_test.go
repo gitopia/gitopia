@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	"github.com/gitopia/gitopia/testutil/sample"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
 

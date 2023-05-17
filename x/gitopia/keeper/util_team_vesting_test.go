@@ -7,11 +7,11 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/app/params"
-	tkeeper "github.com/gitopia/gitopia/testutil/keeper"
-	"github.com/gitopia/gitopia/testutil/sample"
-	"github.com/gitopia/gitopia/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/app/params"
+	tkeeper "github.com/gitopia/gitopia/v2/testutil/keeper"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
+	"github.com/gitopia/gitopia/v2/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -108,19 +108,19 @@ func TestTeamVestingSchedule(t *testing.T) {
 		},
 		{
 			name:        "2 years",
-			blockTime:   genesisTime.AddDate(2, 0, 0), 
+			blockTime:   genesisTime.AddDate(2, 0, 0),
 			teamSupply:  math.NewInt(115149998 * 1000000),
 			teamVesting: math.NewInt(33911820100000),
 		},
 		{
 			name:        "3 years",
-			blockTime:   genesisTime.AddDate(3, 0, 0), 
+			blockTime:   genesisTime.AddDate(3, 0, 0),
 			teamSupply:  math.NewInt(159801248 * 1000000),
 			teamVesting: math.NewInt(67823640200000),
 		},
 		{
 			name:        "4 years",
-			blockTime:   genesisTime.AddDate(4, 0, 0), 
+			blockTime:   genesisTime.AddDate(4, 0, 0),
 			teamSupply:  math.NewInt(212266466 * 1000000),
 			teamVesting: math.NewInt(101735460300000),
 		},
@@ -132,25 +132,25 @@ func TestTeamVestingSchedule(t *testing.T) {
 		},
 		{
 			name:        "6 years",
-			blockTime:   genesisTime.AddDate(6, 0, 0), 
+			blockTime:   genesisTime.AddDate(6, 0, 0),
 			teamSupply:  math.NewInt(276610138 * 1000000),
 			teamVesting: math.NewInt(169559100500000),
 		},
 		{
 			name:        "7 years",
-			blockTime:   genesisTime.AddDate(7, 0, 0), 
+			blockTime:   genesisTime.AddDate(7, 0, 0),
 			teamSupply:  math.NewInt(294836831 * 1000000),
 			teamVesting: math.NewInt(203470920600000),
 		},
 		{
 			name:        "8 years",
-			blockTime:   genesisTime.AddDate(8, 0, 0), 
+			blockTime:   genesisTime.AddDate(8, 0, 0),
 			teamSupply:  math.NewInt(313860943 * 1000000),
 			teamVesting: math.NewInt(237382740700000),
 		},
 		{
 			name:        "9 years",
-			blockTime:   genesisTime.AddDate(9, 0, 0), 
+			blockTime:   genesisTime.AddDate(9, 0, 0),
 			teamSupply:  math.NewInt(323789151 * 1000000),
 			teamVesting: math.NewInt(271294560800000),
 		},
@@ -162,7 +162,7 @@ func TestTeamVestingSchedule(t *testing.T) {
 		},
 		{
 			name:        "11 years",
-			blockTime:   genesisTime.AddDate(11, 0, 0), 
+			blockTime:   genesisTime.AddDate(11, 0, 0),
 			teamSupply:  math.NewInt(339118201 * 1000000),
 			teamVesting: math.NewInt(339118201000000),
 		},

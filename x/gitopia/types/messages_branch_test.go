@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/testutil/sample"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 
@@ -227,9 +227,9 @@ func TestMsgToggleForcePush_ValidateBasic(t *testing.T) {
 		}, {
 			name: "valid address",
 			msg: MsgToggleForcePush{
-				Creator: addr,
+				Creator:      addr,
 				RepositoryId: repositoryId,
-				BranchName: "branch",
+				BranchName:   "branch",
 			},
 		},
 	}

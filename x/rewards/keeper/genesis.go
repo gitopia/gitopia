@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
 
 func (k Keeper) CreateRewardsModuleAccount(ctx sdk.Context, params types.Params) error {
@@ -49,7 +49,7 @@ func (k Keeper) CreateRewardsModuleAccount(ctx sdk.Context, params types.Params)
 	return nil
 }
 
-func (k Keeper) MintRewardsModuleAccount(ctx sdk.Context, rp *types.RewardPool, accountName string)error{
+func (k Keeper) MintRewardsModuleAccount(ctx sdk.Context, rp *types.RewardPool, accountName string) error {
 	if rp == nil {
 		return sdkerrors.Wrap(sdkerrors.ErrAppConfig, "reward pool empty")
 	}

@@ -1,4 +1,4 @@
-module github.com/gitopia/gitopia
+module github.com/gitopia/gitopia/v2
 
 go 1.19
 

@@ -23,10 +23,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/gitopia/gitopia/app/keepers"
-	gitopiaappparams "github.com/gitopia/gitopia/app/params"
-	"github.com/gitopia/gitopia/app/upgrades"
-	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/app/keepers"
+	gitopiaappparams "github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v2/app/upgrades"
+	gitopiatypes "github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -209,7 +209,7 @@ func (app *GitopiaApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abc
 // InitChainer application update at chain initialization
 func (app *GitopiaApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
-	
+
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}

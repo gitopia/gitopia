@@ -11,8 +11,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/gitopia/gitopia/x/offchain/client/cli"
-	"github.com/gitopia/gitopia/x/offchain/types"
+	"github.com/gitopia/gitopia/v2/x/offchain/client/cli"
+	"github.com/gitopia/gitopia/v2/x/offchain/types"
 )
 
 var (

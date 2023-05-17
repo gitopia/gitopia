@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 	"github.com/spf13/cobra"
 )
 
@@ -14,32 +14,32 @@ func CmdListRewards() *cobra.Command {
 		Use:   "list-rewards",
 		Short: "list all rewards",
 		RunE: func(cmd *cobra.Command, args []string) error {
-            clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx := client.GetClientContextFromCmd(cmd)
 
-            pageReq, err := client.ReadPageRequest(cmd.Flags())
-            if err != nil {
-                return err
-            }
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-            queryClient := types.NewQueryClient(clientCtx)
+			queryClient := types.NewQueryClient(clientCtx)
 
-            params := &types.QueryAllRewardsRequest{
-                Pagination: pageReq,
-            }
+			params := &types.QueryAllRewardsRequest{
+				Pagination: pageReq,
+			}
 
-            res, err := queryClient.RewardsAll(context.Background(), params)
-            if err != nil {
-                return err
-            }
+			res, err := queryClient.RewardsAll(context.Background(), params)
+			if err != nil {
+				return err
+			}
 
-            return clientCtx.PrintProto(res)
+			return clientCtx.PrintProto(res)
 		},
 	}
 
 	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
 	flags.AddQueryFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }
 
 func CmdShowRewards() *cobra.Command {
@@ -48,27 +48,26 @@ func CmdShowRewards() *cobra.Command {
 		Short: "shows a rewards",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-            clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx := client.GetClientContextFromCmd(cmd)
 
-            queryClient := types.NewQueryClient(clientCtx)
+			queryClient := types.NewQueryClient(clientCtx)
 
-             argRecipient := args[0]
-            
-            params := &types.QueryGetRewardRequest{
-                Recipient: argRecipient,
-                
-            }
+			argRecipient := args[0]
 
-            res, err := queryClient.Reward(context.Background(), params)
-            if err != nil {
-                return err
-            }
+			params := &types.QueryGetRewardRequest{
+				Recipient: argRecipient,
+			}
 
-            return clientCtx.PrintProto(res)
+			res, err := queryClient.Reward(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
 		},
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }
