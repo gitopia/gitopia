@@ -5,8 +5,8 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/app/params"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
 func (k Keeper) VestedAmount(c context.Context, req *types.QueryVestedAmountRequest) (*types.QueryVestedAmountResponse, error) {

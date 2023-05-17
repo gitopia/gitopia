@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
 func RepositoryCollaboratorExists(r []*types.RepositoryCollaborator, val string) (int, bool) {

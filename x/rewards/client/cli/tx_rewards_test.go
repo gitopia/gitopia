@@ -17,15 +17,14 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/gitopia/gitopia/testutil/network"
-	"github.com/gitopia/gitopia/testutil/sample"
-	"github.com/gitopia/gitopia/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/v2/testutil/network"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
+	"github.com/gitopia/gitopia/v2/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
 
 // Prevent strconv unused error
 var _ = strconv.IntSize
-
 
 func initAccsWithBalance(t *testing.T, cfg *network.Config, addrs ...string) {
 	genAccs := authtypes.GenesisAccounts{}
@@ -38,7 +37,7 @@ func initAccsWithBalance(t *testing.T, cfg *network.Config, addrs ...string) {
 		genBals = append(genBals, banktypes.Balance{
 			Address: addr,
 			Coins:   sdk.Coins{sdk.Coin{Denom: sdk.DefaultBondDenom, Amount: math.NewInt(10000)}},
-		},)
+		})
 	}
 
 	packedGenAccs, err := authtypes.PackAccounts(genAccs)

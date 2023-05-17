@@ -8,10 +8,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/app/params"
-	keepertest "github.com/gitopia/gitopia/testutil/keeper"
-	"github.com/gitopia/gitopia/x/rewards/keeper"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/v2/app/params"
+	keepertest "github.com/gitopia/gitopia/v2/testutil/keeper"
+	"github.com/gitopia/gitopia/v2/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
 
 // Prevent strconv unused error
@@ -27,9 +27,9 @@ func TestRewardsMsgServerCreate(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		expected := &types.MsgCreateReward{
-			Creator: creator,
+			Creator:   creator,
 			Recipient: strconv.Itoa(i),
-			Amount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
+			Amount:    sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
 		}
 		_, err := srv.CreateReward(wctx, expected)
 		require.NoError(t, err)

@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
 

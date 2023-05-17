@@ -7,9 +7,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/gitopia/gitopia/app/params"
-	"github.com/gitopia/gitopia/testutil/simapp"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v2/testutil/simapp"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )

@@ -13,7 +13,7 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 	"github.com/tendermint/tendermint/libs/log"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )

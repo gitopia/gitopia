@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	gitopiaparams "github.com/gitopia/gitopia/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/v2/app/params"
 )
 
 var defaultGenesisBz []byte

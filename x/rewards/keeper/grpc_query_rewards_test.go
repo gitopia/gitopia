@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-    "strconv"
+	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gitopia/gitopia/x/rewards/types"
-	"github.com/gitopia/gitopia/testutil/nullify"
-	keepertest "github.com/gitopia/gitopia/testutil/keeper"
+	keepertest "github.com/gitopia/gitopia/v2/testutil/keeper"
+	"github.com/gitopia/gitopia/v2/testutil/nullify"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
 
 // Prevent strconv unused error
@@ -32,36 +32,33 @@ func TestRewardQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc:     "First",
-			request:  &types.QueryGetRewardRequest{
-			    Recipient: msgs[0].Recipient,
-                
+			desc: "First",
+			request: &types.QueryGetRewardRequest{
+				Recipient: msgs[0].Recipient,
 			},
 			response: &types.QueryGetRewardResponse{Reward: types.QueryGetRewardResponseReward{
-				Recipient: msgs[0].Recipient,
-				Amount: msgs[0].Amount,
+				Recipient:     msgs[0].Recipient,
+				Amount:        msgs[0].Amount,
 				ClaimedAmount: msgs[0].ClaimedAmount,
 			}},
 		},
 		{
-			desc:     "Second",
-			request:  &types.QueryGetRewardRequest{
-			    Recipient: msgs[1].Recipient,
-                
+			desc: "Second",
+			request: &types.QueryGetRewardRequest{
+				Recipient: msgs[1].Recipient,
 			},
 			response: &types.QueryGetRewardResponse{Reward: types.QueryGetRewardResponseReward{
-				Recipient: msgs[1].Recipient,
-				Amount: msgs[1].Amount,
+				Recipient:     msgs[1].Recipient,
+				Amount:        msgs[1].Amount,
 				ClaimedAmount: msgs[1].ClaimedAmount,
 			}},
 		},
 		{
-			desc:    "KeyNotFound",
+			desc: "KeyNotFound",
 			request: &types.QueryGetRewardRequest{
-			    Recipient:strconv.Itoa(100000),
-                
+				Recipient: strconv.Itoa(100000),
 			},
-			err:     status.Error(codes.NotFound, "reward not found"),
+			err: status.Error(codes.NotFound, "reward not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -107,9 +104,9 @@ func TestRewardQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.Rewards),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.Rewards),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -120,9 +117,9 @@ func TestRewardQueryPaginated(t *testing.T) {
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.Rewards), step)
 			require.Subset(t,
-            	nullify.Fill(msgs),
-            	nullify.Fill(resp.Rewards),
-            )
+				nullify.Fill(msgs),
+				nullify.Fill(resp.Rewards),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})

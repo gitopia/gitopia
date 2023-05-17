@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	gTypes "github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	gTypes "github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
 
 var (
@@ -27,7 +27,7 @@ var (
 	}
 )
 
-func(k Keeper) getTasks(ctx sdk.Context, addr string) ([]types.Task, error){
+func (k Keeper) getTasks(ctx sdk.Context, addr string) ([]types.Task, error) {
 	var tasks []types.Task
 	tasks = append(tasks, types.Task{
 		Type:       types.TaskType_CREATE_USER,

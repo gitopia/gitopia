@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/gitopia/gitopia/testutil/network"
-	"github.com/gitopia/gitopia/testutil/nullify"
-	"github.com/gitopia/gitopia/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/testutil/network"
+	"github.com/gitopia/gitopia/v2/testutil/nullify"
+	"github.com/gitopia/gitopia/v2/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
 func networkWithMemberObjects(t *testing.T, n int) (*network.Network, []types.Member) {

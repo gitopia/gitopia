@@ -49,10 +49,10 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v5/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v5/modules/core/keeper"
-	gitopiakeeper "github.com/gitopia/gitopia/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/x/gitopia/types"
-	rewardskeeper "github.com/gitopia/gitopia/x/rewards/keeper"
-	rewardtypes "github.com/gitopia/gitopia/x/rewards/types"
+	gitopiakeeper "github.com/gitopia/gitopia/v2/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v2/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/v2/x/rewards/keeper"
+	rewardtypes "github.com/gitopia/gitopia/v2/x/rewards/types"
 	tmos "github.com/tendermint/tendermint/libs/os"
 )
 

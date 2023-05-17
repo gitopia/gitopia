@@ -7,8 +7,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/utils"
 )
 
 func ElementExists(s []uint64, val uint64) (int, bool) {

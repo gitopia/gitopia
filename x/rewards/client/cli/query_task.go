@@ -5,10 +5,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/gitopia/gitopia/x/rewards/types"
+	"github.com/gitopia/gitopia/v2/x/rewards/types"
 	"github.com/spf13/cobra"
 )
-
 
 func CmdListTask() *cobra.Command {
 	cmd := &cobra.Command{

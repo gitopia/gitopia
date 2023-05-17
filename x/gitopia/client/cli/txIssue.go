@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cosmosTypes "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/x/gitopia/types"
-	"github.com/gitopia/gitopia/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/utils"
 )
 
 func CmdCreateIssue() *cobra.Command {

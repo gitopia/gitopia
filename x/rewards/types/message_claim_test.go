@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/gitopia/gitopia/v2/testutil/sample"
 	"github.com/stretchr/testify/require"
-	"github.com/gitopia/gitopia/testutil/sample"
 )
 
 func TestMsgClaim_ValidateBasic(t *testing.T) {

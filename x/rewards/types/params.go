@@ -3,7 +3,7 @@ package types
 import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/app/params"
+	"github.com/gitopia/gitopia/v2/app/params"
 )
 
 type DefaultAcc struct {
