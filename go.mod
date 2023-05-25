@@ -178,3 +178,5 @@ require (
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 replace github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
+
+replace github.com/cosmos/ibc-go/v5 => github.com/gitopia/ibc-go/v5 v5.0.0-huckleberry-patch.1
