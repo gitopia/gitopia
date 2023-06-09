@@ -116,6 +116,7 @@ const (
 	DeleteRepositoryEventKey             = "DeleteRepository"
 	InvokeForkRepositoryEventKey         = "InvokeForkRepository"
 	ForkRepositoryEventKey               = "ForkRepository"
+	ForkRepositorySuccessEventKey        = "ForkRepositorySuccess"
 	SetRepositoryBranchEventKey          = "SetRepositoryBranch"
 	SetRepositoryTagEventKey             = "SetRepositoryTag"
 	MultiSetRepositoryBranchEventKey     = "MultiSetRepositoryBranch"
