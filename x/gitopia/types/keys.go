@@ -142,6 +142,12 @@ const (
 )
 
 const (
+	CreateCommentEventKey = "CreateComment"
+	UpdateCommentEventKey = "UpdateComment"
+	DeleteCommentEventKey = "DeleteComment"
+)
+
+const (
 	CreatePullRequestEventKey            = "CreatePullRequest"
 	UpdatePullRequestTitleEventKey       = "UpdatePullRequestTitle"
 	UpdatePullRequestDescriptionEventKey = "UpdatePullRequestDescription"
@@ -232,6 +238,18 @@ const (
 	EventAttributeIssueStateKey       = "IssueState"
 	EventAttributeIssueDescriptionKey = "IssueDescription"
 	EventAttributeClosedByKey         = "ClosedBy"
+)
+
+const (
+	EventAttributeCommentIdKey        = "CommentId"
+	EventAttributeCommentIidKey       = "CommentIid"
+	EventAttributeCommentParentIidKey = "CommentParentIid"
+	EventAttributeCommentParentKey    = "CommentParent"
+	EventAttributeCommentBodyKey      = "CommentBody"
+	EventAttributeCommentDiffHunkKey  = "CommentDiffHunk"
+	EventAttributeCommentPathKey      = "CommentPath"
+	EventAttributeCommentPositionKey  = "CommentPosition"
+	EventAttributeCommentTypeKey      = "CommentType"
 )
 
 const (

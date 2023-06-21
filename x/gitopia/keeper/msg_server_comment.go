@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -72,6 +73,26 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 		k.SetPullRequest(ctx, pullRequest)
 	}
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateCommentEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeCommentDiffHunkKey, comment.DiffHunk),
+			sdk.NewAttribute(types.EventAttributeCommentPathKey, comment.Path),
+			sdk.NewAttribute(types.EventAttributeCommentPositionKey, strconv.FormatUint(comment.Position, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),
+			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(comment.CreatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(comment.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgCreateCommentResponse{
 		Id: id,
 	}, nil
@@ -112,6 +133,22 @@ func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComm
 
 	k.SetComment(ctx, comment)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateCommentEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(comment.UpdatedAt, 10)),
+		),
+	)
+
 	return &types.MsgUpdateCommentResponse{}, nil
 }
 
@@ -150,6 +187,20 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 	case types.CommentParentPullRequest:
 		k.RemovePullRequestComment(ctx, comment.RepositoryId, comment.ParentIid, comment.CommentIid)
 	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteCommentEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),
+		),
+	)
 
 	return &types.MsgDeleteCommentResponse{}, nil
 }
