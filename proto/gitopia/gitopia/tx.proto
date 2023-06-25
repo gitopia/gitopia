@@ -782,7 +782,7 @@ message MsgUpdateRepositoryDescriptionResponse { }
 message MsgUpdateArchiveState {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string archived = 3;
+  bool archived = 3;
 }
 
 message MsgUpdateArchiveStateResponse { }

@@ -106,6 +106,7 @@ const (
 	ChangeOwnerEventKey                  = "ChangeOwner"
 	RenameRepositoryEventKey             = "RenameRepository"
 	UpdateRepositoryDescriptionEventKey  = "UpdateRepositoryDescription"
+	UpdateArchivedStateEventKey          = "UpdateArchivedState"
 	UpdateRepositoryCollaboratorEventKey = "UpdateRepositoryCollaborator"
 	RemoveRepositoryCollaboratorEventKey = "RemoveRepositoryCollaborator"
 	CreateRepositoryLabelEventKey        = "CreateRepositoryLabel"

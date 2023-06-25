@@ -515,7 +515,7 @@ func (k msgServer) UpdateArchiveState(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("archived state not modified"))
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryUpdateArchiveState) {
+	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryUpdateArchiveStatePermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
