@@ -27,6 +27,10 @@ func (k msgServer) CreateIssue(goCtx context.Context, msg *types.MsgCreateIssue)
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -284,6 +288,10 @@ func (k msgServer) ToggleIssueState(goCtx context.Context, msg *types.MsgToggleI
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
@@ -425,6 +433,10 @@ func (k msgServer) AddIssueAssignees(goCtx context.Context, msg *types.MsgAddIss
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
@@ -508,6 +520,10 @@ func (k msgServer) RemoveIssueAssignees(goCtx context.Context, msg *types.MsgRem
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
@@ -582,6 +598,10 @@ func (k msgServer) AddIssueLabels(goCtx context.Context, msg *types.MsgAddIssueL
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
@@ -663,6 +683,10 @@ func (k msgServer) RemoveIssueLabels(goCtx context.Context, msg *types.MsgRemove
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
@@ -745,6 +769,10 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 	}
 
 	repository, found := k.GetRepositoryById(ctx, issue.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", issue.RepositoryId))
 	}
