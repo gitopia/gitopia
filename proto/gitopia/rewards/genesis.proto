@@ -2,8 +2,8 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
-import "rewards/params.proto";
-import "rewards/rewards.proto";
+import "gitopia/rewards/params.proto";
+import "gitopia/rewards/rewards.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 // this line is used by starport scaffolding # genesis/proto/import

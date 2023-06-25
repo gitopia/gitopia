@@ -23,6 +23,8 @@ cd ..
 
 # move proto files to the right places
 #
+cp -r github.com/gitopia/gitopia/* ./
+
 # Note: Proto files are suffixed with the current binary version.
 rm -rf github.com
 

@@ -146,6 +146,7 @@ require (
 )
 
 require (
+	github.com/cosmos/gogoproto v1.4.10
 	github.com/ipfs/go-cid v0.3.2
 	golang.org/x/exp v0.0.0-20230310171629-522b1b587ee0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc
