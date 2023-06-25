@@ -493,6 +493,51 @@ func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types
 	return &types.MsgUpdateRepositoryDescriptionResponse{}, nil
 }
 
+func (k msgServer) UpdateArchiveState(goCtx context.Context, msg *types.MsgUpdateArchiveState) (*types.MsgUpdateArchiveStateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	if msg.Archived == repository.Archived {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("archived state not modified"))
+	}
+
+	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryUpdateArchiveState) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	repository.Archived = msg.Archived
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateArchivedStateEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUpdateArchiveStateResponse{}, nil
+}
+
 func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateRepositoryCollaborator) (*types.MsgUpdateRepositoryCollaboratorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

@@ -151,3 +151,21 @@ mocks:
 	go install github.com/vektra/mockery/v2@latest
 	mockery --name MsgClient --inpackage --case snake --dir ./x/gitopia/types
 	mockery --name QueryClient --inpackage --case snake --dir ./x/gitopia/types
+
+###############################################################################
+###                                  Proto                                  ###
+###############################################################################
+
+protoVer=0.11.6
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+containerProtoGen=proto-gen-$(protoVer)
+containerProtoFmt=proto-fmt-$(protoVer)
+
+proto-all: proto-gen
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
+		sh ./scripts/protocgen.sh; fi
+
+.PHONY: proto-all proto-gen
