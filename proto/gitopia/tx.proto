@@ -19,7 +19,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/attachment.proto";
 import "gitopia/reaction.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
@@ -46,7 +46,7 @@ service Msg {
   rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
   rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
-  rpc Exercise(MsgExercise) returns (MsgExerciseResponse);
+  rpc Exercise(MsgExercise1) returns (MsgExerciseResponse);
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
@@ -110,7 +110,7 @@ service Msg {
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
 
-message MsgExercise {
+message MsgExercise1 {
   string creator = 1;
   cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false,
