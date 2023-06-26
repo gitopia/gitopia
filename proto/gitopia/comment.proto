@@ -1,7 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.gitopia;
 
-option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
 import "gitopia/reaction.proto";
