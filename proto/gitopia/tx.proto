@@ -46,7 +46,7 @@ service Msg {
   rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
   rpc DeleteBounty(MsgDeleteBounty) returns (MsgDeleteBountyResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
-  rpc Exercise(MsgExercise1) returns (MsgExerciseResponse);
+  rpc Exercise(MsgExercise) returns (MsgExerciseResponse);
   rpc CreateRelease(MsgCreateRelease) returns (MsgCreateReleaseResponse);
   rpc UpdateRelease(MsgUpdateRelease) returns (MsgUpdateReleaseResponse);
   rpc DeleteRelease(MsgDeleteRelease) returns (MsgDeleteReleaseResponse);
@@ -110,7 +110,7 @@ service Msg {
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
 }
 
-message MsgExercise1 {
+message MsgExercise {
   string creator = 1;
   cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false,
