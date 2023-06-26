@@ -1,0 +1,525 @@
+{
+  "genesis_time": "2023-06-26T10:39:40.182707Z",
+  "chain_id": "chain-kvYIGY",
+  "initial_height": "1",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1",
+      "time_iota_ms": "1000"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000",
+      "max_bytes": "1048576"
+    },
+    "validator": {
+      "pub_key_types": [
+        "ed25519"
+      ]
+    },
+    "version": {}
+  },
+  "app_hash": "",
+  "app_state": {
+    "auth": {
+      "params": {
+        "max_memo_characters": "256",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000"
+      },
+      "accounts": [
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "gitopia16xl4vt8tmuw87f5c7vqn6wgvw9gu5xpervedqj",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        }
+      ]
+    },
+    "authz": {
+      "authorization": []
+    },
+    "bank": {
+      "params": {
+        "send_enabled": [],
+        "default_send_enabled": true
+      },
+      "balances": [
+        {
+          "address": "gitopia16xl4vt8tmuw87f5c7vqn6wgvw9gu5xpervedqj",
+          "coins": [
+            {
+              "denom": "node0token",
+              "amount": "1000000000"
+            },
+            {
+              "denom": "stake",
+              "amount": "500000000"
+            }
+          ]
+        }
+      ],
+      "supply": [],
+      "denom_metadata": []
+    },
+    "capability": {
+      "index": "1",
+      "owners": []
+    },
+    "crisis": {
+      "constant_fee": {
+        "denom": "stake",
+        "amount": "1000"
+      }
+    },
+    "distribution": {
+      "params": {
+        "community_tax": "0.020000000000000000",
+        "base_proposer_reward": "0.010000000000000000",
+        "bonus_proposer_reward": "0.040000000000000000",
+        "withdraw_addr_enabled": true
+      },
+      "fee_pool": {
+        "community_pool": []
+      },
+      "delegator_withdraw_infos": [],
+      "previous_proposer": "",
+      "outstanding_rewards": [],
+      "validator_accumulated_commissions": [],
+      "validator_historical_rewards": [],
+      "validator_current_rewards": [],
+      "delegator_starting_infos": [],
+      "validator_slash_events": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "feegrant": {
+      "allowances": []
+    },
+    "genutil": {
+      "gen_txs": [
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "node0",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "0.500000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "gitopia16xl4vt8tmuw87f5c7vqn6wgvw9gu5xpervedqj",
+                "validator_address": "gitopiavaloper16xl4vt8tmuw87f5c7vqn6wgvw9gu5xpetkaaqf",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "R8BO1pHa1IKb1wBUtmLebP/MQs9JEtb/z2CjRiQFrqI="
+                },
+                "value": {
+                  "denom": "stake",
+                  "amount": "100000000"
+                }
+              }
+            ],
+            "memo": "d10c6e76c940ec22c1ad97e8fbd2d2356fbdc7f4@0.0.0.0:60147",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "AvqWBRXATV9M+ddn/uzTxB3QoTliBUGK/9vcY5wNvsVN"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "1000000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "TEC5QFohxPWj/7LPeV/chRuu8hDP6IM28T475jNR6m4MZC18ch+u6QkzQ/WTdt4HuPc1Bjvbv57HMc3cxK35kw=="
+          ]
+        }
+      ]
+    },
+    "gitopia": {
+      "exercisedAmountList": [],
+      "exercisedAmountCount": "0",
+      "params": {
+        "next_inflation_time": "2025-06-26T10:39:40.171879Z",
+        "pool_proportions": {
+          "ecosystem": {
+            "proportion": "30.000000000000000000",
+            "address": ""
+          },
+          "team": {
+            "proportion": "28.000000000000000000",
+            "address": ""
+          }
+        },
+        "team_proportions": [
+          {
+            "proportion": "50.000000000000000000",
+            "address": "gitopia1k9pvyj845y9a4m4vuxx8sjq5q28yxym520fh2x"
+          },
+          {
+            "proportion": "35.000000000000000000",
+            "address": "gitopia1njn3grh5ar4ccapyp4uehuq28wpk2sk5heu7ac"
+          },
+          {
+            "proportion": "15.000000000000000000",
+            "address": "gitopia1d5r0ql0pg5d8xfs5t0pmn7dl72m2zj2wchkfq3"
+          }
+        ],
+        "genesis_time": "2022-06-26T10:39:40.171880Z",
+        "git_server": "gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke",
+        "storage_provider": "gitopia1xp4e40rd4akt882h2pxl8cw8ygxjxndu23c5wn"
+      },
+      "bountyList": [],
+      "bountyCount": "0",
+      "userDaoList": [],
+      "baseRepositoryKeyList": [],
+      "memberList": [],
+      "memberCount": "0",
+      "tagList": [],
+      "tagCount": "0",
+      "branchList": [],
+      "branchCount": "0",
+      "taskList": [],
+      "taskCount": "0",
+      "releaseList": [],
+      "releaseCount": "0",
+      "pullRequestList": [],
+      "pullRequestCount": "0",
+      "daoList": [],
+      "daoCount": "0",
+      "commentList": [],
+      "commentCount": "0",
+      "issueList": [],
+      "issueCount": "0",
+      "repositoryList": [],
+      "repositoryCount": "0",
+      "userList": [],
+      "userCount": "0",
+      "whoisList": [],
+      "whoisCount": "0"
+    },
+    "gov": {
+      "starting_proposal_id": "1",
+      "deposits": [],
+      "votes": [],
+      "proposals": [],
+      "deposit_params": {
+        "min_deposit": [
+          {
+            "denom": "stake",
+            "amount": "10000000"
+          }
+        ],
+        "max_deposit_period": "172800s"
+      },
+      "voting_params": {
+        "voting_period": "172800s"
+      },
+      "tally_params": {
+        "quorum": "0.334000000000000000",
+        "threshold": "0.500000000000000000",
+        "veto_threshold": "0.334000000000000000"
+      }
+    },
+    "group": {
+      "group_seq": "0",
+      "groups": [],
+      "group_members": [],
+      "group_policy_seq": "0",
+      "group_policies": [],
+      "proposal_seq": "0",
+      "proposals": [],
+      "votes": []
+    },
+    "ibc": {
+      "client_genesis": {
+        "clients": [],
+        "clients_consensus": [],
+        "clients_metadata": [],
+        "params": {
+          "allowed_clients": [
+            "06-solomachine",
+            "07-tendermint"
+          ]
+        },
+        "create_localhost": false,
+        "next_client_sequence": "0"
+      },
+      "connection_genesis": {
+        "connections": [],
+        "client_connection_paths": [],
+        "next_connection_sequence": "0",
+        "params": {
+          "max_expected_time_per_block": "30000000000"
+        }
+      },
+      "channel_genesis": {
+        "channels": [],
+        "acknowledgements": [],
+        "commitments": [],
+        "receipts": [],
+        "send_sequences": [],
+        "recv_sequences": [],
+        "ack_sequences": [],
+        "next_channel_sequence": "0"
+      }
+    },
+    "mint": {
+      "minter": {
+        "inflation": "0.130000000000000000",
+        "annual_provisions": "0.000000000000000000"
+      },
+      "params": {
+        "mint_denom": "stake",
+        "inflation_rate_change": "0.130000000000000000",
+        "inflation_max": "0.200000000000000000",
+        "inflation_min": "0.070000000000000000",
+        "goal_bonded": "0.670000000000000000",
+        "blocks_per_year": "6311520"
+      }
+    },
+    "params": null,
+    "rewards": {
+      "rewardsList": [
+        {
+          "recipient": "gitopia1k45rtjtgq6gvgxcnkcvtkrgm2zh98dxatv2mtt",
+          "amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "creator": "",
+          "claimed_amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "claimed_amount_with_decay": {
+            "denom": "",
+            "amount": "0"
+          }
+        },
+        {
+          "recipient": "gitopia1fl4sjt3kw82xnk27kx6k47hgptxawfgvurqrm5",
+          "amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "creator": "",
+          "claimed_amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "claimed_amount_with_decay": {
+            "denom": "",
+            "amount": "0"
+          }
+        },
+        {
+          "recipient": "gitopia1hzc4955wy5xqlj80fgaet6lmtzh7hmvh9w0uw5",
+          "amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "creator": "",
+          "claimed_amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "claimed_amount_with_decay": {
+            "denom": "",
+            "amount": "0"
+          }
+        },
+        {
+          "recipient": "gitopia1zllyryn7w7z26877dscu668achw3hk6v57jwna",
+          "amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "creator": "",
+          "claimed_amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "claimed_amount_with_decay": {
+            "denom": "",
+            "amount": "0"
+          }
+        },
+        {
+          "recipient": "gitopia15rn7mft3nxdm5aeflunnau6yg8uafmjy72mxtm",
+          "amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "creator": "",
+          "claimed_amount": {
+            "denom": "",
+            "amount": "0"
+          },
+          "claimed_amount_with_decay": {
+            "denom": "",
+            "amount": "0"
+          }
+        }
+      ],
+      "params": {
+        "evaluator_address": "gitopia1mnswtu0ueq7xw90u060ccfujvk04e8rv9vc47t",
+        "reward_series": {
+          "series_one": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_two": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_three": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_four": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_five": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_six": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          },
+          "series_seven": {
+            "total_amount": {
+              "denom": "ulore",
+              "amount": "1000"
+            },
+            "claimed_amount": {
+              "denom": "ulore",
+              "amount": "0"
+            },
+            "start_time": "0001-01-01T00:00:00Z",
+            "end_time": "0001-01-01T00:00:00Z"
+          }
+        }
+      }
+    },
+    "slashing": {
+      "params": {
+        "signed_blocks_window": "100",
+        "min_signed_per_window": "0.500000000000000000",
+        "downtime_jail_duration": "600s",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.010000000000000000"
+      },
+      "signing_infos": [],
+      "missed_blocks": []
+    },
+    "staking": {
+      "params": {
+        "unbonding_time": "1814400s",
+        "max_validators": 100,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "stake",
+        "min_commission_rate": "0.000000000000000000"
+      },
+      "last_total_power": "0",
+      "last_validator_powers": [],
+      "validators": [],
+      "delegations": [],
+      "unbonding_delegations": [],
+      "redelegations": [],
+      "exported": false
+    },
+    "transfer": {
+      "port_id": "transfer",
+      "denom_traces": [],
+      "params": {
+        "send_enabled": true,
+        "receive_enabled": true
+      }
+    },
+    "upgrade": {},
+    "vesting": {}
+  }
+}

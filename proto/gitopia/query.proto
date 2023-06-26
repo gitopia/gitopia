@@ -3,21 +3,21 @@ package gitopia.gitopia.gitopia;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "gitopia/gitopia/task.proto";
-import "gitopia/gitopia/branch.proto";
-import "gitopia/gitopia/tag.proto";
-import "gitopia/gitopia/member.proto";
-import "gitopia/gitopia/bounty.proto";
+import "gitopia/task.proto";
+import "gitopia/branch.proto";
+import "gitopia/tag.proto";
+import "gitopia/member.proto";
+import "gitopia/bounty.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
-import "gitopia/gitopia/release.proto";
-import "gitopia/gitopia/pullRequest.proto";
-import "gitopia/gitopia/dao.proto";
-import "gitopia/gitopia/comment.proto";
-import "gitopia/gitopia/issue.proto";
-import "gitopia/gitopia/repository.proto";
-import "gitopia/gitopia/user.proto";
-import "gitopia/gitopia/whois.proto";
+import "gitopia/release.proto";
+import "gitopia/pullRequest.proto";
+import "gitopia/dao.proto";
+import "gitopia/comment.proto";
+import "gitopia/issue.proto";
+import "gitopia/repository.proto";
+import "gitopia/user.proto";
+import "gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";

@@ -195,6 +195,38 @@ func CmdUpdateRepositoryDescription() *cobra.Command {
 	return cmd
 }
 
+func CmdUpdateArchiveState() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-archive-state [owner-id] [repository-name] [archived]",
+		Short: "Update archive state",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argOwnerid := args[0]
+			argRepositoryName := args[1]
+			argArchived := args[2]
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			archived, _ := strconv.ParseBool(argArchived)
+			msg := types.NewMsgUpdateArchiveState(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argOwnerid, Name: argRepositoryName},
+				archived,
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdChangeOwner() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "change-owner [id] [repository-name] [owner-id]",

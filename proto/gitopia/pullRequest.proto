@@ -4,7 +4,7 @@ package gitopia.gitopia.gitopia;
 option go_package = "github.com/gitopia/gitopia/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
-import "gitopia/gitopia/repository.proto";
+import "gitopia/repository.proto";
 
 message PullRequest {
   string creator = 1;
