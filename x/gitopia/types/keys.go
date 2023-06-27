@@ -251,6 +251,7 @@ const (
 	EventAttributeCommentPathKey      = "CommentPath"
 	EventAttributeCommentPositionKey  = "CommentPosition"
 	EventAttributeCommentTypeKey      = "CommentType"
+	EventAttributeCommentResolvedKey  = "CommentResolved"
 )
 
 const (

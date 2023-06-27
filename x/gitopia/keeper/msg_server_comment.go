@@ -237,7 +237,7 @@ func (k msgServer) ToggleCommentResolved(goCtx context.Context, msg *types.MsgTo
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
-			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
+			sdk.NewAttribute(types.EventAttributeCommentResolvedKey, strconv.FormatBool(comment.Resolved)),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
