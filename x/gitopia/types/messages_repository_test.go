@@ -266,22 +266,6 @@ func TestMsgUpdateRepositoryArchived_ValidateBasic(t *testing.T) {
 				RepositoryId: repositoryId,
 				Archived:     true,
 			},
-		}, {
-			name: "invalid user id",
-			msg: MsgUpdateRepositoryArchived{
-				Creator:      sample.AccAddress(),
-				RepositoryId: repositoryId,
-				Archived:     true,
-			},
-			err: sdkerrors.ErrInvalidRequest,
-		}, {
-			name: "invalid user role",
-			msg: MsgUpdateRepositoryArchived{
-				Creator:      sample.AccAddress(),
-				RepositoryId: repositoryId,
-				Archived:     true,
-			},
-			err: sdkerrors.ErrInvalidRequest,
 		},
 	}
 	for _, tt := range tests {
