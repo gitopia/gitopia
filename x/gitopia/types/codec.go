@@ -70,6 +70,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
 	cdc.RegisterConcrete(&MsgUpdateComment{}, "gitopia/UpdateComment", nil)
 	cdc.RegisterConcrete(&MsgDeleteComment{}, "gitopia/DeleteComment", nil)
+	cdc.RegisterConcrete(&MsgToggleCommentResolved{}, "gitopia/ToggleCommentResolved", nil)
 
 	cdc.RegisterConcrete(&MsgCreateIssue{}, "gitopia/CreateIssue", nil)
 	cdc.RegisterConcrete(&MsgUpdateIssueTitle{}, "gitopia/UpdateIssueTitle", nil)
@@ -187,6 +188,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateComment{},
 		&MsgUpdateComment{},
 		&MsgDeleteComment{},
+		&MsgToggleCommentResolved{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateIssue{},

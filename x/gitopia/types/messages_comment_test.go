@@ -113,3 +113,35 @@ func TestMsgDeleteComment_ValidateBasic(t *testing.T) {
 		})
 	}
 }
+
+func TestMsgToggleCommentResolved_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgToggleCommentResolved
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgToggleCommentResolved{
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgToggleCommentResolved{
+				Creator: sample.AccAddress(),
+				Parent:  CommentParentPullRequest,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}

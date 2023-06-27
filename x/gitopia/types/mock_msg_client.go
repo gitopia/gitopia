@@ -1755,6 +1755,36 @@ func (_m *MockMsgClient) ToggleRepositoryForking(ctx context.Context, in *MsgTog
 	return r0, r1
 }
 
+// ToggleRepositoryForking provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) ToggleCommentResolved(ctx context.Context, in *MsgToggleCommentResolved, opts ...grpc.CallOption) (*MsgToggleCommentResolvedResponse, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *MsgToggleCommentResolvedResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgToggleCommentResolved, ...grpc.CallOption) *MsgToggleCommentResolvedResponse); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*MsgToggleCommentResolvedResponse)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgToggleCommentResolved, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UnlinkPullRequestIssueByIid provides a mock function with given fields: ctx, in, opts
 func (_m *MockMsgClient) UnlinkPullRequestIssueByIid(ctx context.Context, in *MsgUnlinkPullRequestIssueByIid, opts ...grpc.CallOption) (*MsgUnlinkPullRequestIssueByIidResponse, error) {
 	_va := make([]interface{}, len(opts))
