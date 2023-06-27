@@ -133,6 +133,43 @@ func TestCommentMsgServerDelete(t *testing.T) {
 	}
 }
 
+func TestCommentMsgServerResolved(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
+	users, _, _, _ := setupPreComment(ctx, t, srv)
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue})
+	require.NoError(t, err)
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgToggleCommentResolved
+		err     error
+	}{
+		{
+			desc:    "Unauthorized",
+			request: &types.MsgToggleCommentResolved{Creator: users[1], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
+			err:     sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc:    "Completed",
+			request: &types.MsgToggleCommentResolved{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
+		},
+		{
+			desc:    "KeyNotFound",
+			request: &types.MsgToggleCommentResolved{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err = srv.ToggleCommentResolved(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func setupPreComment(ctx context.Context, t *testing.T, srv types.MsgServer) (users []string, repositoryId types.RepositoryId, issueId uint64, pullRequestId uint64) {
 	users = append(users, "A", "B")
 	repositoryId = types.RepositoryId{
