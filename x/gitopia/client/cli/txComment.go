@@ -179,3 +179,44 @@ func CmdDeleteComment() *cobra.Command {
 
 	return cmd
 }
+
+func CmdToggleCommentResolved() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "toggle-comment-resolved [repository-id] [parent-iid] [parent] [comment-iid]",
+		Short: "Mark a comment Resolved or Unresolved",
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argsRepositoryId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsParentIid, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+			argsParent, err := strconv.ParseInt(args[2], 10, 32)
+			if err != nil {
+				return err
+			}
+			argsCommentIid, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgToggleCommentResolved(clientCtx.GetFromAddress().String(), argsRepositoryId, argsParentIid, types.CommentParent(argsParent), argsCommentIid)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}

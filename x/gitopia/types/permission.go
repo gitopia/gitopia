@@ -23,4 +23,5 @@ const (
 	ToggleIssueStatePermission            = RepositoryCollaborator_TRIAGE
 	RepositoryBackupPermission            = RepositoryCollaborator_ADMIN
 	ToggleForcePushToBranchPermission     = RepositoryCollaborator_ADMIN
+	ToggleCommentResolvedPermission       = RepositoryCollaborator_TRIAGE
 )

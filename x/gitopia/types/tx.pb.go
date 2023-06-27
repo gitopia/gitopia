@@ -5816,6 +5816,126 @@ func (m *MsgDeleteCommentResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteCommentResponse proto.InternalMessageInfo
 
+type MsgToggleCommentResolved struct {
+	Creator      string        `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	RepositoryId uint64        `protobuf:"varint,2,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
+	ParentIid    uint64        `protobuf:"varint,3,opt,name=parentIid,proto3" json:"parentIid,omitempty"`
+	Parent       CommentParent `protobuf:"varint,4,opt,name=parent,proto3,enum=gitopia.gitopia.gitopia.CommentParent" json:"parent,omitempty"`
+	CommentIid   uint64        `protobuf:"varint,5,opt,name=commentIid,proto3" json:"commentIid,omitempty"`
+}
+
+func (m *MsgToggleCommentResolved) Reset()         { *m = MsgToggleCommentResolved{} }
+func (m *MsgToggleCommentResolved) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleCommentResolved) ProtoMessage()    {}
+func (*MsgToggleCommentResolved) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a62a3f7fe5854081, []int{103}
+}
+func (m *MsgToggleCommentResolved) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgToggleCommentResolved) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgToggleCommentResolved.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgToggleCommentResolved) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleCommentResolved.Merge(m, src)
+}
+func (m *MsgToggleCommentResolved) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgToggleCommentResolved) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleCommentResolved.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgToggleCommentResolved proto.InternalMessageInfo
+
+func (m *MsgToggleCommentResolved) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgToggleCommentResolved) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *MsgToggleCommentResolved) GetParentIid() uint64 {
+	if m != nil {
+		return m.ParentIid
+	}
+	return 0
+}
+
+func (m *MsgToggleCommentResolved) GetParent() CommentParent {
+	if m != nil {
+		return m.Parent
+	}
+	return CommentParentNone
+}
+
+func (m *MsgToggleCommentResolved) GetCommentIid() uint64 {
+	if m != nil {
+		return m.CommentIid
+	}
+	return 0
+}
+
+type MsgToggleCommentResolvedResponse struct {
+	Resolved bool `protobuf:"varint,1,opt,name=resolved,proto3" json:"resolved,omitempty"`
+}
+
+func (m *MsgToggleCommentResolvedResponse) Reset()         { *m = MsgToggleCommentResolvedResponse{} }
+func (m *MsgToggleCommentResolvedResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleCommentResolvedResponse) ProtoMessage()    {}
+func (*MsgToggleCommentResolvedResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_a62a3f7fe5854081, []int{104}
+}
+func (m *MsgToggleCommentResolvedResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgToggleCommentResolvedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgToggleCommentResolvedResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgToggleCommentResolvedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleCommentResolvedResponse.Merge(m, src)
+}
+func (m *MsgToggleCommentResolvedResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgToggleCommentResolvedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleCommentResolvedResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgToggleCommentResolvedResponse proto.InternalMessageInfo
+
+func (m *MsgToggleCommentResolvedResponse) GetResolved() bool {
+	if m != nil {
+		return m.Resolved
+	}
+	return false
+}
+
 type MsgCreateIssue struct {
 	Creator      string                                   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	RepositoryId RepositoryId                             `protobuf:"bytes,2,opt,name=repositoryId,proto3" json:"repositoryId"`
@@ -9069,6 +9189,8 @@ func init() {
 	proto.RegisterType((*MsgUpdateCommentResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateCommentResponse")
 	proto.RegisterType((*MsgDeleteComment)(nil), "gitopia.gitopia.gitopia.MsgDeleteComment")
 	proto.RegisterType((*MsgDeleteCommentResponse)(nil), "gitopia.gitopia.gitopia.MsgDeleteCommentResponse")
+	proto.RegisterType((*MsgToggleCommentResolved)(nil), "gitopia.gitopia.gitopia.MsgToggleCommentResolved")
+	proto.RegisterType((*MsgToggleCommentResolvedResponse)(nil), "gitopia.gitopia.gitopia.MsgToggleCommentResolvedResponse")
 	proto.RegisterType((*MsgCreateIssue)(nil), "gitopia.gitopia.gitopia.MsgCreateIssue")
 	proto.RegisterType((*MsgCreateIssueResponse)(nil), "gitopia.gitopia.gitopia.MsgCreateIssueResponse")
 	proto.RegisterType((*MsgUpdateIssueTitle)(nil), "gitopia.gitopia.gitopia.MsgUpdateIssueTitle")
@@ -9478,6 +9600,7 @@ type MsgClient interface {
 	CreateComment(ctx context.Context, in *MsgCreateComment, opts ...grpc.CallOption) (*MsgCreateCommentResponse, error)
 	UpdateComment(ctx context.Context, in *MsgUpdateComment, opts ...grpc.CallOption) (*MsgUpdateCommentResponse, error)
 	DeleteComment(ctx context.Context, in *MsgDeleteComment, opts ...grpc.CallOption) (*MsgDeleteCommentResponse, error)
+	ToggleCommentResolved(ctx context.Context, in *MsgToggleCommentResolved, opts ...grpc.CallOption) (*MsgToggleCommentResolvedResponse, error)
 	CreateIssue(ctx context.Context, in *MsgCreateIssue, opts ...grpc.CallOption) (*MsgCreateIssueResponse, error)
 	UpdateIssueTitle(ctx context.Context, in *MsgUpdateIssueTitle, opts ...grpc.CallOption) (*MsgUpdateIssueTitleResponse, error)
 	UpdateIssueDescription(ctx context.Context, in *MsgUpdateIssueDescription, opts ...grpc.CallOption) (*MsgUpdateIssueDescriptionResponse, error)
@@ -9963,6 +10086,15 @@ func (c *msgClient) DeleteComment(ctx context.Context, in *MsgDeleteComment, opt
 	return out, nil
 }
 
+func (c *msgClient) ToggleCommentResolved(ctx context.Context, in *MsgToggleCommentResolved, opts ...grpc.CallOption) (*MsgToggleCommentResolvedResponse, error) {
+	out := new(MsgToggleCommentResolvedResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/ToggleCommentResolved", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) CreateIssue(ctx context.Context, in *MsgCreateIssue, opts ...grpc.CallOption) (*MsgCreateIssueResponse, error) {
 	out := new(MsgCreateIssueResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/CreateIssue", in, out, opts...)
@@ -10313,6 +10445,7 @@ type MsgServer interface {
 	CreateComment(context.Context, *MsgCreateComment) (*MsgCreateCommentResponse, error)
 	UpdateComment(context.Context, *MsgUpdateComment) (*MsgUpdateCommentResponse, error)
 	DeleteComment(context.Context, *MsgDeleteComment) (*MsgDeleteCommentResponse, error)
+	ToggleCommentResolved(context.Context, *MsgToggleCommentResolved) (*MsgToggleCommentResolvedResponse, error)
 	CreateIssue(context.Context, *MsgCreateIssue) (*MsgCreateIssueResponse, error)
 	UpdateIssueTitle(context.Context, *MsgUpdateIssueTitle) (*MsgUpdateIssueTitleResponse, error)
 	UpdateIssueDescription(context.Context, *MsgUpdateIssueDescription) (*MsgUpdateIssueDescriptionResponse, error)
@@ -10499,6 +10632,9 @@ func (*UnimplementedMsgServer) UpdateComment(ctx context.Context, req *MsgUpdate
 }
 func (*UnimplementedMsgServer) DeleteComment(ctx context.Context, req *MsgDeleteComment) (*MsgDeleteCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
+}
+func (*UnimplementedMsgServer) ToggleCommentResolved(ctx context.Context, req *MsgToggleCommentResolved) (*MsgToggleCommentResolvedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleCommentResolved not implemented")
 }
 func (*UnimplementedMsgServer) CreateIssue(ctx context.Context, req *MsgCreateIssue) (*MsgCreateIssueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIssue not implemented")
@@ -11482,6 +11618,24 @@ func _Msg_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).DeleteComment(ctx, req.(*MsgDeleteComment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ToggleCommentResolved_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgToggleCommentResolved)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ToggleCommentResolved(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.gitopia.Msg/ToggleCommentResolved",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ToggleCommentResolved(ctx, req.(*MsgToggleCommentResolved))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -16560,6 +16714,89 @@ func (m *MsgDeleteCommentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgToggleCommentResolved) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgToggleCommentResolved) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgToggleCommentResolved) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CommentIid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CommentIid))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Parent != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Parent))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ParentIid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ParentIid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgToggleCommentResolvedResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgToggleCommentResolvedResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgToggleCommentResolvedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Resolved {
+		i--
+		if m.Resolved {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *MsgCreateIssue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -20674,6 +20911,43 @@ func (m *MsgDeleteCommentResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
+	return n
+}
+
+func (m *MsgToggleCommentResolved) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RepositoryId != 0 {
+		n += 1 + sovTx(uint64(m.RepositoryId))
+	}
+	if m.ParentIid != 0 {
+		n += 1 + sovTx(uint64(m.ParentIid))
+	}
+	if m.Parent != 0 {
+		n += 1 + sovTx(uint64(m.Parent))
+	}
+	if m.CommentIid != 0 {
+		n += 1 + sovTx(uint64(m.CommentIid))
+	}
+	return n
+}
+
+func (m *MsgToggleCommentResolvedResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Resolved {
+		n += 2
+	}
 	return n
 }
 
@@ -33706,6 +33980,236 @@ func (m *MsgDeleteCommentResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+
+func (m *MsgToggleCommentResolved) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgToggleCommentResolved: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgToggleCommentResolved: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ParentIid", wireType)
+			}
+			m.ParentIid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ParentIid |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Parent", wireType)
+			}
+			m.Parent = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Parent |= CommentParent(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommentIid", wireType)
+			}
+			m.CommentIid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommentIid |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgToggleCommentResolvedResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgToggleCommentResolvedResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgToggleCommentResolvedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AllowForking", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Resolved = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+
 func (m *MsgCreateIssue) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0

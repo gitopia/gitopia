@@ -4,3 +4,4 @@ secret.yml
 build
 cmd/gitopiad/__debug_bin
 .DS_Store
+.lfsconfig

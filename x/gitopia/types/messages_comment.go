@@ -227,3 +227,49 @@ func (msg *MsgDeleteComment) ValidateBasic() error {
 	}
 	return nil
 }
+
+var _ sdk.Msg = &MsgToggleCommentResolved{}
+
+func NewMsgToggleCommentResolved(creator string, repositoryid uint64, parentIid uint64, parent CommentParent, commentIid uint64) *MsgToggleCommentResolved {
+	return &MsgToggleCommentResolved{
+		Creator:      creator,
+		RepositoryId: repositoryid,
+		ParentIid:    parentIid,
+		Parent:       parent,
+		CommentIid:   commentIid,
+	}
+}
+
+func (msg *MsgToggleCommentResolved) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgToggleCommentResolved) Type() string {
+	return "ToggleCommentResolved"
+}
+
+func (msg *MsgToggleCommentResolved) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgToggleCommentResolved) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgToggleCommentResolved) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	switch msg.Parent {
+	case CommentParentPullRequest:
+	default:
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid parent (%s)", msg.Parent)
+	}
+	return nil
+}

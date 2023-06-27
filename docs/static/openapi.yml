@@ -76802,6 +76802,11 @@ definitions:
     properties:
       allowForking:
         type: boolean
+  gitopia.gitopia.gitopia.MsgToggleCommentResolvedResponse:
+    type: object
+    properties:
+      resolved:
+        type: boolean
   gitopia.gitopia.gitopia.MsgUnlinkPullRequestIssueByIidResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateBountyExpiryResponse:
