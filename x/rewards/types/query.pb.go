@@ -397,7 +397,7 @@ func init() {
 	proto.RegisterType((*QueryAllRewardsResponse)(nil), "gitopia.gitopia.rewards.QueryAllRewardsResponse")
 }
 
-func init() { proto.RegisterFile("gitopia/rewards/query.proto", fileDescriptor_16b85c5f22209df1) }
+func init() { proto.RegisterFile("rewards/query.proto", fileDescriptor_16b85c5f22209df1) }
 
 var fileDescriptor_16b85c5f22209df1 = []byte{
 	// 694 bytes of a gzipped FileDescriptorProto
@@ -602,7 +602,7 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "gitopia/rewards/query.proto",
+	Metadata: "rewards/query.proto",
 }
 
 func (m *QueryTasksRequest) Marshal() (dAtA []byte, err error) {

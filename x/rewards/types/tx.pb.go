@@ -222,7 +222,7 @@ func init() {
 	proto.RegisterType((*MsgClaimResponse)(nil), "gitopia.gitopia.rewards.MsgClaimResponse")
 }
 
-func init() { proto.RegisterFile("gitopia/rewards/tx.proto", fileDescriptor_7c381979139f2588) }
+func init() { proto.RegisterFile("rewards/tx.proto", fileDescriptor_7c381979139f2588) }
 
 var fileDescriptor_7c381979139f2588 = []byte{
 	// 362 bytes of a gzipped FileDescriptorProto
@@ -364,7 +364,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "gitopia/rewards/tx.proto",
+	Metadata: "rewards/tx.proto",
 }
 
 func (m *MsgCreateReward) Marshal() (dAtA []byte, err error) {

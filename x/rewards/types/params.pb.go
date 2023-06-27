@@ -247,7 +247,7 @@ func init() {
 	proto.RegisterType((*Params)(nil), "gitopia.gitopia.rewards.Params")
 }
 
-func init() { proto.RegisterFile("gitopia/rewards/params.proto", fileDescriptor_fe21394d7c37f32a) }
+func init() { proto.RegisterFile("rewards/params.proto", fileDescriptor_fe21394d7c37f32a) }
 
 var fileDescriptor_fe21394d7c37f32a = []byte{
 	// 624 bytes of a gzipped FileDescriptorProto
