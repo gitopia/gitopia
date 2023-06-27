@@ -241,6 +241,8 @@ func (k msgServer) ToggleCommentResolved(goCtx context.Context, msg *types.MsgTo
 	comment.Resolved = !comment.Resolved
 	comment.UpdatedAt = ctx.BlockTime().Unix()
 
+	k.SetComment(ctx, comment)
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
