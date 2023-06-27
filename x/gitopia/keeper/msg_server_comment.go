@@ -204,3 +204,47 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 	return &types.MsgDeleteCommentResponse{}, nil
 }
+func (k msgServer) ToggleResolveComment(goCtx context.Context, msg *types.MsgToggleResolveComment) (*types.MsgToggleResolveCommentResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	var comment types.Comment
+
+	switch msg.Parent {
+	case types.CommentParentPullRequest:
+		comment, found = k.GetPullRequestComment(ctx, msg.RepositoryId, msg.ParentIid, msg.CommentIid)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment  (%d) doesn't exist", msg.CommentIid))
+		}
+	default:
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment parent (%v)", msg.Parent))
+	}
+	if msg.Creator != comment.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	comment.Resolved = !comment.Resolved
+	comment.UpdatedAt = ctx.BlockTime().Unix()
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleResolveCommentEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
+			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(comment.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgToggleResolveCommentResponse{Resolved: comment.Resolved}, nil
+}
