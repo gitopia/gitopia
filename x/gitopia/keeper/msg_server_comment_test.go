@@ -136,7 +136,7 @@ func TestCommentMsgServerDelete(t *testing.T) {
 func TestCommentMsgServerResolved(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	users, _, _, _ := setupPreComment(ctx, t, srv)
-	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue})
+	_, err := srv.CreateComment(ctx, &types.MsgCreateComment{Creator: users[0], ParentIid: 1, Parent: types.CommentParentPullRequest})
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -146,17 +146,12 @@ func TestCommentMsgServerResolved(t *testing.T) {
 	}{
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgToggleCommentResolved{Creator: users[1], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
+			request: &types.MsgToggleCommentResolved{Creator: users[1], ParentIid: 1, Parent: types.CommentParentPullRequest, CommentIid: 1},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgToggleCommentResolved{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
-		},
-		{
-			desc:    "KeyNotFound",
-			request: &types.MsgToggleCommentResolved{Creator: users[0], ParentIid: 1, Parent: types.CommentParentIssue, CommentIid: 1},
-			err:     sdkerrors.ErrKeyNotFound,
+			request: &types.MsgToggleCommentResolved{Creator: users[0], ParentIid: 1, Parent: types.CommentParentPullRequest, CommentIid: 1},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {

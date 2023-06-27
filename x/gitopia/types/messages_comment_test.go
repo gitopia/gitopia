@@ -130,7 +130,7 @@ func TestMsgToggleCommentResolved_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgToggleCommentResolved{
 				Creator: sample.AccAddress(),
-				Parent:  CommentParentIssue,
+				Parent:  CommentParentPullRequest,
 			},
 		},
 	}
