@@ -579,6 +579,57 @@ func TestRepositoryMsgServerDelete(t *testing.T) {
 	}
 }
 
+func TestRepositoryMsgServerUpdateArchived(t *testing.T) {
+	srv, ctx := setupMsgServer(t)
+	users := setupPreRepository(ctx, t, srv)
+	repositoryId := types.RepositoryId{
+		Id:   users[0],
+		Name: "repository",
+	}
+	_, err := srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: repositoryId.Id, Name: repositoryId.Name, Owner: repositoryId.Id})
+	require.NoError(t, err)
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgUpdateRepositoryArchived
+		err     error
+	}{
+		{
+			desc:    "Creator Not Exists",
+			request: &types.MsgUpdateRepositoryArchived{Creator: "X", RepositoryId: repositoryId, Archived: true},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Repository Not Exists",
+			request: &types.MsgUpdateRepositoryArchived{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, Archived: true},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+		{
+			desc:    "Unauthorized",
+			request: &types.MsgUpdateRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
+			err:     sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc:    "Unauthorized Self",
+			request: &types.MsgUpdateRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
+			err:     sdkerrors.ErrUnauthorized,
+		},
+		{
+			desc:    "Completed",
+			request: &types.MsgUpdateRepositoryArchived{Creator: users[0], RepositoryId: repositoryId, Archived: true},
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			_, err = srv.UpdateRepositoryArchived(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func setupPreRepository(ctx context.Context, t *testing.T, srv types.MsgServer) (users []string) {
 	users = append(users, "A", "B", "C")
 

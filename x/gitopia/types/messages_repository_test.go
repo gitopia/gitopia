@@ -240,6 +240,62 @@ func TestMsgUpdateRepositoryCollaborator_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateRepositoryArchived_ValidateBasic(t *testing.T) {
+	repositoryId := RepositoryId{
+		Id:   sample.AccAddress(),
+		Name: "repository",
+	}
+
+	tests := []struct {
+		name string
+		msg  MsgUpdateRepositoryArchived
+		err  error
+	}{
+		{
+			name: "invalid creator address",
+			msg: MsgUpdateRepositoryArchived{
+				Creator:      "invalid_address",
+				RepositoryId: repositoryId,
+				Archived:     true,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid MsgUpdateRepositoryArchived",
+			msg: MsgUpdateRepositoryArchived{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Archived:     true,
+			},
+		}, {
+			name: "invalid user id",
+			msg: MsgUpdateRepositoryArchived{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Archived:     true,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "invalid user role",
+			msg: MsgUpdateRepositoryArchived{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+				Archived:     true,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgRemoveRepositoryCollaborator_ValidateBasic(t *testing.T) {
 	repositoryId := RepositoryId{
 		Id:   sample.AccAddress(),
