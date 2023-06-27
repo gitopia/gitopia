@@ -204,7 +204,7 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 
 	return &types.MsgDeleteCommentResponse{}, nil
 }
-func (k msgServer) ToggleResolveComment(goCtx context.Context, msg *types.MsgToggleResolveComment) (*types.MsgToggleResolveCommentResponse, error) {
+func (k msgServer) ToggleCommentResolved(goCtx context.Context, msg *types.MsgToggleCommentResolved) (*types.MsgToggleCommentResolvedResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -233,7 +233,7 @@ func (k msgServer) ToggleResolveComment(goCtx context.Context, msg *types.MsgTog
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleResolveCommentEventKey),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleCommentResolvedEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
@@ -246,5 +246,5 @@ func (k msgServer) ToggleResolveComment(goCtx context.Context, msg *types.MsgTog
 		),
 	)
 
-	return &types.MsgToggleResolveCommentResponse{Resolved: comment.Resolved}, nil
+	return &types.MsgToggleCommentResolvedResponse{Resolved: comment.Resolved}, nil
 }

@@ -142,10 +142,10 @@ const (
 )
 
 const (
-	CreateCommentEventKey        = "CreateComment"
-	UpdateCommentEventKey        = "UpdateComment"
-	DeleteCommentEventKey        = "DeleteComment"
-	ToggleResolveCommentEventKey = "ToggleResolveComment"
+	CreateCommentEventKey         = "CreateComment"
+	UpdateCommentEventKey         = "UpdateComment"
+	DeleteCommentEventKey         = "DeleteComment"
+	ToggleCommentResolvedEventKey = "ToggleCommentResolved"
 )
 
 const (

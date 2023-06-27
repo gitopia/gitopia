@@ -74,7 +74,7 @@ service Msg {
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
-  rpc ToggleResolveComment(MsgToggleResolveComment) returns (MsgToggleResolveCommentResponse);
+  rpc ToggleCommentResolved(MsgToggleCommentResolved) returns (MsgToggleCommentResolvedResponse);
   rpc CreateIssue(MsgCreateIssue) returns (MsgCreateIssueResponse);
   rpc UpdateIssueTitle(MsgUpdateIssueTitle) returns (MsgUpdateIssueTitleResponse);
   rpc UpdateIssueDescription(MsgUpdateIssueDescription) returns (MsgUpdateIssueDescriptionResponse);
@@ -625,7 +625,7 @@ message MsgDeleteComment {
 
 message MsgDeleteCommentResponse { }
 
-message MsgToggleResolveComment {
+message MsgToggleCommentResolved {
   string creator = 1;
   uint64 repositoryId = 2;
   uint64 parentIid = 3;
@@ -633,7 +633,7 @@ message MsgToggleResolveComment {
   uint64 commentIid = 5;
 }
 
-message MsgToggleResolveCommentResponse {
+message MsgToggleCommentResolvedResponse {
   bool resolved = 1;
 }
 

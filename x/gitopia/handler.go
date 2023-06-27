@@ -228,8 +228,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.DeleteComment(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgToggleResolveComment:
-			res, err := msgServer.ToggleResolveComment(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgToggleCommentResolved:
+			res, err := msgServer.ToggleCommentResolved(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateIssue:

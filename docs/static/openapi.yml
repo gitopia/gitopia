@@ -76802,7 +76802,7 @@ definitions:
     properties:
       allowForking:
         type: boolean
-  gitopia.gitopia.gitopia.MsgToggleResolveCommentResponse:
+  gitopia.gitopia.gitopia.MsgToggleCommentResolvedResponse:
     type: object
     properties:
       resolved:

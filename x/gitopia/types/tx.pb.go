@@ -5816,7 +5816,7 @@ func (m *MsgDeleteCommentResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteCommentResponse proto.InternalMessageInfo
 
-type MsgToggleResolveComment struct {
+type MsgToggleCommentResolved struct {
 	Creator      string        `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	RepositoryId uint64        `protobuf:"varint,2,opt,name=repositoryId,proto3" json:"repositoryId,omitempty"`
 	ParentIid    uint64        `protobuf:"varint,3,opt,name=parentIid,proto3" json:"parentIid,omitempty"`
@@ -5824,18 +5824,18 @@ type MsgToggleResolveComment struct {
 	CommentIid   uint64        `protobuf:"varint,5,opt,name=commentIid,proto3" json:"commentIid,omitempty"`
 }
 
-func (m *MsgToggleResolveComment) Reset()         { *m = MsgToggleResolveComment{} }
-func (m *MsgToggleResolveComment) String() string { return proto.CompactTextString(m) }
-func (*MsgToggleResolveComment) ProtoMessage()    {}
-func (*MsgToggleResolveComment) Descriptor() ([]byte, []int) {
+func (m *MsgToggleCommentResolved) Reset()         { *m = MsgToggleCommentResolved{} }
+func (m *MsgToggleCommentResolved) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleCommentResolved) ProtoMessage()    {}
+func (*MsgToggleCommentResolved) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{103}
 }
-func (m *MsgToggleResolveComment) XXX_Unmarshal(b []byte) error {
+func (m *MsgToggleCommentResolved) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgToggleResolveComment) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgToggleCommentResolved) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgToggleResolveComment.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgToggleCommentResolved.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -5845,69 +5845,69 @@ func (m *MsgToggleResolveComment) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *MsgToggleResolveComment) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgToggleResolveComment.Merge(m, src)
+func (m *MsgToggleCommentResolved) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleCommentResolved.Merge(m, src)
 }
-func (m *MsgToggleResolveComment) XXX_Size() int {
+func (m *MsgToggleCommentResolved) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgToggleResolveComment) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgToggleResolveComment.DiscardUnknown(m)
+func (m *MsgToggleCommentResolved) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleCommentResolved.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgToggleResolveComment proto.InternalMessageInfo
+var xxx_messageInfo_MsgToggleCommentResolved proto.InternalMessageInfo
 
-func (m *MsgToggleResolveComment) GetCreator() string {
+func (m *MsgToggleCommentResolved) GetCreator() string {
 	if m != nil {
 		return m.Creator
 	}
 	return ""
 }
 
-func (m *MsgToggleResolveComment) GetRepositoryId() uint64 {
+func (m *MsgToggleCommentResolved) GetRepositoryId() uint64 {
 	if m != nil {
 		return m.RepositoryId
 	}
 	return 0
 }
 
-func (m *MsgToggleResolveComment) GetParentIid() uint64 {
+func (m *MsgToggleCommentResolved) GetParentIid() uint64 {
 	if m != nil {
 		return m.ParentIid
 	}
 	return 0
 }
 
-func (m *MsgToggleResolveComment) GetParent() CommentParent {
+func (m *MsgToggleCommentResolved) GetParent() CommentParent {
 	if m != nil {
 		return m.Parent
 	}
 	return CommentParentNone
 }
 
-func (m *MsgToggleResolveComment) GetCommentIid() uint64 {
+func (m *MsgToggleCommentResolved) GetCommentIid() uint64 {
 	if m != nil {
 		return m.CommentIid
 	}
 	return 0
 }
 
-type MsgToggleResolveCommentResponse struct {
+type MsgToggleCommentResolvedResponse struct {
 	Resolved bool `protobuf:"varint,1,opt,name=resolved,proto3" json:"resolved,omitempty"`
 }
 
-func (m *MsgToggleResolveCommentResponse) Reset()         { *m = MsgToggleResolveCommentResponse{} }
-func (m *MsgToggleResolveCommentResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgToggleResolveCommentResponse) ProtoMessage()    {}
-func (*MsgToggleResolveCommentResponse) Descriptor() ([]byte, []int) {
+func (m *MsgToggleCommentResolvedResponse) Reset()         { *m = MsgToggleCommentResolvedResponse{} }
+func (m *MsgToggleCommentResolvedResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleCommentResolvedResponse) ProtoMessage()    {}
+func (*MsgToggleCommentResolvedResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{104}
 }
-func (m *MsgToggleResolveCommentResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgToggleCommentResolvedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgToggleResolveCommentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgToggleCommentResolvedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgToggleResolveCommentResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgToggleCommentResolvedResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -5917,19 +5917,19 @@ func (m *MsgToggleResolveCommentResponse) XXX_Marshal(b []byte, deterministic bo
 		return b[:n], nil
 	}
 }
-func (m *MsgToggleResolveCommentResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgToggleResolveCommentResponse.Merge(m, src)
+func (m *MsgToggleCommentResolvedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleCommentResolvedResponse.Merge(m, src)
 }
-func (m *MsgToggleResolveCommentResponse) XXX_Size() int {
+func (m *MsgToggleCommentResolvedResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgToggleResolveCommentResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgToggleResolveCommentResponse.DiscardUnknown(m)
+func (m *MsgToggleCommentResolvedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleCommentResolvedResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgToggleResolveCommentResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgToggleCommentResolvedResponse proto.InternalMessageInfo
 
-func (m *MsgToggleResolveCommentResponse) GetResolved() bool {
+func (m *MsgToggleCommentResolvedResponse) GetResolved() bool {
 	if m != nil {
 		return m.Resolved
 	}
@@ -9189,8 +9189,8 @@ func init() {
 	proto.RegisterType((*MsgUpdateCommentResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateCommentResponse")
 	proto.RegisterType((*MsgDeleteComment)(nil), "gitopia.gitopia.gitopia.MsgDeleteComment")
 	proto.RegisterType((*MsgDeleteCommentResponse)(nil), "gitopia.gitopia.gitopia.MsgDeleteCommentResponse")
-	proto.RegisterType((*MsgToggleResolveComment)(nil), "gitopia.gitopia.gitopia.MsgToggleResolveComment")
-	proto.RegisterType((*MsgToggleResolveCommentResponse)(nil), "gitopia.gitopia.gitopia.MsgToggleResolveCommentResponse")
+	proto.RegisterType((*MsgToggleCommentResolved)(nil), "gitopia.gitopia.gitopia.MsgToggleCommentResolved")
+	proto.RegisterType((*MsgToggleCommentResolvedResponse)(nil), "gitopia.gitopia.gitopia.MsgToggleCommentResolvedResponse")
 	proto.RegisterType((*MsgCreateIssue)(nil), "gitopia.gitopia.gitopia.MsgCreateIssue")
 	proto.RegisterType((*MsgCreateIssueResponse)(nil), "gitopia.gitopia.gitopia.MsgCreateIssueResponse")
 	proto.RegisterType((*MsgUpdateIssueTitle)(nil), "gitopia.gitopia.gitopia.MsgUpdateIssueTitle")
@@ -9600,7 +9600,7 @@ type MsgClient interface {
 	CreateComment(ctx context.Context, in *MsgCreateComment, opts ...grpc.CallOption) (*MsgCreateCommentResponse, error)
 	UpdateComment(ctx context.Context, in *MsgUpdateComment, opts ...grpc.CallOption) (*MsgUpdateCommentResponse, error)
 	DeleteComment(ctx context.Context, in *MsgDeleteComment, opts ...grpc.CallOption) (*MsgDeleteCommentResponse, error)
-	ToggleResolveComment(ctx context.Context, in *MsgToggleResolveComment, opts ...grpc.CallOption) (*MsgToggleResolveCommentResponse, error)
+	ToggleCommentResolved(ctx context.Context, in *MsgToggleCommentResolved, opts ...grpc.CallOption) (*MsgToggleCommentResolvedResponse, error)
 	CreateIssue(ctx context.Context, in *MsgCreateIssue, opts ...grpc.CallOption) (*MsgCreateIssueResponse, error)
 	UpdateIssueTitle(ctx context.Context, in *MsgUpdateIssueTitle, opts ...grpc.CallOption) (*MsgUpdateIssueTitleResponse, error)
 	UpdateIssueDescription(ctx context.Context, in *MsgUpdateIssueDescription, opts ...grpc.CallOption) (*MsgUpdateIssueDescriptionResponse, error)
@@ -10086,9 +10086,9 @@ func (c *msgClient) DeleteComment(ctx context.Context, in *MsgDeleteComment, opt
 	return out, nil
 }
 
-func (c *msgClient) ToggleResolveComment(ctx context.Context, in *MsgToggleResolveComment, opts ...grpc.CallOption) (*MsgToggleResolveCommentResponse, error) {
-	out := new(MsgToggleResolveCommentResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/ToggleResolveComment", in, out, opts...)
+func (c *msgClient) ToggleCommentResolved(ctx context.Context, in *MsgToggleCommentResolved, opts ...grpc.CallOption) (*MsgToggleCommentResolvedResponse, error) {
+	out := new(MsgToggleCommentResolvedResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/ToggleCommentResolved", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -10445,7 +10445,7 @@ type MsgServer interface {
 	CreateComment(context.Context, *MsgCreateComment) (*MsgCreateCommentResponse, error)
 	UpdateComment(context.Context, *MsgUpdateComment) (*MsgUpdateCommentResponse, error)
 	DeleteComment(context.Context, *MsgDeleteComment) (*MsgDeleteCommentResponse, error)
-	ToggleResolveComment(context.Context, *MsgToggleResolveComment) (*MsgToggleResolveCommentResponse, error)
+	ToggleCommentResolved(context.Context, *MsgToggleCommentResolved) (*MsgToggleCommentResolvedResponse, error)
 	CreateIssue(context.Context, *MsgCreateIssue) (*MsgCreateIssueResponse, error)
 	UpdateIssueTitle(context.Context, *MsgUpdateIssueTitle) (*MsgUpdateIssueTitleResponse, error)
 	UpdateIssueDescription(context.Context, *MsgUpdateIssueDescription) (*MsgUpdateIssueDescriptionResponse, error)
@@ -10633,8 +10633,8 @@ func (*UnimplementedMsgServer) UpdateComment(ctx context.Context, req *MsgUpdate
 func (*UnimplementedMsgServer) DeleteComment(ctx context.Context, req *MsgDeleteComment) (*MsgDeleteCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
-func (*UnimplementedMsgServer) ToggleResolveComment(ctx context.Context, req *MsgToggleResolveComment) (*MsgToggleResolveCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ToggleResolveComment not implemented")
+func (*UnimplementedMsgServer) ToggleCommentResolved(ctx context.Context, req *MsgToggleCommentResolved) (*MsgToggleCommentResolvedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleCommentResolved not implemented")
 }
 func (*UnimplementedMsgServer) CreateIssue(ctx context.Context, req *MsgCreateIssue) (*MsgCreateIssueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIssue not implemented")
@@ -11622,20 +11622,20 @@ func _Msg_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_ToggleResolveComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgToggleResolveComment)
+func _Msg_ToggleCommentResolved_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgToggleCommentResolved)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).ToggleResolveComment(ctx, in)
+		return srv.(MsgServer).ToggleCommentResolved(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Msg/ToggleResolveComment",
+		FullMethod: "/gitopia.gitopia.gitopia.Msg/ToggleCommentResolved",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).ToggleResolveComment(ctx, req.(*MsgToggleResolveComment))
+		return srv.(MsgServer).ToggleCommentResolved(ctx, req.(*MsgToggleCommentResolved))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -16714,7 +16714,7 @@ func (m *MsgDeleteCommentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgToggleResolveComment) Marshal() (dAtA []byte, err error) {
+func (m *MsgToggleCommentResolved) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -16724,12 +16724,12 @@ func (m *MsgToggleResolveComment) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgToggleResolveComment) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgToggleCommentResolved) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgToggleResolveComment) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgToggleCommentResolved) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -16764,7 +16764,7 @@ func (m *MsgToggleResolveComment) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgToggleResolveCommentResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgToggleCommentResolvedResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -16774,12 +16774,12 @@ func (m *MsgToggleResolveCommentResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgToggleResolveCommentResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgToggleCommentResolvedResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgToggleResolveCommentResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgToggleCommentResolvedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -20914,7 +20914,7 @@ func (m *MsgDeleteCommentResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgToggleResolveComment) Size() (n int) {
+func (m *MsgToggleCommentResolved) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -20939,7 +20939,7 @@ func (m *MsgToggleResolveComment) Size() (n int) {
 	return n
 }
 
-func (m *MsgToggleResolveCommentResponse) Size() (n int) {
+func (m *MsgToggleCommentResolvedResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -33981,7 +33981,7 @@ func (m *MsgDeleteCommentResponse) Unmarshal(dAtA []byte) error {
 	return nil
 }
 
-func (m *MsgToggleResolveComment) Unmarshal(dAtA []byte) error {
+func (m *MsgToggleCommentResolved) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -34004,10 +34004,10 @@ func (m *MsgToggleResolveComment) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgToggleResolveComment: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgToggleCommentResolved: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgToggleResolveComment: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgToggleCommentResolved: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -34139,7 +34139,7 @@ func (m *MsgToggleResolveComment) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgToggleResolveCommentResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgToggleCommentResolvedResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -34162,10 +34162,10 @@ func (m *MsgToggleResolveCommentResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgToggleResolveCommentResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgToggleCommentResolvedResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgToggleResolveCommentResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgToggleCommentResolvedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
