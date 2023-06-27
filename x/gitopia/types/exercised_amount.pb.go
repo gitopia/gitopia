@@ -80,9 +80,7 @@ func init() {
 	proto.RegisterType((*ExercisedAmount)(nil), "gitopia.gitopia.gitopia.ExercisedAmount")
 }
 
-func init() {
-	proto.RegisterFile("gitopia/exercised_amount.proto", fileDescriptor_e2f495f5b056fe64)
-}
+func init() { proto.RegisterFile("gitopia/exercised_amount.proto", fileDescriptor_e2f495f5b056fe64) }
 
 var fileDescriptor_e2f495f5b056fe64 = []byte{
 	// 252 bytes of a gzipped FileDescriptorProto
