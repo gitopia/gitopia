@@ -226,7 +226,7 @@ func (k msgServer) ToggleCommentResolved(goCtx context.Context, msg *types.MsgTo
 
 	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.GetParentIid())
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.ParentIid))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pull request (%d) doesn't exist in repository", msg.ParentIid))
 	}
 
 	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
