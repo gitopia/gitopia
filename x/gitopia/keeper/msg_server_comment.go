@@ -223,10 +223,21 @@ func (k msgServer) ToggleCommentResolved(goCtx context.Context, msg *types.MsgTo
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment parent (%v)", msg.Parent))
 	}
-	if msg.Creator != comment.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.GetParentIid())
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("issue (%d) doesn't exist in repository", msg.ParentIid))
 	}
 
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v) doesn't exist", msg.RepositoryId))
+	}
+	if msg.Creator != pullRequest.Creator {
+		if !k.HavePermission(ctx, msg.Creator, repository, types.ToggleCommentResolvedPermission) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
+	}
 	comment.Resolved = !comment.Resolved
 	comment.UpdatedAt = ctx.BlockTime().Unix()
 
