@@ -2235,8 +2235,8 @@ func (_m *MockMsgClient) UpdateRepositoryDescription(ctx context.Context, in *Ms
 	return r0, r1
 }
 
-// UpdateArchiveState provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateArchivedState(ctx context.Context, in *MsgUpdateArchiveState, opts ...grpc.CallOption) (*MsgUpdateArchiveStateResponse, error) {
+// UpdateRepositoryArchived provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) UpdateArchivedState(ctx context.Context, in *MsgUpdateRepositoryArchived, opts ...grpc.CallOption) (*MsgUpdateRepositoryArchivedResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]
@@ -2246,17 +2246,17 @@ func (_m *MockMsgClient) UpdateArchivedState(ctx context.Context, in *MsgUpdateA
 	_ca = append(_ca, _va...)
 	ret := _m.Called(_ca...)
 
-	var r0 *MsgUpdateArchiveStateResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateArchiveState, ...grpc.CallOption) *MsgUpdateArchiveStateResponse); ok {
+	var r0 *MsgUpdateRepositoryArchivedResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateRepositoryArchived, ...grpc.CallOption) *MsgUpdateRepositoryArchivedResponse); ok {
 		r0 = rf(ctx, in, opts...)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgUpdateArchiveStateResponse)
+			r0 = ret.Get(0).(*MsgUpdateRepositoryArchivedResponse)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateArchiveState, ...grpc.CallOption) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateRepositoryArchived, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

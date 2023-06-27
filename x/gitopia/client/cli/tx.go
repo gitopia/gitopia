@@ -106,7 +106,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdForkRepository())
 	cmd.AddCommand(CmdRenameRepository())
 	cmd.AddCommand(CmdUpdateRepositoryDescription())
-	cmd.AddCommand(CmdUpdateArchiveState())
+	cmd.AddCommand(CmdUpdateRepositoryArchived())
 	cmd.AddCommand(CmdChangeOwner())
 	cmd.AddCommand(CmdUpdateRepositoryCollaborator())
 	cmd.AddCommand(CmdRemoveRepositoryCollaborator())

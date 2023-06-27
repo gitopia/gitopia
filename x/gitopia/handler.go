@@ -284,8 +284,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.RenameRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgUpdateArchiveState:
-			res, err := msgServer.UpdateArchiveState(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgUpdateRepositoryArchived:
+			res, err := msgServer.UpdateRepositoryArchived(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgUpdateRepositoryDescription:

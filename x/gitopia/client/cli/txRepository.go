@@ -195,7 +195,7 @@ func CmdUpdateRepositoryDescription() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateArchiveState() *cobra.Command {
+func CmdUpdateRepositoryArchived() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-archive-state [owner-id] [repository-name] [archived]",
 		Short: "Update archive state",
@@ -210,7 +210,7 @@ func CmdUpdateArchiveState() *cobra.Command {
 				return err
 			}
 			archived, _ := strconv.ParseBool(argArchived)
-			msg := types.NewMsgUpdateArchiveState(
+			msg := types.NewMsgUpdateRepositoryArchived(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argOwnerid, Name: argRepositoryName},
 				archived,

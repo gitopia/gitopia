@@ -87,7 +87,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryDescription{}, "gitopia/UpdateRepositoryDescription", nil)
-	cdc.RegisterConcrete(&MsgUpdateArchiveState{}, "gitopia/UpdateArchiveState", nil)
+	cdc.RegisterConcrete(&MsgUpdateRepositoryArchived{}, "gitopia/UpdateRepositoryArchived", nil)
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
@@ -208,7 +208,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateRepositoryDescription{},
 		&MsgChangeOwner{},
 		&MsgUpdateRepositoryCollaborator{},
-		&MsgUpdateArchiveState{},
+		&MsgUpdateRepositoryArchived{},
 		&MsgRemoveRepositoryCollaborator{},
 		&MsgCreateRepositoryLabel{},
 		&MsgUpdateRepositoryLabel{},

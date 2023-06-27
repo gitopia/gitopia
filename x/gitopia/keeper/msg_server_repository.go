@@ -504,7 +504,7 @@ func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types
 	return &types.MsgUpdateRepositoryDescriptionResponse{}, nil
 }
 
-func (k msgServer) UpdateArchiveState(goCtx context.Context, msg *types.MsgUpdateArchiveState) (*types.MsgUpdateArchiveStateResponse, error) {
+func (k msgServer) UpdateRepositoryArchived(goCtx context.Context, msg *types.MsgUpdateRepositoryArchived) (*types.MsgUpdateRepositoryArchivedResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	_, found := k.GetUser(ctx, msg.Creator)
@@ -526,7 +526,7 @@ func (k msgServer) UpdateArchiveState(goCtx context.Context, msg *types.MsgUpdat
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("archived state not modified"))
 	}
 
-	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryUpdateArchiveStatePermission) {
+	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryUpdateRepositoryArchivedPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
@@ -546,7 +546,7 @@ func (k msgServer) UpdateArchiveState(goCtx context.Context, msg *types.MsgUpdat
 		),
 	)
 
-	return &types.MsgUpdateArchiveStateResponse{}, nil
+	return &types.MsgUpdateRepositoryArchivedResponse{}, nil
 }
 
 func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateRepositoryCollaborator) (*types.MsgUpdateRepositoryCollaboratorResponse, error) {

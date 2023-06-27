@@ -76834,7 +76834,7 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryDescriptionResponse:
     type: object
-  gitopia.gitopia.gitopia.MsgUpdateArchiveStateResponse:
+  gitopia.gitopia.gitopia.MsgUpdateRepositoryArchivedResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryLabelResponse:
     type: object

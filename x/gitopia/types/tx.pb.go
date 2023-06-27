@@ -7482,24 +7482,24 @@ func (m *MsgUpdateRepositoryDescriptionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateRepositoryDescriptionResponse proto.InternalMessageInfo
 
-type MsgUpdateArchiveState struct {
+type MsgUpdateRepositoryArchived struct {
 	Creator      string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	RepositoryId RepositoryId `protobuf:"bytes,2,opt,name=repositoryId,proto3" json:"repositoryId"`
 	Archived     bool         `protobuf:"varint,3,opt,name=archived,proto3" json:"archived,omitempty"`
 }
 
-func (m *MsgUpdateArchiveState) Reset()         { *m = MsgUpdateArchiveState{} }
-func (m *MsgUpdateArchiveState) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateArchiveState) ProtoMessage()    {}
-func (*MsgUpdateArchiveState) Descriptor() ([]byte, []int) {
+func (m *MsgUpdateRepositoryArchived) Reset()         { *m = MsgUpdateRepositoryArchived{} }
+func (m *MsgUpdateRepositoryArchived) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateRepositoryArchived) ProtoMessage()    {}
+func (*MsgUpdateRepositoryArchived) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{135}
 }
-func (m *MsgUpdateArchiveState) XXX_Unmarshal(b []byte) error {
+func (m *MsgUpdateRepositoryArchived) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUpdateArchiveState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUpdateRepositoryArchived) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUpdateArchiveState.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUpdateRepositoryArchived.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -7509,54 +7509,54 @@ func (m *MsgUpdateArchiveState) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgUpdateArchiveState) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateArchiveState.Merge(m, src)
+func (m *MsgUpdateRepositoryArchived) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateRepositoryArchived.Merge(m, src)
 }
-func (m *MsgUpdateArchiveState) XXX_Size() int {
+func (m *MsgUpdateRepositoryArchived) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUpdateArchiveState) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateArchiveState.DiscardUnknown(m)
+func (m *MsgUpdateRepositoryArchived) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateRepositoryArchived.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUpdateArchiveState proto.InternalMessageInfo
+var xxx_messageInfo_MsgUpdateRepositoryArchived proto.InternalMessageInfo
 
-func (m *MsgUpdateArchiveState) GetCreator() string {
+func (m *MsgUpdateRepositoryArchived) GetCreator() string {
 	if m != nil {
 		return m.Creator
 	}
 	return ""
 }
 
-func (m *MsgUpdateArchiveState) GetRepositoryId() RepositoryId {
+func (m *MsgUpdateRepositoryArchived) GetRepositoryId() RepositoryId {
 	if m != nil {
 		return m.RepositoryId
 	}
 	return RepositoryId{}
 }
 
-func (m *MsgUpdateArchiveState) GetArchived() bool {
+func (m *MsgUpdateRepositoryArchived) GetArchived() bool {
 	if m != nil {
 		return m.Archived
 	}
 	return false
 }
 
-type MsgUpdateArchiveStateResponse struct {
+type MsgUpdateRepositoryArchivedResponse struct {
 }
 
-func (m *MsgUpdateArchiveStateResponse) Reset()         { *m = MsgUpdateArchiveStateResponse{} }
-func (m *MsgUpdateArchiveStateResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateArchiveStateResponse) ProtoMessage()    {}
-func (*MsgUpdateArchiveStateResponse) Descriptor() ([]byte, []int) {
+func (m *MsgUpdateRepositoryArchivedResponse) Reset()         { *m = MsgUpdateRepositoryArchivedResponse{} }
+func (m *MsgUpdateRepositoryArchivedResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateRepositoryArchivedResponse) ProtoMessage()    {}
+func (*MsgUpdateRepositoryArchivedResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{136}
 }
-func (m *MsgUpdateArchiveStateResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgUpdateRepositoryArchivedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUpdateArchiveStateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgUpdateRepositoryArchivedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUpdateArchiveStateResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -7566,17 +7566,17 @@ func (m *MsgUpdateArchiveStateResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgUpdateArchiveStateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateArchiveStateResponse.Merge(m, src)
+func (m *MsgUpdateRepositoryArchivedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.Merge(m, src)
 }
-func (m *MsgUpdateArchiveStateResponse) XXX_Size() int {
+func (m *MsgUpdateRepositoryArchivedResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUpdateArchiveStateResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateArchiveStateResponse.DiscardUnknown(m)
+func (m *MsgUpdateRepositoryArchivedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUpdateArchiveStateResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgUpdateRepositoryArchivedResponse proto.InternalMessageInfo
 
 type MsgChangeOwner struct {
 	Creator      string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -9195,8 +9195,8 @@ func init() {
 	proto.RegisterType((*MsgRenameRepositoryResponse)(nil), "gitopia.gitopia.gitopia.MsgRenameRepositoryResponse")
 	proto.RegisterType((*MsgUpdateRepositoryDescription)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryDescription")
 	proto.RegisterType((*MsgUpdateRepositoryDescriptionResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryDescriptionResponse")
-	proto.RegisterType((*MsgUpdateArchiveState)(nil), "gitopia.gitopia.gitopia.MsgUpdateArchiveState")
-	proto.RegisterType((*MsgUpdateArchiveStateResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateArchiveStateResponse")
+	proto.RegisterType((*MsgUpdateRepositoryArchived)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryArchived")
+	proto.RegisterType((*MsgUpdateRepositoryArchivedResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryArchivedResponse")
 	proto.RegisterType((*MsgChangeOwner)(nil), "gitopia.gitopia.gitopia.MsgChangeOwner")
 	proto.RegisterType((*MsgChangeOwnerResponse)(nil), "gitopia.gitopia.gitopia.MsgChangeOwnerResponse")
 	proto.RegisterType((*MsgUpdateRepositoryCollaborator)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaborator")
@@ -9591,7 +9591,7 @@ type MsgClient interface {
 	ForkRepositorySuccess(ctx context.Context, in *MsgForkRepositorySuccess, opts ...grpc.CallOption) (*MsgForkRepositorySuccessResponse, error)
 	RenameRepository(ctx context.Context, in *MsgRenameRepository, opts ...grpc.CallOption) (*MsgRenameRepositoryResponse, error)
 	UpdateRepositoryDescription(ctx context.Context, in *MsgUpdateRepositoryDescription, opts ...grpc.CallOption) (*MsgUpdateRepositoryDescriptionResponse, error)
-	UpdateArchiveState(ctx context.Context, in *MsgUpdateArchiveState, opts ...grpc.CallOption) (*MsgUpdateArchiveStateResponse, error)
+	UpdateRepositoryArchived(ctx context.Context, in *MsgUpdateRepositoryArchived, opts ...grpc.CallOption) (*MsgUpdateRepositoryArchivedResponse, error)
 	ChangeOwner(ctx context.Context, in *MsgChangeOwner, opts ...grpc.CallOption) (*MsgChangeOwnerResponse, error)
 	UpdateRepositoryCollaborator(ctx context.Context, in *MsgUpdateRepositoryCollaborator, opts ...grpc.CallOption) (*MsgUpdateRepositoryCollaboratorResponse, error)
 	RemoveRepositoryCollaborator(ctx context.Context, in *MsgRemoveRepositoryCollaborator, opts ...grpc.CallOption) (*MsgRemoveRepositoryCollaboratorResponse, error)
@@ -10197,9 +10197,9 @@ func (c *msgClient) UpdateRepositoryDescription(ctx context.Context, in *MsgUpda
 	return out, nil
 }
 
-func (c *msgClient) UpdateArchiveState(ctx context.Context, in *MsgUpdateArchiveState, opts ...grpc.CallOption) (*MsgUpdateArchiveStateResponse, error) {
-	out := new(MsgUpdateArchiveStateResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/UpdateArchiveState", in, out, opts...)
+func (c *msgClient) UpdateRepositoryArchived(ctx context.Context, in *MsgUpdateRepositoryArchived, opts ...grpc.CallOption) (*MsgUpdateRepositoryArchivedResponse, error) {
+	out := new(MsgUpdateRepositoryArchivedResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/UpdateRepositoryArchived", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -10436,7 +10436,7 @@ type MsgServer interface {
 	ForkRepositorySuccess(context.Context, *MsgForkRepositorySuccess) (*MsgForkRepositorySuccessResponse, error)
 	RenameRepository(context.Context, *MsgRenameRepository) (*MsgRenameRepositoryResponse, error)
 	UpdateRepositoryDescription(context.Context, *MsgUpdateRepositoryDescription) (*MsgUpdateRepositoryDescriptionResponse, error)
-	UpdateArchiveState(context.Context, *MsgUpdateArchiveState) (*MsgUpdateArchiveStateResponse, error)
+	UpdateRepositoryArchived(context.Context, *MsgUpdateRepositoryArchived) (*MsgUpdateRepositoryArchivedResponse, error)
 	ChangeOwner(context.Context, *MsgChangeOwner) (*MsgChangeOwnerResponse, error)
 	UpdateRepositoryCollaborator(context.Context, *MsgUpdateRepositoryCollaborator) (*MsgUpdateRepositoryCollaboratorResponse, error)
 	RemoveRepositoryCollaborator(context.Context, *MsgRemoveRepositoryCollaborator) (*MsgRemoveRepositoryCollaboratorResponse, error)
@@ -10654,8 +10654,8 @@ func (*UnimplementedMsgServer) RenameRepository(ctx context.Context, req *MsgRen
 func (*UnimplementedMsgServer) UpdateRepositoryDescription(ctx context.Context, req *MsgUpdateRepositoryDescription) (*MsgUpdateRepositoryDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRepositoryDescription not implemented")
 }
-func (*UnimplementedMsgServer) UpdateArchiveState(ctx context.Context, req *MsgUpdateArchiveState) (*MsgUpdateArchiveStateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateArchiveState not implemented")
+func (*UnimplementedMsgServer) UpdateRepositoryArchived(ctx context.Context, req *MsgUpdateRepositoryArchived) (*MsgUpdateRepositoryArchivedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRepositoryArchived not implemented")
 }
 func (*UnimplementedMsgServer) ChangeOwner(ctx context.Context, req *MsgChangeOwner) (*MsgChangeOwnerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeOwner not implemented")
@@ -11868,20 +11868,20 @@ func _Msg_UpdateRepositoryDescription_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_UpdateArchiveState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUpdateArchiveState)
+func _Msg_UpdateRepositoryArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateRepositoryArchived)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).UpdateArchiveState(ctx, in)
+		return srv.(MsgServer).UpdateRepositoryArchived(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Msg/UpdateArchiveState",
+		FullMethod: "/gitopia.gitopia.gitopia.Msg/UpdateRepositoryArchived",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UpdateArchiveState(ctx, req.(*MsgUpdateArchiveState))
+		return srv.(MsgServer).UpdateRepositoryArchived(ctx, req.(*MsgUpdateRepositoryArchived))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -12471,8 +12471,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UpdateRepositoryDescription_Handler,
 		},
 		{
-			MethodName: "UpdateArchiveState",
-			Handler:    _Msg_UpdateArchiveState_Handler,
+			MethodName: "UpdateRepositoryArchived",
+			Handler:    _Msg_UpdateRepositoryArchived_Handler,
 		},
 		{
 			MethodName: "ChangeOwner",
@@ -17914,7 +17914,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) MarshalToSizedBuffer(dAtA []byt
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateArchiveState) Marshal() (dAtA []byte, err error) {
+func (m *MsgUpdateRepositoryArchived) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -17924,12 +17924,12 @@ func (m *MsgUpdateArchiveState) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUpdateArchiveState) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUpdateRepositoryArchived) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUpdateArchiveState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUpdateRepositoryArchived) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -17964,7 +17964,7 @@ func (m *MsgUpdateArchiveState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateArchiveStateResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgUpdateRepositoryArchivedResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -17974,12 +17974,12 @@ func (m *MsgUpdateArchiveStateResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUpdateArchiveStateResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgUpdateRepositoryArchivedResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUpdateArchiveStateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgUpdateRepositoryArchivedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -21425,7 +21425,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgUpdateArchiveState) Size() (n int) {
+func (m *MsgUpdateRepositoryArchived) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -21443,7 +21443,7 @@ func (m *MsgUpdateArchiveState) Size() (n int) {
 	return n
 }
 
-func (m *MsgUpdateArchiveStateResponse) Size() (n int) {
+func (m *MsgUpdateRepositoryArchivedResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -37605,7 +37605,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUpdateArchiveState) Unmarshal(dAtA []byte) error {
+func (m *MsgUpdateRepositoryArchived) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -37628,10 +37628,10 @@ func (m *MsgUpdateArchiveState) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateArchiveState: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUpdateRepositoryArchived: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateArchiveState: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUpdateRepositoryArchived: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -37740,7 +37740,7 @@ func (m *MsgUpdateArchiveState) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUpdateArchiveStateResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgUpdateRepositoryArchivedResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -37763,10 +37763,10 @@ func (m *MsgUpdateArchiveStateResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateArchiveStateResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgUpdateRepositoryArchivedResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateArchiveStateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgUpdateRepositoryArchivedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
