@@ -50,7 +50,7 @@ func (x BountyState) String() string {
 }
 
 func (BountyState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_b40b67d80582e8a3, []int{0}
+	return fileDescriptor_67a698d5c16076fb, []int{0}
 }
 
 type BountyParent int32
@@ -72,7 +72,7 @@ func (x BountyParent) String() string {
 }
 
 func (BountyParent) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_b40b67d80582e8a3, []int{1}
+	return fileDescriptor_67a698d5c16076fb, []int{1}
 }
 
 type Bounty struct {
@@ -93,7 +93,7 @@ func (m *Bounty) Reset()         { *m = Bounty{} }
 func (m *Bounty) String() string { return proto.CompactTextString(m) }
 func (*Bounty) ProtoMessage()    {}
 func (*Bounty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40b67d80582e8a3, []int{0}
+	return fileDescriptor_67a698d5c16076fb, []int{0}
 }
 func (m *Bounty) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -205,7 +205,7 @@ func init() {
 	proto.RegisterType((*Bounty)(nil), "gitopia.gitopia.gitopia.Bounty")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/bounty.proto", fileDescriptor_b40b67d80582e8a3) }
+func init() { proto.RegisterFile("gitopia/gitopia/bounty.proto", fileDescriptor_67a698d5c16076fb) }
 
 var fileDescriptor_67a698d5c16076fb = []byte{
 	// 538 bytes of a gzipped FileDescriptorProto

@@ -35,7 +35,7 @@ func (m *Tag) Reset()         { *m = Tag{} }
 func (m *Tag) String() string { return proto.CompactTextString(m) }
 func (*Tag) ProtoMessage()    {}
 func (*Tag) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1d18d058690603bd, []int{0}
+	return fileDescriptor_bd09f5e76807ae94, []int{0}
 }
 func (m *Tag) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -110,7 +110,7 @@ func init() {
 	proto.RegisterType((*Tag)(nil), "gitopia.gitopia.gitopia.Tag")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/tag.proto", fileDescriptor_1d18d058690603bd) }
+func init() { proto.RegisterFile("gitopia/gitopia/tag.proto", fileDescriptor_bd09f5e76807ae94) }
 
 var fileDescriptor_bd09f5e76807ae94 = []byte{
 	// 219 bytes of a gzipped FileDescriptorProto

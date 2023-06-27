@@ -96,7 +96,7 @@ func (x CommentType) String() string {
 }
 
 func (CommentType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_87c2e1cdf0cacb50, []int{0}
+	return fileDescriptor_61a8a10ae7d09fb4, []int{0}
 }
 
 type CommentParent int32
@@ -124,7 +124,7 @@ func (x CommentParent) String() string {
 }
 
 func (CommentParent) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_87c2e1cdf0cacb50, []int{1}
+	return fileDescriptor_61a8a10ae7d09fb4, []int{1}
 }
 
 type Comment struct {
@@ -154,7 +154,7 @@ func (m *Comment) Reset()         { *m = Comment{} }
 func (m *Comment) String() string { return proto.CompactTextString(m) }
 func (*Comment) ProtoMessage()    {}
 func (*Comment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_87c2e1cdf0cacb50, []int{0}
+	return fileDescriptor_61a8a10ae7d09fb4, []int{0}
 }
 func (m *Comment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -329,7 +329,7 @@ func init() {
 	proto.RegisterType((*Comment)(nil), "gitopia.gitopia.gitopia.Comment")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/comment.proto", fileDescriptor_87c2e1cdf0cacb50) }
+func init() { proto.RegisterFile("gitopia/gitopia/comment.proto", fileDescriptor_61a8a10ae7d09fb4) }
 
 var fileDescriptor_61a8a10ae7d09fb4 = []byte{
 	// 1001 bytes of a gzipped FileDescriptorProto

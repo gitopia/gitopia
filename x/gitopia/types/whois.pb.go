@@ -45,7 +45,7 @@ func (x OwnerType) String() string {
 }
 
 func (OwnerType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_4aac85447b86043d, []int{0}
+	return fileDescriptor_eb936eb6838a72a6, []int{0}
 }
 
 type Whois struct {
@@ -60,7 +60,7 @@ func (m *Whois) Reset()         { *m = Whois{} }
 func (m *Whois) String() string { return proto.CompactTextString(m) }
 func (*Whois) ProtoMessage()    {}
 func (*Whois) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4aac85447b86043d, []int{0}
+	return fileDescriptor_eb936eb6838a72a6, []int{0}
 }
 func (m *Whois) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -129,7 +129,7 @@ func init() {
 	proto.RegisterType((*Whois)(nil), "gitopia.gitopia.gitopia.Whois")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/whois.proto", fileDescriptor_4aac85447b86043d) }
+func init() { proto.RegisterFile("gitopia/gitopia/whois.proto", fileDescriptor_eb936eb6838a72a6) }
 
 var fileDescriptor_eb936eb6838a72a6 = []byte{
 	// 254 bytes of a gzipped FileDescriptorProto

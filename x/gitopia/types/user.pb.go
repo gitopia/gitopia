@@ -44,7 +44,7 @@ func (m *User) Reset()         { *m = User{} }
 func (m *User) String() string { return proto.CompactTextString(m) }
 func (*User) ProtoMessage()    {}
 func (*User) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1258b7c717290ab, []int{0}
+	return fileDescriptor_bf7f4b301dc3d162, []int{0}
 }
 func (m *User) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -180,7 +180,7 @@ func (m *UserDao) Reset()         { *m = UserDao{} }
 func (m *UserDao) String() string { return proto.CompactTextString(m) }
 func (*UserDao) ProtoMessage()    {}
 func (*UserDao) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1258b7c717290ab, []int{1}
+	return fileDescriptor_bf7f4b301dc3d162, []int{1}
 }
 func (m *UserDao) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -228,7 +228,7 @@ func init() {
 	proto.RegisterType((*UserDao)(nil), "gitopia.gitopia.gitopia.UserDao")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/user.proto", fileDescriptor_f1258b7c717290ab) }
+func init() { proto.RegisterFile("gitopia/gitopia/user.proto", fileDescriptor_bf7f4b301dc3d162) }
 
 var fileDescriptor_bf7f4b301dc3d162 = []byte{
 	// 386 bytes of a gzipped FileDescriptorProto

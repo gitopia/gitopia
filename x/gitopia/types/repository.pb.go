@@ -54,7 +54,7 @@ func (x RepositoryCollaborator_Permission) String() string {
 }
 
 func (RepositoryCollaborator_Permission) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{6, 0}
+	return fileDescriptor_771033d6361900fa, []int{6, 0}
 }
 
 type RepositoryBackup_Store int32
@@ -79,7 +79,7 @@ func (x RepositoryBackup_Store) String() string {
 }
 
 func (RepositoryBackup_Store) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{9, 0}
+	return fileDescriptor_771033d6361900fa, []int{9, 0}
 }
 
 type Repository struct {
@@ -115,7 +115,7 @@ func (m *Repository) Reset()         { *m = Repository{} }
 func (m *Repository) String() string { return proto.CompactTextString(m) }
 func (*Repository) ProtoMessage()    {}
 func (*Repository) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{0}
+	return fileDescriptor_771033d6361900fa, []int{0}
 }
 func (m *Repository) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -335,7 +335,7 @@ func (m *RepositoryId) Reset()         { *m = RepositoryId{} }
 func (m *RepositoryId) String() string { return proto.CompactTextString(m) }
 func (*RepositoryId) ProtoMessage()    {}
 func (*RepositoryId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{1}
+	return fileDescriptor_771033d6361900fa, []int{1}
 }
 func (m *RepositoryId) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -388,7 +388,7 @@ func (m *BaseRepositoryKey) Reset()         { *m = BaseRepositoryKey{} }
 func (m *BaseRepositoryKey) String() string { return proto.CompactTextString(m) }
 func (*BaseRepositoryKey) ProtoMessage()    {}
 func (*BaseRepositoryKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{2}
+	return fileDescriptor_771033d6361900fa, []int{2}
 }
 func (m *BaseRepositoryKey) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -447,7 +447,7 @@ func (m *RepositoryOwner) Reset()         { *m = RepositoryOwner{} }
 func (m *RepositoryOwner) String() string { return proto.CompactTextString(m) }
 func (*RepositoryOwner) ProtoMessage()    {}
 func (*RepositoryOwner) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{3}
+	return fileDescriptor_771033d6361900fa, []int{3}
 }
 func (m *RepositoryOwner) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -499,7 +499,7 @@ func (m *IssueIid) Reset()         { *m = IssueIid{} }
 func (m *IssueIid) String() string { return proto.CompactTextString(m) }
 func (*IssueIid) ProtoMessage()    {}
 func (*IssueIid) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{4}
+	return fileDescriptor_771033d6361900fa, []int{4}
 }
 func (m *IssueIid) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -551,7 +551,7 @@ func (m *PullRequestIid) Reset()         { *m = PullRequestIid{} }
 func (m *PullRequestIid) String() string { return proto.CompactTextString(m) }
 func (*PullRequestIid) ProtoMessage()    {}
 func (*PullRequestIid) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{5}
+	return fileDescriptor_771033d6361900fa, []int{5}
 }
 func (m *PullRequestIid) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -603,7 +603,7 @@ func (m *RepositoryCollaborator) Reset()         { *m = RepositoryCollaborator{}
 func (m *RepositoryCollaborator) String() string { return proto.CompactTextString(m) }
 func (*RepositoryCollaborator) ProtoMessage()    {}
 func (*RepositoryCollaborator) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{6}
+	return fileDescriptor_771033d6361900fa, []int{6}
 }
 func (m *RepositoryCollaborator) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -657,7 +657,7 @@ func (m *RepositoryLabel) Reset()         { *m = RepositoryLabel{} }
 func (m *RepositoryLabel) String() string { return proto.CompactTextString(m) }
 func (*RepositoryLabel) ProtoMessage()    {}
 func (*RepositoryLabel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{7}
+	return fileDescriptor_771033d6361900fa, []int{7}
 }
 func (m *RepositoryLabel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -723,7 +723,7 @@ func (m *RepositoryRelease) Reset()         { *m = RepositoryRelease{} }
 func (m *RepositoryRelease) String() string { return proto.CompactTextString(m) }
 func (*RepositoryRelease) ProtoMessage()    {}
 func (*RepositoryRelease) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{8}
+	return fileDescriptor_771033d6361900fa, []int{8}
 }
 func (m *RepositoryRelease) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -775,7 +775,7 @@ func (m *RepositoryBackup) Reset()         { *m = RepositoryBackup{} }
 func (m *RepositoryBackup) String() string { return proto.CompactTextString(m) }
 func (*RepositoryBackup) ProtoMessage()    {}
 func (*RepositoryBackup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bbd9a19e6dde689c, []int{9}
+	return fileDescriptor_771033d6361900fa, []int{9}
 }
 func (m *RepositoryBackup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -833,7 +833,7 @@ func init() {
 	proto.RegisterType((*RepositoryBackup)(nil), "gitopia.gitopia.gitopia.RepositoryBackup")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/repository.proto", fileDescriptor_bbd9a19e6dde689c) }
+func init() { proto.RegisterFile("gitopia/gitopia/repository.proto", fileDescriptor_771033d6361900fa) }
 
 var fileDescriptor_771033d6361900fa = []byte{
 	// 881 bytes of a gzipped FileDescriptorProto

@@ -45,7 +45,7 @@ func (x TaskType) String() string {
 }
 
 func (TaskType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_224396eac3759120, []int{0}
+	return fileDescriptor_a6920678987ef43f, []int{0}
 }
 
 type TaskState int32
@@ -73,7 +73,7 @@ func (x TaskState) String() string {
 }
 
 func (TaskState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_224396eac3759120, []int{1}
+	return fileDescriptor_a6920678987ef43f, []int{1}
 }
 
 type Task struct {
@@ -89,7 +89,7 @@ func (m *Task) Reset()         { *m = Task{} }
 func (m *Task) String() string { return proto.CompactTextString(m) }
 func (*Task) ProtoMessage()    {}
 func (*Task) Descriptor() ([]byte, []int) {
-	return fileDescriptor_224396eac3759120, []int{0}
+	return fileDescriptor_a6920678987ef43f, []int{0}
 }
 func (m *Task) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -166,7 +166,7 @@ func init() {
 	proto.RegisterType((*Task)(nil), "gitopia.gitopia.gitopia.Task")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/task.proto", fileDescriptor_224396eac3759120) }
+func init() { proto.RegisterFile("gitopia/gitopia/task.proto", fileDescriptor_a6920678987ef43f) }
 
 var fileDescriptor_a6920678987ef43f = []byte{
 	// 441 bytes of a gzipped FileDescriptorProto

@@ -33,7 +33,7 @@ func (m *ExercisedAmount) Reset()         { *m = ExercisedAmount{} }
 func (m *ExercisedAmount) String() string { return proto.CompactTextString(m) }
 func (*ExercisedAmount) ProtoMessage()    {}
 func (*ExercisedAmount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ffa3487fa892d0e7, []int{0}
+	return fileDescriptor_e2f495f5b056fe64, []int{0}
 }
 func (m *ExercisedAmount) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -81,7 +81,7 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("gitopia/gitopia/exercised_amount.proto", fileDescriptor_ffa3487fa892d0e7)
+	proto.RegisterFile("gitopia/gitopia/exercised_amount.proto", fileDescriptor_e2f495f5b056fe64)
 }
 
 var fileDescriptor_e2f495f5b056fe64 = []byte{

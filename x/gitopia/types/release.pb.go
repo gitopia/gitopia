@@ -44,7 +44,7 @@ func (m *Release) Reset()         { *m = Release{} }
 func (m *Release) String() string { return proto.CompactTextString(m) }
 func (*Release) ProtoMessage()    {}
 func (*Release) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b8eecbd9f280ec72, []int{0}
+	return fileDescriptor_5fd2e3bb1bcbe1fb, []int{0}
 }
 func (m *Release) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -175,7 +175,7 @@ func init() {
 	proto.RegisterType((*Release)(nil), "gitopia.gitopia.gitopia.Release")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/release.proto", fileDescriptor_b8eecbd9f280ec72) }
+func init() { proto.RegisterFile("gitopia/gitopia/release.proto", fileDescriptor_5fd2e3bb1bcbe1fb) }
 
 var fileDescriptor_5fd2e3bb1bcbe1fb = []byte{
 	// 368 bytes of a gzipped FileDescriptorProto

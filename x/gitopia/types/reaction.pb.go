@@ -45,7 +45,7 @@ func (x Emoji) String() string {
 }
 
 func (Emoji) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_693bbc73a7a9ebea, []int{0}
+	return fileDescriptor_6751c3791b2fecc0, []int{0}
 }
 
 type Reaction struct {
@@ -57,7 +57,7 @@ func (m *Reaction) Reset()         { *m = Reaction{} }
 func (m *Reaction) String() string { return proto.CompactTextString(m) }
 func (*Reaction) ProtoMessage()    {}
 func (*Reaction) Descriptor() ([]byte, []int) {
-	return fileDescriptor_693bbc73a7a9ebea, []int{0}
+	return fileDescriptor_6751c3791b2fecc0, []int{0}
 }
 func (m *Reaction) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -105,7 +105,7 @@ func init() {
 	proto.RegisterType((*Reaction)(nil), "gitopia.gitopia.gitopia.Reaction")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/reaction.proto", fileDescriptor_693bbc73a7a9ebea) }
+func init() { proto.RegisterFile("gitopia/gitopia/reaction.proto", fileDescriptor_6751c3791b2fecc0) }
 
 var fileDescriptor_6751c3791b2fecc0 = []byte{
 	// 257 bytes of a gzipped FileDescriptorProto

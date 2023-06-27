@@ -44,7 +44,7 @@ func (x MemberRole) String() string {
 }
 
 func (MemberRole) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_38f2f3c327861373, []int{0}
+	return fileDescriptor_eb50d9e34f0ece82, []int{0}
 }
 
 type Member struct {
@@ -58,7 +58,7 @@ func (m *Member) Reset()         { *m = Member{} }
 func (m *Member) String() string { return proto.CompactTextString(m) }
 func (*Member) ProtoMessage()    {}
 func (*Member) Descriptor() ([]byte, []int) {
-	return fileDescriptor_38f2f3c327861373, []int{0}
+	return fileDescriptor_eb50d9e34f0ece82, []int{0}
 }
 func (m *Member) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -120,7 +120,7 @@ func init() {
 	proto.RegisterType((*Member)(nil), "gitopia.gitopia.gitopia.Member")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/member.proto", fileDescriptor_38f2f3c327861373) }
+func init() { proto.RegisterFile("gitopia/gitopia/member.proto", fileDescriptor_eb50d9e34f0ece82) }
 
 var fileDescriptor_eb50d9e34f0ece82 = []byte{
 	// 230 bytes of a gzipped FileDescriptorProto

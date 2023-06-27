@@ -33,7 +33,7 @@ func (m *Attachment) Reset()         { *m = Attachment{} }
 func (m *Attachment) String() string { return proto.CompactTextString(m) }
 func (*Attachment) ProtoMessage()    {}
 func (*Attachment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_606c5d5397332767, []int{0}
+	return fileDescriptor_8035b0c82cbdbc3b, []int{0}
 }
 func (m *Attachment) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -94,7 +94,7 @@ func init() {
 	proto.RegisterType((*Attachment)(nil), "gitopia.gitopia.gitopia.Attachment")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/attachment.proto", fileDescriptor_606c5d5397332767) }
+func init() { proto.RegisterFile("gitopia/gitopia/attachment.proto", fileDescriptor_8035b0c82cbdbc3b) }
 
 var fileDescriptor_8035b0c82cbdbc3b = []byte{
 	// 186 bytes of a gzipped FileDescriptorProto

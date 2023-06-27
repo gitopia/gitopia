@@ -37,7 +37,7 @@ func (m *DistributionProportion) Reset()         { *m = DistributionProportion{}
 func (m *DistributionProportion) String() string { return proto.CompactTextString(m) }
 func (*DistributionProportion) ProtoMessage()    {}
 func (*DistributionProportion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6a6ecb9e82fafe65, []int{0}
+	return fileDescriptor_cdae11692a018c3a, []int{0}
 }
 func (m *DistributionProportion) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -82,7 +82,7 @@ func (m *PoolProportions) Reset()         { *m = PoolProportions{} }
 func (m *PoolProportions) String() string { return proto.CompactTextString(m) }
 func (*PoolProportions) ProtoMessage()    {}
 func (*PoolProportions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6a6ecb9e82fafe65, []int{1}
+	return fileDescriptor_cdae11692a018c3a, []int{1}
 }
 func (m *PoolProportions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -138,7 +138,7 @@ type Params struct {
 func (m *Params) Reset()      { *m = Params{} }
 func (*Params) ProtoMessage() {}
 func (*Params) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6a6ecb9e82fafe65, []int{2}
+	return fileDescriptor_cdae11692a018c3a, []int{2}
 }
 func (m *Params) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -215,7 +215,7 @@ func init() {
 	proto.RegisterType((*Params)(nil), "gitopia.gitopia.gitopia.Params")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/params.proto", fileDescriptor_6a6ecb9e82fafe65) }
+func init() { proto.RegisterFile("gitopia/gitopia/params.proto", fileDescriptor_cdae11692a018c3a) }
 
 var fileDescriptor_cdae11692a018c3a = []byte{
 	// 553 bytes of a gzipped FileDescriptorProto

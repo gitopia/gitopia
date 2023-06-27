@@ -64,7 +64,7 @@ func (m *GenesisState) Reset()         { *m = GenesisState{} }
 func (m *GenesisState) String() string { return proto.CompactTextString(m) }
 func (*GenesisState) ProtoMessage()    {}
 func (*GenesisState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bf4bc08c97d29141, []int{0}
+	return fileDescriptor_fe28ed7a80acf9ab, []int{0}
 }
 func (m *GenesisState) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -314,7 +314,7 @@ func init() {
 	proto.RegisterType((*GenesisState)(nil), "gitopia.gitopia.gitopia.GenesisState")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/genesis.proto", fileDescriptor_bf4bc08c97d29141) }
+func init() { proto.RegisterFile("gitopia/gitopia/genesis.proto", fileDescriptor_fe28ed7a80acf9ab) }
 
 var fileDescriptor_fe28ed7a80acf9ab = []byte{
 	// 766 bytes of a gzipped FileDescriptorProto

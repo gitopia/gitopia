@@ -45,7 +45,7 @@ func (x Issue_State) String() string {
 }
 
 func (Issue_State) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_b1597db1c2e3956f, []int{0, 0}
+	return fileDescriptor_4cf64e56e9098bda, []int{0, 0}
 }
 
 type Issue struct {
@@ -72,7 +72,7 @@ func (m *Issue) Reset()         { *m = Issue{} }
 func (m *Issue) String() string { return proto.CompactTextString(m) }
 func (*Issue) ProtoMessage()    {}
 func (*Issue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b1597db1c2e3956f, []int{0}
+	return fileDescriptor_4cf64e56e9098bda, []int{0}
 }
 func (m *Issue) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -225,7 +225,7 @@ func init() {
 	proto.RegisterType((*Issue)(nil), "gitopia.gitopia.gitopia.Issue")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/issue.proto", fileDescriptor_b1597db1c2e3956f) }
+func init() { proto.RegisterFile("gitopia/gitopia/issue.proto", fileDescriptor_4cf64e56e9098bda) }
 
 var fileDescriptor_4cf64e56e9098bda = []byte{
 	// 454 bytes of a gzipped FileDescriptorProto

@@ -5,3 +5,4 @@ build
 cmd/gitopiad/__debug_bin
 .DS_Store
 .lfsconfig
+x/client/cli/test

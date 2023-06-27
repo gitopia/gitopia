@@ -36,7 +36,7 @@ func (m *Branch) Reset()         { *m = Branch{} }
 func (m *Branch) String() string { return proto.CompactTextString(m) }
 func (*Branch) ProtoMessage()    {}
 func (*Branch) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e572d9d24936cc5d, []int{0}
+	return fileDescriptor_e76348169b9d2db0, []int{0}
 }
 func (m *Branch) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -118,7 +118,7 @@ func init() {
 	proto.RegisterType((*Branch)(nil), "gitopia.gitopia.gitopia.Branch")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/branch.proto", fileDescriptor_e572d9d24936cc5d) }
+func init() { proto.RegisterFile("gitopia/gitopia/branch.proto", fileDescriptor_e76348169b9d2db0) }
 
 var fileDescriptor_e76348169b9d2db0 = []byte{
 	// 249 bytes of a gzipped FileDescriptorProto

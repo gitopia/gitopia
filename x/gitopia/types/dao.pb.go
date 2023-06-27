@@ -44,7 +44,7 @@ func (m *Dao) Reset()         { *m = Dao{} }
 func (m *Dao) String() string { return proto.CompactTextString(m) }
 func (*Dao) ProtoMessage()    {}
 func (*Dao) Descriptor() ([]byte, []int) {
-	return fileDescriptor_379922b0fc6d5d17, []int{0}
+	return fileDescriptor_bbacb5867cc9ed90, []int{0}
 }
 func (m *Dao) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -175,7 +175,7 @@ func init() {
 	proto.RegisterType((*Dao)(nil), "gitopia.gitopia.gitopia.Dao")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/dao.proto", fileDescriptor_379922b0fc6d5d17) }
+func init() { proto.RegisterFile("gitopia/gitopia/dao.proto", fileDescriptor_bbacb5867cc9ed90) }
 
 var fileDescriptor_bbacb5867cc9ed90 = []byte{
 	// 340 bytes of a gzipped FileDescriptorProto

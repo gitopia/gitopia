@@ -48,7 +48,7 @@ func (x PullRequest_State) String() string {
 }
 
 func (PullRequest_State) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_7329f752498d765e, []int{0, 0}
+	return fileDescriptor_ee729f91ddeb1e95, []int{0, 0}
 }
 
 type PullRequest struct {
@@ -81,7 +81,7 @@ func (m *PullRequest) Reset()         { *m = PullRequest{} }
 func (m *PullRequest) String() string { return proto.CompactTextString(m) }
 func (*PullRequest) ProtoMessage()    {}
 func (*PullRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7329f752498d765e, []int{0}
+	return fileDescriptor_ee729f91ddeb1e95, []int{0}
 }
 func (m *PullRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -281,7 +281,7 @@ func (m *PullRequestHead) Reset()         { *m = PullRequestHead{} }
 func (m *PullRequestHead) String() string { return proto.CompactTextString(m) }
 func (*PullRequestHead) ProtoMessage()    {}
 func (*PullRequestHead) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7329f752498d765e, []int{1}
+	return fileDescriptor_ee729f91ddeb1e95, []int{1}
 }
 func (m *PullRequestHead) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -341,7 +341,7 @@ func (m *PullRequestBase) Reset()         { *m = PullRequestBase{} }
 func (m *PullRequestBase) String() string { return proto.CompactTextString(m) }
 func (*PullRequestBase) ProtoMessage()    {}
 func (*PullRequestBase) Descriptor() ([]byte, []int) {
-	return fileDescriptor_7329f752498d765e, []int{2}
+	return fileDescriptor_ee729f91ddeb1e95, []int{2}
 }
 func (m *PullRequestBase) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -398,7 +398,7 @@ func init() {
 	proto.RegisterType((*PullRequestBase)(nil), "gitopia.gitopia.gitopia.PullRequestBase")
 }
 
-func init() { proto.RegisterFile("gitopia/gitopia/pullRequest.proto", fileDescriptor_7329f752498d765e) }
+func init() { proto.RegisterFile("gitopia/gitopia/pullRequest.proto", fileDescriptor_ee729f91ddeb1e95) }
 
 var fileDescriptor_ee729f91ddeb1e95 = []byte{
 	// 611 bytes of a gzipped FileDescriptorProto
