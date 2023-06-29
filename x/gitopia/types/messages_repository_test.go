@@ -256,7 +256,6 @@ func TestMsgToggleRepositoryArchived_ValidateBasic(t *testing.T) {
 			msg: MsgToggleRepositoryArchived{
 				Creator:      "invalid_address",
 				RepositoryId: repositoryId,
-				Archived:     true,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
@@ -264,7 +263,6 @@ func TestMsgToggleRepositoryArchived_ValidateBasic(t *testing.T) {
 			msg: MsgToggleRepositoryArchived{
 				Creator:      sample.AccAddress(),
 				RepositoryId: repositoryId,
-				Archived:     true,
 			},
 		},
 	}

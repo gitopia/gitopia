@@ -2266,7 +2266,7 @@ func (_m *MockMsgClient) UpdateRepositoryDescription(ctx context.Context, in *Ms
 }
 
 // ToggleRepositoryArchived provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) UpdateArchivedState(ctx context.Context, in *MsgToggleRepositoryArchived, opts ...grpc.CallOption) (*MsgToggleRepositoryArchivedResponse, error) {
+func (_m *MockMsgClient) ToggleRepositoryArchived(ctx context.Context, in *MsgToggleRepositoryArchived, opts ...grpc.CallOption) (*MsgToggleRepositoryArchivedResponse, error) {
 	_va := make([]interface{}, len(opts))
 	for _i := range opts {
 		_va[_i] = opts[_i]

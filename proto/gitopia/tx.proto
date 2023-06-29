@@ -795,7 +795,6 @@ message MsgUpdateRepositoryDescriptionResponse { }
 message MsgToggleRepositoryArchived {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  bool archived = 3;
 }
 
 message MsgToggleRepositoryArchivedResponse { }

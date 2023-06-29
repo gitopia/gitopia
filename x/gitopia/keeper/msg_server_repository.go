@@ -522,15 +522,11 @@ func (k msgServer) ToggleRepositoryArchived(goCtx context.Context, msg *types.Ms
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
 
-	if msg.Archived == repository.Archived {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("archived state not modified"))
-	}
-
 	if !k.HavePermission(ctx, msg.Creator, repository, types.RepositoryToggleRepositoryArchivedPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	repository.Archived = msg.Archived
+	repository.Archived = !repository.Archived
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 
 	k.SetRepository(ctx, repository)
@@ -538,10 +534,11 @@ func (k msgServer) ToggleRepositoryArchived(goCtx context.Context, msg *types.Ms
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateArchivedStateEventKey),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.ToggleRepositoryArchivedEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeToggleRepositoryArchived, strconv.FormatBool(repository.Archived)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)

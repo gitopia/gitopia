@@ -755,7 +755,6 @@ func NewMsgToggleRepositoryArchived(creator string, repositoryId RepositoryId, a
 	return &MsgToggleRepositoryArchived{
 		Creator:      creator,
 		RepositoryId: repositoryId,
-		Archived:     archived,
 	}
 }
 
@@ -764,7 +763,7 @@ func (msg *MsgToggleRepositoryArchived) Route() string {
 }
 
 func (msg *MsgToggleRepositoryArchived) Type() string {
-	return "UpdateArchivedState"
+	return "ToggleRepositoryArchived"
 }
 
 func (msg *MsgToggleRepositoryArchived) GetSigners() []sdk.AccAddress {
