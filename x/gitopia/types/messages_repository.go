@@ -751,7 +751,7 @@ func (msg *MsgUpdateRepositoryDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgToggleRepositoryArchived{}
 
-func NewMsgToggleRepositoryArchived(creator string, repositoryId RepositoryId, archived bool) *MsgToggleRepositoryArchived {
+func NewMsgToggleRepositoryArchived(creator string, repositoryId RepositoryId) *MsgToggleRepositoryArchived {
 	return &MsgToggleRepositoryArchived{
 		Creator:      creator,
 		RepositoryId: repositoryId,

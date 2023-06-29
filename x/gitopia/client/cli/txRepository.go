@@ -197,23 +197,20 @@ func CmdUpdateRepositoryDescription() *cobra.Command {
 
 func CmdToggleRepositoryArchived() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-archive-state [owner-id] [repository-name] [archived]",
-		Short: "Update archive state",
+		Use:   "toggle-repository-archived [owner-id] [repository-name]",
+		Short: "toggle repository archived",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argOwnerid := args[0]
 			argRepositoryName := args[1]
-			argArchived := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			archived, _ := strconv.ParseBool(argArchived)
 			msg := types.NewMsgToggleRepositoryArchived(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argOwnerid, Name: argRepositoryName},
-				archived,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
