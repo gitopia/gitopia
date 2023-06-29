@@ -90,7 +90,7 @@ service Msg {
   rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
   rpc UpdateRepositoryDescription(MsgUpdateRepositoryDescription) returns (MsgUpdateRepositoryDescriptionResponse);
-  rpc UpdateRepositoryArchived(MsgUpdateRepositoryArchived) returns (MsgUpdateRepositoryArchivedResponse);
+  rpc ToggleRepositoryArchived(MsgToggleRepositoryArchived) returns (MsgToggleRepositoryArchivedResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
@@ -792,13 +792,13 @@ message MsgUpdateRepositoryDescription {
 
 message MsgUpdateRepositoryDescriptionResponse { }
 
-message MsgUpdateRepositoryArchived {
+message MsgToggleRepositoryArchived {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
   bool archived = 3;
 }
 
-message MsgUpdateRepositoryArchivedResponse { }
+message MsgToggleRepositoryArchivedResponse { }
 
 message MsgChangeOwner {
   string creator = 1;

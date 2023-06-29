@@ -7602,24 +7602,24 @@ func (m *MsgUpdateRepositoryDescriptionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateRepositoryDescriptionResponse proto.InternalMessageInfo
 
-type MsgUpdateRepositoryArchived struct {
+type MsgToggleRepositoryArchived struct {
 	Creator      string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	RepositoryId RepositoryId `protobuf:"bytes,2,opt,name=repositoryId,proto3" json:"repositoryId"`
 	Archived     bool         `protobuf:"varint,3,opt,name=archived,proto3" json:"archived,omitempty"`
 }
 
-func (m *MsgUpdateRepositoryArchived) Reset()         { *m = MsgUpdateRepositoryArchived{} }
-func (m *MsgUpdateRepositoryArchived) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateRepositoryArchived) ProtoMessage()    {}
-func (*MsgUpdateRepositoryArchived) Descriptor() ([]byte, []int) {
+func (m *MsgToggleRepositoryArchived) Reset()         { *m = MsgToggleRepositoryArchived{} }
+func (m *MsgToggleRepositoryArchived) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleRepositoryArchived) ProtoMessage()    {}
+func (*MsgToggleRepositoryArchived) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{137}
 }
-func (m *MsgUpdateRepositoryArchived) XXX_Unmarshal(b []byte) error {
+func (m *MsgToggleRepositoryArchived) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUpdateRepositoryArchived) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgToggleRepositoryArchived) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUpdateRepositoryArchived.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgToggleRepositoryArchived.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -7629,54 +7629,54 @@ func (m *MsgUpdateRepositoryArchived) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *MsgUpdateRepositoryArchived) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateRepositoryArchived.Merge(m, src)
+func (m *MsgToggleRepositoryArchived) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleRepositoryArchived.Merge(m, src)
 }
-func (m *MsgUpdateRepositoryArchived) XXX_Size() int {
+func (m *MsgToggleRepositoryArchived) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUpdateRepositoryArchived) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateRepositoryArchived.DiscardUnknown(m)
+func (m *MsgToggleRepositoryArchived) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleRepositoryArchived.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUpdateRepositoryArchived proto.InternalMessageInfo
+var xxx_messageInfo_MsgToggleRepositoryArchived proto.InternalMessageInfo
 
-func (m *MsgUpdateRepositoryArchived) GetCreator() string {
+func (m *MsgToggleRepositoryArchived) GetCreator() string {
 	if m != nil {
 		return m.Creator
 	}
 	return ""
 }
 
-func (m *MsgUpdateRepositoryArchived) GetRepositoryId() RepositoryId {
+func (m *MsgToggleRepositoryArchived) GetRepositoryId() RepositoryId {
 	if m != nil {
 		return m.RepositoryId
 	}
 	return RepositoryId{}
 }
 
-func (m *MsgUpdateRepositoryArchived) GetArchived() bool {
+func (m *MsgToggleRepositoryArchived) GetArchived() bool {
 	if m != nil {
 		return m.Archived
 	}
 	return false
 }
 
-type MsgUpdateRepositoryArchivedResponse struct {
+type MsgToggleRepositoryArchivedResponse struct {
 }
 
-func (m *MsgUpdateRepositoryArchivedResponse) Reset()         { *m = MsgUpdateRepositoryArchivedResponse{} }
-func (m *MsgUpdateRepositoryArchivedResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateRepositoryArchivedResponse) ProtoMessage()    {}
-func (*MsgUpdateRepositoryArchivedResponse) Descriptor() ([]byte, []int) {
+func (m *MsgToggleRepositoryArchivedResponse) Reset()         { *m = MsgToggleRepositoryArchivedResponse{} }
+func (m *MsgToggleRepositoryArchivedResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgToggleRepositoryArchivedResponse) ProtoMessage()    {}
+func (*MsgToggleRepositoryArchivedResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a62a3f7fe5854081, []int{138}
 }
-func (m *MsgUpdateRepositoryArchivedResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgToggleRepositoryArchivedResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgUpdateRepositoryArchivedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgToggleRepositoryArchivedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgToggleRepositoryArchivedResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -7686,17 +7686,17 @@ func (m *MsgUpdateRepositoryArchivedResponse) XXX_Marshal(b []byte, deterministi
 		return b[:n], nil
 	}
 }
-func (m *MsgUpdateRepositoryArchivedResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.Merge(m, src)
+func (m *MsgToggleRepositoryArchivedResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgToggleRepositoryArchivedResponse.Merge(m, src)
 }
-func (m *MsgUpdateRepositoryArchivedResponse) XXX_Size() int {
+func (m *MsgToggleRepositoryArchivedResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgUpdateRepositoryArchivedResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateRepositoryArchivedResponse.DiscardUnknown(m)
+func (m *MsgToggleRepositoryArchivedResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgToggleRepositoryArchivedResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgUpdateRepositoryArchivedResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgToggleRepositoryArchivedResponse proto.InternalMessageInfo
 
 type MsgChangeOwner struct {
 	Creator      string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -9317,8 +9317,8 @@ func init() {
 	proto.RegisterType((*MsgRenameRepositoryResponse)(nil), "gitopia.gitopia.gitopia.MsgRenameRepositoryResponse")
 	proto.RegisterType((*MsgUpdateRepositoryDescription)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryDescription")
 	proto.RegisterType((*MsgUpdateRepositoryDescriptionResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryDescriptionResponse")
-	proto.RegisterType((*MsgUpdateRepositoryArchived)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryArchived")
-	proto.RegisterType((*MsgUpdateRepositoryArchivedResponse)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryArchivedResponse")
+	proto.RegisterType((*MsgToggleRepositoryArchived)(nil), "gitopia.gitopia.gitopia.MsgToggleRepositoryArchived")
+	proto.RegisterType((*MsgToggleRepositoryArchivedResponse)(nil), "gitopia.gitopia.gitopia.MsgToggleRepositoryArchivedResponse")
 	proto.RegisterType((*MsgChangeOwner)(nil), "gitopia.gitopia.gitopia.MsgChangeOwner")
 	proto.RegisterType((*MsgChangeOwnerResponse)(nil), "gitopia.gitopia.gitopia.MsgChangeOwnerResponse")
 	proto.RegisterType((*MsgUpdateRepositoryCollaborator)(nil), "gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaborator")
@@ -9721,7 +9721,7 @@ type MsgClient interface {
 	ForkRepositorySuccess(ctx context.Context, in *MsgForkRepositorySuccess, opts ...grpc.CallOption) (*MsgForkRepositorySuccessResponse, error)
 	RenameRepository(ctx context.Context, in *MsgRenameRepository, opts ...grpc.CallOption) (*MsgRenameRepositoryResponse, error)
 	UpdateRepositoryDescription(ctx context.Context, in *MsgUpdateRepositoryDescription, opts ...grpc.CallOption) (*MsgUpdateRepositoryDescriptionResponse, error)
-	UpdateRepositoryArchived(ctx context.Context, in *MsgUpdateRepositoryArchived, opts ...grpc.CallOption) (*MsgUpdateRepositoryArchivedResponse, error)
+	ToggleRepositoryArchived(ctx context.Context, in *MsgToggleRepositoryArchived, opts ...grpc.CallOption) (*MsgToggleRepositoryArchivedResponse, error)
 	ChangeOwner(ctx context.Context, in *MsgChangeOwner, opts ...grpc.CallOption) (*MsgChangeOwnerResponse, error)
 	UpdateRepositoryCollaborator(ctx context.Context, in *MsgUpdateRepositoryCollaborator, opts ...grpc.CallOption) (*MsgUpdateRepositoryCollaboratorResponse, error)
 	RemoveRepositoryCollaborator(ctx context.Context, in *MsgRemoveRepositoryCollaborator, opts ...grpc.CallOption) (*MsgRemoveRepositoryCollaboratorResponse, error)
@@ -10336,9 +10336,9 @@ func (c *msgClient) UpdateRepositoryDescription(ctx context.Context, in *MsgUpda
 	return out, nil
 }
 
-func (c *msgClient) UpdateRepositoryArchived(ctx context.Context, in *MsgUpdateRepositoryArchived, opts ...grpc.CallOption) (*MsgUpdateRepositoryArchivedResponse, error) {
-	out := new(MsgUpdateRepositoryArchivedResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/UpdateRepositoryArchived", in, out, opts...)
+func (c *msgClient) ToggleRepositoryArchived(ctx context.Context, in *MsgToggleRepositoryArchived, opts ...grpc.CallOption) (*MsgToggleRepositoryArchivedResponse, error) {
+	out := new(MsgToggleRepositoryArchivedResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.gitopia.Msg/ToggleRepositoryArchived", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -10576,7 +10576,7 @@ type MsgServer interface {
 	ForkRepositorySuccess(context.Context, *MsgForkRepositorySuccess) (*MsgForkRepositorySuccessResponse, error)
 	RenameRepository(context.Context, *MsgRenameRepository) (*MsgRenameRepositoryResponse, error)
 	UpdateRepositoryDescription(context.Context, *MsgUpdateRepositoryDescription) (*MsgUpdateRepositoryDescriptionResponse, error)
-	UpdateRepositoryArchived(context.Context, *MsgUpdateRepositoryArchived) (*MsgUpdateRepositoryArchivedResponse, error)
+	ToggleRepositoryArchived(context.Context, *MsgToggleRepositoryArchived) (*MsgToggleRepositoryArchivedResponse, error)
 	ChangeOwner(context.Context, *MsgChangeOwner) (*MsgChangeOwnerResponse, error)
 	UpdateRepositoryCollaborator(context.Context, *MsgUpdateRepositoryCollaborator) (*MsgUpdateRepositoryCollaboratorResponse, error)
 	RemoveRepositoryCollaborator(context.Context, *MsgRemoveRepositoryCollaborator) (*MsgRemoveRepositoryCollaboratorResponse, error)
@@ -10797,8 +10797,8 @@ func (*UnimplementedMsgServer) RenameRepository(ctx context.Context, req *MsgRen
 func (*UnimplementedMsgServer) UpdateRepositoryDescription(ctx context.Context, req *MsgUpdateRepositoryDescription) (*MsgUpdateRepositoryDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRepositoryDescription not implemented")
 }
-func (*UnimplementedMsgServer) UpdateRepositoryArchived(ctx context.Context, req *MsgUpdateRepositoryArchived) (*MsgUpdateRepositoryArchivedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRepositoryArchived not implemented")
+func (*UnimplementedMsgServer) ToggleRepositoryArchived(ctx context.Context, req *MsgToggleRepositoryArchived) (*MsgToggleRepositoryArchivedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleRepositoryArchived not implemented")
 }
 func (*UnimplementedMsgServer) ChangeOwner(ctx context.Context, req *MsgChangeOwner) (*MsgChangeOwnerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeOwner not implemented")
@@ -12029,20 +12029,20 @@ func _Msg_UpdateRepositoryDescription_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_UpdateRepositoryArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgUpdateRepositoryArchived)
+func _Msg_ToggleRepositoryArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgToggleRepositoryArchived)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).UpdateRepositoryArchived(ctx, in)
+		return srv.(MsgServer).ToggleRepositoryArchived(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitopia.gitopia.gitopia.Msg/UpdateRepositoryArchived",
+		FullMethod: "/gitopia.gitopia.gitopia.Msg/ToggleRepositoryArchived",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).UpdateRepositoryArchived(ctx, req.(*MsgUpdateRepositoryArchived))
+		return srv.(MsgServer).ToggleRepositoryArchived(ctx, req.(*MsgToggleRepositoryArchived))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -12636,8 +12636,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UpdateRepositoryDescription_Handler,
 		},
 		{
-			MethodName: "UpdateRepositoryArchived",
-			Handler:    _Msg_UpdateRepositoryArchived_Handler,
+			MethodName: "ToggleRepositoryArchived",
+			Handler:    _Msg_ToggleRepositoryArchived_Handler,
 		},
 		{
 			MethodName: "ChangeOwner",
@@ -18162,7 +18162,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) MarshalToSizedBuffer(dAtA []byt
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateRepositoryArchived) Marshal() (dAtA []byte, err error) {
+func (m *MsgToggleRepositoryArchived) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -18172,12 +18172,12 @@ func (m *MsgUpdateRepositoryArchived) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgUpdateRepositoryArchived) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgToggleRepositoryArchived) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUpdateRepositoryArchived) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgToggleRepositoryArchived) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -18212,7 +18212,7 @@ func (m *MsgUpdateRepositoryArchived) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateRepositoryArchivedResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgToggleRepositoryArchivedResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -18222,12 +18222,12 @@ func (m *MsgUpdateRepositoryArchivedResponse) Marshal() (dAtA []byte, err error)
 	return dAtA[:n], nil
 }
 
-func (m *MsgUpdateRepositoryArchivedResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgToggleRepositoryArchivedResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgUpdateRepositoryArchivedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgToggleRepositoryArchivedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -21710,7 +21710,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgUpdateRepositoryArchived) Size() (n int) {
+func (m *MsgToggleRepositoryArchived) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -21728,7 +21728,7 @@ func (m *MsgUpdateRepositoryArchived) Size() (n int) {
 	return n
 }
 
-func (m *MsgUpdateRepositoryArchivedResponse) Size() (n int) {
+func (m *MsgToggleRepositoryArchivedResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -38118,7 +38118,7 @@ func (m *MsgUpdateRepositoryDescriptionResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUpdateRepositoryArchived) Unmarshal(dAtA []byte) error {
+func (m *MsgToggleRepositoryArchived) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -38141,10 +38141,10 @@ func (m *MsgUpdateRepositoryArchived) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateRepositoryArchived: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgToggleRepositoryArchived: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateRepositoryArchived: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgToggleRepositoryArchived: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -38253,7 +38253,7 @@ func (m *MsgUpdateRepositoryArchived) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgUpdateRepositoryArchivedResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgToggleRepositoryArchivedResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -38276,10 +38276,10 @@ func (m *MsgUpdateRepositoryArchivedResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateRepositoryArchivedResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgToggleRepositoryArchivedResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateRepositoryArchivedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgToggleRepositoryArchivedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

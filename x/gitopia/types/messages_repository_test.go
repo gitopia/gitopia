@@ -240,7 +240,7 @@ func TestMsgUpdateRepositoryCollaborator_ValidateBasic(t *testing.T) {
 	}
 }
 
-func TestMsgUpdateRepositoryArchived_ValidateBasic(t *testing.T) {
+func TestMsgToggleRepositoryArchived_ValidateBasic(t *testing.T) {
 	repositoryId := RepositoryId{
 		Id:   sample.AccAddress(),
 		Name: "repository",
@@ -248,20 +248,20 @@ func TestMsgUpdateRepositoryArchived_ValidateBasic(t *testing.T) {
 
 	tests := []struct {
 		name string
-		msg  MsgUpdateRepositoryArchived
+		msg  MsgToggleRepositoryArchived
 		err  error
 	}{
 		{
 			name: "invalid creator address",
-			msg: MsgUpdateRepositoryArchived{
+			msg: MsgToggleRepositoryArchived{
 				Creator:      "invalid_address",
 				RepositoryId: repositoryId,
 				Archived:     true,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid MsgUpdateRepositoryArchived",
-			msg: MsgUpdateRepositoryArchived{
+			name: "valid MsgToggleRepositoryArchived",
+			msg: MsgToggleRepositoryArchived{
 				Creator:      sample.AccAddress(),
 				RepositoryId: repositoryId,
 				Archived:     true,

@@ -591,36 +591,36 @@ func TestRepositoryMsgServerUpdateArchived(t *testing.T) {
 
 	for _, tc := range []struct {
 		desc    string
-		request *types.MsgUpdateRepositoryArchived
+		request *types.MsgToggleRepositoryArchived
 		err     error
 	}{
 		{
 			desc:    "Creator Not Exists",
-			request: &types.MsgUpdateRepositoryArchived{Creator: "X", RepositoryId: repositoryId, Archived: true},
+			request: &types.MsgToggleRepositoryArchived{Creator: "X", RepositoryId: repositoryId, Archived: true},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Repository Not Exists",
-			request: &types.MsgUpdateRepositoryArchived{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, Archived: true},
+			request: &types.MsgToggleRepositoryArchived{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, Archived: true},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Unauthorized",
-			request: &types.MsgUpdateRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
+			request: &types.MsgToggleRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Unauthorized Self",
-			request: &types.MsgUpdateRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
+			request: &types.MsgToggleRepositoryArchived{Creator: users[1], RepositoryId: repositoryId, Archived: true},
 			err:     sdkerrors.ErrUnauthorized,
 		},
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdateRepositoryArchived{Creator: users[0], RepositoryId: repositoryId, Archived: true},
+			request: &types.MsgToggleRepositoryArchived{Creator: users[0], RepositoryId: repositoryId, Archived: true},
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			_, err = srv.UpdateRepositoryArchived(ctx, tc.request)
+			_, err = srv.ToggleRepositoryArchived(ctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

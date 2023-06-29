@@ -19,7 +19,7 @@ const (
 	RepositoryRenamePermission                   = RepositoryCollaborator_ADMIN
 	RepositoryTransferOwnershipPermission        = RepositoryCollaborator_ADMIN
 	RepositoryUpdateDescriptionPermission        = RepositoryCollaborator_MAINTAIN
-	RepositoryUpdateRepositoryArchivedPermission = RepositoryCollaborator_MAINTAIN
+	RepositoryToggleRepositoryArchivedPermission = RepositoryCollaborator_MAINTAIN
 	ToggleRepositoryForkingPermission            = RepositoryCollaborator_ADMIN
 	ToggleIssueStatePermission                   = RepositoryCollaborator_TRIAGE
 	RepositoryBackupPermission                   = RepositoryCollaborator_ADMIN

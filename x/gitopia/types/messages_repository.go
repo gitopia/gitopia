@@ -749,25 +749,25 @@ func (msg *MsgUpdateRepositoryDescription) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgUpdateRepositoryArchived{}
+var _ sdk.Msg = &MsgToggleRepositoryArchived{}
 
-func NewMsgUpdateRepositoryArchived(creator string, repositoryId RepositoryId, archived bool) *MsgUpdateRepositoryArchived {
-	return &MsgUpdateRepositoryArchived{
+func NewMsgToggleRepositoryArchived(creator string, repositoryId RepositoryId, archived bool) *MsgToggleRepositoryArchived {
+	return &MsgToggleRepositoryArchived{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Archived:     archived,
 	}
 }
 
-func (msg *MsgUpdateRepositoryArchived) Route() string {
+func (msg *MsgToggleRepositoryArchived) Route() string {
 	return RouterKey
 }
 
-func (msg *MsgUpdateRepositoryArchived) Type() string {
+func (msg *MsgToggleRepositoryArchived) Type() string {
 	return "UpdateArchivedState"
 }
 
-func (msg *MsgUpdateRepositoryArchived) GetSigners() []sdk.AccAddress {
+func (msg *MsgToggleRepositoryArchived) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
@@ -775,12 +775,12 @@ func (msg *MsgUpdateRepositoryArchived) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-func (msg *MsgUpdateRepositoryArchived) GetSignBytes() []byte {
+func (msg *MsgToggleRepositoryArchived) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgUpdateRepositoryArchived) ValidateBasic() error {
+func (msg *MsgToggleRepositoryArchived) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
