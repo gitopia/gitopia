@@ -25,6 +25,10 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -95,6 +99,10 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -170,6 +178,10 @@ func (k msgServer) SetDefaultBranch(goCtx context.Context, msg *types.MsgSetDefa
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -223,6 +235,10 @@ func (k msgServer) DeleteBranch(goCtx context.Context, msg *types.MsgDeleteBranc
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -276,6 +292,10 @@ func (k msgServer) MultiDeleteBranch(goCtx context.Context, msg *types.MsgMultiD
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -337,6 +357,10 @@ func (k msgServer) ToggleForcePush(goCtx context.Context, msg *types.MsgToggleFo
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}

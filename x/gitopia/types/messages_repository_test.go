@@ -240,6 +240,44 @@ func TestMsgUpdateRepositoryCollaborator_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgToggleRepositoryArchived_ValidateBasic(t *testing.T) {
+	repositoryId := RepositoryId{
+		Id:   sample.AccAddress(),
+		Name: "repository",
+	}
+
+	tests := []struct {
+		name string
+		msg  MsgToggleRepositoryArchived
+		err  error
+	}{
+		{
+			name: "invalid creator address",
+			msg: MsgToggleRepositoryArchived{
+				Creator:      "invalid_address",
+				RepositoryId: repositoryId,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid MsgToggleRepositoryArchived",
+			msg: MsgToggleRepositoryArchived{
+				Creator:      sample.AccAddress(),
+				RepositoryId: repositoryId,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgRemoveRepositoryCollaborator_ValidateBasic(t *testing.T) {
 	repositoryId := RepositoryId{
 		Id:   sample.AccAddress(),

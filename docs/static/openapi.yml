@@ -76839,6 +76839,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryDescriptionResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgToggleRepositoryArchivedResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateRepositoryLabelResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateTaskResponse:

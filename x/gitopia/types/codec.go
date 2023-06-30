@@ -88,6 +88,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryDescription{}, "gitopia/UpdateRepositoryDescription", nil)
+	cdc.RegisterConcrete(&MsgToggleRepositoryArchived{}, "gitopia/ToggleRepositoryArchived", nil)
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
@@ -153,8 +154,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil))
 	// this line is used by starport scaffolding # 3
 
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRelease{},
 		&MsgUpdateRelease{},
@@ -211,6 +210,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateRepositoryDescription{},
 		&MsgChangeOwner{},
 		&MsgUpdateRepositoryCollaborator{},
+		&MsgToggleRepositoryArchived{},
 		&MsgRemoveRepositoryCollaborator{},
 		&MsgCreateRepositoryLabel{},
 		&MsgUpdateRepositoryLabel{},
