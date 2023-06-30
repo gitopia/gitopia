@@ -199,7 +199,7 @@ func CmdToggleRepositoryArchived() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "toggle-repository-archived [owner-id] [repository-name]",
 		Short: "toggle repository archived",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argOwnerid := args[0]
 			argRepositoryName := args[1]
