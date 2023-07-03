@@ -195,6 +195,35 @@ func CmdUpdateRepositoryDescription() *cobra.Command {
 	return cmd
 }
 
+func CmdToggleRepositoryArchived() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "toggle-repository-archived [owner-id] [repository-name]",
+		Short: "toggle repository archived",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argOwnerid := args[0]
+			argRepositoryName := args[1]
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgToggleRepositoryArchived(
+				clientCtx.GetFromAddress().String(),
+				types.RepositoryId{Id: argOwnerid, Name: argRepositoryName},
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
 func CmdChangeOwner() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "change-owner [id] [repository-name] [owner-id]",

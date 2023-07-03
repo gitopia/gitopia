@@ -27,6 +27,10 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -129,6 +133,10 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 	}
 
 	repository, found := k.GetRepositoryById(ctx, release.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", release.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.Id))
 	}
@@ -222,6 +230,10 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 	}
 
 	repository, found := k.GetRepositoryById(ctx, release.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", release.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", release.RepositoryId))
 	}

@@ -106,6 +106,7 @@ const (
 	ChangeOwnerEventKey                  = "ChangeOwner"
 	RenameRepositoryEventKey             = "RenameRepository"
 	UpdateRepositoryDescriptionEventKey  = "UpdateRepositoryDescription"
+	ToggleRepositoryArchivedEventKey     = "ToggleRepositoryArchived"
 	UpdateRepositoryCollaboratorEventKey = "UpdateRepositoryCollaborator"
 	RemoveRepositoryCollaboratorEventKey = "RemoveRepositoryCollaborator"
 	CreateRepositoryLabelEventKey        = "CreateRepositoryLabel"
@@ -230,6 +231,7 @@ const (
 	EventAttributeRepoBranchKey              = "RepositoryBranch"
 	EventAttributeRepoTagKey                 = "RepositoryTag"
 	EventAttributeRepoDefaultBranchKey       = "RepositoryDefaultBranch"
+	EventAttributeToggleRepositoryArchived   = "ToggleRepositoryArchived"
 )
 
 const (

@@ -27,6 +27,10 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	}
 
 	headRepository, found := k.GetAddressRepository(ctx, headRepoOwnerAddress.Address, msg.HeadRepositoryId.Name)
+	if headRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.HeadRepositoryId.Name)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("head-repository (%v/%v) doesn't exist", msg.HeadRepositoryId.Id, msg.HeadRepositoryId.Name))
 	}
@@ -41,6 +45,9 @@ func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreate
 	}
 
 	baseRepository, found := k.GetAddressRepository(ctx, baseRepositoryAddress.Address, msg.BaseRepositoryId.Name)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.BaseRepositoryId.Name)
+	}
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("base-repository (%v/%v) doesn't exist", msg.BaseRepositoryId.Id, msg.BaseRepositoryId.Name))
 	}
@@ -327,6 +334,10 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 	}
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", pullRequest.Base.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -377,6 +388,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	blockTime := ctx.BlockTime().Unix()
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", pullRequest.Base.RepositoryId)
+	}
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -633,6 +647,9 @@ func (k msgServer) AddPullRequestReviewers(goCtx context.Context, msg *types.Msg
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -710,6 +727,10 @@ func (k msgServer) RemovePullRequestReviewers(goCtx context.Context, msg *types.
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -784,6 +805,10 @@ func (k msgServer) AddPullRequestAssignees(goCtx context.Context, msg *types.Msg
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -861,6 +886,10 @@ func (k msgServer) RemovePullRequestAssignees(goCtx context.Context, msg *types.
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -935,6 +964,9 @@ func (k msgServer) LinkPullRequestIssueByIid(goCtx context.Context, msg *types.M
 	}
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -1047,6 +1079,10 @@ func (k msgServer) UnlinkPullRequestIssueByIid(goCtx context.Context, msg *types
 	}
 
 	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -1153,6 +1189,10 @@ func (k msgServer) AddPullRequestLabels(goCtx context.Context, msg *types.MsgAdd
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -1234,6 +1274,10 @@ func (k msgServer) RemovePullRequestLabels(goCtx context.Context, msg *types.Msg
 	}
 
 	repository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
@@ -1315,6 +1359,10 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	}
 
 	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", msg.RepositoryId)
+	}
+
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
