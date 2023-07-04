@@ -65,12 +65,17 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 	)
 
 	/* Increment comment count in the parent issue/pullRequest */
+	var parentId uint64
 	if comment.Parent == types.CommentParentIssue {
 		issue.CommentsCount += 1
 		k.SetIssue(ctx, issue)
+
+		parentId = issue.Id
 	} else if comment.Parent == types.CommentParentPullRequest {
 		pullRequest.CommentsCount += 1
 		k.SetPullRequest(ctx, pullRequest)
+
+		parentId = pullRequest.Id
 	}
 
 	ctx.EventManager().EmitEvent(
@@ -82,6 +87,7 @@ func (k msgServer) CreateComment(goCtx context.Context, msg *types.MsgCreateComm
 			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIdKey, strconv.FormatUint(parentId, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
 			sdk.NewAttribute(types.EventAttributeCommentDiffHunkKey, comment.DiffHunk),
@@ -107,6 +113,7 @@ func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComm
 	}
 
 	var comment types.Comment
+	var parentId uint64
 
 	switch msg.Parent {
 	case types.CommentParentIssue:
@@ -114,11 +121,17 @@ func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComm
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment  (%d) doesn't exist", msg.CommentIid))
 		}
+
+		issue, _ := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.ParentIid)
+		parentId = issue.Id
 	case types.CommentParentPullRequest:
 		comment, found = k.GetPullRequestComment(ctx, msg.RepositoryId, msg.ParentIid, msg.CommentIid)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment  (%d) doesn't exist", msg.CommentIid))
 		}
+
+		pullRequest, _ := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.ParentIid)
+		parentId = pullRequest.Id
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment parent (%v)", msg.Parent))
 	}
@@ -142,6 +155,7 @@ func (k msgServer) UpdateComment(goCtx context.Context, msg *types.MsgUpdateComm
 			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentBodyKey, comment.Body),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIdKey, strconv.FormatUint(parentId, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
 			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),
@@ -161,6 +175,7 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 	}
 
 	var comment types.Comment
+	var parentId uint64
 
 	switch msg.Parent {
 	case types.CommentParentIssue:
@@ -168,11 +183,17 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment  (%d) doesn't exist", msg.CommentIid))
 		}
+
+		issue, _ := k.GetRepositoryIssue(ctx, msg.RepositoryId, msg.ParentIid)
+		parentId = issue.Id
 	case types.CommentParentPullRequest:
 		comment, found = k.GetPullRequestComment(ctx, msg.RepositoryId, msg.ParentIid, msg.CommentIid)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("comment  (%d) doesn't exist", msg.CommentIid))
 		}
+
+		pullRequest, _ := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.ParentIid)
+		parentId = pullRequest.Id
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid comment parent (%v)", msg.Parent))
 	}
@@ -196,6 +217,7 @@ func (k msgServer) DeleteComment(goCtx context.Context, msg *types.MsgDeleteComm
 			sdk.NewAttribute(types.EventAttributeCommentIdKey, strconv.FormatUint(comment.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentIidKey, strconv.FormatUint(comment.CommentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(comment.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeCommentParentIdKey, strconv.FormatUint(parentId, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentIidKey, strconv.FormatUint(comment.ParentIid, 10)),
 			sdk.NewAttribute(types.EventAttributeCommentParentKey, comment.Parent.String()),
 			sdk.NewAttribute(types.EventAttributeCommentTypeKey, comment.CommentType.String()),

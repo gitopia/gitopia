@@ -243,6 +243,7 @@ const (
 const (
 	EventAttributeCommentIdKey        = "CommentId"
 	EventAttributeCommentIidKey       = "CommentIid"
+	EventAttributeCommentParentIdKey  = "CommentParentId"
 	EventAttributeCommentParentIidKey = "CommentParentIid"
 	EventAttributeCommentParentKey    = "CommentParent"
 	EventAttributeCommentBodyKey      = "CommentBody"
@@ -281,6 +282,7 @@ const (
 	EventAttributeBountyAmountKey    = "BountyAmount"
 	EventAttributeBountyStateKey     = "BountyState"
 	EventAttributeBountyParentKey    = "BountyParent"
+	EventAttributeBountyParentIdKey  = "BountyParentId"
 	EventAttributeBountyParentIidKey = "BountyParentIid"
 	EventAttributeBountyExpiry       = "BountyExpiry"
 )
