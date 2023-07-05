@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/utils"
 )
 
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
@@ -264,6 +265,37 @@ func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
 	}
 
 	k.RemoveUser(ctx, user.Creator)
+}
+
+func (k msgServer) UpdateUserPinnedRepositories(goCtx context.Context, msg *types.MsgUpdateUserPinnedRepositories) (*types.MsgUpdateUserPinnedRepositoriesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	user, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	if allow := utils.CheckPinnedRepositoryAllowMax(user); allow {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Creator))
+	}
+
+	user.PinnedRepos = append(user.PinnedRepos, msg.RepositoryId)
+	user.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetUser(ctx, user)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateUserPinnedRepositoriesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeUserIdKey, strconv.FormatUint(user.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePinnedRepositories, strconv.FormatUint(msg.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(user.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUpdateUserPinnedRepositoriesResponse{}, nil
 }
 
 // func (k msgServer) TransferUser(goCtx context.Context, msg *types.MsgTransferUser) (*types.MsgTransferUserResponse, error) {

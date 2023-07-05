@@ -265,6 +265,45 @@ func (msg *MsgUpdateUserAvatar) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateUserPinnedRepositories{}
+
+func NewMsgUpdateUserPinnedRepositories(creator string, repositoryId uint64) *MsgUpdateUserPinnedRepositories {
+	return &MsgUpdateUserPinnedRepositories{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+	}
+}
+
+func (msg *MsgUpdateUserPinnedRepositories) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateUserPinnedRepositories) Type() string {
+	return "UpdateUserPinnedRepositories"
+}
+
+func (msg *MsgUpdateUserPinnedRepositories) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateUserPinnedRepositories) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateUserPinnedRepositories) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteUser{}
 
 func NewMsgDeleteUser(creator string) *MsgDeleteUser {

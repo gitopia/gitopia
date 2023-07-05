@@ -80,25 +80,27 @@ const (
 )
 
 const (
-	CreateUserEventKey         = "CreateUser"
-	UpdateUserUsernameEventKey = "UpdateUserUsername"
-	UpdateUserNameEventKey     = "UpdateUserName"
-	UpdateUserBioEventKey      = "UpdateUserBio"
-	UpdateUserAvatarEventKey   = "UpdateUserAvatar"
-	DeleteUserEventKey         = "DeleteUser"
+	CreateUserEventKey                   = "CreateUser"
+	UpdateUserUsernameEventKey           = "UpdateUserUsername"
+	UpdateUserNameEventKey               = "UpdateUserName"
+	UpdateUserBioEventKey                = "UpdateUserBio"
+	UpdateUserAvatarEventKey             = "UpdateUserAvatar"
+	DeleteUserEventKey                   = "DeleteUser"
+	UpdateUserPinnedRepositoriesEventKey = "UpdateUserPinnedRepositories"
 )
 
 const (
-	CreateDaoEventKey            = "CreateDao"
-	RenameDaoEventKey            = "RenameDao"
-	UpdateDaoDescriptionEventKey = "UpdateDaoDescription"
-	UpdateDaoWebsiteEventKey     = "UpdateDaoWebsite"
-	UpdateDaoLocationEventKey    = "UpdateDaoLocation"
-	UpdateDaoAvatarEventKey      = "UpdateDaoAvatar"
-	DeleteDaoEventKey            = "DeleteDao"
-	AddDaoMemberEventKey         = "AddDaoMember"
-	UpdateDaoMemberRoleEventKey  = "UpdateDaoMemberRole"
-	RemoveDaoMemberEventKey      = "RemoveDaoMember"
+	CreateDaoEventKey                   = "CreateDao"
+	RenameDaoEventKey                   = "RenameDao"
+	UpdateDaoDescriptionEventKey        = "UpdateDaoDescription"
+	UpdateDaoWebsiteEventKey            = "UpdateDaoWebsite"
+	UpdateDaoLocationEventKey           = "UpdateDaoLocation"
+	UpdateDaoAvatarEventKey             = "UpdateDaoAvatar"
+	DeleteDaoEventKey                   = "DeleteDao"
+	AddDaoMemberEventKey                = "AddDaoMember"
+	UpdateDaoMemberRoleEventKey         = "UpdateDaoMemberRole"
+	RemoveDaoMemberEventKey             = "RemoveDaoMember"
+	UpdateDaoPinnedRepositoriesEventKey = "UpdateDaoPinnedRepositories"
 )
 
 const (
@@ -195,22 +197,24 @@ const (
 )
 
 const (
-	EventAttributeUserIdKey       = "UserId"
-	EventAttributeUserUsernameKey = "UserUsername"
-	EventAttributeUserNameKey     = "UserName"
-	EventAttributeUserBio         = "UserBio"
-	EventAttributeAvatarUrl       = "AvatarUrl"
+	EventAttributeUserIdKey          = "UserId"
+	EventAttributeUserUsernameKey    = "UserUsername"
+	EventAttributeUserNameKey        = "UserName"
+	EventAttributeUserBio            = "UserBio"
+	EventAttributeAvatarUrl          = "AvatarUrl"
+	EventAttributePinnedRepositories = "PinnedRepositories"
 )
 
 const (
-	EventAttributeDaoIdKey            = "DaoId"
-	EventAttributeDaoAddressKey       = "DaoAddress"
-	EventAttributeDaoNameKey          = "DaoName"
-	EventAttributeDaoDescription      = "DaoDescription"
-	EventAttributeDaoLocation         = "DaoLocation"
-	EventAttributeDaoWebsite          = "DaoWebsite"
-	EventAttributeDaoMemberAddressKey = "DaoMemberAddress"
-	EventAttributeDaoMemberRoleKey    = "DaoMemberRole"
+	EventAttributeDaoIdKey              = "DaoId"
+	EventAttributeDaoAddressKey         = "DaoAddress"
+	EventAttributeDaoNameKey            = "DaoName"
+	EventAttributeDaoDescription        = "DaoDescription"
+	EventAttributeDaoLocation           = "DaoLocation"
+	EventAttributeDaoWebsite            = "DaoWebsite"
+	EventAttributeDaoMemberAddressKey   = "DaoMemberAddress"
+	EventAttributeDaoMemberRoleKey      = "DaoMemberRole"
+	EventAttributeDaoPinnedRepositories = "DaoPinnedRepositories"
 )
 
 const (

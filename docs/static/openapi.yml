@@ -76815,6 +76815,8 @@ definitions:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateDaoAvatarResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgUpdateDaoPinnedRepositoriesResponse:
+    type: object
   gitopia.gitopia.gitopia.MsgUpdateDaoDescriptionResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateDaoLocationResponse:
@@ -76852,6 +76854,8 @@ definitions:
   gitopia.gitopia.gitopia.MsgUpdateUserNameResponse:
     type: object
   gitopia.gitopia.gitopia.MsgUpdateUserUsernameResponse:
+    type: object
+  gitopia.gitopia.gitopia.MsgUpdateUserPinnedRepositoriesResponse:
     type: object
   gitopia.gitopia.gitopia.OwnerType:
     type: string

@@ -85,6 +85,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdateDaoWebsite())
 	cmd.AddCommand(CmdUpdateDaoLocation())
 	cmd.AddCommand(CmdUpdateDaoAvatar())
+	cmd.AddCommand(CmdUpdateDaoPinnedRepositories())
 	cmd.AddCommand(CmdDeleteDao())
 
 	cmd.AddCommand(CmdCreateComment())
@@ -122,6 +123,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUpdateUserName())
 	cmd.AddCommand(CmdUpdateUserBio())
 	cmd.AddCommand(CmdUpdateUserAvatar())
+	cmd.AddCommand(CmdUpdateUserPinnedRepositories())
 	cmd.AddCommand(CmdDeleteUser())
 	// cmd.AddCommand(CmdTransferUser())
 

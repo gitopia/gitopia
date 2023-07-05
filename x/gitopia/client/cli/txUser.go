@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"strconv"
+
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/cast"
@@ -144,6 +146,35 @@ func CmdUpdateUserAvatar() *cobra.Command {
 			}
 
 			msg := types.NewMsgUpdateUserAvatar(clientCtx.GetFromAddress().String(), string(argsUrl))
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdateUserPinnedRepositories() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-user-pinned-repos [repository-id]",
+		Short: "Update user pinned repositories",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			argsRepositoryID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateUserPinnedRepositories(clientCtx.GetFromAddress().String(), argsRepositoryID)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -414,6 +414,60 @@ func (msg *MsgUpdateDaoAvatar) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateDaoPinnedRepositories{}
+
+func NewMsgUpdateDaoPinnedRepositories(creator, id string, repositoryId uint64) *MsgUpdateDaoPinnedRepositories {
+	return &MsgUpdateDaoPinnedRepositories{
+		Id:           id,
+		Creator:      creator,
+		RepositoryId: repositoryId,
+	}
+}
+
+func (msg *MsgUpdateDaoPinnedRepositories) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateDaoPinnedRepositories) Type() string {
+	return "UpdateDaoPinnedRepositories"
+}
+
+func (msg *MsgUpdateDaoPinnedRepositories) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateDaoPinnedRepositories) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateDaoPinnedRepositories) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	_, err = sdk.AccAddressFromBech32(msg.Id)
+	if err != nil {
+		if len(msg.Id) < 3 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
+		} else if len(msg.Id) > 39 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		}
+		if !valid {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
+		}
+	}
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteDao{}
 
 func NewMsgDeleteDao(creator string, id string) *MsgDeleteDao {

@@ -14,10 +14,11 @@ message Dao {
   repeated string followers = 6; 
   repeated string following = 7; 
   repeated uint64 teams = 8; 
-  string location = 9; 
-  string website = 10; 
-  bool verified = 11; 
-  string description = 12; 
-  int64 createdAt = 13; 
-  int64 updatedAt = 14; 
+  repeated uint64 pinned_repos = 9;
+  string location = 10; 
+  string website = 11; 
+  bool verified = 12; 
+  string description = 13; 
+  int64 createdAt = 14; 
+  int64 updatedAt = 15; 
 }

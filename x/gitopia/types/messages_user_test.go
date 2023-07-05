@@ -144,6 +144,43 @@ func TestMsgUpdateUserAvatar_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateUserPinnedRepositories_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateUserPinnedRepositories
+		err  error
+	}{
+		{
+			name: "invalid address",
+			msg: MsgUpdateUserPinnedRepositories{
+				Creator: "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateUserPinnedRepositories{
+				Creator:      sample.AccAddress(),
+				RepositoryId: 123,
+			},
+		}, {
+			name: "empty repositoryID",
+			msg: MsgUpdateUserPinnedRepositories{
+				Creator: sample.AccAddress(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgDeleteUser_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
