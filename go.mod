@@ -161,6 +161,8 @@ require (
 	github.com/cometbft/cometbft-db v0.7.0 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/figment-networks/extractor-cosmos v0.1.0 // indirect
+	github.com/figment-networks/proto-cosmos v0.1.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.4 // indirect
 	github.com/manifoldco/promptui v0.9.0 // indirect
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
@@ -179,7 +181,10 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-replace github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
+replace (
+	github.com/cosmos/cosmos-sdk => github.com/gitopia/cosmos-sdk v0.46.13-fh
+	github.com/tendermint/tendermint => github.com/gitopia/cometbft v0.34.28-fh
+)
 
 replace github.com/cosmos/ibc-go/v5 => github.com/gitopia/ibc-go/v5 v5.0.0-huckleberry-patch.1
 
