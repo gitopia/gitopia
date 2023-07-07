@@ -217,6 +217,7 @@ const (
 	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
 	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"
 	EventAttributeRepoCollaboratorKey        = "RepositoryCollaborator"
+	EventAttributeRepoCollaboratorRoleKey    = "RepositoryCollaboratorRole"
 	EventAttributeRepoLabelIdKey             = "RepositoryLabelId"
 	EventAttributeRepoLabelNameKey           = "RepositoryLabelName"
 	EventAttributeRepoLabelColorKey          = "RepositoryLabelColor"

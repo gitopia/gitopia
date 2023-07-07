@@ -555,6 +555,7 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.Address),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorRoleKey, msg.Role),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
