@@ -21,7 +21,7 @@ require (
 	google.golang.org/grpc v1.55.0
 )
 
-require github.com/cosmos/ibc-go/v5 v5.0.0-20220801112651-041096304a27
+require github.com/cosmos/ibc-go/v5 v5.3.1
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -45,7 +45,7 @@ require (
 	github.com/coinbase/rosetta-sdk-go v0.7.9 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
+	github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.6 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
@@ -180,8 +180,6 @@ require (
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 replace github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
-
-replace github.com/cosmos/ibc-go/v5 => github.com/gitopia/ibc-go/v5 v5.0.0-huckleberry-patch.1
 
 // replace broken goleveldb
 replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
