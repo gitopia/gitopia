@@ -213,6 +213,7 @@ const (
 
 const (
 	EventAttributeRepoNameKey                = "RepositoryName"
+	EventAttributeRepoDescriptionKey         = "RepositoryDescription"
 	EventAttributeRepoIdKey                  = "RepositoryId"
 	EventAttributeRepoOwnerIdKey             = "RepositoryOwnerId"
 	EventAttributeRepoOwnerTypeKey           = "RepositoryOwnerType"

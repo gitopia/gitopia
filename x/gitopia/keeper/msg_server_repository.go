@@ -60,6 +60,7 @@ func (k msgServer) CreateRepository(goCtx context.Context, msg *types.MsgCreateR
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoDescriptionKey, repository.Description),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, repository.Owner.Type.String()),
@@ -486,6 +487,7 @@ func (k msgServer) UpdateRepositoryDescription(goCtx context.Context, msg *types
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoDescriptionKey, repository.Description),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
 		),
 	)
