@@ -15,12 +15,12 @@ message User {
   repeated string followers = 7; 
   repeated string following = 8;
   repeated uint64 starred_repos = 9; 
-  repeated uint64 pinned_repos = 10;
-  string subscriptions = 11; 
-  string bio = 12; 
-  int64 createdAt = 13; 
-  int64 updatedAt = 14; 
-  bool verified = 15;
+  string subscriptions = 10; 
+  string bio = 11; 
+  int64 createdAt = 12; 
+  int64 updatedAt = 13; 
+  bool verified = 14;
+  repeated uint64 pinned_repos = 15;
 }
 
 message UserDao {

@@ -19,3 +19,12 @@ func ValidateUsername(username string) (bool, error) {
 func CheckPinnedRepositoryAllowMax(u types.User) bool {
 	return (len(u.PinnedRepos) == max_pinned_repos)
 }
+
+func CheckRepositoryPinnedExists(u types.User, val uint64) bool {
+	for _, v := range u.PinnedRepos {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}

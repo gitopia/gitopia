@@ -275,8 +275,25 @@ func (k msgServer) UpdateUserPinnedRepositories(goCtx context.Context, msg *type
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
 	}
 
-	if allow := utils.CheckPinnedRepositoryAllowMax(user); allow {
+	if alreadyMax := utils.CheckPinnedRepositoryAllowMax(user); alreadyMax {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Creator))
+	}
+
+	if exists := utils.CheckRepositoryPinnedExists(user, msg.RepositoryId); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository Id (%v) already exists in the list", msg.RepositoryId))
+	}
+
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v) doesn't exist", msg.RepositoryId))
+	}
+
+	if repository.Owner.Type == types.OwnerType_DAO {
+		_, found = k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
 	}
 
 	user.PinnedRepos = append(user.PinnedRepos, msg.RepositoryId)

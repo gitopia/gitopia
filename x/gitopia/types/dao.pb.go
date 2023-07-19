@@ -32,13 +32,13 @@ type Dao struct {
 	Followers   []string `protobuf:"bytes,6,rep,name=followers,proto3" json:"followers,omitempty"`
 	Following   []string `protobuf:"bytes,7,rep,name=following,proto3" json:"following,omitempty"`
 	Teams       []uint64 `protobuf:"varint,8,rep,packed,name=teams,proto3" json:"teams,omitempty"`
-	PinnedRepos []uint64 `protobuf:"varint,9,rep,packed,name=pinned_repos,json=pinnedRepos,proto3" json:"pinned_repos,omitempty"`
-	Location    string   `protobuf:"bytes,10,opt,name=location,proto3" json:"location,omitempty"`
-	Website     string   `protobuf:"bytes,11,opt,name=website,proto3" json:"website,omitempty"`
-	Verified    bool     `protobuf:"varint,12,opt,name=verified,proto3" json:"verified,omitempty"`
-	Description string   `protobuf:"bytes,13,opt,name=description,proto3" json:"description,omitempty"`
-	CreatedAt   int64    `protobuf:"varint,14,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	UpdatedAt   int64    `protobuf:"varint,15,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	Location    string   `protobuf:"bytes,9,opt,name=location,proto3" json:"location,omitempty"`
+	Website     string   `protobuf:"bytes,10,opt,name=website,proto3" json:"website,omitempty"`
+	Verified    bool     `protobuf:"varint,11,opt,name=verified,proto3" json:"verified,omitempty"`
+	Description string   `protobuf:"bytes,12,opt,name=description,proto3" json:"description,omitempty"`
+	CreatedAt   int64    `protobuf:"varint,13,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	UpdatedAt   int64    `protobuf:"varint,14,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
+	PinnedRepos []uint64 `protobuf:"varint,15,rep,packed,name=pinned_repos,json=pinnedRepos,proto3" json:"pinned_repos,omitempty"`
 }
 
 func (m *Dao) Reset()         { *m = Dao{} }
@@ -130,13 +130,6 @@ func (m *Dao) GetTeams() []uint64 {
 	return nil
 }
 
-func (m *Dao) GetPinnedRepos() []uint64 {
-	if m != nil {
-		return m.PinnedRepos
-	}
-	return nil
-}
-
 func (m *Dao) GetLocation() string {
 	if m != nil {
 		return m.Location
@@ -179,6 +172,13 @@ func (m *Dao) GetUpdatedAt() int64 {
 	return 0
 }
 
+func (m *Dao) GetPinnedRepos() []uint64 {
+	if m != nil {
+		return m.PinnedRepos
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Dao)(nil), "gitopia.gitopia.gitopia.Dao")
 }
@@ -186,30 +186,30 @@ func init() {
 func init() { proto.RegisterFile("gitopia/dao.proto", fileDescriptor_bbacb5867cc9ed90) }
 
 var fileDescriptor_bbacb5867cc9ed90 = []byte{
-	// 360 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x92, 0x4f, 0x4b, 0xf3, 0x30,
-	0x1c, 0xc7, 0x97, 0xb5, 0xfb, 0x97, 0xed, 0xd9, 0x83, 0x61, 0x60, 0x18, 0x52, 0xaa, 0xa7, 0x5e,
-	0x5c, 0x41, 0x5f, 0x81, 0x22, 0x78, 0x2f, 0x78, 0xf1, 0x22, 0x59, 0x93, 0xd5, 0x40, 0xd7, 0x5f,
-	0x49, 0xb2, 0x4d, 0xdf, 0x85, 0x2f, 0xc1, 0x97, 0xe3, 0x71, 0x47, 0x8f, 0xb2, 0xbd, 0x11, 0x49,
-	0xda, 0x75, 0xc3, 0x53, 0xf2, 0xfd, 0x7c, 0xbe, 0x29, 0xfd, 0xb5, 0xc1, 0x67, 0x99, 0x34, 0x50,
-	0x4a, 0x16, 0x73, 0x06, 0xb3, 0x52, 0x81, 0x01, 0x72, 0x5e, 0xa3, 0xd9, 0x9f, 0x75, 0x3a, 0xc9,
-	0x20, 0x03, 0xd7, 0x89, 0xed, 0xae, 0xaa, 0x5f, 0x7d, 0x7a, 0xd8, 0x7b, 0x60, 0x40, 0x28, 0xee,
-	0xa5, 0x4a, 0x30, 0x03, 0x8a, 0xa2, 0x10, 0x45, 0x83, 0xe4, 0x10, 0xc9, 0x18, 0xb7, 0x25, 0xa7,
-	0xed, 0x10, 0x45, 0x7e, 0xd2, 0x96, 0xdc, 0x36, 0x19, 0xe7, 0x4a, 0x68, 0x4d, 0xbd, 0xaa, 0x59,
-	0x47, 0x42, 0xb0, 0x5f, 0xb0, 0xa5, 0xa0, 0xbe, 0xc3, 0x6e, 0x4f, 0x2e, 0xf0, 0x80, 0xad, 0x99,
-	0x61, 0xea, 0x49, 0xe5, 0xb4, 0xe3, 0xc4, 0x11, 0x58, 0xbb, 0x80, 0x3c, 0x87, 0x8d, 0x50, 0x9a,
-	0x76, 0x43, 0xcf, 0xda, 0x06, 0x1c, 0xad, 0x2c, 0x32, 0xda, 0x3b, 0xb5, 0xb2, 0xc8, 0xc8, 0x04,
-	0x77, 0x8c, 0x60, 0x4b, 0x4d, 0xfb, 0xa1, 0x17, 0xf9, 0x49, 0x15, 0xc8, 0x25, 0x1e, 0x95, 0xb2,
-	0x28, 0x04, 0x7f, 0x51, 0xa2, 0x04, 0x4d, 0x07, 0x4e, 0x0e, 0x2b, 0x96, 0x58, 0x44, 0xa6, 0xb8,
-	0x9f, 0x43, 0xca, 0x8c, 0x84, 0x82, 0x62, 0xf7, 0x46, 0x4d, 0xb6, 0xc3, 0x6d, 0xc4, 0x5c, 0x4b,
-	0x23, 0xe8, 0xb0, 0x1a, 0xae, 0x8e, 0xf6, 0xd4, 0x5a, 0x28, 0xb9, 0x90, 0x82, 0xd3, 0x51, 0x88,
-	0xa2, 0x7e, 0xd2, 0x64, 0x12, 0xe2, 0x21, 0x17, 0x3a, 0x55, 0xb2, 0x74, 0x0f, 0xfd, 0xe7, 0x4e,
-	0x9e, 0x22, 0x3b, 0x8a, 0xfb, 0x9e, 0x82, 0xdf, 0x19, 0x3a, 0x0e, 0x51, 0xe4, 0x25, 0x47, 0x60,
-	0xed, 0xaa, 0xe4, 0xb5, 0xfd, 0x5f, 0xd9, 0x06, 0xdc, 0x3f, 0x7e, 0xed, 0x02, 0xb4, 0xdd, 0x05,
-	0xe8, 0x67, 0x17, 0xa0, 0x8f, 0x7d, 0xd0, 0xda, 0xee, 0x83, 0xd6, 0xf7, 0x3e, 0x68, 0x3d, 0x5f,
-	0x67, 0xd2, 0xbc, 0xae, 0xe6, 0xb3, 0x14, 0x96, 0xf1, 0xe1, 0x26, 0x1c, 0xd6, 0xf5, 0x4d, 0xfc,
-	0xd6, 0x04, 0xf3, 0x5e, 0x0a, 0x3d, 0xef, 0xba, 0x5f, 0x7e, 0xfb, 0x1b, 0x00, 0x00, 0xff, 0xff,
-	0xa6, 0xbe, 0x75, 0x10, 0x36, 0x02, 0x00, 0x00,
+	// 361 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x92, 0xbb, 0x4e, 0xf3, 0x30,
+	0x18, 0x86, 0xeb, 0x26, 0x3d, 0xb9, 0xfd, 0xfb, 0x0b, 0xab, 0x12, 0x56, 0x85, 0xa2, 0xc0, 0x94,
+	0x85, 0x46, 0x82, 0x2b, 0x00, 0x21, 0xb1, 0x47, 0x62, 0x61, 0x41, 0x6e, 0xec, 0x06, 0x4b, 0x69,
+	0xbe, 0xc8, 0x76, 0x5b, 0xb8, 0x0b, 0x2e, 0x81, 0xcb, 0x61, 0xec, 0xc8, 0x88, 0xda, 0x1b, 0x41,
+	0x76, 0xd2, 0xb4, 0x62, 0xb2, 0xdf, 0xe7, 0x79, 0x9d, 0x7c, 0x39, 0xe0, 0xb3, 0x4c, 0x1a, 0x28,
+	0x25, 0x8b, 0x39, 0x83, 0x59, 0xa9, 0xc0, 0x00, 0x39, 0xaf, 0xd1, 0xec, 0xcf, 0x3a, 0x9d, 0x64,
+	0x90, 0x81, 0xeb, 0xc4, 0x76, 0x57, 0xd5, 0xaf, 0x3e, 0x3d, 0xec, 0x3d, 0x30, 0x20, 0x14, 0xf7,
+	0x52, 0x25, 0x98, 0x01, 0x45, 0x51, 0x88, 0xa2, 0x41, 0x72, 0x88, 0x64, 0x8c, 0xdb, 0x92, 0xd3,
+	0x76, 0x88, 0x22, 0x3f, 0x69, 0x4b, 0x6e, 0x9b, 0x8c, 0x73, 0x25, 0xb4, 0xa6, 0x5e, 0xd5, 0xac,
+	0x23, 0x21, 0xd8, 0x2f, 0xd8, 0x52, 0x50, 0xdf, 0x61, 0xb7, 0x27, 0x17, 0x78, 0xc0, 0xd6, 0xcc,
+	0x30, 0xf5, 0xa4, 0x72, 0xda, 0x71, 0xe2, 0x08, 0xac, 0x5d, 0x40, 0x9e, 0xc3, 0x46, 0x28, 0x4d,
+	0xbb, 0xa1, 0x67, 0x6d, 0x03, 0x8e, 0x56, 0x16, 0x19, 0xed, 0x9d, 0x5a, 0x59, 0x64, 0x64, 0x82,
+	0x3b, 0x46, 0xb0, 0xa5, 0xa6, 0xfd, 0xd0, 0x8b, 0xfc, 0xa4, 0x0a, 0x64, 0x8a, 0xfb, 0x39, 0xa4,
+	0xcc, 0x48, 0x28, 0xe8, 0xc0, 0xdd, 0xae, 0xc9, 0x76, 0xf2, 0x8d, 0x98, 0x6b, 0x69, 0x04, 0xc5,
+	0xd5, 0xe4, 0x75, 0xb4, 0xa7, 0xd6, 0x42, 0xc9, 0x85, 0x14, 0x9c, 0x0e, 0x43, 0x14, 0xf5, 0x93,
+	0x26, 0x93, 0x10, 0x0f, 0xb9, 0xd0, 0xa9, 0x92, 0xa5, 0xbb, 0xe8, 0xc8, 0x9d, 0x3c, 0x45, 0x76,
+	0x4e, 0xf7, 0xb2, 0x04, 0xbf, 0x33, 0xf4, 0x5f, 0x88, 0x22, 0x2f, 0x39, 0x02, 0x6b, 0x57, 0x25,
+	0xaf, 0xed, 0xb8, 0xb2, 0x0d, 0x20, 0x97, 0x78, 0x54, 0xca, 0xa2, 0x10, 0xfc, 0x45, 0x89, 0x12,
+	0x34, 0xfd, 0xef, 0x1e, 0x66, 0x58, 0xb1, 0xc4, 0xa2, 0xfb, 0xc7, 0xaf, 0x5d, 0x80, 0xb6, 0xbb,
+	0x00, 0xfd, 0xec, 0x02, 0xf4, 0xb1, 0x0f, 0x5a, 0xdb, 0x7d, 0xd0, 0xfa, 0xde, 0x07, 0xad, 0xe7,
+	0xeb, 0x4c, 0x9a, 0xd7, 0xd5, 0x7c, 0x96, 0xc2, 0x32, 0x3e, 0xfc, 0x09, 0x87, 0x75, 0x7d, 0x13,
+	0xbf, 0x35, 0xc1, 0xbc, 0x97, 0x42, 0xcf, 0xbb, 0xee, 0x93, 0xdf, 0xfe, 0x06, 0x00, 0x00, 0xff,
+	0xff, 0x22, 0xef, 0x12, 0x6e, 0x36, 0x02, 0x00, 0x00,
 }
 
 func (m *Dao) Marshal() (dAtA []byte, err error) {
@@ -232,47 +232,6 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.UpdatedAt != 0 {
-		i = encodeVarintDao(dAtA, i, uint64(m.UpdatedAt))
-		i--
-		dAtA[i] = 0x78
-	}
-	if m.CreatedAt != 0 {
-		i = encodeVarintDao(dAtA, i, uint64(m.CreatedAt))
-		i--
-		dAtA[i] = 0x70
-	}
-	if len(m.Description) > 0 {
-		i -= len(m.Description)
-		copy(dAtA[i:], m.Description)
-		i = encodeVarintDao(dAtA, i, uint64(len(m.Description)))
-		i--
-		dAtA[i] = 0x6a
-	}
-	if m.Verified {
-		i--
-		if m.Verified {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x60
-	}
-	if len(m.Website) > 0 {
-		i -= len(m.Website)
-		copy(dAtA[i:], m.Website)
-		i = encodeVarintDao(dAtA, i, uint64(len(m.Website)))
-		i--
-		dAtA[i] = 0x5a
-	}
-	if len(m.Location) > 0 {
-		i -= len(m.Location)
-		copy(dAtA[i:], m.Location)
-		i = encodeVarintDao(dAtA, i, uint64(len(m.Location)))
-		i--
-		dAtA[i] = 0x52
-	}
 	if len(m.PinnedRepos) > 0 {
 		dAtA2 := make([]byte, len(m.PinnedRepos)*10)
 		var j1 int
@@ -288,6 +247,47 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= j1
 		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintDao(dAtA, i, uint64(j1))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if m.UpdatedAt != 0 {
+		i = encodeVarintDao(dAtA, i, uint64(m.UpdatedAt))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.CreatedAt != 0 {
+		i = encodeVarintDao(dAtA, i, uint64(m.CreatedAt))
+		i--
+		dAtA[i] = 0x68
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if m.Verified {
+		i--
+		if m.Verified {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x58
+	}
+	if len(m.Website) > 0 {
+		i -= len(m.Website)
+		copy(dAtA[i:], m.Website)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.Website)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.Location) > 0 {
+		i -= len(m.Location)
+		copy(dAtA[i:], m.Location)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.Location)))
 		i--
 		dAtA[i] = 0x4a
 	}
@@ -418,13 +418,6 @@ func (m *Dao) Size() (n int) {
 		}
 		n += 1 + sovDao(uint64(l)) + l
 	}
-	if len(m.PinnedRepos) > 0 {
-		l = 0
-		for _, e := range m.PinnedRepos {
-			l += sovDao(uint64(e))
-		}
-		n += 1 + sovDao(uint64(l)) + l
-	}
 	l = len(m.Location)
 	if l > 0 {
 		n += 1 + l + sovDao(uint64(l))
@@ -445,6 +438,13 @@ func (m *Dao) Size() (n int) {
 	}
 	if m.UpdatedAt != 0 {
 		n += 1 + sovDao(uint64(m.UpdatedAt))
+	}
+	if len(m.PinnedRepos) > 0 {
+		l = 0
+		for _, e := range m.PinnedRepos {
+			l += sovDao(uint64(e))
+		}
+		n += 1 + sovDao(uint64(l)) + l
 	}
 	return n
 }
@@ -772,6 +772,160 @@ func (m *Dao) Unmarshal(dAtA []byte) error {
 				return fmt.Errorf("proto: wrong wireType = %d for field Teams", wireType)
 			}
 		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Location = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Website", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Website = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Verified", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Verified = bool(v != 0)
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
+			}
+			m.CreatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
+			}
+			m.UpdatedAt = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UpdatedAt |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 15:
 			if wireType == 0 {
 				var v uint64
 				for shift := uint(0); ; shift += 7 {
@@ -846,160 +1000,6 @@ func (m *Dao) Unmarshal(dAtA []byte) error {
 				}
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field PinnedRepos", wireType)
-			}
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Location", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDao
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDao
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Location = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 11:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Website", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDao
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDao
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Website = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 12:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Verified", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Verified = bool(v != 0)
-		case 13:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDao
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthDao
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 14:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAt", wireType)
-			}
-			m.CreatedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.CreatedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 15:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UpdatedAt", wireType)
-			}
-			m.UpdatedAt = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDao
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.UpdatedAt |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
 			}
 		default:
 			iNdEx = preIndex

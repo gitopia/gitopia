@@ -432,7 +432,7 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 
 	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
 	}
 
 	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
@@ -443,8 +443,25 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
 	}
 
-	if allow := utils.CheckDaoPinnedRepositoryAllowMax(dao); allow {
+	if alreadyMax := utils.CheckDaoPinnedRepositoryAllowMax(dao); alreadyMax {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Creator))
+	}
+
+	if exists := utils.CheckDaoRepositoryPinnedExists(dao, msg.RepositoryId); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository Id (%v) already exists in the list", msg.RepositoryId))
+	}
+
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v) doesn't exist", msg.RepositoryId))
+	}
+
+	if repository.Owner.Type == types.OwnerType_DAO {
+		_, found = k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
 	}
 
 	dao.PinnedRepos = append(dao.PinnedRepos, msg.RepositoryId)
