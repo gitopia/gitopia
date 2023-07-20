@@ -1905,6 +1905,36 @@ func (_m *MockMsgClient) UpdateDaoAvatar(ctx context.Context, in *MsgUpdateDaoAv
 	return r0, r1
 }
 
+// UpdateDaoPinnedRepositories provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) UpdateDaoPinnedRepositories(ctx context.Context, in *MsgUpdateDaoPinnedRepositories, opts ...grpc.CallOption) (*MsgUpdateDaoPinnedRepositoriesResponse, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *MsgUpdateDaoPinnedRepositoriesResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateDaoPinnedRepositories, ...grpc.CallOption) *MsgUpdateDaoPinnedRepositoriesResponse); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*MsgUpdateDaoPinnedRepositoriesResponse)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateDaoPinnedRepositories, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateDaoDescription provides a mock function with given fields: ctx, in, opts
 func (_m *MockMsgClient) UpdateDaoDescription(ctx context.Context, in *MsgUpdateDaoDescription, opts ...grpc.CallOption) (*MsgUpdateDaoDescriptionResponse, error) {
 	_va := make([]interface{}, len(opts))
@@ -2377,6 +2407,36 @@ func (_m *MockMsgClient) UpdateUserAvatar(ctx context.Context, in *MsgUpdateUser
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateUserAvatar, ...grpc.CallOption) error); ok {
+		r1 = rf(ctx, in, opts...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateUserPinnedRepositories provides a mock function with given fields: ctx, in, opts
+func (_m *MockMsgClient) UpdateUserPinnedRepositories(ctx context.Context, in *MsgUpdateUserPinnedRepositories, opts ...grpc.CallOption) (*MsgUpdateUserPinnedRepositoriesResponse, error) {
+	_va := make([]interface{}, len(opts))
+	for _i := range opts {
+		_va[_i] = opts[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, in)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *MsgUpdateUserPinnedRepositoriesResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *MsgUpdateUserPinnedRepositories, ...grpc.CallOption) *MsgUpdateUserPinnedRepositoriesResponse); ok {
+		r0 = rf(ctx, in, opts...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*MsgUpdateUserPinnedRepositoriesResponse)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *MsgUpdateUserPinnedRepositories, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

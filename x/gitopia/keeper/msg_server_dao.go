@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v2/x/gitopia/utils"
 )
 
 func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*types.MsgCreateDaoResponse, error) {
@@ -414,4 +415,77 @@ func DoRemoveDao(ctx sdk.Context, k msgServer, user types.User, dao types.Dao) {
 	}
 
 	k.RemoveDao(ctx, dao.Address)
+}
+
+func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types.MsgUpdateDaoPinnedRepositories) (*types.MsgUpdateDaoPinnedRepositoriesResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
+	}
+
+	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, daoAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
+	}
+
+	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
+		if m.Role != types.MemberRole_OWNER {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
+		}
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	}
+
+	if alreadyMax := utils.CheckDaoPinnedRepositoryAllowMax(dao); alreadyMax {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Creator))
+	}
+
+	if exists := utils.CheckDaoRepositoryPinnedExists(dao, msg.RepositoryId); exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository Id (%v) already exists in the list", msg.RepositoryId))
+	}
+
+	repository, found := k.GetRepositoryById(ctx, msg.RepositoryId)
+
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v) doesn't exist", msg.RepositoryId))
+	}
+
+	if repository.Owner.Type == types.OwnerType_DAO {
+		owner, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
+		if dao.Id != owner.Id {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository owner (%v) is not same as dao", msg.RepositoryId))
+		}
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository owner (%v) isn't dao", msg.RepositoryId))
+	}
+
+	dao.PinnedRepos = append(dao.PinnedRepos, msg.RepositoryId)
+	dao.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetDao(ctx, dao)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoPinnedRepositoriesEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeDaoPinnedRepositories, strconv.FormatUint(msg.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUpdateDaoPinnedRepositoriesResponse{}, nil
 }

@@ -169,6 +169,39 @@ func TestUserMsgServerUpdateAvatar(t *testing.T) {
 	}
 }
 
+func TestUserMsgServerUpdatePinnedRepositories(t *testing.T) {
+	creator := "A"
+
+	for _, tc := range []struct {
+		desc    string
+		request *types.MsgUpdateUserPinnedRepositories
+		err     error
+	}{
+		{
+			desc:    "Completed",
+			request: &types.MsgUpdateUserPinnedRepositories{Creator: creator, RepositoryId: 123},
+		},
+		{
+			desc:    "KeyNotFound",
+			request: &types.MsgUpdateUserPinnedRepositories{Creator: "B"},
+			err:     sdkerrors.ErrKeyNotFound,
+		},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			srv, ctx := setupMsgServer(t)
+			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+			require.NoError(t, err)
+
+			_, err = srv.UpdateUserPinnedRepositories(ctx, tc.request)
+			if tc.err != nil {
+				require.ErrorIs(t, err, tc.err)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestUserMsgServerDelete(t *testing.T) {
 	srv, ctx := setupMsgServer(t)
 	creator := "A"

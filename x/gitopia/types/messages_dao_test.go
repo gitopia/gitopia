@@ -264,6 +264,53 @@ func TestMsgUpdateDaoAvatar_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestMsgUpdateDaoPinnedRepositories_ValidateBasic(t *testing.T) {
+	tests := []struct {
+		name string
+		msg  MsgUpdateDaoPinnedRepositories
+		err  error
+	}{
+		{
+			name: "invalid creator address",
+			msg: MsgUpdateDaoPinnedRepositories{
+				Creator: "invalid_address",
+				Id:      sample.AccAddress(),
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid dao address",
+			msg: MsgUpdateDaoPinnedRepositories{
+				Creator: sample.AccAddress(),
+				Id:      "invalid_address",
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		}, {
+			name: "valid address",
+			msg: MsgUpdateDaoPinnedRepositories{
+				Creator:      sample.AccAddress(),
+				Id:           sample.AccAddress(),
+				RepositoryId: 123,
+			},
+		}, {
+			name: "empty url",
+			msg: MsgUpdateDaoPinnedRepositories{
+				Creator: sample.AccAddress(),
+				Id:      sample.AccAddress(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
+}
+
 func TestMsgDeleteDao_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string

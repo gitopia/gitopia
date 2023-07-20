@@ -65,6 +65,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateDaoWebsite{}, "gitopia/UpdateDaoWebsite", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoLocation{}, "gitopia/UpdateDaoLocation", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoAvatar{}, "gitopia/UpdateDaoAvatar", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoPinnedRepositories{}, "gitopia/UpdateDaoPinnedRepositories", nil)
 	cdc.RegisterConcrete(&MsgDeleteDao{}, "gitopia/DeleteDao", nil)
 
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
@@ -104,6 +105,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateUserName{}, "gitopia/UpdateUserName", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserBio{}, "gitopia/UpdateUserBio", nil)
 	cdc.RegisterConcrete(&MsgUpdateUserAvatar{}, "gitopia/UpdateUserAvatar", nil)
+	cdc.RegisterConcrete(&MsgUpdateUserPinnedRepositories{}, "gitopia/UpdateUserPinnedRepositories", nil)
 	cdc.RegisterConcrete(&MsgDeleteUser{}, "gitopia/DeleteUser", nil)
 	// cdc.RegisterConcrete(&MsgTransferUser{}, "gitopia/TransferUser", nil)
 
@@ -182,6 +184,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateDaoWebsite{},
 		&MsgUpdateDaoLocation{},
 		&MsgUpdateDaoAvatar{},
+		&MsgUpdateDaoPinnedRepositories{},
 		&MsgDeleteDao{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -225,6 +228,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateUserName{},
 		&MsgUpdateUserBio{},
 		&MsgUpdateUserAvatar{},
+		&MsgUpdateUserPinnedRepositories{},
 		&MsgDeleteUser{},
 		// &MsgTransferUser{},
 	)

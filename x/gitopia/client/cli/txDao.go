@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"strconv"
+
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/cast"
@@ -214,6 +216,40 @@ func CmdUpdateDaoAvatar() *cobra.Command {
 			}
 
 			msg := types.NewMsgUpdateDaoAvatar(clientCtx.GetFromAddress().String(), id, argsUrl)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func CmdUpdateDaoPinnedRepositories() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-dao-pinned-repos [id] [repository-id]",
+		Short: "Update dao pinned repositories",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := cast.ToStringE(args[0])
+			if err != nil {
+				return err
+			}
+
+			argsRepositoryID, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateDaoPinnedRepositories(clientCtx.GetFromAddress().String(), id, argsRepositoryID)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

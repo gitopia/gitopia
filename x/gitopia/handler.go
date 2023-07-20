@@ -212,6 +212,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateDaoAvatar(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateDaoPinnedRepositories:
+			res, err := msgServer.UpdateDaoPinnedRepositories(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgDeleteDao:
 			res, err := msgServer.DeleteDao(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -346,6 +350,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdateUserAvatar:
 			res, err := msgServer.UpdateUserAvatar(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateUserPinnedRepositories:
+			res, err := msgServer.UpdateUserPinnedRepositories(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteUser:

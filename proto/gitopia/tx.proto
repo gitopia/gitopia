@@ -110,6 +110,8 @@ service Msg {
   // rpc TransferUser(MsgTransferUser) returns (MsgTransferUserResponse);
   rpc UpdateRepositoryBackupRef(MsgUpdateRepositoryBackupRef) returns (MsgUpdateRepositoryBackupRefResponse);
   rpc AddRepositoryBackupRef(MsgAddRepositoryBackupRef) returns (MsgAddRepositoryBackupRefResponse);
+  rpc UpdateUserPinnedRepositories(MsgUpdateUserPinnedRepositories) returns (MsgUpdateUserPinnedRepositoriesResponse);
+  rpc UpdateDaoPinnedRepositories(MsgUpdateDaoPinnedRepositories) returns (MsgUpdateDaoPinnedRepositoriesResponse);
 }
 
 message MsgExercise {
@@ -933,3 +935,18 @@ message MsgDeleteUserResponse { }
 // }
 
 // message MsgTransferUserResponse { }
+
+message MsgUpdateUserPinnedRepositories  {
+  string creator = 1;
+  uint64 repositoryId = 2;
+}
+
+message MsgUpdateUserPinnedRepositoriesResponse { }
+
+message MsgUpdateDaoPinnedRepositories  {
+  string creator = 1;
+  uint64 repositoryId = 2;
+  string id = 3;
+}
+
+message MsgUpdateDaoPinnedRepositoriesResponse { }

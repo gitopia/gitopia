@@ -20,4 +20,5 @@ message Dao {
   string description = 12; 
   int64 createdAt = 13; 
   int64 updatedAt = 14; 
+  repeated uint64 pinned_repos = 15;
 }
