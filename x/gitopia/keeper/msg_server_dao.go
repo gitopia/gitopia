@@ -463,10 +463,10 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
 		}
 		if dao.Id != owner.Id {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository owner (%v) is not same as user", msg.RepositoryId))
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository owner (%v) is not same as dao", msg.RepositoryId))
 		}
 	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository owner (%v) isn't user", msg.RepositoryId))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("Repository owner (%v) isn't dao", msg.RepositoryId))
 	}
 
 	dao.PinnedRepos = append(dao.PinnedRepos, msg.RepositoryId)
