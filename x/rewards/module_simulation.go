@@ -44,12 +44,20 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	rewardsGenesis := types.GenesisState{
 		RewardsList: []types.Reward{
 			{
-				Creator:   sample.AccAddress(),
 				Recipient: "0",
+				Rewards: []*types.RecipientReward{
+					{
+						Creator: sample.AccAddress(),
+					},
+				},
 			},
 			{
-				Creator:   sample.AccAddress(),
 				Recipient: "1",
+				Rewards: []*types.RecipientReward{
+					{
+						Creator: sample.AccAddress(),
+					},
+				},
 			},
 		},
 		// this line is used by starport scaffolding # simapp/module/genesisState

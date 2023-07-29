@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/v2/x/rewards/types"
 )
@@ -15,6 +16,16 @@ func (k Keeper) GetParams(ctx sdk.Context) (p types.Params) {
 
 	k.cdc.MustUnmarshal(bz, &p)
 	return p
+}
+
+func (k Keeper) GetParamsOfType(ctx sdk.Context, p interface{}) {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.ParamsKey)
+	if bz == nil {
+		return 
+	}
+
+	k.cdc.MustUnmarshal(bz, p.(codec.ProtoMarshaler))
 }
 
 // SetParams set the params

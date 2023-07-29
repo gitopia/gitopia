@@ -90,8 +90,6 @@ func TestShowRewards(t *testing.T) {
 				nullify.Fill(&resp)
 				// query doesnt return reward as is. returns additional processed fields
 				assert.Equal(t, tc.obj.Recipient, resp.Reward.Recipient)
-				assert.Equal(t, tc.obj.Amount, resp.Reward.Amount)
-				assert.Equal(t, tc.obj.Creator, resp.Reward.Creator)
 			}
 		})
 	}

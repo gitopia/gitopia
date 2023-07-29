@@ -8,39 +8,11 @@ import (
 func (k Keeper) BeginBlocker(ctx sdk.Context) {
 	params := k.GetParams(ctx)
 
-	err := k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesOne, types.RewardsSeriesOneAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesTwo, types.RewardsSeriesTwoAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesThree, types.RewardsSeriesThreeAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesFour, types.RewardsSeriesFourAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesFive, types.RewardsSeriesFiveAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesSix, types.RewardsSeriesSixAccount)
-	if err != nil {
-		panic(err)
-	}
-
-	err = k.TransferRewardPoolBalance(ctx, params.RewardSeries.SeriesSeven, types.RewardsSeriesSevenAccount)
-	if err != nil {
-		panic(err)
+	for _, pool := range params.RewardSeries {
+		err := k.TransferRewardPoolBalance(ctx, pool, types.SeriesModuleAccount(pool.Series))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 

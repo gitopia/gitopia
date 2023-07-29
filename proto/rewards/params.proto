@@ -2,62 +2,17 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
-import "cosmos/base/v1beta1/coin.proto";
+import "rewards/pool.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/gitopia/gitopia/x/rewards/types";
-
-
-message RewardPool {
-  cosmos.base.v1beta1.Coin total_amount = 1 [
-    (gogoproto.moretags) = "yaml:\"total_amount\"",
-    (gogoproto.nullable) = false, 
-    (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  cosmos.base.v1beta1.Coin claimed_amount = 2 [
-    (gogoproto.moretags) = "yaml:\"claimed_amount\"",
-    (gogoproto.nullable) = false, 
-    (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  google.protobuf.Timestamp start_time = 3 [
-    (gogoproto.stdtime) = true,
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"start_time\""];
-  google.protobuf.Timestamp end_time = 4 [
-    (gogoproto.stdtime) = true,
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"end_time\""
-  ];
-}
-
-message RewardSeries {
-  RewardPool series_one = 1 [
-    (gogoproto.moretags) = "yaml:\"series_one\""
-  ];
-  RewardPool series_two = 2 [
-    (gogoproto.moretags) = "yaml:\"series_two\""
-  ];
-  RewardPool series_three = 3 [
-    (gogoproto.moretags) = "yaml:\"series_three\""
-  ];
-  RewardPool series_four = 4 [
-    (gogoproto.moretags) = "yaml:\"series_four\""
-  ];
-  RewardPool series_five = 5 [
-    (gogoproto.moretags) = "yaml:\"series_five\""
-  ];
-  RewardPool series_six = 6 [
-    (gogoproto.moretags) = "yaml:\"series_six\""
-  ];
-  RewardPool series_seven = 7 [
-    (gogoproto.moretags) = "yaml:\"series_seven\""
-  ];
-}
+option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
 
 // Params defines the parameters for the module.
 message Params {
   string evaluator_address = 1 [
     (gogoproto.moretags) = "yaml:\"evaluator_address\""
   ];
-  RewardSeries reward_series = 2 [
+  repeated RewardPool reward_series = 2 [
     (gogoproto.moretags) = "yaml:\"reward_series\""
   ];
 }

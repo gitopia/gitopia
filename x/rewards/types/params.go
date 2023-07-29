@@ -19,7 +19,7 @@ var Acc1 = DefaultAcc{
 }
 
 // NewParams creates a new Params instance
-func NewParams(evaluatorAddress string, rewardSeries *RewardSeries) Params {
+func NewParams(evaluatorAddress string, rewardSeries []*RewardPool) Params {
 	return Params{
 		EvaluatorAddress: evaluatorAddress,
 		RewardSeries:     rewardSeries,
@@ -29,34 +29,41 @@ func NewParams(evaluatorAddress string, rewardSeries *RewardSeries) Params {
 // DefaultParams returns a default set of parameters
 // NOTE: contains sensitive data. DO NOT use in production
 func DefaultParams() Params {
-	return NewParams(Acc1.Address, &RewardSeries{
-		SeriesOne: &RewardPool{
+	return NewParams(Acc1.Address, []*RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_ONE,
 		},
-		SeriesTwo: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_TWO,
 		},
-		SeriesThree: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_THREE,
 		},
-		SeriesFour: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_FOUR,
 		},
-		SeriesFive: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_FIVE,
 		},
-		SeriesSix: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_SIX,
 		},
-		SeriesSeven: &RewardPool{
+		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+			Series: Series_SEVEN,
 		},
 	})
 }
