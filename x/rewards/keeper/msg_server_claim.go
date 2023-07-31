@@ -16,49 +16,80 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "bad address "+msg.Creator)
 	}
 
-	params := k.GetParams(ctx)
-	if !params.RewardSeries.SeriesOne.EndTime.IsZero() &&
-		params.RewardSeries.SeriesOne.EndTime.Before(ctx.BlockTime()) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
-	}
-
-	reward, found := k.GetReward(ctx, msg.Creator)
+	rewards, found := k.GetReward(ctx, msg.Creator)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward not found for address "+msg.Creator)
 	}
 
-	if reward.Amount.IsZero() {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "(%s) address not eligible for reward ", msg.Creator)
+	claimedRewards := []*types.ClaimResponseReward{}
+	expiredRewards := []*types.ClaimResponseReward{}
+	allClaimedRewards := []*types.ClaimResponseReward{}
+	for i, _ := range rewards.Rewards {
+		reward := rewards.Rewards[i]
+		pool := k.getRewardPool(ctx, reward.Series)
+
+		// pool expired but reward not claimed
+		if !pool.EndTime.IsZero() &&
+			pool.EndTime.Before(ctx.BlockTime()) && !reward.Amount.Equal(reward.ClaimedAmount){
+				expiredRewards = append(expiredRewards, &types.ClaimResponseReward{
+					Series: pool.Series,
+					Amount: reward.Amount.Sub(reward.ClaimedAmount),
+				})
+			continue
+		}
+
+		if reward.Amount.IsZero() {
+			continue
+		}
+
+		if reward.Amount.IsEqual(reward.ClaimedAmount) {
+			allClaimedRewards = append(allClaimedRewards, &types.ClaimResponseReward{
+				Series: pool.Series,
+				Amount: reward.Amount.Sub(reward.ClaimedAmount),
+			})
+		}
+
+		claimableAmount, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
+		if err != nil {
+			return nil, err
+		}
+
+		// claimedAmount cannot be greater than claimable amount
+		// eligible reward already claimed. must complete more tasks
+		if reward.ClaimedAmount.IsEqual(claimableAmount) {
+			continue
+		}
+
+		balance := claimableAmount.Sub(reward.ClaimedAmount)
+		balanceWithDecay, err := k.GetDecayedRewardAmount(ctx, balance, pool.Series)
+		if err != nil {
+			return nil, err
+		}
+
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.SeriesModuleAccount(pool.Series), toAddr, sdk.Coins{balanceWithDecay})
+		if err != nil {
+			return nil, err
+		}
+
+		reward.ClaimedAmountWithDecay = reward.ClaimedAmount.Add(balanceWithDecay)
+		reward.ClaimedAmount = claimableAmount
+
+		allClaimedRewards = append(allClaimedRewards, &types.ClaimResponseReward{
+			Series: pool.Series,
+			Amount: balanceWithDecay,
+		})
+
+		claimedRewards = append(claimedRewards, &types.ClaimResponseReward{
+			Series: pool.Series,
+			Amount: balanceWithDecay,
+		})
 	}
 
-	if reward.Amount.IsEqual(reward.ClaimedAmount) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already claimed by address "+msg.Creator)
-	}
+	k.SetReward(ctx, rewards)
 
-	claimableAmount, err := k.GetTotalClaimableAmount(ctx, msg.Creator, reward.Amount)
-	if err != nil {
-		return nil, err
-	}
-
-	// claimedAmount cannot be greater than claimable amount
-	if reward.ClaimedAmount.IsEqual(claimableAmount) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "eligible reward already claimed. must complete more tasks")
-	}
-
-	balance := claimableAmount.Sub(reward.ClaimedAmount)
-	balanceWithDecay, err := k.GetDecayedRewardAmount(ctx, balance)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.RewardsSeriesOneAccount, toAddr, sdk.Coins{balanceWithDecay})
-	if err != nil {
-		return nil, err
-	}
-
-	reward.ClaimedAmountWithDecay = reward.ClaimedAmount.Add(balanceWithDecay)
-	reward.ClaimedAmount = claimableAmount
-	k.SetReward(ctx, reward)
-
-	return &types.MsgClaimResponse{}, nil
+	return &types.MsgClaimResponse{
+		ClaimedRewards: claimedRewards,
+		ExpiredRewards: expiredRewards,
+		AllClaimedRewards: allClaimedRewards,
+	}, nil
 }

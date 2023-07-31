@@ -66,3 +66,13 @@ func (k Keeper) getRewardPool(ctx sdk.Context, series types.Series) *types.Rewar
 	}
 	return nil
 }
+
+func (k Keeper) setRewardPool(ctx sdk.Context, params types.Params, pool *types.RewardPool) {
+	for i, _ := range params.RewardSeries {
+		if params.RewardSeries[i].Series == pool.Series {
+			params.RewardSeries[i] = pool
+		}
+	}
+
+	k.SetParams(ctx, params)
+}

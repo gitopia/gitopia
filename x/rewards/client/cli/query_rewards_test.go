@@ -86,10 +86,10 @@ func TestShowRewards(t *testing.T) {
 				require.NoError(t, err)
 				var resp types.QueryGetRewardResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.Reward)
+				require.NotNil(t, resp.Rewards)
 				nullify.Fill(&resp)
 				// query doesnt return reward as is. returns additional processed fields
-				assert.Equal(t, tc.obj.Recipient, resp.Reward.Recipient)
+				assert.Equal(t, tc.obj.Recipient, resp.Recipient)
 			}
 		})
 	}

@@ -60,6 +60,10 @@ func (msg *MsgCreateReward) ValidateBasic() error {
 		return err
 	}
 
+	if msg.Amount.IsZero(){
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "empty amount")
+	}
+
 	if _, found := sdk.GetDenomUnit(msg.Amount.Denom); !found {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "invalid coin denom (%s)", msg.Amount.Denom)
 	}

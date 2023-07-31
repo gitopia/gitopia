@@ -33,10 +33,9 @@ func TestRewardsMsgServerCreate(t *testing.T) {
 		}
 		_, err := srv.CreateReward(wctx, expected)
 		require.NoError(t, err)
-		rst, found := keepers.RewardKeeper.GetReward(ctx,
+		_, found := keepers.RewardKeeper.GetReward(ctx,
 			expected.Recipient,
 		)
 		require.True(t, found)
-		require.Equal(t, expected.Creator, rst.Creator)
 	}
 }
