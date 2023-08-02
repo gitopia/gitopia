@@ -16,6 +16,7 @@ enum Series {
     FIVE = 5;
     SIX = 6;
     SEVEN = 7;
+    COSMOS = 8;
 }
 
 message RewardPool {
