@@ -19,6 +19,11 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
+var (
+	AIRDROP_START_TIME = time.Date(2023, 8, 10, 0, 0, 0, 0, time.Now().Local().Location())
+	AIRDROP_END_TIME = time.Date(2023, 9, 10, 0, 0, 0, 0, time.Now().Local().Location())
+)
+
 type Migrator struct {
 	keeper keeper.Keeper
 }
@@ -37,7 +42,12 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 
 	newParams := v2types.Params{}
 	newParams.EvaluatorAddress = oldParams.EvaluatorAddress
-	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesOne))
+
+	seriesOne := getV2Params(oldParams.RewardSeries.SeriesOne)
+	seriesOne.StartTime = AIRDROP_START_TIME
+	seriesOne.EndTime = AIRDROP_END_TIME
+	
+	newParams.RewardSeries = append(newParams.RewardSeries, seriesOne)
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesTwo))
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesThree))
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesFour))
@@ -47,8 +57,8 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 
 	newParams.RewardSeries = append(newParams.RewardSeries, &v2types.RewardPool{
 		TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000)),
-		StartTime:   time.Date(2023, 8, 10, 0, 0, 0, 0, nil),
-		EndTime:     time.Date(2023, 9, 10, 0, 0, 0, 0, nil),
+		StartTime:   AIRDROP_START_TIME,
+		EndTime:     AIRDROP_END_TIME,
 		Series:      types.Series_COSMOS,
 	})
 	m.keeper.SetParams(ctx, newParams)
