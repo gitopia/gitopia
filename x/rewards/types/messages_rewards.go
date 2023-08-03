@@ -15,12 +15,13 @@ func NewMsgCreateReward(
 	creator string,
 	recipient string,
 	amount sdk.Coin,
-
+	series Series,
 ) *MsgCreateReward {
 	return &MsgCreateReward{
 		Creator:   creator,
 		Recipient: recipient,
 		Amount:    amount,
+		Series: series,
 	}
 }
 
