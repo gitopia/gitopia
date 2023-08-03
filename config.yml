@@ -24,7 +24,8 @@ accounts:
 - name: evaluator
   coins:
   - 100000000ulore
-  address: gitopia1tfsvwp95023a64rnke7vxd3jjlp5fg4m46yx9j
+  address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+# fantasy guitar settle happy spoil fever leisure life lounge trumpet reason labor hub paddle envelope tunnel identify reveal turtle sting worth lottery afford rescue
 faucet:
   name: faucet
   coins:
@@ -80,7 +81,7 @@ genesis:
           address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
     rewards: 
       params:
-        evaluator_address: gitopia1tfsvwp95023a64rnke7vxd3jjlp5fg4m46yx9j
+        evaluator_address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
         reward_series:
           series_one: 
             total_amount: 

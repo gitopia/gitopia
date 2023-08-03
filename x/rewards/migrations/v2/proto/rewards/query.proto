@@ -1,5 +1,5 @@
 syntax = "proto3";
-package gitopia.gitopia.rewards;
+package gitopia.gitopia.rewards.v2;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
@@ -9,7 +9,8 @@ import "rewards/rewards.proto";
 import "cosmos/base/v1beta1/coin.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/x/rewards/migrations/v2/types;types";
+
 
 // Query defines the gRPC querier service.
 service Query {
