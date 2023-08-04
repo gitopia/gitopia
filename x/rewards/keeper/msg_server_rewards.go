@@ -66,6 +66,8 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already exists for recipient for this pool")
 			}
 		}
+	} else {
+		recipientRewards.Recipient = msg.Recipient
 	}
 	recipientRewards.Rewards = append(recipientRewards.Rewards, &recipientReward)
 
