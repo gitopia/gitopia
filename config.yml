@@ -83,49 +83,49 @@ genesis:
       params:
         evaluator_address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
         reward_series:
-          series_one: 
+          - series: "ONE"
             total_amount: 
               amount: "2000000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_two: 
+          - series: "TWO"
             total_amount: 
               amount: "1700000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_three: 
+          - series: "THREE"
             total_amount: 
               amount: "1400000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_four: 
+          - series: "FOUR"
             total_amount: 
               amount: "1100000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_five: 
+          - series: "FIVE"
             total_amount: 
               amount: "800000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_six: 
+          - series: "SIX"
             total_amount: 
               amount: "500000000000"
               denom: "ulore"
             claimed_amount:
               amount: "0"
               denom: "ulore"
-          series_seven: 
+          - series: "SEVEN"
             total_amount: 
               amount: "250000000000"
               denom: "ulore"
