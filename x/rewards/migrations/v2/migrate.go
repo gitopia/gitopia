@@ -15,8 +15,6 @@ import (
 	// ideally, you wouldnt need this setup since there cannot be breaking changes.
 	v1types "github.com/gitopia/gitopia/v2/x/rewards/migrations/v2/types"
 	v2types "github.com/gitopia/gitopia/v2/x/rewards/types"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 var (
@@ -63,7 +61,7 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	})
 	m.keeper.SetParams(ctx, newParams)
 
-	m.keeper.CreateModuleAccount(ctx, types.SeriesModuleAccount(types.Series_COSMOS), authtypes.Minter)
+	m.keeper.CreateModuleAccount(ctx, types.SeriesModuleAccount(types.Series_COSMOS))
 
 	return nil
 }
