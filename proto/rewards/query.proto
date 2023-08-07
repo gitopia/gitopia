@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "rewards/task.proto";
 import "rewards/rewards.proto";
+import "rewards/pool.proto";
 import "cosmos/base/v1beta1/coin.proto";
 // this line is used by starport scaffolding # 1
 
@@ -44,17 +45,18 @@ message QueryGetRewardRequest {
 }
 
 message QueryGetRewardResponseReward {
-  cosmos.base.v1beta1.Coin amount = 1
+	string creator = 1;
+	Series series = 2;
+  	cosmos.base.v1beta1.Coin amount = 3
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  string creator = 2;
-  cosmos.base.v1beta1.Coin claimed_amount = 3
+  cosmos.base.v1beta1.Coin claimed_amount = 4
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  cosmos.base.v1beta1.Coin claimable_amount = 4
+  cosmos.base.v1beta1.Coin claimable_amount = 5
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
-  cosmos.base.v1beta1.Coin remaining_claimable_amount = 5
+  cosmos.base.v1beta1.Coin remaining_claimable_amount = 6
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }

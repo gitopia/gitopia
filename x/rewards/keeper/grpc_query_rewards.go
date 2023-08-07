@@ -79,6 +79,7 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 			return nil, err
 		}
 		responseRewards = append(responseRewards, types.QueryGetRewardResponseReward{
+			Series:                   reward.Series,
 			Amount:                   reward.Amount,
 			Creator:                  reward.Creator,
 			ClaimedAmount:            reward.ClaimedAmountWithDecay,
