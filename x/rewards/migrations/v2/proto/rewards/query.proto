@@ -1,16 +1,16 @@
 syntax = "proto3";
-package gitopia.gitopia.rewards;
+package gitopia.gitopia.rewards.v2;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "rewards/task.proto";
 import "rewards/rewards.proto";
-import "rewards/pool.proto";
 import "cosmos/base/v1beta1/coin.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/x/rewards/migrations/v2/types;types";
+
 
 // Query defines the gRPC querier service.
 service Query {
@@ -45,11 +45,11 @@ message QueryGetRewardRequest {
 }
 
 message QueryGetRewardResponseReward {
-	string creator = 1;
-	Series series = 2;
-  	cosmos.base.v1beta1.Coin amount = 3
+  string recipient = 1; 
+  cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+  string creator = 3;
   cosmos.base.v1beta1.Coin claimed_amount = 4
     [(gogoproto.nullable) = false, 
 	(gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
@@ -62,8 +62,7 @@ message QueryGetRewardResponseReward {
 }
 
 message QueryGetRewardResponse {
-	string recipient = 1; 
-	repeated QueryGetRewardResponseReward rewards = 2 [
+	QueryGetRewardResponseReward reward = 1 [
 		(gogoproto.nullable) = false,
 		(gogoproto.moretags) = "yaml:\"reward\""
 	  ];

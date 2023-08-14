@@ -1,0 +1,43 @@
+syntax = "proto3";
+package gitopia.gitopia.rewards;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
+
+enum Series {
+    NONE = 0; 
+    ONE = 1;
+    TWO = 2;
+    THREE = 3;
+    FOUR = 4;
+    FIVE = 5;
+    SIX = 6;
+    SEVEN = 7;
+    COSMOS = 8;
+}
+
+message RewardPool {
+    cosmos.base.v1beta1.Coin total_amount = 1 [
+      (gogoproto.moretags) = "yaml:\"total_amount\"",
+      (gogoproto.nullable) = false, 
+      (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+    cosmos.base.v1beta1.Coin claimed_amount = 2 [
+      (gogoproto.moretags) = "yaml:\"claimed_amount\"",
+      (gogoproto.nullable) = false, 
+      (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+    google.protobuf.Timestamp start_time = 3 [
+      (gogoproto.stdtime) = true,
+      (gogoproto.nullable) = false,
+      (gogoproto.moretags) = "yaml:\"start_time\""];
+    google.protobuf.Timestamp end_time = 4 [
+      (gogoproto.stdtime) = true,
+      (gogoproto.nullable) = false,
+      (gogoproto.moretags) = "yaml:\"end_time\""
+    ];
+    Series series = 5[
+      (gogoproto.moretags) = "yaml:\"series\""
+    ];
+  }

@@ -1,20 +1,13 @@
 syntax = "proto3";
-package gitopia.gitopia.rewards;
+package gitopia.gitopia.rewards.v2;
 
 import "gogoproto/gogo.proto";
-import "rewards/pool.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/x/rewards/migrations/v2/types;types";
 
-// a map from recipient to all her rewards
 message Reward {
-  string recipient = 1;
-  repeated RecipientReward rewards= 2;
-}
-
-message RecipientReward {
-  Series series = 1;
+  string recipient = 1; 
   cosmos.base.v1beta1.Coin amount = 2
     [(gogoproto.nullable) = false, 
     (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
@@ -26,3 +19,4 @@ message RecipientReward {
     [(gogoproto.nullable) = false, 
     (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
+

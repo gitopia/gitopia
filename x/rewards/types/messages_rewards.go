@@ -15,12 +15,13 @@ func NewMsgCreateReward(
 	creator string,
 	recipient string,
 	amount sdk.Coin,
-
+	series Series,
 ) *MsgCreateReward {
 	return &MsgCreateReward{
 		Creator:   creator,
 		Recipient: recipient,
 		Amount:    amount,
+		Series: series,
 	}
 }
 
@@ -58,6 +59,10 @@ func (msg *MsgCreateReward) ValidateBasic() error {
 
 	if msg.Amount.Validate() != nil {
 		return err
+	}
+
+	if msg.Amount.IsZero(){
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "empty amount")
 	}
 
 	if _, found := sdk.GetDenomUnit(msg.Amount.Denom); !found {

@@ -23,20 +23,24 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "user (%v) doesn't have permission to perform this operation", msg.Creator)
 	}
 
-	rewardpool := params.RewardSeries.SeriesOne
-	if !rewardpool.StartTime.IsZero() && ctx.BlockTime().Before(rewardpool.StartTime) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool not active")
+	pool := k.getRewardPool(ctx, msg.Series)
+	if pool == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "pool not found")
 	}
 
-	if !rewardpool.StartTime.IsZero() && ctx.BlockTime().After(rewardpool.EndTime) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool expired")
+	if !pool.StartTime.IsZero() && ctx.BlockTime().Before(pool.StartTime) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool not active")
 	}
 
-	if rewardpool.ClaimedAmount.IsEqual(rewardpool.TotalAmount) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "series 1 reward pool claimed")
+	if !pool.StartTime.IsZero() && ctx.BlockTime().After(pool.EndTime) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool expired")
 	}
 
-	availablePoolBal := rewardpool.TotalAmount.Sub(rewardpool.ClaimedAmount)
+	if pool.ClaimedAmount.IsEqual(pool.TotalAmount) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool claimed")
+	}
+
+	availablePoolBal := pool.TotalAmount.Sub(pool.ClaimedAmount)
 	amount := sdk.NormalizeCoin(msg.Amount)
 	if availablePoolBal.IsLT(msg.Amount) {
 		// reward whatever is left in the reward pool
@@ -44,30 +48,36 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 	}
 
 	// Check if the value already exists
-	_, isFound := k.GetReward(
+	recipientRewards, isFound := k.GetReward(
 		ctx,
 		msg.Recipient,
 	)
-	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
-	}
 
-	var reward = types.Reward{
+	recipientReward := types.RecipientReward{
+		Series:                 msg.Series,
 		Creator:                msg.Creator,
-		Recipient:              msg.Recipient,
 		Amount:                 amount,
 		ClaimedAmount:          sdk.NewCoin(gitopiaparams.BaseCoinUnit, math.NewInt(0)),
 		ClaimedAmountWithDecay: sdk.NewCoin(gitopiaparams.BaseCoinUnit, math.NewInt(0)),
 	}
+	if isFound {
+		for _, r := range recipientRewards.Rewards {
+			if r.Series == msg.Series {
+				return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward already exists for recipient for this pool")
+			}
+		}
+	} else {
+		recipientRewards.Recipient = msg.Recipient
+	}
+	recipientRewards.Rewards = append(recipientRewards.Rewards, &recipientReward)
 
 	k.SetReward(
 		ctx,
-		reward,
+		recipientRewards,
 	)
 
-	rewardpool.ClaimedAmount = rewardpool.ClaimedAmount.Add(amount)
-	params.RewardSeries.SeriesOne = rewardpool
-	k.SetParams(ctx, params)
+	pool.ClaimedAmount = pool.ClaimedAmount.Add(amount)
+	k.setRewardPool(ctx, params, pool)
 
 	return &types.MsgCreateRewardResponse{
 		Amount: amount,

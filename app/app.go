@@ -44,7 +44,12 @@ var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
 
-	Upgrades = []upgrades.Upgrade{}
+	Upgrades = []upgrades.Upgrade{
+		{
+			UpgradeName:          "rewards-v2",
+			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
+		},
+	}
 )
 
 var (

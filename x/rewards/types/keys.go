@@ -1,5 +1,10 @@
 package types
 
+import (
+	"fmt"
+	"strings"
+)
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "rewards"
@@ -12,14 +17,6 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_rewards"
-
-	RewardsSeriesOneAccount   = "rewards_series_one_account"
-	RewardsSeriesTwoAccount   = "rewards_series_two_account"
-	RewardsSeriesThreeAccount = "rewards_series_three_account"
-	RewardsSeriesFourAccount  = "rewards_series_four_account"
-	RewardsSeriesFiveAccount  = "rewards_series_five_account"
-	RewardsSeriesSixAccount   = "rewards_series_six_account"
-	RewardsSeriesSevenAccount = "rewards_series_seven_account"
 )
 
 var (
@@ -29,3 +26,8 @@ var (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+// module accounts for reward series
+func SeriesModuleAccount(series Series) string {
+	return fmt.Sprintf("rewards_series_%s_account", strings.ToLower(Series_name[int32(series)]))
+}	

@@ -987,34 +987,40 @@ func GenerateGenesisCmd() *cobra.Command {
 				sdk.MustNewDecFromStr("0.0001"),
 			)
 
-			rewardsGenesis.Params = rewardstypes.NewParams(rewardsServiceAddress, &rewardstypes.RewardSeries{
-				SeriesOne: &rewardstypes.RewardPool{
-					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(2_000_000_000_000)),
-					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-				},
-				SeriesTwo: &rewardstypes.RewardPool{
+			rewardsGenesis.Params = rewardstypes.NewParams(rewardsServiceAddress, []*rewardstypes.RewardPool{{
+				TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(2_000_000_000_000)),
+				ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+				Series:        rewardstypes.Series_ONE,
+			},
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1_700_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_TWO,
 				},
-				SeriesThree: &rewardstypes.RewardPool{
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1_400_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_THREE,
 				},
-				SeriesFour: &rewardstypes.RewardPool{
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1_100_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_FOUR,
 				},
-				SeriesFive: &rewardstypes.RewardPool{
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(800_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_FIVE,
 				},
-				SeriesSix: &rewardstypes.RewardPool{
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(500_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_SIX,
 				},
-				SeriesSeven: &rewardstypes.RewardPool{
+				{
 					TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(250_000_000_000)),
 					ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+					Series:        rewardstypes.Series_SEVEN,
 				},
 			})
 

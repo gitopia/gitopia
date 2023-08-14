@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -11,15 +13,20 @@ import (
 
 func CmdCreateRewards() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-reward [recipient] [amount]",
+		Use:   "create-reward [recipient] [amount] [series]",
 		Short: "Create a new reward",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
 			recipient := args[0]
 
 			// Get value arguments
 			argAmount, err := cosmosTypes.ParseCoinNormalized(args[1])
+			if err != nil {
+				return err
+			}
+
+			argSeries, err := strconv.Atoi(args[2])
 			if err != nil {
 				return err
 			}
@@ -33,6 +40,7 @@ func CmdCreateRewards() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				recipient,
 				argAmount,
+				types.Series(argSeries),
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

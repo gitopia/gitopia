@@ -28,11 +28,14 @@ func (k Keeper) RewardsAll(c context.Context, req *types.QueryAllRewardsRequest)
 			return err
 		}
 
-		totalReward, err := k.GetDecayedRewardAmount(ctx, reward.Amount)
-		if err != nil {
-			return err
+		for i, _ := range reward.Rewards {
+			totalReward, err := k.GetDecayedRewardAmount(ctx, reward.Rewards[i].Amount, reward.Rewards[i].Series)
+			if err != nil {
+				return err
+			}
+			reward.Rewards[i].Amount = totalReward
 		}
-		reward.Amount = totalReward
+
 		rewards = append(rewards, reward)
 		return nil
 	})
@@ -50,7 +53,8 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	reward, found := k.GetReward(
+	responseRewards := []types.QueryGetRewardResponseReward{}
+	allRewards, found := k.GetReward(
 		ctx,
 		req.Recipient,
 	)
@@ -58,30 +62,34 @@ func (k Keeper) Reward(c context.Context, req *types.QueryGetRewardRequest) (*ty
 		return nil, status.Error(codes.NotFound, "reward not found")
 	}
 
-	totalClaimableAmount, err := k.GetTotalClaimableAmount(ctx, req.Recipient, reward.Amount)
-	if err != nil {
-		return nil, err
-	}
+	for _, reward := range allRewards.Rewards {
+		totalClaimableAmount, err := k.GetTotalClaimableAmount(ctx, req.Recipient, reward.Amount)
+		if err != nil {
+			return nil, err
+		}
 
-	claimableAmount := totalClaimableAmount.Sub(reward.ClaimedAmount)
-	claimableAmountWithDecay, err := k.GetDecayedRewardAmount(ctx, claimableAmount)
-	if err != nil {
-		return nil, err
-	}
+		claimableAmount := totalClaimableAmount.Sub(reward.ClaimedAmount)
+		claimableAmountWithDecay, err := k.GetDecayedRewardAmount(ctx, claimableAmount, reward.Series)
+		if err != nil {
+			return nil, err
+		}
 
-	remainingClaimableAmountWithDecay, err := k.GetDecayedRewardAmount(ctx, reward.Amount.Sub(totalClaimableAmount))
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.QueryGetRewardResponse{
-		Reward: types.QueryGetRewardResponseReward{
-			Recipient:                reward.Recipient,
+		remainingClaimableAmountWithDecay, err := k.GetDecayedRewardAmount(ctx, reward.Amount.Sub(totalClaimableAmount), reward.Series)
+		if err != nil {
+			return nil, err
+		}
+		responseRewards = append(responseRewards, types.QueryGetRewardResponseReward{
+			Series:                   reward.Series,
 			Amount:                   reward.Amount,
 			Creator:                  reward.Creator,
 			ClaimedAmount:            reward.ClaimedAmountWithDecay,
 			ClaimableAmount:          claimableAmountWithDecay,
 			RemainingClaimableAmount: remainingClaimableAmountWithDecay,
-		},
+		})
+	}
+
+	return &types.QueryGetRewardResponse{
+		Recipient: req.Recipient,
+		Rewards:   responseRewards,
 	}, nil
 }

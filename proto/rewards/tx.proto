@@ -2,12 +2,12 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
-import "rewards/rewards.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "rewards/pool.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "github.com/gitopia/gitopia/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
 
 // Msg defines the Msg service.
 service Msg {
@@ -23,6 +23,8 @@ message MsgCreateReward {
   cosmos.base.v1beta1.Coin amount = 3
   [(gogoproto.nullable) = false, 
   (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+
+  Series series = 4;
 }
 message MsgCreateRewardResponse {
   // actual granted amount
@@ -36,6 +38,16 @@ message MsgClaim {
   string creator = 1;
 }
 
+message ClaimResponseReward {
+  Series series = 1;
+  cosmos.base.v1beta1.Coin amount = 2 
+  [(gogoproto.nullable) = false, 
+  (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
+}
+
 message MsgClaimResponse {
+  repeated ClaimResponseReward claimed_rewards = 1;
+  repeated ClaimResponseReward expired_rewards = 2;
+  repeated ClaimResponseReward all_claimed_rewards = 3;
 }
 
