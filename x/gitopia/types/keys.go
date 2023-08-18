@@ -272,9 +272,12 @@ const (
 
 const (
 	EventAttributeReleaseIdKey          = "ReleaseId"
+	EventAttributeReleaseTagIdKey       = "ReleaseTagId"
 	EventAttributeReleaseTagNameKey     = "ReleaseTagName"
+	EventAttributeReleaseTargetKey      = "ReleaseTarget"
 	EventAttributeReleaseNameKey        = "ReleaseName"
 	EventAttributeReleaseDescriptionKey = "ReleaseDescription"
+	EventAttributeReleaseAttachmentsKey = "ReleaseAttachments"
 	EventAttributeReleaseDraftKey       = "ReleaseDraft"
 	EventAttributeReleasePreReleaseKey  = "ReleasePreRelease"
 )

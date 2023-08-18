@@ -35,7 +35,8 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if _, found := k.GetRepositoryTag(ctx, repository.Id, msg.TagName); !found {
+	tag, found := k.GetRepositoryTag(ctx, repository.Id, msg.TagName)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) does not exists", msg.TagName))
 	}
 
@@ -99,9 +100,12 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseTagIdKey, strconv.FormatUint(tag.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
+			sdk.NewAttribute(types.EventAttributeReleaseTargetKey, release.Target),
 			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
 			sdk.NewAttribute(types.EventAttributeReleaseDescriptionKey, release.Description),
+			sdk.NewAttribute(types.EventAttributeReleaseAttachmentsKey, msg.Attachments),
 			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
 			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(release.CreatedAt, 10)),
@@ -137,7 +141,8 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	if _, found := k.GetRepositoryTag(ctx, repository.Id, msg.TagName); !found {
+	tag, found := k.GetRepositoryTag(ctx, repository.Id, msg.TagName)
+	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("tag (%v) does not exists", msg.TagName))
 	}
 
@@ -195,9 +200,12 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(release.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseTagIdKey, strconv.FormatUint(tag.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
+			sdk.NewAttribute(types.EventAttributeReleaseTargetKey, release.Target),
 			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
 			sdk.NewAttribute(types.EventAttributeReleaseDescriptionKey, release.Description),
+			sdk.NewAttribute(types.EventAttributeReleaseAttachmentsKey, msg.Attachments),
 			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
 			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(release.UpdatedAt, 10)),
