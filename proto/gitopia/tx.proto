@@ -19,7 +19,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/attachment.proto";
 import "gitopia/reaction.proto";
 
-option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {

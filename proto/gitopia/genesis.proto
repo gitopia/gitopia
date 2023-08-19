@@ -19,7 +19,7 @@ import "gitopia/whois.proto";
 import "gitopia/params.proto";
 import "gitopia/exercised_amount.proto";
 
-option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/types";
 
 // GenesisState defines the gitopia module's genesis state.
 message GenesisState {

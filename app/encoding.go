@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v3/app/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing

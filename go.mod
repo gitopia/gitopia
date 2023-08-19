@@ -1,4 +1,4 @@
-module github.com/gitopia/gitopia/v2
+module github.com/gitopia/gitopia/v3
 
 go 1.19
 
@@ -161,7 +161,9 @@ require (
 	github.com/cometbft/cometbft-db v0.7.0 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
+	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/google/s2a-go v0.1.4 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.4 // indirect
 	github.com/manifoldco/promptui v0.9.0 // indirect
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect

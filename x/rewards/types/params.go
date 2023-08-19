@@ -3,7 +3,7 @@ package types
 import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v3/app/params"
 )
 
 type DefaultAcc struct {
@@ -33,37 +33,37 @@ func DefaultParams() Params {
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_ONE,
+			Series:        Series_ONE,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_TWO,
+			Series:        Series_TWO,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_THREE,
+			Series:        Series_THREE,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_FOUR,
+			Series:        Series_FOUR,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_FIVE,
+			Series:        Series_FIVE,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_SIX,
+			Series:        Series_SIX,
 		},
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
-			Series: Series_SEVEN,
+			Series:        Series_SEVEN,
 		},
 	})
 }

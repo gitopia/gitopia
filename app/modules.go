@@ -45,33 +45,33 @@ import (
 	ibc "github.com/cosmos/ibc-go/v5/modules/core"
 	ibcclientclient "github.com/cosmos/ibc-go/v5/modules/core/02-client/client"
 	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	gitopiaappparams "github.com/gitopia/gitopia/v2/app/params"
-	"github.com/gitopia/gitopia/v2/x/gitopia"
-	gitopiatypes "github.com/gitopia/gitopia/v2/x/gitopia/types"
-	"github.com/gitopia/gitopia/v2/x/rewards"
-	rewardtypes "github.com/gitopia/gitopia/v2/x/rewards/types"
+	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
+	"github.com/gitopia/gitopia/v3/x/gitopia"
+	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v3/x/rewards"
+	rewardtypes "github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 var maccPerms = map[string][]string{
-	authtypes.FeeCollectorName:                                 nil,
-	distrtypes.ModuleName:                                      nil,
-	minttypes.ModuleName:                                       {authtypes.Minter},
-	stakingtypes.BondedPoolName:                                {authtypes.Burner, authtypes.Staking},
-	stakingtypes.NotBondedPoolName:                             {authtypes.Burner, authtypes.Staking},
-	govtypes.ModuleName:                                        {authtypes.Burner},
-	ibctransfertypes.ModuleName:                                {authtypes.Minter, authtypes.Burner},
-	gitopiatypes.MinterAccountName:                             nil,
-	gitopiatypes.TeamAccountName:                               nil,
-	gitopiatypes.LiquidityBootstrappingPoolAccountName:         {authtypes.Minter},
-	gitopiatypes.EcosystemIncentivesAccountName:                {authtypes.Minter},
-	gitopiatypes.CommunityPoolGenesisAccountName:               {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_ONE):    {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_TWO):    {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_THREE):  {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_FOUR):   {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_FIVE):   {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SIX):    {authtypes.Minter},
-	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SEVEN):  {authtypes.Minter},
+	authtypes.FeeCollectorName:                                nil,
+	distrtypes.ModuleName:                                     nil,
+	minttypes.ModuleName:                                      {authtypes.Minter},
+	stakingtypes.BondedPoolName:                               {authtypes.Burner, authtypes.Staking},
+	stakingtypes.NotBondedPoolName:                            {authtypes.Burner, authtypes.Staking},
+	govtypes.ModuleName:                                       {authtypes.Burner},
+	ibctransfertypes.ModuleName:                               {authtypes.Minter, authtypes.Burner},
+	gitopiatypes.MinterAccountName:                            nil,
+	gitopiatypes.TeamAccountName:                              nil,
+	gitopiatypes.LiquidityBootstrappingPoolAccountName:        {authtypes.Minter},
+	gitopiatypes.EcosystemIncentivesAccountName:               {authtypes.Minter},
+	gitopiatypes.CommunityPoolGenesisAccountName:              {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_ONE):   {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_TWO):   {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_THREE): {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_FOUR):  {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_FIVE):  {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SIX):   {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SEVEN): {authtypes.Minter},
 	//rewardtypes.SeriesModuleAccount(rewardtypes.Series_COSMOS): {authtypes.Minter},
 }
 

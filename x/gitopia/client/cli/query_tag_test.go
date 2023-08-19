@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gitopia/gitopia/v2/testutil/network"
-	"github.com/gitopia/gitopia/v2/testutil/nullify"
-	"github.com/gitopia/gitopia/v2/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v3/testutil/network"
+	"github.com/gitopia/gitopia/v3/testutil/nullify"
+	"github.com/gitopia/gitopia/v3/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v3/x/gitopia/types"
 )
 
 func networkWithTagObjects(t *testing.T, n int) (*network.Network, []types.Tag) {

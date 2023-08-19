@@ -1,7 +1,7 @@
 syntax = "proto3";
 package gitopia.gitopia.rewards;
 
-option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/v3/x/rewards/types";
 
 enum taskType {
   UNKNOWN = 0;

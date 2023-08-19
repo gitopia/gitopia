@@ -29,7 +29,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/gitopia/gitopia/v2/app"
+	"github.com/gitopia/gitopia/v3/app"
 )
 
 type KeeperTestHelper struct {

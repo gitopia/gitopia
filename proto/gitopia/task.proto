@@ -3,7 +3,7 @@ package gitopia.gitopia.gitopia;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/types";
 
 enum TaskType {
   option (gogoproto.goproto_enum_prefix) = false;
