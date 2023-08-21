@@ -54,7 +54,7 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesSeven))
 
 	newParams.RewardSeries = append(newParams.RewardSeries, &v2types.RewardPool{
-		TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000)),
+		TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000000000)),
 		StartTime:   AIRDROP_START_TIME,
 		EndTime:     AIRDROP_END_TIME,
 		Series:      types.Series_COSMOS,
