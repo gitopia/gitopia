@@ -19,7 +19,7 @@ import (
 
 var (
 	AIRDROP_START_TIME = time.Date(2023, 8, 10, 0, 0, 0, 0, time.Now().Local().Location())
-	AIRDROP_END_TIME = time.Date(2023, 9, 10, 0, 0, 0, 0, time.Now().Local().Location())
+	AIRDROP_END_TIME   = time.Date(2023, 9, 10, 0, 0, 0, 0, time.Now().Local().Location())
 )
 
 type Migrator struct {
@@ -44,7 +44,7 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	seriesOne := getV2Params(oldParams.RewardSeries.SeriesOne)
 	seriesOne.StartTime = AIRDROP_START_TIME
 	seriesOne.EndTime = AIRDROP_END_TIME
-	
+
 	newParams.RewardSeries = append(newParams.RewardSeries, seriesOne)
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesTwo))
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesThree))
@@ -54,10 +54,11 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesSeven))
 
 	newParams.RewardSeries = append(newParams.RewardSeries, &v2types.RewardPool{
-		TotalAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000000000)),
-		StartTime:   AIRDROP_START_TIME,
-		EndTime:     AIRDROP_END_TIME,
-		Series:      types.Series_COSMOS,
+		TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000000000)),
+		ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
+		StartTime:     AIRDROP_START_TIME,
+		EndTime:       AIRDROP_END_TIME,
+		Series:        types.Series_COSMOS,
 	})
 	m.keeper.SetParams(ctx, newParams)
 
