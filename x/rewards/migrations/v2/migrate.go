@@ -44,14 +44,21 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	seriesOne := getV2Params(oldParams.RewardSeries.SeriesOne)
 	seriesOne.StartTime = AIRDROP_START_TIME
 	seriesOne.EndTime = AIRDROP_END_TIME
+	seriesOne.Series = types.Series_ONE
 
 	newParams.RewardSeries = append(newParams.RewardSeries, seriesOne)
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesTwo))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_TWO
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesThree))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_THREE
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesFour))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_FOUR
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesFive))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_FIVE
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesSix))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_SIX
 	newParams.RewardSeries = append(newParams.RewardSeries, getV2Params(oldParams.RewardSeries.SeriesSeven))
+	newParams.RewardSeries[len(newParams.RewardSeries)-1].Series = types.Series_SEVEN
 
 	newParams.RewardSeries = append(newParams.RewardSeries, &v2types.RewardPool{
 		TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(6000000000000)),
