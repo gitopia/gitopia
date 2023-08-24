@@ -136,6 +136,13 @@ genesis:
             claimed_amount:
               amount: "0"
               denom: "ulore"
+          - series: "COSMOS"
+            total_amount: 
+              amount: "6000000000000"
+              denom: "ulore"
+            claimed_amount:
+              amount: "0"
+              denom: "ulore"
     gov:
       deposit_params:
         max_deposit_period: 60s
