@@ -301,6 +301,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
 		appKeepers.DistrKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
 		appCodec,
@@ -312,6 +313,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.AccountKeeper,
 		appKeepers.DistrKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	return appKeepers
