@@ -27,17 +27,12 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams
 
 	if !gitopiaParams.NextInflationTime.IsZero() &&
 		ctx.BlockTime().After(gitopiaParams.NextInflationTime) {
-		// update inflation params
-		mintParams.InflationMax = mintParams.InflationMax.Quo(sdk.NewDec(2))
-		mintParams.InflationMin = mintParams.InflationMin.Quo(sdk.NewDec(2))
-		k.mintKeeper.SetParams(ctx, mintParams)
-
 		// probable next inflation time.
 		// if max supply is already reached, inflation wont change at nextInflationTime
-		gitopiaParams.NextInflationTime = gitopiaParams.NextInflationTime.AddDate(2, 0, 0)
+		gitopiaParams.NextInflationTime = gitopiaParams.NextInflationTime.AddDate(1, 0, 0)
 		k.SetParams(ctx, gitopiaParams)
 
-		minter.Inflation = minter.Inflation.Quo(sdk.NewDec(2))
+		minter.Inflation = minter.Inflation.Sub(sdk.NewDecWithPrec(1, 2))
 	}
 
 	return minter.Inflation
