@@ -19,11 +19,17 @@ import "gitopia/repository.proto";
 import "gitopia/user.proto";
 import "gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "gitopia/params.proto";
 
 option go_package = "github.com/gitopia/gitopia/v2/x/gitopia/types";
 
 // Query defines the gRPC querier service.
 service Query {
+	// Params returns the total set of gitopia parameters.
+	rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/params";
+	}
+
 	// query vested amount for developer address 
 	rpc VestedAmount(QueryVestedAmountRequest) returns (QueryVestedAmountResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/vestedAmount/{address}";
@@ -252,6 +258,15 @@ service Query {
 	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
 	}
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryVestedAmountRequest{

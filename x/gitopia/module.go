@@ -18,6 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gitopia/gitopia/v2/x/gitopia/client/cli"
 	"github.com/gitopia/gitopia/v2/x/gitopia/keeper"
+	v3 "github.com/gitopia/gitopia/v2/x/gitopia/migrations/v3"
 	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
@@ -110,7 +111,7 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 
 // Consensus versions serve as state-breaking versions of app modules and
 // must be incremented when the module introduces breaking changes.
-func (AppModule) ConsensusVersion() uint64 { return 2 }
+func (AppModule) ConsensusVersion() uint64 { return 3 }
 
 // Name returns the capability module's name.
 func (am AppModule) Name() string {
@@ -135,6 +136,7 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate)
 }
 
 // RegisterInvariants registers the capability module's invariants.

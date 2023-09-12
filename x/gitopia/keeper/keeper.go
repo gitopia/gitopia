@@ -31,7 +31,10 @@ type (
 		bankKeeper    bankKeeper.Keeper
 		mintKeeper    mintkeeper.Keeper
 		distrKeeper   *distrkeeper.Keeper
-		// this line is used by starport scaffolding # ibc/keeper/attribute
+
+		// the address capable of executing a MsgUpdateParams message. Typically, this
+		// should be the x/gov module account.
+		authority string
 	}
 )
 
@@ -46,7 +49,7 @@ func NewKeeper(
 	bankKeeper bankKeeper.Keeper,
 	mintKeeper mintkeeper.Keeper,
 	distrKeeper *distrkeeper.Keeper,
-	// this line is used by starport scaffolding # ibc/keeper/parameter
+	authority string,
 ) *Keeper {
 	return &Keeper{
 		cdc:                 cdc,
@@ -60,8 +63,13 @@ func NewKeeper(
 		bankKeeper:    bankKeeper,
 		mintKeeper:    mintKeeper,
 		distrKeeper:   distrKeeper,
-		// this line is used by starport scaffolding # ibc/keeper/return
+		authority:     authority,
 	}
+}
+
+// GetAuthority returns the x/gitopia module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

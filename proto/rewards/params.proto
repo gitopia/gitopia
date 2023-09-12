@@ -9,6 +9,8 @@ option go_package = "github.com/gitopia/gitopia/v2/x/rewards/types";
 
 // Params defines the parameters for the module.
 message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
   string evaluator_address = 1 [
     (gogoproto.moretags) = "yaml:\"evaluator_address\""
   ];

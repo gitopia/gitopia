@@ -62,6 +62,7 @@ var maccPerms = map[string][]string{
 	ibctransfertypes.ModuleName:                                {authtypes.Minter, authtypes.Burner},
 	gitopiatypes.MinterAccountName:                             nil,
 	gitopiatypes.TeamAccountName:                               nil,
+	gitopiatypes.PlatformAccountName:                           nil,
 	gitopiatypes.LiquidityBootstrappingPoolAccountName:         {authtypes.Minter},
 	gitopiatypes.EcosystemIncentivesAccountName:                {authtypes.Minter},
 	gitopiatypes.CommunityPoolGenesisAccountName:               {authtypes.Minter},
@@ -72,7 +73,7 @@ var maccPerms = map[string][]string{
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_FIVE):   {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SIX):    {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SEVEN):  {authtypes.Minter},
-	//rewardtypes.SeriesModuleAccount(rewardtypes.Series_COSMOS): {authtypes.Minter},
+	rewardtypes.SeriesModuleAccount(rewardtypes.Series_COSMOS): nil,
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
