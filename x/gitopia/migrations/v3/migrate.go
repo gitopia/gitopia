@@ -38,6 +38,8 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 
 	m.keeper.CreateModuleAccount(ctx, v3types.PlatformAccountName)
 
+	m.keeper.SetInflation(ctx, sdk.NewDecWithPrec(15, 2))
+
 	return nil
 }
 
@@ -56,6 +58,7 @@ func getV3Params(from v2types.Params) v3types.Params {
 			// 10 + 6.5 + 1.0
 			{Proportion: sdk.MustNewDecFromStr("17.5"), Address: teamMultiSigAddress},
 		},
+		GenesisTime:     from.GenesisTime,
 		GitServer:       from.GitServer,
 		StorageProvider: from.StorageProvider,
 	}

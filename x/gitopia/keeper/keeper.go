@@ -29,7 +29,7 @@ type (
 		accountKeeper authkeeper.AccountKeeper
 		authzKeeper   *authzkeeper.Keeper
 		bankKeeper    bankKeeper.Keeper
-		mintKeeper    mintkeeper.Keeper
+		mintKeeper    *mintkeeper.Keeper
 		distrKeeper   *distrkeeper.Keeper
 
 		// the address capable of executing a MsgUpdateParams message. Typically, this
@@ -47,7 +47,7 @@ func NewKeeper(
 	ak authkeeper.AccountKeeper,
 	authzKeeper *authzkeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
-	mintKeeper mintkeeper.Keeper,
+	mintKeeper *mintkeeper.Keeper,
 	distrKeeper *distrkeeper.Keeper,
 	authority string,
 ) *Keeper {
