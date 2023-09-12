@@ -7,10 +7,10 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	"github.com/gitopia/gitopia/v2/app/params"
-	"github.com/gitopia/gitopia/v2/testutil/sample"
-	"github.com/gitopia/gitopia/v2/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	"github.com/gitopia/gitopia/v3/app/params"
+	"github.com/gitopia/gitopia/v3/testutil/sample"
+	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v3/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -13,11 +13,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gitopia/gitopia/v2/testutil/network"
-	"github.com/gitopia/gitopia/v2/testutil/nullify"
-	"github.com/gitopia/gitopia/v2/testutil/sample"
-	"github.com/gitopia/gitopia/v2/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	"github.com/gitopia/gitopia/v3/testutil/network"
+	"github.com/gitopia/gitopia/v3/testutil/nullify"
+	"github.com/gitopia/gitopia/v3/testutil/sample"
+	"github.com/gitopia/gitopia/v3/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 // Prevent strconv unused error

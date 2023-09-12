@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	gTypes "github.com/gitopia/gitopia/v2/x/gitopia/types"
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	gTypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 var (

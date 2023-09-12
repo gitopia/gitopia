@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	keepertest "github.com/gitopia/gitopia/v2/testutil/keeper"
-	"github.com/gitopia/gitopia/v2/testutil/nullify"
-	"github.com/gitopia/gitopia/v2/x/gitopia/types"
+	keepertest "github.com/gitopia/gitopia/v3/testutil/keeper"
+	"github.com/gitopia/gitopia/v3/testutil/nullify"
+	"github.com/gitopia/gitopia/v3/x/gitopia/types"
 )
 
 func TestBountyQuerySingle(t *testing.T) {

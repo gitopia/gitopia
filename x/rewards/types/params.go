@@ -5,7 +5,7 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v2/app/params"
+	"github.com/gitopia/gitopia/v3/app/params"
 	"gopkg.in/yaml.v2"
 )
 

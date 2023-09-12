@@ -11,9 +11,9 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/v2/testutil/network"
-	"github.com/gitopia/gitopia/v2/testutil/sample"
-	"github.com/gitopia/gitopia/v2/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v3/testutil/network"
+	"github.com/gitopia/gitopia/v3/testutil/sample"
+	"github.com/gitopia/gitopia/v3/x/gitopia/client/cli"
 )
 
 func TestAuthorizeProvider(t *testing.T) {

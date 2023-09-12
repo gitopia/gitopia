@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 	"github.com/stretchr/testify/require"
 )
 

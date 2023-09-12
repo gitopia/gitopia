@@ -9,9 +9,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/gitopia/gitopia/v2/testutil/sample"
-	rewardssimulation "github.com/gitopia/gitopia/v2/x/rewards/simulation"
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	"github.com/gitopia/gitopia/v3/testutil/sample"
+	rewardssimulation "github.com/gitopia/gitopia/v3/x/rewards/simulation"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 // avoid unused import issue

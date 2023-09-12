@@ -17,10 +17,10 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v2/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/v2/x/rewards/keeper"
-	v2 "github.com/gitopia/gitopia/v2/x/rewards/migrations/v2"
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	"github.com/gitopia/gitopia/v3/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
+	v2 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v2"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 var (

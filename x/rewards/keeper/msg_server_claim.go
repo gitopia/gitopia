@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v2/x/rewards/types"
+	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
 func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.MsgClaimResponse, error) {
@@ -30,11 +30,11 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 
 		// pool expired but reward not claimed
 		if !pool.EndTime.IsZero() &&
-			pool.EndTime.Before(ctx.BlockTime()) && !reward.Amount.Equal(reward.ClaimedAmount){
-				expiredRewards = append(expiredRewards, &types.ClaimResponseReward{
-					Series: pool.Series,
-					Amount: reward.Amount.Sub(reward.ClaimedAmount),
-				})
+			pool.EndTime.Before(ctx.BlockTime()) && !reward.Amount.Equal(reward.ClaimedAmount) {
+			expiredRewards = append(expiredRewards, &types.ClaimResponseReward{
+				Series: pool.Series,
+				Amount: reward.Amount.Sub(reward.ClaimedAmount),
+			})
 			continue
 		}
 
@@ -88,8 +88,8 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 	k.SetReward(ctx, rewards)
 
 	return &types.MsgClaimResponse{
-		ClaimedRewards: claimedRewards,
-		ExpiredRewards: expiredRewards,
+		ClaimedRewards:    claimedRewards,
+		ExpiredRewards:    expiredRewards,
 		AllClaimedRewards: allClaimedRewards,
 	}, nil
 }
