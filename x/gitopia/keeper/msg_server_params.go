@@ -9,13 +9,13 @@ import (
 	"github.com/gitopia/gitopia/v2/x/gitopia/types"
 )
 
-func (ms msgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
-	if ms.authority != req.Authority {
-		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", ms.authority, req.Authority)
+func (k msgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	if k.authority != req.Authority {
+		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority, req.Authority)
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	if err := ms.SetParams(ctx, req.Params); err != nil {
+	if err := k.SetParams(ctx, req.Params); err != nil {
 		return nil, err
 	}
 

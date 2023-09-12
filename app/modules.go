@@ -62,6 +62,7 @@ var maccPerms = map[string][]string{
 	ibctransfertypes.ModuleName:                                {authtypes.Minter, authtypes.Burner},
 	gitopiatypes.MinterAccountName:                             nil,
 	gitopiatypes.TeamAccountName:                               nil,
+	gitopiatypes.PlatformAccountName:                           nil,
 	gitopiatypes.LiquidityBootstrappingPoolAccountName:         {authtypes.Minter},
 	gitopiatypes.EcosystemIncentivesAccountName:                {authtypes.Minter},
 	gitopiatypes.CommunityPoolGenesisAccountName:               {authtypes.Minter},

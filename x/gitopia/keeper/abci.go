@@ -66,6 +66,20 @@ func (k Keeper) TokenDistribution(ctx sdk.Context) {
 		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
 	}
 
+	if gitopiaParams.PoolProportions.Platform != nil {
+		if gitopiaParams.PoolProportions.Platform.Address != "" {
+			err := errors.New("platform address not empty")
+			ctx.Logger().Error(err.Error())
+			panic(err)
+		}
+		coins, err := k.TransferProportion(ctx, mintedCoin, k.minterAccountName, types.PlatformAccountName, gitopiaParams.PoolProportions.Platform.Proportion)
+		if err != nil {
+			ctx.Logger().Error(err.Error())
+			panic(err)
+		}
+		remainingMintedCoins = remainingMintedCoins.Sub(coins...)
+	}
+
 	// move community, validator and delegator incentives into fee collector account,
 	// to be distributed by cosmos-sdk distribution module.
 	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.minterAccountName, k.feeCollectorAccount, remainingMintedCoins); err != nil {

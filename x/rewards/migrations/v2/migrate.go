@@ -42,8 +42,6 @@ func (m Migrator) Migrate(ctx sdk.Context) error {
 	newParams.EvaluatorAddress = oldParams.EvaluatorAddress
 
 	seriesOne := getV2Params(oldParams.RewardSeries.SeriesOne)
-	seriesOne.StartTime = AIRDROP_START_TIME
-	seriesOne.EndTime = AIRDROP_END_TIME
 	seriesOne.Series = types.Series_ONE
 
 	newParams.RewardSeries = append(newParams.RewardSeries, seriesOne)
