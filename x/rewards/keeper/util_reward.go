@@ -50,7 +50,7 @@ func (k Keeper) GetDecayedRewardAmount(ctx sdk.Context, totalReward sdk.Coin, se
 		return sdk.Coin{}, nil
 	}
 	duration := ctx.BlockTime().Sub(pool.StartTime)
-	decayedFactor := (duration.Hours() / 24) * (1 - SERIES_ONE_REWARD_DECAY_PER_DAY)
+	decayedFactor := 1 - (SERIES_ONE_REWARD_DECAY_PER_DAY * (duration.Hours() / 24))
 	totalReward.Amount = totalReward.Amount.Mul(math.NewInt((int64)(decayedFactor * 100))).Quo(math.NewInt(100))
 
 	return totalReward, nil

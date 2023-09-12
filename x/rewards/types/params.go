@@ -1,9 +1,12 @@
 package types
 
 import (
+	"fmt"
+
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/v3/app/params"
+	"gopkg.in/yaml.v2"
 )
 
 type DefaultAcc struct {
@@ -66,4 +69,68 @@ func DefaultParams() Params {
 			Series:        Series_SEVEN,
 		},
 	})
+}
+
+// validate params
+func (p Params) Validate() error {
+	if err := validateEvaluatorAddress(p.EvaluatorAddress); err != nil {
+		return err
+	}
+	if err := validateRewardSeries(p.RewardSeries); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// String implements the Stringer interface.
+func (p Params) String() string {
+	out, _ := yaml.Marshal(p)
+	return string(out)
+}
+
+func validateEvaluatorAddress(i interface{}) error {
+	v, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	// validate v is an address
+	_, err := sdk.AccAddressFromBech32(v)
+	if err != nil {
+		return fmt.Errorf("invalid evaluator address: %s", err)
+	}
+
+	return nil
+}
+
+func validateRewardSeries(i interface{}) error {
+	v, ok := i.([]*RewardPool)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	for _, pool := range v {
+		if err := validateRewardPool(pool); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func validateRewardPool(pool *RewardPool) error {
+	if pool.TotalAmount.IsZero() {
+		return fmt.Errorf("total amount cannot be zero")
+	}
+
+	if pool.ClaimedAmount.IsNegative() {
+		return fmt.Errorf("claimed amount cannot be negative")
+	}
+
+	if pool.ClaimedAmount.Amount.GT(pool.TotalAmount.Amount) {
+		return fmt.Errorf("claimed amount cannot exceed total amount")
+	}
+
+	return nil
 }

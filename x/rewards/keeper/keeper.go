@@ -31,6 +31,10 @@ type (
 		bankKeeper    bankkeeper.Keeper
 		accountKeeper authkeeper.AccountKeeper
 		distrKeeper   *distrkeeper.Keeper
+
+		// the address capable of executing a MsgUpdateParams message. Typically, this
+		// should be the x/gov module account.
+		authority string
 	}
 )
 
@@ -44,6 +48,7 @@ func NewKeeper(
 	bk bankkeeper.Keeper,
 	ak authkeeper.AccountKeeper,
 	dk *distrkeeper.Keeper,
+	authority string,
 ) *Keeper {
 
 	return &Keeper{
@@ -57,7 +62,13 @@ func NewKeeper(
 		bankKeeper:    bk,
 		accountKeeper: ak,
 		distrKeeper:   dk,
+		authority:     authority,
 	}
+}
+
+// GetAuthority returns the x/rewards module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

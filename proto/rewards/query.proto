@@ -8,12 +8,18 @@ import "rewards/task.proto";
 import "rewards/rewards.proto";
 import "rewards/pool.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "rewards/params.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/gitopia/gitopia/v3/x/rewards/types";
 
 // Query defines the gRPC querier service.
 service Query {
+	// Params returns the total set of rewards parameters.
+	rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/rewards/params";
+	}
+
 	// Queries a list of tasks items.
 	rpc Tasks(QueryTasksRequest) returns (QueryTasksResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/rewards/tasks/{address}";
@@ -31,6 +37,16 @@ service Query {
 
 // this line is used by starport scaffolding # 2
 }
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
 message QueryTasksRequest {
 	string address = 1;
 }

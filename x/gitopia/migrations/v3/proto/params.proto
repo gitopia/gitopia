@@ -1,10 +1,10 @@
 syntax = "proto3";
-package gitopia.gitopia.gitopia;
+package gitopia.gitopia.gitopia.v3;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/migrations/v3/types;types";
 
 message DistributionProportion {
   string proportion = 1 [
