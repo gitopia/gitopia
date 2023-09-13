@@ -46,7 +46,7 @@ var (
 
 	Upgrades = []upgrades.Upgrade{
 		{
-			UpgradeName:          "rewards-v2",
+			UpgradeName:          "v3",
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
 	}
