@@ -37,3 +37,10 @@ func (k Keeper) InflationFn(ctx sdk.Context, minter minttypes.Minter, mintParams
 
 	return minter.Inflation
 }
+
+func (k Keeper) SetInflation(ctx sdk.Context, inflation sdk.Dec) {
+	minter := k.mintKeeper.GetMinter(ctx)
+	minter.Inflation = inflation
+
+	k.mintKeeper.SetMinter(ctx, minter)
+}

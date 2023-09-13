@@ -72,7 +72,7 @@ type AppKeepers struct {
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
-	MintKeeper       mintkeeper.Keeper
+	MintKeeper       *mintkeeper.Keeper
 	DistrKeeper      *distrkeeper.Keeper
 	GovKeeper        govkeeper.Keeper
 	CrisisKeeper     crisiskeeper.Keeper
@@ -188,7 +188,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.GetSubspace(stakingtypes.ModuleName),
 	)
-	appKeepers.MintKeeper = mintkeeper.NewKeeper(
+	mintKeeper := mintkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[minttypes.StoreKey],
 		appKeepers.GetSubspace(minttypes.ModuleName),
@@ -197,6 +197,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		gitopiatypes.MinterAccountName,
 	)
+	appKeepers.MintKeeper = &mintKeeper
 	distrKeeper := distrkeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[distrtypes.StoreKey],
