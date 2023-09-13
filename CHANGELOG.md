@@ -2,6 +2,16 @@
 
 All notable changes will be documented here.
 
+## [3.0.0] - 2023-09-13
+
+- Added a transaction to archive a repository
+- Upgrade ibc-go to v5.3.1
+- Added a transaction to pin repositories for user and DAO
+- Added update param transactions for gitopia and rewards module
+- Migrate gitopia and rewards params
+- Set start and end time for Cosmos ecosytem rewards
+- Change inflation and token emission distribution
+
 ## [v1.4.0] - UNRELEASED
 
 - Upgrade cosmos-sdk version to v0.46.10 and tendermint version to v0.34.26
