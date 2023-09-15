@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	AIRDROP_START_TIME = time.Date(2023, 9, 16, 0, 0, 0, 0, time.Now().Local().Location())
-	AIRDROP_END_TIME   = time.Date(2023, 11, 16, 0, 0, 0, 0, time.Now().Local().Location())
+	AIRDROP_START_TIME = time.Date(2023, 9, 16, 0, 0, 0, 0, time.UTC)
+	AIRDROP_END_TIME   = time.Date(2023, 11, 16, 0, 0, 0, 0, time.UTC)
 )
 
 type Migrator struct {
