@@ -11,7 +11,7 @@ var _ msg = &MsgSignData{}
 
 const (
 	// ExpectedChainID defines the chain id an off-chain message must have
-	ExpectedChainID = "gitopia"
+	ExpectedChainID = ""
 	// ExpectedAccountNumber defines the account number an off-chain message must have
 	ExpectedAccountNumber = 0
 	// ExpectedSequence defines the sequence number an off-chain message must have
