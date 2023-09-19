@@ -28,11 +28,11 @@ func (k msgServer) CreateReward(goCtx context.Context, msg *types.MsgCreateRewar
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "pool not found")
 	}
 
-	if !pool.StartTime.IsZero() && ctx.BlockTime().Before(pool.StartTime) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool not active")
-	}
+	// if !pool.StartTime.IsZero() && ctx.BlockTime().Before(pool.StartTime) {
+	// 	return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool not active")
+	// }
 
-	if !pool.StartTime.IsZero() && ctx.BlockTime().After(pool.EndTime) {
+	if !pool.EndTime.IsZero() && ctx.BlockTime().After(pool.EndTime) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "reward pool expired")
 	}
 
