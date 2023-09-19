@@ -27,6 +27,7 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
 	"github.com/gitopia/gitopia/v3/app/upgrades"
 	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
+	rewardstypes "github.com/gitopia/gitopia/v3/x/rewards/types"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -47,6 +48,10 @@ var (
 	Upgrades = []upgrades.Upgrade{
 		{
 			UpgradeName:          "v3",
+			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
+		},
+		{
+			UpgradeName:          "v4",
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
 	}
@@ -254,6 +259,7 @@ func (app *GitopiaApp) BlockedModuleAccountAddrs() map[string]bool {
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.TeamAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.LiquidityBootstrappingPoolAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.EcosystemIncentivesAccountName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(rewardstypes.SeriesModuleAccount(rewardstypes.Series_COSMOS)).String())
 
 	return modAccAddrs
 }

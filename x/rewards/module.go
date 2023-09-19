@@ -20,6 +20,7 @@ import (
 	"github.com/gitopia/gitopia/v3/x/rewards/client/cli"
 	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
 	v2 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v2"
+	v3 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v3"
 	"github.com/gitopia/gitopia/v3/x/rewards/types"
 )
 
@@ -128,6 +129,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	cfg.RegisterMigration(types.ModuleName, 1, v2.NewMigrator(am.keeper).Migrate) // migrate from version 1
+	cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate) // migrate from version 2
 }
 
 // RegisterInvariants registers the invariants of the module. If an invariant deviates from its predicted value, the InvariantRegistry triggers appropriate logic (most often the chain will be halted)
@@ -151,7 +153,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // ConsensusVersion is a sequence number for state-breaking change of the module. It should be incremented on each consensus-breaking change introduced by the module. To avoid wrong/empty versions, the initial version should be set to 1
-func (AppModule) ConsensusVersion() uint64 { return 2 }
+func (AppModule) ConsensusVersion() uint64 { return 3 }
 
 // BeginBlock contains the logic that is automatically triggered at the beginning of each block
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
