@@ -28,6 +28,11 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 		reward := rewards.Rewards[i]
 		pool := k.getRewardPool(ctx, reward.Series)
 
+		// cannot claim from future pool
+		if !pool.StartTime.IsZero() && pool.StartTime.After(ctx.BlockTime()) {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "airdrop not active yet")
+		}
+
 		// pool expired but reward not claimed
 		if !pool.EndTime.IsZero() &&
 			pool.EndTime.Before(ctx.BlockTime()) && !reward.Amount.Equal(reward.ClaimedAmount) {
