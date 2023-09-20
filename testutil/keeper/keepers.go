@@ -110,11 +110,12 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.ParamsKeeper.Subspace(stakingtypes.ModuleName),
 	)
 
-	appKeepers.MintKeeper = mintkeeper.NewKeeper(
+	mintKeeper := mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey],
 		appKeepers.ParamsKeeper.Subspace(minttypes.ModuleName),
 		appKeepers.StakingKeeper, appKeepers.AccountKeeper,
 		appKeepers.BankKeeper, types.MinterAccountName)
+	appKeepers.MintKeeper = &mintKeeper
 
 	distrKeeper := distrkeeper.NewKeeper(
 		appCodec,
@@ -138,6 +139,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
 		&distrKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	appKeepers.GovKeeper = govkeeper.NewKeeper(
@@ -162,6 +164,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.BankKeeper,
 		appKeepers.AccountKeeper,
 		appKeepers.DistrKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	return appKeepers, ctx
