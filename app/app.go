@@ -51,7 +51,7 @@ var (
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
 		{
-			UpgradeName:          "v4",
+			UpgradeName:          "v3.2.0",
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
 	}
