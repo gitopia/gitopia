@@ -54,6 +54,10 @@ var (
 			UpgradeName:          "v3.2.0",
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
+		{
+			UpgradeName:          "v3.3.0",
+			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
+		},
 	}
 )
 
