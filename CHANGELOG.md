@@ -2,6 +2,11 @@
 
 All notable changes will be documented here.
 
+## [3.3.0] - 2023-09-27
+
+- Fix ledger signature validation in rewards module
+- Reset airdrop decay
+
 ## [3.0.0] - 2023-09-13
 
 - Added a transaction to archive a repository
