@@ -66,7 +66,7 @@ func (k Keeper) GetAllRewards(ctx sdk.Context) (list []types.Reward) {
 func (k Keeper) IterateRewards(ctx sdk.Context, fn func(validator types.Reward)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.KeyPrefix(types.RewardsKeyPrefix)))
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefix(types.RewardsKeyPrefix))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
