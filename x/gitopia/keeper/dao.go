@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 // GetDaoCount get the total number of Dao

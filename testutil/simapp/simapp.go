@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	gitopiaparams "github.com/gitopia/gitopia/v3/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -12,7 +12,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
 
-	"github.com/gitopia/gitopia/v3/app"
+	"github.com/gitopia/gitopia/v4/app"
 )
 
 // setup creates application instance with in-memory database and disabled logging.

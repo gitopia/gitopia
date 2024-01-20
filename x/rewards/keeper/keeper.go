@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 	"github.com/tendermint/tendermint/libs/log"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -14,7 +14,7 @@ import (
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	gitopiakeeper "github.com/gitopia/gitopia/v3/x/gitopia/keeper"
+	gitopiakeeper "github.com/gitopia/gitopia/v4/x/gitopia/keeper"
 )
 
 type (

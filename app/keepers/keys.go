@@ -19,8 +19,8 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
 	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
-	rewardtypes "github.com/gitopia/gitopia/v3/x/rewards/types"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
+	rewardtypes "github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 func (appKeepers *AppKeepers) GenerateKeys() {

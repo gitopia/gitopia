@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 func (k msgServer) DistributePlatformIncentives(goCtx context.Context, req *types.MsgDistributePlatformIncentives) (*types.MsgDistributePlatformIncentivesResponse, error) {

@@ -5,16 +5,16 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 
 	// confusing!? v1types is the old proto in migrations/v2 dir
 	// rewards module was never used. its okay to have breaking change!
 	// hence a copy of old proto is maintained for migrations.
 	// ideally, you wouldnt need this setup since there cannot be breaking changes.
-	v1types "github.com/gitopia/gitopia/v3/x/rewards/migrations/v2/types"
-	v2types "github.com/gitopia/gitopia/v3/x/rewards/types"
+	v1types "github.com/gitopia/gitopia/v4/x/rewards/migrations/v2/types"
+	v2types "github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 var (

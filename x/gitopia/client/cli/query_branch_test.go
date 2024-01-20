@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gitopia/gitopia/v3/testutil/network"
-	"github.com/gitopia/gitopia/v3/testutil/nullify"
-	"github.com/gitopia/gitopia/v3/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/testutil/network"
+	"github.com/gitopia/gitopia/v4/testutil/nullify"
+	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 func networkWithBranchObjects(t *testing.T, n int) (*network.Network, []types.Branch) {

@@ -14,11 +14,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
+	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmdb "github.com/tendermint/tm-db"
 
-	"github.com/gitopia/gitopia/v3/app"
+	"github.com/gitopia/gitopia/v4/app"
 )
 
 type (

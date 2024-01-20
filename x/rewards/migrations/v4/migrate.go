@@ -4,8 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 var (

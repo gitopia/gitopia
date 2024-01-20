@@ -17,10 +17,10 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/gitopia/gitopia/v3/testutil/network"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/testutil/network"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 // Prevent strconv unused error
