@@ -4,17 +4,17 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/errors"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gitopia/gitopia/v3/x/gitopia/types"
 )
 
 func (k msgServer) DistributePlatformIncentives(goCtx context.Context, req *types.MsgDistributePlatformIncentives) (*types.MsgDistributePlatformIncentivesResponse, error) {
-	if k.authority != req.Authority {
-		return nil, errors.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority, req.Authority)
-	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	params := k.GetParams(ctx)
+
+	if params.PlatformIncentives != req.Creator {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "user (%v) doesn't have permission to perform this operation", req.Creator)
+	}
 
 	for _, addr := range req.Addresses {
 		recipientAddr, err := sdk.AccAddressFromBech32(addr.Address)

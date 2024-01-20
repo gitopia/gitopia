@@ -48,4 +48,7 @@ message Params {
   string storage_provider = 6 [
     (gogoproto.moretags) = "yaml:\"storage_provider\""
   ];
+  string platform_incentives = 7 [
+    (gogoproto.moretags) = "yaml:\"platform_incentives\""
+  ];
 }

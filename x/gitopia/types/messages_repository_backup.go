@@ -12,12 +12,13 @@ const (
 
 var _ sdk.Msg = &MsgAddRepositoryBackupRef{}
 
-func NewMsgAddRepositoryBackupRef(creator string, repositoryId RepositoryId, store RepositoryBackup_Store, ref string) *MsgAddRepositoryBackupRef {
+func NewMsgAddRepositoryBackupRef(creator string, repositoryId RepositoryId, store RepositoryBackup_Store, ref string, name string) *MsgAddRepositoryBackupRef {
 	return &MsgAddRepositoryBackupRef{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Store:        store,
 		Ref:          ref,
+		Name:         name,
 	}
 }
 
@@ -64,6 +65,9 @@ func (msg *MsgAddRepositoryBackupRef) ValidateBasic() error {
 	default:
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid store type")
 	}
+
+	// TODO
+	// validate packfile name
 
 	return nil
 }

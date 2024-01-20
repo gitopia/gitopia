@@ -36,15 +36,21 @@ func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgA
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
 
-	var backup *types.RepositoryBackup
-	if i, found := utils.RepositoryBackupExists(repository.Backups, msg.Store); found {
-		backup = repository.Backups[i]
-	} else {
-		backup = new(types.RepositoryBackup)
-		backup.Store = msg.Store
-		repository.Backups = append(repository.Backups, backup)
+	storage, found := k.GetRepositoryStorage(ctx, repository.Id)
+	if !found {
+		storage = types.Storage{
+			ParentId:        repository.Id,
+			StorageType:     types.StorageTypeIpfs,
+			StorageFileType: types.StorageFileTypePackfile,
+			Latest: &types.FileMeta{
+				Id:   msg.Ref,
+				Name: msg.Name,
+			},
+			CreatedAt: ctx.BlockTime().Unix(),
+			UpdatedAt: ctx.BlockTime().Unix(),
+		}
+		k.AppendStorage(ctx, storage)
 	}
-	backup.Refs = append(backup.Refs, msg.Ref)
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -87,11 +93,8 @@ func (k msgServer) UpdateRepositoryBackupRef(goCtx context.Context, msg *types.M
 		repository.Backups = append(repository.Backups, backup)
 	}
 
-	if len(backup.Refs) == 0 {
-		backup.Refs = []string{msg.Ref}
-	} else {
-		backup.Refs[0] = msg.Ref
-	}
+	backup.Refs[0] = backup.Refs[1]
+	backup.Refs[1] = msg.Ref
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)

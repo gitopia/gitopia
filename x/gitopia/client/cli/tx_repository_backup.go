@@ -22,6 +22,7 @@ func CmdAddRepositoryBackupRef() *cobra.Command {
 			argRepositoryName := args[1]
 			argStore := (types.RepositoryBackup_Store)(types.RepositoryBackup_Store_value[args[2]])
 			argRef := args[3]
+			argName := args[4]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -33,6 +34,7 @@ func CmdAddRepositoryBackupRef() *cobra.Command {
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
 				argStore,
 				argRef,
+				argName,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

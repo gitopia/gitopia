@@ -67,6 +67,7 @@ func RepositoryReleaseIdExists(r []*types.RepositoryRelease, val uint64) (int, b
 	return 0, false
 }
 
+// CLEANUP
 func RepositoryBackupExists(r []*types.RepositoryBackup, val types.RepositoryBackup_Store) (int, bool) {
 	for i, v := range r {
 		if v.Store == val {

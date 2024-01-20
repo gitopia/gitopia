@@ -7,9 +7,9 @@ import (
 
 var _ sdk.Msg = &MsgDistributePlatformIncentives{}
 
-func NewMsgDistributePlatformIncentives(authority string, addresses []MsgDistributePlatformIncentives_Address) *MsgDistributePlatformIncentives {
+func NewMsgDistributePlatformIncentives(creator string, addresses []MsgDistributePlatformIncentives_Address) *MsgDistributePlatformIncentives {
 	return &MsgDistributePlatformIncentives{
-		Authority: authority,
+		Creator:   creator,
 		Addresses: addresses,
 	}
 }
@@ -23,11 +23,11 @@ func (msg *MsgDistributePlatformIncentives) Type() string {
 }
 
 func (msg *MsgDistributePlatformIncentives) GetSigners() []sdk.AccAddress {
-	authority, err := sdk.AccAddressFromBech32(msg.Authority)
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{authority}
+	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgDistributePlatformIncentives) GetSignBytes() []byte {
@@ -36,8 +36,8 @@ func (msg *MsgDistributePlatformIncentives) GetSignBytes() []byte {
 }
 
 func (m *MsgDistributePlatformIncentives) ValidateBasic() error {
-	if _, err := sdk.AccAddressFromBech32(m.Authority); err != nil {
-		return sdkerrors.Wrap(err, "invalid authority address")
+	if _, err := sdk.AccAddressFromBech32(m.Creator); err != nil {
+		return sdkerrors.Wrap(err, "invalid creator address")
 	}
 
 	for _, addr := range m.Addresses {

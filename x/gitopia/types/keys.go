@@ -329,6 +329,11 @@ const (
 	ExercisedAmountCountKey = "ExercisedAmount-count-"
 )
 
+const (
+	StorageKey      = "Storage-value-"
+	StorageCountKey = "Storage-count-"
+)
+
 // GetRepositoryKeyForAddress returns Key from address
 func GetRepositoryKeyForAddress(address string) string {
 	return RepositoryKey + address + "-"
@@ -372,4 +377,19 @@ func GetCommentKeyForIssue(repositoryId uint64, issueIid uint64) string {
 // GetCommentKeyForPullRequest returns Key for repository pull request
 func GetCommentKeyForPullRequest(repositoryId uint64, pullRequestIid uint64) string {
 	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-pr-" + strconv.FormatUint(pullRequestIid, 10) + "-"
+}
+
+// GetStorageKeyForRepository returns Key for repository storage
+func GetStorageKeyForGitRepository(repositoryId uint64) string {
+	return StorageKey + strconv.FormatUint(repositoryId, 10) + "-"
+}
+
+// GetStorageKeyForRepository returns Key for repository git lfs storage
+func GetStorageKeyForGitLfs(repositoryId uint64) string {
+	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-lfs-"
+}
+
+// GetStorageKeyForRepository returns Key for repository release
+func GetStorageKeyForRelease(repositoryId uint64, releaseIid uint64) string {
+	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-r-" + strconv.FormatUint(releaseIid, 10) + "-"
 }
