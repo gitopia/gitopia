@@ -34379,6 +34379,8 @@ paths:
                     type: string
                   storage_provider:
                     type: string
+                  platform_incentives:
+                    type: string
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -74080,6 +74082,8 @@ definitions:
         type: string
       storage_provider:
         type: string
+      platform_incentives:
+        type: string
     description: Params defines the parameters for the module.
   gitopia.gitopia.gitopia.PoolProportions:
     type: object
@@ -77501,6 +77505,8 @@ definitions:
           git_server:
             type: string
           storage_provider:
+            type: string
+          platform_incentives:
             type: string
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   gitopia.gitopia.gitopia.QueryVestedAmountResponse:

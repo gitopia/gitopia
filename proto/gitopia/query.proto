@@ -20,6 +20,7 @@ import "gitopia/user.proto";
 import "gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/params.proto";
+import "gitopia/storage.proto";
 
 option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
 
@@ -163,6 +164,11 @@ service Query {
 	// Queries a list of issue items.
 	rpc IssueAll(QueryAllIssueRequest) returns (QueryAllIssueResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/issue";
+	}
+
+	// Queries a repository storage by repository id.
+	rpc RepositoryStorage(QueryGetRepositoryStorageRequest) returns (QueryGetRepositoryStorageResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/storage";
 	}
 
 	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
@@ -563,6 +569,14 @@ message QueryAllIssueRequest {
 message QueryAllIssueResponse {
 	repeated Issue Issue = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRepositoryStorageRequest {
+	uint64 repositoryId = 1;
+}
+
+message QueryGetRepositoryStorageResponse {
+	 Storage storage = 1;
 }
 
 message QueryGetLatestRepositoryReleaseRequest { 
