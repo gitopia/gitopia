@@ -379,11 +379,6 @@ func GetCommentKeyForPullRequest(repositoryId uint64, pullRequestIid uint64) str
 	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-pr-" + strconv.FormatUint(pullRequestIid, 10) + "-"
 }
 
-// GetStorageKeyForRepository returns Key for repository storage
-func GetStorageKeyForGitRepository(repositoryId uint64) string {
-	return StorageKey + strconv.FormatUint(repositoryId, 10) + "-"
-}
-
 // GetStorageKeyForRepository returns Key for repository git lfs storage
 func GetStorageKeyForGitLfs(repositoryId uint64) string {
 	return CommentKey + strconv.FormatUint(repositoryId, 10) + "-lfs-"

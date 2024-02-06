@@ -44,10 +44,10 @@ func (k Keeper) AppendStorage(
 
 	store := prefix.NewStore(
 		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetStorageKeyForGitRepository(storage.ParentId)),
+		types.KeyPrefix(types.StorageKey),
 	)
 	appendedValue := k.cdc.MustMarshal(&storage)
-	store.Set(GetStorageIDBytes(storage.Id), appendedValue)
+	store.Set(GetStorageIDBytes(storage.ParentId), appendedValue)
 
 	// Update storage count
 	k.SetStorageCount(ctx, count+1)
@@ -59,10 +59,10 @@ func (k Keeper) AppendStorage(
 func (k Keeper) SetRepositoryStorage(ctx sdk.Context, storage types.Storage) {
 	store := prefix.NewStore(
 		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetStorageKeyForGitRepository(storage.ParentId)),
+		types.KeyPrefix(types.StorageKey),
 	)
 	b := k.cdc.MustMarshal(&storage)
-	store.Set(GetStorageIDBytes(storage.Id), b)
+	store.Set(GetStorageIDBytes(storage.ParentId), b)
 }
 
 // GetRepositoryStorage returns a Storage from its repository id
@@ -71,7 +71,7 @@ func (k Keeper) GetRepositoryStorage(ctx sdk.Context, repositoryId uint64) (val 
 		ctx.KVStore(k.storeKey),
 		types.KeyPrefix(types.StorageKey),
 	)
-	b := store.Get([]byte(types.GetStorageKeyForGitRepository(repositoryId)))
+	b := store.Get(GetStorageIDBytes(repositoryId))
 	if b == nil {
 		return val, false
 	}
@@ -85,7 +85,7 @@ func (k Keeper) RemoveRepositoryStorage(ctx sdk.Context, repositoryId uint64) {
 		ctx.KVStore(k.storeKey),
 		types.KeyPrefix(types.StorageKey),
 	)
-	store.Delete([]byte(types.GetStorageKeyForGitRepository(repositoryId)))
+	store.Delete([]byte(GetStorageIDBytes(repositoryId)))
 }
 
 // GetAllStorage returns all Storage

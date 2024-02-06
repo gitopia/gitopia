@@ -36074,6 +36074,86 @@ paths:
           format: uint64
       tags:
         - Query
+  /gitopia/gitopia/gitopia/repository/{repositoryId}/storage:
+    get:
+      summary: Queries a repository storage by repository id.
+      operationId: GitopiaGitopiaGitopiaRepositoryStorage
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              storage:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  parentId:
+                    type: string
+                    format: uint64
+                  storageType:
+                    type: string
+                    enum:
+                      - STORAGE_TYPE_UNSPECIFIED
+                      - STORAGE_TYPE_IPFS
+                      - STORAGE_TYPE_ARWEAVE
+                    default: STORAGE_TYPE_UNSPECIFIED
+                  storageFileType:
+                    type: string
+                    enum:
+                      - STORAGE_FILE_TYPE_UNSPECIFIED
+                      - STORAGE_FILE_TYPE_PACKFILE
+                      - STORAGE_FILE_TYPE_RELEASE
+                      - STORAGE_FILE_TYPE_GIT_LFS
+                    default: STORAGE_FILE_TYPE_UNSPECIFIED
+                  latest:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  previous:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  createdAt:
+                    type: string
+                    format: int64
+                  updatedAt:
+                    type: string
+                    format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: repositoryId
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /gitopia/gitopia/gitopia/tag:
     get:
       summary: Queries a list of Tag items.
@@ -73609,6 +73689,13 @@ definitions:
       - EMOJI_THUMBS_UP
       - EMOJI_THUMBS_DOWN
     default: EMOJI_THUMBS_UP
+  gitopia.gitopia.gitopia.FileMeta:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
   gitopia.gitopia.gitopia.Issue:
     type: object
     properties:
@@ -77331,6 +77418,53 @@ definitions:
                     type: string
           enableArweaveBackup:
             type: boolean
+  gitopia.gitopia.gitopia.QueryGetRepositoryStorageResponse:
+    type: object
+    properties:
+      storage:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          parentId:
+            type: string
+            format: uint64
+          storageType:
+            type: string
+            enum:
+              - STORAGE_TYPE_UNSPECIFIED
+              - STORAGE_TYPE_IPFS
+              - STORAGE_TYPE_ARWEAVE
+            default: STORAGE_TYPE_UNSPECIFIED
+          storageFileType:
+            type: string
+            enum:
+              - STORAGE_FILE_TYPE_UNSPECIFIED
+              - STORAGE_FILE_TYPE_PACKFILE
+              - STORAGE_FILE_TYPE_RELEASE
+              - STORAGE_FILE_TYPE_GIT_LFS
+            default: STORAGE_FILE_TYPE_UNSPECIFIED
+          latest:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+          previous:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+          createdAt:
+            type: string
+            format: int64
+          updatedAt:
+            type: string
+            format: int64
   gitopia.gitopia.gitopia.QueryGetRepositoryTagResponse:
     type: object
     properties:
@@ -77839,6 +77973,65 @@ definitions:
         format: uint64
       tagName:
         type: string
+  gitopia.gitopia.gitopia.Storage:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      parentId:
+        type: string
+        format: uint64
+      storageType:
+        type: string
+        enum:
+          - STORAGE_TYPE_UNSPECIFIED
+          - STORAGE_TYPE_IPFS
+          - STORAGE_TYPE_ARWEAVE
+        default: STORAGE_TYPE_UNSPECIFIED
+      storageFileType:
+        type: string
+        enum:
+          - STORAGE_FILE_TYPE_UNSPECIFIED
+          - STORAGE_FILE_TYPE_PACKFILE
+          - STORAGE_FILE_TYPE_RELEASE
+          - STORAGE_FILE_TYPE_GIT_LFS
+        default: STORAGE_FILE_TYPE_UNSPECIFIED
+      latest:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+      previous:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+      createdAt:
+        type: string
+        format: int64
+      updatedAt:
+        type: string
+        format: int64
+  gitopia.gitopia.gitopia.StorageFileType:
+    type: string
+    enum:
+      - STORAGE_FILE_TYPE_UNSPECIFIED
+      - STORAGE_FILE_TYPE_PACKFILE
+      - STORAGE_FILE_TYPE_RELEASE
+      - STORAGE_FILE_TYPE_GIT_LFS
+    default: STORAGE_FILE_TYPE_UNSPECIFIED
+  gitopia.gitopia.gitopia.StorageType:
+    type: string
+    enum:
+      - STORAGE_TYPE_UNSPECIFIED
+      - STORAGE_TYPE_IPFS
+      - STORAGE_TYPE_ARWEAVE
+    default: STORAGE_TYPE_UNSPECIFIED
   gitopia.gitopia.gitopia.Tag:
     type: object
     properties:
