@@ -171,6 +171,11 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/repository/{repositoryId}/storage";
 	}
 
+	// Queries a list of repository storage.
+	rpc RepositoryStorageAll(QueryGetAllRepositoryStorageRequest) returns (QueryGetAllRepositoryStorageResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/storage";
+	}
+
 	rpc RepositoryReleaseLatest(QueryGetLatestRepositoryReleaseRequest) returns (QueryGetLatestRepositoryReleaseResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/releases/latest";
 	}
@@ -577,6 +582,15 @@ message QueryGetRepositoryStorageRequest {
 
 message QueryGetRepositoryStorageResponse {
 	 Storage storage = 1;
+}
+
+message QueryGetAllRepositoryStorageRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryGetAllRepositoryStorageResponse {
+	 repeated Storage storages = 1;
+	 cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetLatestRepositoryReleaseRequest { 

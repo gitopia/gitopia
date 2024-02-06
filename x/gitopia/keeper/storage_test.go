@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setupStorage(keeper *keeper.Keeper, ctx sdk.Context, repositoryId uint64) types.Storage {
+func SetupStorage(keeper *keeper.Keeper, ctx sdk.Context, repositoryId uint64) types.Storage {
 	storage := types.Storage{
 		ParentId:        repositoryId,
 		StorageType:     types.StorageTypeIpfs,
@@ -24,7 +24,7 @@ func setupStorage(keeper *keeper.Keeper, ctx sdk.Context, repositoryId uint64) t
 func TestStorageGet(t *testing.T) {
 	keepers, ctx := keepertest.AppKeepers(t)
 	keeper := &keepers.GitopiaKeeper
-	storage := setupStorage(keeper, ctx, 1)
+	storage := SetupStorage(keeper, ctx, 1)
 	got, found := keeper.GetRepositoryStorage(ctx, storage.ParentId)
 	require.True(t, found)
 	require.Equal(t, storage, got)
@@ -33,7 +33,7 @@ func TestStorageGet(t *testing.T) {
 func TestRemoveRepositoryStorage(t *testing.T) {
 	keepers, ctx := keepertest.AppKeepers(t)
 	keeper := &keepers.GitopiaKeeper
-	storage := setupStorage(keeper, ctx, 1)
+	storage := SetupStorage(keeper, ctx, 1)
 	// check storage exists before removing
 	_, found := keeper.GetRepositoryStorage(ctx, storage.ParentId)
 	require.True(t, found)
@@ -50,8 +50,8 @@ func TestGetAllStorage(t *testing.T) {
 	keepers, ctx := keepertest.AppKeepers(t)
 	keeper := &keepers.GitopiaKeeper
 	storages := make([]types.Storage, 2)
-	storages[0] = setupStorage(keeper, ctx, 1)
-	storages[1] = setupStorage(keeper, ctx, 2)
+	storages[0] = SetupStorage(keeper, ctx, 1)
+	storages[1] = SetupStorage(keeper, ctx, 2)
 
 	got := keeper.GetAllStorage(ctx)
 	require.Equal(t, uint64(2), keeper.GetStorageCount(ctx))
