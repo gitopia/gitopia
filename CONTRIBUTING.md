@@ -1,49 +1,169 @@
-# Contribution Guidelines
+Contributing to Gitopia
+=======================
 
-## Reporting Bug or Feature Request
+Getting Started
+---------------
 
-We recommend using Gitopia issues for bug report, feature request and feedback. However, you can ask quick questions on our official [Gitopia Discord](https://discord.gg/mVpQVW3vKE).
+New contributors to the project are always welcome. The best place to get started is the issues page. You can filter for issues with "good first issue" label. These issues will be lot easier and favourable if you are new to the project. You can comment on the issue which you are interest to work on and ask any doubts you have. You can start working on it once we clarify the implementation and assign the issue to you.
 
-Before you open an issue, do a web search, and check for existing open and closed Issues to see if that bug has already been reported. If you find a relevant topic, you can comment on that issue.
+You can also discuss in the #💻-development channel of [Gitopia's Discord server](https://discord.com/invite/mVpQVW3vKE). You can see general queries regarding development and other contributor's discussions there.
 
-Please try to be as detailed as possible. What steps will reproduce the issue? What are you looking in particular feature?
+[gitopia issues](https://gitopia.com/gitopia/gitopia/issues)
 
-## Submitting Pull Request
+Communication Channels
+----------------------
 
-### Base branch
+The discussions specific to the particular issue and pull request can be discussed in the issue and pull request page on the Gitopia platform itself. Other discussions can happen over #💻-development channel of [Gitopia's Discord server](https://discord.com/invite/mVpQVW3vKE).
 
-In general, always base your work on the `master` branch.
+Contributor Workflow
+--------------------
 
-For a bug that's not yet in `master`, find the branch that introduces the bug, and base your work on the tip of that branch.
+All contributions should happen over Pull Requests.
 
-### Do not rebase commits in your branch. 
+To contribute a patch, the workflow is as follows:
 
-Avoid rebasing after you open your PRs to reviews. Instead, add more commits to your PR. It's OK to do force pushes if PR was never opened for reviews before.
+  1. Fork repository ([only for the first time](https://docs.gitopia.com/fork))
+  2. Create topic branch
+  3. Commit patches
+  4. Create a Pull Request
 
-A reviewer likes to see a linear commit history while reviewing. If you tend to force push from an older commit, a reviewer might lose track in your recent changes and will have to start reviewing from scratch.
+For GUI-related issues or pull requests, the https://gitopia.com/Gitopia/gitopia-web repository should be used.
+For issues and pull requests related to the node, the https://gitopia.com/Gitopia/gitopia repository should be used.
 
-Don't worry about adding too many commits. The commits are squashed into a single commit while merging (if needed). Your PR title is used as the commit message.
+The project coding conventions in the [CodingGuidelines](CodingGuidelines.md)
+must be followed.
 
-### Describe changes
+### Committing Patches
 
-Give an explanation for the change(s) that is detailed enough so that people can judge if it is good thing to do, without reading the actual code. 
+In general, [commits should be atomic](https://en.wikipedia.org/wiki/Atomic_commit#Atomic_commit_convention)
+and diffs should be easy to read. For this reason, do not mix any formatting
+fixes or code moves with actual code changes.
 
-The goal of your commit message is to convey the _what_ and _why_ behind your change.
+Make sure each individual commit is hygienic: that it builds successfully on its
+own without warnings, errors, regressions, or test failures.
 
-### Make seperate commits
+Commit messages should be verbose by default consisting of a short subject line
+(50 chars max), a blank line and detailed explanatory text as separate
+paragraph(s), unless the title alone is self-explanatory (like "Correct typo
+in init.cpp") in which case a single title line is sufficient. Commit messages should be
+helpful to people reading your code in the future, so explain the reasoning for
+your decisions. Further explanation [here](https://chris.beams.io/posts/git-commit/).
 
-Make separate commits for logically separate changes. 
+If a particular commit references another issue, please add the reference. For
+example: `refs #1234` or `fixes #4321`.
 
-If your description starts to get too long, that's a sign that you probably need to split up your commit to finer grained pieces.
+### Creating the Pull Request
 
-### Respect existing Code
+The body of the pull request should contain sufficient description of *what* the
+patch does, and even more importantly, *why*, with justification and reasoning.
+You should include references to any discussions (for example, other issues).
 
-Bug fix or feature implementation should not break existing functionalities and tests.
+### Address Feedback
 
-### Write Tests
+At this stage, one should expect comments and review from other contributors. You
+can add more commits to your pull request by committing them locally and pushing
+to your fork.
 
-Make sure that you have tests for the bug you are fixing. 
+You are expected to reply to any review comments before your pull request is
+merged. You may update the code or reject the feedback if you do not agree with
+it, but you should express so in a reply. If there is outstanding feedback and
+you are not actively working on it, your pull request may be closed.
 
-### Code must be well written
+### Squashing Commits
 
-See [Coding Guidelines](CodingGuidelines.md).
+If your pull request contains fixup commits (commits that change the same line of code repeatedly) or too fine-grained
+commits, you may be asked to [squash](https://git-scm.com/docs/git-rebase#_interactive_mode) your commits
+before it will be reviewed. The basic squashing workflow is shown below.
+
+```
+git checkout your_branch_name
+git rebase -i HEAD~n
+# n is normally the number of commits in the pull request.
+# Set commits (except the one in the first line) from 'pick' to 'squash', save and quit.
+# On the next screen, edit/refine commit messages.
+# Save and quit.
+git push -f # (force push)
+```
+
+Please update the resulting commit message, if needed. It should read as a
+coherent message. In most cases, this means not just listing the interim
+commits.
+
+If your change contains a merge commit, the above workflow may not work and you
+will need to remove the merge commit first. See the next section for details on
+how to rebase.
+
+Please refrain from creating several pull requests for the same change.
+Use the pull request that is already open (or was created earlier) to amend
+changes. This preserves the discussion and review that happened earlier for
+the respective change set.
+
+### Rebasing Changes
+
+When a pull request conflicts with the target branch, you may be asked to rebase it on top of the current target branch.
+
+```
+git fetch gitopia://Gitopia/gitopia  # Fetch the latest upstream commit
+git rebase FETCH_HEAD  # Rebuild commits on top of the new base
+```
+
+Pull Request Philosophy
+-----------------------
+
+Patchsets should always be focused. For example, a pull request could add a
+feature, fix a bug, or refactor code; but not a mixture. Please also avoid super
+pull requests which attempt to do too much, are overly large, or overly complex
+as this makes review difficult.
+
+### Finding Reviewers
+
+You can reach out to the project maintainers on #💻-development channel of [Gitopia's Discord server](https://discord.com/invite/mVpQVW3vKE) if no one has picked up your review.
+
+Setting Up the Development Environment
+--------------------------------------
+
+### Dependencies
+
+[Go 1.19+](https://golang.org/dl/)
+
+[Ignite CLI v0.26.0](https://github.com/ignite/cli)
+
+> [!WARNING]
+> Make sure that you install the v0.26.0 of Ignite CLI. The latest versions are not compatible with v0.46.13 of cosmos-sdk used by gitopia.
+
+### Setup
+
+We use Ignite CLI for configuring the local test chain. The configuration file `config.yml` is located in the root directory. You can find more details about the config file [here](https://docs.ignite.com/references/config).
+
+You can start the node by executing the following command. Ignite will automatically build and start the node whenever any new changes are made into the code.
+
+```
+ignite chain serve
+```
+
+On successfull execution, you should see output like below.
+
+```
+❯ ignite chain serve
+  
+  ✔ Added account node3 with address gitopia1vzjwk8cd7y9scd4uj9darlusgflkr9ccgfrzzr and mnemonic:  
+  ✔ Added account faucet with address gitopia1hgjmjsnstdgzlfs4uxazf78se30p3xlxcetdt8 and mnemonic:
+  👤 evaluator's account address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+  👤 cosmos_rewards's account address: gitopia1e385ct9padxt2ylzen884kr79genlq8la04sy4
+  
+  🌍 Tendermint node: http://0.0.0.0:26657
+  🌍 Blockchain API: http://0.0.0.0:1317
+  🌍 Token faucet: http://0.0.0.0:4500
+  👤 evaluator's account address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+  ⋆ Data directory: /Users/alice/.gitopia
+  ⋆ App binary: /Users/alice/go/bin/gitopiad
+  
+  Press the 'q' key to stop serve
+
+```
+
+And this is the command to compile protocol buffer files to Go source code when you make changes to proto files in `proto` directory. The generated Go files will be available in respective go packages (For eg., `x/gitopia/types`). This is automatically done when you use `ignite chain serve`.
+
+```
+ignite generate proto-go
+```
