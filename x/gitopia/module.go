@@ -18,7 +18,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
 	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
-	v3 "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v3"
+
+	// v3 "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v3"
 	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
@@ -136,7 +137,7 @@ func (AppModule) QuerierRoute() string { return types.QuerierRoute }
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
-	cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate)
+	// cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate)
 }
 
 // RegisterInvariants registers the capability module's invariants.
