@@ -4,11 +4,11 @@ package gitopia.gitopia.rewards;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "rewards/task.proto";
-import "rewards/rewards.proto";
-import "rewards/pool.proto";
+import "gitopia/gitopia/rewards/task.proto";
+import "gitopia/gitopia/rewards/rewards.proto";
+import "gitopia/gitopia/rewards/pool.proto";
 import "cosmos/base/v1beta1/coin.proto";
-import "rewards/params.proto";
+import "gitopia/gitopia/rewards/params.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/gitopia/gitopia/v4/x/rewards/types";

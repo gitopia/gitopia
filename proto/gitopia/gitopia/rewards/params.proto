@@ -2,7 +2,7 @@ syntax = "proto3";
 package gitopia.gitopia.rewards;
 
 import "gogoproto/gogo.proto";
-import "rewards/pool.proto";
+import "gitopia/gitopia/rewards/pool.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/gitopia/gitopia/v4/x/rewards/types";
