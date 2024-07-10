@@ -828,11 +828,11 @@ func GenerateGenesisCmd() *cobra.Command {
 			twoDays := 2 * 24 * time.Hour
 			depositParams := govv1types.NewDepositParams(
 				sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000000000))),
-				twoDays,
+				&twoDays,
 			)
 			govGenesis.DepositParams = &depositParams
 
-			votingParams := govv1types.NewVotingParams(twoDays)
+			votingParams := govv1types.NewVotingParams(&twoDays)
 			govGenesis.VotingParams = &votingParams
 
 			// Disable all transfers

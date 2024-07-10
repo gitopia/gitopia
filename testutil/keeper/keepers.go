@@ -22,7 +22,6 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -79,10 +78,10 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 	appKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		keys[authtypes.StoreKey],
-		appKeepers.ParamsKeeper.Subspace(authtypes.ModuleName),
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
 		"gitopia",
+		authtypes.NewModuleAddress(authtypes.ModuleName).String(),
 	)
 
 	authzkeeper := authzkeeper.NewKeeper(
@@ -97,8 +96,8 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appCodec,
 		keys[banktypes.StoreKey],
 		appKeepers.AccountKeeper,
-		appKeepers.ParamsKeeper.Subspace(banktypes.ModuleName),
 		nil,
+		authtypes.NewModuleAddress(banktypes.ModuleName).String(),
 	)
 	appKeepers.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
 
@@ -107,24 +106,23 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		keys[stakingtypes.StoreKey],
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
-		appKeepers.ParamsKeeper.Subspace(stakingtypes.ModuleName),
+		authtypes.NewModuleAddress(stakingtypes.ModuleName).String(),
 	)
 
 	mintKeeper := mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey],
-		appKeepers.ParamsKeeper.Subspace(minttypes.ModuleName),
 		appKeepers.StakingKeeper, appKeepers.AccountKeeper,
-		appKeepers.BankKeeper, types.MinterAccountName)
+		appKeepers.BankKeeper, types.MinterAccountName, authtypes.NewModuleAddress(minttypes.ModuleName).String())
 	appKeepers.MintKeeper = &mintKeeper
 
 	distrKeeper := distrkeeper.NewKeeper(
 		appCodec,
 		keys[distrtypes.StoreKey],
-		appKeepers.ParamsKeeper.Subspace(distrtypes.ModuleName),
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.StakingKeeper,
 		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(distrtypes.ModuleName).String(),
 	)
 	appKeepers.DistrKeeper = &distrKeeper
 
@@ -142,16 +140,15 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	appKeepers.GovKeeper = govkeeper.NewKeeper(
+	appKeepers.GovKeeper = *govkeeper.NewKeeper(
 		appCodec,
 		keys[govtypes.StoreKey],
-		appKeepers.ParamsKeeper.Subspace(govtypes.ModuleName),
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.StakingKeeper,
-		govv1beta1.NewRouter(),
 		bapp.NewMsgServiceRouter(),
 		govtypes.DefaultConfig(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
@@ -159,7 +156,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		keys[rewardstypes.StoreKey],
 		mkeys[types.MemStoreKey],
 		&appKeepers.GitopiaKeeper,
-		appKeepers.StakingKeeper,
+		*appKeepers.StakingKeeper,
 		appKeepers.GovKeeper,
 		appKeepers.BankKeeper,
 		appKeepers.AccountKeeper,

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
 )
 
@@ -33,14 +32,14 @@ func Setup(isCheckTx bool) *GitopiaApp {
 	db := dbm.NewMemDB()
 	encoding := gitopiaparams.EncodingConfig(MakeEncodingConfig())
 
-	app := NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, encoding, sims.EmptyAppOptions{})
+	app := NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, encoding, sims.EmptyAppOptions{})
 	if !isCheckTx {
 		stateBytes := getDefaultGenesisStateBytes(app.AppCodec())
 
 		app.InitChain(
 			abci.RequestInitChain{
 				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simapp.DefaultConsensusParams,
+				ConsensusParams: sims.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
 			},
 		)
@@ -52,14 +51,18 @@ func Setup(isCheckTx bool) *GitopiaApp {
 // SetupTestingAppWithLevelDb initializes a new GitopiaApp intended for testing,
 // with LevelDB as a db.
 func SetupTestingAppWithLevelDb(isCheckTx bool) (app *GitopiaApp, cleanupFn func()) {
-	dir := "osmosis_testing"
-	db, err := sdk.NewLevelDB("gitopia_leveldb_testing", dir)
+	dir, err := os.MkdirTemp(os.TempDir(), "gitopia_leveldb_testing")
 	if err != nil {
 		panic(err)
 	}
+	db, err := dbm.NewGoLevelDB("gitopia_leveldb_testing", dir)
+	if err != nil {
+		panic(err)
+	}
+
 	encoding := gitopiaparams.EncodingConfig(MakeEncodingConfig())
 
-	app = NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, encoding, simapp.EmptyAppOptions{})
+	app = NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, encoding, sims.EmptyAppOptions{})
 	if !isCheckTx {
 		genesisState := NewDefaultGenesisState(app.AppCodec())
 		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
@@ -70,7 +73,7 @@ func SetupTestingAppWithLevelDb(isCheckTx bool) (app *GitopiaApp, cleanupFn func
 		app.InitChain(
 			abci.RequestInitChain{
 				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simapp.DefaultConsensusParams,
+				ConsensusParams: sims.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
 			},
 		)

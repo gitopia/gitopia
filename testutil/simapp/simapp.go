@@ -7,7 +7,6 @@ import (
 	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
 
 	tmdb "github.com/cometbft/cometbft-db"
-	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
@@ -22,7 +21,7 @@ func setup(dir string) *app.GitopiaApp {
 
 	encoding := gitopiaparams.EncodingConfig(app.MakeEncodingConfig())
 
-	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, encoding,
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
 		sims.EmptyAppOptions{})
 	// https://github.com/cosmos/cosmos-sdk/issues/8961. EDIT: DO NOT init chain
@@ -36,8 +35,8 @@ func setup(dir string) *app.GitopiaApp {
 	return a
 }
 
-var defaultConsensusParams = &abci.ConsensusParams{
-	Block: &abci.BlockParams{
+var defaultConsensusParams = &tmproto.ConsensusParams{
+	Block: &tmproto.BlockParams{
 		MaxBytes: 200000,
 		MaxGas:   2000000,
 	},

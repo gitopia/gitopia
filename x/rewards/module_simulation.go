@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gitopia/gitopia/v4/testutil/sample"
@@ -18,9 +17,14 @@ import (
 var (
 	_ = sample.AccAddress
 	_ = rewardssimulation.FindAccount
-	_ = testutil.StakePerAccount //recheck
 	_ = simulation.MsgEntryKind
 	_ = baseapp.Paramspace
+)
+
+// Simulation parameter constants
+const (
+	StakePerAccount           = "stake_per_account"
+	InitiallyBondedValidators = "initially_bonded_validators"
 )
 
 const (
