@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
@@ -13,7 +14,6 @@ import (
 	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestTokenDistributionSucessNoDistribution(t *testing.T) {

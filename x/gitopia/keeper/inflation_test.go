@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/gitopia/gitopia/v3/app/params"
 	"github.com/gitopia/gitopia/v3/testutil/simapp"
 	"github.com/gitopia/gitopia/v3/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 // tests inflation does not halve, if next inflation time has not passed

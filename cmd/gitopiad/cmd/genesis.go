@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
+	tmjson "github.com/cometbft/cometbft/libs/json"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -30,8 +32,8 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	ibctypes "github.com/cosmos/ibc-go/v5/modules/core/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	ibctypes "github.com/cosmos/ibc-go/v7/modules/core/types"
 	"github.com/gitopia/gitopia/v3/app/params"
 	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
 	testnettypes "github.com/gitopia/gitopia/v3/x/gitopia/migrations/testnet/types"
@@ -39,8 +41,6 @@ import (
 	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/v3/x/rewards/types"
 	"github.com/spf13/cobra"
-	tmjson "github.com/tendermint/tendermint/libs/json"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 const (
@@ -1034,7 +1034,7 @@ func GenerateGenesisCmd() *cobra.Command {
 			state[slashingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(slashingGenesis)
 			state[genutiltypes.ModuleName] = ctx.Codec.MustMarshalJSON(genutilGenesis)
 			state[stakingtypes.ModuleName] = ctx.Codec.MustMarshalJSON(stakingGenesis)
-			state[ibchost.ModuleName] = ctx.Codec.MustMarshalJSON(ibcGenesis)
+			state[ibcexported.ModuleName] = ctx.Codec.MustMarshalJSON(ibcGenesis)
 			state[gitopiatypes.ModuleName] = ctx.Codec.MustMarshalJSON(&genesisState)
 			state[group.ModuleName] = ctx.Codec.MustMarshalJSON(groupGenesis)
 			state[capabilitytypes.ModuleName] = ctx.Codec.MustMarshalJSON(capabilityGenesis)

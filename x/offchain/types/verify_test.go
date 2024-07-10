@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
@@ -36,7 +36,7 @@ type signatureVerifierSuite struct {
 }
 
 func (ts *signatureVerifierSuite) SetupTest() {
-	encConf := simapp.MakeTestEncodingConfig()
+	encConf := testutil.MakeTestEncodingConfig()
 	RegisterInterfaces(encConf.InterfaceRegistry)
 	RegisterLegacyAminoCodec(encConf.Amino)
 	ts.txDecoder = encConf.TxConfig.TxJSONDecoder()

@@ -1,10 +1,10 @@
 module github.com/gitopia/gitopia/v3
 
-go 1.19
+go 1.21
 
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
-	github.com/cosmos/cosmos-sdk v0.46.13
+	github.com/cosmos/cosmos-sdk v0.47.12
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
@@ -15,13 +15,13 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
-	github.com/tendermint/tendermint v0.34.28
-	github.com/tendermint/tm-db v0.6.7
+	github.com/cometbft/cometbft v0.37.6
+	github.com/cometbft/cometbft-db v0.11.0
 	google.golang.org/genproto v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.58.0
 )
 
-require github.com/cosmos/ibc-go/v5 v5.3.1
+require github.com/cosmos/ibc-go/v7 v7.4.0
 
 require (
 	cloud.google.com/go v0.110.6 // indirect
@@ -180,8 +180,6 @@ require (
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-replace github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
 
 // replace broken goleveldb
 replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7

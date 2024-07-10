@@ -4,9 +4,9 @@ import (
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/gitopia/gitopia/v3/testutil/sample"
@@ -18,7 +18,7 @@ import (
 var (
 	_ = sample.AccAddress
 	_ = rewardssimulation.FindAccount
-	_ = simappparams.StakePerAccount
+	_ = testutil.StakePerAccount //recheck
 	_ = simulation.MsgEntryKind
 	_ = baseapp.Paramspace
 )

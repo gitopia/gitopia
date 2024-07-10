@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"os"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	gitopiaparams "github.com/gitopia/gitopia/v3/app/params"
 )
@@ -33,7 +33,7 @@ func Setup(isCheckTx bool) *GitopiaApp {
 	db := dbm.NewMemDB()
 	encoding := gitopiaparams.EncodingConfig(MakeEncodingConfig())
 
-	app := NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, encoding, simapp.EmptyAppOptions{})
+	app := NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, encoding, sims.EmptyAppOptions{})
 	if !isCheckTx {
 		stateBytes := getDefaultGenesisStateBytes(app.AppCodec())
 

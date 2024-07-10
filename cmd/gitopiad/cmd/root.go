@@ -7,6 +7,7 @@ import (
 
 	"github.com/gitopia/gitopia/v3/app/params"
 
+	tmcfg "github.com/cometbft/cometbft/config"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -30,12 +31,11 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	tmcfg "github.com/tendermint/tendermint/config"
 
-	tmcmds "github.com/tendermint/tendermint/cmd/cometbft/commands"
-	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
+	dbm "github.com/cometbft/cometbft-db"
+	tmcmds "github.com/cometbft/cometbft/cmd/cometbft/commands"
+	tmcli "github.com/cometbft/cometbft/libs/cli"
+	"github.com/cometbft/cometbft/libs/log"
 
 	gitopia "github.com/gitopia/gitopia/v3/app"
 )
