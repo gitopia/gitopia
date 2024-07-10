@@ -2,6 +2,10 @@
 
 All notable changes will be documented here.
 
+## [3.3.1] - 2024-07-10
+
+- Use gitopia chain id in offchain signatures
+
 ## [3.3.0] - 2023-09-27
 
 - Fix ledger signature validation in rewards module
