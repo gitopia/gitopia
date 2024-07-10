@@ -28,11 +28,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/gitopia/gitopia/v3/app/keepers"
-	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/app/upgrades"
-	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
-	rewardstypes "github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/app/keepers"
+	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/app/upgrades"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
+	rewardstypes "github.com/gitopia/gitopia/v4/x/rewards/types"
 	"github.com/spf13/cast"
 )
 

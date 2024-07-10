@@ -22,7 +22,7 @@ import "gitopia/params.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/gitopia/gitopia/v3/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {

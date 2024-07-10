@@ -10,10 +10,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/v3/testutil/network"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/testutil/network"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 func TestCreateTask(t *testing.T) {

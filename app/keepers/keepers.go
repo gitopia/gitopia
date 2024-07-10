@@ -50,10 +50,10 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	gitopiakeeper "github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
-	rewardskeeper "github.com/gitopia/gitopia/v3/x/rewards/keeper"
-	rewardtypes "github.com/gitopia/gitopia/v3/x/rewards/types"
+	gitopiakeeper "github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/v4/x/rewards/keeper"
+	rewardtypes "github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 const (

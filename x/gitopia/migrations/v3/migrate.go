@@ -4,9 +4,9 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	v2types "github.com/gitopia/gitopia/v3/x/gitopia/migrations/v2/types"
-	v3types "github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	v2types "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v2/types"
+	v3types "github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 const (

@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gitopia/gitopia/v3/app/params"
+	"github.com/gitopia/gitopia/v4/app/params"
 
 	tmcfg "github.com/cometbft/cometbft/config"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -28,7 +28,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
-	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
+	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
@@ -37,7 +37,7 @@ import (
 	tmcli "github.com/cometbft/cometbft/libs/cli"
 	"github.com/cometbft/cometbft/libs/log"
 
-	gitopia "github.com/gitopia/gitopia/v3/app"
+	gitopia "github.com/gitopia/gitopia/v4/app"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

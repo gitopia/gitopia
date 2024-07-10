@@ -1,4 +1,4 @@
-module github.com/gitopia/gitopia/v3
+module github.com/gitopia/gitopia/v4
 
 go 1.21
 

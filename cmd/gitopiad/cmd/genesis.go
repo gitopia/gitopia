@@ -34,12 +34,12 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctypes "github.com/cosmos/ibc-go/v7/modules/core/types"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	testnettypes "github.com/gitopia/gitopia/v3/x/gitopia/migrations/testnet/types"
-	v2types "github.com/gitopia/gitopia/v3/x/gitopia/migrations/v2/types"
-	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
-	rewardstypes "github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	testnettypes "github.com/gitopia/gitopia/v4/x/gitopia/migrations/testnet/types"
+	v2types "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v2/types"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
+	rewardstypes "github.com/gitopia/gitopia/v4/x/rewards/types"
 	"github.com/spf13/cobra"
 )
 

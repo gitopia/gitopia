@@ -19,7 +19,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/gitopia/gitopia/v3/app"
+	"github.com/gitopia/gitopia/v4/app"
 	"github.com/stretchr/testify/require"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
@@ -37,8 +37,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	gitopiaApp "github.com/gitopia/gitopia/v3/app"
-	"github.com/gitopia/gitopia/v3/app/params"
+	gitopiaApp "github.com/gitopia/gitopia/v4/app"
+	"github.com/gitopia/gitopia/v4/app/params"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in

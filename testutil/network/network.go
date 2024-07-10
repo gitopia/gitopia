@@ -16,9 +16,9 @@ import (
 	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	gitopiaappparams "github.com/gitopia/gitopia/v3/app/params"
+	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
 
-	"github.com/gitopia/gitopia/v3/app"
+	"github.com/gitopia/gitopia/v4/app"
 )
 
 type (
