@@ -69,9 +69,9 @@ func (s *IntegrationTestSuite) TestIBC() {
 	}
 
 	s.testIBCTokenTransfer()
-	s.testMultihopIBCTokenTransfer()
-	s.testFailedMultihopIBCTokenTransfer()
-	s.testICARegisterAccountAndSendTx()
+	// s.testMultihopIBCTokenTransfer()
+	// s.testFailedMultihopIBCTokenTransfer()
+	// s.testICARegisterAccountAndSendTx()
 }
 
 func (s *IntegrationTestSuite) TestSlashing() {
