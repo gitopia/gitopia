@@ -154,7 +154,7 @@ func (s *IntegrationTestSuite) registerICAAccount(c *chain, valIdx int, sender, 
 		"-y",
 	}
 	s.T().Logf("%s registering ICA account on host chain %s", sender, s.chainB.id)
-	s.executeGaiaTxCommand(ctx, c, icaCmd, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, icaCmd, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Log("successfully sent register ICA account tx")
 }
 
@@ -179,7 +179,7 @@ func (s *IntegrationTestSuite) sendICATransaction(c *chain, valIdx int, sender, 
 		"-y",
 	}
 	s.T().Logf("%s sending ICA transaction to the host chain %s", sender, s.chainB.id)
-	s.executeGaiaTxCommand(ctx, c, icaCmd, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, icaCmd, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Log("successfully sent ICA transaction")
 }
 

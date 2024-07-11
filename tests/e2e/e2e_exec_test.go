@@ -77,18 +77,18 @@ func (s *IntegrationTestSuite) execEncode(
 	defer cancel()
 
 	s.T().Logf("%s - Executing gaiad encoding with %v", c.id, txPath)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		"encode",
 		txPath,
 	}
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
 	var encoded string
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, 0, func(stdOut []byte, stdErr []byte) bool {
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, 0, func(stdOut []byte, stdErr []byte) bool {
 		if stdErr != nil {
 			return false
 		}
@@ -109,18 +109,18 @@ func (s *IntegrationTestSuite) execDecode(
 	defer cancel()
 
 	s.T().Logf("%s - Executing gaiad decoding with %v", c.id, txPath)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		"decode",
 		txPath,
 	}
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
 	var decoded string
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, 0, func(stdOut []byte, stdErr []byte) bool {
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, 0, func(stdOut []byte, stdErr []byte) bool {
 		if stdErr != nil {
 			return false
 		}
@@ -143,20 +143,20 @@ func (s *IntegrationTestSuite) execVestingTx( //nolint:unused
 	defer cancel()
 
 	s.T().Logf("%s - Executing gaiad %s with %v", c.id, method, args)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		vestingtypes.ModuleName,
 		method,
 		"-y",
 	}
-	gaiaCommand = append(gaiaCommand, args...)
+	gitopiaCommand = append(gitopiaCommand, args...)
 
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, 0, s.defaultExecValidation(c, 0))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, 0, s.defaultExecValidation(c, 0))
 	s.T().Logf("successfully %s with %v", method, args)
 }
 
@@ -181,7 +181,7 @@ func (s *IntegrationTestSuite) execUnjail(
 	defer cancel()
 
 	s.T().Logf("Executing gaiad slashing unjail %s with options: %v", c.id, opt)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		slashingtypes.ModuleName,
@@ -190,10 +190,10 @@ func (s *IntegrationTestSuite) execUnjail(
 	}
 
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, 0, s.defaultExecValidation(c, 0))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, 0, s.defaultExecValidation(c, 0))
 	s.T().Logf("successfully unjail with options %v", opt)
 }
 
@@ -207,7 +207,7 @@ func (s *IntegrationTestSuite) execFeeGrant(c *chain, valIdx int, granter, grant
 
 	s.T().Logf("granting %s fee from %s on chain %s", grantee, granter, c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		feegrant.ModuleName,
@@ -221,11 +221,11 @@ func (s *IntegrationTestSuite) execFeeGrant(c *chain, valIdx int, granter, grant
 		"-y",
 	}
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%s", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%s", flag, value))
 	}
-	s.T().Logf("running feegrant on chain: %s - Tx %v", c.id, gaiaCommand)
+	s.T().Logf("running feegrant on chain: %s - Tx %v", c.id, gitopiaCommand)
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 }
 
 func (s *IntegrationTestSuite) execFeeGrantRevoke(c *chain, valIdx int, granter, grantee string, opt ...flagOption) {
@@ -237,7 +237,7 @@ func (s *IntegrationTestSuite) execFeeGrantRevoke(c *chain, valIdx int, granter,
 
 	s.T().Logf("revoking %s fee grant from %s on chain %s", grantee, granter, c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		feegrant.ModuleName,
@@ -247,10 +247,10 @@ func (s *IntegrationTestSuite) execFeeGrantRevoke(c *chain, valIdx int, granter,
 		"-y",
 	}
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 }
 
 func (s *IntegrationTestSuite) execBankSend(
@@ -273,7 +273,7 @@ func (s *IntegrationTestSuite) execBankSend(
 
 	s.T().Logf("sending %s tokens from %s to %s on chain %s", amt, from, to, c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		banktypes.ModuleName,
@@ -284,10 +284,10 @@ func (s *IntegrationTestSuite) execBankSend(
 		"-y",
 	}
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.expectErrExecValidation(c, valIdx, expectErr))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.expectErrExecValidation(c, valIdx, expectErr))
 }
 
 func (s *IntegrationTestSuite) execBankMultiSend(
@@ -310,7 +310,7 @@ func (s *IntegrationTestSuite) execBankMultiSend(
 
 	s.T().Logf("sending %s tokens from %s to %s on chain %s", amt, from, to, c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		banktypes.ModuleName,
@@ -318,14 +318,14 @@ func (s *IntegrationTestSuite) execBankMultiSend(
 		from,
 	}
 
-	gaiaCommand = append(gaiaCommand, to...)
-	gaiaCommand = append(gaiaCommand, amt, "-y")
+	gitopiaCommand = append(gitopiaCommand, to...)
+	gitopiaCommand = append(gitopiaCommand, amt, "-y")
 
 	for flag, value := range opts {
-		gaiaCommand = append(gaiaCommand, fmt.Sprintf("--%s=%v", flag, value))
+		gitopiaCommand = append(gitopiaCommand, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.expectErrExecValidation(c, valIdx, expectErr))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.expectErrExecValidation(c, valIdx, expectErr))
 }
 
 func (s *IntegrationTestSuite) execDistributionFundCommunityPool(c *chain, valIdx int, from, amt, fees string) {
@@ -334,7 +334,7 @@ func (s *IntegrationTestSuite) execDistributionFundCommunityPool(c *chain, valId
 
 	s.T().Logf("Executing gaiad tx distribution fund-community-pool on chain %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		distributiontypes.ModuleName,
@@ -348,7 +348,7 @@ func (s *IntegrationTestSuite) execDistributionFundCommunityPool(c *chain, valId
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("Successfully funded community pool")
 }
 
@@ -360,7 +360,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 		validateResponse = validationFunc
 	}
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		govtypes.ModuleName,
@@ -377,9 +377,9 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 		"-y",
 	}
 
-	gaiaCommand = concatFlags(gaiaCommand, proposalFlags, generalFlags)
+	gitopiaCommand = concatFlags(gitopiaCommand, proposalFlags, generalFlags)
 	s.T().Logf("Executing gaiad tx gov %s on chain %s", govCommand, c.id)
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, validateResponse)
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, validateResponse)
 	s.T().Logf("Successfully executed %s", govCommand)
 }
 
@@ -388,7 +388,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 // 	defer cancel()
 
-// 	gaiaCommand := []string{
+// 	gitopiaCommand := []string{
 // 		gitopiadBinary,
 // 		keysCommand,
 // 		"add",
@@ -399,7 +399,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 	}
 
 // 	var addrRecord AddressResponse
-// 	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
+// 	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
 // 		// Gaiad keys add by default returns payload to stdErr
 // 		if err := json.Unmarshal(stdErr, &addrRecord); err != nil {
 // 			return false
@@ -414,7 +414,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 // 	defer cancel()
 
-// 	gaiaCommand := []string{
+// 	gitopiaCommand := []string{
 // 		gitopiadBinary,
 // 		keysCommand,
 // 		"list",
@@ -423,7 +423,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 // 		"--output=json",
 // 	}
 
-// 	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, func([]byte, []byte) bool {
+// 	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, func([]byte, []byte) bool {
 // 		return true
 // 	})
 // }
@@ -435,7 +435,7 @@ func (s *IntegrationTestSuite) execDelegate(c *chain, valIdx int, amount, valOpe
 
 	s.T().Logf("Executing gaiad tx staking delegate %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -452,7 +452,7 @@ func (s *IntegrationTestSuite) execDelegate(c *chain, valIdx int, amount, valOpe
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully delegated %s to %s", delegatorAddr, amount, valOperAddress)
 }
 
@@ -462,7 +462,7 @@ func (s *IntegrationTestSuite) execUnbondDelegation(c *chain, valIdx int, amount
 
 	s.T().Logf("Executing gaiad tx staking unbond %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -479,7 +479,7 @@ func (s *IntegrationTestSuite) execUnbondDelegation(c *chain, valIdx int, amount
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully undelegated %s to %s", delegatorAddr, amount, valOperAddress)
 }
 
@@ -489,7 +489,7 @@ func (s *IntegrationTestSuite) execCancelUnbondingDelegation(c *chain, valIdx in
 
 	s.T().Logf("Executing gaiad tx staking cancel-unbond %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -506,7 +506,7 @@ func (s *IntegrationTestSuite) execCancelUnbondingDelegation(c *chain, valIdx in
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully canceled unbonding %s to %s", delegatorAddr, amount, valOperAddress)
 }
 
@@ -518,7 +518,7 @@ func (s *IntegrationTestSuite) execRedelegate(c *chain, valIdx int, amount, orig
 
 	s.T().Logf("Executing gaiad tx staking redelegate %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -536,7 +536,7 @@ func (s *IntegrationTestSuite) execRedelegate(c *chain, valIdx int, amount, orig
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully redelegated %s from %s to %s", delegatorAddr, amount, originalValOperAddress, newValOperAddress)
 }
 
@@ -551,8 +551,8 @@ func (s *IntegrationTestSuite) getLatestBlockHeight(c *chain, valIdx int) int {
 	}
 
 	var currentHeight int
-	gaiaCommand := []string{gitopiadBinary, "status"}
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
+	gitopiaCommand := []string{gitopiadBinary, "status"}
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
 		var (
 			err   error
 			block syncInfo
@@ -590,7 +590,7 @@ func (s *IntegrationTestSuite) execSetWithdrawAddress(
 	defer cancel()
 
 	s.T().Logf("Setting distribution withdrawal address on chain %s for %s to %s", c.id, delegatorAddress, newWithdrawalAddress)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		distributiontypes.ModuleName,
@@ -605,7 +605,7 @@ func (s *IntegrationTestSuite) execSetWithdrawAddress(
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("Successfully set new distribution withdrawal address for %s to %s", delegatorAddress, newWithdrawalAddress)
 }
 
@@ -620,7 +620,7 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 	defer cancel()
 
 	s.T().Logf("Withdrawing distribution rewards on chain %s for delegator %s from %s validator", c.id, delegatorAddress, validatorAddress)
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		distributiontypes.ModuleName,
@@ -637,11 +637,11 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("Successfully withdrew distribution rewards for delegator %s from validator %s", delegatorAddress, validatorAddress)
 }
 
-func (s *IntegrationTestSuite) executeGaiaTxCommand(ctx context.Context, c *chain, gaiaCommand []string, valIdx int, validation func([]byte, []byte) bool) {
+func (s *IntegrationTestSuite) executeGitopiaTxCommand(ctx context.Context, c *chain, gitopiaCommand []string, valIdx int, validation func([]byte, []byte) bool) {
 	if validation == nil {
 		validation = s.defaultExecValidation(s.chainA, 0)
 	}
@@ -655,7 +655,7 @@ func (s *IntegrationTestSuite) executeGaiaTxCommand(ctx context.Context, c *chai
 		AttachStderr: true,
 		Container:    s.valResources[c.id][valIdx].Container.ID,
 		User:         "nonroot",
-		Cmd:          gaiaCommand,
+		Cmd:          gitopiaCommand,
 	})
 	s.Require().NoError(err)
 
@@ -785,7 +785,7 @@ func (s *IntegrationTestSuite) executeValidatorBond(c *chain, valIdx int, valOpe
 
 	s.T().Logf("Executing gaiad tx staking validator-bond %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -800,7 +800,7 @@ func (s *IntegrationTestSuite) executeValidatorBond(c *chain, valIdx int, valOpe
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully executed validator bond tx to %s", delegatorAddr, valOperAddress)
 }
 
@@ -810,7 +810,7 @@ func (s *IntegrationTestSuite) executeTokenizeShares(c *chain, valIdx int, amoun
 
 	s.T().Logf("Executing gaiad tx staking tokenize-share %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -828,7 +828,7 @@ func (s *IntegrationTestSuite) executeTokenizeShares(c *chain, valIdx int, amoun
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully executed tokenize share tx from %s", delegatorAddr, valOperAddress)
 }
 
@@ -838,7 +838,7 @@ func (s *IntegrationTestSuite) executeRedeemShares(c *chain, valIdx int, amount,
 
 	s.T().Logf("Executing gaiad tx staking redeem-tokens %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -854,7 +854,7 @@ func (s *IntegrationTestSuite) executeRedeemShares(c *chain, valIdx int, amount,
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully executed redeem share tx for %s", delegatorAddr, amount)
 }
 
@@ -864,7 +864,7 @@ func (s *IntegrationTestSuite) executeTransferTokenizeShareRecord(c *chain, valI
 
 	s.T().Logf("Executing gaiad tx staking transfer-tokenize-share-record %s", c.id)
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		stakingtypes.ModuleName,
@@ -880,7 +880,7 @@ func (s *IntegrationTestSuite) executeTransferTokenizeShareRecord(c *chain, valI
 		"-y",
 	}
 
-	s.executeGaiaTxCommand(ctx, c, gaiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 	s.T().Logf("%s successfully executed transfer tokenize share record for %s", owner, recordID)
 }
 
@@ -891,7 +891,7 @@ func (s *IntegrationTestSuite) signTxFileOnline(chain *chain, valIdx int, from s
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	gaiaCommand := []string{
+	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		"sign",
@@ -912,7 +912,7 @@ func (s *IntegrationTestSuite) signTxFileOnline(chain *chain, valIdx int, from s
 		return true
 	}
 
-	s.executeGaiaTxCommand(ctx, chain, gaiaCommand, valIdx, captureOutput)
+	s.executeGitopiaTxCommand(ctx, chain, gitopiaCommand, valIdx, captureOutput)
 	if len(erroutput) > 0 {
 		return nil, fmt.Errorf("failed to sign tx: %s", string(erroutput))
 	}
@@ -947,7 +947,7 @@ func (s *IntegrationTestSuite) broadcastTxFile(chain *chain, valIdx int, from st
 		return true
 	}
 
-	s.executeGaiaTxCommand(ctx, chain, broadcastTxCmd, valIdx, captureOutput)
+	s.executeGitopiaTxCommand(ctx, chain, broadcastTxCmd, valIdx, captureOutput)
 	if len(erroutput) > 0 {
 		return nil, fmt.Errorf("failed to sign tx: %s", string(erroutput))
 	}
