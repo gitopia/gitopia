@@ -5,20 +5,20 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/gitopia/gitopia/v4/app/params"
 	"gopkg.in/yaml.v2"
 )
 
-type DefaultAcc struct {
-	Name     string
-	Address  string
-	Mnemonic string
-}
+// Parameter store keys.
+var (
+	KeyEvaluatorAddress = []byte("EvaluatorAddress")
+	KeyRewardSeries     = []byte("RewardSeries")
+)
 
-var Acc1 = DefaultAcc{
-	"acc1",
-	"gitopia1mnswtu0ueq7xw90u060ccfujvk04e8rv9vc47t",
-	"catch ship moment silk oak kingdom program matrix wire sleep rabbit tank camp sauce heart uncle school letter segment feel mean empower develop short",
+// ParamTable for rewards module.
+func ParamKeyTable() paramtypes.KeyTable {
+	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 // NewParams creates a new Params instance
@@ -30,9 +30,8 @@ func NewParams(evaluatorAddress string, rewardSeries []*RewardPool) Params {
 }
 
 // DefaultParams returns a default set of parameters
-// NOTE: contains sensitive data. DO NOT use in production
 func DefaultParams() Params {
-	return NewParams(Acc1.Address, []*RewardPool{
+	return NewParams("gitopia1mnswtu0ueq7xw90u060ccfujvk04e8rv9vc47t", []*RewardPool{
 		{
 			TotalAmount:   sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1000)),
 			ClaimedAmount: sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
@@ -69,6 +68,14 @@ func DefaultParams() Params {
 			Series:        Series_SEVEN,
 		},
 	})
+}
+
+// ParamSetPairs get the params.ParamSet
+func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
+	return paramtypes.ParamSetPairs{
+		paramtypes.NewParamSetPair(KeyEvaluatorAddress, &p.EvaluatorAddress, validateEvaluatorAddress),
+		paramtypes.NewParamSetPair(KeyRewardSeries, &p.RewardSeries, validateRewardSeries),
+	}
 }
 
 // validate params

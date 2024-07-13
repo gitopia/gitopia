@@ -38,6 +38,7 @@ import (
 	"github.com/gitopia/gitopia/v4/app/keepers"
 	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
 	"github.com/gitopia/gitopia/v4/app/upgrades"
+	v4 "github.com/gitopia/gitopia/v4/app/upgrades/v4"
 	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/v4/x/rewards/types"
 	"github.com/spf13/cast"
@@ -65,6 +66,7 @@ var (
 			UpgradeName:          "v3.3.0",
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
+		v4.Upgrade,
 	}
 )
 
