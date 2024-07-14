@@ -9,6 +9,8 @@ import (
 	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
 
 	tmcfg "github.com/cometbft/cometbft/config"
+	"github.com/cometbft/cometbft/crypto"
+	"github.com/cometbft/cometbft/libs/bytes"
 	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -32,9 +34,11 @@ import (
 	genutil "github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	gitopia "github.com/gitopia/gitopia/v4/app"
 	"github.com/gitopia/gitopia/v4/app/params"
 	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
+	v4 "github.com/gitopia/gitopia/v4/app/upgrades/v4"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
@@ -147,6 +151,7 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 	)
 
 	server.AddCommands(rootCmd, gitopia.DefaultNodeHome, newApp, createGitopiaAppAndExport, addModuleInitFlags)
+	server.AddTestnetCreatorCommand(rootCmd, gitopia.DefaultNodeHome, newTestnetApp, addModuleInitFlags)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
@@ -251,11 +256,8 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 
 		chainID = appGenesis.ChainID
 	}
-	return gitopia.NewGitopiaApp(
-		logger, db, traceStore, true, skipUpgradeHeights,
-		cast.ToString(appOpts.Get(flags.FlagHome)),
-		gitopiaappparams.EncodingConfig(gitopia.MakeEncodingConfig()), // Ideally, we would reuse the one created by NewRootCmd.
-		appOpts,
+
+	baseAppOptions := []func(*baseapp.BaseApp){
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
@@ -270,7 +272,53 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts serverty
 			KeepRecent: cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
 		}),
 		baseapp.SetChainID(chainID),
+	}
+
+	// If this is an in place testnet, set any new stores that may exist
+	if cast.ToBool(appOpts.Get(server.KeyIsTestnet)) {
+		version := store.NewCommitMultiStore(db).LatestVersion() + 1
+		fmt.Println("version", version)
+		baseAppOptions = append(baseAppOptions, baseapp.SetStoreLoader(upgradetypes.UpgradeStoreLoader(version, &v4.Upgrade.StoreUpgrades)))
+	}
+
+	return gitopia.NewGitopiaApp(
+		logger, db, traceStore, true, skipUpgradeHeights,
+		cast.ToString(appOpts.Get(flags.FlagHome)),
+		gitopiaappparams.EncodingConfig(gitopia.MakeEncodingConfig()), // Ideally, we would reuse the one created by NewRootCmd.
+		appOpts,
+		baseAppOptions...,
 	)
+}
+
+// newTestnetApp starts by running the normal newApp method. From there, the app interface returned is modified in order
+// for a testnet to be created from the provided app.
+func newTestnetApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {
+	// Create an app and type cast to an GitopiaApp
+	app := newApp(logger, db, traceStore, appOpts)
+	gitopiaApp, ok := app.(*gitopia.GitopiaApp)
+	if !ok {
+		panic("app created from newApp is not of type gitopiaApp")
+	}
+
+	newValAddr, ok := appOpts.Get(server.KeyNewValAddr).(bytes.HexBytes)
+	if !ok {
+		panic("newValAddr is not of type bytes.HexBytes")
+	}
+	newValPubKey, ok := appOpts.Get(server.KeyUserPubKey).(crypto.PubKey)
+	if !ok {
+		panic("newValPubKey is not of type crypto.PubKey")
+	}
+	newOperatorAddress, ok := appOpts.Get(server.KeyNewOpAddr).(string)
+	if !ok {
+		panic("newOperatorAddress is not of type string")
+	}
+	upgradeToTrigger, ok := appOpts.Get(server.KeyTriggerTestnetUpgrade).(string)
+	if !ok {
+		panic("upgradeToTrigger is not of type string")
+	}
+
+	// Make modifications to the normal GitopiaApp required to run the network locally
+	return gitopia.InitGitopiaAppForTestnet(gitopiaApp, newValAddr, newValPubKey, newOperatorAddress, upgradeToTrigger)
 }
 
 func createGitopiaAppAndExport(
