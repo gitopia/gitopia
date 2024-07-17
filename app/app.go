@@ -253,10 +253,7 @@ func (app *GitopiaApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) a
 		panic(err)
 	}
 	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
-	// Set genesis_time in params
-	gitopiaParams := app.GitopiaKeeper.GetParams(ctx)
-	gitopiaParams.GenesisTime = req.Time
-	app.GitopiaKeeper.SetParams(ctx, gitopiaParams)
+
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
 

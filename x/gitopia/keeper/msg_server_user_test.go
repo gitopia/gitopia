@@ -179,7 +179,7 @@ func TestUserMsgServerUpdatePinnedRepositories(t *testing.T) {
 	}{
 		{
 			desc:    "Completed",
-			request: &types.MsgUpdateUserPinnedRepositories{Creator: creator, RepositoryId: 123},
+			request: &types.MsgUpdateUserPinnedRepositories{Creator: creator, RepositoryId: 0},
 		},
 		{
 			desc:    "KeyNotFound",
@@ -190,6 +190,9 @@ func TestUserMsgServerUpdatePinnedRepositories(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			srv, ctx := setupMsgServer(t)
 			_, err := srv.CreateUser(ctx, &types.MsgCreateUser{Creator: creator, Username: creator})
+			require.NoError(t, err)
+
+			_, err = srv.CreateRepository(ctx, &types.MsgCreateRepository{Creator: creator, Name: "repository", Owner: creator})
 			require.NoError(t, err)
 
 			_, err = srv.UpdateUserPinnedRepositories(ctx, tc.request)

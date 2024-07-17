@@ -30,6 +30,7 @@ func TestRewardsMsgServerCreate(t *testing.T) {
 			Creator:   creator,
 			Recipient: strconv.Itoa(i),
 			Amount:    sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)),
+			Series:    types.Series_ONE,
 		}
 		_, err := srv.CreateReward(wctx, expected)
 		require.NoError(t, err)

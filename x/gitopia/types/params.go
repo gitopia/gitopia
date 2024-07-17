@@ -171,7 +171,7 @@ func validateGenesisTime(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
-	if v.Before(time.Now().UTC()) {
+	if v.After(time.Now().UTC()) {
 		return fmt.Errorf("genesis time must be in the past. got %s", v)
 	}
 
