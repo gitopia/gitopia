@@ -126,6 +126,8 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 	)
 	appKeepers.DistrKeeper = &distrKeeper
 
+	distrKeeper.SetFeePool(ctx, distrtypes.InitialFeePool())
+
 	appKeepers.GitopiaKeeper = *keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		keys[types.StoreKey],
