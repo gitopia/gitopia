@@ -13,6 +13,7 @@ var (
 	runStakingAndDistributionTest = true
 	runVestingTest                = true
 	runRestInterfacesTest         = true
+	runGitopiaTest                = true
 )
 
 func (s *IntegrationTestSuite) TestRestInterfaces() {
@@ -99,4 +100,11 @@ func (s *IntegrationTestSuite) TestVesting() {
 	s.testDelayedVestingAccount(chainAAPI)
 	s.testContinuousVestingAccount(chainAAPI)
 	// s.testPeriodicVestingAccount(chainAAPI) TODO: add back when v0.45 adds the missing CLI command.
+}
+
+func (s *IntegrationTestSuite) TestGitopia() {
+	if !runGitopiaTest {
+		s.T().Skip()
+	}
+	s.testGitopiaCreateRepository()
 }

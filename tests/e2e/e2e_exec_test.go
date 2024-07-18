@@ -22,6 +22,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 const (
@@ -76,7 +77,7 @@ func (s *IntegrationTestSuite) execEncode(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing gaiad encoding with %v", c.id, txPath)
+	s.T().Logf("%s - Executing gitopiad encoding with %v", c.id, txPath)
 	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
@@ -108,7 +109,7 @@ func (s *IntegrationTestSuite) execDecode(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing gaiad decoding with %v", c.id, txPath)
+	s.T().Logf("%s - Executing gitopiad decoding with %v", c.id, txPath)
 	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
@@ -142,7 +143,7 @@ func (s *IntegrationTestSuite) execVestingTx( //nolint:unused
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("%s - Executing gaiad %s with %v", c.id, method, args)
+	s.T().Logf("%s - Executing gitopiad %s with %v", c.id, method, args)
 	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
@@ -167,7 +168,7 @@ func (s *IntegrationTestSuite) execCreatePeriodicVestingAccount( //nolint:unused
 	jsonPath string,
 	opt ...flagOption,
 ) {
-	s.T().Logf("Executing gaiad create periodic vesting account %s", c.id)
+	s.T().Logf("Executing gitopiad create periodic vesting account %s", c.id)
 	s.execVestingTx(c, "create-periodic-vesting-account", []string{address, jsonPath}, opt...)
 	s.T().Logf("successfully created periodic vesting account %s with %s", address, jsonPath)
 }
@@ -180,7 +181,7 @@ func (s *IntegrationTestSuite) execUnjail(
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad slashing unjail %s with options: %v", c.id, opt)
+	s.T().Logf("Executing gitopiad slashing unjail %s with options: %v", c.id, opt)
 	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
@@ -332,7 +333,7 @@ func (s *IntegrationTestSuite) execDistributionFundCommunityPool(c *chain, valId
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx distribution fund-community-pool on chain %s", c.id)
+	s.T().Logf("Executing gitopiad tx distribution fund-community-pool on chain %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -378,7 +379,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 	}
 
 	gitopiaCommand = concatFlags(gitopiaCommand, proposalFlags, generalFlags)
-	s.T().Logf("Executing gaiad tx gov %s on chain %s", govCommand, c.id)
+	s.T().Logf("Executing gitopiad tx gov %s on chain %s", govCommand, c.id)
 	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, validateResponse)
 	s.T().Logf("Successfully executed %s", govCommand)
 }
@@ -400,7 +401,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 
 // 	var addrRecord AddressResponse
 // 	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, func(stdOut []byte, stdErr []byte) bool {
-// 		// Gaiad keys add by default returns payload to stdErr
+// 		// gitopiad keys add by default returns payload to stdErr
 // 		if err := json.Unmarshal(stdErr, &addrRecord); err != nil {
 // 			return false
 // 		}
@@ -433,7 +434,7 @@ func (s *IntegrationTestSuite) execDelegate(c *chain, valIdx int, amount, valOpe
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking delegate %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking delegate %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -460,7 +461,7 @@ func (s *IntegrationTestSuite) execUnbondDelegation(c *chain, valIdx int, amount
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking unbond %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking unbond %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -487,7 +488,7 @@ func (s *IntegrationTestSuite) execCancelUnbondingDelegation(c *chain, valIdx in
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking cancel-unbond %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking cancel-unbond %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -516,7 +517,7 @@ func (s *IntegrationTestSuite) execRedelegate(c *chain, valIdx int, amount, orig
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking redelegate %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking redelegate %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -731,7 +732,7 @@ func (s *IntegrationTestSuite) expectErrExecValidation(chain *chain, valIdx int,
 		// wait for the tx to be committed on chain
 		s.Require().Eventuallyf(
 			func() bool {
-				gotErr := queryGaiaTx(endpoint, txResp.TxHash) != nil
+				gotErr := queryGitopiaTx(endpoint, txResp.TxHash) != nil
 				return gotErr == expectErr
 			},
 			time.Minute,
@@ -753,7 +754,7 @@ func (s *IntegrationTestSuite) defaultExecValidation(chain *chain, valIdx int) f
 			endpoint := fmt.Sprintf("http://%s", s.valResources[chain.id][valIdx].GetHostPort("1317/tcp"))
 			s.Require().Eventually(
 				func() bool {
-					return queryGaiaTx(endpoint, txResp.TxHash) == nil
+					return queryGitopiaTx(endpoint, txResp.TxHash) == nil
 				},
 				time.Minute,
 				5*time.Second,
@@ -783,7 +784,7 @@ func (s *IntegrationTestSuite) executeValidatorBond(c *chain, valIdx int, valOpe
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking validator-bond %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking validator-bond %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -808,7 +809,7 @@ func (s *IntegrationTestSuite) executeTokenizeShares(c *chain, valIdx int, amoun
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking tokenize-share %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking tokenize-share %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -836,7 +837,7 @@ func (s *IntegrationTestSuite) executeRedeemShares(c *chain, valIdx int, amount,
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking redeem-tokens %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking redeem-tokens %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -862,7 +863,7 @@ func (s *IntegrationTestSuite) executeTransferTokenizeShareRecord(c *chain, valI
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("Executing gaiad tx staking transfer-tokenize-share-record %s", c.id)
+	s.T().Logf("Executing gitopiad tx staking transfer-tokenize-share-record %s", c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
@@ -952,4 +953,59 @@ func (s *IntegrationTestSuite) broadcastTxFile(chain *chain, valIdx int, from st
 		return nil, fmt.Errorf("failed to sign tx: %s", string(erroutput))
 	}
 	return output, nil
+}
+
+func (s *IntegrationTestSuite) execGitopiaCreateUser(c *chain, valIdx int, address, username string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	s.T().Logf("creating user %s on chain %s", address, c.id)
+
+	gitopiaCommand := []string{
+		gitopiadBinary,
+		txCommand,
+		gitopiatypes.ModuleName,
+		"create-user",
+		username,
+		username,
+		"https://example.com/images/profile.jpg",
+		"bio",
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, address),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
+		"--keyring-backend=test",
+		"--output=json",
+		"-y",
+	}
+
+	s.T().Logf("creating user on chain: %s - Tx %v", c.id, gitopiaCommand)
+
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+}
+
+func (s *IntegrationTestSuite) execGitopiaCreateRepository(c *chain, valIdx int, owner, repositoryName string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	s.T().Logf("%s creating repository %s on chain %s", owner, repositoryName, c.id)
+
+	gitopiaCommand := []string{
+		gitopiadBinary,
+		txCommand,
+		gitopiatypes.ModuleName,
+		"create-repository",
+		repositoryName,
+		owner,
+		"description",
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, owner),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
+		"--keyring-backend=test",
+		"--output=json",
+		"-y",
+	}
+
+	s.T().Logf("creating repository on chain: %s - Tx %v", c.id, gitopiaCommand)
+
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
 }

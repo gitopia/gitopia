@@ -233,7 +233,7 @@ func (s *IntegrationTestSuite) testIBCTokenTransfer() {
 
 		s.Require().Eventually(
 			func() bool {
-				balances, err = queryGaiaAllBalances(chainBAPIEndpoint, recipient)
+				balances, err = queryGitopiaAllBalances(chainBAPIEndpoint, recipient)
 				s.Require().NoError(err)
 				return balances.Len() != 0
 			},
@@ -255,7 +255,7 @@ func (s *IntegrationTestSuite) testIBCTokenTransfer() {
 
 		s.Require().Eventually(
 			func() bool {
-				balances, err = queryGaiaAllBalances(chainBAPIEndpoint, recipient)
+				balances, err = queryGitopiaAllBalances(chainBAPIEndpoint, recipient)
 				s.Require().NoError(err)
 				return balances.Len() != 0
 			},

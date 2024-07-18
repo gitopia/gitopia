@@ -18,9 +18,10 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
-func queryGaiaTx(endpoint, txHash string) error {
+func queryGitopiaTx(endpoint, txHash string) error {
 	resp, err := http.Get(fmt.Sprintf("%s/cosmos/tx/v1beta1/txs/%s", endpoint, txHash))
 	if err != nil {
 		return fmt.Errorf("failed to execute HTTP request: %w", err)
@@ -47,7 +48,7 @@ func queryGaiaTx(endpoint, txHash string) error {
 
 // if coin is zero, return empty coin.
 func getSpecificBalance(endpoint, addr, denom string) (amt sdk.Coin, err error) {
-	balances, err := queryGaiaAllBalances(endpoint, addr)
+	balances, err := queryGitopiaAllBalances(endpoint, addr)
 	if err != nil {
 		return amt, err
 	}
@@ -60,7 +61,7 @@ func getSpecificBalance(endpoint, addr, denom string) (amt sdk.Coin, err error) 
 	return amt, nil
 }
 
-func queryGaiaAllBalances(endpoint, addr string) (sdk.Coins, error) {
+func queryGitopiaAllBalances(endpoint, addr string) (sdk.Coins, error) {
 	body, err := httpGet(fmt.Sprintf("%s/cosmos/bank/v1beta1/balances/%s", endpoint, addr))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP request: %w", err)
@@ -297,4 +298,18 @@ func queryICAAccountAddress(endpoint, owner, connectionID string) (string, error
 	}
 
 	return icaAccountResp.Address, nil
+}
+
+func queryGitopiaRepository(endpoint, owner, repositoryName string) (gitopiatypes.QueryGetAnyRepositoryResponse, error) {
+	body, err := httpGet(fmt.Sprintf("%s/gitopia/gitopia/gitopia/user/%s/repository/%s", endpoint, owner, repositoryName))
+	if err != nil {
+		return gitopiatypes.QueryGetAnyRepositoryResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
+	}
+
+	var repositoryResp gitopiatypes.QueryGetAnyRepositoryResponse
+	if err := cdc.UnmarshalJSON(body, &repositoryResp); err != nil {
+		return gitopiatypes.QueryGetAnyRepositoryResponse{}, err
+	}
+
+	return repositoryResp, nil
 }

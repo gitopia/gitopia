@@ -161,7 +161,7 @@ func (s *IntegrationTestSuite) submitLegacyGovProposal(chainAAPIEndpoint, sender
 
 // NOTE: in SDK >= v0.47 the submit-proposal does not have a --deposit flag
 // Instead, the depoist is added to the "deposit" field of the proposal JSON (usually stored as a file)
-// you can use `gaiad tx gov draft-proposal` to create a proposal file that you can use
+// you can use `gitopiad tx gov draft-proposal` to create a proposal file that you can use
 // min initial deposit of 100ulore is required in e2e tests, otherwise the proposal would be dropped
 //
 //nolint:unparam

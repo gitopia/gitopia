@@ -68,7 +68,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 
 		s.Require().Eventually(
 			func() bool {
-				icaAccountBalances, err = queryGaiaAllBalances(chainBAPIEndpoint, icaAccount)
+				icaAccountBalances, err = queryGitopiaAllBalances(chainBAPIEndpoint, icaAccount)
 				s.Require().NoError(err)
 				return icaAccountBalances.Len() != 0
 			},
@@ -90,7 +90,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 
 		s.Require().Eventually(
 			func() bool {
-				recipientBalances, err = queryGaiaAllBalances(chainBAPIEndpoint, recipientB)
+				recipientBalances, err = queryGitopiaAllBalances(chainBAPIEndpoint, recipientB)
 				s.Require().NoError(err)
 				return recipientBalances.Len() != 0
 			},
@@ -116,7 +116,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 
 		s.Require().Eventually(
 			func() bool {
-				recipientBalances, err = queryGaiaAllBalances(chainBAPIEndpoint, recipientB)
+				recipientBalances, err = queryGitopiaAllBalances(chainBAPIEndpoint, recipientB)
 				s.Require().NoError(err)
 				return recipientBalances.Len() != 0
 			},
