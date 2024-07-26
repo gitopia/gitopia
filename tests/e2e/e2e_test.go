@@ -3,17 +3,18 @@ package e2e
 import "fmt"
 
 var (
-	runBankTest                   = true
-	runEncodeTest                 = true
-	runEvidenceTest               = true
-	runFeeGrantTest               = true
-	runGovTest                    = true
-	runIBCTest                    = true
-	runSlashingTest               = true
-	runStakingAndDistributionTest = true
-	runVestingTest                = true
-	runRestInterfacesTest         = true
-	runGitopiaTest                = true
+	runBankTest                     = true
+	runEncodeTest                   = true
+	runEvidenceTest                 = true
+	runFeeGrantTest                 = true
+	runGovTest                      = true
+	runIBCTest                      = true
+	runSlashingTest                 = true
+	runStakingAndDistributionTest   = true
+	runVestingTest                  = true
+	runRestInterfacesTest           = true
+	runGitopiaTest                  = true
+	runGitopiaOsmosisIBCUpgradeTest = true
 )
 
 func (s *IntegrationTestSuite) TestRestInterfaces() {
@@ -107,4 +108,12 @@ func (s *IntegrationTestSuite) TestGitopia() {
 		s.T().Skip()
 	}
 	s.testGitopiaCreateRepository()
+}
+
+func (s *IntegrationTestSuite) TestGitopiaOsmosisIBC() {
+	if !runGitopiaOsmosisIBCUpgradeTest {
+		s.T().Skip()
+	}
+	// s.testIBCOsmosisTokenTransfer()
+	s.TestGitopiaOsmosisIBCUpgrade()
 }

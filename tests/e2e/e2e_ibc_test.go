@@ -50,7 +50,7 @@ func (s *IntegrationTestSuite) sendIBC(c *chain, valIdx int, sender, recipient, 
 		"--output=json",
 		"-y",
 	}
-	s.T().Logf("sending %s from %s (%s) to %s (%s) with memo %s", token, s.chainA.id, sender, s.chainB.id, recipient, note)
+	s.T().Logf("sending %s from %s (%s) to localosmosis (%s) with memo %s", token, c.id, sender, recipient, note)
 	if expErr {
 		s.executeGitopiaTxCommand(ctx, c, ibcCmd, valIdx, s.expectErrExecValidation(c, valIdx, true))
 		s.T().Log("unsuccessfully sent IBC tokens")
@@ -95,8 +95,8 @@ type RelayerPacketsOutput struct {
 	Status string `json:"status"`
 }
 
-func (s *IntegrationTestSuite) createConnection() {
-	s.T().Logf("connecting %s and %s chains via IBC", s.chainA.id, s.chainB.id)
+func (s *IntegrationTestSuite) createConnection(aChainId, bChainId string) {
+	s.T().Logf("connecting %s and %s chains via IBC", aChainId, bChainId)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
@@ -107,19 +107,19 @@ func (s *IntegrationTestSuite) createConnection() {
 		"create",
 		"connection",
 		"--a-chain",
-		s.chainA.id,
+		aChainId,
 		"--b-chain",
-		s.chainB.id,
+		bChainId,
 	}
 
 	_, err := s.executeHermesCommand(ctx, hermesCmd)
 	s.Require().NoError(err, "failed to connect chains: %s", err)
 
-	s.T().Logf("connected %s and %s chains via IBC", s.chainA.id, s.chainB.id)
+	s.T().Logf("connected %s and %s chains via IBC", aChainId, bChainId)
 }
 
-func (s *IntegrationTestSuite) createChannel() {
-	s.T().Logf("creating IBC transfer channel created between chains %s and %s", s.chainA.id, s.chainB.id)
+func (s *IntegrationTestSuite) createChannel(aChainId, bChainId string) {
+	s.T().Logf("creating IBC transfer channel created between chains %s and %s", aChainId, bChainId)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
@@ -128,7 +128,7 @@ func (s *IntegrationTestSuite) createChannel() {
 		"--json",
 		"create",
 		"channel",
-		"--a-chain", s.chainA.id,
+		"--a-chain", aChainId,
 		"--a-connection", "connection-0",
 		"--a-port", "transfer",
 		"--b-port", "transfer",
@@ -139,7 +139,7 @@ func (s *IntegrationTestSuite) createChannel() {
 	_, err := s.executeHermesCommand(ctx, hermesCmd)
 	s.Require().NoError(err, "failed to create IBC transfer channel between chains: %s", err)
 
-	s.T().Logf("IBC transfer channel created between chains %s and %s", s.chainA.id, s.chainB.id)
+	s.T().Logf("IBC transfer channel created between chains %s and %s", aChainId, bChainId)
 }
 
 // This function will complete the channel handshake in cases when ChanOpenInit was initiated

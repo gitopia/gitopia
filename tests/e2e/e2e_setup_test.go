@@ -59,7 +59,7 @@ const (
 	// global fee lower/higher than min_gas_price
 	initialBaseFeeAmt               = "0.005"
 	gas                             = 200000
-	govProposalBlockBuffer          = 35
+	govProposalBlockBuffer          = 100
 	relayerAccountIndexHermes       = 0
 	numberOfEvidences               = 10
 	slashingShares            int64 = 10000
@@ -80,19 +80,20 @@ const (
 	transferPort              = "transfer"
 	transferChannel           = "channel-0"
 
-	govAuthority = "cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn"
+	govAuthority = "gitopia10d07y265gmmuvt4z0w9aw880jnsr700jy65jes"
 )
 
 var (
 	gaiaConfigPath    = filepath.Join(gitopiaHomePath, "config")
 	stakingAmount     = sdk.NewInt(100000000000)
 	stakingAmountCoin = sdk.NewCoin(uloreDenom, stakingAmount)
-	tokenAmount       = sdk.NewCoin(uloreDenom, sdk.NewInt(3300000000)) // 3,300ulore
+	tokenAmount       = sdk.NewCoin(uloreDenom, sdk.NewInt(3300000000)) // 3,300lore
 	standardFees      = sdk.NewCoin(uloreDenom, sdk.NewInt(330000))     // 0.33ulore
-	depositAmount     = sdk.NewCoin(uloreDenom, sdk.NewInt(330000000))  // 3,300ulore
+	depositAmount     = sdk.NewCoin(uloreDenom, sdk.NewInt(10000000))   // 10lore
 	distModuleAddress = authtypes.NewModuleAddress(distrtypes.ModuleName).String()
 	govModuleAddress  = authtypes.NewModuleAddress(govtypes.ModuleName).String()
 	proposalCounter   = 0
+	gasPrices         = "0.001ulore"
 )
 
 type IntegrationTestSuite struct {
@@ -101,6 +102,7 @@ type IntegrationTestSuite struct {
 	tmpDirs        []string
 	chainA         *chain
 	chainB         *chain
+	chainC         *chain
 	dkrPool        *dockertest.Pool
 	dkrNet         *dockertest.Network
 	hermesResource *dockertest.Resource
@@ -129,6 +131,9 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.chainB, err = newChain()
 	s.Require().NoError(err)
 
+	s.chainC, err = newChain()
+	s.Require().NoError(err)
+
 	s.dkrPool, err = dockertest.NewPool("")
 	s.Require().NoError(err)
 
@@ -154,16 +159,24 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.initNodes(s.chainA)
 	s.initGenesis(s.chainA, vestingMnemonic, jailedValMnemonic)
 	s.initValidatorConfigs(s.chainA)
-	s.runValidators(s.chainA, 0)
+	s.runValidators(s.chainA, 10)
 
 	s.T().Logf("starting e2e infrastructure for chain B; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
 	s.initNodes(s.chainB)
 	s.initGenesis(s.chainB, vestingMnemonic, jailedValMnemonic)
 	s.initValidatorConfigs(s.chainB)
-	s.runValidators(s.chainB, 10)
+	s.runValidators(s.chainB, 20)
 
 	time.Sleep(10 * time.Second)
 	s.runIBCRelayer()
+
+	node := s.chainC.createValidator(0)
+	s.chainC.validators = append(s.chainC.validators, node)
+	s.runGitopiaV3(s.chainC, 30)
+
+	s.connectOsmosisValidator()
+
+	s.runGitopiaOsmosisIBCRelayer(s.chainC)
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {
@@ -186,10 +199,17 @@ func (s *IntegrationTestSuite) TearDownSuite() {
 		}
 	}
 
+	// remove osmosis validator from network
+	err := s.dkrPool.Client.DisconnectNetwork(s.dkrNet.Network.ID, docker.NetworkConnectionOptions{
+		Container: "localosmosis-osmosisd-1",
+	})
+	s.Require().NoError(err)
+
 	s.Require().NoError(s.dkrPool.RemoveNetwork(s.dkrNet))
 
 	os.RemoveAll(s.chainA.dataDir)
 	os.RemoveAll(s.chainB.dataDir)
+	os.RemoveAll(s.chainC.dataDir)
 
 	for _, td := range s.tmpDirs {
 		os.RemoveAll(td)
@@ -593,7 +613,145 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 		},
 		5*time.Minute,
 		time.Second,
-		"Gaia node failed to produce blocks",
+		"Gitopia node failed to produce blocks",
+	)
+}
+
+func (s *IntegrationTestSuite) runGitopiaV3(c *chain, portOffset int) {
+	s.T().Logf("starting Gitopia %s containers...", c.id)
+
+	instanceName := fmt.Sprintf("%s-gitopia-00", c.id)
+	configDir := fmt.Sprintf("%s/%s", c.configDir(), instanceName)
+
+	runOpts := &dockertest.RunOptions{
+		Name:      instanceName,
+		NetworkID: s.dkrNet.Network.ID,
+		Mounts: []string{
+			fmt.Sprintf("%s/:%s", configDir, gitopiaHomePath),
+		},
+		Repository: "gitopia/gitopiad-e2e",
+		Tag:        "v3.3.0",
+		Env: []string{
+			fmt.Sprintf("CHAIN_ID=%s", c.id),
+		},
+		Entrypoint: []string{
+			"sh",
+			"-c",
+			fmt.Sprintf("chmod +x %s/scripts/setup_chain.sh && %s/scripts/setup_chain.sh && tail -f /dev/null", gitopiaHomePath, gitopiaHomePath),
+		},
+	}
+
+	p := path.Join(configDir, "scripts")
+	s.Require().NoError(os.MkdirAll(p, 0o755))
+	s.Require().NoError(exec.Command("cp", "scripts/setup_chain.sh", p).Run()) //nolint:gosec // this is a test
+
+	s.Require().NoError(exec.Command("chmod", "-R", "0777", configDir).Run()) //nolint:gosec // this is a test
+
+	// expose the validator for debugging and communication
+	runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
+		"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
+		"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
+		"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
+		"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
+		"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
+		"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
+		"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
+		"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
+		"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
+		"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
+	}
+
+	resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+	s.Require().NoError(err)
+
+	s.valResources[c.id] = make([]*dockertest.Resource, 1)
+	s.valResources[c.id][0] = resource
+	s.T().Logf("started Gitopia %s validator container: %s", c.id, resource.Container.ID)
+
+	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
+	s.Require().NoError(err)
+
+	s.Require().Eventually(
+		func() bool {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+			defer cancel()
+
+			status, err := rpcClient.Status(ctx)
+			if err != nil {
+				return false
+			}
+
+			// let the node produce a few blocks
+			if status.SyncInfo.CatchingUp || status.SyncInfo.LatestBlockHeight < 3 {
+				return false
+			}
+			return true
+		},
+		5*time.Minute,
+		time.Second,
+		"Gitopia node failed to produce blocks",
+	)
+}
+
+// runValidatorWithUpgradedBinary resumes the validator with the upgraded binary.
+func (s *IntegrationTestSuite) runValidatorWithUpgradedBinary(c *chain, portOffset, upgradeHeight int) {
+	s.T().Logf("resuming Gitopia %s validator with upgraded binary...", c.id)
+
+	instanceName := fmt.Sprintf("%s-gitopia-00", c.id)
+	configDir := fmt.Sprintf("%s/%s", c.configDir(), instanceName)
+
+	runOpts := &dockertest.RunOptions{
+		Name:      instanceName,
+		NetworkID: s.dkrNet.Network.ID,
+		Mounts: []string{
+			fmt.Sprintf("%s/:%s", configDir, gitopiaHomePath),
+		},
+		Repository: "gitopia/gitopiad-e2e",
+	}
+
+	s.Require().NoError(exec.Command("chmod", "-R", "0777", configDir).Run()) //nolint:gosec // this is a test
+
+	runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
+		"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
+		"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
+		"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
+		"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
+		"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
+		"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
+		"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
+		"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
+		"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
+		"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
+	}
+
+	resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+	s.Require().NoError(err)
+
+	s.valResources[c.id][0] = resource
+	s.T().Logf("resumeded Gitopia %s validator container with upgraded binary: %s", c.id, resource.Container.ID)
+
+	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
+	s.Require().NoError(err)
+
+	s.Require().Eventually(
+		func() bool {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+			defer cancel()
+
+			status, err := rpcClient.Status(ctx)
+			if err != nil {
+				return false
+			}
+
+			// let the node produce a few blocks after upgrade height
+			if status.SyncInfo.CatchingUp || status.SyncInfo.LatestBlockHeight < int64(upgradeHeight)+3 {
+				return false
+			}
+			return true
+		},
+		5*time.Minute,
+		time.Second,
+		"Gitopia node failed to produce blocks",
 	)
 }
 
@@ -667,9 +825,81 @@ func (s *IntegrationTestSuite) runIBCRelayer() {
 	// transport errors.
 	time.Sleep(10 * time.Second)
 
-	// create the client, connection and channel between the two Gaia chains
-	s.createConnection()
-	s.createChannel()
+	// create the client, connection and channel between the two Gitopia chains
+	s.createConnection(s.chainA.id, s.chainB.id)
+	s.createChannel(s.chainA.id, s.chainB.id)
+}
+
+// runGitopiaOsmosisIBCRelayer bootstraps an IBC Hermes relayer by creating an IBC connection and
+// a transfer channel between chainA and Osmosis localnet.
+func (s *IntegrationTestSuite) runGitopiaOsmosisIBCRelayer(c *chain) {
+	s.T().Log("starting Hermes relayer container")
+
+	tmpDir, err := os.MkdirTemp("", "gitopia-e2e-testnet-hermes-")
+	s.Require().NoError(err)
+	s.tmpDirs = append(s.tmpDirs, tmpDir)
+
+	hermesCfgPath := path.Join(tmpDir, "hermes")
+
+	s.Require().NoError(os.MkdirAll(hermesCfgPath, 0o755))
+	_, err = copyFile(
+		filepath.Join("./scripts/", "hermes_bootstrap_osmosis.sh"),
+		filepath.Join(hermesCfgPath, "hermes_bootstrap_osmosis.sh"),
+	)
+	s.Require().NoError(err)
+
+	s.hermesResource, err = s.dkrPool.RunWithOptions(
+		&dockertest.RunOptions{
+			Name:       fmt.Sprintf("%s-osmosis-relayer", c.id),
+			Repository: "gitopia/hermes-e2e",
+			Tag:        "1.0.0",
+			NetworkID:  s.dkrNet.Network.ID,
+			Mounts: []string{
+				fmt.Sprintf("%s/:/root/hermes", hermesCfgPath),
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"3031/tcp": {{HostIP: "", HostPort: "3031"}},
+			},
+			Env: []string{
+				fmt.Sprintf("GITOPIA_A_E2E_CHAIN_ID=%s", c.id),
+				"OSMOSIS_E2E_CHAIN_ID=localosmosis",
+				"GITOPIA_A_E2E_RLY_MNEMONIC=firm easily muscle barely tank lens aunt phrase net bean void picnic soap uphold level civil motor acquire runway evil poverty staff fog dinosaur",
+				"OSMOSIS_E2E_RLY_MNEMONIC=bottom loan skill merry east cradle onion journey palm apology verb edit desert impose absurd oil bubble sweet glove shallow size build burst effort",
+				fmt.Sprintf("GITOPIA_A_E2E_VAL_HOST=%s", s.valResources[c.id][0].Container.Name[1:]),
+				"OSMOSIS_E2E_VAL_HOST=localosmosis-osmosisd-1",
+			},
+			User: "root",
+			Entrypoint: []string{
+				"sh",
+				"-c",
+				"chmod +x /root/hermes/hermes_bootstrap_osmosis.sh && /root/hermes/hermes_bootstrap_osmosis.sh && tail -f /dev/null",
+			},
+		},
+		noRestart,
+	)
+	s.Require().NoError(err)
+
+	s.T().Logf("started Hermes relayer container: %s", s.hermesResource.Container.ID)
+
+	// XXX: Give time to both networks to start, otherwise we might see gRPC
+	// transport errors.
+	time.Sleep(10 * time.Second)
+
+	// create the client, connection and channel between Gitopia and Osmosis localnet
+	s.createConnection(c.id, "localosmosis")
+	s.createChannel(c.id, "localosmosis")
+}
+
+// connectOsmosisValidator connects osmosis validator to test docker network
+func (s *IntegrationTestSuite) connectOsmosisValidator() {
+	s.T().Log("connecting local Osmosis validator to the test docker network")
+
+	err := s.dkrPool.Client.ConnectNetwork(s.dkrNet.Network.ID, docker.NetworkConnectionOptions{
+		Container: "localosmosis-osmosisd-1",
+	})
+	s.Require().NoError(err)
+
+	s.T().Log("connected local Osmosis validator to the test docker network")
 }
 
 func (s *IntegrationTestSuite) writeGovCommunitySpendProposal(c *chain, amount sdk.Coin, recipient string) {

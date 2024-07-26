@@ -371,7 +371,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 	generalFlags := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, submitterAddr),
 		fmt.Sprintf("--%s=%s", flags.FlagGas, "350000"), // default 200000 isn't enough
-		fmt.Sprintf("--%s=%s", flags.FlagGasPrices, fees),
+		fmt.Sprintf("--%s=%s", flags.FlagGasPrices, gasPrices),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		"--keyring-backend=test",
 		"--output=json",
@@ -558,7 +558,15 @@ func (s *IntegrationTestSuite) getLatestBlockHeight(c *chain, valIdx int) int {
 			err   error
 			block syncInfo
 		)
-		s.Require().NoError(json.Unmarshal(stdOut, &block))
+
+		// earlier version of gitopiad returns output in stdErr
+		if len(stdOut) > 0 {
+			err = json.Unmarshal(stdOut, &block)
+		} else {
+			err = json.Unmarshal(stdErr, &block)
+		}
+		s.Require().NoError(err)
+
 		currentHeight, err = strconv.Atoi(block.SyncInfo.LatestHeight)
 		s.Require().NoError(err)
 		return currentHeight > 0
@@ -644,7 +652,7 @@ func (s *IntegrationTestSuite) execWithdrawReward(
 
 func (s *IntegrationTestSuite) executeGitopiaTxCommand(ctx context.Context, c *chain, gitopiaCommand []string, valIdx int, validation func([]byte, []byte) bool) {
 	if validation == nil {
-		validation = s.defaultExecValidation(s.chainA, 0)
+		validation = s.defaultExecValidation(c, 0)
 	}
 	var (
 		outBuf bytes.Buffer
