@@ -3,12 +3,13 @@ package e2e
 import (
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
+
+const ibcDenom = "ibc/4502C6FCE15100B9ABE95AC9B570924C92ADD08F6640926268F62BFAF431DE8B"
 
 func (s *IntegrationTestSuite) testIBCOsmosisTokenTransfer() {
 	s.Run("send_ulore_to_chainOsmosis", func() {
@@ -37,7 +38,7 @@ func (s *IntegrationTestSuite) testIBCOsmosisTokenTransfer() {
 			5*time.Second,
 		)
 		for _, c := range balances {
-			if strings.Contains(c.Denom, "ibc/") {
+			if c.Denom == ibcDenom {
 				beforeBalance = c.Amount.Int64()
 				break
 			}
@@ -59,7 +60,7 @@ func (s *IntegrationTestSuite) testIBCOsmosisTokenTransfer() {
 			5*time.Second,
 		)
 		for _, c := range balances {
-			if strings.Contains(c.Denom, "ibc/") {
+			if c.Denom == ibcDenom {
 				ibcStakeDenom = c.Denom
 				s.Require().Equal((int64(tokenAmt) + beforeBalance), c.Amount.Int64())
 				break
@@ -96,7 +97,7 @@ func (s *IntegrationTestSuite) TestGitopiaOsmosisIBCUpgrade() {
 			5*time.Second,
 		)
 		for _, c := range balances {
-			if strings.Contains(c.Denom, "ibc/") {
+			if c.Denom == ibcDenom {
 				beforeBalance = c.Amount.Int64()
 				break
 			}
@@ -118,7 +119,7 @@ func (s *IntegrationTestSuite) TestGitopiaOsmosisIBCUpgrade() {
 			5*time.Second,
 		)
 		for _, c := range balances {
-			if strings.Contains(c.Denom, "ibc/") {
+			if c.Denom == ibcDenom {
 				ibcStakeDenom = c.Denom
 				s.Require().Equal((int64(tokenAmt) + beforeBalance), c.Amount.Int64())
 				break
@@ -157,5 +158,34 @@ func (s *IntegrationTestSuite) TestGitopiaOsmosisIBCUpgrade() {
 		s.T().Logf("Restarting chain %s with v4 binary", s.chainC.id)
 		s.runValidatorWithUpgradedBinary(s.chainC, 30, proposalHeight)
 
+		// reset ibc stake denom
+		ibcStakeDenom = ""
+
+		beforeBalance += int64(tokenAmt)
+
+		tokenAmt = 5000000000
+		s.sendIBC(s.chainC, 0, sender, recipient, strconv.Itoa(tokenAmt)+uloreDenom, standardFees.String(), "", false)
+
+		pass = s.hermesClearPacket(hermesConfigWithGasPrices, s.chainC.id, transferPort, transferChannel)
+		s.Require().True(pass)
+
+		s.Require().Eventually(
+			func() bool {
+				balances, err = queryGitopiaAllBalances(chainOsmosisAPIEndpoint, recipient)
+				s.Require().NoError(err)
+				return balances.Len() != 0
+			},
+			time.Minute,
+			5*time.Second,
+		)
+		for _, c := range balances {
+			if c.Denom == ibcDenom {
+				ibcStakeDenom = c.Denom
+				s.Require().Equal((int64(tokenAmt) + beforeBalance), c.Amount.Int64())
+				break
+			}
+		}
+
+		s.Require().NotEmpty(ibcStakeDenom)
 	})
 }

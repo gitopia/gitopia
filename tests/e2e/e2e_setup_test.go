@@ -858,7 +858,7 @@ func (s *IntegrationTestSuite) runGitopiaOsmosisIBCRelayer(c *chain) {
 				fmt.Sprintf("%s/:/root/hermes", hermesCfgPath),
 			},
 			PortBindings: map[docker.Port][]docker.PortBinding{
-				"3031/tcp": {{HostIP: "", HostPort: "3031"}},
+				"3031/tcp": {{HostIP: "", HostPort: "3032"}},
 			},
 			Env: []string{
 				fmt.Sprintf("GITOPIA_A_E2E_CHAIN_ID=%s", c.id),
