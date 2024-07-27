@@ -359,8 +359,10 @@ func (app *GitopiaApp) setupUpgradeStoreLoaders() {
 	}
 
 	for _, upgrade := range Upgrades {
+		upgrade := upgrade
 		if upgradeInfo.Name == upgrade.UpgradeName {
-			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+			storeUpgrades := upgrade.StoreUpgrades
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
 		}
 	}
 }
