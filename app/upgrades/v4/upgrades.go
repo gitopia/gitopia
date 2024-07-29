@@ -92,13 +92,18 @@ func CreateUpgradeHandler(
 			return nil, err
 		}
 
-		// Set expedited proposal param:
 		govParams := keepers.GovKeeper.GetParams(ctx)
 		govParams.MinInitialDepositRatio = sdk.NewDecWithPrec(1, 1).String() // 0.1 (10%)
 		err = keepers.GovKeeper.SetParams(ctx, govParams)
 		if err != nil {
 			return nil, err
 		}
+
+		// Enable ICA controllers
+		keepers.ICAControllerKeeper.SetParams(ctx, icacontrollertypes.DefaultParams())
+
+		// Enable ICA host
+		keepers.ICAHostKeeper.SetParams(ctx, icahosttypes.DefaultParams())
 
 		return migrations, nil
 	}
