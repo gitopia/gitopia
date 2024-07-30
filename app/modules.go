@@ -12,6 +12,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
@@ -40,6 +41,7 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
+	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
 	"github.com/cosmos/ibc-go/v7/modules/apps/transfer"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v7/modules/core"
@@ -167,6 +169,7 @@ func orderBeginBlockers() []string {
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName,
 		ibcexported.ModuleName,
+		icatypes.ModuleName,
 		feegrant.ModuleName,
 		group.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -179,6 +182,7 @@ func orderBeginBlockers() []string {
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		rewardtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	}
 }
 
@@ -200,11 +204,13 @@ func orderEndBlockers() []string {
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		ibcexported.ModuleName,
+		icatypes.ModuleName,
 		feegrant.ModuleName,
 		group.ModuleName,
 		ibctransfertypes.ModuleName,
 		gitopiatypes.ModuleName,
 		rewardtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	}
 }
 
@@ -214,12 +220,13 @@ func orderInitBlockers() []string {
 		authtypes.ModuleName,
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
+		govtypes.ModuleName,
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
-		govtypes.ModuleName,
 		minttypes.ModuleName,
 		crisistypes.ModuleName,
 		ibcexported.ModuleName,
+		icatypes.ModuleName,
 		feegrant.ModuleName,
 		group.ModuleName,
 		genutiltypes.ModuleName,
@@ -231,5 +238,6 @@ func orderInitBlockers() []string {
 		gitopiatypes.ModuleName,
 		authz.ModuleName,
 		rewardtypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	}
 }
