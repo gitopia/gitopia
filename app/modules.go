@@ -12,6 +12,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	"github.com/cosmos/cosmos-sdk/x/consensus"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
@@ -58,6 +59,7 @@ import (
 var maccPerms = map[string][]string{
 	authtypes.FeeCollectorName:                                 nil,
 	distrtypes.ModuleName:                                      nil,
+	icatypes.ModuleName:                                        nil,
 	minttypes.ModuleName:                                       {authtypes.Minter},
 	stakingtypes.BondedPoolName:                                {authtypes.Burner, authtypes.Staking},
 	stakingtypes.NotBondedPoolName:                             {authtypes.Burner, authtypes.Staking},
@@ -113,6 +115,8 @@ var ModuleBasics = module.NewBasicManager(
 	vesting.AppModuleBasic{},
 	gitopia.AppModule{},
 	rewards.AppModule{},
+	consensus.AppModuleBasic{},
+	ica.AppModuleBasic{},
 )
 
 func appModules(

@@ -71,7 +71,7 @@ func (s *IntegrationTestSuite) testIBCOsmosisTokenTransfer() {
 	})
 }
 
-func (s *IntegrationTestSuite) TestGitopiaOsmosisIBCUpgrade() {
+func (s *IntegrationTestSuite) testGitopiaOsmosisIBCUpgrade() {
 	s.Run("gitopia_osmosis_ibc_upgrade", func() {
 		// require the recipient account receives the IBC tokens (IBC packets ACKd)
 		var (

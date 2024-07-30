@@ -592,7 +592,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 		s.T().Logf("started Gitopia %s validator container: %s", c.id, resource.Container.ID)
 	}
 
-	rpcClient, err := rpchttp.New("tcp://localhost:26657", "/websocket")
+	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
 	s.Require().NoError(err)
 
 	s.Require().Eventually(

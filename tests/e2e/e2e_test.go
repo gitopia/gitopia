@@ -115,5 +115,5 @@ func (s *IntegrationTestSuite) TestGitopiaOsmosisIBC() {
 		s.T().Skip()
 	}
 	// s.testIBCOsmosisTokenTransfer()
-	s.TestGitopiaOsmosisIBCUpgrade()
+	s.testGitopiaOsmosisIBCUpgrade()
 }
