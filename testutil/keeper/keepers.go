@@ -81,7 +81,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		authtypes.ProtoBaseAccount,
 		app.GetMaccPerms(),
 		"gitopia",
-		authtypes.NewModuleAddress(authtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	authzkeeper := authzkeeper.NewKeeper(
@@ -97,7 +97,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		keys[banktypes.StoreKey],
 		appKeepers.AccountKeeper,
 		nil,
-		authtypes.NewModuleAddress(banktypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
 
@@ -106,13 +106,13 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		keys[stakingtypes.StoreKey],
 		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
-		authtypes.NewModuleAddress(stakingtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	mintKeeper := mintkeeper.NewKeeper(
 		appCodec, keys[minttypes.StoreKey],
 		appKeepers.StakingKeeper, appKeepers.AccountKeeper,
-		appKeepers.BankKeeper, types.MinterAccountName, authtypes.NewModuleAddress(minttypes.ModuleName).String())
+		appKeepers.BankKeeper, types.MinterAccountName, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 	appKeepers.MintKeeper = &mintKeeper
 
 	distrKeeper := distrkeeper.NewKeeper(
@@ -122,7 +122,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.BankKeeper,
 		appKeepers.StakingKeeper,
 		authtypes.FeeCollectorName,
-		authtypes.NewModuleAddress(distrtypes.ModuleName).String(),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.DistrKeeper = &distrKeeper
 
