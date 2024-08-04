@@ -59,7 +59,7 @@ const (
 	// global fee lower/higher than min_gas_price
 	initialBaseFeeAmt               = "0.001"
 	gas                             = 200000
-	govProposalBlockBuffer          = 100
+	govProposalBlockBuffer          = 75
 	relayerAccountIndexHermes       = 0
 	numberOfEvidences               = 10
 	slashingShares            int64 = 10000
@@ -754,38 +754,40 @@ func (s *IntegrationTestSuite) runGitopiaV3(c *chain, portOffset int) {
 func (s *IntegrationTestSuite) runValidatorWithUpgradedBinary(c *chain, portOffset, upgradeHeight int) {
 	s.T().Logf("resuming Gitopia %s validator with upgraded binary...", c.id)
 
-	instanceName := fmt.Sprintf("%s-gitopia-00", c.id)
-	configDir := fmt.Sprintf("%s/%s", c.configDir(), instanceName)
+	for i, val := range c.validators {
+		runOpts := &dockertest.RunOptions{
+			Name:      val.instanceName(),
+			NetworkID: s.dkrNet.Network.ID,
+			Mounts: []string{
+				fmt.Sprintf("%s/:%s", val.configDir(), gitopiaHomePath),
+			},
+			Repository: "gitopia/gitopiad-e2e",
+		}
 
-	runOpts := &dockertest.RunOptions{
-		Name:      instanceName,
-		NetworkID: s.dkrNet.Network.ID,
-		Mounts: []string{
-			fmt.Sprintf("%s/:%s", configDir, gitopiaHomePath),
-		},
-		Repository: "gitopia/gitopiad-e2e",
+		s.Require().NoError(exec.Command("chmod", "-R", "0777", val.configDir()).Run()) //nolint:gosec // this is a test
+
+		// expose the first validator for debugging and communication
+		if val.index == 0 {
+			runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
+				"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
+				"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
+				"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
+				"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
+				"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
+				"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
+				"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
+				"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
+				"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
+				"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
+			}
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+
+		s.valResources[c.id][i] = resource
+		s.T().Logf("resumeded Gitopia %s validator container with upgraded binary: %s", c.id, resource.Container.ID)
 	}
-
-	s.Require().NoError(exec.Command("chmod", "-R", "0777", configDir).Run()) //nolint:gosec // this is a test
-
-	runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
-		"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
-		"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
-		"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
-		"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
-		"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
-		"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
-		"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
-		"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
-		"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
-		"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
-	}
-
-	resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
-	s.Require().NoError(err)
-
-	s.valResources[c.id][0] = resource
-	s.T().Logf("resumeded Gitopia %s validator container with upgraded binary: %s", c.id, resource.Container.ID)
 
 	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
 	s.Require().NoError(err)

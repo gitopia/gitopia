@@ -155,7 +155,9 @@ func (s *IntegrationTestSuite) testGitopiaOsmosisIBCUpgrade() {
 		s.verifyChainHaltedAtUpgradeHeight(s.chainC, 0, proposalHeight)
 		s.T().Logf("Successfully halted chain at  height %d", proposalHeight)
 
-		s.Require().NoError(s.dkrPool.Purge(s.valResources[s.chainC.id][0]))
+		for _, vr := range s.valResources[s.chainC.id] {
+			s.Require().NoError(s.dkrPool.Purge(vr))
+		}
 
 		s.T().Logf("Restarting chain %s with v4 binary", s.chainC.id)
 		s.runValidatorWithUpgradedBinary(s.chainC, 30, proposalHeight)
