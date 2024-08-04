@@ -1,10 +1,16 @@
 #!/bin/sh
+set -eo pipefail
 
 GITOPIA_HOME=$HOME/.gitopia
 CONFIG_FOLDER=$GITOPIA_HOME/config
-MONIKER=val
+GENESIS_TIME="2024-08-04T00:00:00Z"
+NEXT_INFLATION_TIME="2025-08-04T00:00:00Z"
 
-MNEMONIC="firm easily muscle barely tank lens aunt phrase net bean void picnic soap uphold level civil motor acquire runway evil poverty staff fog dinosaur"
+init_genesis () {
+    # Remove the incompatible genesis file
+    rm $CONFIG_FOLDER/genesis.json
+    gitopiad init $MONIKER --chain-id $CHAIN_ID --home $GITOPIA_HOME --overwrite
+}
 
 edit_genesis () {
 
@@ -32,32 +38,27 @@ edit_genesis () {
  
     # Update mint module
     dasel put -t string -f $GENESIS '.app_state.mint.params.mint_denom' -v 'ulore'
+
+    # Update genesis time
+    dasel put -t string -f $GENESIS '.genesis_time' -v "$GENESIS_TIME"
+
+    # Update gitopia module
+    dasel put -t string -f $GENESIS '.app_state.gitopia.params.next_inflation_time' -v "$NEXT_INFLATION_TIME"
+    dasel put -t string -f $GENESIS '.app_state.gitopia.params.genesis_time' -v "$GENESIS_TIME"
 }
 
 add_genesis_accounts () {
 
-    gitopiad add-genesis-account gitopia18pqef3j8808c8fhq4apcxp72unk74jmjr5zgnt 100000000000ulore --home $GITOPIA_HOME
-    gitopiad add-genesis-account gitopia1uhya8vt5qnmrdcr49nxxwatyn2y534gp8v9qyv 100000000000ulore --home $GITOPIA_HOME
-    gitopiad add-genesis-account gitopia1frsm6ddpzw2j5pa4rrgq8hx25nh23fwqc8xccl 100000000000ulore --home $GITOPIA_HOME
+    gitopiad keys delete val -y --keyring-backend=test --home $GITOPIA_HOME
+    echo $VALIDATOR_0_MNEMONIC | gitopiad keys add $VALIDATOR_0_MONIKER --recover --keyring-backend=test --home $GITOPIA_HOME
+    echo $VALIDATOR_1_MNEMONIC | gitopiad keys add $VALIDATOR_1_MONIKER --recover --keyring-backend=test --home $GITOPIA_HOME
 
-    echo $MNEMONIC | gitopiad keys add $MONIKER --recover --keyring-backend=test --home $GITOPIA_HOME
-    gitopiad gentx $MONIKER 500000000ulore --keyring-backend=test --chain-id=$CHAIN_ID --home $GITOPIA_HOME
-
-    gitopiad collect-gentxs --home $GITOPIA_HOME
+    gitopiad add-genesis-account $(gitopiad keys show $VALIDATOR_0_MONIKER -a --keyring-backend=test --home $GITOPIA_HOME) 200000000000ulore --keyring-backend=test --home $GITOPIA_HOME
+    gitopiad add-genesis-account $(gitopiad keys show $VALIDATOR_1_MONIKER -a --keyring-backend=test --home $GITOPIA_HOME) 100000000000ulore --keyring-backend=test --home $GITOPIA_HOME
+    gitopiad add-genesis-account $RELAYER_ACCOUNT_ADDRESS 100000000000ulore --keyring-backend=test --home $GITOPIA_HOME
 }
 
-initialize_validator () {
-    gitopiad gentx $MONIKER 5000000ulore \
-      --chain-id=$CHAIN_ID \
-      --moniker="$MONIKER" \
-      --commission-rate="0.10" \
-      --commission-max-rate="0.20" \
-      --commission-max-change-rate="0.01" \
-      --min-self-delegation="1" \
-      --pubkey=$(gitopiad tendermint show-validator) \
-      --keyring-backend=test \
-      --home $GITOPIA_HOME
-
+collect_gentxs () {
     gitopiad collect-gentxs --home $GITOPIA_HOME
 }
 
@@ -118,15 +119,12 @@ run_with_retries() {
   done
 }
 
-if [[ ! -d $CONFIG_FOLDER ]]
-then
-    echo $MNEMONIC | gitopiad init -o --chain-id=$CHAIN_ID --home $GITOPIA_HOME --recover $MONIKER
-    edit_genesis
-    add_genesis_accounts
-    initialize_validator
-    edit_config
-    enable_cors
-fi
+init_genesis
+edit_genesis
+add_genesis_accounts
+collect_gentxs
+edit_config
+enable_cors
 
 gitopiad start --home $GITOPIA_HOME &
 

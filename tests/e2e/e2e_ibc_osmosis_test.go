@@ -45,9 +45,9 @@ func (s *IntegrationTestSuite) testIBCOsmosisTokenTransfer() {
 		}
 
 		tokenAmt := 3300000000
-		s.sendIBC(s.chainA, 0, sender, recipient, strconv.Itoa(tokenAmt)+uloreDenom, standardFees.String(), "", false)
+		s.sendIBC(s.chainC, 0, sender, recipient, strconv.Itoa(tokenAmt)+uloreDenom, standardFees.String(), "", false)
 
-		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
+		pass := s.hermesClearPacket(s.hermesOsmosisResource, hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 		s.Require().True(pass)
 
 		s.Require().Eventually(
@@ -81,7 +81,9 @@ func (s *IntegrationTestSuite) testGitopiaOsmosisIBCUpgrade() {
 			ibcStakeDenom string
 		)
 
-		sender := "gitopia18pqef3j8808c8fhq4apcxp72unk74jmjr5zgnt"
+		address, _ := s.chainC.validators[0].keyInfo.GetAddress()
+		sender := address.String()
+
 		recipient := "osmo1jllfytsz4dryxhz5tl7u73v29exsf80vz52ucc"
 
 		chainCAPIEndpoint := fmt.Sprintf("http://%s", s.valResources[s.chainC.id][0].GetHostPort("1317/tcp"))
@@ -106,7 +108,7 @@ func (s *IntegrationTestSuite) testGitopiaOsmosisIBCUpgrade() {
 		tokenAmt := 3300000000
 		s.sendIBC(s.chainC, 0, sender, recipient, strconv.Itoa(tokenAmt)+uloreDenom, standardFees.String(), "", false)
 
-		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainC.id, transferPort, transferChannel)
+		pass := s.hermesClearPacket(s.hermesOsmosisResource, hermesConfigWithGasPrices, s.chainC.id, transferPort, transferChannel)
 		s.Require().True(pass)
 
 		s.Require().Eventually(
@@ -166,7 +168,7 @@ func (s *IntegrationTestSuite) testGitopiaOsmosisIBCUpgrade() {
 		tokenAmt = 5000000000
 		s.sendIBC(s.chainC, 0, sender, recipient, strconv.Itoa(tokenAmt)+uloreDenom, standardFees.String(), "", false)
 
-		pass = s.hermesClearPacket(hermesConfigWithGasPrices, s.chainC.id, transferPort, transferChannel)
+		pass = s.hermesClearPacket(s.hermesOsmosisResource, hermesConfigWithGasPrices, s.chainC.id, transferPort, transferChannel)
 		s.Require().True(pass)
 
 		s.Require().Eventually(

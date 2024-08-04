@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -370,7 +371,7 @@ func (s *IntegrationTestSuite) runGovExec(c *chain, valIdx int, submitterAddr, g
 
 	generalFlags := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, submitterAddr),
-		fmt.Sprintf("--%s=%s", flags.FlagGas, "350000"), // default 200000 isn't enough
+		fmt.Sprintf("--%s=%s", flags.FlagGasAdjustment, "1.5"),
 		fmt.Sprintf("--%s=%s", flags.FlagGasPrices, gasPrices),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		"--keyring-backend=test",
@@ -684,13 +685,13 @@ func (s *IntegrationTestSuite) executeGitopiaTxCommand(ctx context.Context, c *c
 	}
 }
 
-func (s *IntegrationTestSuite) executeHermesCommand(ctx context.Context, hermesCmd []string) ([]byte, error) { //nolint:unparam
+func (s *IntegrationTestSuite) executeHermesCommand(ctx context.Context, container *dockertest.Resource, hermesCmd []string) ([]byte, error) { //nolint:unparam
 	var outBuf bytes.Buffer
 	exec, err := s.dkrPool.Client.CreateExec(docker.CreateExecOptions{
 		Context:      ctx,
 		AttachStdout: true,
 		AttachStderr: true,
-		Container:    s.hermesResource.Container.ID,
+		Container:    container.Container.ID,
 		User:         "root",
 		Cmd:          hermesCmd,
 	})

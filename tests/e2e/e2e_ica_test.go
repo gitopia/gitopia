@@ -46,6 +46,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 
 		s.registerICAAccount(s.chainA, 0, icaOwnerAccount, connectionID, standardFees.String())
 		s.completeChannelHandshakeFromTry(
+			s.hermesResource,
 			s.chainA.id, s.chainB.id,
 			connectionID, connectionID,
 			icaOwnerPortID, icatypes.HostPortID,
@@ -63,7 +64,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 		tokenAmount := 3300000000
 		s.sendIBC(s.chainA, 0, icaOwnerAccount, icaAccount, strconv.Itoa(tokenAmount)+uloreDenom, standardFees.String(), "", false)
 
-		pass := s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
+		pass := s.hermesClearPacket(s.hermesResource, hermesConfigWithGasPrices, s.chainA.id, transferPort, transferChannel)
 		s.Require().True(pass)
 
 		s.Require().Eventually(
@@ -112,7 +113,7 @@ func (s *IntegrationTestSuite) testICARegisterAccountAndSendTx() {
 
 		s.buildICASendTransactionFile(cdc, []proto.Message{bankSendMsg}, s.chainA.validators[0].configDir())
 		s.sendICATransaction(s.chainA, 0, icaOwnerAccount, connectionID, configFile(ICASendTransactionFileName), standardFees.String())
-		s.Require().True(s.hermesClearPacket(hermesConfigWithGasPrices, s.chainA.id, icaOwnerPortID, icaChannel))
+		s.Require().True(s.hermesClearPacket(s.hermesResource, hermesConfigWithGasPrices, s.chainA.id, icaOwnerPortID, icaChannel))
 
 		s.Require().Eventually(
 			func() bool {
