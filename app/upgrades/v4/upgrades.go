@@ -1,6 +1,8 @@
 package v21
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -25,6 +27,10 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+)
+
+var (
+	GENESIS_TIME = time.Date(2023, 5, 17, 17, 5, 17, 517517517, time.UTC)
 )
 
 func CreateUpgradeHandler(
@@ -99,11 +105,13 @@ func CreateUpgradeHandler(
 			return nil, err
 		}
 
-		// Enable ICA controllers
-		keepers.ICAControllerKeeper.SetParams(ctx, icacontrollertypes.DefaultParams())
-
-		// Enable ICA host
-		keepers.ICAHostKeeper.SetParams(ctx, icahosttypes.DefaultParams())
+		// fix genesis time in gitopia params for vested team accounts
+		gitopiaParams := keepers.GitopiaKeeper.GetParams(ctx)
+		gitopiaParams.GenesisTime = GENESIS_TIME
+		err = keepers.GitopiaKeeper.SetParams(ctx, gitopiaParams)
+		if err != nil {
+			return nil, err
+		}
 
 		return migrations, nil
 	}
