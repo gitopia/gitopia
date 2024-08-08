@@ -5,7 +5,7 @@
 
 ## Building the source
 
-Building `gitopiad` (Gitopia Daemon) requires [Go 1.19+](https://golang.org/dl/).
+Building `gitopiad` (Gitopia Daemon) requires [Go 1.21+](https://golang.org/dl/).
 
 ```
 make build
