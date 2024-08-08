@@ -11,6 +11,7 @@ import (
 
 	"github.com/cosmos/gogoproto/proto"
 	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 
 	"cosmossdk.io/math"
 
@@ -145,6 +146,7 @@ func (s *IntegrationTestSuite) registerICAAccount(c *chain, valIdx int, sender, 
 		"controller",
 		"register",
 		connectionID,
+		fmt.Sprintf("--ordering=%s", channeltypes.ORDERED.String()),
 		fmt.Sprintf("--from=%s", sender),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, fees),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
