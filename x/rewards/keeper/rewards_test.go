@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/gitopia/gitopia/v3/testutil/keeper"
-	"github.com/gitopia/gitopia/v3/testutil/nullify"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
+	"github.com/gitopia/gitopia/v4/testutil/nullify"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 	"github.com/stretchr/testify/require"
 )
 

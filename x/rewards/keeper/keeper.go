@@ -3,18 +3,18 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	gitopiakeeper "github.com/gitopia/gitopia/v3/x/gitopia/keeper"
+	gitopiakeeper "github.com/gitopia/gitopia/v4/x/gitopia/keeper"
 )
 
 type (

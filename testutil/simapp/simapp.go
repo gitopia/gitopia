@@ -3,16 +3,15 @@ package simapp
 import (
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	gitopiaparams "github.com/gitopia/gitopia/v3/app/params"
+	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
+	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-	tmdb "github.com/tendermint/tm-db"
+	tmdb "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
-	"github.com/gitopia/gitopia/v3/app"
+	"github.com/gitopia/gitopia/v4/app"
 )
 
 // setup creates application instance with in-memory database and disabled logging.
@@ -22,9 +21,9 @@ func setup(dir string) *app.GitopiaApp {
 
 	encoding := gitopiaparams.EncodingConfig(app.MakeEncodingConfig())
 
-	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+	a := app.NewGitopiaApp(logger, db, nil, true, map[int64]bool{}, dir, encoding,
 		// this line is used by starport scaffolding # stargate/testutil/appArgument
-		simapp.EmptyAppOptions{})
+		sims.EmptyAppOptions{})
 	// https://github.com/cosmos/cosmos-sdk/issues/8961. EDIT: DO NOT init chain
 	// InitChain updates deliverState which is required when app.NewContext is called
 	// a.InitChain(abci.RequestInitChain{
@@ -36,8 +35,8 @@ func setup(dir string) *app.GitopiaApp {
 	return a
 }
 
-var defaultConsensusParams = &abci.ConsensusParams{
-	Block: &abci.BlockParams{
+var defaultConsensusParams = &tmproto.ConsensusParams{
+	Block: &tmproto.BlockParams{
 		MaxBytes: 200000,
 		MaxGas:   2000000,
 	},

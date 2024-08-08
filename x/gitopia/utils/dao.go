@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 var max_dao_pinned_repos = 6

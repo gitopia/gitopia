@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	keepertest "github.com/gitopia/gitopia/v3/testutil/keeper"
-	"github.com/gitopia/gitopia/v3/testutil/nullify"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
+	"github.com/gitopia/gitopia/v4/testutil/nullify"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 // Prevent strconv unused error

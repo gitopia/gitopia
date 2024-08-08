@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 

@@ -5,9 +5,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/gitopia/gitopia/v3/app"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/cmd/gitopiad/cmd"
+	"github.com/gitopia/gitopia/v4/app"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/cmd/gitopiad/cmd"
 )
 
 func main() {

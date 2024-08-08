@@ -9,8 +9,8 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v3/testutil/network"
-	"github.com/gitopia/gitopia/v3/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v4/testutil/network"
+	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
 	"github.com/stretchr/testify/require"
 )
 

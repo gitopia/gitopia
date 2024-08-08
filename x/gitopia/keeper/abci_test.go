@@ -4,22 +4,34 @@ import (
 	"testing"
 	"time"
 
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/testutil/simapp"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/testutil/simapp"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 func TestTokenDistributionSucessNoDistribution(t *testing.T) {
 	app := simapp.Setup(t)
 	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
-	gParams := gitopiatypes.Params{}
+	gParams := gitopiatypes.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: gitopiatypes.PoolProportions{
+			Ecosystem: &gitopiatypes.DistributionProportion{Proportion: sdk.ZeroDec()},
+			Team:      &gitopiatypes.DistributionProportion{Proportion: sdk.ZeroDec()},
+		},
+		TeamProportions: []gitopiatypes.DistributionProportion{
+			{Proportion: sdk.NewDec(100), Address: sample.AccAddress()},
+		},
+		GenesisTime:     time.Now().UTC().AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
+	}
 	minter := gitopiatypes.MinterAccountName
 	feeCollector := authtypes.FeeCollectorName
 	gitopiaKeeper := app.GitopiaKeeper
@@ -29,48 +41,13 @@ func TestTokenDistributionSucessNoDistribution(t *testing.T) {
 	// setup
 	err := testutil.FundModuleAccount(bankKeeper, ctx, minter, sdk.NewCoins(sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50))))
 	assert.NoError(t, err)
-	gitopiaKeeper.SetParams(ctx, gParams)
+	err = gitopiaKeeper.SetParams(ctx, gParams)
+	assert.NoError(t, err)
 
 	gitopiaKeeper.TokenDistribution(ctx)
 
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(50)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(feeCollector), params.BaseCoinUnit))
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, sdk.NewInt(0)), bankKeeper.GetBalance(ctx, accountKeeper.GetModuleAddress(minter), params.BaseCoinUnit))
-}
-
-func TestTokenDistributionSucessWithNonEmptyEcosystemAddress(t *testing.T) {
-	app := simapp.Setup(t)
-	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
-	gParams := gitopiatypes.Params{
-		PoolProportions: gitopiatypes.PoolProportions{
-			Ecosystem: &gitopiatypes.DistributionProportion{
-				Address: "addr",
-			},
-		},
-	}
-	gitopiaKeeper := app.GitopiaKeeper
-	gitopiaKeeper.SetParams(ctx, gParams)
-
-	require.Panics(t, func() {
-		gitopiaKeeper.TokenDistribution(ctx)
-	})
-}
-
-func TestTokenDistributionSucessWithNonEmptyTeamAddress(t *testing.T) {
-	app := simapp.Setup(t)
-	ctx := app.BaseApp.NewContext(false, tmtypes.Header{Height: 1, ChainID: "gitopia-1", Time: time.Now().UTC()})
-	gParams := gitopiatypes.Params{
-		PoolProportions: gitopiatypes.PoolProportions{
-			Team: &gitopiatypes.DistributionProportion{
-				Address: "addr",
-			},
-		},
-	}
-	gitopiaKeeper := app.GitopiaKeeper
-	gitopiaKeeper.SetParams(ctx, gParams)
-
-	require.Panics(t, func() {
-		gitopiaKeeper.TokenDistribution(ctx)
-	})
 }
 
 func TestTokenDistributionSucess(t *testing.T) {
@@ -88,6 +65,12 @@ func TestTokenDistributionSucess(t *testing.T) {
 				Proportion: teamProportion,
 			},
 		},
+		TeamProportions: []gitopiatypes.DistributionProportion{
+			{Proportion: sdk.NewDec(100), Address: sample.AccAddress()},
+		},
+		GenesisTime:     time.Now().UTC().AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	}
 	minter := gitopiatypes.MinterAccountName
 	feeCollector := authtypes.FeeCollectorName
@@ -120,6 +103,7 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	ecosystemProportion, _ := sdk.NewDecFromStr("30.0")
 	teamProportion, _ := sdk.NewDecFromStr("28.0")
 	gParams := gitopiatypes.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
 		PoolProportions: gitopiatypes.PoolProportions{
 			Ecosystem: &gitopiatypes.DistributionProportion{
 				Proportion: ecosystemProportion,
@@ -128,6 +112,12 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 				Proportion: teamProportion,
 			},
 		},
+		TeamProportions: []gitopiatypes.DistributionProportion{
+			{Proportion: sdk.NewDec(100), Address: sample.AccAddress()},
+		},
+		GenesisTime:     time.Now().UTC().AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	}
 	minter := gitopiatypes.MinterAccountName
 	feeCollector := authtypes.FeeCollectorName
@@ -135,7 +125,8 @@ func TestTokenDistributionSucessWhenNoTokenMinted(t *testing.T) {
 	bankKeeper := app.BankKeeper
 	accountKeeper := app.AccountKeeper
 
-	gitopiaKeeper.SetParams(ctx, gParams)
+	err := gitopiaKeeper.SetParams(ctx, gParams)
+	assert.NoError(t, err)
 
 	gitopiaKeeper.TokenDistribution(ctx)
 

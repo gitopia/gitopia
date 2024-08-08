@@ -165,12 +165,12 @@ Setting Up the Development Environment
 
 ### Dependencies
 
-[Go 1.19+](https://golang.org/dl/)
+[Go 1.21+](https://golang.org/dl/)
 
-[Ignite CLI v0.26.1](https://github.com/ignite/cli/releases/tag/v0.26.1)
+[Ignite CLI v0.27.2](https://github.com/ignite/cli/releases/tag/v0.27.2)
 
 > [!WARNING]
-> Make sure that you install the v0.26.1 of Ignite CLI. The latest versions are not compatible with v0.46.13 of cosmos-sdk used by gitopia.
+> Make sure that you install the v0.27.2 of Ignite CLI. The latest versions are not compatible with v0.47.13 of cosmos-sdk used by gitopia.
 
 ### Setup
 

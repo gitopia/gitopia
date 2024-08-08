@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	keepertest "github.com/gitopia/gitopia/v3/testutil/keeper"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
 
