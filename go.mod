@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/errors v1.0.1
 	github.com/cometbft/cometbft v0.37.6
 	github.com/cometbft/cometbft-db v0.11.0
-	github.com/cosmos/cosmos-sdk v0.47.12
+	github.com/cosmos/cosmos-sdk v0.47.13
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/golang/protobuf v1.5.4
@@ -21,7 +21,7 @@ require (
 	google.golang.org/grpc v1.65.0
 )
 
-require github.com/cosmos/ibc-go/v7 v7.4.0
+require github.com/cosmos/ibc-go/v7 v7.6.0
 
 require (
 	cloud.google.com/go v0.112.1 // indirect
@@ -75,7 +75,7 @@ require (
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/gtank/ristretto255 v0.1.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-getter v1.7.1 // indirect
+	github.com/hashicorp/go-getter v1.7.5 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
@@ -113,7 +113,7 @@ require (
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.18.2 // indirect
+	github.com/spf13/viper v1.18.2
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
@@ -141,6 +141,7 @@ require (
 	cosmossdk.io/tools/rosetta v0.2.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
 	github.com/ipfs/go-cid v0.3.2
+	github.com/ory/dockertest/v3 v3.10.0
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	google.golang.org/genproto/googleapis/api v0.0.0-20240709173604-40e1e62336c5
 )
@@ -186,7 +187,6 @@ require (
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/huandu/skiplist v1.2.0 // indirect
-	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.4 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -205,7 +205,6 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/opencontainers/runc v1.1.13 // indirect
-	github.com/ory/dockertest/v3 v3.10.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
@@ -223,10 +222,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.23.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
 	pgregory.net/rapid v1.1.0 // indirect
 )
