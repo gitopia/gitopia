@@ -16,10 +16,13 @@ RUN echo "Ensuring binary is statically linked ..."  \
 
 FROM alpine:$IMG_TAG
 RUN apk add --no-cache build-base
-RUN adduser -D nonroot
+
+# Healthcheck dependency
+RUN apk add --no-cache curl
+
 ARG IMG_TAG
-COPY --from=gitopiad-builder  /src/app/build/gitopiad /usr/local/bin/
+COPY --from=gitopiad-builder  /src/app/build/gitopiad /gitopia/bin/
+ENV PATH="/gitopia/bin:${PATH}"
 EXPOSE 26656 26657 1317 9090
-USER nonroot
 
 ENTRYPOINT ["gitopiad", "start"]

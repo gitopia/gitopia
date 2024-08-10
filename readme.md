@@ -13,6 +13,18 @@ make build
 
 The `gitopiad` binary will be created in the `build` directory.
 
+## Localnet
+
+Provision a localnet with a single validator, faucet and git-server for testing.
+
+### Setup
+
+Build the images for git-server and faucet from their respective repositories. Then, start the localnet.
+
+```bash
+make localnet-start
+```
+
 ## Contributing
 
 Gitopia is an open source project and contributions from community are always welcome. Discussion and development of Gitopia majorly take place on the Gitopia via issues and proposals -- everyone is welcome to post bugs, feature requests, comments and pull requests to Gitopia. (read [Contribution Guidelines](CONTRIBUTING.md) and [Coding Guidelines](CodingGuidelines.md).
