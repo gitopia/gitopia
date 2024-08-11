@@ -38,20 +38,11 @@ services:
   faucet:
     image: gitopia/faucet
     ports:
-      - 8000:8000
+      - 4500:4500
     volumes:
       - gitopiad-binary:/usr/local/gitopia/bin:ro  # Share the binary with the faucet
     environment:
       - PATH=/usr/local/gitopia/bin:$PATH
-      - CLI_NAME=gitopiad
-      - NODE=http://gitopiad:26657
-      - KEYRING_BACKEND=test
-      - ACCOUNT_NAME=feegrant
-      - MNEMONIC="kangaroo custom casino hawk ship fine meadow noble holiday elite kitchen idea spoon pencil dilemma image endorse apple monkey predict satisfy layer rail version"
-      - DENOMS=ulore
-      - CREDIT_AMOUNT=1000000000000
-      - MAX_CREDIT=1000000000000
-      - FEES=200ulore
     depends_on:
       gitopiad:
         condition: service_healthy
