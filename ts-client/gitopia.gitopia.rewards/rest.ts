@@ -9,11 +9,40 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * Params defines the parameters for the module.
+ */
+export interface GitopiarewardsParams {
+  evaluator_address?: string;
+  reward_series?: RewardsRewardPool[];
+}
+
+export interface GitopiarewardsReward {
+  recipient?: string;
+  rewards?: RewardsRecipientReward[];
+}
+
 export interface ProtobufAny {
   "@type"?: string;
 }
 
-export type RewardsMsgClaimResponse = object;
+export interface RewardsClaimResponseReward {
+  series?: RewardsSeries;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
+}
+
+export interface RewardsMsgClaimResponse {
+  claimed_rewards?: RewardsClaimResponseReward[];
+  expired_rewards?: RewardsClaimResponseReward[];
+  all_claimed_rewards?: RewardsClaimResponseReward[];
+}
 
 export interface RewardsMsgCreateRewardResponse {
   /**
@@ -26,8 +55,10 @@ export interface RewardsMsgCreateRewardResponse {
   amount?: V1Beta1Coin;
 }
 
+export type RewardsMsgUpdateParamsResponse = object;
+
 export interface RewardsQueryAllRewardsResponse {
-  rewards?: RewardsReward[];
+  rewards?: GitopiarewardsReward[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -42,11 +73,13 @@ export interface RewardsQueryAllRewardsResponse {
 }
 
 export interface RewardsQueryGetRewardResponse {
-  reward?: RewardsQueryGetRewardResponseReward;
+  recipient?: string;
+  rewards?: RewardsQueryGetRewardResponseReward[];
 }
 
 export interface RewardsQueryGetRewardResponseReward {
-  recipient?: string;
+  creator?: string;
+  series?: RewardsSeries;
 
   /**
    * Coin defines a token with a denomination and an amount.
@@ -57,14 +90,12 @@ export interface RewardsQueryGetRewardResponseReward {
   amount?: V1Beta1Coin;
 
   /**
-   * not required in the response
-   * string creator = 3;
    * Coin defines a token with a denomination and an amount.
    *
    * NOTE: The amount field is an Int which implements the custom method
    * signatures required by gogoproto.
    */
-  claimedAmount?: V1Beta1Coin;
+  claimed_amount?: V1Beta1Coin;
 
   /**
    * Coin defines a token with a denomination and an amount.
@@ -72,15 +103,31 @@ export interface RewardsQueryGetRewardResponseReward {
    * NOTE: The amount field is an Int which implements the custom method
    * signatures required by gogoproto.
    */
-  claimableAmount?: V1Beta1Coin;
+  claimable_amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  remaining_claimable_amount?: V1Beta1Coin;
+}
+
+/**
+ * QueryParamsResponse is the response type for the Query/Params RPC method.
+ */
+export interface RewardsQueryParamsResponse {
+  /** params defines the parameters of the module. */
+  params?: GitopiarewardsParams;
 }
 
 export interface RewardsQueryTasksResponse {
   tasks?: RewardsTask[];
 }
 
-export interface RewardsReward {
-  recipient?: string;
+export interface RewardsRecipientReward {
+  series?: RewardsSeries;
 
   /**
    * Coin defines a token with a denomination and an amount.
@@ -97,7 +144,25 @@ export interface RewardsReward {
    * NOTE: The amount field is an Int which implements the custom method
    * signatures required by gogoproto.
    */
-  claimed_amount_without_decay?: V1Beta1Coin;
+  claimed_amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  claimed_amount_with_decay?: V1Beta1Coin;
+}
+
+export interface RewardsRewardPool {
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  total_amount?: V1Beta1Coin;
 
   /**
    * Coin defines a token with a denomination and an amount.
@@ -106,6 +171,25 @@ export interface RewardsReward {
    * signatures required by gogoproto.
    */
   claimed_amount?: V1Beta1Coin;
+
+  /** @format date-time */
+  start_time?: string;
+
+  /** @format date-time */
+  end_time?: string;
+  series?: RewardsSeries;
+}
+
+export enum RewardsSeries {
+  NONE = "NONE",
+  ONE = "ONE",
+  TWO = "TWO",
+  THREE = "THREE",
+  FOUR = "FOUR",
+  FIVE = "FIVE",
+  SIX = "SIX",
+  SEVEN = "SEVEN",
+  COSMOS = "COSMOS",
 }
 
 export interface RewardsTask {
@@ -341,10 +425,26 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title rewards/genesis.proto
+ * @title gitopia/gitopia/rewards/genesis.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryParams
+   * @summary Params returns the total set of rewards parameters.
+   * @request GET:/gitopia/gitopia/rewards/params
+   */
+  queryParams = (params: RequestParams = {}) =>
+    this.request<RewardsQueryParamsResponse, RpcStatus>({
+      path: `/gitopia/gitopia/rewards/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *

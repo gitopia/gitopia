@@ -10,6 +10,19 @@
  */
 
 /**
+ * Params defines the set of Connection parameters.
+ */
+export interface Coreconnectionv1Params {
+  /**
+   * maximum expected time per block (in nanoseconds), used to enforce block delay. This parameter should reflect the
+   * largest amount of time that the chain might reasonably take to produce the next block under normal operating
+   * conditions. A safe choice is 3-5x the expected time per block.
+   * @format uint64
+   */
+  max_expected_time_per_block?: string;
+}
+
+/**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
 
@@ -462,6 +475,14 @@ export interface V1QueryConnectionConsensusStateResponse {
 }
 
 /**
+ * QueryConnectionParamsResponse is the response type for the Query/ConnectionParams RPC method.
+ */
+export interface V1QueryConnectionParamsResponse {
+  /** params defines the parameters of the module. */
+  params?: Coreconnectionv1Params;
+}
+
+/**
 * QueryConnectionResponse is the response type for the Query/Connection RPC
 method. Besides the connection end, it includes a proof and the height from
 which the proof was retrieved.
@@ -845,6 +866,22 @@ connection.
   ) =>
     this.request<V1QueryConnectionConsensusStateResponse, RpcStatus>({
       path: `/ibc/core/connection/v1/connections/${connectionId}/consensus_state/revision/${revisionNumber}/height/${revisionHeight}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryConnectionParams
+   * @summary ConnectionParams queries all parameters of the ibc connection submodule.
+   * @request GET:/ibc/core/connection/v1/params
+   */
+  queryConnectionParams = (params: RequestParams = {}) =>
+    this.request<V1QueryConnectionParamsResponse, RpcStatus>({
+      path: `/ibc/core/connection/v1/params`,
       method: "GET",
       format: "json",
       ...params,

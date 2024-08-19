@@ -7,14 +7,28 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgClaim } from "./types/rewards/tx";
-import { MsgCreateReward } from "./types/rewards/tx";
+import { MsgClaim } from "./types/gitopia/gitopia/rewards/tx";
+import { MsgUpdateParams } from "./types/gitopia/gitopia/rewards/tx";
+import { MsgCreateReward } from "./types/gitopia/gitopia/rewards/tx";
 
+import { Params as typeParams} from "./types"
+import { RewardPool as typeRewardPool} from "./types"
+import { QueryGetRewardResponseReward as typeQueryGetRewardResponseReward} from "./types"
+import { Reward as typeReward} from "./types"
+import { RecipientReward as typeRecipientReward} from "./types"
+import { Task as typeTask} from "./types"
+import { ClaimResponseReward as typeClaimResponseReward} from "./types"
 
-export { MsgClaim, MsgCreateReward };
+export { MsgClaim, MsgUpdateParams, MsgCreateReward };
 
 type sendMsgClaimParams = {
   value: MsgClaim,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateParamsParams = {
+  value: MsgUpdateParams,
   fee?: StdFee,
   memo?: string
 };
@@ -30,6 +44,10 @@ type msgClaimParams = {
   value: MsgClaim,
 };
 
+type msgUpdateParamsParams = {
+  value: MsgUpdateParams,
+};
+
 type msgCreateRewardParams = {
   value: MsgCreateReward,
 };
@@ -37,6 +55,18 @@ type msgCreateRewardParams = {
 
 export const registry = new Registry(msgTypes);
 
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	const structure: {fields: Field[]} = { fields: [] }
+	for (let [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
 const defaultFee = {
   amount: [],
   gas: "200000",
@@ -66,6 +96,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgUpdateParams({ value, fee, memo }: sendMsgUpdateParamsParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateParams: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateParams({ value: MsgUpdateParams.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateParams: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		async sendMsgCreateReward({ value, fee, memo }: sendMsgCreateRewardParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateReward: Unable to sign Tx. Signer is not present.')
@@ -86,6 +130,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/gitopia.gitopia.rewards.MsgClaim", value: MsgClaim.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgClaim: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateParams({ value }: msgUpdateParamsParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.rewards.MsgUpdateParams", value: MsgUpdateParams.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateParams: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -111,13 +163,23 @@ export const queryClient = ({ addr: addr }: QueryClientOptions = { addr: "http:/
 class SDKModule {
 	public query: ReturnType<typeof queryClient>;
 	public tx: ReturnType<typeof txClient>;
-	
+	public structure: Record<string,unknown>;
 	public registry: Array<[string, GeneratedType]> = [];
 
 	constructor(client: IgniteClient) {		
 	
 		this.query = queryClient({ addr: client.env.apiURL });		
 		this.updateTX(client);
+		this.structure =  {
+						Params: getStructure(typeParams.fromPartial({})),
+						RewardPool: getStructure(typeRewardPool.fromPartial({})),
+						QueryGetRewardResponseReward: getStructure(typeQueryGetRewardResponseReward.fromPartial({})),
+						Reward: getStructure(typeReward.fromPartial({})),
+						RecipientReward: getStructure(typeRecipientReward.fromPartial({})),
+						Task: getStructure(typeTask.fromPartial({})),
+						ClaimResponseReward: getStructure(typeClaimResponseReward.fromPartial({})),
+						
+		};
 		client.on('signer-changed',(signer) => {			
 		 this.updateTX(client);
 		})

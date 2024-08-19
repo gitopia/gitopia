@@ -10,6 +10,121 @@
  */
 
 /**
+* Deposit defines an amount deposited by an account address to an active
+proposal.
+*/
+export interface Govv1Beta1Deposit {
+  /**
+   * proposal_id defines the unique id of the proposal.
+   * @format uint64
+   */
+  proposal_id?: string;
+
+  /** depositor defines the deposit addresses from the proposals. */
+  depositor?: string;
+
+  /** amount to be deposited by depositor. */
+  amount?: V1Beta1Coin[];
+}
+
+/**
+ * Proposal defines the core field members of a governance proposal.
+ */
+export interface Govv1Beta1Proposal {
+  /**
+   * proposal_id defines the unique id of the proposal.
+   * @format uint64
+   */
+  proposal_id?: string;
+
+  /** content is the proposal's content. */
+  content?: ProtobufAny;
+
+  /** status defines the proposal status. */
+  status?: V1Beta1ProposalStatus;
+
+  /**
+   * final_tally_result is the final tally result of the proposal. When
+   * querying a proposal via gRPC, this field is not populated until the
+   * proposal's voting period has ended.
+   */
+  final_tally_result?: Govv1Beta1TallyResult;
+
+  /**
+   * submit_time is the time of proposal submission.
+   * @format date-time
+   */
+  submit_time?: string;
+
+  /**
+   * deposit_end_time is the end time for deposition.
+   * @format date-time
+   */
+  deposit_end_time?: string;
+
+  /** total_deposit is the total deposit on the proposal. */
+  total_deposit?: V1Beta1Coin[];
+
+  /**
+   * voting_start_time is the starting time to vote on a proposal.
+   * @format date-time
+   */
+  voting_start_time?: string;
+
+  /**
+   * voting_end_time is the end time of voting on a proposal.
+   * @format date-time
+   */
+  voting_end_time?: string;
+}
+
+/**
+ * TallyResult defines a standard tally for a governance proposal.
+ */
+export interface Govv1Beta1TallyResult {
+  /** yes is the number of yes votes on a proposal. */
+  yes?: string;
+
+  /** abstain is the number of abstain votes on a proposal. */
+  abstain?: string;
+
+  /** no is the number of no votes on a proposal. */
+  no?: string;
+
+  /** no_with_veto is the number of no with veto votes on a proposal. */
+  no_with_veto?: string;
+}
+
+/**
+* Vote defines a vote on a governance proposal.
+A Vote consists of a proposal ID, the voter, and the vote option.
+*/
+export interface Govv1Beta1Vote {
+  /**
+   * proposal_id defines the unique id of the proposal.
+   * @format uint64
+   */
+  proposal_id?: string;
+
+  /** voter is the voter address of the proposal. */
+  voter?: string;
+
+  /**
+   * Deprecated: Prefer to use `options` instead. This field is set in queries
+   * if and only if `len(options) == 1` and that option has weight 1. In all
+   * other cases, this field will default to VOTE_OPTION_UNSPECIFIED.
+   */
+  option?: V1Beta1VoteOption;
+
+  /**
+   * options is the weighted vote options.
+   *
+   * Since: cosmos-sdk 0.43
+   */
+  options?: V1Beta1WeightedVoteOption[];
+}
+
+/**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
 
@@ -142,17 +257,6 @@ export interface V1Beta1Coin {
 }
 
 /**
-* Deposit defines an amount deposited by an account address to an active
-proposal.
-*/
-export interface V1Beta1Deposit {
-  /** @format uint64 */
-  proposal_id?: string;
-  depositor?: string;
-  amount?: V1Beta1Coin[];
-}
-
-/**
  * DepositParams defines the params for deposits on governance proposals.
  */
 export interface V1Beta1DepositParams {
@@ -161,7 +265,7 @@ export interface V1Beta1DepositParams {
 
   /**
    * Maximum period for Atom holders to deposit on a proposal. Initial value: 2
-   *  months.
+   * months.
    */
   max_deposit_period?: string;
 }
@@ -175,7 +279,10 @@ export type V1Beta1MsgDepositResponse = object;
  * MsgSubmitProposalResponse defines the Msg/SubmitProposal response type.
  */
 export interface V1Beta1MsgSubmitProposalResponse {
-  /** @format uint64 */
+  /**
+   * proposal_id defines the unique id of the proposal.
+   * @format uint64
+   */
   proposal_id?: string;
 }
 
@@ -264,110 +371,6 @@ export interface V1Beta1PageResponse {
 }
 
 /**
- * Proposal defines the core field members of a governance proposal.
- */
-export interface V1Beta1Proposal {
-  /** @format uint64 */
-  proposal_id?: string;
-
-  /**
-   * `Any` contains an arbitrary serialized protocol buffer message along with a
-   * URL that describes the type of the serialized message.
-   *
-   * Protobuf library provides support to pack/unpack Any values in the form
-   * of utility functions or additional generated methods of the Any type.
-   * Example 1: Pack and unpack a message in C++.
-   *     Foo foo = ...;
-   *     Any any;
-   *     any.PackFrom(foo);
-   *     ...
-   *     if (any.UnpackTo(&foo)) {
-   *       ...
-   *     }
-   * Example 2: Pack and unpack a message in Java.
-   *     Any any = Any.pack(foo);
-   *     if (any.is(Foo.class)) {
-   *       foo = any.unpack(Foo.class);
-   *  Example 3: Pack and unpack a message in Python.
-   *     foo = Foo(...)
-   *     any = Any()
-   *     any.Pack(foo)
-   *     if any.Is(Foo.DESCRIPTOR):
-   *       any.Unpack(foo)
-   *  Example 4: Pack and unpack a message in Go
-   *      foo := &pb.Foo{...}
-   *      any, err := anypb.New(foo)
-   *      if err != nil {
-   *        ...
-   *      }
-   *      ...
-   *      foo := &pb.Foo{}
-   *      if err := any.UnmarshalTo(foo); err != nil {
-   * The pack methods provided by protobuf library will by default use
-   * 'type.googleapis.com/full.type.name' as the type URL and the unpack
-   * methods only use the fully qualified type name after the last '/'
-   * in the type URL, for example "foo.bar.com/x/y.z" will yield type
-   * name "y.z".
-   * JSON
-   * ====
-   * The JSON representation of an `Any` value uses the regular
-   * representation of the deserialized, embedded message, with an
-   * additional field `@type` which contains the type URL. Example:
-   *     package google.profile;
-   *     message Person {
-   *       string first_name = 1;
-   *       string last_name = 2;
-   *     {
-   *       "@type": "type.googleapis.com/google.profile.Person",
-   *       "firstName": <string>,
-   *       "lastName": <string>
-   * If the embedded message type is well-known and has a custom JSON
-   * representation, that representation will be embedded adding a field
-   * `value` which holds the custom JSON in addition to the `@type`
-   * field. Example (for message [google.protobuf.Duration][]):
-   *       "@type": "type.googleapis.com/google.protobuf.Duration",
-   *       "value": "1.212s"
-   */
-  content?: ProtobufAny;
-
-  /**
-   * ProposalStatus enumerates the valid statuses of a proposal.
-   *
-   *  - PROPOSAL_STATUS_UNSPECIFIED: PROPOSAL_STATUS_UNSPECIFIED defines the default proposal status.
-   *  - PROPOSAL_STATUS_DEPOSIT_PERIOD: PROPOSAL_STATUS_DEPOSIT_PERIOD defines a proposal status during the deposit
-   * period.
-   *  - PROPOSAL_STATUS_VOTING_PERIOD: PROPOSAL_STATUS_VOTING_PERIOD defines a proposal status during the voting
-   *  - PROPOSAL_STATUS_PASSED: PROPOSAL_STATUS_PASSED defines a proposal status of a proposal that has
-   * passed.
-   *  - PROPOSAL_STATUS_REJECTED: PROPOSAL_STATUS_REJECTED defines a proposal status of a proposal that has
-   * been rejected.
-   *  - PROPOSAL_STATUS_FAILED: PROPOSAL_STATUS_FAILED defines a proposal status of a proposal that has
-   * failed.
-   */
-  status?: V1Beta1ProposalStatus;
-
-  /**
-   * final_tally_result is the final tally result of the proposal. When
-   * querying a proposal via gRPC, this field is not populated until the
-   * proposal's voting period has ended.
-   */
-  final_tally_result?: V1Beta1TallyResult;
-
-  /** @format date-time */
-  submit_time?: string;
-
-  /** @format date-time */
-  deposit_end_time?: string;
-  total_deposit?: V1Beta1Coin[];
-
-  /** @format date-time */
-  voting_start_time?: string;
-
-  /** @format date-time */
-  voting_end_time?: string;
-}
-
-/**
 * ProposalStatus enumerates the valid statuses of a proposal.
 
  - PROPOSAL_STATUS_UNSPECIFIED: PROPOSAL_STATUS_UNSPECIFIED defines the default proposal status.
@@ -396,14 +399,15 @@ export enum V1Beta1ProposalStatus {
  */
 export interface V1Beta1QueryDepositResponse {
   /** deposit defines the requested deposit. */
-  deposit?: V1Beta1Deposit;
+  deposit?: Govv1Beta1Deposit;
 }
 
 /**
  * QueryDepositsResponse is the response type for the Query/Deposits RPC method.
  */
 export interface V1Beta1QueryDepositsResponse {
-  deposits?: V1Beta1Deposit[];
+  /** deposits defines the requested deposits. */
+  deposits?: Govv1Beta1Deposit[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -428,7 +432,7 @@ export interface V1Beta1QueryParamsResponse {
  */
 export interface V1Beta1QueryProposalResponse {
   /** Proposal defines the core field members of a governance proposal. */
-  proposal?: V1Beta1Proposal;
+  proposal?: Govv1Beta1Proposal;
 }
 
 /**
@@ -436,7 +440,8 @@ export interface V1Beta1QueryProposalResponse {
 method.
 */
 export interface V1Beta1QueryProposalsResponse {
-  proposals?: V1Beta1Proposal[];
+  /** proposals defines all the requested governance proposals. */
+  proposals?: Govv1Beta1Proposal[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -447,23 +452,23 @@ export interface V1Beta1QueryProposalsResponse {
  */
 export interface V1Beta1QueryTallyResultResponse {
   /** tally defines the requested tally. */
-  tally?: V1Beta1TallyResult;
+  tally?: Govv1Beta1TallyResult;
 }
 
 /**
  * QueryVoteResponse is the response type for the Query/Vote RPC method.
  */
 export interface V1Beta1QueryVoteResponse {
-  /** vote defined the queried vote. */
-  vote?: V1Beta1Vote;
+  /** vote defines the queried vote. */
+  vote?: Govv1Beta1Vote;
 }
 
 /**
  * QueryVotesResponse is the response type for the Query/Votes RPC method.
  */
 export interface V1Beta1QueryVotesResponse {
-  /** votes defined the queried votes. */
-  votes?: V1Beta1Vote[];
+  /** votes defines the queried votes. */
+  votes?: Govv1Beta1Vote[];
 
   /** pagination defines the pagination in the response. */
   pagination?: V1Beta1PageResponse;
@@ -475,7 +480,7 @@ export interface V1Beta1QueryVotesResponse {
 export interface V1Beta1TallyParams {
   /**
    * Minimum percentage of total stake needed to vote for a result to be
-   *  considered valid.
+   * considered valid.
    * @format byte
    */
   quorum?: string;
@@ -488,40 +493,10 @@ export interface V1Beta1TallyParams {
 
   /**
    * Minimum value of Veto votes to Total votes ratio for proposal to be
-   *  vetoed. Default value: 1/3.
+   * vetoed. Default value: 1/3.
    * @format byte
    */
   veto_threshold?: string;
-}
-
-/**
- * TallyResult defines a standard tally for a governance proposal.
- */
-export interface V1Beta1TallyResult {
-  yes?: string;
-  abstain?: string;
-  no?: string;
-  no_with_veto?: string;
-}
-
-/**
-* Vote defines a vote on a governance proposal.
-A Vote consists of a proposal ID, the voter, and the vote option.
-*/
-export interface V1Beta1Vote {
-  /** @format uint64 */
-  proposal_id?: string;
-  voter?: string;
-
-  /**
-   * Deprecated: Prefer to use `options` instead. This field is set in queries
-   * if and only if `len(options) == 1` and that option has weight 1. In all
-   * other cases, this field will default to VOTE_OPTION_UNSPECIFIED.
-   */
-  option?: V1Beta1VoteOption;
-
-  /** Since: cosmos-sdk 0.43 */
-  options?: V1Beta1WeightedVoteOption[];
 }
 
 /**
@@ -545,7 +520,7 @@ export enum V1Beta1VoteOption {
  * VotingParams defines the params for voting on governance proposals.
  */
 export interface V1Beta1VotingParams {
-  /** Length of the voting period. */
+  /** Duration of the voting period. */
   voting_period?: string;
 }
 
@@ -555,16 +530,10 @@ export interface V1Beta1VotingParams {
 Since: cosmos-sdk 0.43
 */
 export interface V1Beta1WeightedVoteOption {
-  /**
-   * VoteOption enumerates the valid vote options for a given governance proposal.
-   *
-   *  - VOTE_OPTION_UNSPECIFIED: VOTE_OPTION_UNSPECIFIED defines a no-op vote option.
-   *  - VOTE_OPTION_YES: VOTE_OPTION_YES defines a yes vote option.
-   *  - VOTE_OPTION_ABSTAIN: VOTE_OPTION_ABSTAIN defines an abstain vote option.
-   *  - VOTE_OPTION_NO: VOTE_OPTION_NO defines a no vote option.
-   *  - VOTE_OPTION_NO_WITH_VETO: VOTE_OPTION_NO_WITH_VETO defines a no with veto vote option.
-   */
+  /** option defines the valid vote options, it must not contain duplicate vote options. */
   option?: V1Beta1VoteOption;
+
+  /** weight is the vote weight associated with the vote option. */
   weight?: string;
 }
 

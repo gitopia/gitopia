@@ -9,6 +9,34 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * Params defines the set of params for the distribution module.
+ */
+export interface Distributionv1Beta1Params {
+  community_tax?: string;
+
+  /**
+   * Deprecated: The base_proposer_reward field is deprecated and is no longer used
+   * in the x/distribution module's reward mechanism.
+   */
+  base_proposer_reward?: string;
+
+  /**
+   * Deprecated: The bonus_proposer_reward field is deprecated and is no longer used
+   * in the x/distribution module's reward mechanism.
+   */
+  bonus_proposer_reward?: string;
+  withdraw_addr_enabled?: boolean;
+}
+
+/**
+* ValidatorOutstandingRewards represents outstanding (un-withdrawn) rewards
+for a validator inexpensive to track, allows simple sanity checks.
+*/
+export interface Distributionv1Beta1ValidatorOutstandingRewards {
+  rewards?: V1Beta1DecCoin[];
+}
+
 export interface ProtobufAny {
   "@type"?: string;
 }
@@ -52,26 +80,45 @@ export interface V1Beta1DelegationDelegatorReward {
 }
 
 /**
+* MsgCommunityPoolSpendResponse defines the response to executing a
+MsgCommunityPoolSpend message.
+
+Since: cosmos-sdk 0.47
+*/
+export type V1Beta1MsgCommunityPoolSpendResponse = object;
+
+/**
  * MsgFundCommunityPoolResponse defines the Msg/FundCommunityPool response type.
  */
 export type V1Beta1MsgFundCommunityPoolResponse = object;
 
 /**
- * MsgSetWithdrawAddressResponse defines the Msg/SetWithdrawAddress response type.
- */
+* MsgSetWithdrawAddressResponse defines the Msg/SetWithdrawAddress response
+type.
+*/
 export type V1Beta1MsgSetWithdrawAddressResponse = object;
 
 /**
- * MsgWithdrawDelegatorRewardResponse defines the Msg/WithdrawDelegatorReward response type.
- */
+* MsgUpdateParamsResponse defines the response structure for executing a
+MsgUpdateParams message.
+
+Since: cosmos-sdk 0.47
+*/
+export type V1Beta1MsgUpdateParamsResponse = object;
+
+/**
+* MsgWithdrawDelegatorRewardResponse defines the Msg/WithdrawDelegatorReward
+response type.
+*/
 export interface V1Beta1MsgWithdrawDelegatorRewardResponse {
   /** Since: cosmos-sdk 0.46 */
   amount?: V1Beta1Coin[];
 }
 
 /**
- * MsgWithdrawValidatorCommissionResponse defines the Msg/WithdrawValidatorCommission response type.
- */
+* MsgWithdrawValidatorCommissionResponse defines the
+Msg/WithdrawValidatorCommission response type.
+*/
 export interface V1Beta1MsgWithdrawValidatorCommissionResponse {
   /** Since: cosmos-sdk 0.46 */
   amount?: V1Beta1Coin[];
@@ -150,16 +197,6 @@ export interface V1Beta1PageResponse {
 }
 
 /**
- * Params defines the set of params for the distribution module.
- */
-export interface V1Beta1Params {
-  community_tax?: string;
-  base_proposer_reward?: string;
-  bonus_proposer_reward?: string;
-  withdraw_addr_enabled?: boolean;
-}
-
-/**
 * QueryCommunityPoolResponse is the response type for the Query/CommunityPool
 RPC method.
 */
@@ -212,12 +249,26 @@ export interface V1Beta1QueryDelegatorWithdrawAddressResponse {
  */
 export interface V1Beta1QueryParamsResponse {
   /** params defines the parameters of the module. */
-  params?: V1Beta1Params;
+  params?: Distributionv1Beta1Params;
 }
 
 export interface V1Beta1QueryValidatorCommissionResponse {
-  /** commission defines the commision the validator received. */
+  /** commission defines the commission the validator received. */
   commission?: V1Beta1ValidatorAccumulatedCommission;
+}
+
+/**
+ * QueryValidatorDistributionInfoResponse is the response type for the Query/ValidatorDistributionInfo RPC method.
+ */
+export interface V1Beta1QueryValidatorDistributionInfoResponse {
+  /** operator_address defines the validator operator address. */
+  operator_address?: string;
+
+  /** self_bond_rewards defines the self delegations rewards. */
+  self_bond_rewards?: V1Beta1DecCoin[];
+
+  /** commission defines the commission the validator received. */
+  commission?: V1Beta1DecCoin[];
 }
 
 /**
@@ -229,7 +280,7 @@ export interface V1Beta1QueryValidatorOutstandingRewardsResponse {
    * ValidatorOutstandingRewards represents outstanding (un-withdrawn) rewards
    * for a validator inexpensive to track, allows simple sanity checks.
    */
-  rewards?: V1Beta1ValidatorOutstandingRewards;
+  rewards?: Distributionv1Beta1ValidatorOutstandingRewards;
 }
 
 /**
@@ -250,14 +301,6 @@ for a validator kept as a running counter, can be withdrawn at any time.
 */
 export interface V1Beta1ValidatorAccumulatedCommission {
   commission?: V1Beta1DecCoin[];
-}
-
-/**
-* ValidatorOutstandingRewards represents outstanding (un-withdrawn) rewards
-for a validator inexpensive to track, allows simple sanity checks.
-*/
-export interface V1Beta1ValidatorOutstandingRewards {
-  rewards?: V1Beta1DecCoin[];
 }
 
 /**
@@ -489,6 +532,22 @@ validator.
   queryParams = (params: RequestParams = {}) =>
     this.request<V1Beta1QueryParamsResponse, RpcStatus>({
       path: `/cosmos/distribution/v1beta1/params`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryValidatorDistributionInfo
+   * @summary ValidatorDistributionInfo queries validator commission and self-delegation rewards for validator
+   * @request GET:/cosmos/distribution/v1beta1/validators/{validator_address}
+   */
+  queryValidatorDistributionInfo = (validatorAddress: string, params: RequestParams = {}) =>
+    this.request<V1Beta1QueryValidatorDistributionInfoResponse, RpcStatus>({
+      path: `/cosmos/distribution/v1beta1/validators/${validatorAddress}`,
       method: "GET",
       format: "json",
       ...params,
