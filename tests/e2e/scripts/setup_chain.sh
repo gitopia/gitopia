@@ -6,6 +6,10 @@ CONFIG_FOLDER=$GITOPIA_HOME/config
 GENESIS_TIME="2024-08-04T00:00:00Z"
 NEXT_INFLATION_TIME="2025-08-04T00:00:00Z"
 
+install_prerequisites () {
+    apk add dasel
+}
+
 init_genesis () {
     # Remove the incompatible genesis file
     rm $CONFIG_FOLDER/genesis.json
@@ -119,6 +123,7 @@ run_with_retries() {
   done
 }
 
+install_prerequisites
 init_genesis
 edit_genesis
 add_genesis_accounts

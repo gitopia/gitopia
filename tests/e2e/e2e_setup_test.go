@@ -50,7 +50,7 @@ const (
 	txCommand       = "tx"
 	queryCommand    = "query"
 	keysCommand     = "keys"
-	gitopiaHomePath = "/home/nonroot/.gitopia"
+	gitopiaHomePath = "/root/.gitopia"
 	uloreDenom      = params.BaseCoinUnit
 	stakeDenom      = params.BaseCoinUnit
 	initBalanceStr  = "100000000000000000ulore"

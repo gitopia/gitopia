@@ -1,0 +1,14 @@
+start:
+  args:
+    - reader
+    - merger
+    - firehose
+    - relayer
+  flags:
+    common-first-streamable-block: 1
+    firehose-grpc-listen-addr: ":9030"
+    reader-mode: node
+    reader-node-path: /gitopia/bin/gitopiad
+    reader-node-args: start --x-crisis-skip-assert-invariants --home=/root/.gitopia
+    reader-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
+    relayer-max-source-latency: 99999h
