@@ -2,6 +2,20 @@
 
 All notable changes will be documented here.
 
+## [4.0.0] - 2024-08-20
+
+- Upgrade cosmos-sdk version to v0.47.13
+- Upgrade ibc-go version to v7.4.0
+- Upgrade cometbft version to v0.37.6
+- Upgrade go version to 1.21
+- Change
+- Add end to end tests
+- Fix output stream of gitopiad binary
+- Migration of params of sdk modules
+- Fix genesis time in gitopia params
+- Enable Interchain Accounts
+- Add localnet docker compose config with chain, faucet, git server, graph indexer and rewards service
+
 ## [3.3.1] - 2024-07-10
 
 - Use gitopia chain id in offchain signatures
