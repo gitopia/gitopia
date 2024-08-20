@@ -46,6 +46,18 @@ services:
       gitopiad:
         condition: service_healthy
 
+  rewards:
+    image: gitopia/rewards
+    ports:
+      - 10500:10500
+    expose:
+      - 10500
+    environment:
+      - PATH=/usr/local/gitopia/bin:$PATH
+      - ENV=dev
+    volumes:
+      - gitopiad-binary:/usr/local/gitopia/bin:ro  # Share the binary with the rewards service
+
   ipfs:
     image: ipfs/go-ipfs:v0.10.0
     ports:

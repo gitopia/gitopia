@@ -36,6 +36,9 @@ edit_genesis () {
 
     # Update mint module
     dasel put -t string -f $GENESIS '.app_state.mint.params.mint_denom' -v 'ulore'
+
+    # Update rewards params
+    dasel put -t string -f $GENESIS '.app_state.rewards.params.evaluator_address' -v 'gitopia17jhwu9ly6tvk029whklfxtcy9l7k2klkctpxu9'
 }
 
 add_genesis_accounts () {
@@ -48,6 +51,9 @@ add_genesis_accounts () {
 
     # git server wallet address
     gitopiad add-genesis-account gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9 100000000000ulore --home $GITOPIA_HOME
+
+    # rewards service wallet address
+    gitopiad add-genesis-account gitopia17jhwu9ly6tvk029whklfxtcy9l7k2klkctpxu9 100000000000ulore --home $GITOPIA_HOME
 
     echo $MNEMONIC | gitopiad keys add $MONIKER --recover --keyring-backend=test --home $GITOPIA_HOME
     gitopiad gentx $MONIKER 500000000ulore --keyring-backend=test --chain-id=$CHAIN_ID --home $GITOPIA_HOME
