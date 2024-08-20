@@ -6,34 +6,26 @@ build:
     - third_party/proto
     - proto_vendor
 accounts:
-- name: node0
-  coins:
-  - 200000000ulore
-- name: node1
-  coins:
-  - 100000000utlore
-- name: node2
-  coins:
-  - 100000000utlore
-- name: node3
-  coins:
-  - 50000000utlore
-- name: faucet
-  coins:
-  - 100000000ulore
-- name: evaluator
-  coins:
-  - 100000000ulore
-  address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
-# fantasy guitar settle happy spoil fever leisure life lounge trumpet reason labor hub paddle envelope tunnel identify reveal turtle sting worth lottery afford rescue
-- name: cosmos_rewards
-  coins:
-  - 100000000ulore
-  address: gitopia1e385ct9padxt2ylzen884kr79genlq8la04sy4
+  - name: node0
+    coins: ['200000000ulore']
+  - name: node1
+    coins: ['100000000ulore']
+  - name: node2
+    coins: ['100000000ulore']
+  - name: node3
+    coins: ['50000000ulore']
+  - name: faucet
+    coins: ['100000000ulore']
+  - name: evaluator
+    coins: ['100000000ulore']
+    address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+  # fantasy guitar settle happy spoil fever leisure life lounge trumpet reason labor hub paddle envelope tunnel identify reveal turtle sting worth lottery afford rescue
+  - name: cosmos_rewards
+    coins: ['100000000ulore']
+    address: gitopia1e385ct9padxt2ylzen884kr79genlq8la04sy4
 faucet:
   name: faucet
-  coins:
-  - 1000000ulore
+  coins: ['200000000ulore']
   coins_max:
   - 3000000ulore
   host: 0.0.0.0:4500

@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 // NewHandler ...

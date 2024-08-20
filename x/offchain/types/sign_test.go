@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 )
 
 type signerTestSuite struct {
@@ -20,7 +20,7 @@ type signerTestSuite struct {
 }
 
 func (ts *signerTestSuite) SetupTest() {
-	encConf := simapp.MakeTestEncodingConfig()
+	encConf := testutil.MakeTestEncodingConfig()
 	privKey := secp256k1.GenPrivKeyFromSecret(nil)
 
 	RegisterInterfaces(encConf.InterfaceRegistry)

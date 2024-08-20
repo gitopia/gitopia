@@ -10,9 +10,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	gitopiasimulation "github.com/gitopia/gitopia/v3/x/gitopia/simulation"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	gitopiasimulation "github.com/gitopia/gitopia/v4/x/gitopia/simulation"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
 // avoid unused import issue
@@ -97,11 +97,6 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 	return nil
 }
 
-// RandomizedParams creates randomized  param changes for the simulator
-func (am AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-
-	return []simtypes.ParamChange{}
-}
 
 // RegisterStoreDecoder registers a decoder
 func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}

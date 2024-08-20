@@ -1,12 +1,13 @@
 #!/usr/bin/make -f
 
+include scripts/makefiles/localnet.mk
+
 APPNAME := gitopiad
-PACKAGES=$(shell go list ./... | grep -v '/simulation')
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 
 LEDGER_ENABLED ?= true
-TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::') # grab everything after the space in "github.com/tendermint/tendermint v0.34.10"
+TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::') # grab everything after the space in "github.com/cometbft/cometbft v0.34.10"
 BUILDDIR ?= $(CURDIR)/build
 
 # don't override user values
@@ -55,8 +56,11 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=gitopia \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 	-X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
-	-X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
+	-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TM_VERSION)
 
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
 ifeq (,$(findstring nostrip,$(GITOPIA_BUILD_OPTIONS)))
   ldflags += -w -s
 endif
@@ -144,10 +148,47 @@ go.sum: go.mod
 clean:
 	rm -rf $(BUILDDIR)/
 
-test:
-	@go test -mod=readonly $(PACKAGES)
-
 mocks:
 	go install github.com/vektra/mockery/v2@latest
 	mockery --name MsgClient --inpackage --case snake --dir ./x/gitopia/types
 	mockery --name QueryClient --inpackage --case snake --dir ./x/gitopia/types
+
+###############################################################################
+###                           Tests & Simulation                            ###
+###############################################################################
+
+include sims.mk
+
+PACKAGES_UNIT=$(shell go list ./... | grep -v -e '/tests/e2e')
+PACKAGES_E2E=$(shell cd tests/e2e && go list ./... | grep '/e2e')
+TEST_PACKAGES=./...
+TEST_TARGETS := test-unit test-unit-cover test-race test-e2e
+
+test-unit: ARGS=-timeout=5m -tags='norace'
+test-unit: TEST_PACKAGES=$(PACKAGES_UNIT)
+test-unit-cover: ARGS=-timeout=5m -tags='norace' -coverprofile=coverage.txt -covermode=atomic
+test-unit-cover: TEST_PACKAGES=$(PACKAGES_UNIT)
+test-race: ARGS=-timeout=5m -race
+test-race: TEST_PACKAGES=$(PACKAGES_UNIT)
+test-e2e: ARGS=-timeout=35m -v
+test-e2e: TEST_PACKAGES=$(PACKAGES_E2E)
+$(TEST_TARGETS): run-tests
+
+run-tests:
+ifneq (,$(shell which tparse 2>/dev/null))
+	@echo "--> Running tests"
+	@go test -mod=readonly -json $(ARGS) $(TEST_PACKAGES) | tparse
+else
+	@echo "--> Running tests"
+	@go test -mod=readonly $(ARGS) $(TEST_PACKAGES)
+endif
+
+.PHONY: run-tests $(TEST_TARGETS)
+
+docker-build-debug:
+	@docker build -t gitopia/gitopiad-e2e -f Dockerfile .
+
+docker-build-hermes:
+	@cd tests/e2e/docker; docker build -t gitopia/hermes-e2e:1.0.0 -f hermes.Dockerfile .
+
+docker-build-all: docker-build-debug docker-build-hermes

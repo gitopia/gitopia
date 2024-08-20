@@ -9,21 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-export interface ProtobufAny {
-  "@type"?: string;
-}
-
-export interface RpcStatus {
-  /** @format int32 */
-  code?: number;
-  message?: string;
-  details?: ProtobufAny[];
-}
-
 /**
- * Params holds parameters for the mint module.
+ * Params defines the parameters for the x/mint module.
  */
-export interface V1Beta1Params {
+export interface Mintv1Beta1Params {
   /** type of coin to mint */
   mint_denom?: string;
 
@@ -45,6 +34,25 @@ export interface V1Beta1Params {
    */
   blocks_per_year?: string;
 }
+
+export interface ProtobufAny {
+  "@type"?: string;
+}
+
+export interface RpcStatus {
+  /** @format int32 */
+  code?: number;
+  message?: string;
+  details?: ProtobufAny[];
+}
+
+/**
+* MsgUpdateParamsResponse defines the response structure for executing a
+MsgUpdateParams message.
+
+Since: cosmos-sdk 0.47
+*/
+export type V1Beta1MsgUpdateParamsResponse = object;
 
 /**
 * QueryAnnualProvisionsResponse is the response type for the
@@ -75,7 +83,7 @@ export interface V1Beta1QueryInflationResponse {
  */
 export interface V1Beta1QueryParamsResponse {
   /** params defines the parameters of the module. */
-  params?: V1Beta1Params;
+  params?: Mintv1Beta1Params;
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";

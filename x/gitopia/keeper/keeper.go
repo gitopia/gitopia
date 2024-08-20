@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,8 +14,7 @@ import (
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	// this line is used by starport scaffolding # ibc/keeper/import
 )
 

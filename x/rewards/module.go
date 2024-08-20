@@ -10,19 +10,20 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v3/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/v3/x/rewards/keeper"
-	v2 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v2"
-	v3 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v3"
-	v4 "github.com/gitopia/gitopia/v3/x/rewards/migrations/v4"
-	"github.com/gitopia/gitopia/v3/x/rewards/types"
+	"github.com/gitopia/gitopia/v4/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v4/x/rewards/keeper"
+
+	// v2 "github.com/gitopia/gitopia/v4/x/rewards/migrations/v2"
+	// v3 "github.com/gitopia/gitopia/v4/x/rewards/migrations/v3"
+	// v4 "github.com/gitopia/gitopia/v4/x/rewards/migrations/v4"
+	"github.com/gitopia/gitopia/v4/x/rewards/types"
 )
 
 var (
@@ -114,24 +115,24 @@ func NewAppModule(
 	}
 }
 
-// Deprecated: use RegisterServices
-func (am AppModule) Route() sdk.Route { return sdk.Route{} }
+// // Deprecated: use RegisterServices
+// func (am AppModule) Route() sdk.Route { return sdk.Route{} }
 
-// Deprecated: use RegisterServices
-func (AppModule) QuerierRoute() string { return types.RouterKey }
+// // Deprecated: use RegisterServices
+// func (AppModule) QuerierRoute() string { return types.RouterKey }
 
-// Deprecated: use RegisterServices
-func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
-	return nil
-}
+// // Deprecated: use RegisterServices
+// func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
+// 	return nil
+// }
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-	cfg.RegisterMigration(types.ModuleName, 1, v2.NewMigrator(am.keeper).Migrate) // migrate from version 1
-	cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate) // migrate from version 2
-	cfg.RegisterMigration(types.ModuleName, 3, v4.NewMigrator(am.keeper).Migrate) // migrate from version 3
+	// cfg.RegisterMigration(types.ModuleName, 1, v2.NewMigrator(am.keeper).Migrate) // migrate from version 1
+	// cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate) // migrate from version 2
+	// cfg.RegisterMigration(types.ModuleName, 3, v4.NewMigrator(am.keeper).Migrate) // migrate from version 3
 }
 
 // RegisterInvariants registers the invariants of the module. If an invariant deviates from its predicted value, the InvariantRegistry triggers appropriate logic (most often the chain will be halted)

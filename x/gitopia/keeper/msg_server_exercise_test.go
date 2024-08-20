@@ -7,10 +7,10 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	"github.com/gitopia/gitopia/v3/app/params"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,19 +21,38 @@ func TestExerciseSuccess(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)), addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)), addr))
 	assert.NoError(t, err)
 	assert.Equal(t, sdk.Coin{Denom: params.BaseCoinUnit, Amount: math.NewInt(10)},
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -46,21 +65,40 @@ func TestExerciseSuccessMaxBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
 	// 20%
 	eligibleAmount := sdk.NewCoin(params.BaseCoinUnit, sdk.NewDecWithPrec(2, 1).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt())
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount, addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount, addr))
 	assert.NoError(t, err)
 	assert.Equal(t, eligibleAmount,
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -73,22 +111,41 @@ func TestExerciseFailsWithoutBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
 	// 20%
 	eligibleAmount := sdk.NewCoin(params.BaseCoinUnit, sdk.NewDecWithPrec(2, 1).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt())
 	// exercise more than eligible amount
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.AddAmount(math.NewInt(1)), addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.AddAmount(math.NewInt(1)), addr))
 	assert.Error(t, err)
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -101,19 +158,38 @@ func TestExerciseSuccessMultipleClaims(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(20)), addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(20)), addr))
 	assert.NoError(t, err)
 	assert.Equal(t, sdk.Coin{Denom: params.BaseCoinUnit, Amount: math.NewInt(20)},
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -131,21 +207,40 @@ func TestExerciseSuccessAllBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
 	// 20%
 	eligibleAmount := sdk.NewCoin(params.BaseCoinUnit, sdk.NewDecWithPrec(2, 1).MulInt64(keeper.TEAM_VESTING_AMOUNT).TruncateInt())
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.SubAmount(math.NewInt(200)), addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.SubAmount(math.NewInt(200)), addr))
 	assert.NoError(t, err)
 	assert.Equal(t, eligibleAmount.SubAmount(math.NewInt(200)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -163,21 +258,40 @@ func TestExerciseSuccessOnlyVestedBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-2, 0, 0), // one year tokens vested
+		GenesisTime:     now.AddDate(-2, 0, 0), // one year token vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt((int64)(VESTING_PER_MONTH * 12))}})
 	// 20%
 	eligibleAmount := sdk.NewCoin(params.BaseCoinUnit, sdk.NewDecWithPrec(2, 1).MulInt64((int64)(VESTING_PER_MONTH*12)).TruncateInt())
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.AddAmount(math.NewInt(1)), addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, eligibleAmount.AddAmount(math.NewInt(1)), addr))
 	assert.Error(t, err)
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -195,16 +309,36 @@ func TestExerciseFailsOnNoVestedBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-1, 0, 0), // no tokens vested
+		GenesisTime:     now.AddDate(-1, 0, 0), // no token vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1)), addr))
+	assert.NoError(t, err)
+
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(1)), addr))
 	assert.Error(t, err)
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))
@@ -219,7 +353,19 @@ func TestExerciseSuccessProportionately(t *testing.T) {
 	accAddr2 := sdk.MustAccAddressFromBech32(addr2)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
@@ -230,8 +376,11 @@ func TestExerciseSuccessProportionately(t *testing.T) {
 				Address:    addr2,
 			},
 		},
-		GenesisTime: now.AddDate(-1, 0, 0), // cliff period
+		GenesisTime:     now.AddDate(-1, 0, 0), // cliff period
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt((int64)(VESTING_PER_MONTH * 2))}})
@@ -240,7 +389,7 @@ func TestExerciseSuccessProportionately(t *testing.T) {
 	amount := sdk.NewCoin(params.BaseCoinUnit,
 		sdk.NewDecWithPrec(2, 1).MulInt64((int64)(VESTING_PER_MONTH)).TruncateInt())
 	// exercise one month vested balance
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr1, amount, addr1))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr1, amount, addr1))
 	assert.NoError(t, err)
 	assert.Equal(t, amount,
 		keepers.BankKeeper.GetBalance(ctx, accAddr1, params.BaseCoinUnit))
@@ -281,19 +430,38 @@ func TestExerciseToAnotherAdddress(t *testing.T) {
 	accAddr2 := sdk.MustAccAddressFromBech32(addr2)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-11, 0, 0), // all tokens have vested
+		GenesisTime:     now.AddDate(-11, 0, 0), // all tokens have vested
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	testutil.FundModuleAccount(keepers.BankKeeper, ctx, types.TeamAccountName,
 		[]sdk.Coin{{Denom: params.BaseCoinUnit, Amount: math.NewInt(keeper.TEAM_VESTING_AMOUNT)}})
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)), addr2))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(10)), addr2))
 	assert.NoError(t, err)
 	assert.Equal(t, sdk.Coin{Denom: params.BaseCoinUnit, Amount: math.NewInt(10)}.String(),
 		keepers.BankKeeper.GetBalance(ctx, accAddr2, params.BaseCoinUnit).String())
@@ -309,21 +477,40 @@ func TestExerciseFailsOnInsufficientBalance(t *testing.T) {
 	accAddr := sdk.MustAccAddressFromBech32(addr)
 	now := time.Now()
 
-	keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+	err := keepers.GitopiaKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
 		TeamProportions: []types.DistributionProportion{
 			{
 				Proportion: sdk.NewDec(20),
 				Address:    addr,
 			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
 		},
-		GenesisTime: now.AddDate(-1, 0, 0), // cliff period
+		GenesisTime:     now.AddDate(-1, 0, 0), // cliff period
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	ctx = ctx.WithBlockTime(now.AddDate(0, 1, 0)) // one month vesting
 	amount := sdk.NewCoin(params.BaseCoinUnit,
 		sdk.NewDecWithPrec(2, 1).MulInt64((int64)(VESTING_PER_MONTH)).TruncateInt())
 	// exercise one month vested balance
-	_, err := srv.Exercise(ctx, types.NewMsgExercise(addr, amount, addr))
+	_, err = srv.Exercise(ctx, types.NewMsgExercise(addr, amount, addr))
 	assert.ErrorContains(t, err, "insufficient funds")
 	assert.Equal(t, sdk.NewCoin(params.BaseCoinUnit, math.NewInt(0)),
 		keepers.BankKeeper.GetBalance(ctx, accAddr, params.BaseCoinUnit))

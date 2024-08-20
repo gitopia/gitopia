@@ -5,13 +5,25 @@
 
 ## Building the source
 
-Building `gitopiad` (Gitopia Daemon) requires [Go 1.19+](https://golang.org/dl/).
+Building `gitopiad` (Gitopia Daemon) requires [Go 1.21+](https://golang.org/dl/).
 
 ```
 make build
 ```
 
 The `gitopiad` binary will be created in the `build` directory.
+
+## Localnet
+
+Provision a localnet with a single validator, faucet and git-server for testing.
+
+### Setup
+
+Build the images for git-server and faucet from their respective repositories. Then, start the localnet.
+
+```bash
+make localnet-start
+```
 
 ## Contributing
 

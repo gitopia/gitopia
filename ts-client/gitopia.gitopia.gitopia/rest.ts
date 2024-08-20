@@ -9,6 +9,18 @@
  * ---------------------------------------------------------------
  */
 
+export interface MsgDistributePlatformIncentivesAddress {
+  address?: string;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
+}
+
 export enum RepositoryBackupStore {
   IPFS = "IPFS",
   ARWEAVE = "ARWEAVE",
@@ -29,31 +41,6 @@ export interface GitopiaAttachment {
   size?: string;
   sha?: string;
   uploader?: string;
-}
-
-export interface GitopiaBounty {
-  /** @format uint64 */
-  id?: string;
-  amount?: V1Beta1Coin[];
-  state?: GitopiaBountyState;
-
-  /** @format uint64 */
-  repositoryId?: string;
-
-  /** @format uint64 */
-  parentIid?: string;
-  parent?: GitopiaBountyParent;
-
-  /** @format int64 */
-  expireAt?: string;
-  rewardedTo?: string;
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
-  creator?: string;
 }
 
 export enum GitopiaBountyParent {
@@ -131,27 +118,9 @@ export enum GitopiaCommentType {
   COMMENT_TYPE_CLOSED_BOUNTY = "COMMENT_TYPE_CLOSED_BOUNTY",
 }
 
-export interface GitopiaDao {
-  creator?: string;
-
-  /** @format uint64 */
-  id?: string;
+export interface GitopiaDistributionProportion {
+  proportion?: string;
   address?: string;
-  name?: string;
-  avatarUrl?: string;
-  followers?: string[];
-  following?: string[];
-  teams?: string[];
-  location?: string;
-  website?: string;
-  verified?: boolean;
-  description?: string;
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
 }
 
 export enum GitopiaEmoji {
@@ -334,6 +303,8 @@ export type GitopiaMsgDeleteTaskResponse = object;
 
 export type GitopiaMsgDeleteUserResponse = object;
 
+export type GitopiaMsgDistributePlatformIncentivesResponse = object;
+
 export type GitopiaMsgExerciseResponse = object;
 
 export interface GitopiaMsgForkRepositoryResponse {
@@ -414,11 +385,17 @@ export interface GitopiaMsgToggleArweaveBackupResponse {
   enableArweaveBackup?: boolean;
 }
 
+export interface GitopiaMsgToggleCommentResolvedResponse {
+  resolved?: boolean;
+}
+
 export type GitopiaMsgToggleForcePushResponse = object;
 
 export interface GitopiaMsgToggleIssueStateResponse {
   state?: string;
 }
+
+export type GitopiaMsgToggleRepositoryArchivedResponse = object;
 
 export interface GitopiaMsgToggleRepositoryForkingResponse {
   allowForking?: boolean;
@@ -436,6 +413,8 @@ export type GitopiaMsgUpdateDaoDescriptionResponse = object;
 
 export type GitopiaMsgUpdateDaoLocationResponse = object;
 
+export type GitopiaMsgUpdateDaoPinnedRepositoriesResponse = object;
+
 export type GitopiaMsgUpdateDaoWebsiteResponse = object;
 
 export type GitopiaMsgUpdateIssueDescriptionResponse = object;
@@ -443,6 +422,8 @@ export type GitopiaMsgUpdateIssueDescriptionResponse = object;
 export type GitopiaMsgUpdateIssueTitleResponse = object;
 
 export type GitopiaMsgUpdateMemberRoleResponse = object;
+
+export type GitopiaMsgUpdateParamsResponse = object;
 
 export type GitopiaMsgUpdatePullRequestDescriptionResponse = object;
 
@@ -466,11 +447,19 @@ export type GitopiaMsgUpdateUserBioResponse = object;
 
 export type GitopiaMsgUpdateUserNameResponse = object;
 
+export type GitopiaMsgUpdateUserPinnedRepositoriesResponse = object;
+
 export type GitopiaMsgUpdateUserUsernameResponse = object;
 
 export enum GitopiaOwnerType {
   USER = "USER",
   DAO = "DAO",
+}
+
+export interface GitopiaPoolProportions {
+  ecosystem?: GitopiaDistributionProportion;
+  team?: GitopiaDistributionProportion;
+  platform?: GitopiaDistributionProportion;
 }
 
 export enum GitopiaProviderPermission {
@@ -564,7 +553,7 @@ export enum GitopiaPullRequestState {
 }
 
 export interface GitopiaQueryAllAnyRepositoryResponse {
-  Repository?: GitopiaRepository[];
+  Repository?: GitopiagitopiaRepository[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -579,7 +568,7 @@ export interface GitopiaQueryAllAnyRepositoryResponse {
 }
 
 export interface GitopiaQueryAllBountyResponse {
-  Bounty?: GitopiaBounty[];
+  Bounty?: GitopiagitopiaBounty[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -639,7 +628,7 @@ export interface GitopiaQueryAllDaoMemberResponse {
 }
 
 export interface GitopiaQueryAllDaoResponse {
-  dao?: GitopiaDao[];
+  dao?: GitopiagitopiaDao[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -729,7 +718,7 @@ export interface GitopiaQueryAllPullRequestResponse {
 }
 
 export interface GitopiaQueryAllReleaseResponse {
-  Release?: GitopiaRelease[];
+  Release?: GitopiagitopiaRelease[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -789,7 +778,7 @@ export interface GitopiaQueryAllRepositoryPullRequestResponse {
 }
 
 export interface GitopiaQueryAllRepositoryReleaseResponse {
-  Release?: GitopiaRelease[];
+  Release?: GitopiagitopiaRelease[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -804,7 +793,7 @@ export interface GitopiaQueryAllRepositoryReleaseResponse {
 }
 
 export interface GitopiaQueryAllRepositoryResponse {
-  Repository?: GitopiaRepository[];
+  Repository?: GitopiagitopiaRepository[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -849,7 +838,7 @@ export interface GitopiaQueryAllTagResponse {
 }
 
 export interface GitopiaQueryAllTaskResponse {
-  Task?: GitopiaTask[];
+  Task?: GitopiagitopiaTask[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -864,7 +853,7 @@ export interface GitopiaQueryAllTaskResponse {
 }
 
 export interface GitopiaQueryAllUserDaoResponse {
-  dao?: GitopiaDao[];
+  dao?: GitopiagitopiaDao[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -879,7 +868,7 @@ export interface GitopiaQueryAllUserDaoResponse {
 }
 
 export interface GitopiaQueryAllUserResponse {
-  User?: GitopiaUser[];
+  User?: GitopiagitopiaUser[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -894,7 +883,7 @@ export interface GitopiaQueryAllUserResponse {
 }
 
 export interface GitopiaQueryAllWhoisResponse {
-  Whois?: GitopiaWhois[];
+  Whois?: GitopiagitopiaWhois[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -932,11 +921,11 @@ export interface GitopiaQueryGetAllForkResponse {
 }
 
 export interface GitopiaQueryGetAnyRepositoryResponse {
-  Repository?: GitopiaRepository;
+  Repository?: GitopiagitopiaRepository;
 }
 
 export interface GitopiaQueryGetBountyResponse {
-  Bounty?: GitopiaBounty;
+  Bounty?: GitopiagitopiaBounty;
 }
 
 export interface GitopiaQueryGetDaoMemberResponse {
@@ -944,7 +933,7 @@ export interface GitopiaQueryGetDaoMemberResponse {
 }
 
 export interface GitopiaQueryGetDaoResponse {
-  dao?: GitopiaDao;
+  dao?: GitopiagitopiaDao;
 }
 
 export interface GitopiaQueryGetIssueCommentResponse {
@@ -952,7 +941,7 @@ export interface GitopiaQueryGetIssueCommentResponse {
 }
 
 export interface GitopiaQueryGetLatestRepositoryReleaseResponse {
-  Release?: GitopiaRelease;
+  Release?: GitopiagitopiaRelease;
 }
 
 export interface GitopiaQueryGetPullRequestCommentResponse {
@@ -964,7 +953,7 @@ export interface GitopiaQueryGetPullRequestMergePermissionResponse {
 }
 
 export interface GitopiaQueryGetReleaseResponse {
-  Release?: GitopiaRelease;
+  Release?: GitopiagitopiaRelease;
 }
 
 export interface GitopiaQueryGetRepositoryBranchResponse {
@@ -984,11 +973,11 @@ export interface GitopiaQueryGetRepositoryPullRequestResponse {
 }
 
 export interface GitopiaQueryGetRepositoryReleaseResponse {
-  Release?: GitopiaRelease;
+  Release?: GitopiagitopiaRelease;
 }
 
 export interface GitopiaQueryGetRepositoryResponse {
-  Repository?: GitopiaRepository;
+  Repository?: GitopiagitopiaRepository;
 }
 
 export interface GitopiaQueryGetRepositoryTagResponse {
@@ -1000,92 +989,48 @@ export interface GitopiaQueryGetRepositoryTagShaResponse {
 }
 
 export interface GitopiaQueryGetTaskResponse {
-  Task?: GitopiaTask;
+  Task?: GitopiagitopiaTask;
 }
 
 export interface GitopiaQueryGetUserResponse {
-  User?: GitopiaUser;
+  User?: GitopiagitopiaUser;
 }
 
 export interface GitopiaQueryGetWhoisResponse {
-  Whois?: GitopiaWhois;
+  Whois?: GitopiagitopiaWhois;
+}
+
+/**
+ * QueryParamsResponse is the response type for the Query/Params RPC method.
+ */
+export interface GitopiaQueryParamsResponse {
+  /** params defines the parameters of the module. */
+  params?: GitopiagitopiaParams;
+}
+
+export interface GitopiaQueryVestedAmountResponse {
+  address?: string;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  amount?: V1Beta1Coin;
+
+  /**
+   * Coin defines a token with a denomination and an amount.
+   *
+   * NOTE: The amount field is an Int which implements the custom method
+   * signatures required by gogoproto.
+   */
+  exercisedAmount?: V1Beta1Coin;
 }
 
 export interface GitopiaReaction {
   address?: string;
   emojis?: GitopiaEmoji[];
-}
-
-export interface GitopiaRelease {
-  creator?: string;
-
-  /** @format uint64 */
-  id?: string;
-
-  /** @format uint64 */
-  repositoryId?: string;
-  tagName?: string;
-  target?: string;
-  name?: string;
-  description?: string;
-  attachments?: GitopiaAttachment[];
-  draft?: boolean;
-  preRelease?: boolean;
-  isTag?: boolean;
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
-
-  /** @format int64 */
-  publishedAt?: string;
-}
-
-export interface GitopiaRepository {
-  creator?: string;
-
-  /** @format uint64 */
-  id?: string;
-  name?: string;
-  owner?: GitopiaRepositoryOwner;
-  description?: string;
-  forks?: string[];
-  subscribers?: string;
-  commits?: string;
-
-  /** @format uint64 */
-  issuesCount?: string;
-
-  /** @format uint64 */
-  pullsCount?: string;
-  labels?: GitopiaRepositoryLabel[];
-
-  /** @format uint64 */
-  labelsCount?: string;
-  releases?: GitopiaRepositoryRelease[];
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
-
-  /** @format int64 */
-  pushedAt?: string;
-  stargazers?: string[];
-  archived?: boolean;
-  license?: string;
-  defaultBranch?: string;
-
-  /** @format uint64 */
-  parent?: string;
-  fork?: boolean;
-  collaborators?: GitopiaRepositoryCollaborator[];
-  allowForking?: boolean;
-  backups?: GitopiaRepositoryBackup[];
-  enableArweaveBackup?: boolean;
 }
 
 export interface GitopiaRepositoryBackup {
@@ -1138,22 +1083,6 @@ export interface GitopiaRepositoryOwner {
   type?: GitopiaOwnerType;
 }
 
-export interface GitopiaRepositoryRelease {
-  /** @format uint64 */
-  id?: string;
-  tagName?: string;
-}
-
-export interface GitopiaTask {
-  /** @format uint64 */
-  id?: string;
-  type?: GitopiaTaskType;
-  state?: GitopiaTaskState;
-  message?: string;
-  creator?: string;
-  provider?: string;
-}
-
 export enum GitopiaTaskState {
   TASK_STATE_PENDING = "TASK_STATE_PENDING",
   TASK_STATE_SUCCESS = "TASK_STATE_SUCCESS",
@@ -1165,7 +1094,192 @@ export enum GitopiaTaskType {
   TASK_TYPE_SET_PULL_REQUEST_STATE = "TASK_TYPE_SET_PULL_REQUEST_STATE",
 }
 
-export interface GitopiaUser {
+export interface GitopiagitopiaBounty {
+  /** @format uint64 */
+  id?: string;
+  amount?: V1Beta1Coin[];
+  state?: GitopiaBountyState;
+
+  /** @format uint64 */
+  repositoryId?: string;
+
+  /** @format uint64 */
+  parentIid?: string;
+  parent?: GitopiaBountyParent;
+
+  /** @format int64 */
+  expireAt?: string;
+  rewardedTo?: string;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+  creator?: string;
+}
+
+export interface GitopiagitopiaBranch {
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  repositoryId?: string;
+  name?: string;
+  sha?: string;
+  allowForcePush?: boolean;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+}
+
+export interface GitopiagitopiaDao {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  address?: string;
+  name?: string;
+  avatarUrl?: string;
+  followers?: string[];
+  following?: string[];
+  teams?: string[];
+  location?: string;
+  website?: string;
+  verified?: boolean;
+  description?: string;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+  pinned_repos?: string[];
+}
+
+/**
+ * Params defines the parameters for the module.
+ */
+export interface GitopiagitopiaParams {
+  /** @format date-time */
+  next_inflation_time?: string;
+  pool_proportions?: GitopiaPoolProportions;
+  team_proportions?: GitopiaDistributionProportion[];
+
+  /** @format date-time */
+  genesis_time?: string;
+  git_server?: string;
+  storage_provider?: string;
+}
+
+export interface GitopiagitopiaRelease {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  repositoryId?: string;
+  tagName?: string;
+  target?: string;
+  name?: string;
+  description?: string;
+  attachments?: GitopiaAttachment[];
+  draft?: boolean;
+  preRelease?: boolean;
+  isTag?: boolean;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+
+  /** @format int64 */
+  publishedAt?: string;
+}
+
+export interface GitopiagitopiaRepository {
+  creator?: string;
+
+  /** @format uint64 */
+  id?: string;
+  name?: string;
+  owner?: GitopiaRepositoryOwner;
+  description?: string;
+  forks?: string[];
+  subscribers?: string;
+  commits?: string;
+
+  /** @format uint64 */
+  issuesCount?: string;
+
+  /** @format uint64 */
+  pullsCount?: string;
+  labels?: GitopiaRepositoryLabel[];
+
+  /** @format uint64 */
+  labelsCount?: string;
+  releases?: GitopiagitopiaRepositoryRelease[];
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+
+  /** @format int64 */
+  pushedAt?: string;
+  stargazers?: string[];
+  archived?: boolean;
+  license?: string;
+  defaultBranch?: string;
+
+  /** @format uint64 */
+  parent?: string;
+  fork?: boolean;
+  collaborators?: GitopiaRepositoryCollaborator[];
+  allowForking?: boolean;
+  backups?: GitopiaRepositoryBackup[];
+  enableArweaveBackup?: boolean;
+}
+
+export interface GitopiagitopiaRepositoryRelease {
+  /** @format uint64 */
+  id?: string;
+  tagName?: string;
+}
+
+export interface GitopiagitopiaTag {
+  /** @format uint64 */
+  id?: string;
+
+  /** @format uint64 */
+  repositoryId?: string;
+  name?: string;
+  sha?: string;
+
+  /** @format int64 */
+  createdAt?: string;
+
+  /** @format int64 */
+  updatedAt?: string;
+}
+
+export interface GitopiagitopiaTask {
+  /** @format uint64 */
+  id?: string;
+  type?: GitopiaTaskType;
+  state?: GitopiaTaskState;
+  message?: string;
+  creator?: string;
+  provider?: string;
+}
+
+export interface GitopiagitopiaUser {
   creator?: string;
 
   /** @format uint64 */
@@ -1186,9 +1300,10 @@ export interface GitopiaUser {
   /** @format int64 */
   updatedAt?: string;
   verified?: boolean;
+  pinned_repos?: string[];
 }
 
-export interface GitopiaWhois {
+export interface GitopiagitopiaWhois {
   creator?: string;
 
   /** @format uint64 */
@@ -1196,39 +1311,6 @@ export interface GitopiaWhois {
   name?: string;
   address?: string;
   ownerType?: GitopiaOwnerType;
-}
-
-export interface GitopiagitopiaBranch {
-  /** @format uint64 */
-  id?: string;
-
-  /** @format uint64 */
-  repositoryId?: string;
-  name?: string;
-  sha?: string;
-  allowForcePush?: boolean;
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
-}
-
-export interface GitopiagitopiaTag {
-  /** @format uint64 */
-  id?: string;
-
-  /** @format uint64 */
-  repositoryId?: string;
-  name?: string;
-  sha?: string;
-
-  /** @format int64 */
-  createdAt?: string;
-
-  /** @format int64 */
-  updatedAt?: string;
 }
 
 export interface ProtobufAny {
@@ -1446,7 +1528,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title gitopia/attachment.proto
+ * @title gitopia/gitopia/gitopia/attachment.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -1707,6 +1789,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/gitopia/gitopia/gitopia/member`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryParams
+   * @summary Params returns the total set of gitopia parameters.
+   * @request GET:/gitopia/gitopia/gitopia/params
+   */
+  queryParams = (params: RequestParams = {}) =>
+    this.request<GitopiaQueryParamsResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/params`,
+      method: "GET",
       format: "json",
       ...params,
     });
@@ -2110,6 +2208,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/gitopia/gitopia/gitopia/user/${userId}/dao`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryVestedAmount
+   * @summary query vested amount for developer address
+   * @request GET:/gitopia/gitopia/gitopia/vestedAmount/{address}
+   */
+  queryVestedAmount = (address: string, params: RequestParams = {}) =>
+    this.request<GitopiaQueryVestedAmountResponse, RpcStatus>({
+      path: `/gitopia/gitopia/gitopia/vestedAmount/${address}`,
+      method: "GET",
       format: "json",
       ...params,
     });

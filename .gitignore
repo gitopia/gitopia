@@ -7,3 +7,4 @@ cmd/gitopiad/__debug_bin
 .DS_Store
 .lfsconfig
 x/rewards/client/cli/test
+tests/localnet/data

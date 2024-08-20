@@ -7,88 +7,94 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgRemovePullRequestReviewers } from "./types/gitopia/tx";
-import { MsgSetBranch } from "./types/gitopia/tx";
-import { MsgDeleteBranch } from "./types/gitopia/tx";
-import { MsgUpdatePullRequestTitle } from "./types/gitopia/tx";
-import { MsgDeleteUser } from "./types/gitopia/tx";
-import { MsgUpdateDaoAvatar } from "./types/gitopia/tx";
-import { MsgChangeOwner } from "./types/gitopia/tx";
-import { MsgToggleForcePush } from "./types/gitopia/tx";
-import { MsgMultiDeleteTag } from "./types/gitopia/tx";
-import { MsgInvokeMergePullRequest } from "./types/gitopia/tx";
-import { MsgCreateBounty } from "./types/gitopia/tx";
-import { MsgUpdateRepositoryLabel } from "./types/gitopia/tx";
-import { MsgUpdateComment } from "./types/gitopia/tx";
-import { MsgLinkPullRequestIssueByIid } from "./types/gitopia/tx";
-import { MsgSetDefaultBranch } from "./types/gitopia/tx";
-import { MsgUpdateUserBio } from "./types/gitopia/tx";
-import { MsgForkRepository } from "./types/gitopia/tx";
-import { MsgCreateRepositoryLabel } from "./types/gitopia/tx";
-import { MsgRenameDao } from "./types/gitopia/tx";
-import { MsgAddIssueAssignees } from "./types/gitopia/tx";
-import { MsgDeletePullRequest } from "./types/gitopia/tx";
-import { MsgUpdateMemberRole } from "./types/gitopia/tx";
-import { MsgAddIssueLabels } from "./types/gitopia/tx";
-import { MsgRemoveIssueAssignees } from "./types/gitopia/tx";
-import { MsgUnlinkPullRequestIssueByIid } from "./types/gitopia/tx";
-import { MsgCloseBounty } from "./types/gitopia/tx";
-import { MsgUpdateRepositoryBackupRef } from "./types/gitopia/tx";
-import { MsgDeleteIssue } from "./types/gitopia/tx";
-import { MsgAddPullRequestAssignees } from "./types/gitopia/tx";
-import { MsgAddRepositoryBackupRef } from "./types/gitopia/tx";
-import { MsgRevokeProviderPermission } from "./types/gitopia/tx";
-import { MsgUpdateDaoDescription } from "./types/gitopia/tx";
-import { MsgToggleIssueState } from "./types/gitopia/tx";
-import { MsgDeleteRepository } from "./types/gitopia/tx";
-import { MsgDeleteComment } from "./types/gitopia/tx";
-import { MsgDeleteDao } from "./types/gitopia/tx";
-import { MsgRemovePullRequestLabels } from "./types/gitopia/tx";
-import { MsgDeleteBounty } from "./types/gitopia/tx";
-import { MsgDeleteRelease } from "./types/gitopia/tx";
-import { MsgAddPullRequestReviewers } from "./types/gitopia/tx";
-import { MsgCreateUser } from "./types/gitopia/tx";
-import { MsgUpdateUserName } from "./types/gitopia/tx";
-import { MsgUpdateBountyExpiry } from "./types/gitopia/tx";
-import { MsgCreateIssue } from "./types/gitopia/tx";
-import { MsgToggleRepositoryForking } from "./types/gitopia/tx";
-import { MsgUpdateRelease } from "./types/gitopia/tx";
-import { MsgUpdateIssueDescription } from "./types/gitopia/tx";
-import { MsgMultiSetBranch } from "./types/gitopia/tx";
-import { MsgAuthorizeProvider } from "./types/gitopia/tx";
-import { MsgUpdateTask } from "./types/gitopia/tx";
-import { MsgInvokeForkRepository } from "./types/gitopia/tx";
-import { MsgCreateRelease } from "./types/gitopia/tx";
-import { MsgCreateTask } from "./types/gitopia/tx";
-import { MsgAddMember } from "./types/gitopia/tx";
-import { MsgSetTag } from "./types/gitopia/tx";
-import { MsgUpdateRepositoryDescription } from "./types/gitopia/tx";
-import { MsgCreateComment } from "./types/gitopia/tx";
-import { MsgRemovePullRequestAssignees } from "./types/gitopia/tx";
-import { MsgAddPullRequestLabels } from "./types/gitopia/tx";
-import { MsgDeleteTask } from "./types/gitopia/tx";
-import { MsgCreateDao } from "./types/gitopia/tx";
-import { MsgUpdateRepositoryCollaborator } from "./types/gitopia/tx";
-import { MsgRemoveMember } from "./types/gitopia/tx";
-import { MsgUpdatePullRequestDescription } from "./types/gitopia/tx";
-import { MsgUpdateIssueTitle } from "./types/gitopia/tx";
-import { MsgUpdateUserAvatar } from "./types/gitopia/tx";
-import { MsgRenameRepository } from "./types/gitopia/tx";
-import { MsgRemoveRepositoryCollaborator } from "./types/gitopia/tx";
-import { MsgUpdateDaoLocation } from "./types/gitopia/tx";
-import { MsgUpdateUserUsername } from "./types/gitopia/tx";
-import { MsgUpdateDaoWebsite } from "./types/gitopia/tx";
-import { MsgRemoveIssueLabels } from "./types/gitopia/tx";
-import { MsgMultiDeleteBranch } from "./types/gitopia/tx";
-import { MsgDeleteRepositoryLabel } from "./types/gitopia/tx";
-import { MsgExercise } from "./types/gitopia/tx";
-import { MsgDeleteTag } from "./types/gitopia/tx";
-import { MsgCreateRepository } from "./types/gitopia/tx";
-import { MsgForkRepositorySuccess } from "./types/gitopia/tx";
-import { MsgCreatePullRequest } from "./types/gitopia/tx";
-import { MsgSetPullRequestState } from "./types/gitopia/tx";
-import { MsgToggleArweaveBackup } from "./types/gitopia/tx";
-import { MsgMultiSetTag } from "./types/gitopia/tx";
+import { MsgUpdateMemberRole } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateUserAvatar } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgMultiSetTag } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteTag } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleRepositoryArchived } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgSetBranch } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgForkRepositorySuccess } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeletePullRequest } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteRepositoryLabel } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddPullRequestLabels } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateUserUsername } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgSetTag } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgMultiDeleteTag } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteTask } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteRepository } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRevokeProviderPermission } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateRelease } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateUserBio } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateIssueDescription } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateDaoAvatar } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgMultiSetBranch } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgInvokeMergePullRequest } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddIssueLabels } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateComment } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdatePullRequestDescription } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddPullRequestReviewers } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateTask } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRenameRepository } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleIssueState } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUnlinkPullRequestIssueByIid } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateRelease } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteRelease } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateIssue } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleRepositoryForking } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemovePullRequestLabels } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgForkRepository } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleCommentResolved } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateUserName } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteBounty } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateDao } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRenameDao } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddMember } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateIssueTitle } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgChangeOwner } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateRepositoryLabel } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateTask } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteBranch } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreatePullRequest } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgInvokeForkRepository } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemoveIssueLabels } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDistributePlatformIncentives } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateComment } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteUser } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgLinkPullRequestIssueByIid } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddIssueAssignees } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgExercise } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateUserPinnedRepositories } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemoveMember } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateBountyExpiry } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemovePullRequestReviewers } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteComment } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCloseBounty } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemoveIssueAssignees } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateDaoWebsite } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateRepositoryDescription } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateRepositoryBackupRef } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgSetDefaultBranch } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddPullRequestAssignees } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateParams } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleForcePush } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgToggleArweaveBackup } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdatePullRequestTitle } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateDaoDescription } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteIssue } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateBounty } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgDeleteDao } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateRepository } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemovePullRequestAssignees } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAddRepositoryBackupRef } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateDaoPinnedRepositories } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateRepositoryCollaborator } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgRemoveRepositoryCollaborator } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgAuthorizeProvider } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgMultiDeleteBranch } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateRepositoryLabel } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgCreateUser } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgSetPullRequestState } from "./types/gitopia/gitopia/gitopia/tx";
+import { MsgUpdateDaoLocation } from "./types/gitopia/gitopia/gitopia/tx";
 
 import { Attachment as typeAttachment} from "./types"
 import { Bounty as typeBounty} from "./types"
@@ -128,14 +134,39 @@ import { MsgSetBranch_Branch as typeMsgSetBranch_Branch} from "./types"
 import { MsgMultiSetBranch_Branch as typeMsgMultiSetBranch_Branch} from "./types"
 import { MsgSetTag_Tag as typeMsgSetTag_Tag} from "./types"
 import { MsgMultiSetTag_Tag as typeMsgMultiSetTag_Tag} from "./types"
+import { MsgDistributePlatformIncentives_Address as typeMsgDistributePlatformIncentives_Address} from "./types"
 import { User as typeUser} from "./types"
 import { UserDao as typeUserDao} from "./types"
 import { Whois as typeWhois} from "./types"
 
-export { MsgRemovePullRequestReviewers, MsgSetBranch, MsgDeleteBranch, MsgUpdatePullRequestTitle, MsgDeleteUser, MsgUpdateDaoAvatar, MsgChangeOwner, MsgToggleForcePush, MsgMultiDeleteTag, MsgInvokeMergePullRequest, MsgCreateBounty, MsgUpdateRepositoryLabel, MsgUpdateComment, MsgLinkPullRequestIssueByIid, MsgSetDefaultBranch, MsgUpdateUserBio, MsgForkRepository, MsgCreateRepositoryLabel, MsgRenameDao, MsgAddIssueAssignees, MsgDeletePullRequest, MsgUpdateMemberRole, MsgAddIssueLabels, MsgRemoveIssueAssignees, MsgUnlinkPullRequestIssueByIid, MsgCloseBounty, MsgUpdateRepositoryBackupRef, MsgDeleteIssue, MsgAddPullRequestAssignees, MsgAddRepositoryBackupRef, MsgRevokeProviderPermission, MsgUpdateDaoDescription, MsgToggleIssueState, MsgDeleteRepository, MsgDeleteComment, MsgDeleteDao, MsgRemovePullRequestLabels, MsgDeleteBounty, MsgDeleteRelease, MsgAddPullRequestReviewers, MsgCreateUser, MsgUpdateUserName, MsgUpdateBountyExpiry, MsgCreateIssue, MsgToggleRepositoryForking, MsgUpdateRelease, MsgUpdateIssueDescription, MsgMultiSetBranch, MsgAuthorizeProvider, MsgUpdateTask, MsgInvokeForkRepository, MsgCreateRelease, MsgCreateTask, MsgAddMember, MsgSetTag, MsgUpdateRepositoryDescription, MsgCreateComment, MsgRemovePullRequestAssignees, MsgAddPullRequestLabels, MsgDeleteTask, MsgCreateDao, MsgUpdateRepositoryCollaborator, MsgRemoveMember, MsgUpdatePullRequestDescription, MsgUpdateIssueTitle, MsgUpdateUserAvatar, MsgRenameRepository, MsgRemoveRepositoryCollaborator, MsgUpdateDaoLocation, MsgUpdateUserUsername, MsgUpdateDaoWebsite, MsgRemoveIssueLabels, MsgMultiDeleteBranch, MsgDeleteRepositoryLabel, MsgExercise, MsgDeleteTag, MsgCreateRepository, MsgForkRepositorySuccess, MsgCreatePullRequest, MsgSetPullRequestState, MsgToggleArweaveBackup, MsgMultiSetTag };
+export { MsgUpdateMemberRole, MsgUpdateUserAvatar, MsgMultiSetTag, MsgDeleteTag, MsgToggleRepositoryArchived, MsgSetBranch, MsgForkRepositorySuccess, MsgDeletePullRequest, MsgDeleteRepositoryLabel, MsgAddPullRequestLabels, MsgUpdateUserUsername, MsgSetTag, MsgMultiDeleteTag, MsgDeleteTask, MsgDeleteRepository, MsgRevokeProviderPermission, MsgCreateRelease, MsgUpdateUserBio, MsgUpdateIssueDescription, MsgUpdateDaoAvatar, MsgMultiSetBranch, MsgInvokeMergePullRequest, MsgAddIssueLabels, MsgCreateComment, MsgUpdatePullRequestDescription, MsgAddPullRequestReviewers, MsgUpdateTask, MsgRenameRepository, MsgToggleIssueState, MsgUnlinkPullRequestIssueByIid, MsgUpdateRelease, MsgDeleteRelease, MsgCreateIssue, MsgToggleRepositoryForking, MsgRemovePullRequestLabels, MsgForkRepository, MsgToggleCommentResolved, MsgUpdateUserName, MsgDeleteBounty, MsgCreateDao, MsgRenameDao, MsgAddMember, MsgUpdateIssueTitle, MsgChangeOwner, MsgCreateRepositoryLabel, MsgCreateTask, MsgDeleteBranch, MsgCreatePullRequest, MsgInvokeForkRepository, MsgRemoveIssueLabels, MsgDistributePlatformIncentives, MsgUpdateComment, MsgDeleteUser, MsgLinkPullRequestIssueByIid, MsgAddIssueAssignees, MsgExercise, MsgUpdateUserPinnedRepositories, MsgRemoveMember, MsgUpdateBountyExpiry, MsgRemovePullRequestReviewers, MsgDeleteComment, MsgCloseBounty, MsgRemoveIssueAssignees, MsgUpdateDaoWebsite, MsgUpdateRepositoryDescription, MsgUpdateRepositoryBackupRef, MsgSetDefaultBranch, MsgAddPullRequestAssignees, MsgUpdateParams, MsgToggleForcePush, MsgToggleArweaveBackup, MsgUpdatePullRequestTitle, MsgUpdateDaoDescription, MsgDeleteIssue, MsgCreateBounty, MsgDeleteDao, MsgCreateRepository, MsgRemovePullRequestAssignees, MsgAddRepositoryBackupRef, MsgUpdateDaoPinnedRepositories, MsgUpdateRepositoryCollaborator, MsgRemoveRepositoryCollaborator, MsgAuthorizeProvider, MsgMultiDeleteBranch, MsgUpdateRepositoryLabel, MsgCreateUser, MsgSetPullRequestState, MsgUpdateDaoLocation };
 
-type sendMsgRemovePullRequestReviewersParams = {
-  value: MsgRemovePullRequestReviewers,
+type sendMsgUpdateMemberRoleParams = {
+  value: MsgUpdateMemberRole,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateUserAvatarParams = {
+  value: MsgUpdateUserAvatar,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgMultiSetTagParams = {
+  value: MsgMultiSetTag,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteTagParams = {
+  value: MsgDeleteTag,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgToggleRepositoryArchivedParams = {
+  value: MsgToggleRepositoryArchived,
   fee?: StdFee,
   memo?: string
 };
@@ -146,110 +177,8 @@ type sendMsgSetBranchParams = {
   memo?: string
 };
 
-type sendMsgDeleteBranchParams = {
-  value: MsgDeleteBranch,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdatePullRequestTitleParams = {
-  value: MsgUpdatePullRequestTitle,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteUserParams = {
-  value: MsgDeleteUser,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateDaoAvatarParams = {
-  value: MsgUpdateDaoAvatar,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgChangeOwnerParams = {
-  value: MsgChangeOwner,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgToggleForcePushParams = {
-  value: MsgToggleForcePush,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgMultiDeleteTagParams = {
-  value: MsgMultiDeleteTag,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgInvokeMergePullRequestParams = {
-  value: MsgInvokeMergePullRequest,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateBountyParams = {
-  value: MsgCreateBounty,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateRepositoryLabelParams = {
-  value: MsgUpdateRepositoryLabel,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateCommentParams = {
-  value: MsgUpdateComment,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgLinkPullRequestIssueByIidParams = {
-  value: MsgLinkPullRequestIssueByIid,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgSetDefaultBranchParams = {
-  value: MsgSetDefaultBranch,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateUserBioParams = {
-  value: MsgUpdateUserBio,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgForkRepositoryParams = {
-  value: MsgForkRepository,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateRepositoryLabelParams = {
-  value: MsgCreateRepositoryLabel,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRenameDaoParams = {
-  value: MsgRenameDao,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddIssueAssigneesParams = {
-  value: MsgAddIssueAssignees,
+type sendMsgForkRepositorySuccessParams = {
+  value: MsgForkRepositorySuccess,
   fee?: StdFee,
   memo?: string
 };
@@ -260,74 +189,38 @@ type sendMsgDeletePullRequestParams = {
   memo?: string
 };
 
-type sendMsgUpdateMemberRoleParams = {
-  value: MsgUpdateMemberRole,
+type sendMsgDeleteRepositoryLabelParams = {
+  value: MsgDeleteRepositoryLabel,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgAddIssueLabelsParams = {
-  value: MsgAddIssueLabels,
+type sendMsgAddPullRequestLabelsParams = {
+  value: MsgAddPullRequestLabels,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgRemoveIssueAssigneesParams = {
-  value: MsgRemoveIssueAssignees,
+type sendMsgUpdateUserUsernameParams = {
+  value: MsgUpdateUserUsername,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUnlinkPullRequestIssueByIidParams = {
-  value: MsgUnlinkPullRequestIssueByIid,
+type sendMsgSetTagParams = {
+  value: MsgSetTag,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgCloseBountyParams = {
-  value: MsgCloseBounty,
+type sendMsgMultiDeleteTagParams = {
+  value: MsgMultiDeleteTag,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateRepositoryBackupRefParams = {
-  value: MsgUpdateRepositoryBackupRef,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteIssueParams = {
-  value: MsgDeleteIssue,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddPullRequestAssigneesParams = {
-  value: MsgAddPullRequestAssignees,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddRepositoryBackupRefParams = {
-  value: MsgAddRepositoryBackupRef,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRevokeProviderPermissionParams = {
-  value: MsgRevokeProviderPermission,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateDaoDescriptionParams = {
-  value: MsgUpdateDaoDescription,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgToggleIssueStateParams = {
-  value: MsgToggleIssueState,
+type sendMsgDeleteTaskParams = {
+  value: MsgDeleteTask,
   fee?: StdFee,
   memo?: string
 };
@@ -338,32 +231,62 @@ type sendMsgDeleteRepositoryParams = {
   memo?: string
 };
 
-type sendMsgDeleteCommentParams = {
-  value: MsgDeleteComment,
+type sendMsgRevokeProviderPermissionParams = {
+  value: MsgRevokeProviderPermission,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgDeleteDaoParams = {
-  value: MsgDeleteDao,
+type sendMsgCreateReleaseParams = {
+  value: MsgCreateRelease,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgRemovePullRequestLabelsParams = {
-  value: MsgRemovePullRequestLabels,
+type sendMsgUpdateUserBioParams = {
+  value: MsgUpdateUserBio,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgDeleteBountyParams = {
-  value: MsgDeleteBounty,
+type sendMsgUpdateIssueDescriptionParams = {
+  value: MsgUpdateIssueDescription,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgDeleteReleaseParams = {
-  value: MsgDeleteRelease,
+type sendMsgUpdateDaoAvatarParams = {
+  value: MsgUpdateDaoAvatar,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgMultiSetBranchParams = {
+  value: MsgMultiSetBranch,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgInvokeMergePullRequestParams = {
+  value: MsgInvokeMergePullRequest,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAddIssueLabelsParams = {
+  value: MsgAddIssueLabels,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCreateCommentParams = {
+  value: MsgCreateComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdatePullRequestDescriptionParams = {
+  value: MsgUpdatePullRequestDescription,
   fee?: StdFee,
   memo?: string
 };
@@ -374,20 +297,38 @@ type sendMsgAddPullRequestReviewersParams = {
   memo?: string
 };
 
-type sendMsgCreateUserParams = {
-  value: MsgCreateUser,
+type sendMsgUpdateTaskParams = {
+  value: MsgUpdateTask,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateUserNameParams = {
-  value: MsgUpdateUserName,
+type sendMsgRenameRepositoryParams = {
+  value: MsgRenameRepository,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateBountyExpiryParams = {
-  value: MsgUpdateBountyExpiry,
+type sendMsgToggleIssueStateParams = {
+  value: MsgToggleIssueState,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUnlinkPullRequestIssueByIidParams = {
+  value: MsgUnlinkPullRequestIssueByIid,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateReleaseParams = {
+  value: MsgUpdateRelease,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteReleaseParams = {
+  value: MsgDeleteRelease,
   fee?: StdFee,
   memo?: string
 };
@@ -404,92 +345,32 @@ type sendMsgToggleRepositoryForkingParams = {
   memo?: string
 };
 
-type sendMsgUpdateReleaseParams = {
-  value: MsgUpdateRelease,
+type sendMsgRemovePullRequestLabelsParams = {
+  value: MsgRemovePullRequestLabels,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateIssueDescriptionParams = {
-  value: MsgUpdateIssueDescription,
+type sendMsgForkRepositoryParams = {
+  value: MsgForkRepository,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgMultiSetBranchParams = {
-  value: MsgMultiSetBranch,
+type sendMsgToggleCommentResolvedParams = {
+  value: MsgToggleCommentResolved,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgAuthorizeProviderParams = {
-  value: MsgAuthorizeProvider,
+type sendMsgUpdateUserNameParams = {
+  value: MsgUpdateUserName,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateTaskParams = {
-  value: MsgUpdateTask,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgInvokeForkRepositoryParams = {
-  value: MsgInvokeForkRepository,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateReleaseParams = {
-  value: MsgCreateRelease,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateTaskParams = {
-  value: MsgCreateTask,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddMemberParams = {
-  value: MsgAddMember,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgSetTagParams = {
-  value: MsgSetTag,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateRepositoryDescriptionParams = {
-  value: MsgUpdateRepositoryDescription,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateCommentParams = {
-  value: MsgCreateComment,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRemovePullRequestAssigneesParams = {
-  value: MsgRemovePullRequestAssignees,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddPullRequestLabelsParams = {
-  value: MsgAddPullRequestLabels,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteTaskParams = {
-  value: MsgDeleteTask,
+type sendMsgDeleteBountyParams = {
+  value: MsgDeleteBounty,
   fee?: StdFee,
   memo?: string
 };
@@ -500,20 +381,14 @@ type sendMsgCreateDaoParams = {
   memo?: string
 };
 
-type sendMsgUpdateRepositoryCollaboratorParams = {
-  value: MsgUpdateRepositoryCollaborator,
+type sendMsgRenameDaoParams = {
+  value: MsgRenameDao,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgRemoveMemberParams = {
-  value: MsgRemoveMember,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdatePullRequestDescriptionParams = {
-  value: MsgUpdatePullRequestDescription,
+type sendMsgAddMemberParams = {
+  value: MsgAddMember,
   fee?: StdFee,
   memo?: string
 };
@@ -524,80 +399,26 @@ type sendMsgUpdateIssueTitleParams = {
   memo?: string
 };
 
-type sendMsgUpdateUserAvatarParams = {
-  value: MsgUpdateUserAvatar,
+type sendMsgChangeOwnerParams = {
+  value: MsgChangeOwner,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgRenameRepositoryParams = {
-  value: MsgRenameRepository,
+type sendMsgCreateRepositoryLabelParams = {
+  value: MsgCreateRepositoryLabel,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgRemoveRepositoryCollaboratorParams = {
-  value: MsgRemoveRepositoryCollaborator,
+type sendMsgCreateTaskParams = {
+  value: MsgCreateTask,
   fee?: StdFee,
   memo?: string
 };
 
-type sendMsgUpdateDaoLocationParams = {
-  value: MsgUpdateDaoLocation,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateUserUsernameParams = {
-  value: MsgUpdateUserUsername,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateDaoWebsiteParams = {
-  value: MsgUpdateDaoWebsite,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRemoveIssueLabelsParams = {
-  value: MsgRemoveIssueLabels,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgMultiDeleteBranchParams = {
-  value: MsgMultiDeleteBranch,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteRepositoryLabelParams = {
-  value: MsgDeleteRepositoryLabel,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgExerciseParams = {
-  value: MsgExercise,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeleteTagParams = {
-  value: MsgDeleteTag,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgCreateRepositoryParams = {
-  value: MsgCreateRepository,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgForkRepositorySuccessParams = {
-  value: MsgForkRepositorySuccess,
+type sendMsgDeleteBranchParams = {
+  value: MsgDeleteBranch,
   fee?: StdFee,
   memo?: string
 };
@@ -608,8 +429,134 @@ type sendMsgCreatePullRequestParams = {
   memo?: string
 };
 
-type sendMsgSetPullRequestStateParams = {
-  value: MsgSetPullRequestState,
+type sendMsgInvokeForkRepositoryParams = {
+  value: MsgInvokeForkRepository,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemoveIssueLabelsParams = {
+  value: MsgRemoveIssueLabels,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDistributePlatformIncentivesParams = {
+  value: MsgDistributePlatformIncentives,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateCommentParams = {
+  value: MsgUpdateComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteUserParams = {
+  value: MsgDeleteUser,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgLinkPullRequestIssueByIidParams = {
+  value: MsgLinkPullRequestIssueByIid,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAddIssueAssigneesParams = {
+  value: MsgAddIssueAssignees,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgExerciseParams = {
+  value: MsgExercise,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateUserPinnedRepositoriesParams = {
+  value: MsgUpdateUserPinnedRepositories,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemoveMemberParams = {
+  value: MsgRemoveMember,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateBountyExpiryParams = {
+  value: MsgUpdateBountyExpiry,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemovePullRequestReviewersParams = {
+  value: MsgRemovePullRequestReviewers,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteCommentParams = {
+  value: MsgDeleteComment,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCloseBountyParams = {
+  value: MsgCloseBounty,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemoveIssueAssigneesParams = {
+  value: MsgRemoveIssueAssignees,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateDaoWebsiteParams = {
+  value: MsgUpdateDaoWebsite,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateRepositoryDescriptionParams = {
+  value: MsgUpdateRepositoryDescription,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateRepositoryBackupRefParams = {
+  value: MsgUpdateRepositoryBackupRef,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgSetDefaultBranchParams = {
+  value: MsgSetDefaultBranch,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAddPullRequestAssigneesParams = {
+  value: MsgAddPullRequestAssignees,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateParamsParams = {
+  value: MsgUpdateParams,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgToggleForcePushParams = {
+  value: MsgToggleForcePush,
   fee?: StdFee,
   memo?: string
 };
@@ -620,183 +567,235 @@ type sendMsgToggleArweaveBackupParams = {
   memo?: string
 };
 
-type sendMsgMultiSetTagParams = {
-  value: MsgMultiSetTag,
+type sendMsgUpdatePullRequestTitleParams = {
+  value: MsgUpdatePullRequestTitle,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateDaoDescriptionParams = {
+  value: MsgUpdateDaoDescription,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteIssueParams = {
+  value: MsgDeleteIssue,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCreateBountyParams = {
+  value: MsgCreateBounty,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeleteDaoParams = {
+  value: MsgDeleteDao,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCreateRepositoryParams = {
+  value: MsgCreateRepository,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemovePullRequestAssigneesParams = {
+  value: MsgRemovePullRequestAssignees,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAddRepositoryBackupRefParams = {
+  value: MsgAddRepositoryBackupRef,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateDaoPinnedRepositoriesParams = {
+  value: MsgUpdateDaoPinnedRepositories,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateRepositoryCollaboratorParams = {
+  value: MsgUpdateRepositoryCollaborator,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRemoveRepositoryCollaboratorParams = {
+  value: MsgRemoveRepositoryCollaborator,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAuthorizeProviderParams = {
+  value: MsgAuthorizeProvider,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgMultiDeleteBranchParams = {
+  value: MsgMultiDeleteBranch,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateRepositoryLabelParams = {
+  value: MsgUpdateRepositoryLabel,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgCreateUserParams = {
+  value: MsgCreateUser,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgSetPullRequestStateParams = {
+  value: MsgSetPullRequestState,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateDaoLocationParams = {
+  value: MsgUpdateDaoLocation,
   fee?: StdFee,
   memo?: string
 };
 
 
-type msgRemovePullRequestReviewersParams = {
-  value: MsgRemovePullRequestReviewers,
+type msgUpdateMemberRoleParams = {
+  value: MsgUpdateMemberRole,
+};
+
+type msgUpdateUserAvatarParams = {
+  value: MsgUpdateUserAvatar,
+};
+
+type msgMultiSetTagParams = {
+  value: MsgMultiSetTag,
+};
+
+type msgDeleteTagParams = {
+  value: MsgDeleteTag,
+};
+
+type msgToggleRepositoryArchivedParams = {
+  value: MsgToggleRepositoryArchived,
 };
 
 type msgSetBranchParams = {
   value: MsgSetBranch,
 };
 
-type msgDeleteBranchParams = {
-  value: MsgDeleteBranch,
-};
-
-type msgUpdatePullRequestTitleParams = {
-  value: MsgUpdatePullRequestTitle,
-};
-
-type msgDeleteUserParams = {
-  value: MsgDeleteUser,
-};
-
-type msgUpdateDaoAvatarParams = {
-  value: MsgUpdateDaoAvatar,
-};
-
-type msgChangeOwnerParams = {
-  value: MsgChangeOwner,
-};
-
-type msgToggleForcePushParams = {
-  value: MsgToggleForcePush,
-};
-
-type msgMultiDeleteTagParams = {
-  value: MsgMultiDeleteTag,
-};
-
-type msgInvokeMergePullRequestParams = {
-  value: MsgInvokeMergePullRequest,
-};
-
-type msgCreateBountyParams = {
-  value: MsgCreateBounty,
-};
-
-type msgUpdateRepositoryLabelParams = {
-  value: MsgUpdateRepositoryLabel,
-};
-
-type msgUpdateCommentParams = {
-  value: MsgUpdateComment,
-};
-
-type msgLinkPullRequestIssueByIidParams = {
-  value: MsgLinkPullRequestIssueByIid,
-};
-
-type msgSetDefaultBranchParams = {
-  value: MsgSetDefaultBranch,
-};
-
-type msgUpdateUserBioParams = {
-  value: MsgUpdateUserBio,
-};
-
-type msgForkRepositoryParams = {
-  value: MsgForkRepository,
-};
-
-type msgCreateRepositoryLabelParams = {
-  value: MsgCreateRepositoryLabel,
-};
-
-type msgRenameDaoParams = {
-  value: MsgRenameDao,
-};
-
-type msgAddIssueAssigneesParams = {
-  value: MsgAddIssueAssignees,
+type msgForkRepositorySuccessParams = {
+  value: MsgForkRepositorySuccess,
 };
 
 type msgDeletePullRequestParams = {
   value: MsgDeletePullRequest,
 };
 
-type msgUpdateMemberRoleParams = {
-  value: MsgUpdateMemberRole,
+type msgDeleteRepositoryLabelParams = {
+  value: MsgDeleteRepositoryLabel,
 };
 
-type msgAddIssueLabelsParams = {
-  value: MsgAddIssueLabels,
+type msgAddPullRequestLabelsParams = {
+  value: MsgAddPullRequestLabels,
 };
 
-type msgRemoveIssueAssigneesParams = {
-  value: MsgRemoveIssueAssignees,
+type msgUpdateUserUsernameParams = {
+  value: MsgUpdateUserUsername,
 };
 
-type msgUnlinkPullRequestIssueByIidParams = {
-  value: MsgUnlinkPullRequestIssueByIid,
+type msgSetTagParams = {
+  value: MsgSetTag,
 };
 
-type msgCloseBountyParams = {
-  value: MsgCloseBounty,
+type msgMultiDeleteTagParams = {
+  value: MsgMultiDeleteTag,
 };
 
-type msgUpdateRepositoryBackupRefParams = {
-  value: MsgUpdateRepositoryBackupRef,
-};
-
-type msgDeleteIssueParams = {
-  value: MsgDeleteIssue,
-};
-
-type msgAddPullRequestAssigneesParams = {
-  value: MsgAddPullRequestAssignees,
-};
-
-type msgAddRepositoryBackupRefParams = {
-  value: MsgAddRepositoryBackupRef,
-};
-
-type msgRevokeProviderPermissionParams = {
-  value: MsgRevokeProviderPermission,
-};
-
-type msgUpdateDaoDescriptionParams = {
-  value: MsgUpdateDaoDescription,
-};
-
-type msgToggleIssueStateParams = {
-  value: MsgToggleIssueState,
+type msgDeleteTaskParams = {
+  value: MsgDeleteTask,
 };
 
 type msgDeleteRepositoryParams = {
   value: MsgDeleteRepository,
 };
 
-type msgDeleteCommentParams = {
-  value: MsgDeleteComment,
+type msgRevokeProviderPermissionParams = {
+  value: MsgRevokeProviderPermission,
 };
 
-type msgDeleteDaoParams = {
-  value: MsgDeleteDao,
+type msgCreateReleaseParams = {
+  value: MsgCreateRelease,
 };
 
-type msgRemovePullRequestLabelsParams = {
-  value: MsgRemovePullRequestLabels,
+type msgUpdateUserBioParams = {
+  value: MsgUpdateUserBio,
 };
 
-type msgDeleteBountyParams = {
-  value: MsgDeleteBounty,
+type msgUpdateIssueDescriptionParams = {
+  value: MsgUpdateIssueDescription,
 };
 
-type msgDeleteReleaseParams = {
-  value: MsgDeleteRelease,
+type msgUpdateDaoAvatarParams = {
+  value: MsgUpdateDaoAvatar,
+};
+
+type msgMultiSetBranchParams = {
+  value: MsgMultiSetBranch,
+};
+
+type msgInvokeMergePullRequestParams = {
+  value: MsgInvokeMergePullRequest,
+};
+
+type msgAddIssueLabelsParams = {
+  value: MsgAddIssueLabels,
+};
+
+type msgCreateCommentParams = {
+  value: MsgCreateComment,
+};
+
+type msgUpdatePullRequestDescriptionParams = {
+  value: MsgUpdatePullRequestDescription,
 };
 
 type msgAddPullRequestReviewersParams = {
   value: MsgAddPullRequestReviewers,
 };
 
-type msgCreateUserParams = {
-  value: MsgCreateUser,
+type msgUpdateTaskParams = {
+  value: MsgUpdateTask,
 };
 
-type msgUpdateUserNameParams = {
-  value: MsgUpdateUserName,
+type msgRenameRepositoryParams = {
+  value: MsgRenameRepository,
 };
 
-type msgUpdateBountyExpiryParams = {
-  value: MsgUpdateBountyExpiry,
+type msgToggleIssueStateParams = {
+  value: MsgToggleIssueState,
+};
+
+type msgUnlinkPullRequestIssueByIidParams = {
+  value: MsgUnlinkPullRequestIssueByIid,
+};
+
+type msgUpdateReleaseParams = {
+  value: MsgUpdateRelease,
+};
+
+type msgDeleteReleaseParams = {
+  value: MsgDeleteRelease,
 };
 
 type msgCreateIssueParams = {
@@ -807,152 +806,220 @@ type msgToggleRepositoryForkingParams = {
   value: MsgToggleRepositoryForking,
 };
 
-type msgUpdateReleaseParams = {
-  value: MsgUpdateRelease,
+type msgRemovePullRequestLabelsParams = {
+  value: MsgRemovePullRequestLabels,
 };
 
-type msgUpdateIssueDescriptionParams = {
-  value: MsgUpdateIssueDescription,
+type msgForkRepositoryParams = {
+  value: MsgForkRepository,
 };
 
-type msgMultiSetBranchParams = {
-  value: MsgMultiSetBranch,
+type msgToggleCommentResolvedParams = {
+  value: MsgToggleCommentResolved,
 };
 
-type msgAuthorizeProviderParams = {
-  value: MsgAuthorizeProvider,
+type msgUpdateUserNameParams = {
+  value: MsgUpdateUserName,
 };
 
-type msgUpdateTaskParams = {
-  value: MsgUpdateTask,
-};
-
-type msgInvokeForkRepositoryParams = {
-  value: MsgInvokeForkRepository,
-};
-
-type msgCreateReleaseParams = {
-  value: MsgCreateRelease,
-};
-
-type msgCreateTaskParams = {
-  value: MsgCreateTask,
-};
-
-type msgAddMemberParams = {
-  value: MsgAddMember,
-};
-
-type msgSetTagParams = {
-  value: MsgSetTag,
-};
-
-type msgUpdateRepositoryDescriptionParams = {
-  value: MsgUpdateRepositoryDescription,
-};
-
-type msgCreateCommentParams = {
-  value: MsgCreateComment,
-};
-
-type msgRemovePullRequestAssigneesParams = {
-  value: MsgRemovePullRequestAssignees,
-};
-
-type msgAddPullRequestLabelsParams = {
-  value: MsgAddPullRequestLabels,
-};
-
-type msgDeleteTaskParams = {
-  value: MsgDeleteTask,
+type msgDeleteBountyParams = {
+  value: MsgDeleteBounty,
 };
 
 type msgCreateDaoParams = {
   value: MsgCreateDao,
 };
 
-type msgUpdateRepositoryCollaboratorParams = {
-  value: MsgUpdateRepositoryCollaborator,
+type msgRenameDaoParams = {
+  value: MsgRenameDao,
 };
 
-type msgRemoveMemberParams = {
-  value: MsgRemoveMember,
-};
-
-type msgUpdatePullRequestDescriptionParams = {
-  value: MsgUpdatePullRequestDescription,
+type msgAddMemberParams = {
+  value: MsgAddMember,
 };
 
 type msgUpdateIssueTitleParams = {
   value: MsgUpdateIssueTitle,
 };
 
-type msgUpdateUserAvatarParams = {
-  value: MsgUpdateUserAvatar,
+type msgChangeOwnerParams = {
+  value: MsgChangeOwner,
 };
 
-type msgRenameRepositoryParams = {
-  value: MsgRenameRepository,
+type msgCreateRepositoryLabelParams = {
+  value: MsgCreateRepositoryLabel,
 };
 
-type msgRemoveRepositoryCollaboratorParams = {
-  value: MsgRemoveRepositoryCollaborator,
+type msgCreateTaskParams = {
+  value: MsgCreateTask,
 };
 
-type msgUpdateDaoLocationParams = {
-  value: MsgUpdateDaoLocation,
-};
-
-type msgUpdateUserUsernameParams = {
-  value: MsgUpdateUserUsername,
-};
-
-type msgUpdateDaoWebsiteParams = {
-  value: MsgUpdateDaoWebsite,
-};
-
-type msgRemoveIssueLabelsParams = {
-  value: MsgRemoveIssueLabels,
-};
-
-type msgMultiDeleteBranchParams = {
-  value: MsgMultiDeleteBranch,
-};
-
-type msgDeleteRepositoryLabelParams = {
-  value: MsgDeleteRepositoryLabel,
-};
-
-type msgExerciseParams = {
-  value: MsgExercise,
-};
-
-type msgDeleteTagParams = {
-  value: MsgDeleteTag,
-};
-
-type msgCreateRepositoryParams = {
-  value: MsgCreateRepository,
-};
-
-type msgForkRepositorySuccessParams = {
-  value: MsgForkRepositorySuccess,
+type msgDeleteBranchParams = {
+  value: MsgDeleteBranch,
 };
 
 type msgCreatePullRequestParams = {
   value: MsgCreatePullRequest,
 };
 
-type msgSetPullRequestStateParams = {
-  value: MsgSetPullRequestState,
+type msgInvokeForkRepositoryParams = {
+  value: MsgInvokeForkRepository,
+};
+
+type msgRemoveIssueLabelsParams = {
+  value: MsgRemoveIssueLabels,
+};
+
+type msgDistributePlatformIncentivesParams = {
+  value: MsgDistributePlatformIncentives,
+};
+
+type msgUpdateCommentParams = {
+  value: MsgUpdateComment,
+};
+
+type msgDeleteUserParams = {
+  value: MsgDeleteUser,
+};
+
+type msgLinkPullRequestIssueByIidParams = {
+  value: MsgLinkPullRequestIssueByIid,
+};
+
+type msgAddIssueAssigneesParams = {
+  value: MsgAddIssueAssignees,
+};
+
+type msgExerciseParams = {
+  value: MsgExercise,
+};
+
+type msgUpdateUserPinnedRepositoriesParams = {
+  value: MsgUpdateUserPinnedRepositories,
+};
+
+type msgRemoveMemberParams = {
+  value: MsgRemoveMember,
+};
+
+type msgUpdateBountyExpiryParams = {
+  value: MsgUpdateBountyExpiry,
+};
+
+type msgRemovePullRequestReviewersParams = {
+  value: MsgRemovePullRequestReviewers,
+};
+
+type msgDeleteCommentParams = {
+  value: MsgDeleteComment,
+};
+
+type msgCloseBountyParams = {
+  value: MsgCloseBounty,
+};
+
+type msgRemoveIssueAssigneesParams = {
+  value: MsgRemoveIssueAssignees,
+};
+
+type msgUpdateDaoWebsiteParams = {
+  value: MsgUpdateDaoWebsite,
+};
+
+type msgUpdateRepositoryDescriptionParams = {
+  value: MsgUpdateRepositoryDescription,
+};
+
+type msgUpdateRepositoryBackupRefParams = {
+  value: MsgUpdateRepositoryBackupRef,
+};
+
+type msgSetDefaultBranchParams = {
+  value: MsgSetDefaultBranch,
+};
+
+type msgAddPullRequestAssigneesParams = {
+  value: MsgAddPullRequestAssignees,
+};
+
+type msgUpdateParamsParams = {
+  value: MsgUpdateParams,
+};
+
+type msgToggleForcePushParams = {
+  value: MsgToggleForcePush,
 };
 
 type msgToggleArweaveBackupParams = {
   value: MsgToggleArweaveBackup,
 };
 
-type msgMultiSetTagParams = {
-  value: MsgMultiSetTag,
+type msgUpdatePullRequestTitleParams = {
+  value: MsgUpdatePullRequestTitle,
+};
+
+type msgUpdateDaoDescriptionParams = {
+  value: MsgUpdateDaoDescription,
+};
+
+type msgDeleteIssueParams = {
+  value: MsgDeleteIssue,
+};
+
+type msgCreateBountyParams = {
+  value: MsgCreateBounty,
+};
+
+type msgDeleteDaoParams = {
+  value: MsgDeleteDao,
+};
+
+type msgCreateRepositoryParams = {
+  value: MsgCreateRepository,
+};
+
+type msgRemovePullRequestAssigneesParams = {
+  value: MsgRemovePullRequestAssignees,
+};
+
+type msgAddRepositoryBackupRefParams = {
+  value: MsgAddRepositoryBackupRef,
+};
+
+type msgUpdateDaoPinnedRepositoriesParams = {
+  value: MsgUpdateDaoPinnedRepositories,
+};
+
+type msgUpdateRepositoryCollaboratorParams = {
+  value: MsgUpdateRepositoryCollaborator,
+};
+
+type msgRemoveRepositoryCollaboratorParams = {
+  value: MsgRemoveRepositoryCollaborator,
+};
+
+type msgAuthorizeProviderParams = {
+  value: MsgAuthorizeProvider,
+};
+
+type msgMultiDeleteBranchParams = {
+  value: MsgMultiDeleteBranch,
+};
+
+type msgUpdateRepositoryLabelParams = {
+  value: MsgUpdateRepositoryLabel,
+};
+
+type msgCreateUserParams = {
+  value: MsgCreateUser,
+};
+
+type msgSetPullRequestStateParams = {
+  value: MsgSetPullRequestState,
+};
+
+type msgUpdateDaoLocationParams = {
+  value: MsgUpdateDaoLocation,
 };
 
 
@@ -985,17 +1052,73 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgRemovePullRequestReviewers({ value, fee, memo }: sendMsgRemovePullRequestReviewersParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateMemberRole({ value, fee, memo }: sendMsgUpdateMemberRoleParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRemovePullRequestReviewers: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateMemberRole: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemovePullRequestReviewers({ value: MsgRemovePullRequestReviewers.fromPartial(value) })
+				let msg = this.msgUpdateMemberRole({ value: MsgUpdateMemberRole.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemovePullRequestReviewers: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateMemberRole: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateUserAvatar({ value, fee, memo }: sendMsgUpdateUserAvatarParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateUserAvatar: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateUserAvatar({ value: MsgUpdateUserAvatar.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateUserAvatar: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgMultiSetTag({ value, fee, memo }: sendMsgMultiSetTagParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgMultiSetTag: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgMultiSetTag({ value: MsgMultiSetTag.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgMultiSetTag: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteTag({ value, fee, memo }: sendMsgDeleteTagParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteTag: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteTag({ value: MsgDeleteTag.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteTag: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgToggleRepositoryArchived({ value, fee, memo }: sendMsgToggleRepositoryArchivedParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgToggleRepositoryArchived: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgToggleRepositoryArchived({ value: MsgToggleRepositoryArchived.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgToggleRepositoryArchived: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1013,255 +1136,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgDeleteBranch({ value, fee, memo }: sendMsgDeleteBranchParams): Promise<DeliverTxResponse> {
+		async sendMsgForkRepositorySuccess({ value, fee, memo }: sendMsgForkRepositorySuccessParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteBranch: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgForkRepositorySuccess: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteBranch({ value: MsgDeleteBranch.fromPartial(value) })
+				let msg = this.msgForkRepositorySuccess({ value: MsgForkRepositorySuccess.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteBranch: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdatePullRequestTitle({ value, fee, memo }: sendMsgUpdatePullRequestTitleParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdatePullRequestTitle: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdatePullRequestTitle({ value: MsgUpdatePullRequestTitle.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdatePullRequestTitle: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeleteUser({ value, fee, memo }: sendMsgDeleteUserParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteUser: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteUser({ value: MsgDeleteUser.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteUser: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateDaoAvatar({ value, fee, memo }: sendMsgUpdateDaoAvatarParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateDaoAvatar: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateDaoAvatar({ value: MsgUpdateDaoAvatar.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateDaoAvatar: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgChangeOwner({ value, fee, memo }: sendMsgChangeOwnerParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgChangeOwner: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgChangeOwner({ value: MsgChangeOwner.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgChangeOwner: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgToggleForcePush({ value, fee, memo }: sendMsgToggleForcePushParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgToggleForcePush: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgToggleForcePush({ value: MsgToggleForcePush.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgToggleForcePush: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgMultiDeleteTag({ value, fee, memo }: sendMsgMultiDeleteTagParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgMultiDeleteTag: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgMultiDeleteTag({ value: MsgMultiDeleteTag.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgMultiDeleteTag: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgInvokeMergePullRequest({ value, fee, memo }: sendMsgInvokeMergePullRequestParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgInvokeMergePullRequest: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgInvokeMergePullRequest({ value: MsgInvokeMergePullRequest.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgInvokeMergePullRequest: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateBounty({ value, fee, memo }: sendMsgCreateBountyParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateBounty: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateBounty({ value: MsgCreateBounty.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateBounty: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateRepositoryLabel({ value, fee, memo }: sendMsgUpdateRepositoryLabelParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateRepositoryLabel: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateRepositoryLabel({ value: MsgUpdateRepositoryLabel.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateRepositoryLabel: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateComment({ value, fee, memo }: sendMsgUpdateCommentParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateComment: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateComment({ value: MsgUpdateComment.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateComment: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgLinkPullRequestIssueByIid({ value, fee, memo }: sendMsgLinkPullRequestIssueByIidParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgLinkPullRequestIssueByIid: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgLinkPullRequestIssueByIid({ value: MsgLinkPullRequestIssueByIid.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgLinkPullRequestIssueByIid: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgSetDefaultBranch({ value, fee, memo }: sendMsgSetDefaultBranchParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgSetDefaultBranch: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgSetDefaultBranch({ value: MsgSetDefaultBranch.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgSetDefaultBranch: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateUserBio({ value, fee, memo }: sendMsgUpdateUserBioParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateUserBio: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateUserBio({ value: MsgUpdateUserBio.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateUserBio: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgForkRepository({ value, fee, memo }: sendMsgForkRepositoryParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgForkRepository: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgForkRepository({ value: MsgForkRepository.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgForkRepository: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateRepositoryLabel({ value, fee, memo }: sendMsgCreateRepositoryLabelParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateRepositoryLabel: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateRepositoryLabel({ value: MsgCreateRepositoryLabel.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateRepositoryLabel: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRenameDao({ value, fee, memo }: sendMsgRenameDaoParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRenameDao: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRenameDao({ value: MsgRenameDao.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRenameDao: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddIssueAssignees({ value, fee, memo }: sendMsgAddIssueAssigneesParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddIssueAssignees: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddIssueAssignees({ value: MsgAddIssueAssignees.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddIssueAssignees: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgForkRepositorySuccess: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1279,171 +1164,87 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgUpdateMemberRole({ value, fee, memo }: sendMsgUpdateMemberRoleParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteRepositoryLabel({ value, fee, memo }: sendMsgDeleteRepositoryLabelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateMemberRole: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteRepositoryLabel: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateMemberRole({ value: MsgUpdateMemberRole.fromPartial(value) })
+				let msg = this.msgDeleteRepositoryLabel({ value: MsgDeleteRepositoryLabel.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateMemberRole: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteRepositoryLabel: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgAddIssueLabels({ value, fee, memo }: sendMsgAddIssueLabelsParams): Promise<DeliverTxResponse> {
+		async sendMsgAddPullRequestLabels({ value, fee, memo }: sendMsgAddPullRequestLabelsParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgAddIssueLabels: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgAddPullRequestLabels: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddIssueLabels({ value: MsgAddIssueLabels.fromPartial(value) })
+				let msg = this.msgAddPullRequestLabels({ value: MsgAddPullRequestLabels.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddIssueLabels: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgAddPullRequestLabels: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgRemoveIssueAssignees({ value, fee, memo }: sendMsgRemoveIssueAssigneesParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateUserUsername({ value, fee, memo }: sendMsgUpdateUserUsernameParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRemoveIssueAssignees: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateUserUsername: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemoveIssueAssignees({ value: MsgRemoveIssueAssignees.fromPartial(value) })
+				let msg = this.msgUpdateUserUsername({ value: MsgUpdateUserUsername.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemoveIssueAssignees: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateUserUsername: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUnlinkPullRequestIssueByIid({ value, fee, memo }: sendMsgUnlinkPullRequestIssueByIidParams): Promise<DeliverTxResponse> {
+		async sendMsgSetTag({ value, fee, memo }: sendMsgSetTagParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUnlinkPullRequestIssueByIid: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgSetTag: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUnlinkPullRequestIssueByIid({ value: MsgUnlinkPullRequestIssueByIid.fromPartial(value) })
+				let msg = this.msgSetTag({ value: MsgSetTag.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUnlinkPullRequestIssueByIid: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgSetTag: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgCloseBounty({ value, fee, memo }: sendMsgCloseBountyParams): Promise<DeliverTxResponse> {
+		async sendMsgMultiDeleteTag({ value, fee, memo }: sendMsgMultiDeleteTagParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgCloseBounty: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgMultiDeleteTag: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCloseBounty({ value: MsgCloseBounty.fromPartial(value) })
+				let msg = this.msgMultiDeleteTag({ value: MsgMultiDeleteTag.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCloseBounty: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgMultiDeleteTag: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateRepositoryBackupRef({ value, fee, memo }: sendMsgUpdateRepositoryBackupRefParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteTask({ value, fee, memo }: sendMsgDeleteTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateRepositoryBackupRef: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteTask: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateRepositoryBackupRef({ value: MsgUpdateRepositoryBackupRef.fromPartial(value) })
+				let msg = this.msgDeleteTask({ value: MsgDeleteTask.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateRepositoryBackupRef: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeleteIssue({ value, fee, memo }: sendMsgDeleteIssueParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteIssue: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteIssue({ value: MsgDeleteIssue.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteIssue: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddPullRequestAssignees({ value, fee, memo }: sendMsgAddPullRequestAssigneesParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddPullRequestAssignees: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddPullRequestAssignees({ value: MsgAddPullRequestAssignees.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddPullRequestAssignees: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddRepositoryBackupRef({ value, fee, memo }: sendMsgAddRepositoryBackupRefParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddRepositoryBackupRef: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddRepositoryBackupRef({ value: MsgAddRepositoryBackupRef.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddRepositoryBackupRef: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRevokeProviderPermission({ value, fee, memo }: sendMsgRevokeProviderPermissionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRevokeProviderPermission: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRevokeProviderPermission({ value: MsgRevokeProviderPermission.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRevokeProviderPermission: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateDaoDescription({ value, fee, memo }: sendMsgUpdateDaoDescriptionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateDaoDescription: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateDaoDescription({ value: MsgUpdateDaoDescription.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateDaoDescription: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgToggleIssueState({ value, fee, memo }: sendMsgToggleIssueStateParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgToggleIssueState: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgToggleIssueState({ value: MsgToggleIssueState.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgToggleIssueState: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1461,73 +1262,143 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgDeleteComment({ value, fee, memo }: sendMsgDeleteCommentParams): Promise<DeliverTxResponse> {
+		async sendMsgRevokeProviderPermission({ value, fee, memo }: sendMsgRevokeProviderPermissionParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteComment: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRevokeProviderPermission: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteComment({ value: MsgDeleteComment.fromPartial(value) })
+				let msg = this.msgRevokeProviderPermission({ value: MsgRevokeProviderPermission.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteComment: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRevokeProviderPermission: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgDeleteDao({ value, fee, memo }: sendMsgDeleteDaoParams): Promise<DeliverTxResponse> {
+		async sendMsgCreateRelease({ value, fee, memo }: sendMsgCreateReleaseParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteDao: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCreateRelease: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteDao({ value: MsgDeleteDao.fromPartial(value) })
+				let msg = this.msgCreateRelease({ value: MsgCreateRelease.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteDao: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCreateRelease: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgRemovePullRequestLabels({ value, fee, memo }: sendMsgRemovePullRequestLabelsParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateUserBio({ value, fee, memo }: sendMsgUpdateUserBioParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRemovePullRequestLabels: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateUserBio: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemovePullRequestLabels({ value: MsgRemovePullRequestLabels.fromPartial(value) })
+				let msg = this.msgUpdateUserBio({ value: MsgUpdateUserBio.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemovePullRequestLabels: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateUserBio: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgDeleteBounty({ value, fee, memo }: sendMsgDeleteBountyParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateIssueDescription({ value, fee, memo }: sendMsgUpdateIssueDescriptionParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteBounty: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateIssueDescription: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteBounty({ value: MsgDeleteBounty.fromPartial(value) })
+				let msg = this.msgUpdateIssueDescription({ value: MsgUpdateIssueDescription.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteBounty: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateIssueDescription: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgDeleteRelease({ value, fee, memo }: sendMsgDeleteReleaseParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateDaoAvatar({ value, fee, memo }: sendMsgUpdateDaoAvatarParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteRelease: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateDaoAvatar: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteRelease({ value: MsgDeleteRelease.fromPartial(value) })
+				let msg = this.msgUpdateDaoAvatar({ value: MsgUpdateDaoAvatar.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteRelease: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateDaoAvatar: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgMultiSetBranch({ value, fee, memo }: sendMsgMultiSetBranchParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgMultiSetBranch: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgMultiSetBranch({ value: MsgMultiSetBranch.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgMultiSetBranch: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgInvokeMergePullRequest({ value, fee, memo }: sendMsgInvokeMergePullRequestParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgInvokeMergePullRequest: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgInvokeMergePullRequest({ value: MsgInvokeMergePullRequest.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgInvokeMergePullRequest: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAddIssueLabels({ value, fee, memo }: sendMsgAddIssueLabelsParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddIssueLabels: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddIssueLabels({ value: MsgAddIssueLabels.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAddIssueLabels: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgCreateComment({ value, fee, memo }: sendMsgCreateCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateComment({ value: MsgCreateComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdatePullRequestDescription({ value, fee, memo }: sendMsgUpdatePullRequestDescriptionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdatePullRequestDescription: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdatePullRequestDescription({ value: MsgUpdatePullRequestDescription.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdatePullRequestDescription: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1545,45 +1416,87 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCreateUser({ value, fee, memo }: sendMsgCreateUserParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateTask({ value, fee, memo }: sendMsgUpdateTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateUser: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateTask: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateUser({ value: MsgCreateUser.fromPartial(value) })
+				let msg = this.msgUpdateTask({ value: MsgUpdateTask.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateUser: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateUserName({ value, fee, memo }: sendMsgUpdateUserNameParams): Promise<DeliverTxResponse> {
+		async sendMsgRenameRepository({ value, fee, memo }: sendMsgRenameRepositoryParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateUserName: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRenameRepository: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateUserName({ value: MsgUpdateUserName.fromPartial(value) })
+				let msg = this.msgRenameRepository({ value: MsgRenameRepository.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateUserName: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRenameRepository: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateBountyExpiry({ value, fee, memo }: sendMsgUpdateBountyExpiryParams): Promise<DeliverTxResponse> {
+		async sendMsgToggleIssueState({ value, fee, memo }: sendMsgToggleIssueStateParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateBountyExpiry: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgToggleIssueState: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateBountyExpiry({ value: MsgUpdateBountyExpiry.fromPartial(value) })
+				let msg = this.msgToggleIssueState({ value: MsgToggleIssueState.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateBountyExpiry: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgToggleIssueState: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUnlinkPullRequestIssueByIid({ value, fee, memo }: sendMsgUnlinkPullRequestIssueByIidParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUnlinkPullRequestIssueByIid: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUnlinkPullRequestIssueByIid({ value: MsgUnlinkPullRequestIssueByIid.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUnlinkPullRequestIssueByIid: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateRelease({ value, fee, memo }: sendMsgUpdateReleaseParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateRelease: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateRelease({ value: MsgUpdateRelease.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateRelease: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteRelease({ value, fee, memo }: sendMsgDeleteReleaseParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteRelease: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteRelease({ value: MsgDeleteRelease.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteRelease: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1615,213 +1528,73 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgUpdateRelease({ value, fee, memo }: sendMsgUpdateReleaseParams): Promise<DeliverTxResponse> {
+		async sendMsgRemovePullRequestLabels({ value, fee, memo }: sendMsgRemovePullRequestLabelsParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateRelease: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRemovePullRequestLabels: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateRelease({ value: MsgUpdateRelease.fromPartial(value) })
+				let msg = this.msgRemovePullRequestLabels({ value: MsgRemovePullRequestLabels.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateRelease: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRemovePullRequestLabels: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateIssueDescription({ value, fee, memo }: sendMsgUpdateIssueDescriptionParams): Promise<DeliverTxResponse> {
+		async sendMsgForkRepository({ value, fee, memo }: sendMsgForkRepositoryParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateIssueDescription: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgForkRepository: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateIssueDescription({ value: MsgUpdateIssueDescription.fromPartial(value) })
+				let msg = this.msgForkRepository({ value: MsgForkRepository.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateIssueDescription: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgForkRepository: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgMultiSetBranch({ value, fee, memo }: sendMsgMultiSetBranchParams): Promise<DeliverTxResponse> {
+		async sendMsgToggleCommentResolved({ value, fee, memo }: sendMsgToggleCommentResolvedParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgMultiSetBranch: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgToggleCommentResolved: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgMultiSetBranch({ value: MsgMultiSetBranch.fromPartial(value) })
+				let msg = this.msgToggleCommentResolved({ value: MsgToggleCommentResolved.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgMultiSetBranch: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgToggleCommentResolved: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgAuthorizeProvider({ value, fee, memo }: sendMsgAuthorizeProviderParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateUserName({ value, fee, memo }: sendMsgUpdateUserNameParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgAuthorizeProvider: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateUserName: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAuthorizeProvider({ value: MsgAuthorizeProvider.fromPartial(value) })
+				let msg = this.msgUpdateUserName({ value: MsgUpdateUserName.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAuthorizeProvider: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateUserName: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateTask({ value, fee, memo }: sendMsgUpdateTaskParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteBounty({ value, fee, memo }: sendMsgDeleteBountyParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateTask: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteBounty: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateTask({ value: MsgUpdateTask.fromPartial(value) })
+				let msg = this.msgDeleteBounty({ value: MsgDeleteBounty.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateTask: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgInvokeForkRepository({ value, fee, memo }: sendMsgInvokeForkRepositoryParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgInvokeForkRepository: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgInvokeForkRepository({ value: MsgInvokeForkRepository.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgInvokeForkRepository: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateRelease({ value, fee, memo }: sendMsgCreateReleaseParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateRelease: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateRelease({ value: MsgCreateRelease.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateRelease: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateTask({ value: MsgCreateTask.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateTask: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddMember({ value, fee, memo }: sendMsgAddMemberParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddMember: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddMember({ value: MsgAddMember.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddMember: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgSetTag({ value, fee, memo }: sendMsgSetTagParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgSetTag: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgSetTag({ value: MsgSetTag.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgSetTag: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateRepositoryDescription({ value, fee, memo }: sendMsgUpdateRepositoryDescriptionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateRepositoryDescription: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateRepositoryDescription({ value: MsgUpdateRepositoryDescription.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateRepositoryDescription: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateComment({ value, fee, memo }: sendMsgCreateCommentParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateComment: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateComment({ value: MsgCreateComment.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateComment: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRemovePullRequestAssignees({ value, fee, memo }: sendMsgRemovePullRequestAssigneesParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRemovePullRequestAssignees: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemovePullRequestAssignees({ value: MsgRemovePullRequestAssignees.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemovePullRequestAssignees: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddPullRequestLabels({ value, fee, memo }: sendMsgAddPullRequestLabelsParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddPullRequestLabels: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddPullRequestLabels({ value: MsgAddPullRequestLabels.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddPullRequestLabels: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeleteTask({ value, fee, memo }: sendMsgDeleteTaskParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteTask: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteTask({ value: MsgDeleteTask.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteTask: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteBounty: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1839,45 +1612,31 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgUpdateRepositoryCollaborator({ value, fee, memo }: sendMsgUpdateRepositoryCollaboratorParams): Promise<DeliverTxResponse> {
+		async sendMsgRenameDao({ value, fee, memo }: sendMsgRenameDaoParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateRepositoryCollaborator: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRenameDao: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateRepositoryCollaborator({ value: MsgUpdateRepositoryCollaborator.fromPartial(value) })
+				let msg = this.msgRenameDao({ value: MsgRenameDao.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateRepositoryCollaborator: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRenameDao: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgRemoveMember({ value, fee, memo }: sendMsgRemoveMemberParams): Promise<DeliverTxResponse> {
+		async sendMsgAddMember({ value, fee, memo }: sendMsgAddMemberParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRemoveMember: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgAddMember: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemoveMember({ value: MsgRemoveMember.fromPartial(value) })
+				let msg = this.msgAddMember({ value: MsgAddMember.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemoveMember: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdatePullRequestDescription({ value, fee, memo }: sendMsgUpdatePullRequestDescriptionParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdatePullRequestDescription: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdatePullRequestDescription({ value: MsgUpdatePullRequestDescription.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdatePullRequestDescription: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgAddMember: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -1895,185 +1654,59 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgUpdateUserAvatar({ value, fee, memo }: sendMsgUpdateUserAvatarParams): Promise<DeliverTxResponse> {
+		async sendMsgChangeOwner({ value, fee, memo }: sendMsgChangeOwnerParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateUserAvatar: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgChangeOwner: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateUserAvatar({ value: MsgUpdateUserAvatar.fromPartial(value) })
+				let msg = this.msgChangeOwner({ value: MsgChangeOwner.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateUserAvatar: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgChangeOwner: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgRenameRepository({ value, fee, memo }: sendMsgRenameRepositoryParams): Promise<DeliverTxResponse> {
+		async sendMsgCreateRepositoryLabel({ value, fee, memo }: sendMsgCreateRepositoryLabelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRenameRepository: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCreateRepositoryLabel: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRenameRepository({ value: MsgRenameRepository.fromPartial(value) })
+				let msg = this.msgCreateRepositoryLabel({ value: MsgCreateRepositoryLabel.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRenameRepository: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCreateRepositoryLabel: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgRemoveRepositoryCollaborator({ value, fee, memo }: sendMsgRemoveRepositoryCollaboratorParams): Promise<DeliverTxResponse> {
+		async sendMsgCreateTask({ value, fee, memo }: sendMsgCreateTaskParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRemoveRepositoryCollaborator: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCreateTask: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemoveRepositoryCollaborator({ value: MsgRemoveRepositoryCollaborator.fromPartial(value) })
+				let msg = this.msgCreateTask({ value: MsgCreateTask.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemoveRepositoryCollaborator: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCreateTask: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		async sendMsgUpdateDaoLocation({ value, fee, memo }: sendMsgUpdateDaoLocationParams): Promise<DeliverTxResponse> {
+		async sendMsgDeleteBranch({ value, fee, memo }: sendMsgDeleteBranchParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateDaoLocation: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgDeleteBranch: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateDaoLocation({ value: MsgUpdateDaoLocation.fromPartial(value) })
+				let msg = this.msgDeleteBranch({ value: MsgDeleteBranch.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateDaoLocation: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateUserUsername({ value, fee, memo }: sendMsgUpdateUserUsernameParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateUserUsername: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateUserUsername({ value: MsgUpdateUserUsername.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateUserUsername: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateDaoWebsite({ value, fee, memo }: sendMsgUpdateDaoWebsiteParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateDaoWebsite: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateDaoWebsite({ value: MsgUpdateDaoWebsite.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateDaoWebsite: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRemoveIssueLabels({ value, fee, memo }: sendMsgRemoveIssueLabelsParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRemoveIssueLabels: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRemoveIssueLabels({ value: MsgRemoveIssueLabels.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRemoveIssueLabels: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgMultiDeleteBranch({ value, fee, memo }: sendMsgMultiDeleteBranchParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgMultiDeleteBranch: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgMultiDeleteBranch({ value: MsgMultiDeleteBranch.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgMultiDeleteBranch: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeleteRepositoryLabel({ value, fee, memo }: sendMsgDeleteRepositoryLabelParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteRepositoryLabel: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteRepositoryLabel({ value: MsgDeleteRepositoryLabel.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteRepositoryLabel: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgExercise({ value, fee, memo }: sendMsgExerciseParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgExercise: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgExercise({ value: MsgExercise.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgExercise: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeleteTag({ value, fee, memo }: sendMsgDeleteTagParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeleteTag: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeleteTag({ value: MsgDeleteTag.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeleteTag: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgCreateRepository({ value, fee, memo }: sendMsgCreateRepositoryParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateRepository: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateRepository({ value: MsgCreateRepository.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateRepository: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgForkRepositorySuccess({ value, fee, memo }: sendMsgForkRepositorySuccessParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgForkRepositorySuccess: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgForkRepositorySuccess({ value: MsgForkRepositorySuccess.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgForkRepositorySuccess: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgDeleteBranch: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -2091,17 +1724,311 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgSetPullRequestState({ value, fee, memo }: sendMsgSetPullRequestStateParams): Promise<DeliverTxResponse> {
+		async sendMsgInvokeForkRepository({ value, fee, memo }: sendMsgInvokeForkRepositoryParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgSetPullRequestState: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgInvokeForkRepository: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgSetPullRequestState({ value: MsgSetPullRequestState.fromPartial(value) })
+				let msg = this.msgInvokeForkRepository({ value: MsgInvokeForkRepository.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgSetPullRequestState: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgInvokeForkRepository: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemoveIssueLabels({ value, fee, memo }: sendMsgRemoveIssueLabelsParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemoveIssueLabels: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemoveIssueLabels({ value: MsgRemoveIssueLabels.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemoveIssueLabels: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDistributePlatformIncentives({ value, fee, memo }: sendMsgDistributePlatformIncentivesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDistributePlatformIncentives: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDistributePlatformIncentives({ value: MsgDistributePlatformIncentives.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDistributePlatformIncentives: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateComment({ value, fee, memo }: sendMsgUpdateCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateComment({ value: MsgUpdateComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteUser({ value, fee, memo }: sendMsgDeleteUserParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteUser: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteUser({ value: MsgDeleteUser.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteUser: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgLinkPullRequestIssueByIid({ value, fee, memo }: sendMsgLinkPullRequestIssueByIidParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgLinkPullRequestIssueByIid: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgLinkPullRequestIssueByIid({ value: MsgLinkPullRequestIssueByIid.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgLinkPullRequestIssueByIid: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAddIssueAssignees({ value, fee, memo }: sendMsgAddIssueAssigneesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddIssueAssignees: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddIssueAssignees({ value: MsgAddIssueAssignees.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAddIssueAssignees: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgExercise({ value, fee, memo }: sendMsgExerciseParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgExercise: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgExercise({ value: MsgExercise.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgExercise: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateUserPinnedRepositories({ value, fee, memo }: sendMsgUpdateUserPinnedRepositoriesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateUserPinnedRepositories: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateUserPinnedRepositories({ value: MsgUpdateUserPinnedRepositories.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateUserPinnedRepositories: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemoveMember({ value, fee, memo }: sendMsgRemoveMemberParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemoveMember: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemoveMember({ value: MsgRemoveMember.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemoveMember: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateBountyExpiry({ value, fee, memo }: sendMsgUpdateBountyExpiryParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateBountyExpiry: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateBountyExpiry({ value: MsgUpdateBountyExpiry.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateBountyExpiry: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemovePullRequestReviewers({ value, fee, memo }: sendMsgRemovePullRequestReviewersParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemovePullRequestReviewers: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemovePullRequestReviewers({ value: MsgRemovePullRequestReviewers.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemovePullRequestReviewers: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteComment({ value, fee, memo }: sendMsgDeleteCommentParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteComment: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteComment({ value: MsgDeleteComment.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteComment: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgCloseBounty({ value, fee, memo }: sendMsgCloseBountyParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCloseBounty: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCloseBounty({ value: MsgCloseBounty.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCloseBounty: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemoveIssueAssignees({ value, fee, memo }: sendMsgRemoveIssueAssigneesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemoveIssueAssignees: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemoveIssueAssignees({ value: MsgRemoveIssueAssignees.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemoveIssueAssignees: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateDaoWebsite({ value, fee, memo }: sendMsgUpdateDaoWebsiteParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateDaoWebsite: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateDaoWebsite({ value: MsgUpdateDaoWebsite.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateDaoWebsite: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateRepositoryDescription({ value, fee, memo }: sendMsgUpdateRepositoryDescriptionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateRepositoryDescription: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateRepositoryDescription({ value: MsgUpdateRepositoryDescription.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateRepositoryDescription: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateRepositoryBackupRef({ value, fee, memo }: sendMsgUpdateRepositoryBackupRefParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateRepositoryBackupRef: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateRepositoryBackupRef({ value: MsgUpdateRepositoryBackupRef.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateRepositoryBackupRef: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgSetDefaultBranch({ value, fee, memo }: sendMsgSetDefaultBranchParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgSetDefaultBranch: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgSetDefaultBranch({ value: MsgSetDefaultBranch.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgSetDefaultBranch: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAddPullRequestAssignees({ value, fee, memo }: sendMsgAddPullRequestAssigneesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddPullRequestAssignees: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddPullRequestAssignees({ value: MsgAddPullRequestAssignees.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAddPullRequestAssignees: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateParams({ value, fee, memo }: sendMsgUpdateParamsParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateParams: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateParams({ value: MsgUpdateParams.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateParams: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgToggleForcePush({ value, fee, memo }: sendMsgToggleForcePushParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgToggleForcePush: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgToggleForcePush({ value: MsgToggleForcePush.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgToggleForcePush: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -2119,26 +2046,282 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgMultiSetTag({ value, fee, memo }: sendMsgMultiSetTagParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdatePullRequestTitle({ value, fee, memo }: sendMsgUpdatePullRequestTitleParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgMultiSetTag: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdatePullRequestTitle: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgMultiSetTag({ value: MsgMultiSetTag.fromPartial(value) })
+				let msg = this.msgUpdatePullRequestTitle({ value: MsgUpdatePullRequestTitle.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgMultiSetTag: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdatePullRequestTitle: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateDaoDescription({ value, fee, memo }: sendMsgUpdateDaoDescriptionParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateDaoDescription: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateDaoDescription({ value: MsgUpdateDaoDescription.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateDaoDescription: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteIssue({ value, fee, memo }: sendMsgDeleteIssueParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteIssue: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteIssue({ value: MsgDeleteIssue.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteIssue: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgCreateBounty({ value, fee, memo }: sendMsgCreateBountyParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateBounty: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateBounty({ value: MsgCreateBounty.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateBounty: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeleteDao({ value, fee, memo }: sendMsgDeleteDaoParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeleteDao: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeleteDao({ value: MsgDeleteDao.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeleteDao: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgCreateRepository({ value, fee, memo }: sendMsgCreateRepositoryParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateRepository: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateRepository({ value: MsgCreateRepository.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateRepository: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemovePullRequestAssignees({ value, fee, memo }: sendMsgRemovePullRequestAssigneesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemovePullRequestAssignees: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemovePullRequestAssignees({ value: MsgRemovePullRequestAssignees.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemovePullRequestAssignees: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAddRepositoryBackupRef({ value, fee, memo }: sendMsgAddRepositoryBackupRefParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddRepositoryBackupRef: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddRepositoryBackupRef({ value: MsgAddRepositoryBackupRef.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAddRepositoryBackupRef: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateDaoPinnedRepositories({ value, fee, memo }: sendMsgUpdateDaoPinnedRepositoriesParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateDaoPinnedRepositories: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateDaoPinnedRepositories({ value: MsgUpdateDaoPinnedRepositories.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateDaoPinnedRepositories: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateRepositoryCollaborator({ value, fee, memo }: sendMsgUpdateRepositoryCollaboratorParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateRepositoryCollaborator: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateRepositoryCollaborator({ value: MsgUpdateRepositoryCollaborator.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateRepositoryCollaborator: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRemoveRepositoryCollaborator({ value, fee, memo }: sendMsgRemoveRepositoryCollaboratorParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRemoveRepositoryCollaborator: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRemoveRepositoryCollaborator({ value: MsgRemoveRepositoryCollaborator.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRemoveRepositoryCollaborator: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAuthorizeProvider({ value, fee, memo }: sendMsgAuthorizeProviderParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAuthorizeProvider: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAuthorizeProvider({ value: MsgAuthorizeProvider.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAuthorizeProvider: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgMultiDeleteBranch({ value, fee, memo }: sendMsgMultiDeleteBranchParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgMultiDeleteBranch: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgMultiDeleteBranch({ value: MsgMultiDeleteBranch.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgMultiDeleteBranch: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateRepositoryLabel({ value, fee, memo }: sendMsgUpdateRepositoryLabelParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateRepositoryLabel: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateRepositoryLabel({ value: MsgUpdateRepositoryLabel.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateRepositoryLabel: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgCreateUser({ value, fee, memo }: sendMsgCreateUserParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateUser: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateUser({ value: MsgCreateUser.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgCreateUser: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgSetPullRequestState({ value, fee, memo }: sendMsgSetPullRequestStateParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgSetPullRequestState: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgSetPullRequestState({ value: MsgSetPullRequestState.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgSetPullRequestState: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateDaoLocation({ value, fee, memo }: sendMsgUpdateDaoLocationParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateDaoLocation: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateDaoLocation({ value: MsgUpdateDaoLocation.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateDaoLocation: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
 		
-		msgRemovePullRequestReviewers({ value }: msgRemovePullRequestReviewersParams): EncodeObject {
+		msgUpdateMemberRole({ value }: msgUpdateMemberRoleParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestReviewers", value: MsgRemovePullRequestReviewers.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateMemberRole", value: MsgUpdateMemberRole.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRemovePullRequestReviewers: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateMemberRole: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateUserAvatar({ value }: msgUpdateUserAvatarParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserAvatar", value: MsgUpdateUserAvatar.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateUserAvatar: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgMultiSetTag({ value }: msgMultiSetTagParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiSetTag", value: MsgMultiSetTag.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgMultiSetTag: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteTag({ value }: msgDeleteTagParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteTag", value: MsgDeleteTag.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteTag: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgToggleRepositoryArchived({ value }: msgToggleRepositoryArchivedParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleRepositoryArchived", value: MsgToggleRepositoryArchived.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgToggleRepositoryArchived: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2150,147 +2333,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgDeleteBranch({ value }: msgDeleteBranchParams): EncodeObject {
+		msgForkRepositorySuccess({ value }: msgForkRepositorySuccessParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteBranch", value: MsgDeleteBranch.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgForkRepositorySuccess", value: MsgForkRepositorySuccess.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteBranch: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdatePullRequestTitle({ value }: msgUpdatePullRequestTitleParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdatePullRequestTitle", value: MsgUpdatePullRequestTitle.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdatePullRequestTitle: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeleteUser({ value }: msgDeleteUserParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: MsgDeleteUser.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteUser: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateDaoAvatar({ value }: msgUpdateDaoAvatarParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoAvatar", value: MsgUpdateDaoAvatar.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateDaoAvatar: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgChangeOwner({ value }: msgChangeOwnerParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgChangeOwner", value: MsgChangeOwner.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgChangeOwner: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgToggleForcePush({ value }: msgToggleForcePushParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleForcePush", value: MsgToggleForcePush.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgToggleForcePush: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgMultiDeleteTag({ value }: msgMultiDeleteTagParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiDeleteTag", value: MsgMultiDeleteTag.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgMultiDeleteTag: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgInvokeMergePullRequest({ value }: msgInvokeMergePullRequestParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest", value: MsgInvokeMergePullRequest.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgInvokeMergePullRequest: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateBounty({ value }: msgCreateBountyParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateBounty", value: MsgCreateBounty.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateBounty: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateRepositoryLabel({ value }: msgUpdateRepositoryLabelParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryLabel", value: MsgUpdateRepositoryLabel.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateRepositoryLabel: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateComment({ value }: msgUpdateCommentParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateComment", value: MsgUpdateComment.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateComment: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgLinkPullRequestIssueByIid({ value }: msgLinkPullRequestIssueByIidParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgLinkPullRequestIssueByIid", value: MsgLinkPullRequestIssueByIid.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgLinkPullRequestIssueByIid: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgSetDefaultBranch({ value }: msgSetDefaultBranchParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetDefaultBranch", value: MsgSetDefaultBranch.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgSetDefaultBranch: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateUserBio({ value }: msgUpdateUserBioParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserBio", value: MsgUpdateUserBio.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateUserBio: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgForkRepository({ value }: msgForkRepositoryParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgForkRepository", value: MsgForkRepository.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgForkRepository: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateRepositoryLabel({ value }: msgCreateRepositoryLabelParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepositoryLabel", value: MsgCreateRepositoryLabel.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateRepositoryLabel: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRenameDao({ value }: msgRenameDaoParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRenameDao", value: MsgRenameDao.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRenameDao: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddIssueAssignees({ value }: msgAddIssueAssigneesParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddIssueAssignees", value: MsgAddIssueAssignees.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddIssueAssignees: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgForkRepositorySuccess: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2302,99 +2349,51 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgUpdateMemberRole({ value }: msgUpdateMemberRoleParams): EncodeObject {
+		msgDeleteRepositoryLabel({ value }: msgDeleteRepositoryLabelParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateMemberRole", value: MsgUpdateMemberRole.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRepositoryLabel", value: MsgDeleteRepositoryLabel.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateMemberRole: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteRepositoryLabel: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgAddIssueLabels({ value }: msgAddIssueLabelsParams): EncodeObject {
+		msgAddPullRequestLabels({ value }: msgAddPullRequestLabelsParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddIssueLabels", value: MsgAddIssueLabels.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddPullRequestLabels", value: MsgAddPullRequestLabels.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAddIssueLabels: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgAddPullRequestLabels: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgRemoveIssueAssignees({ value }: msgRemoveIssueAssigneesParams): EncodeObject {
+		msgUpdateUserUsername({ value }: msgUpdateUserUsernameParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveIssueAssignees", value: MsgRemoveIssueAssignees.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserUsername", value: MsgUpdateUserUsername.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRemoveIssueAssignees: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateUserUsername: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUnlinkPullRequestIssueByIid({ value }: msgUnlinkPullRequestIssueByIidParams): EncodeObject {
+		msgSetTag({ value }: msgSetTagParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUnlinkPullRequestIssueByIid", value: MsgUnlinkPullRequestIssueByIid.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetTag", value: MsgSetTag.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUnlinkPullRequestIssueByIid: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgSetTag: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgCloseBounty({ value }: msgCloseBountyParams): EncodeObject {
+		msgMultiDeleteTag({ value }: msgMultiDeleteTagParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCloseBounty", value: MsgCloseBounty.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiDeleteTag", value: MsgMultiDeleteTag.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCloseBounty: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgMultiDeleteTag: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateRepositoryBackupRef({ value }: msgUpdateRepositoryBackupRefParams): EncodeObject {
+		msgDeleteTask({ value }: msgDeleteTaskParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryBackupRef", value: MsgUpdateRepositoryBackupRef.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteTask", value: MsgDeleteTask.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateRepositoryBackupRef: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeleteIssue({ value }: msgDeleteIssueParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteIssue", value: MsgDeleteIssue.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteIssue: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddPullRequestAssignees({ value }: msgAddPullRequestAssigneesParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees", value: MsgAddPullRequestAssignees.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddPullRequestAssignees: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddRepositoryBackupRef({ value }: msgAddRepositoryBackupRefParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddRepositoryBackupRef", value: MsgAddRepositoryBackupRef.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddRepositoryBackupRef: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRevokeProviderPermission({ value }: msgRevokeProviderPermissionParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRevokeProviderPermission", value: MsgRevokeProviderPermission.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRevokeProviderPermission: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateDaoDescription({ value }: msgUpdateDaoDescriptionParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoDescription", value: MsgUpdateDaoDescription.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateDaoDescription: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgToggleIssueState({ value }: msgToggleIssueStateParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleIssueState", value: MsgToggleIssueState.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgToggleIssueState: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteTask: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2406,43 +2405,83 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgDeleteComment({ value }: msgDeleteCommentParams): EncodeObject {
+		msgRevokeProviderPermission({ value }: msgRevokeProviderPermissionParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteComment", value: MsgDeleteComment.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRevokeProviderPermission", value: MsgRevokeProviderPermission.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteComment: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRevokeProviderPermission: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgDeleteDao({ value }: msgDeleteDaoParams): EncodeObject {
+		msgCreateRelease({ value }: msgCreateReleaseParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteDao", value: MsgDeleteDao.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRelease", value: MsgCreateRelease.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteDao: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCreateRelease: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgRemovePullRequestLabels({ value }: msgRemovePullRequestLabelsParams): EncodeObject {
+		msgUpdateUserBio({ value }: msgUpdateUserBioParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestLabels", value: MsgRemovePullRequestLabels.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserBio", value: MsgUpdateUserBio.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRemovePullRequestLabels: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateUserBio: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgDeleteBounty({ value }: msgDeleteBountyParams): EncodeObject {
+		msgUpdateIssueDescription({ value }: msgUpdateIssueDescriptionParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteBounty", value: MsgDeleteBounty.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateIssueDescription", value: MsgUpdateIssueDescription.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteBounty: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateIssueDescription: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgDeleteRelease({ value }: msgDeleteReleaseParams): EncodeObject {
+		msgUpdateDaoAvatar({ value }: msgUpdateDaoAvatarParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRelease", value: MsgDeleteRelease.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoAvatar", value: MsgUpdateDaoAvatar.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteRelease: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateDaoAvatar: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgMultiSetBranch({ value }: msgMultiSetBranchParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiSetBranch", value: MsgMultiSetBranch.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgMultiSetBranch: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgInvokeMergePullRequest({ value }: msgInvokeMergePullRequestParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgInvokeMergePullRequest", value: MsgInvokeMergePullRequest.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgInvokeMergePullRequest: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddIssueLabels({ value }: msgAddIssueLabelsParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddIssueLabels", value: MsgAddIssueLabels.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddIssueLabels: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateComment({ value }: msgCreateCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateComment", value: MsgCreateComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateComment: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdatePullRequestDescription({ value }: msgUpdatePullRequestDescriptionParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdatePullRequestDescription", value: MsgUpdatePullRequestDescription.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdatePullRequestDescription: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2454,27 +2493,51 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateUser({ value }: msgCreateUserParams): EncodeObject {
+		msgUpdateTask({ value }: msgUpdateTaskParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: MsgCreateUser.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateTask", value: MsgUpdateTask.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateUser: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateTask: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateUserName({ value }: msgUpdateUserNameParams): EncodeObject {
+		msgRenameRepository({ value }: msgRenameRepositoryParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserName", value: MsgUpdateUserName.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRenameRepository", value: MsgRenameRepository.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateUserName: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRenameRepository: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateBountyExpiry({ value }: msgUpdateBountyExpiryParams): EncodeObject {
+		msgToggleIssueState({ value }: msgToggleIssueStateParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateBountyExpiry", value: MsgUpdateBountyExpiry.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleIssueState", value: MsgToggleIssueState.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateBountyExpiry: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgToggleIssueState: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUnlinkPullRequestIssueByIid({ value }: msgUnlinkPullRequestIssueByIidParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUnlinkPullRequestIssueByIid", value: MsgUnlinkPullRequestIssueByIid.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUnlinkPullRequestIssueByIid: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateRelease({ value }: msgUpdateReleaseParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRelease", value: MsgUpdateRelease.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateRelease: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteRelease({ value }: msgDeleteReleaseParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRelease", value: MsgDeleteRelease.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteRelease: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2494,123 +2557,43 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgUpdateRelease({ value }: msgUpdateReleaseParams): EncodeObject {
+		msgRemovePullRequestLabels({ value }: msgRemovePullRequestLabelsParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRelease", value: MsgUpdateRelease.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestLabels", value: MsgRemovePullRequestLabels.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateRelease: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRemovePullRequestLabels: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateIssueDescription({ value }: msgUpdateIssueDescriptionParams): EncodeObject {
+		msgForkRepository({ value }: msgForkRepositoryParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateIssueDescription", value: MsgUpdateIssueDescription.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgForkRepository", value: MsgForkRepository.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateIssueDescription: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgForkRepository: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgMultiSetBranch({ value }: msgMultiSetBranchParams): EncodeObject {
+		msgToggleCommentResolved({ value }: msgToggleCommentResolvedParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiSetBranch", value: MsgMultiSetBranch.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleCommentResolved", value: MsgToggleCommentResolved.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgMultiSetBranch: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgToggleCommentResolved: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgAuthorizeProvider({ value }: msgAuthorizeProviderParams): EncodeObject {
+		msgUpdateUserName({ value }: msgUpdateUserNameParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAuthorizeProvider", value: MsgAuthorizeProvider.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserName", value: MsgUpdateUserName.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAuthorizeProvider: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateUserName: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateTask({ value }: msgUpdateTaskParams): EncodeObject {
+		msgDeleteBounty({ value }: msgDeleteBountyParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateTask", value: MsgUpdateTask.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteBounty", value: MsgDeleteBounty.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateTask: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgInvokeForkRepository({ value }: msgInvokeForkRepositoryParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgInvokeForkRepository", value: MsgInvokeForkRepository.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgInvokeForkRepository: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateRelease({ value }: msgCreateReleaseParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRelease", value: MsgCreateRelease.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateRelease: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddMember({ value }: msgAddMemberParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddMember", value: MsgAddMember.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddMember: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgSetTag({ value }: msgSetTagParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetTag", value: MsgSetTag.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgSetTag: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateRepositoryDescription({ value }: msgUpdateRepositoryDescriptionParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryDescription", value: MsgUpdateRepositoryDescription.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateRepositoryDescription: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateComment({ value }: msgCreateCommentParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateComment", value: MsgCreateComment.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateComment: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRemovePullRequestAssignees({ value }: msgRemovePullRequestAssigneesParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestAssignees", value: MsgRemovePullRequestAssignees.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRemovePullRequestAssignees: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddPullRequestLabels({ value }: msgAddPullRequestLabelsParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddPullRequestLabels", value: MsgAddPullRequestLabels.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddPullRequestLabels: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeleteTask({ value }: msgDeleteTaskParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteTask", value: MsgDeleteTask.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteTask: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteBounty: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2622,27 +2605,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgUpdateRepositoryCollaborator({ value }: msgUpdateRepositoryCollaboratorParams): EncodeObject {
+		msgRenameDao({ value }: msgRenameDaoParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaborator", value: MsgUpdateRepositoryCollaborator.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRenameDao", value: MsgRenameDao.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateRepositoryCollaborator: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRenameDao: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgRemoveMember({ value }: msgRemoveMemberParams): EncodeObject {
+		msgAddMember({ value }: msgAddMemberParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveMember", value: MsgRemoveMember.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddMember", value: MsgAddMember.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRemoveMember: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdatePullRequestDescription({ value }: msgUpdatePullRequestDescriptionParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdatePullRequestDescription", value: MsgUpdatePullRequestDescription.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdatePullRequestDescription: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgAddMember: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2654,107 +2629,35 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgUpdateUserAvatar({ value }: msgUpdateUserAvatarParams): EncodeObject {
+		msgChangeOwner({ value }: msgChangeOwnerParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserAvatar", value: MsgUpdateUserAvatar.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgChangeOwner", value: MsgChangeOwner.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateUserAvatar: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgChangeOwner: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgRenameRepository({ value }: msgRenameRepositoryParams): EncodeObject {
+		msgCreateRepositoryLabel({ value }: msgCreateRepositoryLabelParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRenameRepository", value: MsgRenameRepository.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepositoryLabel", value: MsgCreateRepositoryLabel.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRenameRepository: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCreateRepositoryLabel: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgRemoveRepositoryCollaborator({ value }: msgRemoveRepositoryCollaboratorParams): EncodeObject {
+		msgCreateTask({ value }: msgCreateTaskParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveRepositoryCollaborator", value: MsgRemoveRepositoryCollaborator.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateTask", value: MsgCreateTask.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRemoveRepositoryCollaborator: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCreateTask: Could not create message: ' + e.message)
 			}
 		},
 		
-		msgUpdateDaoLocation({ value }: msgUpdateDaoLocationParams): EncodeObject {
+		msgDeleteBranch({ value }: msgDeleteBranchParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoLocation", value: MsgUpdateDaoLocation.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteBranch", value: MsgDeleteBranch.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateDaoLocation: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateUserUsername({ value }: msgUpdateUserUsernameParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserUsername", value: MsgUpdateUserUsername.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateUserUsername: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateDaoWebsite({ value }: msgUpdateDaoWebsiteParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoWebsite", value: MsgUpdateDaoWebsite.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateDaoWebsite: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRemoveIssueLabels({ value }: msgRemoveIssueLabelsParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels", value: MsgRemoveIssueLabels.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRemoveIssueLabels: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgMultiDeleteBranch({ value }: msgMultiDeleteBranchParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiDeleteBranch", value: MsgMultiDeleteBranch.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgMultiDeleteBranch: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeleteRepositoryLabel({ value }: msgDeleteRepositoryLabelParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteRepositoryLabel", value: MsgDeleteRepositoryLabel.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteRepositoryLabel: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgExercise({ value }: msgExerciseParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgExercise", value: MsgExercise.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgExercise: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeleteTag({ value }: msgDeleteTagParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteTag", value: MsgDeleteTag.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeleteTag: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgCreateRepository({ value }: msgCreateRepositoryParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: MsgCreateRepository.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateRepository: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgForkRepositorySuccess({ value }: msgForkRepositorySuccessParams): EncodeObject {
-			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgForkRepositorySuccess", value: MsgForkRepositorySuccess.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgForkRepositorySuccess: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgDeleteBranch: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2766,11 +2669,179 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgSetPullRequestState({ value }: msgSetPullRequestStateParams): EncodeObject {
+		msgInvokeForkRepository({ value }: msgInvokeForkRepositoryParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetPullRequestState", value: MsgSetPullRequestState.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgInvokeForkRepository", value: MsgInvokeForkRepository.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgSetPullRequestState: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgInvokeForkRepository: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemoveIssueLabels({ value }: msgRemoveIssueLabelsParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveIssueLabels", value: MsgRemoveIssueLabels.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemoveIssueLabels: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDistributePlatformIncentives({ value }: msgDistributePlatformIncentivesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDistributePlatformIncentives", value: MsgDistributePlatformIncentives.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDistributePlatformIncentives: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateComment({ value }: msgUpdateCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateComment", value: MsgUpdateComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateComment: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteUser({ value }: msgDeleteUserParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteUser", value: MsgDeleteUser.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteUser: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgLinkPullRequestIssueByIid({ value }: msgLinkPullRequestIssueByIidParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgLinkPullRequestIssueByIid", value: MsgLinkPullRequestIssueByIid.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgLinkPullRequestIssueByIid: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddIssueAssignees({ value }: msgAddIssueAssigneesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddIssueAssignees", value: MsgAddIssueAssignees.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddIssueAssignees: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgExercise({ value }: msgExerciseParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgExercise", value: MsgExercise.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgExercise: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateUserPinnedRepositories({ value }: msgUpdateUserPinnedRepositoriesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateUserPinnedRepositories", value: MsgUpdateUserPinnedRepositories.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateUserPinnedRepositories: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemoveMember({ value }: msgRemoveMemberParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveMember", value: MsgRemoveMember.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemoveMember: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateBountyExpiry({ value }: msgUpdateBountyExpiryParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateBountyExpiry", value: MsgUpdateBountyExpiry.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateBountyExpiry: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemovePullRequestReviewers({ value }: msgRemovePullRequestReviewersParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestReviewers", value: MsgRemovePullRequestReviewers.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemovePullRequestReviewers: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteComment({ value }: msgDeleteCommentParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteComment", value: MsgDeleteComment.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteComment: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCloseBounty({ value }: msgCloseBountyParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCloseBounty", value: MsgCloseBounty.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCloseBounty: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemoveIssueAssignees({ value }: msgRemoveIssueAssigneesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveIssueAssignees", value: MsgRemoveIssueAssignees.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemoveIssueAssignees: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateDaoWebsite({ value }: msgUpdateDaoWebsiteParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoWebsite", value: MsgUpdateDaoWebsite.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateDaoWebsite: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateRepositoryDescription({ value }: msgUpdateRepositoryDescriptionParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryDescription", value: MsgUpdateRepositoryDescription.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateRepositoryDescription: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateRepositoryBackupRef({ value }: msgUpdateRepositoryBackupRefParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryBackupRef", value: MsgUpdateRepositoryBackupRef.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateRepositoryBackupRef: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgSetDefaultBranch({ value }: msgSetDefaultBranchParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetDefaultBranch", value: MsgSetDefaultBranch.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgSetDefaultBranch: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddPullRequestAssignees({ value }: msgAddPullRequestAssigneesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddPullRequestAssignees", value: MsgAddPullRequestAssignees.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddPullRequestAssignees: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateParams({ value }: msgUpdateParamsParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateParams", value: MsgUpdateParams.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateParams: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgToggleForcePush({ value }: msgToggleForcePushParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgToggleForcePush", value: MsgToggleForcePush.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgToggleForcePush: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2782,11 +2853,139 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgMultiSetTag({ value }: msgMultiSetTagParams): EncodeObject {
+		msgUpdatePullRequestTitle({ value }: msgUpdatePullRequestTitleParams): EncodeObject {
 			try {
-				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiSetTag", value: MsgMultiSetTag.fromPartial( value ) }  
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdatePullRequestTitle", value: MsgUpdatePullRequestTitle.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgMultiSetTag: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdatePullRequestTitle: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateDaoDescription({ value }: msgUpdateDaoDescriptionParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoDescription", value: MsgUpdateDaoDescription.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateDaoDescription: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteIssue({ value }: msgDeleteIssueParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteIssue", value: MsgDeleteIssue.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteIssue: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateBounty({ value }: msgCreateBountyParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateBounty", value: MsgCreateBounty.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateBounty: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeleteDao({ value }: msgDeleteDaoParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgDeleteDao", value: MsgDeleteDao.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeleteDao: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateRepository({ value }: msgCreateRepositoryParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateRepository", value: MsgCreateRepository.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateRepository: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemovePullRequestAssignees({ value }: msgRemovePullRequestAssigneesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemovePullRequestAssignees", value: MsgRemovePullRequestAssignees.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemovePullRequestAssignees: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddRepositoryBackupRef({ value }: msgAddRepositoryBackupRefParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAddRepositoryBackupRef", value: MsgAddRepositoryBackupRef.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddRepositoryBackupRef: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateDaoPinnedRepositories({ value }: msgUpdateDaoPinnedRepositoriesParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoPinnedRepositories", value: MsgUpdateDaoPinnedRepositories.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateDaoPinnedRepositories: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateRepositoryCollaborator({ value }: msgUpdateRepositoryCollaboratorParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryCollaborator", value: MsgUpdateRepositoryCollaborator.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateRepositoryCollaborator: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRemoveRepositoryCollaborator({ value }: msgRemoveRepositoryCollaboratorParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgRemoveRepositoryCollaborator", value: MsgRemoveRepositoryCollaborator.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRemoveRepositoryCollaborator: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAuthorizeProvider({ value }: msgAuthorizeProviderParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgAuthorizeProvider", value: MsgAuthorizeProvider.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAuthorizeProvider: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgMultiDeleteBranch({ value }: msgMultiDeleteBranchParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgMultiDeleteBranch", value: MsgMultiDeleteBranch.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgMultiDeleteBranch: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateRepositoryLabel({ value }: msgUpdateRepositoryLabelParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateRepositoryLabel", value: MsgUpdateRepositoryLabel.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateRepositoryLabel: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateUser({ value }: msgCreateUserParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgCreateUser", value: MsgCreateUser.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateUser: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgSetPullRequestState({ value }: msgSetPullRequestStateParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgSetPullRequestState", value: MsgSetPullRequestState.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgSetPullRequestState: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateDaoLocation({ value }: msgUpdateDaoLocationParams): EncodeObject {
+			try {
+				return { typeUrl: "/gitopia.gitopia.gitopia.MsgUpdateDaoLocation", value: MsgUpdateDaoLocation.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateDaoLocation: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -2850,6 +3049,7 @@ class SDKModule {
 						MsgMultiSetBranch_Branch: getStructure(typeMsgMultiSetBranch_Branch.fromPartial({})),
 						MsgSetTag_Tag: getStructure(typeMsgSetTag_Tag.fromPartial({})),
 						MsgMultiSetTag_Tag: getStructure(typeMsgMultiSetTag_Tag.fromPartial({})),
+						MsgDistributePlatformIncentives_Address: getStructure(typeMsgDistributePlatformIncentives_Address.fromPartial({})),
 						User: getStructure(typeUser.fromPartial({})),
 						UserDao: getStructure(typeUserDao.fromPartial({})),
 						Whois: getStructure(typeWhois.fromPartial({})),

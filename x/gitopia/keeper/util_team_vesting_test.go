@@ -7,11 +7,11 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v3/app/params"
-	tkeeper "github.com/gitopia/gitopia/v3/testutil/keeper"
-	"github.com/gitopia/gitopia/v3/testutil/sample"
-	"github.com/gitopia/gitopia/v3/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v3/x/gitopia/types"
+	"github.com/gitopia/gitopia/v4/app/params"
+	tkeeper "github.com/gitopia/gitopia/v4/testutil/keeper"
+	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -215,14 +215,34 @@ func TestVestedDeveloperProportionSuccess(t *testing.T) {
 	now := time.Now()
 	ctx = ctx.WithBlockTime(now.AddDate(0, 1, 0)) // one month vesting
 	devAddr := sample.AccAddress()
-
-	gKeeper.SetParams(ctx, types.Params{
-		TeamProportions: []types.DistributionProportion{{
-			Proportion: sdk.NewDec(20),
-			Address:    devAddr,
-		}},
-		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	err := gKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
+		TeamProportions: []types.DistributionProportion{
+			{
+				Proportion: sdk.NewDec(20),
+				Address:    devAddr,
+			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
+		},
+		GenesisTime:     now.AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
@@ -237,13 +257,34 @@ func TestVestedDeveloperProportionWithNoVesting(t *testing.T) {
 	ctx = ctx.WithBlockTime(now)
 	devAddr := sample.AccAddress()
 
-	gKeeper.SetParams(ctx, types.Params{
-		TeamProportions: []types.DistributionProportion{{
-			Proportion: sdk.NewDec(20),
-			Address:    devAddr,
-		}},
-		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	err := gKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
+		TeamProportions: []types.DistributionProportion{
+			{
+				Proportion: sdk.NewDec(20),
+				Address:    devAddr,
+			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
+		},
+		GenesisTime:     now.AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
@@ -258,10 +299,30 @@ func TestVestedDeveloperUnauthorized(t *testing.T) {
 	ctx = ctx.WithBlockTime(now)
 	devAddr := sample.AccAddress()
 
-	gKeeper.SetParams(ctx, types.Params{
-		TeamProportions: []types.DistributionProportion{},
-		GenesisTime:     now.Add(time.Duration(-366*24) * time.Hour),
+	err := gKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
+		TeamProportions: []types.DistributionProportion{
+			{
+				Proportion: sdk.NewDec(100),
+				Address:    sample.AccAddress(),
+			},
+		},
+		GenesisTime:     now.AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
@@ -276,13 +337,34 @@ func TestVestedDeveloperProportionMaxVesting(t *testing.T) {
 	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting
 	devAddr := sample.AccAddress()
 
-	gKeeper.SetParams(ctx, types.Params{
-		TeamProportions: []types.DistributionProportion{{
-			Proportion: sdk.NewDec(20),
-			Address:    devAddr,
-		}},
-		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	err := gKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
+		TeamProportions: []types.DistributionProportion{
+			{
+				Proportion: sdk.NewDec(20),
+				Address:    devAddr,
+			},
+			{
+				Proportion: sdk.NewDec(80),
+				Address:    sample.AccAddress(),
+			},
+		},
+		GenesisTime:     now.AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 
@@ -297,13 +379,34 @@ func TestFractionalVestedDeveloperProportion(t *testing.T) {
 	ctx = ctx.WithBlockTime(now.AddDate(10, 0, 0)) // 11 year vesting. genesis 1 year ago
 	devAddr := sample.AccAddress()
 
-	gKeeper.SetParams(ctx, types.Params{
-		TeamProportions: []types.DistributionProportion{{
-			Proportion: sdk.NewDecWithPrec(205, 1),
-			Address:    devAddr,
-		}},
-		GenesisTime: now.Add(time.Duration(-366*24) * time.Hour),
+	err := gKeeper.SetParams(ctx, types.Params{
+		NextInflationTime: time.Now().UTC().AddDate(1, 0, 0),
+		PoolProportions: types.PoolProportions{
+			Ecosystem: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Platform: &types.DistributionProportion{
+				Proportion: sdk.NewDec(15),
+			},
+			Team: &types.DistributionProportion{
+				Proportion: sdk.NewDec(28),
+			},
+		},
+		TeamProportions: []types.DistributionProportion{
+			{
+				Proportion: sdk.NewDecWithPrec(205, 1),
+				Address:    devAddr,
+			},
+			{
+				Proportion: sdk.NewDecWithPrec(795, 1),
+				Address:    sample.AccAddress(),
+			},
+		},
+		GenesisTime:     now.AddDate(-1, 0, 0),
+		GitServer:       sample.AccAddress(),
+		StorageProvider: sample.AccAddress(),
 	})
+	assert.NoError(t, err)
 
 	amount, err := gKeeper.GetVestedProportion(ctx, devAddr)
 

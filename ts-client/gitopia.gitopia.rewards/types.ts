@@ -1,17 +1,19 @@
-import { RewardPool } from "./types/rewards/params"
-import { RewardSeries } from "./types/rewards/params"
-import { Params } from "./types/rewards/params"
-import { QueryGetRewardResponseReward } from "./types/rewards/query"
-import { Reward } from "./types/rewards/rewards"
-import { Task } from "./types/rewards/task"
+import { Params } from "./types/gitopia/gitopia/rewards/params"
+import { RewardPool } from "./types/gitopia/gitopia/rewards/pool"
+import { QueryGetRewardResponseReward } from "./types/gitopia/gitopia/rewards/query"
+import { Reward } from "./types/gitopia/gitopia/rewards/rewards"
+import { RecipientReward } from "./types/gitopia/gitopia/rewards/rewards"
+import { Task } from "./types/gitopia/gitopia/rewards/task"
+import { ClaimResponseReward } from "./types/gitopia/gitopia/rewards/tx"
 
 
 export {     
-    RewardPool,
-    RewardSeries,
     Params,
+    RewardPool,
     QueryGetRewardResponseReward,
     Reward,
+    RecipientReward,
     Task,
+    ClaimResponseReward,
     
  }

@@ -325,7 +325,11 @@ export type V1MsgUpgradeClientResponse = object;
  * Params defines the set of IBC light client parameters.
  */
 export interface V1Params {
-  /** allowed_clients defines the list of allowed client state types. */
+  /**
+   * allowed_clients defines the list of allowed client state types which can be created
+   * and interacted with. If a client type is removed from the allowed clients list, usage
+   * of this client will be disabled until it is added again to the list.
+   */
   allowed_clients?: string[];
 }
 
@@ -901,22 +905,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryClientParams
-   * @summary ClientParams queries all parameters of the ibc client.
-   * @request GET:/ibc/client/v1/params
-   */
-  queryClientParams = (params: RequestParams = {}) =>
-    this.request<V1QueryClientParamsResponse, RpcStatus>({
-      path: `/ibc/client/v1/params`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryClientStates
    * @summary ClientStates queries all the IBC light clients of a chain.
    * @request GET:/ibc/core/client/v1/client_states
@@ -1046,6 +1034,22 @@ a given height.
       path: `/ibc/core/client/v1/consensus_states/${clientId}/revision/${revisionNumber}/height/${revisionHeight}`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryClientParams
+   * @summary ClientParams queries all parameters of the ibc client submodule.
+   * @request GET:/ibc/core/client/v1/params
+   */
+  queryClientParams = (params: RequestParams = {}) =>
+    this.request<V1QueryClientParamsResponse, RpcStatus>({
+      path: `/ibc/core/client/v1/params`,
+      method: "GET",
       format: "json",
       ...params,
     });
