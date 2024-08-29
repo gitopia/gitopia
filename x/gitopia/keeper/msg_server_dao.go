@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
 )
@@ -30,6 +32,33 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
 	}
 
+	groupMsg := &group.MsgCreateGroupWithPolicy{
+		Admin: msg.Creator,
+		Members: []group.MemberRequest{
+			{Address: msg.Creator, Weight: "1"},
+		},
+		GroupPolicyAsAdmin: true,
+	}
+
+	votingPeriod := time.Duration(2 * time.Minute)
+	minExecutionPeriod := votingPeriod + group.DefaultConfig().MaxExecutionPeriod
+
+	policy := group.NewThresholdDecisionPolicy(
+		"1",
+		votingPeriod,
+		minExecutionPeriod,
+	)
+	err := groupMsg.SetDecisionPolicy(policy)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the group
+	res, err := k.groupKeeper.CreateGroupWithPolicy(ctx, groupMsg)
+	if err != nil {
+		return nil, err
+	}
+
 	var dao = types.Dao{
 		Creator:     msg.Creator,
 		Address:     NewDaoAddress(k.GetDaoCount(ctx)).String(),
@@ -40,6 +69,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		AvatarUrl:   msg.AvatarUrl,
 		Location:    msg.Location,
 		Website:     msg.Website,
+		GroupId:     res.GroupId,
 	}
 
 	// Check if there is a dao with the same address already
@@ -74,7 +104,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 	)
 
 	gParams := k.GetParams(ctx)
-	err := k.Keeper.AuthorizeProvider(ctx, gParams.GitServer, dao.Address, nil, types.ProviderPermission_GIT_SERVER)
+	err = k.Keeper.AuthorizeProvider(ctx, gParams.GitServer, dao.Address, nil, types.ProviderPermission_GIT_SERVER)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,46 @@ import (
 	"github.com/ipfs/go-cid"
 )
 
+func ValidateUserId(userId string) error {
+	_, err := sdk.AccAddressFromBech32(userId)
+	if err != nil {
+		if len(userId) < 3 {
+			return fmt.Errorf("user name must consist minimum 3 chars")
+		} else if len(userId) > 39 {
+			return fmt.Errorf("user name limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", userId)
+		if err != nil {
+			return err
+		}
+		if !valid {
+			return fmt.Errorf("invalid user name (%v)", userId)
+		}
+	}
+
+	return nil
+}
+
+func ValidateDaoId(daoId string) error {
+	_, err := sdk.AccAddressFromBech32(daoId)
+	if err != nil {
+		if len(daoId) < 3 {
+			return fmt.Errorf("dao name must consist minimum 3 chars")
+		} else if len(daoId) > 39 {
+			return fmt.Errorf("dao name limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", daoId)
+		if err != nil {
+			return err
+		}
+		if !valid {
+			return fmt.Errorf("invalid dao name (%v)", daoId)
+		}
+	}
+
+	return nil
+}
+
 func ValidateRepositoryName(name string) error {
 	if len(name) < 3 {
 		return fmt.Errorf("Repository name must be at least 3 characters long")

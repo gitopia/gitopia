@@ -8,16 +8,15 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
 	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
 )
 
 var defaultGenesisBz []byte
 
-func getDefaultGenesisStateBytes(cdc codec.JSONCodec) []byte {
+func getDefaultGenesisStateBytes(encConfig gitopiaparams.EncodingConfig) []byte {
 	if len(defaultGenesisBz) == 0 {
-		genesisState := NewDefaultGenesisState(cdc)
+		genesisState := NewDefaultGenesisState(encConfig)
 		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 		if err != nil {
 			panic(err)
@@ -34,7 +33,7 @@ func Setup(isCheckTx bool) *GitopiaApp {
 
 	app := NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, encoding, sims.EmptyAppOptions{})
 	if !isCheckTx {
-		stateBytes := getDefaultGenesisStateBytes(app.AppCodec())
+		stateBytes := getDefaultGenesisStateBytes(encoding)
 
 		app.InitChain(
 			abci.RequestInitChain{
@@ -64,7 +63,7 @@ func SetupTestingAppWithLevelDb(isCheckTx bool) (app *GitopiaApp, cleanupFn func
 
 	app = NewGitopiaApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, encoding, sims.EmptyAppOptions{})
 	if !isCheckTx {
-		genesisState := NewDefaultGenesisState(app.AppCodec())
+		genesisState := NewDefaultGenesisState(encoding)
 		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 		if err != nil {
 			panic(err)

@@ -13,9 +13,9 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	// this line is used by starport scaffolding # ibc/keeper/import
 )
 
 type (
@@ -31,6 +31,7 @@ type (
 		bankKeeper    bankKeeper.Keeper
 		mintKeeper    *mintkeeper.Keeper
 		distrKeeper   *distrkeeper.Keeper
+		groupKeeper   *groupkeeper.Keeper
 
 		// the address capable of executing a MsgUpdateParams message. Typically, this
 		// should be the x/gov module account.
@@ -49,6 +50,7 @@ func NewKeeper(
 	bankKeeper bankKeeper.Keeper,
 	mintKeeper *mintkeeper.Keeper,
 	distrKeeper *distrkeeper.Keeper,
+	groupKeeper *groupkeeper.Keeper,
 	authority string,
 ) *Keeper {
 	return &Keeper{
@@ -63,6 +65,7 @@ func NewKeeper(
 		bankKeeper:    bankKeeper,
 		mintKeeper:    mintKeeper,
 		distrKeeper:   distrKeeper,
+		groupKeeper:   groupKeeper,
 		authority:     authority,
 	}
 }

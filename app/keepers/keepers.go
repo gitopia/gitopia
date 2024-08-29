@@ -94,7 +94,7 @@ type AppKeepers struct {
 	EvidenceKeeper        evidencekeeper.Keeper
 	TransferKeeper        ibctransferkeeper.Keeper
 	FeeGrantKeeper        feegrantkeeper.Keeper
-	GroupKeeper           groupkeeper.Keeper
+	GroupKeeper           *groupkeeper.Keeper
 	AuthzKeeper           *authzkeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	GitopiaKeeper         gitopiakeeper.Keeper
@@ -188,17 +188,14 @@ func NewAppKeeper(
 	appKeepers.AuthzKeeper = &authzKeeper
 
 	groupConfig := group.DefaultConfig()
-	/*
-		Example of setting group params:
-		groupConfig.MaxMetadataLen = 1000
-	*/
-	appKeepers.GroupKeeper = groupkeeper.NewKeeper(
+	groupKeeper := groupkeeper.NewKeeper(
 		appKeepers.keys[group.StoreKey],
 		appCodec,
 		bApp.MsgServiceRouter(),
 		appKeepers.AccountKeeper,
 		groupConfig,
 	)
+	appKeepers.GroupKeeper = &groupKeeper
 
 	appKeepers.FeeGrantKeeper = feegrantkeeper.NewKeeper(
 		appCodec,
@@ -365,6 +362,7 @@ func NewAppKeeper(
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
 		appKeepers.DistrKeeper,
+		appKeepers.GroupKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(

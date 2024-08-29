@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 )
 
@@ -50,9 +51,21 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("user (%v) is already member of dao", msg.UserId))
 	}
 
+	// Add the user address to the group
+	_, err = k.groupKeeper.UpdateGroupMembers(ctx, &group.MsgUpdateGroupMembers{
+		Admin:   msg.Creator,
+		GroupId: dao.GroupId,
+		MemberUpdates: []group.MemberRequest{
+			{Address: msg.UserId, Weight: "1"},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	member := types.Member{
-		Address:    memberAddress.Address,
-		DaoAddress: daoAddress.Address,
+		Address:    msg.UserId,
+		DaoAddress: dao.Address,
 		Role:       msg.Role,
 	}
 
@@ -76,6 +89,56 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 	)
 
 	return &types.MsgAddMemberResponse{}, nil
+}
+
+func (k Keeper) SubmitAddMemberProposal(goCtx context.Context, msg *types.MsgSubmitAddMemberProposal) (*types.MsgSubmitAddMemberProposalResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, found := k.GetUser(ctx, msg.Creator)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
+	}
+
+	daoAddress, err := k.ResolveAddress(ctx, msg.DaoId)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, daoAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.DaoId))
+	}
+
+	groupInfoResp, err := k.groupKeeper.GroupInfo(ctx, &group.QueryGroupInfoRequest{GroupId: dao.GroupId})
+	if err != nil {
+		return nil, err
+	}
+
+	// The add member message which will be executed when the proposal passes
+	proposalMsg := &types.MsgAddMember{
+		DaoId:  msg.DaoId,
+		UserId: msg.UserId,
+		Role:   msg.Role,
+	}
+
+	req := &group.MsgSubmitProposal{
+		GroupPolicyAddress: groupInfoResp.Info.Admin,
+		Proposers:          []string{msg.Creator},
+		Metadata:           "Add Member Proposal",
+		Exec:               group.Exec_EXEC_UNSPECIFIED,
+	}
+
+	err = req.SetMsgs([]sdk.Msg{proposalMsg})
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := k.groupKeeper.SubmitProposal(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgSubmitAddMemberProposalResponse{ProposalId: res.ProposalId}, nil
 }
 
 func (k msgServer) UpdateMemberRole(goCtx context.Context, msg *types.MsgUpdateMemberRole) (*types.MsgUpdateMemberRoleResponse, error) {

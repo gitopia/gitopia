@@ -42,6 +42,7 @@ service Msg {
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
   rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
   rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
+  rpc SubmitAddMemberProposal(MsgSubmitAddMemberProposal) returns (MsgSubmitAddMemberProposalResponse);
   rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
   rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
   rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
@@ -305,6 +306,17 @@ message MsgAddMember {
 }
 
 message MsgAddMemberResponse { }
+
+message MsgSubmitAddMemberProposal {
+  string creator = 1;
+  string daoId = 2;
+  string userId = 3;
+  MemberRole role = 4;
+}
+
+message MsgSubmitAddMemberProposalResponse {
+  uint64 proposalId = 1;
+}
 
 message MsgUpdateMemberRole {
   string creator = 1;

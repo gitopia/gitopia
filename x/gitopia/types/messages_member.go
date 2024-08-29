@@ -1,8 +1,6 @@
 package types
 
 import (
-	"regexp"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -48,38 +46,17 @@ func (msg *MsgAddMember) GetSignBytes() []byte {
 func (msg *MsgAddMember) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.DaoId)
-	if err != nil {
-		if len(msg.DaoId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.DaoId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.DaoId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.DaoId)
-		}
+
+	if err := ValidateDaoId(msg.DaoId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid dao id (%v)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.UserId)
-	if err != nil {
-		if len(msg.UserId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name must consist minimum 3 chars")
-		} else if len(msg.UserId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.UserId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid user name (%v)", msg.UserId)
-		}
+
+	if err := ValidateUserId(msg.UserId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid user id (%v)", err)
 	}
+
 	return nil
 }
 
@@ -118,38 +95,17 @@ func (msg *MsgUpdateMemberRole) GetSignBytes() []byte {
 func (msg *MsgUpdateMemberRole) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.DaoId)
-	if err != nil {
-		if len(msg.DaoId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.DaoId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.DaoId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.DaoId)
-		}
+
+	if err := ValidateDaoId(msg.DaoId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid dao id (%v)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.UserId)
-	if err != nil {
-		if len(msg.UserId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name must consist minimum 3 chars")
-		} else if len(msg.UserId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.UserId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid user name (%v)", msg.UserId)
-		}
+
+	if err := ValidateUserId(msg.UserId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid user id (%v)", err)
 	}
+
 	return nil
 }
 
@@ -186,37 +142,16 @@ func (msg *MsgRemoveMember) GetSignBytes() []byte {
 func (msg *MsgRemoveMember) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.ErrInvalidAddress.Wrapf("invalid creator address (%s)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.DaoId)
-	if err != nil {
-		if len(msg.DaoId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.DaoId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.DaoId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.DaoId)
-		}
+
+	if err := ValidateDaoId(msg.DaoId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid dao id (%v)", err)
 	}
-	_, err = sdk.AccAddressFromBech32(msg.UserId)
-	if err != nil {
-		if len(msg.UserId) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name must consist minimum 3 chars")
-		} else if len(msg.UserId) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "user name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.UserId)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid user name (%v)", msg.UserId)
-		}
+
+	if err := ValidateUserId(msg.UserId); err != nil {
+		return sdkerrors.ErrInvalidRequest.Wrapf("invalid user id (%v)", err)
 	}
+
 	return nil
 }
