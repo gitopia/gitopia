@@ -5394,101 +5394,101 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_VestedAmount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "vestedAmount", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_VestedAmount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "vestedAmount", "address"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Task_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "task", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Task_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "task", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_TaskAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "task"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_TaskAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "task"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_BranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "branch"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_BranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "branch"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryBranch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"gitopia", "id", "repository", "repositoryName", "branch", "branchName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryBranch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"gitopia", "id", "repository", "repositoryName", "branch", "branchName"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryBranchSha_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"gitopia", "id", "repository", "repositoryName", "branch", "branchName", "sha"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryBranchSha_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"gitopia", "id", "repository", "repositoryName", "branch", "branchName", "sha"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryBranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "branch"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryBranchAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "branch"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_TagAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "tag"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_TagAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "tag"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryTag_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"gitopia", "id", "repository", "repositoryName", "tag", "tagName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryTag_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"gitopia", "id", "repository", "repositoryName", "tag", "tagName"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryTagSha_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"gitopia", "id", "repository", "repositoryName", "tag", "tagName", "sha"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryTagSha_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"gitopia", "id", "repository", "repositoryName", "tag", "tagName", "sha"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryTagAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "tag"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryTagAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "tag"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DaoMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "dao", "daoId", "member", "userId"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DaoMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "dao", "daoId", "member", "userId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DaoMemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "dao", "daoId", "member"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DaoMemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "dao", "daoId", "member"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_MemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "member"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_MemberAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "member"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Bounty_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "bounty", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Bounty_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "bounty", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_BountyAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "bounty"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_BountyAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "bounty"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Release_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "release", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Release_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "release", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ReleaseAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "release"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ReleaseAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "release"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PullRequestAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "pullRequest"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PullRequestAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "pullRequest"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Dao_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "dao", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Dao_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "dao", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DaoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "dao"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DaoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "dao"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_IssueComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "repository", "repositoryId", "issue", "issueIid", "comment", "commentIid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_IssueComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "repository", "repositoryId", "issue", "issueIid", "comment", "commentIid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PullRequestComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "repository", "repositoryId", "pullrequest", "pullRequestIid", "comment", "commentIid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PullRequestComment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "repository", "repositoryId", "pullrequest", "pullRequestIid", "comment", "commentIid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_CommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "comment"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_CommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "comment"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_IssueCommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"gitopia", "repository", "repositoryId", "issue", "issueIid", "comment"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_IssueCommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"gitopia", "repository", "repositoryId", "issue", "issueIid", "comment"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PullRequestCommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"gitopia", "repository", "repositoryId", "pullrequest", "pullRequestIid", "comment"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PullRequestCommentAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"gitopia", "repository", "repositoryId", "pullrequest", "pullRequestIid", "comment"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_IssueAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "issue"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_IssueAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "issue"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryReleaseLatest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 2, 5}, []string{"gitopia", "id", "repository", "repositoryName", "releases", "latest"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryReleaseLatest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 2, 5}, []string{"gitopia", "id", "repository", "repositoryName", "releases", "latest"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryRelease_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "id", "repository", "repositoryName", "releases", "tag", "tagName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryRelease_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 2, 5, 1, 0, 4, 1, 5, 6}, []string{"gitopia", "id", "repository", "repositoryName", "releases", "tag", "tagName"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryReleaseAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "releases"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryReleaseAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "releases"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryIssue_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "id", "repositoryName", "issue", "issueIid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryIssue_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "id", "repositoryName", "issue", "issueIid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryIssueAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "id", "repositoryName", "issue"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryIssueAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "id", "repositoryName", "issue"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryPullRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "id", "repositoryName", "pull", "pullIid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryPullRequest_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "id", "repositoryName", "pull", "pullIid"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryPullRequestAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "id", "repositoryName", "pull"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryPullRequestAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "id", "repositoryName", "pull"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Repository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "repository", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Repository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "repository", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "repository"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "repository"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ForkAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "forks"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ForkAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 1, 0, 4, 1, 5, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"gitopia", "id", "repository", "repositoryName", "forks"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_User_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "user", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_User_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "user", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_UserDaoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "userId", "dao"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserDaoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "userId", "dao"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_UserAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "user"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_UserAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "user"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AnyRepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "id", "repository"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_AnyRepositoryAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"gitopia", "user", "id", "repository"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AnyRepository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "user", "id", "repository", "repositoryName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_AnyRepository_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "user", "id", "repository", "repositoryName"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Whois_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "whois", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Whois_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "whois", "name"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_WhoisAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "whois"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_WhoisAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1}, []string{"gitopia", "whois"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PullRequestMergePermission_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7}, []string{"gitopia", "permissions", "userId", "repository", "repositoryId", "pull", "pullIid", "merge"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PullRequestMergePermission_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5, 1, 0, 4, 1, 5, 6, 2, 7}, []string{"gitopia", "permissions", "userId", "repository", "repositoryId", "pull", "pullIid", "merge"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_CheckGitServerAuthorization_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "authorizations", "git-server", "userAddress", "providerAddress"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_CheckGitServerAuthorization_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "authorizations", "git-server", "userAddress", "providerAddress"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_CheckStorageProviderAuthorization_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "authorizations", "storage-provider", "userAddress", "providerAddress"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_CheckStorageProviderAuthorization_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"gitopia", "authorizations", "storage-provider", "userAddress", "providerAddress"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
