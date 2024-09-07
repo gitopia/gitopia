@@ -54,7 +54,7 @@ services:
       - 10500
     environment:
       - PATH=/usr/local/gitopia/bin:$PATH
-      - ENV=dev
+      - ENV=localnet
     volumes:
       - gitopiad-binary:/usr/local/gitopia/bin:ro  # Share the binary with the rewards service
 

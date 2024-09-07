@@ -418,13 +418,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2}, []string{"gitopia", "rewards", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2}, []string{"gitopia", "rewards", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Tasks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"gitopia", "rewards", "tasks", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Tasks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"gitopia", "rewards", "tasks", "address"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Reward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "rewards", "recipient"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Reward_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"gitopia", "rewards", "recipient"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RewardsAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 1}, []string{"gitopia", "rewards"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RewardsAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 1}, []string{"gitopia", "rewards"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
