@@ -30,18 +30,7 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	}
 
 	if msg.Creator != msg.Granter { // DAO address
-		_, found := k.GetDao(ctx, msg.Granter)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Granter))
-		}
-
-		if m, found := k.GetDaoMember(ctx, msg.Granter, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not authorized to grant permission", msg.Creator))
 	}
 
 	now := ctx.BlockTime()
@@ -66,18 +55,7 @@ func (k msgServer) RevokeProviderPermission(goCtx context.Context, msg *types.Ms
 	granter, _ := sdk.AccAddressFromBech32(msg.Granter)
 
 	if msg.Creator != msg.Granter { // DAO address
-		_, found := k.GetDao(ctx, msg.Granter)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Granter))
-		}
-
-		if m, found := k.GetDaoMember(ctx, msg.Granter, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not authorized to grant permission", msg.Creator))
 	}
 
 	switch msg.Permission {

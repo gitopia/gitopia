@@ -29,10 +29,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteTag{}, "gitopia/DeleteTag", nil)
 	cdc.RegisterConcrete(&MsgMultiDeleteTag{}, "gitopia/MultiDeleteTag", nil)
 
-	cdc.RegisterConcrete(&MsgAddMember{}, "gitopia/AddMember", nil)
-	cdc.RegisterConcrete(&MsgUpdateMemberRole{}, "gitopia/UpdateMemberRole", nil)
-	cdc.RegisterConcrete(&MsgRemoveMember{}, "gitopia/RemoveMember", nil)
-
 	cdc.RegisterConcrete(&MsgUpdateRepositoryBackupRef{}, "gitopia/UpdateRepositoryBackupRef", nil)
 	cdc.RegisterConcrete(&MsgAddRepositoryBackupRef{}, "gitopia/AddRepositoryBackupRef", nil)
 
@@ -69,6 +65,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateDaoLocation{}, "gitopia/UpdateDaoLocation", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoAvatar{}, "gitopia/UpdateDaoAvatar", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoPinnedRepositories{}, "gitopia/UpdateDaoPinnedRepositories", nil)
+	cdc.RegisterConcrete(&MsgDaoTreasurySpend{}, "gitopia/DaoTreasurySpend", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoConfig{}, "gitopia/UpdateDaoConfig", nil)
 	cdc.RegisterConcrete(&MsgDeleteDao{}, "gitopia/DeleteDao", nil)
 
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
@@ -143,11 +141,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgMultiDeleteTag{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAddMember{},
-		&MsgUpdateMemberRole{},
-		&MsgRemoveMember{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgAddRepositoryBackupRef{},
 		&MsgUpdateRepositoryBackupRef{},
 	)
@@ -193,6 +186,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateDaoLocation{},
 		&MsgUpdateDaoAvatar{},
 		&MsgUpdateDaoPinnedRepositories{},
+		&MsgDaoTreasurySpend{},
+		&MsgUpdateDaoConfig{},
 		&MsgDeleteDao{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),

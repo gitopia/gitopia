@@ -46,9 +46,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdSetTag())
 	cmd.AddCommand(CmdDeleteTag())
 
-	cmd.AddCommand(CmdAddMember())
-	cmd.AddCommand(CmdUpdateMemberRole())
-	cmd.AddCommand(CmdRemoveMember())
 	cmd.AddCommand(CmdUpdateRepositoryBackupRef())
 	cmd.AddCommand(CmdAddRepositoryBackupRef())
 
@@ -80,13 +77,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdDeletePullRequest())
 
 	cmd.AddCommand(CmdCreateDao())
-	cmd.AddCommand(CmdRenameDao())
-	cmd.AddCommand(CmdUpdateDaoDescription())
-	cmd.AddCommand(CmdUpdateDaoWebsite())
-	cmd.AddCommand(CmdUpdateDaoLocation())
-	cmd.AddCommand(CmdUpdateDaoAvatar())
-	cmd.AddCommand(CmdUpdateDaoPinnedRepositories())
-	cmd.AddCommand(CmdDeleteDao())
 
 	cmd.AddCommand(CmdCreateComment())
 	cmd.AddCommand(CmdUpdateComment())

@@ -1,30 +1,50 @@
 package keeper
 
 import (
+	"math"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/gitopia/gitopia/v4/x/gitopia/types"
 	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
 )
 
-func (k Keeper) HavePermission(ctx sdk.Context, creator string, repository types.Repository, minAllowedPermission types.RepositoryCollaborator_Permission) (havePermission bool) {
+func (k Keeper) HavePermission(ctx sdk.Context, creator string, repository types.Repository, minAllowedPermission types.RepositoryCollaborator_Permission) bool {
 	if repository.Owner.Type == types.OwnerType_USER {
 		if creator == repository.Owner.Id {
-			havePermission = true
+			return true
 		}
 	} else if repository.Owner.Type == types.OwnerType_DAO {
-		member, found := k.GetDaoMember(ctx, repository.Owner.Id, creator)
-		if found && member.Role == types.MemberRole_OWNER {
-			havePermission = true
+		dao, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return false
 		}
-	}
 
-	if !havePermission {
-		if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, creator); exists {
-			if repository.Collaborators[i].Permission >= minAllowedPermission {
-				havePermission = true
+		groupMembersReq := &group.QueryGroupMembersRequest{
+			GroupId: dao.GroupId,
+			Pagination: &query.PageRequest{
+				Limit: math.MaxUint64,
+			},
+		}
+
+		res, err := k.groupKeeper.GroupMembers(ctx, groupMembersReq)
+		if err != nil {
+			return false
+		}
+
+		for _, member := range res.Members {
+			if member.Member.Address == creator {
+				return true
 			}
 		}
 	}
 
-	return havePermission
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, creator); exists {
+		if repository.Collaborators[i].Permission >= minAllowedPermission {
+			return true
+		}
+	}
+
+	return false
 }

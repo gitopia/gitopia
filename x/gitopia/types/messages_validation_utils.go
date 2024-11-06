@@ -30,21 +30,27 @@ func ValidateUserId(userId string) error {
 	return nil
 }
 
+func ValidateDaoName(name string) error {
+	if len(name) < 3 {
+		return fmt.Errorf("dao name must consist minimum 3 chars")
+	} else if len(name) > 39 {
+		return fmt.Errorf("dao name limit exceed: 39")
+	}
+	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", name)
+	if err != nil {
+		return err
+	}
+	if !valid {
+		return fmt.Errorf("invalid dao name (%v)", name)
+	}
+
+	return nil
+}
+
 func ValidateDaoId(daoId string) error {
 	_, err := sdk.AccAddressFromBech32(daoId)
 	if err != nil {
-		if len(daoId) < 3 {
-			return fmt.Errorf("dao name must consist minimum 3 chars")
-		} else if len(daoId) > 39 {
-			return fmt.Errorf("dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", daoId)
-		if err != nil {
-			return err
-		}
-		if !valid {
-			return fmt.Errorf("invalid dao name (%v)", daoId)
-		}
+		return ValidateDaoName(daoId)
 	}
 
 	return nil

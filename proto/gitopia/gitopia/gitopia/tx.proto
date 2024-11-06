@@ -5,7 +5,6 @@ import "gogoproto/gogo.proto";
 import "gitopia/gitopia/gitopia/task.proto";
 import "gitopia/gitopia/gitopia/branch.proto";
 import "gitopia/gitopia/gitopia/tag.proto";
-import "gitopia/gitopia/gitopia/member.proto";
 import "gitopia/gitopia/gitopia/bounty.proto";
 // this line is used by starport scaffolding # proto/tx/import
 import "gitopia/gitopia/gitopia/release.proto";
@@ -21,6 +20,8 @@ import "gitopia/gitopia/gitopia/reaction.proto";
 import "gitopia/gitopia/gitopia/params.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
+import "cosmos/group/v1/types.proto";
+import "amino/amino.proto";
 
 option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
 
@@ -41,10 +42,6 @@ service Msg {
   rpc MultiSetTag(MsgMultiSetTag) returns (MsgMultiSetTagResponse);
   rpc DeleteTag(MsgDeleteTag) returns (MsgDeleteTagResponse);
   rpc MultiDeleteTag(MsgMultiDeleteTag) returns (MsgMultiDeleteTagResponse);
-  rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
-  rpc SubmitAddMemberProposal(MsgSubmitAddMemberProposal) returns (MsgSubmitAddMemberProposalResponse);
-  rpc UpdateMemberRole(MsgUpdateMemberRole) returns (MsgUpdateMemberRoleResponse);
-  rpc RemoveMember(MsgRemoveMember) returns (MsgRemoveMemberResponse);
   rpc CreateBounty(MsgCreateBounty) returns (MsgCreateBountyResponse);
   rpc UpdateBountyExpiry(MsgUpdateBountyExpiry) returns (MsgUpdateBountyExpiryResponse);
   rpc CloseBounty(MsgCloseBounty) returns (MsgCloseBountyResponse);
@@ -74,7 +71,10 @@ service Msg {
   rpc UpdateDaoWebsite(MsgUpdateDaoWebsite) returns (MsgUpdateDaoWebsiteResponse);
   rpc UpdateDaoLocation(MsgUpdateDaoLocation) returns (MsgUpdateDaoLocationResponse);
   rpc UpdateDaoAvatar(MsgUpdateDaoAvatar) returns (MsgUpdateDaoAvatarResponse);
+  rpc DaoTreasurySpend(MsgDaoTreasurySpend) returns (MsgDaoTreasurySpendResponse);
+  rpc UpdateDaoConfig(MsgUpdateDaoConfig) returns (MsgUpdateDaoConfigResponse);
   rpc DeleteDao(MsgDeleteDao) returns (MsgDeleteDaoResponse);
+  
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
   rpc UpdateComment(MsgUpdateComment) returns (MsgUpdateCommentResponse);
   rpc DeleteComment(MsgDeleteComment) returns (MsgDeleteCommentResponse);
@@ -298,43 +298,6 @@ message MsgMultiDeleteTag {
 
 message MsgMultiDeleteTagResponse { }
 
-message MsgAddMember {
-  string creator = 1;
-  string daoId = 2;
-  string userId = 3;
-  MemberRole role = 4;
-}
-
-message MsgAddMemberResponse { }
-
-message MsgSubmitAddMemberProposal {
-  string creator = 1;
-  string daoId = 2;
-  string userId = 3;
-  MemberRole role = 4;
-}
-
-message MsgSubmitAddMemberProposalResponse {
-  uint64 proposalId = 1;
-}
-
-message MsgUpdateMemberRole {
-  string creator = 1;
-  string daoId = 2;
-  string userId = 3;
-  MemberRole role = 4;
-}
-
-message MsgUpdateMemberRoleResponse {}
-
-message MsgRemoveMember {
-  string creator = 1;
-  string daoId = 2;
-  string userId = 3;
-}
-
-message MsgRemoveMemberResponse { }
-
 message MsgCreateBounty {
   string creator = 1;
   repeated cosmos.base.v1beta1.Coin amount = 2
@@ -555,9 +518,19 @@ message MsgCreateDao {
   string creator = 1;
   string name = 2;
   string description = 3;
-  string avatarUrl = 4; 
-  string location = 5; 
-  string website = 6; 
+  string avatarUrl = 4;
+  string location = 5;
+  string website = 6;
+
+  // members defines the group members.
+  repeated cosmos.group.v1.MemberRequest members = 7 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+
+  // voting_period defines the voting period of the dao in hours.
+  string voting_period = 8;
+  
+  // percentage is the minimum percentage of the weighted sum of `YES` votes must
+  // meet for a proposal to succeed.
+  string percentage = 9;
 }
 
 message MsgCreateDaoResponse {
@@ -565,7 +538,12 @@ message MsgCreateDaoResponse {
 }
 
 message MsgRenameDao {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/RenameDao";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
   string name = 3;
 }
@@ -573,7 +551,12 @@ message MsgRenameDao {
 message MsgRenameDaoResponse { }
 
 message MsgUpdateDaoDescription {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoDescription";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
   string description = 3;
 }
@@ -581,7 +564,12 @@ message MsgUpdateDaoDescription {
 message MsgUpdateDaoDescriptionResponse { }
 
 message MsgUpdateDaoWebsite {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoWebsite";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
   string url = 3;
 }
@@ -589,7 +577,12 @@ message MsgUpdateDaoWebsite {
 message MsgUpdateDaoWebsiteResponse { }
 
 message MsgUpdateDaoLocation {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoLocation";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
   string location = 3;
 }
@@ -597,15 +590,62 @@ message MsgUpdateDaoLocation {
 message MsgUpdateDaoLocationResponse { }
 
 message MsgUpdateDaoAvatar {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoAvatar";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
   string url = 3;
 }
 
 message MsgUpdateDaoAvatarResponse { }
 
+
+// MsgDaoTreasurySpend defines a message for sending tokens from the dao address to another account. This message is typically executed via a group proposal.
+message MsgDaoTreasurySpend {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/MsgDaoTreasurySpend";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string id = 2;
+  string   recipient = 3;
+  repeated cosmos.base.v1beta1.Coin amount = 4 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// MsgDaoTreasurySpendResponse defines the response to executing a
+// MsgDaoTreasurySpend message.
+message MsgDaoTreasurySpendResponse {}
+
+message MsgUpdateDaoConfig {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoConfig";
+
+  // admin is the account address of the group admin
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // dao id to update config for
+  string id = 2;
+
+  // updated config settings
+  DaoConfig config = 3 [(gogoproto.nullable) = false];
+}
+
+message MsgUpdateDaoConfigResponse {}
+
 message MsgDeleteDao {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/DeleteDao";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   string id = 2;
 }
 
@@ -965,7 +1005,12 @@ message MsgUpdateUserPinnedRepositories  {
 message MsgUpdateUserPinnedRepositoriesResponse { }
 
 message MsgUpdateDaoPinnedRepositories  {
-  string creator = 1;
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoPinnedRepositories";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
   uint64 repositoryId = 2;
   string id = 3;
 }

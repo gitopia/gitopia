@@ -33,22 +33,26 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 	}
 
 	groupMsg := &group.MsgCreateGroupWithPolicy{
-		Admin: msg.Creator,
-		Members: []group.MemberRequest{
-			{Address: msg.Creator, Weight: "1"},
-		},
+		Admin:              msg.Creator,
+		Members:            msg.Members,
+		GroupMetadata:      daoName,
 		GroupPolicyAsAdmin: true,
 	}
 
-	votingPeriod := time.Duration(2 * time.Minute)
-	minExecutionPeriod := votingPeriod + group.DefaultConfig().MaxExecutionPeriod
+	hours, err := sdk.NewDecFromStr(msg.VotingPeriod)
+	if err != nil {
+		return nil, err
+	}
 
-	policy := group.NewThresholdDecisionPolicy(
-		"1",
+	nanoseconds := hours.Mul(sdk.NewDec(int64(time.Hour))).TruncateInt().Int64()
+	votingPeriod := time.Duration(nanoseconds)
+
+	policy := group.NewPercentageDecisionPolicy(
+		msg.Percentage,
 		votingPeriod,
-		minExecutionPeriod,
+		time.Duration(0),
 	)
-	err := groupMsg.SetDecisionPolicy(policy)
+	err = groupMsg.SetDecisionPolicy(policy)
 	if err != nil {
 		return nil, err
 	}
@@ -83,13 +87,8 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		dao,
 	)
 
-	member := types.Member{
-		Address:    msg.Creator,
-		DaoAddress: dao.Address,
-		Role:       types.MemberRole_OWNER,
-	}
-
-	k.AppendMember(ctx, member)
+	// save the group id and dao id mapping
+	k.AppendGroupDao(ctx, dao.GroupId, types.GroupDao{DaoAddress: dao.Address})
 
 	whois := types.Whois{
 		Creator:   msg.Creator,
@@ -139,11 +138,6 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*types.MsgRenameDaoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
@@ -154,12 +148,10 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	newDaoName := strings.ToLower(msg.Name)
@@ -185,7 +177,7 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		}
 	} else {
 		whois = types.Whois{
-			Creator:   msg.Creator,
+			Creator:   msg.Admin,
 			Name:      newDaoName,
 			Address:   dao.Address,
 			OwnerType: types.OwnerType_DAO,
@@ -202,7 +194,6 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.RenameDaoEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -216,11 +207,6 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpdateDaoDescription) (*types.MsgUpdateDaoDescriptionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
@@ -231,13 +217,8 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
-	}
+	// check if the message admin and the group admin are the same
+	k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
 
 	dao.Description = msg.Description
 	dao.UpdatedAt = ctx.BlockTime().Unix()
@@ -248,7 +229,6 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoDescriptionEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -263,11 +243,6 @@ func (k msgServer) UpdateDaoDescription(goCtx context.Context, msg *types.MsgUpd
 func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateDaoWebsite) (*types.MsgUpdateDaoWebsiteResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
@@ -278,12 +253,10 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	dao.Website = msg.Url
@@ -294,7 +267,6 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoWebsiteEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -309,11 +281,6 @@ func (k msgServer) UpdateDaoWebsite(goCtx context.Context, msg *types.MsgUpdateD
 func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdateDaoLocation) (*types.MsgUpdateDaoLocationResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
@@ -324,12 +291,10 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	dao.Location = msg.Location
@@ -341,7 +306,6 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoLocationEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -356,11 +320,6 @@ func (k msgServer) UpdateDaoLocation(goCtx context.Context, msg *types.MsgUpdate
 func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDaoAvatar) (*types.MsgUpdateDaoAvatarResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
@@ -371,12 +330,10 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	dao.AvatarUrl = msg.Url
@@ -388,7 +345,6 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoAvatarEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -403,18 +359,15 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*types.MsgDeleteDaoResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	user, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
-
 	dao, found := k.GetDao(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
 	}
 
-	if msg.Creator != dao.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	// check if the message admin and the group admin are the same
+	err := k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	DoRemoveDao(ctx, k, user, dao)
@@ -423,7 +376,6 @@ func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*t
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteDaoEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -433,27 +385,19 @@ func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*t
 	return &types.MsgDeleteDaoResponse{}, nil
 }
 
-func DoRemoveDao(ctx sdk.Context, k msgServer, user types.User, dao types.Dao) {
+func DoRemoveDao(ctx sdk.Context, k msgServer, dao types.Dao) {
 	repositories := k.GetAllAddressRepository(ctx, dao.Address)
 	for _, repository := range repositories {
 		DoRemoveRepository(ctx, k, repository)
 	}
 
-	members := k.GetAllDaoMember(ctx, dao.Address)
-	for _, member := range members {
-		k.RemoveDaoMember(ctx, dao.Address, member.Address)
-	}
+	// delete group
 
 	k.RemoveDao(ctx, dao.Address)
 }
 
 func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types.MsgUpdateDaoPinnedRepositories) (*types.MsgUpdateDaoPinnedRepositoriesResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, found := k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.Creator))
-	}
 
 	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
 	if err != nil {
@@ -465,16 +409,14 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
 	}
 
-	if m, found := k.GetDaoMember(ctx, daoAddress.Address, msg.Creator); found {
-		if m.Role != types.MemberRole_OWNER {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-		}
-	} else {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
 	}
 
 	if alreadyMax := utils.CheckDaoPinnedRepositoryAllowMax(dao); alreadyMax {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Creator))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("pinned repositories of (%v) already maximum", msg.Id))
 	}
 
 	if exists := utils.CheckDaoRepositoryPinnedExists(dao, msg.RepositoryId); exists {
@@ -508,7 +450,6 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoPinnedRepositoriesEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
 			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
@@ -518,4 +459,111 @@ func (k msgServer) UpdateDaoPinnedRepositories(goCtx context.Context, msg *types
 	)
 
 	return &types.MsgUpdateDaoPinnedRepositoriesResponse{}, nil
+}
+
+func (k msgServer) DaoTreasurySpend(goCtx context.Context, msg *types.MsgDaoTreasurySpend) (*types.MsgDaoTreasurySpendResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, daoAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
+	}
+
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the dao treasury has enough balance
+	recipientAddr, _ := sdk.AccAddressFromBech32(msg.Recipient)
+	daoAddr, _ := sdk.AccAddressFromBech32(dao.Address)
+	balance := k.bankKeeper.GetAllBalances(ctx, daoAddr)
+	if !balance.IsAllGTE(msg.Amount) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, "dao treasury balance %v is smaller than %v", balance, msg.Amount)
+	}
+
+	// Send coins from dao treasury to recipient
+	err = k.bankKeeper.SendCoins(ctx, daoAddr, recipientAddr, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.DaoTreasurySpendEventKey),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeRecipientKey, msg.Recipient),
+			sdk.NewAttribute(types.EventAttributeAmountKey, msg.Amount.String()),
+		),
+	)
+
+	return &types.MsgDaoTreasurySpendResponse{}, nil
+}
+
+func (k msgServer) UpdateDaoConfig(goCtx context.Context, msg *types.MsgUpdateDaoConfig) (*types.MsgUpdateDaoConfigResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, daoAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
+	}
+
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	dao.Config = msg.Config
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoConfigEventKey),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoRequirePullRequestProposalKey, strconv.FormatBool(msg.Config.RequirePullRequestProposal)),
+			sdk.NewAttribute(types.EventAttributeDaoRequireRepositoryDeletionProposalKey, strconv.FormatBool(msg.Config.RequireRepositoryDeletionProposal)),
+			sdk.NewAttribute(types.EventAttributeDaoRequireCollaboratorProposalKey, strconv.FormatBool(msg.Config.RequireCollaboratorProposal)),
+			sdk.NewAttribute(types.EventAttributeDaoRequireReleaseProposalKey, strconv.FormatBool(msg.Config.RequireReleaseProposal)),
+		),
+	)
+
+	return &types.MsgUpdateDaoConfigResponse{}, nil
+}
+
+// doAuthenticated makes sure that the group admin initiated the request
+func (k Keeper) doAuthenticated(ctx sdk.Context, groupId uint64, msgAdmin string) error {
+	groupRes, err := k.groupKeeper.GroupInfo(ctx, &group.QueryGroupInfoRequest{
+		GroupId: groupId,
+	})
+	if err != nil {
+		return err
+	}
+	admin, err := sdk.AccAddressFromBech32(groupRes.Info.Admin)
+	if err != nil {
+		return sdkerrors.Wrap(err, "group admin")
+	}
+	msgAdminAddr, err := sdk.AccAddressFromBech32(msgAdmin)
+	if err != nil {
+		return sdkerrors.Wrap(err, "message admin")
+	}
+	if !admin.Equals(msgAdminAddr) {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "not group admin; got %s, expected %s", msgAdmin, groupRes.Info.Admin)
+	}
+
+	return nil
 }

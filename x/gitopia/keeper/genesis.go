@@ -39,13 +39,6 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 
 	// Set tag count
 	k.SetTagCount(ctx, genState.TagCount)
-	// Set all the member
-	for _, elem := range genState.MemberList {
-		k.SetMember(ctx, elem)
-	}
-
-	// Set member count
-	k.SetMemberCount(ctx, genState.MemberCount)
 
 	// Set all the bounty
 	for _, elem := range genState.BountyList {
@@ -79,11 +72,6 @@ func InitGenesis(ctx sdk.Context, k Keeper, genState types.GenesisState) {
 
 	// Set dao count
 	k.SetDaoCount(ctx, genState.DaoCount)
-
-	// Set all the userDao
-	for _, elem := range genState.UserDaoList {
-		k.SetUserDao(ctx, elem)
-	}
 
 	// Set all the comment
 	for _, elem := range genState.CommentList {
@@ -204,9 +192,6 @@ func ExportGenesis(ctx sdk.Context, k Keeper) *types.GenesisState {
 
 	genesis.TagList = k.GetAllTag(ctx)
 	genesis.TagCount = k.GetTagCount(ctx)
-
-	genesis.MemberList = k.GetAllMember(ctx)
-	genesis.MemberCount = k.GetMemberCount(ctx)
 
 	genesis.BountyList = k.GetAllBounty(ctx)
 	genesis.BountyCount = k.GetBountyCount(ctx)

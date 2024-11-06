@@ -23,6 +23,79 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// Configuration options for DAO governance
+type DaoConfig struct {
+	// Whether pull requests require governance proposal
+	RequirePullRequestProposal bool `protobuf:"varint,1,opt,name=require_pull_request_proposal,json=requirePullRequestProposal,proto3" json:"require_pull_request_proposal,omitempty"`
+	// Whether repository deletion requires governance proposal
+	RequireRepositoryDeletionProposal bool `protobuf:"varint,2,opt,name=require_repository_deletion_proposal,json=requireRepositoryDeletionProposal,proto3" json:"require_repository_deletion_proposal,omitempty"`
+	// Whether management of collaborators requires governance proposal
+	RequireCollaboratorProposal bool `protobuf:"varint,3,opt,name=require_collaborator_proposal,json=requireCollaboratorProposal,proto3" json:"require_collaborator_proposal,omitempty"`
+	// Whether releases requires governance proposal
+	RequireReleaseProposal bool `protobuf:"varint,4,opt,name=require_release_proposal,json=requireReleaseProposal,proto3" json:"require_release_proposal,omitempty"`
+}
+
+func (m *DaoConfig) Reset()         { *m = DaoConfig{} }
+func (m *DaoConfig) String() string { return proto.CompactTextString(m) }
+func (*DaoConfig) ProtoMessage()    {}
+func (*DaoConfig) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d3bcfa0ce4b18516, []int{0}
+}
+func (m *DaoConfig) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DaoConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DaoConfig.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DaoConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DaoConfig.Merge(m, src)
+}
+func (m *DaoConfig) XXX_Size() int {
+	return m.Size()
+}
+func (m *DaoConfig) XXX_DiscardUnknown() {
+	xxx_messageInfo_DaoConfig.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DaoConfig proto.InternalMessageInfo
+
+func (m *DaoConfig) GetRequirePullRequestProposal() bool {
+	if m != nil {
+		return m.RequirePullRequestProposal
+	}
+	return false
+}
+
+func (m *DaoConfig) GetRequireRepositoryDeletionProposal() bool {
+	if m != nil {
+		return m.RequireRepositoryDeletionProposal
+	}
+	return false
+}
+
+func (m *DaoConfig) GetRequireCollaboratorProposal() bool {
+	if m != nil {
+		return m.RequireCollaboratorProposal
+	}
+	return false
+}
+
+func (m *DaoConfig) GetRequireReleaseProposal() bool {
+	if m != nil {
+		return m.RequireReleaseProposal
+	}
+	return false
+}
+
 type Dao struct {
 	Creator     string   `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
 	Id          uint64   `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -41,13 +114,15 @@ type Dao struct {
 	PinnedRepos []uint64 `protobuf:"varint,15,rep,packed,name=pinned_repos,json=pinnedRepos,proto3" json:"pinned_repos,omitempty"`
 	// Group associated with the DAO
 	GroupId uint64 `protobuf:"varint,16,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// DAO configuration settings
+	Config DaoConfig `protobuf:"bytes,17,opt,name=config,proto3" json:"config"`
 }
 
 func (m *Dao) Reset()         { *m = Dao{} }
 func (m *Dao) String() string { return proto.CompactTextString(m) }
 func (*Dao) ProtoMessage()    {}
 func (*Dao) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d3bcfa0ce4b18516, []int{0}
+	return fileDescriptor_d3bcfa0ce4b18516, []int{1}
 }
 func (m *Dao) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -188,38 +263,165 @@ func (m *Dao) GetGroupId() uint64 {
 	return 0
 }
 
+func (m *Dao) GetConfig() DaoConfig {
+	if m != nil {
+		return m.Config
+	}
+	return DaoConfig{}
+}
+
+type GroupDao struct {
+	DaoAddress string `protobuf:"bytes,1,opt,name=dao_address,json=daoAddress,proto3" json:"dao_address,omitempty"`
+}
+
+func (m *GroupDao) Reset()         { *m = GroupDao{} }
+func (m *GroupDao) String() string { return proto.CompactTextString(m) }
+func (*GroupDao) ProtoMessage()    {}
+func (*GroupDao) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d3bcfa0ce4b18516, []int{2}
+}
+func (m *GroupDao) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GroupDao) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GroupDao.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GroupDao) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupDao.Merge(m, src)
+}
+func (m *GroupDao) XXX_Size() int {
+	return m.Size()
+}
+func (m *GroupDao) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupDao.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupDao proto.InternalMessageInfo
+
+func (m *GroupDao) GetDaoAddress() string {
+	if m != nil {
+		return m.DaoAddress
+	}
+	return ""
+}
+
 func init() {
+	proto.RegisterType((*DaoConfig)(nil), "gitopia.gitopia.gitopia.DaoConfig")
 	proto.RegisterType((*Dao)(nil), "gitopia.gitopia.gitopia.Dao")
+	proto.RegisterType((*GroupDao)(nil), "gitopia.gitopia.gitopia.GroupDao")
 }
 
 func init() { proto.RegisterFile("gitopia/gitopia/gitopia/dao.proto", fileDescriptor_d3bcfa0ce4b18516) }
 
 var fileDescriptor_d3bcfa0ce4b18516 = []byte{
-	// 379 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x92, 0xb1, 0x6e, 0xea, 0x30,
-	0x14, 0x86, 0x31, 0x09, 0x10, 0x0c, 0x97, 0x7b, 0x65, 0x21, 0x5d, 0x17, 0x55, 0x51, 0xe8, 0x94,
-	0xa5, 0x30, 0xb4, 0x2f, 0xd0, 0xaa, 0x52, 0xd5, 0x35, 0x52, 0x97, 0x2e, 0xc8, 0xc4, 0x26, 0xb5,
-	0x14, 0x62, 0xcb, 0x36, 0xd0, 0xbe, 0x45, 0xdf, 0xa7, 0x2f, 0xd0, 0x91, 0xb1, 0x63, 0x05, 0x2f,
-	0x52, 0xd9, 0x49, 0x03, 0xa2, 0x93, 0xfd, 0x7f, 0xdf, 0x71, 0x72, 0x12, 0x1f, 0x38, 0xce, 0xb8,
-	0x11, 0x92, 0x93, 0xe9, 0xe9, 0x4a, 0x89, 0x98, 0x48, 0x25, 0x8c, 0x40, 0xff, 0x2b, 0x34, 0x39,
-	0x59, 0x47, 0xc3, 0x4c, 0x64, 0xc2, 0xd5, 0x4c, 0xed, 0xae, 0x2c, 0xbf, 0x78, 0xf7, 0xa0, 0x77,
-	0x47, 0x04, 0xc2, 0xb0, 0x93, 0x2a, 0x46, 0x8c, 0x50, 0x18, 0x44, 0x20, 0xee, 0x26, 0x3f, 0x11,
-	0x0d, 0x60, 0x93, 0x53, 0xdc, 0x8c, 0x40, 0xec, 0x27, 0x4d, 0x4e, 0x6d, 0x25, 0xa1, 0x54, 0x31,
-	0xad, 0xb1, 0x57, 0x56, 0x56, 0x11, 0x21, 0xe8, 0x17, 0x64, 0xc9, 0xb0, 0xef, 0xb0, 0xdb, 0xa3,
-	0x73, 0xd8, 0x25, 0x6b, 0x62, 0x88, 0x7a, 0x54, 0x39, 0x6e, 0x39, 0x71, 0x00, 0xd6, 0x2e, 0x44,
-	0x9e, 0x8b, 0x0d, 0x53, 0x1a, 0xb7, 0x23, 0xcf, 0xda, 0x1a, 0x1c, 0x2c, 0x2f, 0x32, 0xdc, 0x39,
-	0xb6, 0xbc, 0xc8, 0xd0, 0x10, 0xb6, 0x0c, 0x23, 0x4b, 0x8d, 0x83, 0xc8, 0x8b, 0xfd, 0xa4, 0x0c,
-	0x68, 0x04, 0x83, 0x5c, 0xa4, 0xc4, 0x70, 0x51, 0xe0, 0xae, 0x7b, 0x5d, 0x9d, 0x6d, 0xe7, 0x1b,
-	0x36, 0xd7, 0xdc, 0x30, 0x0c, 0xcb, 0xce, 0xab, 0x68, 0x4f, 0xad, 0x99, 0xe2, 0x0b, 0xce, 0x28,
-	0xee, 0x45, 0x20, 0x0e, 0x92, 0x3a, 0xa3, 0x08, 0xf6, 0x28, 0xd3, 0xa9, 0xe2, 0xd2, 0x3d, 0xb4,
-	0xef, 0x4e, 0x1e, 0x23, 0xdb, 0xa7, 0xfb, 0x59, 0x8c, 0xde, 0x18, 0xfc, 0x27, 0x02, 0xb1, 0x97,
-	0x1c, 0x80, 0xb5, 0x2b, 0x49, 0x2b, 0x3b, 0x28, 0x6d, 0x0d, 0xd0, 0x18, 0xf6, 0x25, 0x2f, 0x0a,
-	0x46, 0x67, 0x8a, 0x49, 0xa1, 0xf1, 0x5f, 0xf7, 0x31, 0xbd, 0x92, 0x25, 0x16, 0xa1, 0x33, 0x18,
-	0x64, 0x4a, 0xac, 0xe4, 0x8c, 0x53, 0xfc, 0xcf, 0x5d, 0x43, 0xc7, 0xe5, 0x07, 0x7a, 0x7b, 0xff,
-	0xb1, 0x0b, 0xc1, 0x76, 0x17, 0x82, 0xaf, 0x5d, 0x08, 0xde, 0xf6, 0x61, 0x63, 0xbb, 0x0f, 0x1b,
-	0x9f, 0xfb, 0xb0, 0xf1, 0x74, 0x99, 0x71, 0xf3, 0xbc, 0x9a, 0x4f, 0x52, 0xb1, 0xfc, 0x35, 0x2c,
-	0xeb, 0xeb, 0xe9, 0x4b, 0x1d, 0xcc, 0xab, 0x64, 0x7a, 0xde, 0x76, 0xd3, 0x70, 0xf5, 0x1d, 0x00,
-	0x00, 0xff, 0xff, 0x1e, 0xbf, 0x73, 0x0a, 0x61, 0x02, 0x00, 0x00,
+	// 555 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x53, 0x4f, 0x6f, 0xd3, 0x30,
+	0x14, 0x6f, 0x9a, 0x6e, 0x6b, 0xdc, 0x31, 0xc0, 0x9a, 0xc0, 0x14, 0xc8, 0xd2, 0x8a, 0x43, 0x25,
+	0x44, 0x2b, 0x01, 0x07, 0x8e, 0xb4, 0xab, 0x34, 0x71, 0x62, 0x8a, 0xc4, 0x85, 0x4b, 0xe4, 0xc6,
+	0x6e, 0xb0, 0xe4, 0xe6, 0x05, 0xc7, 0xe9, 0xd8, 0xb7, 0xe0, 0x0b, 0xf0, 0x7d, 0x76, 0xdc, 0x91,
+	0x13, 0x42, 0xed, 0xe7, 0x40, 0x42, 0x76, 0xd2, 0xa4, 0x1a, 0xe2, 0x94, 0xfc, 0xfe, 0xbc, 0x5f,
+	0x5e, 0xec, 0xf7, 0xd0, 0x20, 0x11, 0x1a, 0x32, 0x41, 0x27, 0x77, 0x9f, 0x8c, 0xc2, 0x38, 0x53,
+	0xa0, 0x01, 0x3f, 0xae, 0xa8, 0xf1, 0x9d, 0x67, 0xff, 0x34, 0x81, 0x04, 0xac, 0x67, 0x62, 0xde,
+	0x4a, 0xfb, 0xf0, 0x47, 0x1b, 0x79, 0x73, 0x0a, 0xe7, 0x90, 0x2e, 0x45, 0x82, 0xa7, 0xe8, 0xb9,
+	0xe2, 0x5f, 0x0b, 0xa1, 0x78, 0x94, 0x15, 0x52, 0x46, 0x06, 0xf0, 0x5c, 0x47, 0x99, 0x82, 0x0c,
+	0x72, 0x2a, 0x89, 0x13, 0x38, 0xa3, 0x6e, 0xd8, 0xaf, 0x4c, 0x97, 0x85, 0x94, 0x61, 0x69, 0xb9,
+	0xac, 0x1c, 0xf8, 0x23, 0x7a, 0xb1, 0x8b, 0x50, 0x3c, 0x83, 0x5c, 0x68, 0x50, 0xd7, 0x11, 0xe3,
+	0x92, 0x6b, 0x01, 0x69, 0x93, 0xd4, 0xb6, 0x49, 0x83, 0xca, 0x1b, 0xd6, 0xd6, 0x79, 0xe5, 0xac,
+	0x03, 0x67, 0x4d, 0x4f, 0x31, 0x48, 0x49, 0x17, 0xa0, 0xa8, 0x06, 0xd5, 0x24, 0xb9, 0x36, 0xe9,
+	0x69, 0x65, 0x3a, 0xdf, 0xf3, 0xd4, 0x19, 0xef, 0x10, 0x69, 0x9a, 0x92, 0x9c, 0xe6, 0xbc, 0x29,
+	0xef, 0xd8, 0xf2, 0x47, 0x75, 0x23, 0x56, 0xde, 0x55, 0x0e, 0xff, 0xb8, 0xc8, 0x9d, 0x53, 0xc0,
+	0x04, 0x1d, 0xc5, 0x8a, 0x9b, 0x50, 0x7b, 0x06, 0x5e, 0xb8, 0x83, 0xf8, 0x04, 0xb5, 0x05, 0xb3,
+	0xbf, 0xd3, 0x09, 0xdb, 0x82, 0x19, 0x27, 0x65, 0x4c, 0xf1, 0x3c, 0xb7, 0x9d, 0x79, 0xe1, 0x0e,
+	0x62, 0x8c, 0x3a, 0x29, 0x5d, 0x71, 0xfb, 0x45, 0x2f, 0xb4, 0xef, 0xf8, 0x19, 0xf2, 0xe8, 0x9a,
+	0x6a, 0xaa, 0x3e, 0x29, 0x49, 0x0e, 0xac, 0xd0, 0x10, 0x46, 0x5d, 0x82, 0x94, 0x70, 0xc5, 0x55,
+	0x4e, 0x0e, 0x03, 0xd7, 0xa8, 0x35, 0xd1, 0xa8, 0x22, 0x4d, 0xc8, 0xd1, 0xbe, 0x2a, 0xd2, 0x04,
+	0x9f, 0xa2, 0x03, 0xcd, 0xe9, 0x2a, 0x27, 0xdd, 0xc0, 0x1d, 0x75, 0xc2, 0x12, 0xe0, 0x3e, 0xea,
+	0x4a, 0x88, 0xa9, 0x39, 0x61, 0xe2, 0xd9, 0xcf, 0xd5, 0xd8, 0x74, 0x7e, 0xc5, 0x17, 0xb9, 0xd0,
+	0x9c, 0xa0, 0xb2, 0xf3, 0x0a, 0x9a, 0xaa, 0x35, 0x57, 0x62, 0x29, 0x38, 0x23, 0x3d, 0x7b, 0x5e,
+	0x35, 0xc6, 0x01, 0xea, 0x31, 0x9e, 0xc7, 0x4a, 0x64, 0x36, 0xf4, 0xd8, 0x56, 0xee, 0x53, 0xa6,
+	0x4f, 0x7b, 0x58, 0x9c, 0x4d, 0x35, 0xb9, 0x17, 0x38, 0x23, 0x37, 0x6c, 0x08, 0xa3, 0x16, 0x19,
+	0xab, 0xd4, 0x93, 0x52, 0xad, 0x09, 0x3c, 0x40, 0xc7, 0x99, 0x48, 0x53, 0xce, 0xca, 0x69, 0x22,
+	0xf7, 0xed, 0xcf, 0xf4, 0x4a, 0xce, 0x4e, 0x0d, 0x7e, 0x82, 0xba, 0x89, 0x82, 0x22, 0x8b, 0x04,
+	0x23, 0x0f, 0xec, 0x35, 0x1c, 0x59, 0xfc, 0x81, 0xe1, 0xf7, 0xe8, 0x30, 0xb6, 0x93, 0x4d, 0x1e,
+	0x06, 0xce, 0xa8, 0xf7, 0x7a, 0x38, 0xfe, 0xcf, 0x76, 0x8c, 0xeb, 0x1d, 0x98, 0x75, 0x6e, 0x7e,
+	0x9d, 0xb5, 0xc2, 0xaa, 0x6e, 0xf8, 0x12, 0x75, 0x2f, 0x4c, 0x98, 0x99, 0x81, 0x33, 0xd4, 0x63,
+	0x14, 0xa2, 0xdd, 0xed, 0x96, 0x73, 0x80, 0x18, 0x85, 0x69, 0xc9, 0xcc, 0x2e, 0x6e, 0x36, 0xbe,
+	0x73, 0xbb, 0xf1, 0x9d, 0xdf, 0x1b, 0xdf, 0xf9, 0xbe, 0xf5, 0x5b, 0xb7, 0x5b, 0xbf, 0xf5, 0x73,
+	0xeb, 0xb7, 0x3e, 0xbf, 0x4a, 0x84, 0xfe, 0x52, 0x2c, 0xc6, 0x31, 0xac, 0xfe, 0xd9, 0xdd, 0xf5,
+	0xdb, 0xc9, 0xb7, 0x1a, 0xe8, 0xeb, 0x8c, 0xe7, 0x8b, 0x43, 0xbb, 0x9c, 0x6f, 0xfe, 0x06, 0x00,
+	0x00, 0xff, 0xff, 0x0a, 0x0e, 0x92, 0x12, 0xf0, 0x03, 0x00, 0x00,
+}
+
+func (m *DaoConfig) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DaoConfig) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DaoConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.RequireReleaseProposal {
+		i--
+		if m.RequireReleaseProposal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.RequireCollaboratorProposal {
+		i--
+		if m.RequireCollaboratorProposal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.RequireRepositoryDeletionProposal {
+		i--
+		if m.RequireRepositoryDeletionProposal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.RequirePullRequestProposal {
+		i--
+		if m.RequirePullRequestProposal {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Dao) Marshal() (dAtA []byte, err error) {
@@ -242,6 +444,18 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	{
+		size, err := m.Config.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintDao(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1
+	i--
+	dAtA[i] = 0x8a
 	if m.GroupId != 0 {
 		i = encodeVarintDao(dAtA, i, uint64(m.GroupId))
 		i--
@@ -250,20 +464,20 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x80
 	}
 	if len(m.PinnedRepos) > 0 {
-		dAtA2 := make([]byte, len(m.PinnedRepos)*10)
-		var j1 int
+		dAtA3 := make([]byte, len(m.PinnedRepos)*10)
+		var j2 int
 		for _, num := range m.PinnedRepos {
 			for num >= 1<<7 {
-				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA3[j2] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j1++
+				j2++
 			}
-			dAtA2[j1] = uint8(num)
-			j1++
+			dAtA3[j2] = uint8(num)
+			j2++
 		}
-		i -= j1
-		copy(dAtA[i:], dAtA2[:j1])
-		i = encodeVarintDao(dAtA, i, uint64(j1))
+		i -= j2
+		copy(dAtA[i:], dAtA3[:j2])
+		i = encodeVarintDao(dAtA, i, uint64(j2))
 		i--
 		dAtA[i] = 0x7a
 	}
@@ -309,20 +523,20 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x4a
 	}
 	if len(m.Teams) > 0 {
-		dAtA4 := make([]byte, len(m.Teams)*10)
-		var j3 int
+		dAtA5 := make([]byte, len(m.Teams)*10)
+		var j4 int
 		for _, num := range m.Teams {
 			for num >= 1<<7 {
-				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j3++
+				j4++
 			}
-			dAtA4[j3] = uint8(num)
-			j3++
+			dAtA5[j4] = uint8(num)
+			j4++
 		}
-		i -= j3
-		copy(dAtA[i:], dAtA4[:j3])
-		i = encodeVarintDao(dAtA, i, uint64(j3))
+		i -= j4
+		copy(dAtA[i:], dAtA5[:j4])
+		i = encodeVarintDao(dAtA, i, uint64(j4))
 		i--
 		dAtA[i] = 0x42
 	}
@@ -380,6 +594,36 @@ func (m *Dao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GroupDao) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GroupDao) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GroupDao) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.DaoAddress) > 0 {
+		i -= len(m.DaoAddress)
+		copy(dAtA[i:], m.DaoAddress)
+		i = encodeVarintDao(dAtA, i, uint64(len(m.DaoAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintDao(dAtA []byte, offset int, v uint64) int {
 	offset -= sovDao(v)
 	base := offset
@@ -391,6 +635,27 @@ func encodeVarintDao(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *DaoConfig) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RequirePullRequestProposal {
+		n += 2
+	}
+	if m.RequireRepositoryDeletionProposal {
+		n += 2
+	}
+	if m.RequireCollaboratorProposal {
+		n += 2
+	}
+	if m.RequireReleaseProposal {
+		n += 2
+	}
+	return n
+}
+
 func (m *Dao) Size() (n int) {
 	if m == nil {
 		return 0
@@ -466,6 +731,21 @@ func (m *Dao) Size() (n int) {
 	if m.GroupId != 0 {
 		n += 2 + sovDao(uint64(m.GroupId))
 	}
+	l = m.Config.Size()
+	n += 2 + l + sovDao(uint64(l))
+	return n
+}
+
+func (m *GroupDao) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.DaoAddress)
+	if l > 0 {
+		n += 1 + l + sovDao(uint64(l))
+	}
 	return n
 }
 
@@ -474,6 +754,136 @@ func sovDao(x uint64) (n int) {
 }
 func sozDao(x uint64) (n int) {
 	return sovDao(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *DaoConfig) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDao
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DaoConfig: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DaoConfig: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequirePullRequestProposal", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RequirePullRequestProposal = bool(v != 0)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequireRepositoryDeletionProposal", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RequireRepositoryDeletionProposal = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequireCollaboratorProposal", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RequireCollaboratorProposal = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequireReleaseProposal", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.RequireReleaseProposal = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDao(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDao
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *Dao) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1040,6 +1450,121 @@ func (m *Dao) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 17:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Config", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Config.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDao(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthDao
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GroupDao) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDao
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GroupDao: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GroupDao: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DaoAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDao
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDao
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDao
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DaoAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDao(dAtA[iNdEx:])

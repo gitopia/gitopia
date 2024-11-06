@@ -89,19 +89,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.MultiDeleteTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAddMember:
-			res, err := msgServer.AddMember(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateMemberRole:
-			res, err := msgServer.UpdateMemberRole(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgRemoveMember:
-			res, err := msgServer.RemoveMember(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-			// this line is used by starport scaffolding # 1
 		case *types.MsgUpdateRepositoryBackupRef:
 			res, err := msgServer.UpdateRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -222,6 +209,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdateDaoPinnedRepositories:
 			res, err := msgServer.UpdateDaoPinnedRepositories(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDaoTreasurySpend:
+			res, err := msgServer.DaoTreasurySpend(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateDaoConfig:
+			res, err := msgServer.UpdateDaoConfig(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteDao:

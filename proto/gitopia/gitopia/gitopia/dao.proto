@@ -5,6 +5,21 @@ option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
 
 import "gogoproto/gogo.proto";
 
+// Configuration options for DAO governance
+message DaoConfig {
+  // Whether pull requests require governance proposal
+  bool require_pull_request_proposal = 1;
+  
+  // Whether repository deletion requires governance proposal
+  bool require_repository_deletion_proposal = 2;
+
+  // Whether management of collaborators requires governance proposal
+  bool require_collaborator_proposal = 3;
+
+  // Whether releases requires governance proposal
+  bool require_release_proposal = 4;
+}
+
 message Dao {
   string creator = 1;
   uint64 id = 2;
@@ -24,4 +39,11 @@ message Dao {
   
   // Group associated with the DAO
   uint64 group_id = 16;
+
+  // DAO configuration settings
+  DaoConfig config = 17 [(gogoproto.nullable) = false];
+}
+
+message GroupDao {
+  string dao_address = 1;
 }

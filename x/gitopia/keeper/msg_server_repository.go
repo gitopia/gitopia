@@ -116,13 +116,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 		}
 	case types.OwnerType_DAO:
-		if m, found := k.GetDaoMember(ctx, repository.Owner.Id, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao (%v)", msg.Creator, msg.RepositoryId.Id))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
@@ -134,17 +128,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
 		}
 	case types.OwnerType_DAO:
-		dao, found := k.GetDao(ctx, ownerAddress.Address)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
-		}
-		if m, found := k.GetDaoMember(ctx, dao.Address, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}

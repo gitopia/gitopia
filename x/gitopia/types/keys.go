@@ -91,17 +91,29 @@ const (
 )
 
 const (
-	CreateDaoEventKey                   = "CreateDao"
-	RenameDaoEventKey                   = "RenameDao"
-	UpdateDaoDescriptionEventKey        = "UpdateDaoDescription"
-	UpdateDaoWebsiteEventKey            = "UpdateDaoWebsite"
-	UpdateDaoLocationEventKey           = "UpdateDaoLocation"
-	UpdateDaoAvatarEventKey             = "UpdateDaoAvatar"
-	DeleteDaoEventKey                   = "DeleteDao"
-	AddDaoMemberEventKey                = "AddDaoMember"
-	UpdateDaoMemberRoleEventKey         = "UpdateDaoMemberRole"
-	RemoveDaoMemberEventKey             = "RemoveDaoMember"
-	UpdateDaoPinnedRepositoriesEventKey = "UpdateDaoPinnedRepositories"
+	CreateDaoEventKey                           = "CreateDao"
+	RenameDaoProposalEventKey                   = "RenameDaoProposal"
+	RenameDaoEventKey                           = "RenameDao"
+	UpdateDaoDescriptionProposalEventKey        = "UpdateDaoDescriptionProposal"
+	UpdateDaoDescriptionEventKey                = "UpdateDaoDescription"
+	UpdateDaoWebsiteProposalEventKey            = "UpdateDaoWebsiteProposal"
+	UpdateDaoWebsiteEventKey                    = "UpdateDaoWebsite"
+	UpdateDaoLocationProposalEventKey           = "UpdateDaoLocationProposal"
+	UpdateDaoLocationEventKey                   = "UpdateDaoLocation"
+	UpdateDaoAvatarProposalEventKey             = "UpdateDaoAvatarProposal"
+	UpdateDaoAvatarEventKey                     = "UpdateDaoAvatar"
+	DeleteDaoProposalEventKey                   = "DeleteDaoProposal"
+	DeleteDaoEventKey                           = "DeleteDao"
+	AddDaoMemberProposalEventKey                = "AddDaoMemberProposal"
+	AddDaoMemberEventKey                        = "AddDaoMember"
+	UpdateDaoMemberWeightProposalEventKey       = "UpdateDaoMemberWeightProposal"
+	UpdateDaoMemberWeightEventKey               = "UpdateDaoMemberWeight"
+	RemoveDaoMemberProposalEventKey             = "RemoveDaoMemberProposal"
+	RemoveDaoMemberEventKey                     = "RemoveDaoMember"
+	UpdateDaoPinnedRepositoriesProposalEventKey = "UpdateDaoPinnedRepositoriesProposal"
+	UpdateDaoPinnedRepositoriesEventKey         = "UpdateDaoPinnedRepositories"
+	DaoTreasurySpendEventKey                    = "DaoTreasurySpend"
+	UpdateDaoConfigEventKey                     = "UpdateDaoConfig"
 )
 
 const (
@@ -214,8 +226,15 @@ const (
 	EventAttributeDaoLocation           = "DaoLocation"
 	EventAttributeDaoWebsite            = "DaoWebsite"
 	EventAttributeDaoMemberAddressKey   = "DaoMemberAddress"
-	EventAttributeDaoMemberRoleKey      = "DaoMemberRole"
+	EventAttributeDaoMemberWeightKey    = "DaoMemberWeight"
 	EventAttributeDaoPinnedRepositories = "DaoPinnedRepositories"
+	EventAttributeDaoGroupIdKey         = "DaoGroupId"
+	EventAttributeDaoGroupProposalIdKey = "DaoGroupProposalId"
+	// DAO config update event keys
+	EventAttributeDaoRequirePullRequestProposalKey        = "DaoRequirePullRequestProposal"
+	EventAttributeDaoRequireRepositoryDeletionProposalKey = "DaoRequireRepositoryDeletionProposal"
+	EventAttributeDaoRequireCollaboratorProposalKey       = "DaoRequireCollaboratorProposal"
+	EventAttributeDaoRequireReleaseProposalKey            = "DaoRequireReleaseProposal"
 )
 
 const (
@@ -315,11 +334,6 @@ const (
 )
 
 const (
-	MemberKey      = "Member-value-"
-	MemberCountKey = "Member-count-"
-)
-
-const (
 	BountyKey      = "Bounty-value-"
 	BountyCountKey = "Bounty-count-"
 )
@@ -327,6 +341,16 @@ const (
 const (
 	ExercisedAmountKey      = "ExercisedAmount-value-"
 	ExercisedAmountCountKey = "ExercisedAmount-count-"
+)
+
+const (
+	GroupDaoKey      = "GroupDao-value-"
+	GroupDaoCountKey = "GroupDao-count-"
+)
+
+const (
+	EventAttributeRecipientKey = "Receipient"
+	EventAttributeAmountKey    = "Amount"
 )
 
 // GetRepositoryKeyForAddress returns Key from address
@@ -342,16 +366,6 @@ func GetBranchKeyForRepositoryId(repositoryId uint64) string {
 // GetTagKeyForRepositoryId returns Key from repository-id
 func GetTagKeyForRepositoryId(repositoryId uint64) string {
 	return TagKey + strconv.FormatUint(repositoryId, 10) + "-"
-}
-
-// GetMemberKeyForDaoAddress returns Key from dao-address
-func GetMemberKeyForDaoAddress(daoAddress string) string {
-	return MemberKey + daoAddress + "-"
-}
-
-// GetDaoKeyForUserAddress returns Key from dao-address
-func GetUserDaoKeyForUserAddress(userAddress string) string {
-	return UserDaoKey + userAddress + "-"
 }
 
 // GetIssueKeyForRepositoryId returns Key from repository-id
