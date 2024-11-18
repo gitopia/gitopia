@@ -30,9 +30,20 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	if repository.Archived {
 		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
 	}
-
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	// In case of dao, check if dao requires a proposal to create a new release
+	if repository.Owner.Type == types.OwnerType_DAO {
+		dao, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		if dao.Config.RequireReleaseProposal {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("dao (%v) requires a proposal to create a new release", repository.Owner.Id))
+		}
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.ReleasePermission) {

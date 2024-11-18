@@ -44,8 +44,8 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		return nil, err
 	}
 
-	nanoseconds := hours.Mul(sdk.NewDec(int64(time.Hour))).TruncateInt().Int64()
-	votingPeriod := time.Duration(nanoseconds)
+	seconds := hours.Mul(sdk.NewDec(int64(time.Hour))).TruncateInt().Int64()
+	votingPeriod := time.Duration(seconds)
 
 	policy := group.NewPercentageDecisionPolicy(
 		msg.Percentage,
@@ -145,7 +145,7 @@ func (k msgServer) RenameDao(goCtx context.Context, msg *types.MsgRenameDao) (*t
 
 	dao, found := k.GetDao(ctx, daoAddress.Address)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Id))
 	}
 
 	// check if the message admin and the group admin are the same
@@ -370,7 +370,7 @@ func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*t
 		return nil, err
 	}
 
-	DoRemoveDao(ctx, k, user, dao)
+	DoRemoveDao(ctx, k, dao)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,

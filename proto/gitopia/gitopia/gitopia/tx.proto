@@ -55,6 +55,7 @@ service Msg {
   rpc UpdatePullRequestTitle(MsgUpdatePullRequestTitle) returns (MsgUpdatePullRequestTitleResponse);
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc InvokeMergePullRequest(MsgInvokeMergePullRequest) returns (MsgInvokeMergePullRequestResponse);
+  rpc InvokeDaoMergePullRequest(MsgInvokeDaoMergePullRequest) returns (MsgInvokeDaoMergePullRequestResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc AddPullRequestReviewers(MsgAddPullRequestReviewers) returns (MsgAddPullRequestReviewersResponse);
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
@@ -73,6 +74,7 @@ service Msg {
   rpc UpdateDaoAvatar(MsgUpdateDaoAvatar) returns (MsgUpdateDaoAvatarResponse);
   rpc DaoTreasurySpend(MsgDaoTreasurySpend) returns (MsgDaoTreasurySpendResponse);
   rpc UpdateDaoConfig(MsgUpdateDaoConfig) returns (MsgUpdateDaoConfigResponse);
+  rpc DaoCreateRelease(MsgDaoCreateRelease) returns (MsgDaoCreateReleaseResponse);
   rpc DeleteDao(MsgDeleteDao) returns (MsgDeleteDaoResponse);
   
   rpc CreateComment(MsgCreateComment) returns (MsgCreateCommentResponse);
@@ -97,7 +99,9 @@ service Msg {
   rpc ToggleRepositoryArchived(MsgToggleRepositoryArchived) returns (MsgToggleRepositoryArchivedResponse);
   rpc ChangeOwner(MsgChangeOwner) returns (MsgChangeOwnerResponse);
   rpc UpdateRepositoryCollaborator(MsgUpdateRepositoryCollaborator) returns (MsgUpdateRepositoryCollaboratorResponse);
+  rpc UpdateDaoRepositoryCollaborator(MsgUpdateDaoRepositoryCollaborator) returns (MsgUpdateDaoRepositoryCollaboratorResponse);
   rpc RemoveRepositoryCollaborator(MsgRemoveRepositoryCollaborator) returns (MsgRemoveRepositoryCollaboratorResponse);
+  rpc RemoveDaoRepositoryCollaborator(MsgRemoveDaoRepositoryCollaborator) returns (MsgRemoveDaoRepositoryCollaboratorResponse);
   rpc CreateRepositoryLabel(MsgCreateRepositoryLabel) returns (MsgCreateRepositoryLabelResponse);
   rpc UpdateRepositoryLabel(MsgUpdateRepositoryLabel) returns (MsgUpdateRepositoryLabelResponse);
   rpc DeleteRepositoryLabel(MsgDeleteRepositoryLabel) returns (MsgDeleteRepositoryLabelResponse);
@@ -420,6 +424,19 @@ message MsgInvokeMergePullRequest {
 
 message MsgInvokeMergePullRequestResponse { }
 
+message MsgInvokeDaoMergePullRequest {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/InvokeDaoMergePullRequest";
+
+  // admin is the account address of the group admin
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string provider = 4;
+}
+
+message MsgInvokeDaoMergePullRequestResponse { }
+
 message MsgSetPullRequestState {
   string creator = 1;
   uint64 repositoryId = 2;
@@ -606,7 +623,7 @@ message MsgUpdateDaoAvatarResponse { }
 // MsgDaoTreasurySpend defines a message for sending tokens from the dao address to another account. This message is typically executed via a group proposal.
 message MsgDaoTreasurySpend {
   option (cosmos.msg.v1.signer) = "admin";
-  option (amino.name)           = "gitopia/MsgDaoTreasurySpend";
+  option (amino.name)           = "gitopia/DaoTreasurySpend";
 
   // admin is the account address of the group admin.
   string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
@@ -638,6 +655,27 @@ message MsgUpdateDaoConfig {
 }
 
 message MsgUpdateDaoConfigResponse {}
+
+message MsgDaoCreateRelease {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/DaoCreateRelease";
+
+  // admin is the account address of the group admin
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+}
+
+message MsgDaoCreateReleaseResponse {
+  uint64 id = 1;
+}
 
 message MsgDeleteDao {
   option (cosmos.msg.v1.signer) = "admin";
@@ -879,6 +917,19 @@ message MsgUpdateRepositoryCollaborator {
 
 message MsgUpdateRepositoryCollaboratorResponse { }
 
+message MsgUpdateDaoRepositoryCollaborator {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoRepositoryCollaborator";
+
+  // admin is the account address of the group admin
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string user = 3;
+  string role = 4;
+}
+
+message MsgUpdateDaoRepositoryCollaboratorResponse { }
+
 message MsgRemoveRepositoryCollaborator {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
@@ -886,6 +937,18 @@ message MsgRemoveRepositoryCollaborator {
 }
 
 message MsgRemoveRepositoryCollaboratorResponse { }
+
+message MsgRemoveDaoRepositoryCollaborator {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/RemoveDaoRepositoryCollaborator";
+
+  // admin is the account address of the group admin
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string user = 3;
+}
+
+message MsgRemoveDaoRepositoryCollaboratorResponse { }
 
 message MsgCreateRepositoryLabel {
   string creator = 1;

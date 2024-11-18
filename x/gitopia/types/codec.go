@@ -47,6 +47,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdatePullRequestTitle{}, "gitopia/UpdatePullRequestTitle", nil)
 	cdc.RegisterConcrete(&MsgUpdatePullRequestDescription{}, "gitopia/UpdatePullRequestDescription", nil)
 	cdc.RegisterConcrete(&MsgInvokeMergePullRequest{}, "gitopia/InvokeMergePullRequest", nil)
+	cdc.RegisterConcrete(&MsgInvokeDaoMergePullRequest{}, "gitopia/InvokeDaoMergePullRequest", nil)
 	cdc.RegisterConcrete(&MsgSetPullRequestState{}, "gitopia/SetPullRequestState", nil)
 	cdc.RegisterConcrete(&MsgAddPullRequestReviewers{}, "gitopia/AddPullRequestReviewers", nil)
 	cdc.RegisterConcrete(&MsgRemovePullRequestReviewers{}, "gitopia/RemovePullRequestReviewers", nil)
@@ -67,6 +68,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateDaoPinnedRepositories{}, "gitopia/UpdateDaoPinnedRepositories", nil)
 	cdc.RegisterConcrete(&MsgDaoTreasurySpend{}, "gitopia/DaoTreasurySpend", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoConfig{}, "gitopia/UpdateDaoConfig", nil)
+	cdc.RegisterConcrete(&MsgDaoCreateRelease{}, "gitopia/DaoCreateRelease", nil)
 	cdc.RegisterConcrete(&MsgDeleteDao{}, "gitopia/DeleteDao", nil)
 
 	cdc.RegisterConcrete(&MsgCreateComment{}, "gitopia/CreateComment", nil)
@@ -93,7 +95,9 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgToggleRepositoryArchived{}, "gitopia/ToggleRepositoryArchived", nil)
 	cdc.RegisterConcrete(&MsgChangeOwner{}, "gitopia/ChangeOwner", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryCollaborator{}, "gitopia/UpdateRepositoryCollaborator", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoRepositoryCollaborator{}, "gitopia/UpdateDaoRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgRemoveRepositoryCollaborator{}, "gitopia/RemoveRepositoryCollaborator", nil)
+	cdc.RegisterConcrete(&MsgRemoveDaoRepositoryCollaborator{}, "gitopia/RemoveDaoRepositoryCollaborator", nil)
 	cdc.RegisterConcrete(&MsgCreateRepositoryLabel{}, "gitopia/CreateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryLabel{}, "gitopia/UpdateRepositoryLabel", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepositoryLabel{}, "gitopia/DeleteRepositoryLabel", nil)
@@ -167,6 +171,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdatePullRequestTitle{},
 		&MsgUpdatePullRequestDescription{},
 		&MsgInvokeMergePullRequest{},
+		&MsgInvokeDaoMergePullRequest{},
 		&MsgSetPullRequestState{},
 		&MsgAddPullRequestReviewers{},
 		&MsgRemovePullRequestReviewers{},
@@ -188,6 +193,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateDaoPinnedRepositories{},
 		&MsgDaoTreasurySpend{},
 		&MsgUpdateDaoConfig{},
+		&MsgDaoCreateRelease{},
 		&MsgDeleteDao{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
@@ -216,8 +222,10 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateRepositoryDescription{},
 		&MsgChangeOwner{},
 		&MsgUpdateRepositoryCollaborator{},
+		&MsgUpdateDaoRepositoryCollaborator{},
 		&MsgToggleRepositoryArchived{},
 		&MsgRemoveRepositoryCollaborator{},
+		&MsgRemoveDaoRepositoryCollaborator{},
 		&MsgCreateRepositoryLabel{},
 		&MsgUpdateRepositoryLabel{},
 		&MsgDeleteRepositoryLabel{},

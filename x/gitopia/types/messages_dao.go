@@ -3,7 +3,6 @@ package types
 import (
 	"net/url"
 
-	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/group"
@@ -103,7 +102,7 @@ func (msg *MsgCreateDao) ValidateBasic() error {
 		}
 
 		// Validate member weight (must be positive)
-		weight, err := math.LegacyNewDecFromStr(member.Weight)
+		weight, err := sdk.NewDecFromStr(member.Weight)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid member weight: %s", err)
 		}
@@ -124,11 +123,11 @@ func (msg *MsgCreateDao) ValidateBasic() error {
 	}
 
 	// Validate percentage
-	percentage, err := math.NewPositiveDecFromString(msg.Percentage)
+	percentage, err := sdk.NewDecFromStr(msg.Percentage)
 	if err != nil {
 		return sdkerrors.Wrapf(err, "invalid percentage threshold")
 	}
-	if percentage.IsNegative() || percentage.Cmp(math.NewDecFromInt64(1)) == 1 {
+	if percentage.IsNegative() || percentage.GT(sdk.NewDec(1)) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "percentage must be > 0 and <= 1")
 	}
 

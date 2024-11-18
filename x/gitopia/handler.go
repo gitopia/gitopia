@@ -143,6 +143,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.InvokeMergePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgInvokeDaoMergePullRequest:
+			res, err := msgServer.InvokeDaoMergePullRequest(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgSetPullRequestState:
 			res, err := msgServer.SetPullRequestState(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -217,6 +221,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgUpdateDaoConfig:
 			res, err := msgServer.UpdateDaoConfig(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDaoCreateRelease:
+			res, err := msgServer.DaoCreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteDao:
@@ -311,8 +319,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateDaoRepositoryCollaborator:
+			res, err := msgServer.UpdateDaoRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgRemoveRepositoryCollaborator:
 			res, err := msgServer.RemoveRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveDaoRepositoryCollaborator:
+			res, err := msgServer.RemoveDaoRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateRepositoryLabel:
