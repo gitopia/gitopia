@@ -39,6 +39,7 @@ import (
 	gitopiaappparams "github.com/gitopia/gitopia/v5/app/params"
 	"github.com/gitopia/gitopia/v5/app/upgrades"
 	v4 "github.com/gitopia/gitopia/v5/app/upgrades/v4"
+	v5 "github.com/gitopia/gitopia/v5/app/upgrades/v5"
 	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/v5/x/rewards/types"
 	"github.com/spf13/cast"
@@ -67,6 +68,7 @@ var (
 			CreateUpgradeHandler: upgrades.CreateUpgradeHandler,
 		},
 		v4.Upgrade,
+		v5.Upgrade,
 	}
 )
 
