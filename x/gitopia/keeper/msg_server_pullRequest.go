@@ -4,13 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
 )
 
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {
@@ -337,9 +339,17 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 	if baseRepository.Archived {
 		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", pullRequest.Base.RepositoryId)
 	}
-
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	// check if dao requires a proposal to merge pull request
+	dao, found := k.GetDao(ctx, baseRepository.Owner.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", baseRepository.Owner.Id))
+	}
+	if dao.Config.RequirePullRequestProposal {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge pull request without proposal"))
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, baseRepository, types.RepositoryCollaborator_ADMIN) {
@@ -365,6 +375,54 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		),
 	)
 	return &types.MsgInvokeMergePullRequestResponse{}, nil
+}
+
+func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.MsgInvokeDaoMergePullRequest) (*types.MsgInvokeDaoMergePullRequestResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
+	}
+
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if baseRepository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %d when archived is set to true", pullRequest.Base.RepositoryId)
+	}
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
+	}
+
+	dao, found := k.GetDao(ctx, baseRepository.Owner.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", baseRepository.Owner.Id))
+	}
+
+	// check if the message admin and the group admin are the same
+	err := k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	id := k.AppendTask(ctx, types.Task{
+		Type:     types.TaskType(types.TypeSetPullRequestState),
+		State:    types.TaskState(types.StatePending),
+		Creator:  msg.Admin,
+		Provider: msg.Provider,
+	})
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeDaoMergePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+		),
+	)
+	return &types.MsgInvokeDaoMergePullRequestResponse{}, nil
 }
 
 func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetPullRequestState) (*types.MsgSetPullRequestStateResponse, error) {
@@ -406,9 +464,21 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			havePermission = true
 		}
 		if !havePermission {
-			member, found := k.GetDaoMember(ctx, baseRepository.Owner.Id, msg.Creator)
-			if found && member.Role == types.MemberRole_OWNER {
-				havePermission = true
+			resp, err := k.DaoMemberAll(ctx, &types.QueryAllDaoMemberRequest{
+				DaoId: baseRepository.Owner.Id,
+				Pagination: &query.PageRequest{
+					Limit: math.MaxUint64,
+				},
+			})
+			if err != nil {
+				havePermission = false
+			}
+
+			for _, member := range resp.Members {
+				if member.Member.Address == msg.Creator {
+					havePermission = true
+					break
+				}
 			}
 		}
 	} else {
@@ -464,7 +534,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		}
 
 		// Update the branch ref in the base repository
-		var found bool
 		baseBranch, found = k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
 		if !found {
 			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))

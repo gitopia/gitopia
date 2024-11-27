@@ -1,23 +1,24 @@
 package cli
 
 import (
+	"fmt"
 	"strconv"
-
-	"github.com/spf13/cobra"
-
-	"github.com/spf13/cast"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/cosmos/cosmos-sdk/x/group"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 )
 
 func CmdCreateDao() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-dao [name] [description] [avatar-url] [location] [website]",
+		Use:   "create-dao [name] [description] [avatar-url] [location] [website] [voting-period]",
 		Short: "Create a new Dao",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsName, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -39,13 +40,34 @@ func CmdCreateDao() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsVotingPeriod, err := cast.ToStringE(args[5])
+			argsPercentage, err := cast.ToStringE(args[6])
+
+			membersStr, err := cmd.Flags().GetStringSlice("members")
+			if err != nil {
+				return err
+			}
+
+			var members []group.MemberRequest
+			for _, memberStr := range membersStr {
+				parts := strings.Split(memberStr, ",")
+				if len(parts) != 3 {
+					return fmt.Errorf("invalid member format: %s", memberStr)
+				}
+				member := group.MemberRequest{
+					Address:  parts[0],
+					Weight:   parts[1],
+					Metadata: parts[2],
+				}
+				members = append(members, member)
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite)
+			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite, members, argsVotingPeriod, argsPercentage, &types.DaoConfig{})
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

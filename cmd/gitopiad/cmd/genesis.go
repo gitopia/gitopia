@@ -11,7 +11,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	authvesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v5/app/params"
 )
 
 const (

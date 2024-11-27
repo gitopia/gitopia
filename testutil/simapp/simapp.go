@@ -4,14 +4,14 @@ import (
 	"time"
 
 	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
-	gitopiaparams "github.com/gitopia/gitopia/v4/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/v5/app/params"
 
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	"github.com/gitopia/gitopia/v4/app"
+	"github.com/gitopia/gitopia/v5/app"
 )
 
 // setup creates application instance with in-memory database and disabled logging.

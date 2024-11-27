@@ -3,10 +3,10 @@ package rewards_test
 import (
 	"testing"
 
-	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
-	"github.com/gitopia/gitopia/v4/testutil/nullify"
-	"github.com/gitopia/gitopia/v4/x/rewards"
-	"github.com/gitopia/gitopia/v4/x/rewards/types"
+	keepertest "github.com/gitopia/gitopia/v5/testutil/keeper"
+	"github.com/gitopia/gitopia/v5/testutil/nullify"
+	"github.com/gitopia/gitopia/v5/x/rewards"
+	"github.com/gitopia/gitopia/v5/x/rewards/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -18,7 +18,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
+	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
 func queryGitopiaTx(endpoint, txHash string) error {

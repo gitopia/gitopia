@@ -8,8 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
 )
 
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
@@ -250,15 +250,6 @@ func (k msgServer) DeleteUser(goCtx context.Context, msg *types.MsgDeleteUser) (
 }
 
 func DoRemoveUser(ctx sdk.Context, k msgServer, user types.User) {
-	daos, _ := k.GetAllUserDao(ctx, user.Creator)
-	for _, dao := range daos {
-		DoRemoveDao(ctx, k, user, dao)
-		k.Keeper.RemoveWhois(
-			ctx,
-			strings.ToLower(dao.Name),
-		)
-	}
-
 	repositories := k.GetAllAddressRepository(ctx, user.Creator)
 	for _, repository := range repositories {
 		DoRemoveRepository(ctx, k, repository)

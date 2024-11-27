@@ -16,11 +16,10 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v5/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
 
-	// v3 "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v3"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
 var (
@@ -112,7 +111,7 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 
 // Consensus versions serve as state-breaking versions of app modules and
 // must be incremented when the module introduces breaking changes.
-func (AppModule) ConsensusVersion() uint64 { return 3 }
+func (AppModule) ConsensusVersion() uint64 { return 4 }
 
 // Name returns the capability module's name.
 func (am AppModule) Name() string {
@@ -137,7 +136,12 @@ func (AppModule) QuerierRoute() string { return types.QuerierRoute }
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
-	// cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate)
+
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(types.ModuleName, 3, m.Migrate3to4)
+	if err != nil {
+		panic(fmt.Sprintf("failed to migrate x/gitopia from version 3 to 4: %v", err))
+	}
 }
 
 // RegisterInvariants registers the capability module's invariants.

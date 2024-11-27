@@ -6,7 +6,6 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gitopia/gitopia/gitopia/task.proto";
 import "gitopia/gitopia/gitopia/branch.proto";
 import "gitopia/gitopia/gitopia/tag.proto";
-import "gitopia/gitopia/gitopia/member.proto";
 import "gitopia/gitopia/gitopia/bounty.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
@@ -20,6 +19,7 @@ import "gitopia/gitopia/gitopia/user.proto";
 import "gitopia/gitopia/gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/gitopia/gitopia/params.proto";
+import "cosmos/group/v1/types.proto";
 
 option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
 
@@ -83,19 +83,9 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/{id}/repository/{repositoryName}/tag";
 	}
 
-	// Queries a Member by id.
-	rpc DaoMember(QueryGetDaoMemberRequest) returns (QueryGetDaoMemberResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao/{daoId}/member/{userId}";
-	}
-
 	// Queries a list of Dao Member.
 	rpc DaoMemberAll(QueryAllDaoMemberRequest) returns (QueryAllDaoMemberResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/dao/{daoId}/member";
-	}
-
-	// Queries a list of Member items.
-	rpc MemberAll(QueryAllMemberRequest) returns (QueryAllMemberResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/member";
 	}
 
 	// Queries a Bounty by id.
@@ -398,32 +388,17 @@ message QueryAllRepositoryTagResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetDaoMemberRequest {
-	string daoId = 1;
-	string userId = 2;
-}
-
-message QueryGetDaoMemberResponse {
-	Member Member = 1 [(gogoproto.nullable) = false];
-}
-
 message QueryAllDaoMemberRequest {
 	string daoId = 1;
 	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 message QueryAllDaoMemberResponse {
-	repeated Member Member = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
+  // members are the members of the group with given group_id.
+  repeated cosmos.group.v1.GroupMember members = 1;
 
-message QueryAllMemberRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllMemberResponse {
-	repeated Member Member = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetBountyRequest {

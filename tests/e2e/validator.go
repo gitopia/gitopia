@@ -27,7 +27,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	gitopia "github.com/gitopia/gitopia/v4/app"
+	gitopia "github.com/gitopia/gitopia/v5/app"
 )
 
 //

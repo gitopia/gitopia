@@ -28,12 +28,12 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/gitopia/gitopia/v4/app"
-	"github.com/gitopia/gitopia/v4/app/keepers"
-	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	rewardskeeper "github.com/gitopia/gitopia/v4/x/rewards/keeper"
-	rewardstypes "github.com/gitopia/gitopia/v4/x/rewards/types"
+	"github.com/gitopia/gitopia/v5/app"
+	"github.com/gitopia/gitopia/v5/app/keepers"
+	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/v5/x/rewards/keeper"
+	rewardstypes "github.com/gitopia/gitopia/v5/x/rewards/types"
 	"github.com/stretchr/testify/require"
 )
 

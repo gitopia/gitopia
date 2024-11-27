@@ -2,22 +2,26 @@ package types
 
 import (
 	"net/url"
-	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/group"
 )
 
 var _ sdk.Msg = &MsgCreateDao{}
 
-func NewMsgCreateDao(creator string, name string, description string, avatarUrl string, location string, website string) *MsgCreateDao {
+func NewMsgCreateDao(creator string, name string, description string, avatarUrl string, location string, website string, members []group.MemberRequest, votingPeriod string, percentage string, config *DaoConfig) *MsgCreateDao {
 	return &MsgCreateDao{
-		Creator:     creator,
-		Name:        name,
-		Description: description,
-		AvatarUrl:   avatarUrl,
-		Location:    location,
-		Website:     website,
+		Creator:      creator,
+		Name:         name,
+		Description:  description,
+		AvatarUrl:    avatarUrl,
+		Location:     location,
+		Website:      website,
+		Members:      members,
+		VotingPeriod: votingPeriod,
+		Percentage:   percentage,
+		Config:       config,
 	}
 }
 
@@ -48,17 +52,8 @@ func (msg *MsgCreateDao) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Dao name must be at least 3 characters long")
-	} else if len(msg.Name) > 39 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Dao name exceeds limit: 39")
-	}
-	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Name)
-	if err != nil {
+	if err := ValidateDaoName(msg.Name); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-	if !valid {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Name)
 	}
 
 	if len(msg.Description) > 255 {
@@ -95,33 +90,71 @@ func (msg *MsgCreateDao) ValidateBasic() error {
 		}
 	}
 
+	// Validate members
+	if len(msg.Members) == 0 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "group must have at least one member")
+	}
+
+	for _, member := range msg.Members {
+		// Validate member address
+		_, err := sdk.AccAddressFromBech32(member.Address)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid member address (%s)", err)
+		}
+
+		// Validate member weight (must be positive)
+		weight, err := sdk.NewDecFromStr(member.Weight)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid member weight: %s", err)
+		}
+		if !weight.IsPositive() {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "member weight must be positive")
+		}
+
+		// Validate metadata length if needed (optional, adjust limit as needed)
+		if len(member.Metadata) > 255 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "member metadata exceeds limit: 255")
+		}
+	}
+
+	// Validate voting period
+	_, err = sdk.NewDecFromStr(msg.VotingPeriod)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid voting period format: %s", err)
+	}
+
+	// Validate percentage
+	percentage, err := sdk.NewDecFromStr(msg.Percentage)
+	if err != nil {
+		return sdkerrors.Wrapf(err, "invalid percentage threshold")
+	}
+	if percentage.IsNegative() || percentage.GT(sdk.NewDec(1)) {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "percentage must be > 0 and <= 1")
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgRenameDao{}
 
-func NewMsgRenameDao(creator string, id string, name string) *MsgRenameDao {
+func NewMsgRenameDao(admin string, id string, name string) *MsgRenameDao {
 	return &MsgRenameDao{
-		Id:      id,
-		Creator: creator,
-		Name:    name,
+		Admin: admin,
+		Id:    id,
+		Name:  name,
 	}
 }
 
 func (msg *MsgRenameDao) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgRenameDao) Type() string {
-	return "RenameDao"
-}
+func (msg *MsgRenameDao) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgRenameDao) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgRenameDao) GetSignBytes() []byte {
@@ -130,64 +163,42 @@ func (msg *MsgRenameDao) GetSignBytes() []byte {
 }
 
 func (msg *MsgRenameDao) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
-	}
-	if len(msg.Name) < 3 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Dao name must be at least 3 characters long")
-	} else if len(msg.Name) > 39 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Dao name exceeds limit: 39")
-	}
-	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Name)
-	if err != nil {
+
+	if err := ValidateDaoId(msg.Id); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
-	if !valid {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Name)
+
+	if err := ValidateDaoName(msg.Name); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateDaoDescription{}
 
-func NewMsgUpdateDaoDescription(creator string, id string, description string) *MsgUpdateDaoDescription {
+func NewMsgUpdateDaoDescription(admin string, id string, description string) *MsgUpdateDaoDescription {
 	return &MsgUpdateDaoDescription{
+		Admin:       admin,
 		Id:          id,
-		Creator:     creator,
 		Description: description,
 	}
 }
 
 func (msg *MsgUpdateDaoDescription) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgUpdateDaoDescription) Type() string {
-	return "UpdateDaoDescription"
-}
+func (msg *MsgUpdateDaoDescription) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgUpdateDaoDescription) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgUpdateDaoDescription) GetSignBytes() []byte {
@@ -196,58 +207,46 @@ func (msg *MsgUpdateDaoDescription) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateDaoDescription) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
+
 	if len(msg.Description) < 3 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Minimum character required: 3")
 	}
+
 	if len(msg.Description) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Description exceeds limit: 255")
 	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateDaoWebsite{}
 
-func NewMsgUpdateDaoWebsite(creator string, id string, url string) *MsgUpdateDaoWebsite {
+func NewMsgUpdateDaoWebsite(admin string, id string, url string) *MsgUpdateDaoWebsite {
 	return &MsgUpdateDaoWebsite{
-		Id:      id,
-		Creator: creator,
-		Url:     url,
+		Admin: admin,
+		Id:    id,
+		Url:   url,
 	}
 }
 
 func (msg *MsgUpdateDaoWebsite) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgUpdateDaoWebsite) Type() string {
-	return "UpdateDaoWebsite"
-}
+func (msg *MsgUpdateDaoWebsite) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgUpdateDaoWebsite) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgUpdateDaoWebsite) GetSignBytes() []byte {
@@ -256,24 +255,13 @@ func (msg *MsgUpdateDaoWebsite) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateDaoWebsite) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	if len(msg.Url) > 2048 {
@@ -288,33 +276,30 @@ func (msg *MsgUpdateDaoWebsite) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https and http URL scheme is allowed in Website")
 		}
 	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateDaoLocation{}
 
-func NewMsgUpdateDaoLocation(creator string, id string, location string) *MsgUpdateDaoLocation {
+func NewMsgUpdateDaoLocation(admin string, id string, location string) *MsgUpdateDaoLocation {
 	return &MsgUpdateDaoLocation{
+		Admin:    admin,
 		Id:       id,
-		Creator:  creator,
 		Location: location,
 	}
 }
 
 func (msg *MsgUpdateDaoLocation) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgUpdateDaoLocation) Type() string {
-	return "UpdateDaoLocation"
-}
+func (msg *MsgUpdateDaoLocation) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgUpdateDaoLocation) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgUpdateDaoLocation) GetSignBytes() []byte {
@@ -323,55 +308,42 @@ func (msg *MsgUpdateDaoLocation) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateDaoLocation) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
+
 	if len(msg.Location) > 255 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "Location exceeds limit: 255")
+
 	}
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateDaoAvatar{}
 
-func NewMsgUpdateDaoAvatar(creator string, id string, url string) *MsgUpdateDaoAvatar {
+func NewMsgUpdateDaoAvatar(admin string, id string, url string) *MsgUpdateDaoAvatar {
 	return &MsgUpdateDaoAvatar{
-		Id:      id,
-		Creator: creator,
-		Url:     url,
+		Admin: admin,
+		Id:    id,
+		Url:   url,
 	}
 }
 
 func (msg *MsgUpdateDaoAvatar) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgUpdateDaoAvatar) Type() string {
-	return "UpdateDaoAvatar"
-}
+func (msg *MsgUpdateDaoAvatar) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgUpdateDaoAvatar) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgUpdateDaoAvatar) GetSignBytes() []byte {
@@ -380,25 +352,15 @@ func (msg *MsgUpdateDaoAvatar) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateDaoAvatar) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
-	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
+
 	if len(msg.Url) > 2048 {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "avatar url exceeds limit: 2048")
 	}
@@ -411,33 +373,30 @@ func (msg *MsgUpdateDaoAvatar) ValidateBasic() error {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "only https URL scheme is allowed")
 		}
 	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateDaoPinnedRepositories{}
 
-func NewMsgUpdateDaoPinnedRepositories(creator, id string, repositoryId uint64) *MsgUpdateDaoPinnedRepositories {
+func NewMsgUpdateDaoPinnedRepositories(admin, id string, repositoryId uint64) *MsgUpdateDaoPinnedRepositories {
 	return &MsgUpdateDaoPinnedRepositories{
+		Admin:        admin,
 		Id:           id,
-		Creator:      creator,
 		RepositoryId: repositoryId,
 	}
 }
 
 func (msg *MsgUpdateDaoPinnedRepositories) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgUpdateDaoPinnedRepositories) Type() string {
-	return "UpdateDaoPinnedRepositories"
-}
+func (msg *MsgUpdateDaoPinnedRepositories) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgUpdateDaoPinnedRepositories) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgUpdateDaoPinnedRepositories) GetSignBytes() []byte {
@@ -446,50 +405,121 @@ func (msg *MsgUpdateDaoPinnedRepositories) GetSignBytes() []byte {
 }
 
 func (msg *MsgUpdateDaoPinnedRepositories) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return sdkerrors.Wrap(err, "admin")
 	}
-	_, err = sdk.AccAddressFromBech32(msg.Id)
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgDaoTreasurySpend{}
+
+func NewMsgDaoTreasurySpend(admin string, recipient string, amount []sdk.Coin) *MsgDaoTreasurySpend {
+	return &MsgDaoTreasurySpend{
+		Admin:     admin,
+		Recipient: recipient,
+		Amount:    amount,
+	}
+}
+
+func (msg *MsgDaoTreasurySpend) Route() string {
+	return sdk.MsgTypeURL(msg)
+}
+
+func (msg *MsgDaoTreasurySpend) Type() string { return sdk.MsgTypeURL(msg) }
+
+func (msg *MsgDaoTreasurySpend) GetSigners() []sdk.AccAddress {
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
+}
+
+func (msg *MsgDaoTreasurySpend) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDaoTreasurySpend) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
-		if len(msg.Id) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name must consist minimum 3 chars")
-		} else if len(msg.Id) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "dao name limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Id)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid dao name (%v)", msg.Id)
-		}
+		return sdkerrors.Wrap(err, "admin")
 	}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return sdkerrors.Wrap(err, "recipient")
+	}
+
+	return msg.Amount.Validate()
+}
+
+var _ sdk.Msg = &MsgUpdateDaoConfig{}
+
+func NewMsgUpdateDaoConfig(admin string, id string, config DaoConfig) *MsgUpdateDaoConfig {
+	return &MsgUpdateDaoConfig{
+		Admin:  admin,
+		Id:     id,
+		Config: config,
+	}
+}
+
+func (msg *MsgUpdateDaoConfig) Route() string {
+	return sdk.MsgTypeURL(msg)
+}
+
+func (msg *MsgUpdateDaoConfig) Type() string { return sdk.MsgTypeURL(msg) }
+
+func (msg *MsgUpdateDaoConfig) GetSigners() []sdk.AccAddress {
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
+}
+
+func (msg *MsgUpdateDaoConfig) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateDaoConfig) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Admin)
+	if err != nil {
+		return sdkerrors.Wrap(err, "admin")
+	}
+
+	if err := ValidateDaoId(msg.Id); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgDeleteDao{}
 
-func NewMsgDeleteDao(creator string, id string) *MsgDeleteDao {
+func NewMsgDeleteDao(admin string, id string) *MsgDeleteDao {
 	return &MsgDeleteDao{
-		Id:      id,
-		Creator: creator,
+		Admin: admin,
+		Id:    id,
 	}
 }
 func (msg *MsgDeleteDao) Route() string {
-	return RouterKey
+	return sdk.MsgTypeURL(msg)
 }
 
-func (msg *MsgDeleteDao) Type() string {
-	return "DeleteDao"
-}
+func (msg *MsgDeleteDao) Type() string { return sdk.MsgTypeURL(msg) }
 
 func (msg *MsgDeleteDao) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
+	admin := sdk.MustAccAddressFromBech32(msg.Admin)
+
+	return []sdk.AccAddress{admin}
 }
 
 func (msg *MsgDeleteDao) GetSignBytes() []byte {

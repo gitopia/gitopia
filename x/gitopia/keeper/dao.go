@@ -2,11 +2,14 @@ package keeper
 
 import (
 	"encoding/binary"
+	"math"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/x/group"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
 // GetDaoCount get the total number of Dao
@@ -54,15 +57,6 @@ func (k Keeper) AppendDao(
 	return count
 }
 
-func (k Keeper) SetUserDao(
-	ctx sdk.Context,
-	userDao types.UserDao,
-) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GetUserDaoKeyForUserAddress(userDao.UserAddress)))
-	appendedValue := k.cdc.MustMarshal(&userDao)
-	store.Set([]byte(userDao.DaoAddress), appendedValue)
-}
-
 // SetDao set a specific Dao in the store
 func (k Keeper) SetDao(ctx sdk.Context, dao types.Dao) {
 	store := prefix.NewStore(
@@ -96,6 +90,23 @@ func (k Keeper) RemoveDao(ctx sdk.Context, address string) {
 	store.Delete([]byte(address))
 }
 
+// IterateDaos iterates over all the stored DAOs and performs a callback function.
+// Stops iteration when callback returns true.
+func (k Keeper) IterateDaos(ctx sdk.Context, cb func(dao types.Dao) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefix(types.DaoKey))
+
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var dao types.Dao
+		k.cdc.MustUnmarshal(iterator.Value(), &dao)
+
+		if cb(dao) {
+			break
+		}
+	}
+}
+
 // GetAllDao returns all Dao
 func (k Keeper) GetAllDao(ctx sdk.Context) (list []types.Dao) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DaoKey))
@@ -112,30 +123,34 @@ func (k Keeper) GetAllDao(ctx sdk.Context) (list []types.Dao) {
 	return
 }
 
-// GetAllUserDao returns all user
-func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) ([]types.Dao, error) {
-	var list []types.Dao
-	store := prefix.NewStore(
-		ctx.KVStore(k.storeKey),
-		types.KeyPrefix(types.GetUserDaoKeyForUserAddress(userAddress)),
-	)
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+// GetAllUserDao returns all daos of a user
+func (k Keeper) GetAllUserDao(ctx sdk.Context, userAddress string) ([]*types.Dao, error) {
+	var userDaos []*types.Dao
 
-	defer iterator.Close()
+	// get all groups where user is a member
+	resp, err := k.groupKeeper.GroupsByMember(ctx, &group.QueryGroupsByMemberRequest{
+		Address: userAddress,
+		Pagination: &query.PageRequest{
+			Limit: math.MaxUint64,
+		},
+	})
+	if err != nil {
+		return []*types.Dao{}, err
+	}
 
-	for ; iterator.Valid(); iterator.Next() {
-		var userDao types.UserDao
-		if err := k.cdc.Unmarshal(iterator.Value(), &userDao); err != nil {
-			return []types.Dao{}, err
+	for _, group := range resp.Groups {
+		groupDao, found := k.GetGroupDao(ctx, group.Id)
+		if !found {
+			continue
 		}
 
-		dao, found := k.GetDao(ctx, userDao.DaoAddress)
+		dao, found := k.GetDao(ctx, groupDao.DaoAddress)
 		if found {
-			list = append(list, dao)
+			userDaos = append(userDaos, &dao)
 		}
 	}
 
-	return list, nil
+	return userDaos, nil
 }
 
 func NewDaoAddress(daoId uint64) sdk.AccAddress {

@@ -3,12 +3,76 @@ package types
 import (
 	"encoding/base64"
 	"fmt"
+	urlpkg "net/url"
 	"reflect"
 	"regexp"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ipfs/go-cid"
 )
+
+func ValidateUserId(userId string) error {
+	_, err := sdk.AccAddressFromBech32(userId)
+	if err != nil {
+		if len(userId) < 3 {
+			return fmt.Errorf("user name must consist minimum 3 chars")
+		} else if len(userId) > 39 {
+			return fmt.Errorf("user name limit exceed: 39")
+		}
+		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", userId)
+		if err != nil {
+			return err
+		}
+		if !valid {
+			return fmt.Errorf("invalid user name (%v)", userId)
+		}
+	}
+
+	return nil
+}
+
+func ValidateDaoName(name string) error {
+	if len(name) < 3 {
+		return fmt.Errorf("dao name must consist minimum 3 chars")
+	} else if len(name) > 39 {
+		return fmt.Errorf("dao name limit exceed: 39")
+	}
+	valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", name)
+	if err != nil {
+		return err
+	}
+	if !valid {
+		return fmt.Errorf("invalid dao name (%v)", name)
+	}
+
+	return nil
+}
+
+func ValidateDaoId(daoId string) error {
+	_, err := sdk.AccAddressFromBech32(daoId)
+	if err != nil {
+		return ValidateDaoName(daoId)
+	}
+
+	return nil
+}
+
+func ValidateUrl(url string) error {
+	if len(url) > 2048 {
+		return fmt.Errorf("url exceeds limit: 2048")
+	}
+	if url != "" {
+		url, err := urlpkg.ParseRequestURI(url)
+		if err != nil {
+			return fmt.Errorf("invalid url (%s)", url)
+		}
+		if url.Scheme != "https" {
+			return fmt.Errorf("only https URL scheme is allowed")
+		}
+	}
+
+	return nil
+}
 
 func ValidateRepositoryName(name string) error {
 	if len(name) < 3 {

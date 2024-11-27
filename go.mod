@@ -1,4 +1,4 @@
-module github.com/gitopia/gitopia/v4
+module github.com/gitopia/gitopia/v5
 
 go 1.21
 
@@ -233,3 +233,5 @@ replace github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.2021
 
 // https://github.com/cosmos/cosmos-sdk/issues/20159
 replace golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
+
+replace github.com/cosmos/cosmos-sdk => github.com/gitopia/cosmos-sdk v0.47.13-group-disable-pruning

@@ -2,12 +2,13 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -52,31 +53,54 @@ func (k Keeper) UserDaoAll(c context.Context, req *types.QueryAllUserDaoRequest)
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
-	user, found := k.GetUser(ctx, address.Address)
-	if !found {
-		return nil, sdkerrors.ErrKeyNotFound
-	}
-
-	var daos []*types.Dao
-	store := ctx.KVStore(k.storeKey)
-	userDaoStore := prefix.NewStore(store, types.KeyPrefix(types.GetUserDaoKeyForUserAddress(user.Creator)))
-
-	pageRes, err := query.Paginate(userDaoStore, req.Pagination, func(key []byte, value []byte) error {
-		var userDao types.UserDao
-		if err := k.cdc.Unmarshal(value, &userDao); err != nil {
-			return err
-		}
-		if dao, _ := k.GetDao(ctx, userDao.DaoAddress); found {
-			daos = append(daos, &dao)
-		}
-		return nil
-	})
-
+	userDaos, err := k.GetAllUserDao(ctx, address.Address)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllUserDaoResponse{Dao: daos, Pagination: pageRes}, nil
+	// Handle pagination
+	page, limit, err := query.ParsePagination(req.Pagination)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	start := (page - 1) * limit
+	end := start + limit
+
+	totalCount := uint64(len(userDaos))
+
+	// Check if start index is out of bounds
+	if start >= int(totalCount) {
+		return &types.QueryAllUserDaoResponse{
+			Dao: []*types.Dao{},
+			Pagination: &query.PageResponse{
+				Total: totalCount,
+			},
+		}, nil
+	}
+
+	// Adjust end index if it exceeds slice length
+	if end > int(totalCount) {
+		end = int(totalCount)
+	}
+
+	// Get the paginated subset of DAOs
+	paginatedDaos := userDaos[start:end]
+
+	var nextKey []byte
+	if uint64(end) < totalCount {
+		// If there are more results, set the next key
+		// Since we're working with a slice, we can use the index as the key
+		nextKey = []byte(fmt.Sprintf("%d", end))
+	}
+
+	return &types.QueryAllUserDaoResponse{
+		Dao: paginatedDaos,
+		Pagination: &query.PageResponse{
+			NextKey: nextKey,
+			Total:   totalCount,
+		},
+	}, nil
 }
 
 func (k Keeper) Dao(c context.Context, req *types.QueryGetDaoRequest) (*types.QueryGetDaoResponse, error) {

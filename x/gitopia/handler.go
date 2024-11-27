@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
 // NewHandler ...
@@ -89,19 +89,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.MultiDeleteTag(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgAddMember:
-			res, err := msgServer.AddMember(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgUpdateMemberRole:
-			res, err := msgServer.UpdateMemberRole(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgRemoveMember:
-			res, err := msgServer.RemoveMember(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-			// this line is used by starport scaffolding # 1
 		case *types.MsgUpdateRepositoryBackupRef:
 			res, err := msgServer.UpdateRepositoryBackupRef(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
@@ -154,6 +141,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgInvokeMergePullRequest:
 			res, err := msgServer.InvokeMergePullRequest(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgInvokeDaoMergePullRequest:
+			res, err := msgServer.InvokeDaoMergePullRequest(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgSetPullRequestState:
@@ -220,8 +211,24 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateDaoAvatar(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateDaoMetadata:
+			res, err := msgServer.UpdateDaoMetadata(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgUpdateDaoPinnedRepositories:
 			res, err := msgServer.UpdateDaoPinnedRepositories(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDaoTreasurySpend:
+			res, err := msgServer.DaoTreasurySpend(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgUpdateDaoConfig:
+			res, err := msgServer.UpdateDaoConfig(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgDaoCreateRelease:
+			res, err := msgServer.DaoCreateRelease(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgDeleteDao:
@@ -316,8 +323,16 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.UpdateRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
+		case *types.MsgUpdateDaoRepositoryCollaborator:
+			res, err := msgServer.UpdateDaoRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
 		case *types.MsgRemoveRepositoryCollaborator:
 			res, err := msgServer.RemoveRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+
+		case *types.MsgRemoveDaoRepositoryCollaborator:
+			res, err := msgServer.RemoveDaoRepositoryCollaborator(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgCreateRepositoryLabel:

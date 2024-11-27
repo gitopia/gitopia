@@ -20,7 +20,6 @@ func DefaultGenesis() *GenesisState {
 		TaskList:              []Task{},
 		BranchList:            []Branch{},
 		TagList:               []Tag{},
-		MemberList:            []Member{},
 		ReleaseList:           []Release{},
 		PullRequestList:       []PullRequest{},
 		DaoList:               []Dao{},
@@ -29,7 +28,6 @@ func DefaultGenesis() *GenesisState {
 		RepositoryList:        []Repository{},
 		BaseRepositoryKeyList: []BaseRepositoryKey{},
 		UserList:              []User{},
-		UserDaoList:           []UserDao{},
 		WhoisList:             []Whois{},
 	}
 }
@@ -87,24 +85,6 @@ func (gs GenesisState) Validate() error {
 		}
 		tagMap[k] = true
 		tagIdMap[elem.Id] = true
-	}
-	// Check for duplicated ID in member
-	memberMap := make(map[string]bool)
-	memberIdMap := make(map[uint64]bool)
-	memberCount := gs.GetMemberCount()
-	for _, elem := range gs.MemberList {
-		k := elem.Address + elem.DaoAddress
-		if _, ok := memberMap[k]; ok {
-			return fmt.Errorf("duplicated member")
-		}
-		if _, ok := memberIdMap[elem.Id]; ok {
-			return fmt.Errorf("duplicated id for member")
-		}
-		if elem.Id >= memberCount {
-			return fmt.Errorf("member id should be lower or equal than the last id")
-		}
-		memberMap[k] = false
-		memberIdMap[elem.Id] = true
 	}
 
 	// Check for duplicated ID in bounty
@@ -215,18 +195,6 @@ func (gs GenesisState) Validate() error {
 		if id != elem.Id {
 			return fmt.Errorf("mismatch baseRepositoryKey id")
 		}
-	}
-
-	for _, elem := range gs.UserDaoList {
-		k := elem.UserAddress + elem.DaoAddress
-		visited, ok := memberMap[k]
-		if !ok {
-			return fmt.Errorf("missing userDao entry")
-		}
-		if visited {
-			return fmt.Errorf("duplicated userDao entry")
-		}
-		memberMap[k] = true
 	}
 
 	// Check for duplicated ID in user

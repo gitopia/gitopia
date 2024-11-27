@@ -7,8 +7,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
 )
 
 func ElementExists(s []uint64, val uint64) (int, bool) {
@@ -116,13 +116,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 		}
 	case types.OwnerType_DAO:
-		if m, found := k.GetDaoMember(ctx, repository.Owner.Id, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao (%v)", msg.Creator, msg.RepositoryId.Id))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
@@ -134,17 +128,7 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
 		}
 	case types.OwnerType_DAO:
-		dao, found := k.GetDao(ctx, ownerAddress.Address)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("owner (%v) doesn't exist", msg.Owner))
-		}
-		if m, found := k.GetDaoMember(ctx, dao.Address, msg.Creator); found {
-			if m.Role != types.MemberRole_OWNER {
-				return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) does not have required permission", msg.Creator))
-			}
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of dao", msg.Creator))
-		}
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "something went wrong")
 	}
@@ -563,9 +547,20 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 	if repository.Archived {
 		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
 	}
-
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	// In case of dao, check if dao requires a proposal to update collaborator
+	if repository.Owner.Type == types.OwnerType_DAO {
+		dao, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		if dao.Config.RequireCollaboratorProposal {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
 	}
 
 	userAddress, err := k.ResolveAddress(ctx, msg.User)
@@ -619,6 +614,76 @@ func (k msgServer) UpdateRepositoryCollaborator(goCtx context.Context, msg *type
 	return &types.MsgUpdateRepositoryCollaboratorResponse{}, nil
 }
 
+func (k msgServer) UpdateDaoRepositoryCollaborator(goCtx context.Context, msg *types.MsgUpdateDaoRepositoryCollaborator) (*types.MsgUpdateDaoRepositoryCollaboratorResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	dao, found := k.GetDao(ctx, repository.Owner.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+	}
+
+	userAddress, err := k.ResolveAddress(ctx, msg.User)
+	if err != nil {
+		return nil, err
+	}
+
+	_, found = k.GetUser(ctx, userAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("user (%v) doesn't exist", msg.User))
+	}
+
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	permission, exists := types.RepositoryCollaborator_Permission_value[msg.Role]
+	if !exists {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid permission arg (%v)", msg.Role))
+	}
+
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.Address); exists {
+		repository.Collaborators[i].Permission = types.RepositoryCollaborator_Permission(permission)
+	} else {
+		repositoryCollaborator := types.RepositoryCollaborator{
+			Id:         userAddress.Address,
+			Permission: types.RepositoryCollaborator_Permission(permission),
+		}
+		repository.Collaborators = append(repository.Collaborators, &repositoryCollaborator)
+	}
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoRepositoryCollaboratorEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.Address),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUpdateDaoRepositoryCollaboratorResponse{}, nil
+}
+
 func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *types.MsgRemoveRepositoryCollaborator) (*types.MsgRemoveRepositoryCollaboratorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -636,9 +701,20 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 	if repository.Archived {
 		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
 	}
-
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	// In case of dao, check if dao requires a proposal to update collaborator
+	if repository.Owner.Type == types.OwnerType_DAO {
+		dao, found := k.GetDao(ctx, repository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+		}
+
+		if dao.Config.RequireCollaboratorProposal {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+		}
 	}
 
 	userAddress, err := k.ResolveAddress(ctx, msg.User)
@@ -672,6 +748,62 @@ func (k msgServer) RemoveRepositoryCollaborator(goCtx context.Context, msg *type
 	)
 
 	return &types.MsgRemoveRepositoryCollaboratorResponse{}, nil
+}
+
+func (k msgServer) RemoveDaoRepositoryCollaborator(goCtx context.Context, msg *types.MsgRemoveDaoRepositoryCollaborator) (*types.MsgRemoveDaoRepositoryCollaboratorResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if repository.Archived {
+		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
+	}
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	dao, found := k.GetDao(ctx, repository.Owner.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", repository.Owner.Id))
+	}
+
+	userAddress, err := k.ResolveAddress(ctx, msg.User)
+	if err != nil {
+		return nil, err
+	}
+
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	if i, exists := utils.RepositoryCollaboratorExists(repository.Collaborators, userAddress.Address); exists {
+		repository.Collaborators = append(repository.Collaborators[:i], repository.Collaborators[i+1:]...)
+	} else {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("collaborators with id (%v) doesn't exists", msg.User))
+	}
+
+	repository.UpdatedAt = ctx.BlockTime().Unix()
+	k.SetRepository(ctx, repository)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.RemoveDaoRepositoryCollaboratorEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoCollaboratorKey, userAddress.Address),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgRemoveDaoRepositoryCollaboratorResponse{}, nil
 }
 
 func (k msgServer) CreateRepositoryLabel(goCtx context.Context, msg *types.MsgCreateRepositoryLabel) (*types.MsgCreateRepositoryLabelResponse, error) {

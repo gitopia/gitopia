@@ -8,9 +8,9 @@ import (
 	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/gitopia/gitopia/v4/app/params"
-	"github.com/gitopia/gitopia/v4/testutil/simapp"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/app/params"
+	"github.com/gitopia/gitopia/v5/testutil/simapp"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/cosmos/cosmos-sdk/std"
-	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v5/app/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing
@@ -12,5 +12,6 @@ func MakeEncodingConfig() params.EncodingConfig {
 	std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 	ModuleBasics.RegisterLegacyAminoCodec(encodingConfig.Amino)
 	ModuleBasics.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
 	return encodingConfig
 }

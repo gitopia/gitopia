@@ -6,26 +6,33 @@ build:
     - third_party/proto
     - proto_vendor
 accounts:
-  - name: node0
-    coins: ['200000000ulore']
-  - name: node1
-    coins: ['100000000ulore']
-  - name: node2
-    coins: ['100000000ulore']
-  - name: node3
-    coins: ['50000000ulore']
-  - name: faucet
-    coins: ['100000000ulore']
-  - name: evaluator
-    coins: ['100000000ulore']
-    address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
-  # fantasy guitar settle happy spoil fever leisure life lounge trumpet reason labor hub paddle envelope tunnel identify reveal turtle sting worth lottery afford rescue
-  - name: cosmos_rewards
-    coins: ['100000000ulore']
-    address: gitopia1e385ct9padxt2ylzen884kr79genlq8la04sy4
+- name: node0
+  coins:
+  - 200000000ulore
+- name: node1
+  coins:
+  - 100000000ulore
+- name: node2
+  coins:
+  - 100000000ulore
+- name: node3
+  coins:
+  - 50000000ulore
+- name: faucet
+  coins:
+  - 100000000ulore
+- name: evaluator
+  coins:
+  - 100000000ulore
+  address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+- name: cosmos_rewards
+  coins:
+  - 100000000ulore
+  address: gitopia1e385ct9padxt2ylzen884kr79genlq8la04sy4
 faucet:
   name: faucet
-  coins: ['200000000ulore']
+  coins:
+  - 200000000ulore
   coins_max:
   - 3000000ulore
   host: 0.0.0.0:4500
@@ -65,69 +72,15 @@ genesis:
             proportion: "30.0"
           team:
             proportion: "28.0"
-        # remaining: community : 5% staking: 37%
         team_proportions:
-        - proportion: "25.0"
-          address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
-        - proportion: "24.0"
-          address: gitopia1pdczuuqajw3n7zea9j6h9gtdgfpnzkkucjz8tn
-        - proportion: "6.0"
-          address: gitopia19nve7zztd3nf9hazfv7lsx0ajdv3kfjdx83dtg
-        - proportion: "45.0"
-          address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
-    rewards: 
-      params:
-        evaluator_address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
-        reward_series:
-          - series: "ONE"
-            total_amount: 
-              amount: "2000000000000"
-              denom: "ulore" 
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "TWO"
-            total_amount: 
-              amount: "1700000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "THREE"
-            total_amount: 
-              amount: "1400000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "FOUR"
-            total_amount: 
-              amount: "1100000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "FIVE"
-            total_amount: 
-              amount: "800000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "SIX"
-            total_amount: 
-              amount: "500000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
-          - series: "SEVEN"
-            total_amount: 
-              amount: "250000000000"
-              denom: "ulore"
-            claimed_amount:
-              amount: "0"
-              denom: "ulore"
+        - address: gitopia1s9qkkznqqv8p838fuyzzfaxu7ckhy3v8cw3pke
+          proportion: "25.0"
+        - address: gitopia1pdczuuqajw3n7zea9j6h9gtdgfpnzkkucjz8tn
+          proportion: "24.0"
+        - address: gitopia19nve7zztd3nf9hazfv7lsx0ajdv3kfjdx83dtg
+          proportion: "6.0"
+        - address: gitopia1s60vdatv2pdl9fdsy6fcje4ckd6477x2u53q4k
+          proportion: "45.0"
     gov:
       deposit_params:
         max_deposit_period: 60s
@@ -139,6 +92,59 @@ genesis:
     mint:
       params:
         mint_denom: ulore
+    rewards:
+      params:
+        evaluator_address: gitopia12dlfw7kqzy336j8z3qpzr3kfu8zssnccy03xqy
+        reward_series:
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: ONE
+          total_amount:
+            amount: "2000000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: TWO
+          total_amount:
+            amount: "1700000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: THREE
+          total_amount:
+            amount: "1400000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: FOUR
+          total_amount:
+            amount: "1100000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: FIVE
+          total_amount:
+            amount: "800000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: SIX
+          total_amount:
+            amount: "500000000000"
+            denom: ulore
+        - claimed_amount:
+            amount: "0"
+            denom: ulore
+          series: SEVEN
+          total_amount:
+            amount: "250000000000"
+            denom: ulore
     staking:
       params:
         bond_denom: ulore

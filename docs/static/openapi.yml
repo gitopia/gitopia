@@ -35682,6 +35682,10 @@ paths:
                       items:
                         type: string
                         format: uint64
+                    group_id:
+                      type: string
+                      format: uint64
+                      title: Group associated with the DAO
               pagination:
                 type: object
                 properties:
@@ -36035,6 +36039,10 @@ paths:
                     items:
                       type: string
                       format: uint64
+                  group_id:
+                    type: string
+                    format: uint64
+                    title: Group associated with the DAO
         default:
           description: An unexpected error response.
           schema:
@@ -39177,6 +39185,10 @@ paths:
                       items:
                         type: string
                         format: uint64
+                    group_id:
+                      type: string
+                      format: uint64
+                      title: Group associated with the DAO
               pagination:
                 type: object
                 properties:
@@ -77644,6 +77656,10 @@ definitions:
         items:
           type: string
           format: uint64
+      group_id:
+        type: string
+        format: uint64
+        title: Group associated with the DAO
   gitopia.gitopia.gitopia.DistributionProportion:
     type: object
     properties:
@@ -78004,6 +78020,12 @@ definitions:
         type: string
   gitopia.gitopia.gitopia.MsgSetTagResponse:
     type: object
+  gitopia.gitopia.gitopia.MsgSubmitAddMemberProposalResponse:
+    type: object
+    properties:
+      proposalId:
+        type: string
+        format: uint64
   gitopia.gitopia.gitopia.MsgToggleArweaveBackupResponse:
     type: object
     properties:
@@ -78844,6 +78866,10 @@ definitions:
               items:
                 type: string
                 format: uint64
+            group_id:
+              type: string
+              format: uint64
+              title: Group associated with the DAO
       pagination:
         type: object
         properties:
@@ -80202,6 +80228,10 @@ definitions:
               items:
                 type: string
                 format: uint64
+            group_id:
+              type: string
+              format: uint64
+              title: Group associated with the DAO
       pagination:
         type: object
         properties:
@@ -80683,6 +80713,10 @@ definitions:
             items:
               type: string
               format: uint64
+          group_id:
+            type: string
+            format: uint64
+            title: Group associated with the DAO
   gitopia.gitopia.gitopia.QueryGetIssueCommentResponse:
     type: object
     properties:
