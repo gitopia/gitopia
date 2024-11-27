@@ -1,4 +1,4 @@
-package v5
+package v4
 
 import (
 	"encoding/binary"
@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/group"
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
-	v4types "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v4/types"
+	v3types "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v3/types"
 	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
@@ -25,7 +25,7 @@ func Migrate(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCode
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		var oldDao v4types.Dao
+		var oldDao v3types.Dao
 		cdc.MustUnmarshal(iterator.Value(), &oldDao)
 
 		// get all dao members
@@ -36,8 +36,8 @@ func Migrate(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCode
 		for _, member := range members {
 			weight := "0.1"
 
-			// set weight to 1 if member role is v4types.MemberRole_OWNER
-			if member.Role == v4types.MemberRole_OWNER {
+			// set weight to 1 if member role is v3types.MemberRole_OWNER
+			if member.Role == v3types.MemberRole_OWNER {
 				weight = "1"
 			}
 
@@ -111,13 +111,13 @@ func GetMemberKeyForDaoAddress(daoAddress string) string {
 	return MemberKey + daoAddress + "-"
 }
 
-func GetAllDaoMember(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec, daoAddress string) (list []v4types.Member) {
+func GetAllDaoMember(ctx sdk.Context, storeKey storetypes.StoreKey, cdc codec.BinaryCodec, daoAddress string) (list []v3types.Member) {
 	store := ctx.KVStore(storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefix(GetMemberKeyForDaoAddress(daoAddress)))
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		var member v4types.Member
+		var member v3types.Member
 		cdc.MustUnmarshal(iterator.Value(), &member)
 		list = append(list, member)
 	}
