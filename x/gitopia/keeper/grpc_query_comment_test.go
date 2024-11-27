@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	keepertest "github.com/gitopia/gitopia/v5/testutil/keeper"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

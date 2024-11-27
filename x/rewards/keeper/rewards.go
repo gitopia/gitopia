@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v4/x/rewards/types"
+	"github.com/gitopia/gitopia/v5/x/rewards/types"
 )
 
 // SetReward set a specific rewards in the store from its index

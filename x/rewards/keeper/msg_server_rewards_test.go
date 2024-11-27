@@ -8,10 +8,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/v4/app/params"
-	keepertest "github.com/gitopia/gitopia/v4/testutil/keeper"
-	"github.com/gitopia/gitopia/v4/x/rewards/keeper"
-	"github.com/gitopia/gitopia/v4/x/rewards/types"
+	"github.com/gitopia/gitopia/v5/app/params"
+	keepertest "github.com/gitopia/gitopia/v5/testutil/keeper"
+	"github.com/gitopia/gitopia/v5/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v5/x/rewards/types"
 )
 
 // Prevent strconv unused error

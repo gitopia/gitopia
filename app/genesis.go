@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 
-	"github.com/gitopia/gitopia/v4/app/params"
+	"github.com/gitopia/gitopia/v5/app/params"
 )
 
 // The genesis state of the blockchain is represented here as a map of raw json

@@ -16,11 +16,11 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v4/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v4/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v5/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
 
-	// v3 "github.com/gitopia/gitopia/v4/x/gitopia/migrations/v3"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
+	// v3 "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v3"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
 var (

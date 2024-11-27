@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v4/app/params"
-	"github.com/gitopia/gitopia/v4/testutil/sample"
+	"github.com/gitopia/gitopia/v5/app/params"
+	"github.com/gitopia/gitopia/v5/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 

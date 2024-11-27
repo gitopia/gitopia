@@ -32,9 +32,9 @@ import (
 	genutil "github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	gitopia "github.com/gitopia/gitopia/v4/app"
-	"github.com/gitopia/gitopia/v4/app/params"
-	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
+	gitopia "github.com/gitopia/gitopia/v5/app"
+	"github.com/gitopia/gitopia/v5/app/params"
+	gitopiaappparams "github.com/gitopia/gitopia/v5/app/params"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 

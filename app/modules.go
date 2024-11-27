@@ -49,11 +49,11 @@ import (
 	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	gitopiaappparams "github.com/gitopia/gitopia/v4/app/params"
-	"github.com/gitopia/gitopia/v4/x/gitopia"
-	gitopiatypes "github.com/gitopia/gitopia/v4/x/gitopia/types"
-	"github.com/gitopia/gitopia/v4/x/rewards"
-	rewardtypes "github.com/gitopia/gitopia/v4/x/rewards/types"
+	gitopiaappparams "github.com/gitopia/gitopia/v5/app/params"
+	"github.com/gitopia/gitopia/v5/x/gitopia"
+	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/rewards"
+	rewardtypes "github.com/gitopia/gitopia/v5/x/rewards/types"
 )
 
 var maccPerms = map[string][]string{

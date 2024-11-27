@@ -29,7 +29,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gitopia/gitopia/v4/app"
+	"github.com/gitopia/gitopia/v5/app"
 )
 
 type KeeperTestHelper struct {

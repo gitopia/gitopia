@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/cosmos/cosmos-sdk/x/group"
-	"github.com/gitopia/gitopia/v4/x/gitopia/types"
-	"github.com/gitopia/gitopia/v4/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
 )
 
 func (k Keeper) HavePermission(ctx sdk.Context, creator string, repository types.Repository, minAllowedPermission types.RepositoryCollaborator_Permission) bool {

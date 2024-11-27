@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/gitopia/gitopia/v4/x/offchain/types"
+	"github.com/gitopia/gitopia/v5/x/offchain/types"
 )
 
 // GetTxCmd clubs together all the CLI tx commands
