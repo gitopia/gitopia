@@ -74,6 +74,7 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		Location:    msg.Location,
 		Website:     msg.Website,
 		GroupId:     res.GroupId,
+		Config:      *msg.Config,
 	}
 
 	// Check if there is a dao with the same address already
@@ -354,6 +355,60 @@ func (k msgServer) UpdateDaoAvatar(goCtx context.Context, msg *types.MsgUpdateDa
 	)
 
 	return &types.MsgUpdateDaoAvatarResponse{}, nil
+}
+
+func (k msgServer) UpdateDaoMetadata(goCtx context.Context, msg *types.MsgUpdateDaoMetadata) (*types.MsgUpdateDaoMetadataResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	daoAddress, err := k.ResolveAddress(ctx, msg.Id)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, err.Error())
+	}
+
+	dao, found := k.GetDao(ctx, daoAddress.Address)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("organization (%v) doesn't exist", msg.Id))
+	}
+
+	// check if the message admin and the group admin are the same
+	err = k.doAuthenticated(ctx, dao.GroupId, msg.Admin)
+	if err != nil {
+		return nil, err
+	}
+
+	if msg.Name != "" {
+		dao.Name = msg.Name
+	}
+	if msg.Description != "" {
+		dao.Description = msg.Description
+	}
+	if msg.AvatarUrl != "" {
+		dao.AvatarUrl = msg.AvatarUrl
+	}
+	if msg.Location != "" {
+		dao.Location = msg.Location
+	}
+	if msg.Website != "" {
+		dao.Website = msg.Website
+	}
+
+	dao.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetDao(ctx, dao)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.UpdateDaoMetadataEventKey),
+			sdk.NewAttribute(types.EventAttributeDaoIdKey, strconv.FormatUint(dao.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeDaoAddressKey, dao.Address),
+			sdk.NewAttribute(types.EventAttributeDaoNameKey, dao.Name),
+			sdk.NewAttribute(types.EventAttributeAvatarUrl, dao.AvatarUrl),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(dao.UpdatedAt, 10)),
+		),
+	)
+
+	return &types.MsgUpdateDaoMetadataResponse{}, nil
 }
 
 func (k msgServer) DeleteDao(goCtx context.Context, msg *types.MsgDeleteDao) (*types.MsgDeleteDaoResponse, error) {

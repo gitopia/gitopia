@@ -65,6 +65,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateDaoWebsite{}, "gitopia/UpdateDaoWebsite", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoLocation{}, "gitopia/UpdateDaoLocation", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoAvatar{}, "gitopia/UpdateDaoAvatar", nil)
+	cdc.RegisterConcrete(&MsgUpdateDaoMetadata{}, "gitopia/UpdateDaoMetadata", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoPinnedRepositories{}, "gitopia/UpdateDaoPinnedRepositories", nil)
 	cdc.RegisterConcrete(&MsgDaoTreasurySpend{}, "gitopia/DaoTreasurySpend", nil)
 	cdc.RegisterConcrete(&MsgUpdateDaoConfig{}, "gitopia/UpdateDaoConfig", nil)
@@ -190,6 +191,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateDaoWebsite{},
 		&MsgUpdateDaoLocation{},
 		&MsgUpdateDaoAvatar{},
+		&MsgUpdateDaoMetadata{},
 		&MsgUpdateDaoPinnedRepositories{},
 		&MsgDaoTreasurySpend{},
 		&MsgUpdateDaoConfig{},

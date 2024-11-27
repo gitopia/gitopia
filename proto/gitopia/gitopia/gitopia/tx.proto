@@ -72,6 +72,7 @@ service Msg {
   rpc UpdateDaoWebsite(MsgUpdateDaoWebsite) returns (MsgUpdateDaoWebsiteResponse);
   rpc UpdateDaoLocation(MsgUpdateDaoLocation) returns (MsgUpdateDaoLocationResponse);
   rpc UpdateDaoAvatar(MsgUpdateDaoAvatar) returns (MsgUpdateDaoAvatarResponse);
+  rpc UpdateDaoMetadata(MsgUpdateDaoMetadata) returns (MsgUpdateDaoMetadataResponse);
   rpc DaoTreasurySpend(MsgDaoTreasurySpend) returns (MsgDaoTreasurySpendResponse);
   rpc UpdateDaoConfig(MsgUpdateDaoConfig) returns (MsgUpdateDaoConfigResponse);
   rpc DaoCreateRelease(MsgDaoCreateRelease) returns (MsgDaoCreateReleaseResponse);
@@ -548,6 +549,8 @@ message MsgCreateDao {
   // percentage is the minimum percentage of the weighted sum of `YES` votes must
   // meet for a proposal to succeed.
   string percentage = 9;
+
+  DaoConfig config = 10;
 }
 
 message MsgCreateDaoResponse {
@@ -619,6 +622,22 @@ message MsgUpdateDaoAvatar {
 
 message MsgUpdateDaoAvatarResponse { }
 
+message MsgUpdateDaoMetadata {
+  option (cosmos.msg.v1.signer) = "admin";
+  option (amino.name)           = "gitopia/UpdateDaoMetadata";
+
+  // admin is the account address of the group admin.
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  string id = 2;
+  string name = 3;
+  string description = 4;
+  string avatarUrl = 5;
+  string location = 6;
+  string website = 7;
+}
+
+message MsgUpdateDaoMetadataResponse { }
 
 // MsgDaoTreasurySpend defines a message for sending tokens from the dao address to another account. This message is typically executed via a group proposal.
 message MsgDaoTreasurySpend {

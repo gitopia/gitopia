@@ -10,7 +10,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateDao{}
 
-func NewMsgCreateDao(creator string, name string, description string, avatarUrl string, location string, website string, members []group.MemberRequest, votingPeriod string, percentage string) *MsgCreateDao {
+func NewMsgCreateDao(creator string, name string, description string, avatarUrl string, location string, website string, members []group.MemberRequest, votingPeriod string, percentage string, config *DaoConfig) *MsgCreateDao {
 	return &MsgCreateDao{
 		Creator:      creator,
 		Name:         name,
@@ -21,6 +21,7 @@ func NewMsgCreateDao(creator string, name string, description string, avatarUrl 
 		Members:      members,
 		VotingPeriod: votingPeriod,
 		Percentage:   percentage,
+		Config:       config,
 	}
 }
 

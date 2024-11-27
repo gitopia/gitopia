@@ -67,7 +67,7 @@ func CmdCreateDao() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite, members, argsVotingPeriod, argsPercentage)
+			msg := types.NewMsgCreateDao(clientCtx.GetFromAddress().String(), argsName, argsDescription, argsAvatarUrl, argsLocation, argsWebsite, members, argsVotingPeriod, argsPercentage, &types.DaoConfig{})
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

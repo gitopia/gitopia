@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/base64"
 	"fmt"
+	urlpkg "net/url"
 	"reflect"
 	"regexp"
 
@@ -51,6 +52,23 @@ func ValidateDaoId(daoId string) error {
 	_, err := sdk.AccAddressFromBech32(daoId)
 	if err != nil {
 		return ValidateDaoName(daoId)
+	}
+
+	return nil
+}
+
+func ValidateUrl(url string) error {
+	if len(url) > 2048 {
+		return fmt.Errorf("url exceeds limit: 2048")
+	}
+	if url != "" {
+		url, err := urlpkg.ParseRequestURI(url)
+		if err != nil {
+			return fmt.Errorf("invalid url (%s)", url)
+		}
+		if url.Scheme != "https" {
+			return fmt.Errorf("only https URL scheme is allowed")
+		}
 	}
 
 	return nil
