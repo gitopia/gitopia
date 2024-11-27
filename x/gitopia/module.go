@@ -19,7 +19,6 @@ import (
 	"github.com/gitopia/gitopia/v5/x/gitopia/client/cli"
 	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
 
-	// v3 "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v3"
 	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
@@ -137,7 +136,12 @@ func (AppModule) QuerierRoute() string { return types.QuerierRoute }
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
-	// cfg.RegisterMigration(types.ModuleName, 2, v3.NewMigrator(am.keeper).Migrate)
+
+	m := keeper.NewMigrator(am.keeper)
+	err := cfg.RegisterMigration(types.ModuleName, 4, m.Migrate4to5)
+	if err != nil {
+		panic(fmt.Sprintf("failed to migrate x/gitopia from version 4 to 5: %v", err))
+	}
 }
 
 // RegisterInvariants registers the capability module's invariants.

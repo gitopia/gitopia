@@ -90,6 +90,23 @@ func (k Keeper) RemoveDao(ctx sdk.Context, address string) {
 	store.Delete([]byte(address))
 }
 
+// IterateDaos iterates over all the stored DAOs and performs a callback function.
+// Stops iteration when callback returns true.
+func (k Keeper) IterateDaos(ctx sdk.Context, cb func(dao types.Dao) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefix(types.DaoKey))
+
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var dao types.Dao
+		k.cdc.MustUnmarshal(iterator.Value(), &dao)
+
+		if cb(dao) {
+			break
+		}
+	}
+}
+
 // GetAllDao returns all Dao
 func (k Keeper) GetAllDao(ctx sdk.Context) (list []types.Dao) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DaoKey))
