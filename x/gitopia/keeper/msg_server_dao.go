@@ -377,6 +377,38 @@ func (k msgServer) UpdateDaoMetadata(goCtx context.Context, msg *types.MsgUpdate
 	}
 
 	if msg.Name != "" {
+		// Dao name validation and whois update
+		newDaoName := strings.ToLower(msg.Name)
+		currentDaoName := strings.ToLower(dao.Name)
+
+		if whois, found := k.GetWhois(ctx, newDaoName); found && whois.Address != daoAddress.Address {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("name is already taken: (%v)", msg.Name))
+		}
+		if _, reserved := types.ReservedUsernames[newDaoName]; reserved {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("(%v) is reserved name", msg.Name))
+		}
+
+		if whois, found := k.GetWhois(ctx, currentDaoName); found {
+			if newDaoName != currentDaoName { // skip whois update for case change in dao name
+				// Remove existing key
+				k.RemoveWhois(ctx, whois.Name)
+
+				whois.Name = newDaoName
+				k.SetWhois(
+					ctx,
+					whois,
+				)
+			}
+		} else {
+			whois = types.Whois{
+				Creator:   msg.Admin,
+				Name:      newDaoName,
+				Address:   dao.Address,
+				OwnerType: types.OwnerType_DAO,
+			}
+			k.AppendWhois(ctx, whois)
+		}
+
 		dao.Name = msg.Name
 	}
 	if msg.Description != "" {
@@ -586,6 +618,9 @@ func (k msgServer) UpdateDaoConfig(goCtx context.Context, msg *types.MsgUpdateDa
 	}
 
 	dao.Config = msg.Config
+	dao.UpdatedAt = ctx.BlockTime().Unix()
+
+	k.SetDao(ctx, dao)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
