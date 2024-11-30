@@ -1,0 +1,21 @@
+package v51
+
+import (
+	"github.com/gitopia/gitopia/v5/app/upgrades"
+
+	store "github.com/cosmos/cosmos-sdk/store/types"
+)
+
+// UpgradeName defines the on-chain upgrade name for the Gitopia v5.1.0 upgrade.
+const (
+	UpgradeName = "v5.1.0"
+)
+
+var Upgrade = upgrades.Upgrade{
+	UpgradeName:          UpgradeName,
+	CreateUpgradeHandler: CreateUpgradeHandler,
+	StoreUpgrades: store.StoreUpgrades{
+		Added:   []string{},
+		Deleted: []string{},
+	},
+}

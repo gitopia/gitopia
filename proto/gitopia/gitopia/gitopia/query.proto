@@ -21,7 +21,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/gitopia/gitopia/params.proto";
 import "cosmos/group/v1/types.proto";
 
-option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v5/x/gitopia/types";
 
 // Query defines the gRPC querier service.
 service Query {

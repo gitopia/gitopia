@@ -344,12 +344,14 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 	}
 
 	// check if dao requires a proposal to merge pull request
-	dao, found := k.GetDao(ctx, baseRepository.Owner.Id)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", baseRepository.Owner.Id))
-	}
-	if dao.Config.RequirePullRequestProposal {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge pull request without proposal"))
+	if baseRepository.Owner.Type == types.OwnerType_DAO {
+		dao, found := k.GetDao(ctx, baseRepository.Owner.Id)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", baseRepository.Owner.Id))
+		}
+		if dao.Config.RequirePullRequestProposal {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge pull request without proposal"))
+		}
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, baseRepository, types.RepositoryCollaborator_ADMIN) {
@@ -407,7 +409,7 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 	id := k.AppendTask(ctx, types.Task{
 		Type:     types.TaskType(types.TypeSetPullRequestState),
 		State:    types.TaskState(types.StatePending),
-		Creator:  msg.Admin,
+		Creator:  dao.Address,
 		Provider: msg.Provider,
 	})
 
@@ -430,11 +432,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	var found bool
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, found = k.GetUser(ctx, msg.Creator)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("creator (%v) doesn't exist", msg.Creator))
-	}
 
 	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
@@ -460,6 +457,9 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			havePermission = true
 		}
 	} else if baseRepository.Owner.Type == types.OwnerType_DAO {
+		if msg.Creator == baseRepository.Owner.Id {
+			havePermission = true
+		}
 		if (msg.State == types.PullRequest_OPEN.String() || msg.State == types.PullRequest_CLOSED.String()) && msg.Creator == pullRequest.Creator {
 			havePermission = true
 		}

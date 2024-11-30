@@ -3,9 +3,12 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/x/group"
 	"github.com/gitopia/gitopia/v5/x/gitopia/types"
 )
 
@@ -30,7 +33,34 @@ func (k msgServer) AuthorizeProvider(goCtx context.Context, msg *types.MsgAuthor
 	}
 
 	if msg.Creator != msg.Granter { // DAO address
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not authorized to grant permission", msg.Creator))
+		dao, found := k.GetDao(ctx, msg.Granter)
+		if !found {
+
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("dao (%v) doesn't exist", msg.Granter))
+		}
+		groupMembersReq := &group.QueryGroupMembersRequest{
+			GroupId: dao.GroupId,
+			Pagination: &query.PageRequest{
+				Limit: math.MaxUint64,
+			},
+		}
+
+		res, err := k.groupKeeper.GroupMembers(ctx, groupMembersReq)
+		if err != nil {
+			return nil, err
+		}
+
+		isMember := false
+		for _, member := range res.Members {
+			if member.Member.Address == msg.Creator {
+				isMember = true
+				break
+			}
+		}
+
+		if !isMember {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) is not a member of (%v)", msg.Creator, msg.Granter))
+		}
 	}
 
 	now := ctx.BlockTime()

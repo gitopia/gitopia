@@ -4,7 +4,7 @@ package gitopia.gitopia.gitopia;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/gitopia/gitopia/v4/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v5/x/gitopia/types";
 
 enum BountyState {
   option (gogoproto.goproto_enum_prefix) = false;

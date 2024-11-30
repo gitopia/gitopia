@@ -7,7 +7,7 @@ import "gitopia/gitopia/rewards/rewards.proto";
 
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/gitopia/gitopia/v4/x/rewards/types";
+option go_package = "github.com/gitopia/gitopia/v5/x/rewards/types";
 
 // GenesisState defines the rewards module's genesis state.
 message GenesisState {
