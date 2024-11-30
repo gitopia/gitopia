@@ -2,6 +2,32 @@
 
 All notable changes will be documented here.
 
+## [5.1.0] - 2024-11-30
+
+- fix errors in pull request merge messages
+- set whois update in UpdateDaoMetadata proposal
+- fix UpdateDaoConfig proposal
+- update protobuf imports
+- add the new v5.1.0 upgrade handler
+
+## [5.0.1] - 2024-11-27
+
+- update mocks and fix build error
+
+## [5.0.0] - 2024-11-27
+
+- Use cosmos-sdk fork for disabling pruning of proposals and votes in group proposals
+- Implement Gitopia DAOs using the cosmos-sdk module group.
+- Port existing DAO transactions
+- Create new DAO proposal types
+  - Merging PR in DAO repositories
+  - Creating new releases in DAO repositories
+  - Managing collaborators in DAO repositories
+  - Updating DAO governance configuration
+  - Updating DAO metadata
+  - DAO treasury spend
+- Migration for existing DAOs and members
+
 ## [4.0.0] - 2024-08-20
 
 - Upgrade cosmos-sdk version to v0.47.13
