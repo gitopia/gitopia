@@ -1,0 +1,35 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// EventProviderRegistered is emitted when a provider is registered
+message EventProviderRegistered {
+  string address = 1;
+  string peer_id = 2;
+}
+
+// EventProviderStatusUpdated is emitted when provider status is updated
+message EventProviderStatusUpdated {
+  string address = 1;
+  bool online = 2;
+}
+
+// EventPackfileUpdated is emitted when a packfile is updated
+message EventPackfileUpdated {
+  uint64 repository_id = 1;
+  string cid = 2;
+}
+
+// EventChallengeCreated is emitted when a new challenge is created
+message EventChallengeCreated {
+  uint64 challenge_id = 1;
+  string provider_address = 2;
+}
+
+// EventChallengeCompleted is emitted when a challenge is completed
+message EventChallengeCompleted {
+  uint64 challenge_id = 1;
+  string provider_address = 2;
+  bool success = 3;
+}

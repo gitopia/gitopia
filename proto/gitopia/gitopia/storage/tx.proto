@@ -1,0 +1,51 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// Msg defines the Msg service.
+service Msg {
+  // RegisterProvider registers a new storage provider
+  rpc RegisterProvider(MsgRegisterProvider) returns (MsgRegisterProviderResponse);
+  
+  // UpdateRepositoryPackfile updates repository packfile CID and root hash
+  rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
+  
+  // SubmitChallengeResponse submits proof for storage challenge
+  rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
+}
+
+// MsgRegisterProvider defines a message for registering as a storage provider
+message MsgRegisterProvider {
+  string creator = 1;
+  string address = 2;
+  string peer_id = 3;
+  repeated string multiaddresses = 4;
+  cosmos.base.v1beta1.Coin stake = 5 [(gogoproto.nullable) = false];
+}
+
+message MsgRegisterProviderResponse {}
+
+// MsgUpdateRepositoryPackfile defines a message for updating repository packfile
+message MsgUpdateRepositoryPackfile {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string name = 3;
+  string cid = 4;
+  string root_hash = 5;
+}
+
+message MsgUpdateRepositoryPackfileResponse {}
+
+// MsgSubmitChallengeResponse defines a message for submitting challenge response
+message MsgSubmitChallengeResponse {
+  string creator = 1;
+  uint64 challenge_id = 2;
+  bytes data = 3;
+  repeated bytes proof = 4;
+}
+
+message MsgSubmitChallengeResponseResponse {}

@@ -1,0 +1,90 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gitopia/gitopia/storage/params.proto";
+import "gitopia/gitopia/storage/types.proto";
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Params queries the parameters of the module
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/params";
+  }
+  
+  // Provider queries a storage provider by address
+  rpc Provider(QueryProviderRequest) returns (QueryProviderResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider/{address}";
+  }
+  
+  // Providers queries all storage providers
+  rpc Providers(QueryProvidersRequest) returns (QueryProvidersResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/providers";
+  }
+  
+  // Packfile queries a packfile by id
+  rpc Packfile(QueryPackfileRequest) returns (QueryPackfileResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile/{cid}";
+  }
+  
+  // RepositoryPackfile queries a packfile for a repository
+  rpc RepositoryPackfile(QueryRepositoryPackfileRequest) returns (QueryRepositoryPackfileResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/packfile";
+  }
+  
+  // Challenge queries a challenge by id
+  rpc Challenge(QueryChallengeRequest) returns (QueryChallengeResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/challenge/{id}";
+  }
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderRequest {
+  string address = 1;
+}
+
+message QueryProviderResponse {
+  Provider provider = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProvidersRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProvidersResponse {
+  repeated Provider providers = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryPackfileRequest {
+  string cid = 1;
+}
+
+message QueryPackfileResponse {
+  Packfile packfile = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryPackfileRequest {
+  uint64 repository_id = 1;
+}
+
+message QueryRepositoryPackfileResponse {
+  Packfile packfile = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryChallengeRequest {
+  uint64 id = 1;
+}
+
+message QueryChallengeResponse {
+  Challenge challenge = 1 [(gogoproto.nullable) = false];
+}

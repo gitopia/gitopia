@@ -1,0 +1,20 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+  uint64 min_stake_amount = 1 [(gogoproto.moretags) = "yaml:\"min_stake_amount\""];
+  uint64 challenges_per_day = 2 [(gogoproto.moretags) = "yaml:\"challenges_per_day\""];
+  uint64 challenge_timeout_blocks = 3 [(gogoproto.moretags) = "yaml:\"challenge_timeout_blocks\""];
+  cosmos.base.v1beta1.Coin challenge_reward = 4 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin challenge_slash_amount = 5 [(gogoproto.nullable) = false];
+  uint64 consecutive_fails_threshold = 6 [(gogoproto.moretags) = "yaml:\"consecutive_fails_threshold\""];
+  uint64 consecutive_fails_slash_percentage = 7 [(gogoproto.moretags) = "yaml:\"consecutive_fails_slash_percentage\""];
+}

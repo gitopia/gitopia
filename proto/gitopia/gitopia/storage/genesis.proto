@@ -1,0 +1,12 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "gitopia/gitopia/storage/params.proto";
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// GenesisState defines the storage module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

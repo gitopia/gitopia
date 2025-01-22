@@ -1,0 +1,64 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+
+// Provider represents a storage provider in the network
+message Provider {
+  string creator = 1;
+  uint64 id = 2;
+  string address = 3;
+  string peer_id = 4;
+  repeated string multiaddresses = 5;
+  cosmos.base.v1beta1.Coin stake = 6 [(gogoproto.nullable) = false];
+  bool online = 7;
+  uint64 total_challenges = 8;
+  uint64 successful_challenges = 9;
+  uint64 consecutive_failures = 10;
+  google.protobuf.Timestamp join_time = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+];
+}
+
+// Packfile represents a Git packfile stored in IPFS
+message Packfile {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string name = 4;
+  uint64 size = 5;
+  string cid = 6;
+  string root_hash = 7;
+}
+
+// Challenge represents a storage proof challenge
+message Challenge {
+  uint64 id = 1;
+  string provider_address = 2;
+  uint64 packfile_id = 3;
+  string root_hash = 4; 
+  uint64 chunk_index = 5;
+  google.protobuf.Timestamp created_at = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp deadline = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  ChallengeStatus status = 8;
+}
+
+// ChallengeStatus represents the status of a challenge
+enum ChallengeStatus {
+  CHALLENGE_STATUS_UNSPECIFIED = 0;
+  CHALLENGE_STATUS_PENDING = 1;
+  CHALLENGE_STATUS_COMPLETED = 2;
+  CHALLENGE_STATUS_FAILED = 3;
+  CHALLENGE_STATUS_TIMEOUT = 4;
+}
