@@ -155,7 +155,12 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		}
 		if challenge != nil {
 			am.keeper.SetChallenge(ctx, *challenge)
-			ctx.Logger().Info(fmt.Sprintf("Generated new challenge ID: %d for provider: %s", challenge.ID, challenge.ProviderAddress))
+			ctx.Logger().Info(fmt.Sprintf("Generated new challenge ID: %d for provider: %s", challenge.Id, challenge.ProviderAddress))
+
+			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
+				ChallengeId:     challenge.Id,
+				ProviderAddress: challenge.ProviderAddress,
+			})
 		}
 	}
 }
