@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"encoding/binary"
+	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -98,4 +100,49 @@ func GetChallengeIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, id)
 	return bz
+}
+
+// GenerateChallenge creates a new random challenge
+func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
+	// Get all providers
+	providers := k.GetAllProvider(ctx)
+	if len(providers) == 0 {
+		return nil, fmt.Errorf("no providers available")
+	}
+
+	packfilesCount := k.GetPackfileCount(ctx)
+	if packfilesCount == 0 {
+		return nil, fmt.Errorf("no packfiles available")
+	}
+
+	// Initialize random number generator
+	prng := k.GetPseudoRand(ctx)
+
+	providerIndex := uint64(prng.Int63n(int64(len(providers))))
+	packfileID := uint64(prng.Int63n(int64(packfilesCount)))
+
+	packfile, found := k.GetPackfile(ctx, packfileID)
+	if !found {
+		return nil, fmt.Errorf("packfile not found: %d", packfileID)
+	}
+
+	const chunkSize uint64 = 256 * 1024 // 256 KiB chunks
+	maxChunks := packfile.Size / chunkSize
+	if maxChunks == 0 {
+		return nil, fmt.Errorf("packfile too small: %d bytes", packfile.Size)
+	}
+
+	chunkIndex := uint64(prng.Int63n(int64(maxChunks))) * chunkSize
+
+	challenge := &types.Challenge{
+		ProviderAddress: providers[providerIndex].Address,
+		PackfileId:      packfileID,
+		RootHash:        packfile.RootHash,
+		ChunkIndex:      chunkIndex,
+		CreatedAt:       ctx.BlockTime(),
+		Deadline:        ctx.BlockTime().Add(time.Second * 5), // 5 seconds deadline
+		Status:          types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
+	}
+
+	return challenge, nil
 }

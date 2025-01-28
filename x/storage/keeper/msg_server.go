@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	merkletree "github.com/wealdtech/go-merkletree/v2"
+
 	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
@@ -85,7 +87,28 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge already completed")
 	}
 
-	// TODO: Verify proof
+	// Verify the Merkle proof
+	verified, err := merkletree.VerifyProof(
+		msg.Data,                             // The data being proved
+		false,                                // Not using salting
+		&merkletree.Proof{Hashes: msg.Proof}, // The Merkle proof
+		[][]byte{[]byte(challenge.RootHash)}, // The Merkle root as a single-element pollard
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to verify proof: %v", err)
+	}
+	if !verified {
+		// Update provider stats for failed challenge
+		provider, _ := k.GetProvider(ctx, msg.Creator)
+		provider.TotalChallenges++
+		provider.ConsecutiveFailures++
+		k.SetProvider(ctx, provider)
+
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+		k.SetChallenge(ctx, challenge)
+
+		return nil, fmt.Errorf("invalid proof")
+	}
 
 	// Update challenge status
 	challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED

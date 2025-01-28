@@ -1,10 +1,11 @@
 package storage
 
 import (
-  "context"
+	"context"
 	"encoding/json"
 	"fmt"
-    // this line is used by starport scaffolding # 1
+
+	// this line is used by starport scaffolding # 1
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
@@ -16,16 +17,14 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/gitopia/gitopia/v5/x/storage/client/cli"
 	"github.com/gitopia/gitopia/v5/x/storage/keeper"
 	"github.com/gitopia/gitopia/v5/x/storage/types"
-	"github.com/gitopia/gitopia/v5/x/storage/client/cli"
-	
 )
 
 var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
-	
 )
 
 // ----------------------------------------------------------------------------
@@ -72,17 +71,17 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncod
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-    types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the root Tx command for the module. The subcommands of this root command are used by end-users to generate new transactions containing messages defined in the module
 func (a AppModuleBasic) GetTxCmd() *cobra.Command {
-    return cli.GetTxCmd()
+	return cli.GetTxCmd()
 }
 
 // GetQueryCmd returns the root query command for the module. The subcommands of this root command are used by end-users to generate new queries to the subset of the state defined by the module
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-    return cli.GetQueryCmd(types.StoreKey)
+	return cli.GetQueryCmd(types.StoreKey)
 }
 
 // ----------------------------------------------------------------------------
@@ -114,8 +113,8 @@ func NewAppModule(
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-    types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-    types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
 // RegisterInvariants registers the invariants of the module. If an invariant deviates from its predicted value, the InvariantRegistry triggers appropriate logic (most often the chain will be halted)
@@ -142,9 +141,31 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // BeginBlock contains the logic that is automatically triggered at the beginning of each block
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
+func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	params := am.keeper.GetParams(ctx)
+
+	// Calculate which block numbers should generate challenges
+	currentBlockHeight := uint64(ctx.BlockHeight())
+	challengeInterval := params.ChallengeIntervalBlocks
+
+	if currentBlockHeight%challengeInterval == 0 { // Check if it's time to generate challenges
+		challenge, err := am.keeper.GenerateChallenge(ctx)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("Error generating challenge: %v", err))
+		}
+		if challenge != nil {
+			am.keeper.SetChallenge(ctx, *challenge)
+			ctx.Logger().Info(fmt.Sprintf("Generated new challenge ID: %d for provider: %s", challenge.ID, challenge.ProviderAddress))
+		}
+	}
+}
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
-func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	am.keeper.SetPreviousBlockInfo(ctx, &types.BlockInfo{
+		Height:    uint32(ctx.BlockHeight()),
+		Timestamp: ctx.BlockTime(),
+	})
+
 	return []abci.ValidatorUpdate{}
 }

@@ -12,20 +12,20 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 
 var (
 	KeyMinStakeAmount                  = []byte("MinStakeAmount")
-	KeyChallengesPerDay                = []byte("ChallengesPerDay")
+	KeyChallengeIntervalBlocks         = []byte("ChallengeIntervalBlocks")
 	KeyChallengeTimeoutBlocks          = []byte("ChallengeTimeoutBlocks")
 	KeyChallengeReward                 = []byte("ChallengeReward")
 	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
 	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
 	// Default values for parameters
-	DefaultMinStakeAmount                  uint64   = 100 // Example value, adjust as needed
-	DefaultChallengesPerDay                uint64   = 10  // Example value
-	DefaultChallengeTimeoutBlocks          uint64   = 100 // Example value
+	DefaultMinStakeAmount                  uint64   = 100
+	DefaultChallengeIntervalBlocks         uint64   = 100
+	DefaultChallengeTimeoutBlocks          uint64   = 5
 	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(1000))
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(500))
-	DefaultConsecutiveFailsThreshold       uint64   = 3  // Example value
-	DefaultConsecutiveFailsSlashPercentage uint64   = 10 // Example value
+	DefaultConsecutiveFailsThreshold       uint64   = 3
+	DefaultConsecutiveFailsSlashPercentage uint64   = 10
 )
 
 // ParamKeyTable the param key table for launch module
@@ -36,7 +36,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 // NewParams creates a new Params instance
 func NewParams(
 	minStakeAmount uint64,
-	challengesPerDay uint64,
+	challengeIntervalBlocks uint64,
 	challengeTimeoutBlocks uint64,
 	challengeReward sdk.Coin,
 	challengeSlashAmount sdk.Coin,
@@ -45,7 +45,7 @@ func NewParams(
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
-		ChallengesPerDay:                challengesPerDay,
+		ChallengeIntervalBlocks:         challengeIntervalBlocks,
 		ChallengeTimeoutBlocks:          challengeTimeoutBlocks,
 		ChallengeReward:                 challengeReward,
 		ChallengeSlashAmount:            challengeSlashAmount,
@@ -58,7 +58,7 @@ func NewParams(
 func DefaultParams() Params {
 	return NewParams(
 		DefaultMinStakeAmount,
-		DefaultChallengesPerDay,
+		DefaultChallengeIntervalBlocks,
 		DefaultChallengeTimeoutBlocks,
 		DefaultChallengeReward,
 		DefaultChallengeSlashAmount,
@@ -71,7 +71,7 @@ func DefaultParams() Params {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMinStakeAmount, &p.MinStakeAmount, validateMinStakeAmount),
-		paramtypes.NewParamSetPair(KeyChallengesPerDay, &p.ChallengesPerDay, validateChallengesPerDay),
+		paramtypes.NewParamSetPair(KeyChallengeIntervalBlocks, &p.ChallengeIntervalBlocks, validateChallengeIntervalBlocks),
 		paramtypes.NewParamSetPair(KeyChallengeTimeoutBlocks, &p.ChallengeTimeoutBlocks, validateChallengeTimeoutBlocks),
 		paramtypes.NewParamSetPair(KeyChallengeReward, &p.ChallengeReward, validateChallengeReward),
 		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
@@ -85,7 +85,7 @@ func (p Params) Validate() error {
 	if err := validateMinStakeAmount(p.MinStakeAmount); err != nil {
 		return err
 	}
-	if err := validateChallengesPerDay(p.ChallengesPerDay); err != nil {
+	if err := validateChallengeIntervalBlocks(p.ChallengeIntervalBlocks); err != nil {
 		return err
 	}
 
@@ -110,8 +110,8 @@ func validateMinStakeAmount(v interface{}) error {
 	return nil
 }
 
-// validateChallengesPerDay validates the ChallengesPerDay param
-func validateChallengesPerDay(v interface{}) error {
+// validateChallengeIntervalBlocks validates the ChallengeIntervalBlocks param
+func validateChallengeIntervalBlocks(v interface{}) error {
 	amount, ok := v.(uint64)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)

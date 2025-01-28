@@ -11,7 +11,7 @@ message Params {
   option (gogoproto.goproto_stringer) = false;
   
   uint64 min_stake_amount = 1 [(gogoproto.moretags) = "yaml:\"min_stake_amount\""];
-  uint64 challenges_per_day = 2 [(gogoproto.moretags) = "yaml:\"challenges_per_day\""];
+  uint64 challenge_interval_blocks = 2 [(gogoproto.moretags) = "yaml:\"challenge_interval_blocks\""];
   uint64 challenge_timeout_blocks = 3 [(gogoproto.moretags) = "yaml:\"challenge_timeout_blocks\""];
   cosmos.base.v1beta1.Coin challenge_reward = 4 [(gogoproto.nullable) = false];
   cosmos.base.v1beta1.Coin challenge_slash_amount = 5 [(gogoproto.nullable) = false];

@@ -23,6 +23,9 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
+	// PreviousBlockInfoKey defines the key for PreviousBlockInfo
+	PreviousBlockInfoKey = "PreviousBlockInfo"
+
 	ProviderKey       = "Provider-value-"
 	ProviderCountKey  = "Provider-count-"
 	PackfileKey       = "Packfile-value-"

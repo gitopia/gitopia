@@ -62,3 +62,10 @@ enum ChallengeStatus {
   CHALLENGE_STATUS_FAILED = 3;
   CHALLENGE_STATUS_TIMEOUT = 4;
 }
+
+// BlockInfo stores information about a block
+message BlockInfo {
+  uint32 height = 1;
+  google.protobuf.Timestamp timestamp = 2
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+}
