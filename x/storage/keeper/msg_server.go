@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	merkletree "github.com/wealdtech/go-merkletree/v2"
 
+	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
@@ -22,6 +23,12 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
+// ProviderModuleAddress creates a unique module account address for a provider
+func ProviderModuleAddress(providerId uint64) sdk.AccAddress {
+	key := append([]byte("provider"), sdk.Uint64ToBigEndian(providerId)...)
+	return address.Module(types.ModuleName, key)
+}
+
 func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegisterProvider) (*types.MsgRegisterProviderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -31,11 +38,27 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		return nil, fmt.Errorf("provider already registered")
 	}
 
+	// Create module account for the provider
+	providerAcc := ProviderModuleAddress(k.GetProviderCount(ctx))
+
+	// Transfer stake from provider to module account
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, fmt.Errorf("invalid creator address: %v", err)
+	}
+
+	if err := k.bankKeeper.SendCoins(
+		ctx,
+		creator,
+		providerAcc,
+		sdk.NewCoins(msg.Stake),
+	); err != nil {
+		return nil, fmt.Errorf("failed to transfer stake: %v", err)
+	}
+
 	provider := types.Provider{
 		Creator:              msg.Creator,
 		Address:              msg.Address,
-		PeerId:               msg.PeerId,
-		Multiaddresses:       msg.Multiaddresses,
 		Stake:                msg.Stake,
 		TotalChallenges:      0,
 		SuccessfulChallenges: 0,
@@ -103,6 +126,8 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
 		k.SetProvider(ctx, provider)
+
+		// Slash provider
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, challenge)

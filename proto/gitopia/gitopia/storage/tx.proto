@@ -22,9 +22,7 @@ service Msg {
 message MsgRegisterProvider {
   string creator = 1;
   string address = 2;
-  string peer_id = 3;
-  repeated string multiaddresses = 4;
-  cosmos.base.v1beta1.Coin stake = 5 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin stake = 3 [(gogoproto.nullable) = false];
 }
 
 message MsgRegisterProviderResponse {}

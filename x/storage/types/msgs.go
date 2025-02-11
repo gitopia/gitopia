@@ -15,13 +15,11 @@ const (
 var _ sdk.Msg = &MsgRegisterProvider{}
 
 // NewMsgRegisterProvider creates a new MsgRegisterProvider instance
-func NewMsgRegisterProvider(creator string, address string, peerId string, multiaddresses []string, stake sdk.Coin) *MsgRegisterProvider {
+func NewMsgRegisterProvider(creator string, address string, stake sdk.Coin) *MsgRegisterProvider {
 	return &MsgRegisterProvider{
-		Creator:        creator,
-		Address:        address,
-		PeerId:         peerId,
-		Multiaddresses: multiaddresses,
-		Stake:          stake,
+		Creator: creator,
+		Address: address,
+		Stake:   stake,
 	}
 }
 
@@ -54,14 +52,6 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 
 	if msg.Address == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "address cannot be empty")
-	}
-
-	if msg.PeerId == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "peer ID cannot be empty")
-	}
-
-	if len(msg.Multiaddresses) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "multiaddresses cannot be empty")
 	}
 
 	if msg.Stake.IsZero() {

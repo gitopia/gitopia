@@ -20,7 +20,7 @@ var (
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 100
-	DefaultChallengeIntervalBlocks         uint64   = 100
+	DefaultChallengeIntervalBlocks         uint64   = 10
 	DefaultChallengeTimeoutBlocks          uint64   = 5
 	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(1000))
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(500))

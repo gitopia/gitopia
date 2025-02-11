@@ -26,10 +26,11 @@ const (
 	// PreviousBlockInfoKey defines the key for PreviousBlockInfo
 	PreviousBlockInfoKey = "PreviousBlockInfo"
 
-	ProviderKey       = "Provider-value-"
-	ProviderCountKey  = "Provider-count-"
-	PackfileKey       = "Packfile-value-"
-	PackfileCountKey  = "Packfile-count-"
-	ChallengeKey      = "Challenge-value-"
-	ChallengeCountKey = "Challenge-count-"
+	ProviderKey                  = "Provider-value-"
+	ProviderCountKey             = "Provider-count-"
+	PackfileKey                  = "Packfile-value-"
+	PackfileCountKey             = "Packfile-count-"
+	PackfileRepositoryMappingKey = "PackfileRepositoryMapping-value-"
+	ChallengeKey                 = "Challenge-value-"
+	ChallengeCountKey            = "Challenge-count-"
 )

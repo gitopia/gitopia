@@ -25,7 +25,14 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the storage module's genesis state.
 type GenesisState struct {
-	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	ProviderList                  []Provider                  `protobuf:"bytes,1,rep,name=providerList,proto3" json:"providerList"`
+	ProviderCount                 uint64                      `protobuf:"varint,2,opt,name=providerCount,proto3" json:"providerCount,omitempty"`
+	PackfileRepositoryMappingList []PackfileRepositoryMapping `protobuf:"bytes,3,rep,name=packfileRepositoryMappingList,proto3" json:"packfileRepositoryMappingList"`
+	PackfileList                  []Packfile                  `protobuf:"bytes,4,rep,name=packfileList,proto3" json:"packfileList"`
+	PackfileCount                 uint64                      `protobuf:"varint,5,opt,name=packfileCount,proto3" json:"packfileCount,omitempty"`
+	ChallengeList                 []Challenge                 `protobuf:"bytes,6,rep,name=challengeList,proto3" json:"challengeList"`
+	ChallengeCount                uint64                      `protobuf:"varint,7,opt,name=challengeCount,proto3" json:"challengeCount,omitempty"`
+	Params                        Params                      `protobuf:"bytes,8,opt,name=params,proto3" json:"params"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -61,6 +68,55 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
+func (m *GenesisState) GetProviderList() []Provider {
+	if m != nil {
+		return m.ProviderList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetProviderCount() uint64 {
+	if m != nil {
+		return m.ProviderCount
+	}
+	return 0
+}
+
+func (m *GenesisState) GetPackfileRepositoryMappingList() []PackfileRepositoryMapping {
+	if m != nil {
+		return m.PackfileRepositoryMappingList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetPackfileList() []Packfile {
+	if m != nil {
+		return m.PackfileList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetPackfileCount() uint64 {
+	if m != nil {
+		return m.PackfileCount
+	}
+	return 0
+}
+
+func (m *GenesisState) GetChallengeList() []Challenge {
+	if m != nil {
+		return m.ChallengeList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetChallengeCount() uint64 {
+	if m != nil {
+		return m.ChallengeCount
+	}
+	return 0
+}
+
 func (m *GenesisState) GetParams() Params {
 	if m != nil {
 		return m.Params
@@ -77,19 +133,30 @@ func init() {
 }
 
 var fileDescriptor_04b8b12244f834be = []byte{
-	// 191 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x4d, 0xcf, 0x2c, 0xc9,
-	0x2f, 0xc8, 0x4c, 0xd4, 0x87, 0xd1, 0xc5, 0x25, 0xf9, 0x45, 0x89, 0xe9, 0xa9, 0xfa, 0xe9, 0xa9,
-	0x79, 0xa9, 0xc5, 0x99, 0xc5, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xe2, 0x50, 0x69, 0x3d,
-	0x18, 0x0d, 0x55, 0x26, 0x25, 0x92, 0x9e, 0x9f, 0x9e, 0x0f, 0x56, 0xa3, 0x0f, 0x62, 0x41, 0x94,
-	0x4b, 0xa9, 0xe0, 0x32, 0xb5, 0x20, 0xb1, 0x28, 0x31, 0x17, 0x6a, 0xa8, 0x92, 0x2f, 0x17, 0x8f,
-	0x3b, 0xc4, 0x96, 0xe0, 0x92, 0xc4, 0x92, 0x54, 0x21, 0x5b, 0x2e, 0x36, 0x88, 0xbc, 0x04, 0xa3,
-	0x02, 0xa3, 0x06, 0xb7, 0x91, 0xbc, 0x1e, 0x0e, 0x5b, 0xf5, 0x02, 0xc0, 0xca, 0x9c, 0x58, 0x4e,
-	0xdc, 0x93, 0x67, 0x08, 0x82, 0x6a, 0x72, 0x72, 0x3f, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39,
-	0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58, 0x8e, 0xe1, 0xc6, 0x63,
-	0x39, 0x86, 0x28, 0xdd, 0xf4, 0xcc, 0x92, 0x8c, 0xd2, 0x24, 0xbd, 0xe4, 0xfc, 0x5c, 0x7d, 0x74,
-	0x97, 0x95, 0x99, 0xea, 0x57, 0xc0, 0x9d, 0x57, 0x52, 0x59, 0x90, 0x5a, 0x9c, 0xc4, 0x06, 0x76,
-	0x9e, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0xe4, 0x01, 0x25, 0xd2, 0x1c, 0x01, 0x00, 0x00,
+	// 364 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0xcf, 0x4e, 0xf2, 0x40,
+	0x14, 0xc5, 0xdb, 0x8f, 0x7e, 0x68, 0x06, 0x70, 0x31, 0x31, 0x91, 0x90, 0x58, 0x10, 0xd1, 0xb0,
+	0xb1, 0x4d, 0x30, 0x2e, 0xdd, 0xc0, 0x82, 0x85, 0x7f, 0x62, 0x70, 0xe7, 0x6e, 0xc0, 0x71, 0x98,
+	0x08, 0x9d, 0x49, 0x3b, 0x10, 0xd9, 0xf8, 0x0c, 0xbe, 0x87, 0x2f, 0xc2, 0x92, 0xa5, 0x2b, 0x63,
+	0xe8, 0x8b, 0x18, 0xa6, 0xb7, 0x84, 0x92, 0x0c, 0xae, 0xa6, 0x73, 0xfb, 0xbb, 0xf7, 0x9c, 0x93,
+	0xb9, 0xe8, 0x8c, 0x71, 0x25, 0x24, 0x27, 0x7e, 0x7a, 0x46, 0x4a, 0x84, 0x84, 0x51, 0x9f, 0xd1,
+	0x80, 0x46, 0x3c, 0xf2, 0x64, 0x28, 0x94, 0xc0, 0x47, 0xf0, 0xdb, 0x4b, 0x4f, 0xc0, 0x2a, 0x87,
+	0x4c, 0x30, 0xa1, 0x19, 0x7f, 0xf5, 0x95, 0xe0, 0x95, 0x53, 0xd3, 0x54, 0x35, 0x93, 0x14, 0x66,
+	0x56, 0x1a, 0x26, 0x48, 0x92, 0x90, 0x8c, 0x81, 0xaa, 0x7f, 0x3a, 0xa8, 0xd8, 0x4d, 0xbc, 0x3c,
+	0x2a, 0xa2, 0x28, 0xbe, 0x41, 0x45, 0x19, 0x8a, 0x29, 0x7f, 0xa6, 0xe1, 0x2d, 0x8f, 0x54, 0xd9,
+	0xae, 0xe5, 0x9a, 0x85, 0xd6, 0x89, 0x67, 0x70, 0xe8, 0x3d, 0x00, 0xdc, 0x76, 0xe6, 0xdf, 0x55,
+	0xab, 0x97, 0x69, 0xc6, 0x0d, 0x54, 0x4a, 0xef, 0x1d, 0x31, 0x09, 0x54, 0xf9, 0x5f, 0xcd, 0x6e,
+	0x3a, 0xbd, 0x6c, 0x11, 0xbf, 0xa3, 0x63, 0x49, 0x06, 0xaf, 0x2f, 0x7c, 0x44, 0x7b, 0x54, 0x8a,
+	0x88, 0x2b, 0x11, 0xce, 0xee, 0x88, 0x94, 0x3c, 0x60, 0xda, 0x43, 0x4e, 0x7b, 0x68, 0x99, 0x3d,
+	0x98, 0xba, 0xc1, 0xd4, 0xee, 0xf1, 0x3a, 0x32, 0x00, 0x5a, 0xce, 0xf9, 0x2b, 0x32, 0xc0, 0xeb,
+	0xc8, 0x1b, 0xcd, 0x3a, 0x32, 0xdc, 0x93, 0xc8, 0xff, 0x21, 0xf2, 0x66, 0x11, 0xdf, 0xa3, 0xd2,
+	0x60, 0x48, 0x46, 0x23, 0x1a, 0xb0, 0x44, 0x33, 0xaf, 0x35, 0xeb, 0x46, 0xcd, 0x4e, 0x4a, 0x83,
+	0x68, 0xb6, 0x1d, 0x9f, 0xa3, 0x83, 0x75, 0x21, 0x91, 0xdd, 0xd3, 0xb2, 0x5b, 0x55, 0x7c, 0x8d,
+	0xf2, 0xc9, 0xf3, 0x97, 0xf7, 0x6b, 0x76, 0xb3, 0xd0, 0xaa, 0xee, 0x08, 0xb9, 0xc2, 0x40, 0x0d,
+	0x9a, 0xda, 0xdd, 0xf9, 0xd2, 0xb5, 0x17, 0x4b, 0xd7, 0xfe, 0x59, 0xba, 0xf6, 0x47, 0xec, 0x5a,
+	0x8b, 0xd8, 0xb5, 0xbe, 0x62, 0xd7, 0x7a, 0xba, 0x60, 0x5c, 0x0d, 0x27, 0x7d, 0x6f, 0x20, 0xc6,
+	0xfe, 0xf6, 0xe2, 0x4d, 0xaf, 0xfc, 0xb7, 0xec, 0x8a, 0xf6, 0xf3, 0x7a, 0xfb, 0x2e, 0x7f, 0x03,
+	0x00, 0x00, 0xff, 0xff, 0xe6, 0xf9, 0xef, 0xd3, 0x20, 0x03, 0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -121,7 +188,78 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintGenesis(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0xa
+	dAtA[i] = 0x42
+	if m.ChallengeCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.ChallengeCount))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.ChallengeList) > 0 {
+		for iNdEx := len(m.ChallengeList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChallengeList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if m.PackfileCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.PackfileCount))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.PackfileList) > 0 {
+		for iNdEx := len(m.PackfileList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PackfileList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.PackfileRepositoryMappingList) > 0 {
+		for iNdEx := len(m.PackfileRepositoryMappingList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PackfileRepositoryMappingList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.ProviderCount != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.ProviderCount))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.ProviderList) > 0 {
+		for iNdEx := len(m.ProviderList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ProviderList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -142,6 +280,39 @@ func (m *GenesisState) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if len(m.ProviderList) > 0 {
+		for _, e := range m.ProviderList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.ProviderCount != 0 {
+		n += 1 + sovGenesis(uint64(m.ProviderCount))
+	}
+	if len(m.PackfileRepositoryMappingList) > 0 {
+		for _, e := range m.PackfileRepositoryMappingList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if len(m.PackfileList) > 0 {
+		for _, e := range m.PackfileList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.PackfileCount != 0 {
+		n += 1 + sovGenesis(uint64(m.PackfileCount))
+	}
+	if len(m.ChallengeList) > 0 {
+		for _, e := range m.ChallengeList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.ChallengeCount != 0 {
+		n += 1 + sovGenesis(uint64(m.ChallengeCount))
+	}
 	l = m.Params.Size()
 	n += 1 + l + sovGenesis(uint64(l))
 	return n
@@ -183,6 +354,199 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProviderList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProviderList = append(m.ProviderList, Provider{})
+			if err := m.ProviderList[len(m.ProviderList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProviderCount", wireType)
+			}
+			m.ProviderCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProviderCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PackfileRepositoryMappingList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PackfileRepositoryMappingList = append(m.PackfileRepositoryMappingList, PackfileRepositoryMapping{})
+			if err := m.PackfileRepositoryMappingList[len(m.PackfileRepositoryMappingList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PackfileList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PackfileList = append(m.PackfileList, Packfile{})
+			if err := m.PackfileList[len(m.PackfileList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PackfileCount", wireType)
+			}
+			m.PackfileCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PackfileCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChallengeList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChallengeList = append(m.ChallengeList, Challenge{})
+			if err := m.ChallengeList[len(m.ChallengeList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChallengeCount", wireType)
+			}
+			m.ChallengeCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ChallengeCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
 			}

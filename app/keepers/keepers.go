@@ -49,6 +49,8 @@ import (
 	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 	rewardskeeper "github.com/gitopia/gitopia/v5/x/rewards/keeper"
 	rewardtypes "github.com/gitopia/gitopia/v5/x/rewards/types"
+	storagekeeper "github.com/gitopia/gitopia/v5/x/storage/keeper"
+	storagetypes "github.com/gitopia/gitopia/v5/x/storage/types"
 
 	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
@@ -99,7 +101,7 @@ type AppKeepers struct {
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	GitopiaKeeper         gitopiakeeper.Keeper
 	RewardKeeper          rewardskeeper.Keeper
-
+	StorageKeeper         storagekeeper.Keeper
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
@@ -376,6 +378,13 @@ func NewAppKeeper(
 		appKeepers.AccountKeeper,
 		appKeepers.DistrKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	appKeepers.StorageKeeper = *storagekeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[storagetypes.StoreKey],
+		appKeepers.keys[storagetypes.MemStoreKey],
+		appKeepers.BankKeeper,
 	)
 
 	return appKeepers

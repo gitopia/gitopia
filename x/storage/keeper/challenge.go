@@ -121,13 +121,13 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	providerIndex := uint64(prng.Int63n(int64(len(providers))))
 	packfileID := uint64(prng.Int63n(int64(packfilesCount)))
 
-	packfile, found := k.GetPackfile(ctx, packfileID)
+	packfile, found := k.GetPackfileById(ctx, packfileID)
 	if !found {
 		return nil, fmt.Errorf("packfile not found: %d", packfileID)
 	}
 
 	const chunkSize uint64 = 256 * 1024 // 256 KiB chunks
-	maxChunks := packfile.Size / chunkSize
+	maxChunks := packfile.Size_ / chunkSize
 	if maxChunks == 0 {
 		return nil, fmt.Errorf("packfile too small: %d bytes", packfile.Size)
 	}

@@ -45,8 +45,10 @@ func (k Keeper) AppendPackfile(
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileKey))
 	appendedValue := k.cdc.MustMarshal(&packfile)
-	key := []byte(types.PackfileKey + packfile.Cid)
-	store.Set(key, appendedValue)
+	store.Set(GetPackfileIdBytes(packfile.RepositoryId), appendedValue)
+
+	// Set the mapping between packfile id and repository id
+	k.SetPackfileRepositoryMapping(ctx, packfile.Id, packfile.RepositoryId)
 
 	// Update packfile count
 	k.SetPackfileCount(ctx, count+1)
@@ -58,15 +60,30 @@ func (k Keeper) AppendPackfile(
 func (k Keeper) SetPackfile(ctx sdk.Context, packfile types.Packfile) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileKey))
 	b := k.cdc.MustMarshal(&packfile)
-	key := []byte(types.PackfileKey + packfile.Cid)
-	store.Set(key, b)
+	store.Set(GetPackfileIdBytes(packfile.RepositoryId), b)
 }
 
-// GetPackfile returns a packfile from its cid
-func (k Keeper) GetPackfile(ctx sdk.Context, cid string) (val types.Packfile, found bool) {
+// GetPackfile returns a packfile from its repository id
+func (k Keeper) GetPackfile(ctx sdk.Context, repositoryId uint64) (val types.Packfile, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileKey))
-	key := []byte(types.PackfileKey + cid)
-	b := store.Get(key)
+	b := store.Get(GetPackfileIdBytes(repositoryId))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
+// GetPackfileById returns a packfile from its packfile id
+func (k Keeper) GetPackfileById(ctx sdk.Context, packfileId uint64) (val types.Packfile, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileKey))
+
+	packfileRepositoryMapping, found := k.GetPackfileRepositoryMapping(ctx, packfileId)
+	if !found {
+		return val, false
+	}
+
+	b := store.Get(GetPackfileIdBytes(packfileRepositoryMapping.RepositoryId))
 	if b == nil {
 		return val, false
 	}
@@ -75,10 +92,9 @@ func (k Keeper) GetPackfile(ctx sdk.Context, cid string) (val types.Packfile, fo
 }
 
 // RemovePackfile removes a packfile from the store
-func (k Keeper) RemovePackfile(ctx sdk.Context, cid string) {
+func (k Keeper) RemovePackfile(ctx sdk.Context, repositoryId uint64) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileKey))
-	key := []byte(types.PackfileKey + cid)
-	store.Delete(key)
+	store.Delete(GetPackfileIdBytes(repositoryId))
 }
 
 // GetAllPackfile returns all packfiles
@@ -95,4 +111,34 @@ func (k Keeper) GetAllPackfile(ctx sdk.Context) (list []types.Packfile) {
 	}
 
 	return
+}
+
+// GetPackfileIdBytes returns the byte representation of the ID
+func GetPackfileIdBytes(id uint64) []byte {
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+	return bz
+}
+
+// SetPackfileRepositoryMapping set the mapping between packfile id and repository id
+func (k Keeper) SetPackfileRepositoryMapping(ctx sdk.Context, packfileId uint64, repositoryId uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileRepositoryMappingKey))
+
+	packfileRepositoryMapping := types.PackfileRepositoryMapping{
+		PackfileId:   packfileId,
+		RepositoryId: repositoryId,
+	}
+
+	store.Set(GetPackfileIdBytes(packfileId), k.cdc.MustMarshal(&packfileRepositoryMapping))
+}
+
+// GetPackfileRepositoryMapping returns the mapping between packfile id and repository id
+func (k Keeper) GetPackfileRepositoryMapping(ctx sdk.Context, packfileId uint64) (val types.PackfileRepositoryMapping, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PackfileRepositoryMappingKey))
+	b := store.Get(GetPackfileIdBytes(packfileId))
+	if b == nil {
+		return val, false
+	}
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
 }

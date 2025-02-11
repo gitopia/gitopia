@@ -74,7 +74,7 @@ func (k Keeper) Packfile(goCtx context.Context, req *types.QueryPackfileRequest)
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	packfile, found := k.GetPackfile(ctx, req.Cid)
+	packfile, found := k.GetPackfileById(ctx, req.Id)
 	if !found {
 		return nil, status.Errorf(codes.NotFound, "packfile not found")
 	}
@@ -86,10 +86,12 @@ func (k Keeper) RepositoryPackfile(goCtx context.Context, req *types.QueryReposi
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var packfile types.Packfile
-
-	// TODO: Implement this
+	packfile, found := k.GetPackfile(ctx, req.RepositoryId)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "packfile not found")
+	}
 
 	return &types.QueryRepositoryPackfileResponse{
 		Packfile: packfile,
@@ -101,10 +103,12 @@ func (k Keeper) Challenge(goCtx context.Context, req *types.QueryChallengeReques
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var challenge types.Challenge
-
-	// TODO: Implement this
+	challenge, found := k.GetChallenge(ctx, req.Id)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "challenge not found")
+	}
 
 	return &types.QueryChallengeResponse{Challenge: challenge}, nil
 }

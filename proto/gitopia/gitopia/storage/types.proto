@@ -36,6 +36,12 @@ message Packfile {
   string root_hash = 7;
 }
 
+// Mapping between packfile id and repository id
+message PackfileRepositoryMapping {
+  uint64 packfile_id = 1;
+  uint64 repository_id = 2;
+}
+
 // Challenge represents a storage proof challenge
 message Challenge {
   uint64 id = 1;
