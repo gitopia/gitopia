@@ -10,6 +10,7 @@ const (
 	TypeMsgRegisterProvider         = "register_provider"
 	TypeMsgUpdateRepositoryPackfile = "update_repository_packfile"
 	TypeMsgSubmitChallengeResponse  = "submit_challenge_response"
+	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -170,5 +171,42 @@ func (msg *MsgSubmitChallengeResponse) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proof cannot be empty")
 	}
 
+	return nil
+}
+
+var _ sdk.Msg = &MsgWithdrawProviderRewards{}
+
+func NewMsgWithdrawProviderRewards(creator string) *MsgWithdrawProviderRewards {
+	return &MsgWithdrawProviderRewards{
+		Creator: creator,
+	}
+}
+
+func (msg *MsgWithdrawProviderRewards) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgWithdrawProviderRewards) Type() string {
+	return TypeMsgWithdrawProviderRewards
+}
+
+func (msg *MsgWithdrawProviderRewards) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgWithdrawProviderRewards) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgWithdrawProviderRewards) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
 	return nil
 }

@@ -4,6 +4,7 @@ package gitopia.gitopia.storage;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
+import "amino/amino.proto";
 
 option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
 
@@ -74,4 +75,13 @@ message BlockInfo {
   uint32 height = 1;
   google.protobuf.Timestamp timestamp = 2
       [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+}
+
+// ProviderRewards represents rewards for a provider
+message ProviderRewards {
+  repeated cosmos.base.v1beta1.DecCoin rewards = 1 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins",
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
 }

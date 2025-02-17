@@ -16,6 +16,9 @@ service Msg {
   
   // SubmitChallengeResponse submits proof for storage challenge
   rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
+
+  // WithdrawProviderRewards withdraws accumulated rewards for a provider
+  rpc WithdrawProviderRewards(MsgWithdrawProviderRewards) returns (MsgWithdrawProviderRewardsResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -47,3 +50,12 @@ message MsgSubmitChallengeResponse {
 }
 
 message MsgSubmitChallengeResponseResponse {}
+
+// MsgWithdrawProviderRewards defines a message for withdrawing provider rewards
+message MsgWithdrawProviderRewards {
+  string creator = 1;
+}
+
+message MsgWithdrawProviderRewardsResponse {
+  repeated cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
+}

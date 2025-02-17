@@ -8,6 +8,5 @@ import (
 
 // x/storage module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
-	
+	ErrNoProviderRewards = sdkerrors.Register(ModuleName, 2, "no provider rewards to withdraw")
 )

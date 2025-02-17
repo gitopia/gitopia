@@ -110,6 +110,13 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge already completed")
 	}
 
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	params := k.GetParams(ctx)
+
 	// Verify the Merkle proof
 	verified, err := merkletree.VerifyProof(
 		msg.Data,                             // The data being proved
@@ -122,12 +129,13 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	}
 	if !verified {
 		// Update provider stats for failed challenge
-		provider, _ := k.GetProvider(ctx, msg.Creator)
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
 		k.SetProvider(ctx, provider)
 
 		// Slash provider
+		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
+		k.bankKeeper.BurnCoins(ctx, types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, challenge)
@@ -139,12 +147,33 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
 	k.SetChallenge(ctx, challenge)
 
+	// Update provider rewards
+	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+	currentRewards := k.GetProviderRewards(ctx, providerAcc)
+	challengeReward := sdk.NewDecCoinFromCoin(params.ChallengeReward)
+	currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
+	k.SetProviderRewards(ctx, providerAcc, currentRewards)
+
 	// Update provider stats
-	provider, _ := k.GetProvider(ctx, msg.Creator)
 	provider.TotalChallenges++
 	provider.SuccessfulChallenges++
 	provider.ConsecutiveFailures = 0
 	k.SetProvider(ctx, provider)
 
 	return &types.MsgSubmitChallengeResponseResponse{}, nil
+}
+
+func (k msgServer) WithdrawProviderRewards(goCtx context.Context, msg *types.MsgWithdrawProviderRewards) (*types.MsgWithdrawProviderRewardsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	provider, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+	amount, err := k.Keeper.WithdrawProviderRewards(ctx, provider)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgWithdrawProviderRewardsResponse{Amount: amount}, nil
 }

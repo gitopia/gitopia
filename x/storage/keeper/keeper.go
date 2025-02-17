@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
@@ -57,4 +58,25 @@ func (k Keeper) SetPreviousBlockInfo(ctx sdk.Context, info *types.BlockInfo) {
 	store := ctx.KVStore(k.storeKey)
 	b := k.cdc.MustMarshal(info)
 	store.Set([]byte(types.PreviousBlockInfoKey), b)
+}
+
+// withdraw provider rewards
+func (k Keeper) WithdrawProviderRewards(ctx sdk.Context, provider sdk.AccAddress) (sdk.Coins, error) {
+	// fetch provider rewards
+	rewards := k.GetProviderRewards(ctx, provider)
+	if rewards.Rewards.IsZero() {
+		return nil, types.ErrNoProviderRewards
+	}
+
+	amount, remainder := rewards.Rewards.TruncateDecimal()
+	k.SetProviderRewards(ctx, provider, types.ProviderRewards{Rewards: remainder}) // leave remainder to withdraw later
+
+	if !amount.IsZero() {
+		err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, gitopiatypes.EcosystemIncentivesAccountName, provider, amount)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return amount, nil
 }
