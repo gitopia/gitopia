@@ -172,5 +172,29 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		Timestamp: ctx.BlockTime(),
 	})
 
+	// check last challenge expiration
+	challenge, found := am.keeper.GetChallenge(ctx, am.keeper.GetChallengeCount(ctx)-1)
+	if found && challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+
+		provider, found := am.keeper.GetProvider(ctx, challenge.ProviderAddress)
+		if !found {
+			return []abci.ValidatorUpdate{}
+		}
+
+		// Update provider stats for failed challenge
+		provider.TotalChallenges++
+		provider.ConsecutiveFailures++
+		am.keeper.SetProvider(ctx, provider)
+
+		params := am.keeper.GetParams(ctx)
+
+		// Slash provider
+		am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
+		am.bankKeeper.BurnCoins(ctx, types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
+
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+		am.keeper.SetChallenge(ctx, challenge)
+	}
+
 	return []abci.ValidatorUpdate{}
 }
