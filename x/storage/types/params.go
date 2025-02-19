@@ -22,8 +22,8 @@ var (
 	DefaultMinStakeAmount                  uint64   = 100
 	DefaultChallengeIntervalBlocks         uint64   = 10
 	DefaultChallengeTimeoutBlocks          uint64   = 5
-	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(1000))
-	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("stake", sdk.NewInt(500))
+	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(100000000))
+	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(50000000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 10
 )
