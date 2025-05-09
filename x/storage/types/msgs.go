@@ -11,6 +11,8 @@ const (
 	TypeMsgUpdateRepositoryPackfile = "update_repository_packfile"
 	TypeMsgSubmitChallengeResponse  = "submit_challenge_response"
 	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
+	TypeMsgUnregisterProvider       = "unregister_provider"
+	TypeMsgCompleteUnstake          = "complete_unstake"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -65,13 +67,14 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 var _ sdk.Msg = &MsgUpdateRepositoryPackfile{}
 
 // NewMsgUpdateRepositoryPackfile creates a new MsgUpdateRepositoryPackfile instance
-func NewMsgUpdateRepositoryPackfile(creator string, repositoryId uint64, name string, cid string, rootHash string) *MsgUpdateRepositoryPackfile {
+func NewMsgUpdateRepositoryPackfile(creator string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64) *MsgUpdateRepositoryPackfile {
 	return &MsgUpdateRepositoryPackfile{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Name:         name,
 		Cid:          cid,
 		RootHash:     rootHash,
+		Size_:        size,
 	}
 }
 
@@ -102,10 +105,6 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.RepositoryId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository ID cannot be 0")
-	}
-
 	if msg.Name == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
 	}
@@ -114,8 +113,12 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CID cannot be empty")
 	}
 
-	if msg.RootHash == "" {
+	if len(msg.RootHash) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "root hash cannot be empty")
+	}
+
+	if msg.Size_ == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
 	}
 
 	return nil
@@ -123,7 +126,7 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgSubmitChallengeResponse{}
 
-func NewMsgSubmitChallengeResponse(creator string, challengeId uint64, data []byte, proof [][]byte) *MsgSubmitChallengeResponse {
+func NewMsgSubmitChallengeResponse(creator string, challengeId uint64, data []byte, proof *Proof) *MsgSubmitChallengeResponse {
 	return &MsgSubmitChallengeResponse{
 		Creator:     creator,
 		ChallengeId: challengeId,
@@ -159,16 +162,8 @@ func (msg *MsgSubmitChallengeResponse) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.ChallengeId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "challenge ID cannot be 0")
-	}
-
 	if len(msg.Data) == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "data cannot be empty")
-	}
-
-	if len(msg.Proof) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proof cannot be empty")
 	}
 
 	return nil
@@ -204,6 +199,82 @@ func (msg *MsgWithdrawProviderRewards) GetSignBytes() []byte {
 }
 
 func (msg *MsgWithdrawProviderRewards) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUnregisterProvider{}
+
+// NewMsgUnregisterProvider creates a new MsgUnregisterProvider instance
+func NewMsgUnregisterProvider(creator string) *MsgUnregisterProvider {
+	return &MsgUnregisterProvider{
+		Creator: creator,
+	}
+}
+
+func (msg *MsgUnregisterProvider) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUnregisterProvider) Type() string {
+	return TypeMsgUnregisterProvider
+}
+
+func (msg *MsgUnregisterProvider) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUnregisterProvider) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUnregisterProvider) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgCompleteUnstake{}
+
+// NewMsgCompleteUnstake creates a new MsgCompleteUnstake instance
+func NewMsgCompleteUnstake(creator string) *MsgCompleteUnstake {
+	return &MsgCompleteUnstake{
+		Creator: creator,
+	}
+}
+
+func (msg *MsgCompleteUnstake) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCompleteUnstake) Type() string {
+	return TypeMsgCompleteUnstake
+}
+
+func (msg *MsgCompleteUnstake) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCompleteUnstake) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCompleteUnstake) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)

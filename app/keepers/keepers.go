@@ -385,6 +385,7 @@ func NewAppKeeper(
 		appKeepers.keys[storagetypes.StoreKey],
 		appKeepers.keys[storagetypes.MemStoreKey],
 		appKeepers.BankKeeper,
+		&appKeepers.GitopiaKeeper,
 	)
 
 	return appKeepers

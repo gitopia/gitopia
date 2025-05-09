@@ -151,14 +151,14 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	if currentBlockHeight%challengeInterval == 0 { // Check if it's time to generate challenges
 		challenge, err := am.keeper.GenerateChallenge(ctx)
 		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("Error generating challenge: %v", err))
+			ctx.Logger().Error(fmt.Sprintf("error generating challenge: %v", err))
 		}
 		if challenge != nil {
-			am.keeper.SetChallenge(ctx, *challenge)
-			ctx.Logger().Info(fmt.Sprintf("Generated new challenge ID: %d for provider: %s", challenge.Id, challenge.ProviderAddress))
+			id := am.keeper.AppendChallenge(ctx, *challenge)
+			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.ProviderAddress))
 
 			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
-				ChallengeId:     challenge.Id,
+				ChallengeId:     id,
 				ProviderAddress: challenge.ProviderAddress,
 			})
 		}
@@ -194,6 +194,8 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		am.keeper.SetChallenge(ctx, challenge)
+
+		ctx.Logger().Info(fmt.Sprintf("provider %s slashed for challenge %d", provider.Creator, challenge.Id))
 	}
 
 	return []abci.ValidatorUpdate{}

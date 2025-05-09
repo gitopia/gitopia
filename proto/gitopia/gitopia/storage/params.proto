@@ -17,4 +17,5 @@ message Params {
   cosmos.base.v1beta1.Coin challenge_slash_amount = 5 [(gogoproto.nullable) = false];
   uint64 consecutive_fails_threshold = 6 [(gogoproto.moretags) = "yaml:\"consecutive_fails_threshold\""];
   uint64 consecutive_fails_slash_percentage = 7 [(gogoproto.moretags) = "yaml:\"consecutive_fails_slash_percentage\""];
+  uint64 unstake_cooldown_blocks = 8 [(gogoproto.moretags) = "yaml:\"unstake_cooldown_blocks\""];
 }

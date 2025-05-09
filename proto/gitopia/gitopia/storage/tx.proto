@@ -3,6 +3,8 @@ package gitopia.gitopia.storage;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "gitopia/gitopia/storage/types.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
 
@@ -19,6 +21,12 @@ service Msg {
 
   // WithdrawProviderRewards withdraws accumulated rewards for a provider
   rpc WithdrawProviderRewards(MsgWithdrawProviderRewards) returns (MsgWithdrawProviderRewardsResponse);
+
+  // UnregisterProvider initiates the process of leaving the storage network
+  rpc UnregisterProvider(MsgUnregisterProvider) returns (MsgUnregisterProviderResponse);
+
+  // CompleteUnstake completes the unstaking process after the cooldown period
+  rpc CompleteUnstake(MsgCompleteUnstake) returns (MsgCompleteUnstakeResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -36,7 +44,8 @@ message MsgUpdateRepositoryPackfile {
   uint64 repository_id = 2;
   string name = 3;
   string cid = 4;
-  string root_hash = 5;
+  bytes root_hash = 5;
+  uint64 size = 6;
 }
 
 message MsgUpdateRepositoryPackfileResponse {}
@@ -46,7 +55,7 @@ message MsgSubmitChallengeResponse {
   string creator = 1;
   uint64 challenge_id = 2;
   bytes data = 3;
-  repeated bytes proof = 4;
+  Proof proof = 4;
 }
 
 message MsgSubmitChallengeResponseResponse {}
@@ -58,4 +67,25 @@ message MsgWithdrawProviderRewards {
 
 message MsgWithdrawProviderRewardsResponse {
   repeated cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
+}
+
+// MsgUnregisterProvider defines a message for initiating the unregistration process
+message MsgUnregisterProvider {
+  string creator = 1;
+}
+
+message MsgUnregisterProviderResponse {
+  google.protobuf.Timestamp unstake_completion_time = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// MsgCompleteUnstake defines a message for completing the unstaking process
+message MsgCompleteUnstake {
+  string creator = 1;
+}
+
+message MsgCompleteUnstakeResponse {
+  cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
 }

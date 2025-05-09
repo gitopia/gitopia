@@ -38,7 +38,7 @@ func (k Keeper) AppendProvider(ctx sdk.Context, provider types.Provider) uint64 
 	provider.Id = count
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProviderKey))
 	appendedValue := k.cdc.MustMarshal(&provider)
-	store.Set(GetProviderIDBytes(provider.Id), appendedValue)
+	store.Set([]byte(provider.Creator), appendedValue)
 	k.SetProviderCount(ctx, count+1)
 	return count
 }

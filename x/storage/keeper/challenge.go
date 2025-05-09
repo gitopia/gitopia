@@ -128,19 +128,18 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 
 	const chunkSize uint64 = 256 * 1024 // 256 KiB chunks
 	maxChunks := packfile.Size_ / chunkSize
-	if maxChunks == 0 {
-		return nil, fmt.Errorf("packfile too small: %d bytes", packfile.Size)
+	var chunkIndex uint64
+	if maxChunks > 0 {
+		chunkIndex = uint64(prng.Int63n(int64(maxChunks)))
 	}
 
-	chunkIndex := uint64(prng.Int63n(int64(maxChunks))) * chunkSize
-
 	challenge := &types.Challenge{
-		ProviderAddress: providers[providerIndex].Address,
+		ProviderAddress: providers[providerIndex].Creator,
 		PackfileId:      packfileID,
 		RootHash:        packfile.RootHash,
 		ChunkIndex:      chunkIndex,
 		CreatedAt:       ctx.BlockTime(),
-		Deadline:        ctx.BlockTime().Add(time.Second * 5), // 5 seconds deadline
+		Deadline:        ctx.BlockTime().Add(time.Second * 15), // 15 seconds deadline
 		Status:          types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 

@@ -9,16 +9,18 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
+	gitopiakeeper "github.com/gitopia/gitopia/v5/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
 type (
 	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		bankKeeper bankkeeper.Keeper
+		cdc           codec.BinaryCodec
+		storeKey      storetypes.StoreKey
+		memKey        storetypes.StoreKey
+		bankKeeper    bankkeeper.Keeper
+		gitopiaKeeper *gitopiakeeper.Keeper
 	}
 )
 
@@ -27,13 +29,14 @@ func NewKeeper(
 	storeKey,
 	memKey storetypes.StoreKey,
 	bankKeeper bankkeeper.Keeper,
-
+	gitopiaKeeper *gitopiakeeper.Keeper,
 ) *Keeper {
 	return &Keeper{
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		bankKeeper: bankKeeper,
+		cdc:           cdc,
+		storeKey:      storeKey,
+		memKey:        memKey,
+		bankKeeper:    bankKeeper,
+		gitopiaKeeper: gitopiaKeeper,
 	}
 }
 

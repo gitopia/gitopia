@@ -341,6 +341,10 @@ const (
 )
 
 const (
+	UserQuotaKey = "UserQuota-value-"
+)
+
+const (
 	EventAttributeRecipientKey = "Receipient"
 	EventAttributeAmountKey    = "Amount"
 )

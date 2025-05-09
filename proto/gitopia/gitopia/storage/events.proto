@@ -1,6 +1,10 @@
 syntax = "proto3";
 package gitopia.gitopia.storage;
 
+import "google/protobuf/timestamp.proto";
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
 
 // EventProviderRegistered is emitted when a provider is registered
@@ -32,4 +36,19 @@ message EventChallengeCompleted {
   uint64 challenge_id = 1;
   string provider_address = 2;
   bool success = 3;
+}
+
+// EventProviderUnregistered is emitted when a provider initiates unregistration
+message EventProviderUnregistered {
+  string address = 1;
+  google.protobuf.Timestamp unstake_completion_time = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// EventProviderUnstakeCompleted is emitted when a provider's unstaking is completed
+message EventProviderUnstakeCompleted {
+  string address = 1;
+  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
 }

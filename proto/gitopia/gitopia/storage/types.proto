@@ -23,7 +23,11 @@ message Provider {
   google.protobuf.Timestamp join_time = 11 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
-];
+  ];
+  google.protobuf.Timestamp unstake_completion_time = 12 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
 }
 
 // Packfile represents a Git packfile stored in IPFS
@@ -34,7 +38,7 @@ message Packfile {
   string name = 4;
   uint64 size = 5;
   string cid = 6;
-  string root_hash = 7;
+  bytes root_hash = 7;
 }
 
 // Mapping between packfile id and repository id
@@ -48,7 +52,7 @@ message Challenge {
   uint64 id = 1;
   string provider_address = 2;
   uint64 packfile_id = 3;
-  string root_hash = 4; 
+  bytes root_hash = 4; 
   uint64 chunk_index = 5;
   google.protobuf.Timestamp created_at = 6 [
     (gogoproto.nullable) = false,
@@ -84,4 +88,10 @@ message ProviderRewards {
     (gogoproto.nullable)     = false,
     (amino.dont_omitempty)   = true
   ];
+}
+
+// Merkle proof
+message Proof {
+	repeated bytes hashes = 1;
+	uint64 index = 2;
 }
