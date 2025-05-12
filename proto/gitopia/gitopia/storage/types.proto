@@ -67,22 +67,30 @@ message ReleaseAssetRepositoryMapping {
   string name = 4;
 }
 
+// ChallengeType represents the type of storage challenge
+enum ChallengeType {
+  CHALLENGE_TYPE_UNSPECIFIED = 0;
+  CHALLENGE_TYPE_PACKFILE = 1;
+  CHALLENGE_TYPE_RELEASE_ASSET = 2;
+}
+
 // Challenge represents a storage proof challenge
 message Challenge {
   uint64 id = 1;
   string provider_address = 2;
-  uint64 packfile_id = 3;
-  bytes root_hash = 4; 
-  uint64 chunk_index = 5;
-  google.protobuf.Timestamp created_at = 6 [
+  ChallengeType challenge_type = 3;
+  uint64 content_id = 4; // ID of either packfile or release asset based on challenge_type
+  bytes root_hash = 5; 
+  uint64 chunk_index = 6;
+  google.protobuf.Timestamp created_at = 7 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
-  google.protobuf.Timestamp deadline = 7 [
+  google.protobuf.Timestamp deadline = 8 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
-  ChallengeStatus status = 8;
+  ChallengeStatus status = 9;
 }
 
 // ChallengeStatus represents the status of a challenge

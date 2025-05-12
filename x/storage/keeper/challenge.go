@@ -111,23 +111,51 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	}
 
 	packfilesCount := k.GetPackfileCount(ctx)
-	if packfilesCount == 0 {
-		return nil, fmt.Errorf("no packfiles available")
+	releaseAssetsCount := k.GetReleaseAssetCount(ctx)
+
+	if packfilesCount == 0 && releaseAssetsCount == 0 {
+		return nil, fmt.Errorf("no packfiles or release assets available")
 	}
 
 	// Initialize random number generator
 	prng := k.GetPseudoRand(ctx)
 
 	providerIndex := uint64(prng.Int63n(int64(len(providers))))
-	packfileID := uint64(prng.Int63n(int64(packfilesCount)))
 
-	packfile, found := k.GetPackfileById(ctx, packfileID)
-	if !found {
-		return nil, fmt.Errorf("packfile not found: %d", packfileID)
+	// Randomly choose between packfile and release asset challenge
+	challengeType := types.ChallengeType_CHALLENGE_TYPE_PACKFILE
+	if packfilesCount > 0 && releaseAssetsCount > 0 {
+		if prng.Int63n(2) == 1 {
+			challengeType = types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET
+		}
+	} else if packfilesCount == 0 {
+		challengeType = types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET
+	}
+
+	var contentID uint64
+	var rootHash []byte
+	var size uint64
+
+	if challengeType == types.ChallengeType_CHALLENGE_TYPE_PACKFILE {
+		contentID = uint64(prng.Int63n(int64(packfilesCount)))
+		packfile, found := k.GetPackfileById(ctx, contentID)
+		if !found {
+			return nil, fmt.Errorf("packfile not found: %d", contentID)
+		}
+		rootHash = packfile.RootHash
+		size = packfile.Size_
+	} else {
+		contentID = uint64(prng.Int63n(int64(releaseAssetsCount)))
+		releaseAsset, found := k.GetReleaseAssetById(ctx, contentID)
+		if !found {
+			return nil, fmt.Errorf("release asset not found: %d", contentID)
+		}
+		rootHash = releaseAsset.RootHash
+		size = releaseAsset.Size_
 	}
 
 	const chunkSize uint64 = 256 * 1024 // 256 KiB chunks
-	maxChunks := packfile.Size_ / chunkSize
+	maxChunks := size / chunkSize
 	var chunkIndex uint64
 	if maxChunks > 0 {
 		chunkIndex = uint64(prng.Int63n(int64(maxChunks)))
@@ -135,8 +163,9 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 
 	challenge := &types.Challenge{
 		ProviderAddress: providers[providerIndex].Creator,
-		PackfileId:      packfileID,
-		RootHash:        packfile.RootHash,
+		ChallengeType:   challengeType,
+		ContentId:       contentID,
+		RootHash:        rootHash,
 		ChunkIndex:      chunkIndex,
 		CreatedAt:       ctx.BlockTime(),
 		Deadline:        ctx.BlockTime().Add(time.Second * 15), // 15 seconds deadline
