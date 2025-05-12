@@ -22,7 +22,17 @@ message EventProviderStatusUpdated {
 // EventPackfileUpdated is emitted when a packfile is updated
 message EventPackfileUpdated {
   uint64 repository_id = 1;
-  string cid = 2;
+  string new_cid = 2;
+  string old_cid = 3;
+}
+
+// EventReleaseAssetUpdated is emitted when a release asset is updated
+message EventReleaseAssetUpdated {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+  string new_cid = 4;
+  string old_cid = 5;
 }
 
 // EventChallengeCreated is emitted when a new challenge is created

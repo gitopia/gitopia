@@ -81,8 +81,10 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	}
 
 	// Check if packfile already exists for this repository
+	var oldCid string
 	existingPackfile, found := k.GetPackfile(ctx, msg.RepositoryId)
 	if found {
+		oldCid = existingPackfile.Cid
 		// Calculate the difference in size between the existing and new packfile
 		existingSize := existingPackfile.Size_
 		newSize := msg.Size_
@@ -125,6 +127,13 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.AppendPackfile(ctx, packfile)
 	}
 
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventPackfileUpdated{
+		RepositoryId: msg.RepositoryId,
+		NewCid:       msg.Cid,
+		OldCid:       oldCid,
+	})
+
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
 }
 
@@ -137,8 +146,10 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 	}
 
 	// Check if release asset already exists for this repository
+	var oldCid string
 	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
 	if found {
+		oldCid = existingAsset.Cid
 		// Calculate the difference in size between the existing and new asset
 		existingSize := existingAsset.Size_
 		newSize := msg.Size_
@@ -181,6 +192,15 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 
 		k.AppendReleaseAsset(ctx, asset)
 	}
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetUpdated{
+		RepositoryId: msg.RepositoryId,
+		Tag:          msg.Tag,
+		Name:         msg.Name,
+		NewCid:       msg.Cid,
+		OldCid:       oldCid,
+	})
 
 	return &types.MsgUpdateReleaseAssetResponse{}, nil
 }
