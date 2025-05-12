@@ -13,6 +13,7 @@ const (
 	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
 	TypeMsgUnregisterProvider       = "unregister_provider"
 	TypeMsgCompleteUnstake          = "complete_unstake"
+	TypeMsgUpdateReleaseAsset       = "update_release_asset"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -279,5 +280,70 @@ func (msg *MsgCompleteUnstake) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateReleaseAsset{}
+
+// NewMsgUpdateReleaseAsset creates a new MsgUpdateReleaseAsset instance
+func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, name string, cid string, rootHash []byte, size uint64) *MsgUpdateReleaseAsset {
+	return &MsgUpdateReleaseAsset{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag:          tag,
+		Name:         name,
+		Cid:          cid,
+		RootHash:     rootHash,
+		Size_:        size,
+	}
+}
+
+func (msg *MsgUpdateReleaseAsset) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateReleaseAsset) Type() string {
+	return TypeMsgUpdateReleaseAsset
+}
+
+func (msg *MsgUpdateReleaseAsset) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateReleaseAsset) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Tag == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "tag cannot be empty")
+	}
+
+	if msg.Name == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
+	}
+
+	if msg.Cid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CID cannot be empty")
+	}
+
+	if len(msg.RootHash) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "root hash cannot be empty")
+	}
+
+	if msg.Size_ == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
+	}
+
 	return nil
 }

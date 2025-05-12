@@ -112,3 +112,18 @@ func (k Keeper) AnyRepository(c context.Context, req *types.QueryGetAnyRepositor
 
 	return &types.QueryGetAnyRepositoryResponse{Repository: &repository}, nil
 }
+
+func (k Keeper) UserQuota(c context.Context, req *types.QueryUserQuotaRequest) (*types.QueryUserQuotaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	userQuota, found := k.GetUserQuota(ctx, req.Address)
+	if !found {
+		return nil, sdkerrors.ErrKeyNotFound
+	}
+
+	return &types.QueryUserQuotaResponse{UserQuota: userQuota}, nil
+}

@@ -15,6 +15,9 @@ service Msg {
   
   // UpdateRepositoryPackfile updates repository packfile CID and root hash
   rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
+
+  // UpdateReleaseAsset updates release asset
+  rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
   
   // SubmitChallengeResponse submits proof for storage challenge
   rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
@@ -49,6 +52,19 @@ message MsgUpdateRepositoryPackfile {
 }
 
 message MsgUpdateRepositoryPackfileResponse {}
+
+// MsgUpdateReleaseAsset defines a message for updating release asset
+message MsgUpdateReleaseAsset {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
+  string cid = 5;
+  bytes root_hash = 6;
+  uint64 size = 7;
+}
+
+message MsgUpdateReleaseAssetResponse {}
 
 // MsgSubmitChallengeResponse defines a message for submitting challenge response
 message MsgSubmitChallengeResponse {

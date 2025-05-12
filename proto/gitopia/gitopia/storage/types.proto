@@ -41,10 +41,30 @@ message Packfile {
   bytes root_hash = 7;
 }
 
+// Release asset
+message ReleaseAsset {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string tag = 4;
+  string name = 5;
+  uint64 size = 6;
+  string cid = 7;
+  bytes root_hash = 8;
+}
+
 // Mapping between packfile id and repository id
 message PackfileRepositoryMapping {
   uint64 packfile_id = 1;
   uint64 repository_id = 2;
+}
+
+// Mapping between release asset id and repository id, tag and name
+message ReleaseAssetRepositoryMapping {
+  uint64 release_asset_id = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
 }
 
 // Challenge represents a storage proof challenge

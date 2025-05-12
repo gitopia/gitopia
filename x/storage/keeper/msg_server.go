@@ -100,10 +100,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		existingPackfile.RootHash = msg.RootHash
 		existingPackfile.Size_ = msg.Size_
 
-		userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
-		if !found {
-			return nil, fmt.Errorf("user quota not found")
-		}
+		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
@@ -129,6 +126,63 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	}
 
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
+}
+
+func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Check if release asset already exists for this repository
+	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
+	if found {
+		// Calculate the difference in size between the existing and new asset
+		existingSize := existingAsset.Size_
+		newSize := msg.Size_
+		var diff int64
+		if newSize >= existingSize {
+			diff = int64(newSize - existingSize)
+		} else {
+			diff = -(int64(existingSize - newSize))
+		}
+
+		// Update existing asset while preserving its ID
+		existingAsset.Creator = msg.Creator
+		existingAsset.Name = msg.Name
+		existingAsset.Cid = msg.Cid
+		existingAsset.RootHash = msg.RootHash
+		existingAsset.Size_ = msg.Size_
+
+		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+
+		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		k.SetReleaseAsset(ctx, existingAsset)
+	} else {
+		// Create new release asset
+		asset := types.ReleaseAsset{
+			Creator:      msg.Creator,
+			RepositoryId: msg.RepositoryId,
+			Tag:          msg.Tag,
+			Name:         msg.Name,
+			Cid:          msg.Cid,
+			RootHash:     msg.RootHash,
+			Size_:        msg.Size_,
+		}
+
+		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+
+		userQuota.StorageUsed += msg.Size_
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		k.AppendReleaseAsset(ctx, asset)
+	}
+
+	return &types.MsgUpdateReleaseAssetResponse{}, nil
 }
 
 func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.MsgSubmitChallengeResponse) (*types.MsgSubmitChallengeResponseResponse, error) {

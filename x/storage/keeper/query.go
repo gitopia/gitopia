@@ -98,6 +98,37 @@ func (k Keeper) RepositoryPackfile(goCtx context.Context, req *types.QueryReposi
 	}, nil
 }
 
+// ReleaseAsset returns a release asset by ID
+func (k Keeper) ReleaseAsset(goCtx context.Context, req *types.QueryReleaseAssetRequest) (*types.QueryReleaseAssetResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	asset, found := k.GetReleaseAssetById(ctx, req.Id)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "release asset not found")
+	}
+	return &types.QueryReleaseAssetResponse{ReleaseAsset: asset}, nil
+}
+
+// RepositoryReleaseAsset returns a release asset for a repository
+func (k Keeper) RepositoryReleaseAsset(goCtx context.Context, req *types.QueryRepositoryReleaseAssetRequest) (*types.QueryRepositoryReleaseAssetResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	asset, found := k.GetReleaseAsset(ctx, req.RepositoryId, req.Tag, req.Name)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "release asset not found")
+	}
+
+	return &types.QueryRepositoryReleaseAssetResponse{
+		ReleaseAsset: asset,
+	}, nil
+}
+
 // Challenge returns a challenge by ID
 func (k Keeper) Challenge(goCtx context.Context, req *types.QueryChallengeRequest) (*types.QueryChallengeResponse, error) {
 	if req == nil {

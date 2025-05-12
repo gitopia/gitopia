@@ -38,13 +38,16 @@ const (
 	// PreviousBlockInfoKey defines the key for PreviousBlockInfo
 	PreviousBlockInfoKey = "PreviousBlockInfo"
 
-	ProviderKey                  = "Provider-value-"
-	ProviderCountKey             = "Provider-count-"
-	PackfileKey                  = "Packfile-value-"
-	PackfileCountKey             = "Packfile-count-"
-	PackfileRepositoryMappingKey = "PackfileRepositoryMapping-value-"
-	ChallengeKey                 = "Challenge-value-"
-	ChallengeCountKey            = "Challenge-count-"
+	ProviderKey                      = "Provider-value-"
+	ProviderCountKey                 = "Provider-count-"
+	PackfileKey                      = "Packfile-value-"
+	PackfileCountKey                 = "Packfile-count-"
+	PackfileRepositoryMappingKey     = "PackfileRepositoryMapping-value-"
+	ReleaseAssetKey                  = "ReleaseAsset-value-"
+	ReleaseAssetCountKey             = "ReleaseAsset-count-"
+	ReleaseAssetRepositoryMappingKey = "ReleaseAssetRepositoryMapping-value-"
+	ChallengeKey                     = "Challenge-value-"
+	ChallengeCountKey                = "Challenge-count-"
 )
 
 // GetProviderRewardsKey creates the key for a provider's rewards.

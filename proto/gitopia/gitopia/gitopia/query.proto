@@ -20,6 +20,7 @@ import "gitopia/gitopia/gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/gitopia/gitopia/params.proto";
 import "cosmos/group/v1/types.proto";
+import "gitopia/gitopia/gitopia/user_quota.proto";
 
 option go_package = "github.com/gitopia/gitopia/v5/x/gitopia/types";
 
@@ -247,6 +248,10 @@ service Query {
 
 	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
+	}
+
+	rpc UserQuota(QueryUserQuotaRequest) returns (QueryUserQuotaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user-quota/{address}";
 	}
 }
 
@@ -739,4 +744,12 @@ message QueryAllWhoisRequest {
 message QueryAllWhoisResponse {
 	repeated Whois Whois = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryUserQuotaRequest {
+	string address = 1;
+}
+
+message QueryUserQuotaResponse {
+	UserQuota user_quota = 1 [ (gogoproto.nullable) = false ];
 }

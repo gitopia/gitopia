@@ -35,6 +35,16 @@ service Query {
   rpc RepositoryPackfile(QueryRepositoryPackfileRequest) returns (QueryRepositoryPackfileResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/packfile";
   }
+
+  // ReleaseAsset queries a release asset by id
+  rpc ReleaseAsset(QueryReleaseAssetRequest) returns (QueryReleaseAssetResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-asset/{id}";
+  }
+
+  // RepositoryReleaseAsset queries a release asset for a repository by repository id, tag and name
+  rpc RepositoryReleaseAsset(QueryRepositoryReleaseAssetRequest) returns (QueryRepositoryReleaseAssetResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-asset/{tag}/{name}";
+  }
   
   // Challenge queries a challenge by id
   rpc Challenge(QueryChallengeRequest) returns (QueryChallengeResponse) {
@@ -79,6 +89,24 @@ message QueryRepositoryPackfileRequest {
 
 message QueryRepositoryPackfileResponse {
   Packfile packfile = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetRequest {
+  uint64 id = 1;
+}
+
+message QueryReleaseAssetResponse {
+  ReleaseAsset release_asset = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryReleaseAssetRequest {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+}
+
+message QueryRepositoryReleaseAssetResponse {
+  ReleaseAsset release_asset = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryChallengeRequest {
