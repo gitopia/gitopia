@@ -105,6 +105,11 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 		}
 	}
 
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
 	return nil
 }
 
@@ -200,6 +205,12 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 			}
 		}
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
 	return nil
 }
 
@@ -236,6 +247,11 @@ func (msg *MsgDeleteRelease) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
 	}
 
 	return nil

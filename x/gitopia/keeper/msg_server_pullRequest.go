@@ -374,6 +374,7 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
 	return &types.MsgInvokeMergePullRequestResponse{}, nil
@@ -422,6 +423,7 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
 	return &types.MsgInvokeDaoMergePullRequestResponse{}, nil

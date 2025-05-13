@@ -220,6 +220,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
 			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.Address),
 			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
+			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
 	return &types.MsgInvokeForkRepositoryResponse{}, nil

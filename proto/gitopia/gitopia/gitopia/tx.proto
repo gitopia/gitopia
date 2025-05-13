@@ -351,6 +351,7 @@ message MsgCreateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgCreateReleaseResponse {
@@ -368,6 +369,7 @@ message MsgUpdateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgUpdateReleaseResponse { }
@@ -375,6 +377,7 @@ message MsgUpdateReleaseResponse { }
 message MsgDeleteRelease {
   string creator = 1;
   uint64 id = 2;
+  string provider = 3;
 }
 
 message MsgDeleteReleaseResponse { }

@@ -199,6 +199,7 @@ const (
 	EventAttributePublishedAtKey     = "PublishedAt"
 	EventAttributeAssigneesKey       = "Assignees"
 	EventAttributeLabelsKey          = "Labels"
+	EventAttributeProviderKey        = "Provider"
 )
 
 const (
@@ -294,6 +295,7 @@ const (
 	EventAttributeReleaseDescriptionKey = "ReleaseDescription"
 	EventAttributeReleaseDraftKey       = "ReleaseDraft"
 	EventAttributeReleasePreReleaseKey  = "ReleasePreRelease"
+	EventAttributeReleaseAttachmentsKey = "ReleaseAttachments"
 )
 
 const (
