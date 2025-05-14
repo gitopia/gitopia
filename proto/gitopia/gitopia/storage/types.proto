@@ -77,7 +77,7 @@ enum ChallengeType {
 // Challenge represents a storage proof challenge
 message Challenge {
   uint64 id = 1;
-  string provider_address = 2;
+  string provider = 2;
   ChallengeType challenge_type = 3;
   uint64 content_id = 4; // ID of either packfile or release asset based on challenge_type
   bytes root_hash = 5; 

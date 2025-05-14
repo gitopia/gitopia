@@ -155,11 +155,11 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		}
 		if challenge != nil {
 			id := am.keeper.AppendChallenge(ctx, *challenge)
-			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.ProviderAddress))
+			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.Provider))
 
 			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
-				ChallengeId:     id,
-				ProviderAddress: challenge.ProviderAddress,
+				ChallengeId: id,
+				Provider:    challenge.Provider,
 			})
 		}
 	}
@@ -176,7 +176,7 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 	challenge, found := am.keeper.GetChallenge(ctx, am.keeper.GetChallengeCount(ctx)-1)
 	if found && challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
 
-		provider, found := am.keeper.GetProvider(ctx, challenge.ProviderAddress)
+		provider, found := am.keeper.GetProvider(ctx, challenge.Provider)
 		if !found {
 			return []abci.ValidatorUpdate{}
 		}

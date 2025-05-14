@@ -217,7 +217,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	ctx.Logger().Info(fmt.Sprintf("provider %s submitted challenge response for challenge %d", msg.Creator, msg.ChallengeId))
 
 	// Verify the provider is the one being challenged
-	if challenge.ProviderAddress != msg.Creator {
+	if challenge.Provider != msg.Creator {
 		return nil, fmt.Errorf("unauthorized: only challenged provider can submit response")
 	}
 

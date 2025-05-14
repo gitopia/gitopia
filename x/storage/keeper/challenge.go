@@ -162,14 +162,14 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	}
 
 	challenge := &types.Challenge{
-		ProviderAddress: providers[providerIndex].Creator,
-		ChallengeType:   challengeType,
-		ContentId:       contentID,
-		RootHash:        rootHash,
-		ChunkIndex:      chunkIndex,
-		CreatedAt:       ctx.BlockTime(),
-		Deadline:        ctx.BlockTime().Add(time.Second * 15), // 15 seconds deadline
-		Status:          types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
+		Provider:      providers[providerIndex].Creator,
+		ChallengeType: challengeType,
+		ContentId:     contentID,
+		RootHash:      rootHash,
+		ChunkIndex:    chunkIndex,
+		CreatedAt:     ctx.BlockTime(),
+		Deadline:      ctx.BlockTime().Add(time.Second * 15), // 15 seconds deadline
+		Status:        types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 
 	return challenge, nil
