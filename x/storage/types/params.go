@@ -18,6 +18,7 @@ var (
 	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
 	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
+	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 100
 	DefaultChallengeIntervalBlocks         uint64   = 10
@@ -26,6 +27,7 @@ var (
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(50000000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 10
+	DefaultUnstakeCooldownBlocks           uint64   = 5000000
 )
 
 // ParamKeyTable the param key table for launch module
@@ -42,6 +44,7 @@ func NewParams(
 	challengeSlashAmount sdk.Coin,
 	consecutiveFailsThreshold uint64,
 	consecutiveFailsSlashPercentage uint64,
+	unstakeCooldownBlocks uint64,
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
@@ -51,6 +54,7 @@ func NewParams(
 		ChallengeSlashAmount:            challengeSlashAmount,
 		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
 		ConsecutiveFailsSlashPercentage: consecutiveFailsSlashPercentage,
+		UnstakeCooldownBlocks:           unstakeCooldownBlocks,
 	}
 }
 
@@ -64,6 +68,7 @@ func DefaultParams() Params {
 		DefaultChallengeSlashAmount,
 		DefaultConsecutiveFailsThreshold,
 		DefaultConsecutiveFailsSlashPercentage,
+		DefaultUnstakeCooldownBlocks,
 	)
 }
 
@@ -77,6 +82,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsSlashPercentage, &p.ConsecutiveFailsSlashPercentage, validateConsecutiveFailsSlashPercentage),
+		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
 	}
 }
 
@@ -178,6 +184,18 @@ func validateConsecutiveFailsSlashPercentage(v interface{}) error {
 	}
 	if percentage == 0 {
 		return fmt.Errorf("consecutive fails slash percentage cannot be 0")
+	}
+	return nil
+}
+
+// validateUnstakeCooldownBlocks validates the UnstakeCooldownBlocks param
+func validateUnstakeCooldownBlocks(v interface{}) error {
+	blocks, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if blocks == 0 {
+		return fmt.Errorf("unstake cooldown blocks cannot be 0")
 	}
 	return nil
 }
