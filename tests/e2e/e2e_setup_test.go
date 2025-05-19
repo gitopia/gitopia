@@ -142,6 +142,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	s.valResources = make(map[string][]*dockertest.Resource)
+	s.valResources["storage"] = make([]*dockertest.Resource, 6) // 2 providers * 3 services each
 
 	vestingMnemonic, err := createMnemonic()
 	s.Require().NoError(err)
@@ -155,6 +156,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// 2. Create and initialize Gaia validator genesis files (both chains)
 	// 3. Start both networks.
 	// 4. Create and run IBC relayer (Hermes) containers.
+	// 5. Start storage providers.
 
 	s.T().Logf("starting e2e infrastructure for chain A; chain-id: %s; datadir: %s", s.chainA.id, s.chainA.dataDir)
 	s.initNodes(s.chainA)
@@ -171,15 +173,18 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	time.Sleep(10 * time.Second)
 	s.runIBCRelayer()
 
-	s.T().Logf("starting e2e infrastructure for chain C; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
-	s.initV3Nodes(s.chainC)
-	s.createGenTxFiles(s.chainC)
-	s.initValidatorConfigs(s.chainC)
-	s.runGitopiaV3(s.chainC, 30)
+	// Start storage providers
+	s.runStorageProviders()
 
-	s.connectOsmosisValidator()
+	// s.T().Logf("starting e2e infrastructure for chain C; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
+	// s.initV3Nodes(s.chainC)
+	// s.createGenTxFiles(s.chainC)
+	// s.initValidatorConfigs(s.chainC)
+	// s.runGitopiaV3(s.chainC, 30)
 
-	s.runGitopiaOsmosisIBCRelayer(s.chainC)
+	// s.connectOsmosisValidator()
+
+	// s.runGitopiaOsmosisIBCRelayer(s.chainC)
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {
@@ -1153,4 +1158,102 @@ func (s *IntegrationTestSuite) writeExpeditedSoftwareUpgradeProp(c *chain) {
 func configFile(filename string) string {
 	filepath := filepath.Join(gaiaConfigPath, filename)
 	return filepath
+}
+
+func (s *IntegrationTestSuite) runStorageProviders() {
+	s.T().Log("starting storage provider containers...")
+
+	// Create temporary directories for storage provider data
+	tmpDir, err := os.MkdirTemp("", "gitopia-e2e-storage-")
+	s.Require().NoError(err)
+	s.tmpDirs = append(s.tmpDirs, tmpDir)
+
+	// Create directories for each provider
+	for i := 0; i < 2; i++ {
+		providerDir := filepath.Join(tmpDir, fmt.Sprintf("provider%d", i))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "ipfs"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "cluster"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "git-server"), 0755))
+	}
+
+	// Run IPFS nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("ipfs%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "ipfs/kubo",
+			Tag:        "release",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/ipfs:/data/ipfs", tmpDir, i),
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"4001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 4001+i)}},
+				"5001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
+				"8080/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 8080+i)}},
+			},
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i] = resource
+	}
+
+	// Run IPFS Cluster nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("cluster%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "ipfs/ipfs-cluster",
+			Tag:        "latest",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/cluster:/data/ipfs-cluster", tmpDir, i),
+			},
+			Env: []string{
+				fmt.Sprintf("CLUSTER_PEERNAME=cluster%d", i),
+				"CLUSTER_SECRET=test-secret",
+				fmt.Sprintf("CLUSTER_IPFSHTTP_NODEMULTIADDRESS=/dns4/ipfs%d/tcp/5001", i),
+				"CLUSTER_CRDT_TRUSTEDPEERS=*",
+				"CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS=/ip4/0.0.0.0/tcp/9094",
+				"CLUSTER_MONITORPINGINTERVAL=2s",
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"9094/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 9094+i)}},
+			},
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i+2] = resource
+	}
+
+	// Run Git Server nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("git-server%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "gitopia/git-server",
+			Tag:        "latest",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/git-server:/var/repos", tmpDir, i),
+			},
+			Env: []string{
+				fmt.Sprintf("IPFS_CLUSTER_PEER_HOST=cluster%d", i),
+				"IPFS_CLUSTER_PEER_PORT=9094",
+				fmt.Sprintf("GIT_SERVER_ID=%d", i),
+				fmt.Sprintf("IPFS_HOST=ipfs%d", i),
+				"IPFS_PORT=5001",
+				"ENABLE_EXTERNAL_PINNING=false",
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5000+i)}},
+			},
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i+4] = resource
+	}
+
+	// Wait for services to be ready
+	time.Sleep(10 * time.Second)
 }

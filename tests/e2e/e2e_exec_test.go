@@ -664,7 +664,7 @@ func (s *IntegrationTestSuite) executeGitopiaTxCommand(ctx context.Context, c *c
 		AttachStdout: true,
 		AttachStderr: true,
 		Container:    s.valResources[c.id][valIdx].Container.ID,
-		User:         "nonroot",
+		User:         "root",
 		Cmd:          gitopiaCommand,
 	})
 	s.Require().NoError(err)
