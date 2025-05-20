@@ -48,7 +48,7 @@ func CmdInvokeForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "invoke-fork-repository [id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [owner-id] [provider]",
 		Short: "Emits an event for git-server to fork an existing repository",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argid := args[0]
 			argRepositoryName := args[1]

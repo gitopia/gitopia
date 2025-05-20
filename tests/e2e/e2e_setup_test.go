@@ -170,8 +170,8 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.initValidatorConfigs(s.chainB)
 	s.runValidators(s.chainB, 20)
 
-	time.Sleep(10 * time.Second)
-	s.runIBCRelayer()
+	// time.Sleep(10 * time.Second)
+	// s.runIBCRelayer()
 
 	// Start storage providers
 	s.runStorageProviders()
@@ -247,6 +247,13 @@ func (s *IntegrationTestSuite) initNodes(c *chain) {
 		s.Require().NoError(err)
 		addrAll = append(addrAll, acctAddr)
 	}
+
+	// Add Git server addresses
+	gitServerAddr1, err := sdk.AccAddressFromBech32("gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9")
+	s.Require().NoError(err)
+	gitServerAddr2, err := sdk.AccAddressFromBech32("gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
+	s.Require().NoError(err)
+	addrAll = append(addrAll, gitServerAddr1, gitServerAddr2)
 
 	s.Require().NoError(
 		modifyGenesis(val0ConfigDir, "", initBalanceStr, addrAll, initialBaseFeeAmt, uloreDenom),
@@ -1188,7 +1195,7 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 			},
 			PortBindings: map[docker.Port][]docker.PortBinding{
 				"4001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 4001+i)}},
-				"5001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
+				"5001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5003+i)}},
 				"8080/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 8080+i)}},
 			},
 		}
@@ -1243,9 +1250,11 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 				fmt.Sprintf("IPFS_HOST=ipfs%d", i),
 				"IPFS_PORT=5001",
 				"ENABLE_EXTERNAL_PINNING=false",
+				"PINATA_API_KEY=" + os.Getenv("PINATA_API_KEY"),
+				"PINATA_SECRET_KEY=" + os.Getenv("PINATA_SECRET_KEY"),
 			},
 			PortBindings: map[docker.Port][]docker.PortBinding{
-				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5000+i)}},
+				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
 			},
 		}
 

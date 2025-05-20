@@ -49,8 +49,14 @@ add_genesis_accounts () {
     # feegrant wallet address
     gitopiad add-genesis-account gitopia12sjhqc3rqgvu3zpg8ekmwl005rp4ys58ekqg89 100000000000ulore --home $GITOPIA_HOME
 
-    # git server wallet address
+    # git server0 wallet address
     gitopiad add-genesis-account gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9 100000000000ulore --home $GITOPIA_HOME
+
+    # git server1 wallet address
+    gitopiad add-genesis-account gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v 100000000000ulore --home $GITOPIA_HOME
+
+    # git server2 wallet address
+    gitopiad add-genesis-account gitopia159jvuesk653vhgrpdnxf69ma56rc3u5yvuz2fa 100000000000ulore --home $GITOPIA_HOME
 
     # rewards service wallet address
     gitopiad add-genesis-account gitopia17jhwu9ly6tvk029whklfxtcy9l7k2klkctpxu9 100000000000ulore --home $GITOPIA_HOME

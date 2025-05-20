@@ -59,9 +59,9 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 			key   string
 			value string
 		}{
-			{"gitopia.tmAddr", "http://localhost:26657"},
-			{"gitopia.grpcHost", "localhost:9090"},
-			{"gitopia.gitServerHost", "http://localhost:5002"},
+			{"gitopia.tmAddr", "http://host.docker.internal:26667"},
+			{"gitopia.grpcHost", "host.docker.internal:9100"},
+			{"gitopia.gitServerHost", "http://host.docker.internal:5001"},
 		}
 
 		for _, config := range gitConfigs {
@@ -224,7 +224,7 @@ func (s *IntegrationTestSuite) execGitopiaForkRepository(c *chain, valIdx int, o
 		"forked repository",
 		"master",
 		forkOwnerId,
-		"0",
+		"gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9",
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, forkOwnerId),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
