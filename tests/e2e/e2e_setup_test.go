@@ -164,11 +164,11 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.initValidatorConfigs(s.chainA)
 	s.runValidators(s.chainA, 10)
 
-	s.T().Logf("starting e2e infrastructure for chain B; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
-	s.initNodes(s.chainB)
-	s.initGenesis(s.chainB, vestingMnemonic, jailedValMnemonic)
-	s.initValidatorConfigs(s.chainB)
-	s.runValidators(s.chainB, 20)
+	// s.T().Logf("starting e2e infrastructure for chain B; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
+	// s.initNodes(s.chainB)
+	// s.initGenesis(s.chainB, vestingMnemonic, jailedValMnemonic)
+	// s.initValidatorConfigs(s.chainB)
+	// s.runValidators(s.chainB, 20)
 
 	// time.Sleep(10 * time.Second)
 	// s.runIBCRelayer()
@@ -1217,7 +1217,6 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 			},
 			Env: []string{
 				fmt.Sprintf("CLUSTER_PEERNAME=cluster%d", i),
-				"CLUSTER_SECRET=test-secret",
 				fmt.Sprintf("CLUSTER_IPFSHTTP_NODEMULTIADDRESS=/dns4/ipfs%d/tcp/5001", i),
 				"CLUSTER_CRDT_TRUSTEDPEERS=*",
 				"CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS=/ip4/0.0.0.0/tcp/9094",
@@ -1252,6 +1251,7 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 				"ENABLE_EXTERNAL_PINNING=false",
 				"PINATA_API_KEY=" + os.Getenv("PINATA_API_KEY"),
 				"PINATA_SECRET_KEY=" + os.Getenv("PINATA_SECRET_KEY"),
+				fmt.Sprintf("CHAIN_ID=%s", s.chainA.id),
 			},
 			PortBindings: map[docker.Port][]docker.PortBinding{
 				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
