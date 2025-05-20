@@ -50,9 +50,18 @@ func (s *IntegrationTestSuite) testGitopiaCreateRepository() {
 // 6. Creating and merging a pull request
 func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 	s.Run("test gitopia repository workflow", func() {
+		var (
+			valIdx = 0
+			c      = s.chainA
+			api    = fmt.Sprintf("http://%s", s.valResources[c.id][valIdx].GetHostPort("1317/tcp"))
+		)
+
+		alice, _ := c.genesisAccounts[1].keyInfo.GetAddress()
+		bob, _ := c.genesisAccounts[2].keyInfo.GetAddress()
+
 		// Set required environment variables
 		os.Setenv("GITHUB_ACTIONS", "true")
-		os.Setenv("GITOPIA_WALLET", "your wallet mnemonic here") // Replace with actual mnemonic
+		os.Setenv("GITOPIA_WALLET", c.genesisAccounts[1].mnemonic)
 
 		// Configure git
 		gitConfigs := []struct {
@@ -62,6 +71,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 			{"gitopia.tmAddr", "http://host.docker.internal:26667"},
 			{"gitopia.grpcHost", "host.docker.internal:9100"},
 			{"gitopia.gitServerHost", "http://host.docker.internal:5001"},
+			{"gitopia.chainId", c.id},
 		}
 
 		for _, config := range gitConfigs {
@@ -78,16 +88,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 			}
 		}()
 
-		var (
-			valIdx = 0
-			c      = s.chainA
-			api    = fmt.Sprintf("http://%s", s.valResources[c.id][valIdx].GetHostPort("1317/tcp"))
-		)
-
 		// Create users
-		alice, _ := c.genesisAccounts[1].keyInfo.GetAddress()
-		bob, _ := c.genesisAccounts[2].keyInfo.GetAddress()
-
 		s.execGitopiaCreateUser(c, valIdx, alice.String(), "alice")
 		s.execGitopiaCreateUser(c, valIdx, bob.String(), "bob")
 
@@ -128,7 +129,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.Require().NoError(err)
 
 		// Add remote and push
-		remoteURL := fmt.Sprintf("gitopia://%s/%s", alice.String(), repoName)
+		remoteURL := fmt.Sprintf("gitopia://alice/%s", repoName)
 		cmd = exec.Command("git", "remote", "add", "origin", remoteURL)
 		cmd.Dir = tempDir
 		err = cmd.Run()
@@ -136,7 +137,8 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		cmd = exec.Command("git", "push", "-u", "origin", "master")
 		cmd.Dir = tempDir
-		err = cmd.Run()
+		output, err := cmd.CombinedOutput()
+		s.T().Logf("git push output: %s", output)
 		s.Require().NoError(err)
 
 		// Fork repository
