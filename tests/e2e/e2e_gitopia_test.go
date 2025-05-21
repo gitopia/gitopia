@@ -61,16 +61,19 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Set required environment variables
 		os.Setenv("GITHUB_ACTIONS", "true")
-		os.Setenv("GITOPIA_WALLET", c.genesisAccounts[1].mnemonic)
+		address, err := c.genesisAccounts[1].keyInfo.GetAddress()
+		s.Require().NoError(err)
+		walletJSON := fmt.Sprintf(`{"name":"test123","mnemonic":"%s","HDpath":"m/44'/118'/0'/0/","prefix":"gitopia","pathIncrement":0,"accounts":[{"address":"%s","pathIncrement":0}]}`, c.genesisAccounts[1].mnemonic, address.String())
+		os.Setenv("GITOPIA_WALLET", walletJSON)
 
 		// Configure git
 		gitConfigs := []struct {
 			key   string
 			value string
 		}{
-			{"gitopia.tmAddr", "http://host.docker.internal:26667"},
-			{"gitopia.grpcHost", "host.docker.internal:9100"},
-			{"gitopia.gitServerHost", "http://host.docker.internal:5001"},
+			{"gitopia.tmAddr", "http://localhost:26667"},
+			{"gitopia.grpcHost", "localhost:9100"},
+			{"gitopia.gitServerHost", "http://localhost:5001"},
 			{"gitopia.chainId", c.id},
 		}
 
@@ -137,10 +140,27 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		cmd = exec.Command("git", "push", "-u", "origin", "master")
 		cmd.Dir = tempDir
-		output, err := cmd.CombinedOutput()
-		s.T().Logf("git push output: %s", output)
+		cmd.Run()
 		s.Require().NoError(err)
 
+		// Push via different git server
+		cmd = exec.Command("git", "config", "--global", "gitopia.gitServerHost", "http://localhost:5002")
+		err = cmd.Run()
+		s.Require().NoError(err)
+
+		// Make new commit
+		err = os.WriteFile(testFile, []byte("new content"), 0644)
+		s.Require().NoError(err)
+
+		cmd = exec.Command("git", "add", ".")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
+
+		cmd = exec.Command("git", "push", "-u", "origin", "master")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
 		// Fork repository
 		forkRepoName := "forked-repo"
 		s.execGitopiaForkRepository(c, valIdx, alice.String(), repoName, forkRepoName, bob.String())
