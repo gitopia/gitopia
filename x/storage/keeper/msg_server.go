@@ -9,6 +9,7 @@ import (
 	merkletree "github.com/wealdtech/go-merkletree/v2"
 
 	"github.com/cosmos/cosmos-sdk/types/address"
+	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
 	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
@@ -80,6 +81,15 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		return nil, fmt.Errorf("repository not found")
 	}
 
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
 	// Check if packfile already exists for this repository
 	var oldCid string
 	existingPackfile, found := k.GetPackfile(ctx, msg.RepositoryId)
@@ -102,8 +112,6 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		existingPackfile.RootHash = msg.RootHash
 		existingPackfile.Size_ = msg.Size_
 
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
-
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
@@ -118,8 +126,6 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 			RootHash:     msg.RootHash,
 			Size_:        msg.Size_,
 		}
-
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
 		userQuota.StorageUsed += msg.Size_
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
