@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	merkletree "github.com/wealdtech/go-merkletree/v2"
+	"github.com/wealdtech/go-merkletree/v2/sha3"
 
 	"github.com/cosmos/cosmos-sdk/types/address"
 	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
@@ -245,7 +246,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	params := k.GetParams(ctx)
 
 	// Verify the Merkle proof
-	verified, err := merkletree.VerifyProof(
+	verified, err := merkletree.VerifyProofUsing(
 		msg.Data, // The data being proved
 		false,    // Not using salting
 		&merkletree.Proof{
@@ -253,6 +254,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 			Index:  msg.Proof.Index,
 		}, // The Merkle proof
 		[][]byte{challenge.RootHash}, // The Merkle root as a single-element pollard
+		sha3.New256(),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify proof: %v", err)
