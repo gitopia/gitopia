@@ -61,10 +61,9 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Set required environment variables
 		os.Setenv("GITHUB_ACTIONS", "true")
-		address, err := c.genesisAccounts[1].keyInfo.GetAddress()
-		s.Require().NoError(err)
-		walletJSON := fmt.Sprintf(`{"name":"test123","mnemonic":"%s","HDpath":"m/44'/118'/0'/0/","prefix":"gitopia","pathIncrement":0,"accounts":[{"address":"%s","pathIncrement":0}]}`, c.genesisAccounts[1].mnemonic, address.String())
-		os.Setenv("GITOPIA_WALLET", walletJSON)
+		aliceWalletJSON := fmt.Sprintf(`{"name":"test123","mnemonic":"%s","HDpath":"m/44'/118'/0'/0/","prefix":"gitopia","pathIncrement":0,"accounts":[{"address":"%s","pathIncrement":0}]}`, c.genesisAccounts[1].mnemonic, alice.String())
+		bobWalletJSON := fmt.Sprintf(`{"name":"test123","mnemonic":"%s","HDpath":"m/44'/118'/0'/0/","prefix":"gitopia","pathIncrement":0,"accounts":[{"address":"%s","pathIncrement":0}]}`, c.genesisAccounts[2].mnemonic, bob.String())
+		os.Setenv("GITOPIA_WALLET", aliceWalletJSON)
 
 		// Configure git
 		gitConfigs := []struct {
@@ -161,16 +160,27 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
-		// Fork repository
+
+		// sleep 5 seconds
+		time.Sleep(5 * time.Second)
+
+		// Toggle repository forking
+		s.execGitopiaToggleRepositoryForking(c, valIdx, alice.String(), "alice", repoName)
+
+		// Fork repository using bob
 		forkRepoName := "forked-repo"
-		s.execGitopiaForkRepository(c, valIdx, alice.String(), repoName, forkRepoName, bob.String())
+		s.execGitopiaForkRepository(c, valIdx, bob.String(), repoName, forkRepoName, bob.String())
 
 		// Clone forked repository
 		tempDir2, err := os.MkdirTemp("", "gitopia-test-*")
 		s.Require().NoError(err)
 		defer os.RemoveAll(tempDir2)
 
-		cmd = exec.Command("git", "clone", remoteURL, tempDir2)
+		// Set bob's wallet
+		os.Setenv("GITOPIA_WALLET", bobWalletJSON)
+
+		forkRemoteURL := fmt.Sprintf("gitopia://bob/%s", forkRepoName)
+		cmd = exec.Command("git", "clone", forkRemoteURL, tempDir2)
 		cmd.Dir = tempDir2
 		err = cmd.Run()
 		s.Require().NoError(err)
@@ -211,7 +221,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 			bob.String(),
 			prTitle,
 			prDescription,
-			"master",
+			"new-branch",
 			bob.String(),
 			forkRepoName,
 			"master",
@@ -324,6 +334,31 @@ func (s *IntegrationTestSuite) execGitopiaInvokeMergePullRequest(c *chain, valId
 		repositoryId,
 		iid,
 		provider,
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
+		"--keyring-backend=test",
+		"--output=json",
+		"-y",
+	}
+
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+}
+
+// Helper function to execute toggle repository forking command
+func (s *IntegrationTestSuite) execGitopiaToggleRepositoryForking(c *chain, valIdx int, creator, id, repositoryName string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	s.T().Logf("toggling repository forking for %s/%s on chain %s", id, repositoryName, c.id)
+
+	gitopiaCommand := []string{
+		gitopiadBinary,
+		txCommand,
+		gitopiatypes.ModuleName,
+		"toggle-repository-forking",
+		id,
+		repositoryName,
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
