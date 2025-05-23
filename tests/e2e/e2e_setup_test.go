@@ -1217,6 +1217,7 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 			},
 			Env: []string{
 				fmt.Sprintf("CLUSTER_PEERNAME=cluster%d", i),
+				"CLUSTER_SECRET=1056f496539989fb653b6721a45cbedb438124db6e9bbedd83acf21418f5cc79",
 				fmt.Sprintf("CLUSTER_IPFSHTTP_NODEMULTIADDRESS=/dns4/ipfs%d/tcp/5001", i),
 				"CLUSTER_CRDT_TRUSTEDPEERS=*",
 				"CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS=/ip4/0.0.0.0/tcp/9094",
