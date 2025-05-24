@@ -167,9 +167,12 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		// Toggle repository forking
 		s.execGitopiaToggleRepositoryForking(c, valIdx, alice.String(), "alice", repoName)
 
+		// Authorize provider
+		s.execGitopiaAuthorizeProvider(c, valIdx, bob.String(), bob.String(), "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v", "GIT_SERVER")
+
 		// Fork repository using bob
 		forkRepoName := "forked-repo"
-		s.execGitopiaForkRepository(c, valIdx, bob.String(), repoName, forkRepoName, bob.String())
+		s.execGitopiaForkRepository(c, valIdx, "alice", repoName, forkRepoName, bob.String())
 
 		// Clone forked repository
 		tempDir2, err := os.MkdirTemp("", "gitopia-test-*")
@@ -212,6 +215,9 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
+		// Sleep 5 seconds
+		time.Sleep(5 * time.Second)
+
 		// Create pull request
 		prTitle := "Test PR"
 		prDescription := "Test PR description"
@@ -234,7 +240,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		)
 
 		// Merge pull request
-		s.execGitopiaInvokeMergePullRequest(c, valIdx, alice.String(), "1", "1", "gitopia")
+		s.execGitopiaInvokeMergePullRequest(c, valIdx, alice.String(), "0", "1", "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
 	})
 }
 
@@ -359,6 +365,32 @@ func (s *IntegrationTestSuite) execGitopiaToggleRepositoryForking(c *chain, valI
 		"toggle-repository-forking",
 		id,
 		repositoryName,
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
+		"--keyring-backend=test",
+		"--output=json",
+		"-y",
+	}
+
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+}
+
+// Helper function to execute authorize provider command
+func (s *IntegrationTestSuite) execGitopiaAuthorizeProvider(c *chain, valIdx int, creator, granter, provider, permission string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	s.T().Logf("authorizing provider %s for granter %s with permission %s on chain %s", provider, granter, permission, c.id)
+
+	gitopiaCommand := []string{
+		gitopiadBinary,
+		txCommand,
+		gitopiatypes.ModuleName,
+		"authorize-provider",
+		granter,
+		provider,
+		permission,
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
