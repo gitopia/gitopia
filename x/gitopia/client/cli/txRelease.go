@@ -15,9 +15,9 @@ import (
 
 func CmdCreateRelease() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-release [repositoryId] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag]",
+		Use:   "create-release [repositoryId] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag] [provider]",
 		Short: "Create a new release",
-		Args:  cobra.ExactArgs(9),
+		Args:  cobra.ExactArgs(11),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argOwnerid := args[0]
 			argRepositoryName := args[1]
@@ -38,6 +38,7 @@ func CmdCreateRelease() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argProvider := args[10]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -55,6 +56,7 @@ func CmdCreateRelease() *cobra.Command {
 				argDraft,
 				argPreRelease,
 				argIsTag,
+				argProvider,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -70,9 +72,9 @@ func CmdCreateRelease() *cobra.Command {
 
 func CmdUpdateRelease() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-release [id] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag]",
+		Use:   "update-release [id] [tagName] [target] [name] [description] [attachments] [draft] [preRelease] [isTag] [provider]",
 		Short: "Update a release",
-		Args:  cobra.ExactArgs(9),
+		Args:  cobra.ExactArgs(10),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -110,13 +112,14 @@ func CmdUpdateRelease() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			argsProvider := args[9]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateRelease(clientCtx.GetFromAddress().String(), id, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag)
+			msg := types.NewMsgUpdateRelease(clientCtx.GetFromAddress().String(), id, argsTagName, argsTarget, argsName, argsDescription, argsAttachments, argsDraft, argsPreRelease, argsIsTag, argsProvider)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -131,21 +134,22 @@ func CmdUpdateRelease() *cobra.Command {
 
 func CmdDeleteRelease() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-release [id]",
+		Use:   "delete-release [id] [provider]",
 		Short: "Delete a release by id",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
+			argsProvider := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgDeleteRelease(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeleteRelease(clientCtx.GetFromAddress().String(), id, argsProvider)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

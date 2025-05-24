@@ -197,7 +197,7 @@ func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInv
 		}},
 		types.RepositoryCollaborator_ADMIN,
 	) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "cannot create repository")
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
 	}
 
 	id := k.AppendTask(ctx, types.Task{
@@ -288,7 +288,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, forkRepository, types.RepositoryCollaborator_ADMIN) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("unauthorized"))
 	}
 
 	id := k.AppendRepository(

@@ -1,11 +1,17 @@
 package e2e
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -168,11 +174,12 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.execGitopiaToggleRepositoryForking(c, valIdx, alice.String(), "alice", repoName)
 
 		// Authorize provider
+		s.execGitopiaAuthorizeProvider(c, valIdx, alice.String(), alice.String(), "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v", "GIT_SERVER")
 		s.execGitopiaAuthorizeProvider(c, valIdx, bob.String(), bob.String(), "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v", "GIT_SERVER")
 
 		// Fork repository using bob
 		forkRepoName := "forked-repo"
-		s.execGitopiaForkRepository(c, valIdx, "alice", repoName, forkRepoName, bob.String())
+		s.execGitopiaForkRepository(c, valIdx, bob.String(), "alice", repoName, forkRepoName, "bob", "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
 
 		// Clone forked repository
 		tempDir2, err := os.MkdirTemp("", "gitopia-test-*")
@@ -241,11 +248,105 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Merge pull request
 		s.execGitopiaInvokeMergePullRequest(c, valIdx, alice.String(), "0", "1", "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
+
+		// Set alice's wallet
+		os.Setenv("GITOPIA_WALLET", aliceWalletJSON)
+
+		// Pull the latest changes
+		cmd = exec.Command("git", "pull", "origin", "master")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
+
+		// Create tag
+		cmd = exec.Command("git", "tag", "v1.0.0")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
+
+		// Push tag
+		cmd = exec.Command("git", "push", "origin", "v1.0.0")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
+
+		// Test uploading attachment
+		s.T().Log("Testing release asset upload")
+
+		// Create test file to upload
+		testFile = filepath.Join(tempDir2, "test-release-asset.txt")
+		err = os.WriteFile(testFile, []byte("test release asset content"), 0644)
+		s.Require().NoError(err)
+
+		// Create multipart form with file
+		file, err := os.Open(testFile)
+		s.Require().NoError(err)
+		defer file.Close()
+
+		body := &bytes.Buffer{}
+		writer := multipart.NewWriter(body)
+		part, err := writer.CreateFormFile("file", filepath.Base(testFile))
+		s.Require().NoError(err)
+
+		_, err = io.Copy(part, file)
+		s.Require().NoError(err)
+		writer.Close()
+
+		// Make request to upload endpoint
+		req, err := http.NewRequest("POST", "http://localhost:5002/upload", body)
+		s.Require().NoError(err)
+		req.Header.Set("Content-Type", writer.FormDataContentType())
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		s.Require().NoError(err)
+		defer resp.Body.Close()
+
+		s.Require().Equal(http.StatusOK, resp.StatusCode)
+
+		// Parse response
+		var uploadResp struct {
+			Sha  string `json:"sha"`
+			Size int64  `json:"size"`
+		}
+		err = json.NewDecoder(resp.Body).Decode(&uploadResp)
+		s.Require().NoError(err)
+
+		s.T().Logf("Uploaded file with sha: %s and size: %d", uploadResp.Sha, uploadResp.Size)
+		s.Require().NotEmpty(uploadResp.Sha)
+		s.Require().Greater(uploadResp.Size, int64(0))
+
+		attachments := []gitopiatypes.Attachment{{
+			Sha:      uploadResp.Sha,
+			Size_:    uint64(uploadResp.Size),
+			Uploader: bob.String(),
+			Name:     "test-release-asset.txt",
+		}}
+
+		attachmentsJSON, _ := json.Marshal(attachments)
+
+		// Create release
+		s.execGitopiaCreateRelease(
+			c,
+			valIdx,
+			bob.String(),
+			bob.String(),
+			forkRepoName,
+			"v1.0.0",
+			"master",
+			"test release",
+			"test release description",
+			string(attachmentsJSON),
+			false,
+			false,
+			false,
+			"gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v",
+		)
 	})
 }
 
 // Helper function to execute fork repository command
-func (s *IntegrationTestSuite) execGitopiaForkRepository(c *chain, valIdx int, ownerId, repoName, forkRepoName, forkOwnerId string) {
+func (s *IntegrationTestSuite) execGitopiaForkRepository(c *chain, valIdx int, creator, ownerId, repoName, forkRepoName, forkOwnerId, provider string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
@@ -262,8 +363,8 @@ func (s *IntegrationTestSuite) execGitopiaForkRepository(c *chain, valIdx int, o
 		"forked repository",
 		"master",
 		forkOwnerId,
-		"gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9",
-		fmt.Sprintf("--%s=%s", flags.FlagFrom, forkOwnerId),
+		provider,
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
 		"--keyring-backend=test",
@@ -391,6 +492,55 @@ func (s *IntegrationTestSuite) execGitopiaAuthorizeProvider(c *chain, valIdx int
 		granter,
 		provider,
 		permission,
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
+		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
+		"--keyring-backend=test",
+		"--output=json",
+		"-y",
+	}
+
+	s.executeGitopiaTxCommand(ctx, c, gitopiaCommand, valIdx, s.defaultExecValidation(c, valIdx))
+}
+
+// Helper function to execute create release command
+func (s *IntegrationTestSuite) execGitopiaCreateRelease(
+	c *chain,
+	valIdx int,
+	creator,
+	ownerId,
+	repoName,
+	tagName,
+	target,
+	name,
+	description,
+	attachments string,
+	draft,
+	preRelease,
+	isTag bool,
+	provider string,
+) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	s.T().Logf("creating release %s for repository %s/%s on chain %s", tagName, ownerId, repoName, c.id)
+
+	gitopiaCommand := []string{
+		gitopiadBinary,
+		txCommand,
+		gitopiatypes.ModuleName,
+		"create-release",
+		ownerId,
+		repoName,
+		tagName,
+		target,
+		name,
+		description,
+		attachments,
+		strconv.FormatBool(draft),
+		strconv.FormatBool(preRelease),
+		strconv.FormatBool(isTag),
+		provider,
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),

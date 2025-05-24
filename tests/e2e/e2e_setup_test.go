@@ -1180,7 +1180,8 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 		providerDir := filepath.Join(tmpDir, fmt.Sprintf("provider%d", i))
 		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "ipfs"), 0755))
 		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "cluster"), 0755))
-		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "git-server"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "repos"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "attachments"), 0755))
 	}
 
 	// Run IPFS nodes
@@ -1241,7 +1242,8 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 			Repository: "gitopia/git-server",
 			Tag:        "latest",
 			Mounts: []string{
-				fmt.Sprintf("%s/provider%d/git-server:/var/repos", tmpDir, i),
+				fmt.Sprintf("%s/provider%d/repos:/var/repos", tmpDir, i),
+				fmt.Sprintf("%s/provider%d/attachments:/var/attachments", tmpDir, i),
 			},
 			Env: []string{
 				fmt.Sprintf("IPFS_CLUSTER_PEER_HOST=cluster%d", i),
