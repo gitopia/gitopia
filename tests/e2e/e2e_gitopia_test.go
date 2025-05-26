@@ -148,6 +148,12 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		cmd.Run()
 		s.Require().NoError(err)
 
+		// query packfile
+		packfile, err := queryGitopiaRepositoryPackfile(api, 0)
+		s.Require().NoError(err)
+		s.Require().NotEmpty(packfile.Packfile.Cid)
+		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
+
 		// Push via different git server
 		cmd = exec.Command("git", "config", "--global", "gitopia.gitServerHost", "http://localhost:5002")
 		err = cmd.Run()
@@ -166,6 +172,16 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
+
+		// query updated packfile and check if cid is different
+		newPackfile, err := queryGitopiaRepositoryPackfile(api, 0)
+		s.Require().NoError(err)
+		s.Require().NotEmpty(newPackfile.Packfile.Cid)
+		s.Require().Greater(newPackfile.Packfile.Size_, uint64(0))
+		s.Require().NotEqual(packfile.Packfile.Size_, newPackfile.Packfile.Size_)
+		s.Require().NotEqual(packfile.Packfile.RootHash, newPackfile.Packfile.RootHash)
+		s.Require().NotEqual(packfile.Packfile.Name, newPackfile.Packfile.Name)
+		s.Require().NotEqual(packfile.Packfile.Cid, newPackfile.Packfile.Cid)
 
 		// sleep 5 seconds
 		time.Sleep(5 * time.Second)
@@ -258,6 +274,17 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
+		// check test.txt content
+		testFile = filepath.Join(tempDir2, "test.txt")
+		content, err := os.ReadFile(testFile)
+		s.Require().NoError(err)
+		s.Require().Equal("new content", string(content))
+
+		// check new-file.txt content
+		content, err = os.ReadFile(newFile)
+		s.Require().NoError(err)
+		s.Require().Equal("new content", string(content))
+
 		// Create tag
 		cmd = exec.Command("git", "tag", "v1.0.0")
 		cmd.Dir = tempDir
@@ -273,7 +300,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		// Test uploading attachment
 		s.T().Log("Testing release asset upload")
 
-		// Create test file to upload
+		// Create test release assets to upload
 		testFile = filepath.Join(tempDir2, "test-release-asset.txt")
 		err = os.WriteFile(testFile, []byte("test release asset content"), 0644)
 		s.Require().NoError(err)
@@ -342,6 +369,19 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 			false,
 			"gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v",
 		)
+
+		// query release asset
+		releaseAsset, err := queryGitopiaRepositoryReleaseAsset(api, 0, "v1.0.0", "test-release-asset.txt")
+		s.Require().NoError(err)
+		s.Require().NotEmpty(releaseAsset.ReleaseAsset.Cid)
+		s.Require().Greater(releaseAsset.ReleaseAsset.Size_, int64(0))
+
+		// check if release asset is stored in public ipfs
+		ipfsResp, err := http.Get(fmt.Sprintf("https://ipfs.io/ipfs/%s", releaseAsset.ReleaseAsset.Cid))
+		s.Require().NoError(err)
+		defer ipfsResp.Body.Close()
+		s.Require().Equal(http.StatusOK, ipfsResp.StatusCode)
+		s.Require().Equal("test release asset content", ipfsResp.Body)
 	})
 }
 

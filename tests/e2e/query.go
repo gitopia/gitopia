@@ -19,6 +19,7 @@ import (
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	storagetypes "github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 func queryGitopiaTx(endpoint, txHash string) error {
@@ -312,4 +313,32 @@ func queryGitopiaRepository(endpoint, owner, repositoryName string) (gitopiatype
 	}
 
 	return repositoryResp, nil
+}
+
+func queryGitopiaRepositoryPackfile(endpoint string, repositoryId uint64) (storagetypes.QueryPackfileResponse, error) {
+	body, err := httpGet(fmt.Sprintf("%s/gitopia/gitopia/storage/repository/%d/packfile", endpoint, repositoryId))
+	if err != nil {
+		return storagetypes.QueryPackfileResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
+	}
+
+	var packfileResp storagetypes.QueryPackfileResponse
+	if err := cdc.UnmarshalJSON(body, &packfileResp); err != nil {
+		return storagetypes.QueryPackfileResponse{}, err
+	}
+
+	return packfileResp, nil
+}
+
+func queryGitopiaRepositoryReleaseAsset(endpoint string, repositoryId uint64, tag, name string) (storagetypes.QueryReleaseAssetResponse, error) {
+	body, err := httpGet(fmt.Sprintf("%s/gitopia/gitopia/storage/repository/%d/release-asset/%s/%s", endpoint, repositoryId, tag, name))
+	if err != nil {
+		return storagetypes.QueryReleaseAssetResponse{}, fmt.Errorf("failed to execute HTTP request: %w", err)
+	}
+
+	var releaseAssetResp storagetypes.QueryReleaseAssetResponse
+	if err := cdc.UnmarshalJSON(body, &releaseAssetResp); err != nil {
+		return storagetypes.QueryReleaseAssetResponse{}, err
+	}
+
+	return releaseAssetResp, nil
 }
