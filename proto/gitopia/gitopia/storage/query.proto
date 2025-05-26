@@ -30,6 +30,11 @@ service Query {
   rpc Packfile(QueryPackfileRequest) returns (QueryPackfileResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/packfile/{id}";
   }
+
+  // Packfiles queries all packfiles
+  rpc Packfiles(QueryPackfilesRequest) returns (QueryPackfilesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfiles";
+  }
   
   // RepositoryPackfile queries a packfile for a repository
   rpc RepositoryPackfile(QueryRepositoryPackfileRequest) returns (QueryRepositoryPackfileResponse) {
@@ -41,6 +46,11 @@ service Query {
     option (google.api.http).get = "/gitopia/gitopia/storage/release-asset/{id}";
   }
 
+  // ReleaseAssets queries all release assets
+  rpc ReleaseAssets(QueryReleaseAssetsRequest) returns (QueryReleaseAssetsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets";
+  }
+
   // RepositoryReleaseAsset queries a release asset for a repository by repository id, tag and name
   rpc RepositoryReleaseAsset(QueryRepositoryReleaseAssetRequest) returns (QueryRepositoryReleaseAssetResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-asset/{tag}/{name}";
@@ -49,6 +59,10 @@ service Query {
   // Challenge queries a challenge by id
   rpc Challenge(QueryChallengeRequest) returns (QueryChallengeResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/challenge/{id}";
+  }
+
+  rpc Challenges(QueryChallengesRequest) returns (QueryChallengesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/challenges";
   }
 }
 
@@ -83,6 +97,15 @@ message QueryPackfileResponse {
   Packfile packfile = 1 [(gogoproto.nullable) = false];
 }
 
+message QueryPackfilesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryPackfilesResponse {
+  repeated Packfile packfiles = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
 message QueryRepositoryPackfileRequest {
   uint64 repository_id = 1;
 }
@@ -97,6 +120,15 @@ message QueryReleaseAssetRequest {
 
 message QueryReleaseAssetResponse {
   ReleaseAsset release_asset = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryReleaseAssetsResponse {
+  repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryRepositoryReleaseAssetRequest {
@@ -115,4 +147,13 @@ message QueryChallengeRequest {
 
 message QueryChallengeResponse {
   Challenge challenge = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryChallengesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryChallengesResponse {
+  repeated Challenge challenges = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

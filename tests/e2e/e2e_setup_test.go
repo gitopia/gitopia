@@ -580,6 +580,11 @@ func (s *IntegrationTestSuite) initValidatorConfigs(c *chain) {
 		valConfig.StateSync.Enable = false
 		valConfig.LogLevel = "info"
 
+		// Enable CORS for RPC
+		valConfig.RPC.CORSAllowedOrigins = []string{"*"}
+		valConfig.RPC.CORSAllowedMethods = []string{"HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
+		valConfig.RPC.CORSAllowedHeaders = []string{"Accept-Encoding"}
+
 		var peers []string
 
 		for j := 0; j < len(c.validators); j++ {
@@ -604,6 +609,11 @@ func (s *IntegrationTestSuite) initValidatorConfigs(c *chain) {
 		appConfig.API.Address = "tcp://0.0.0.0:1317"
 		appConfig.MinGasPrices = fmt.Sprintf("%s%s", minGasPrice, uloreDenom)
 		appConfig.GRPC.Address = "0.0.0.0:9090"
+
+		// Enable CORS for API and gRPC
+		appConfig.API.EnableUnsafeCORS = true
+		appConfig.API.Swagger = true
+		appConfig.GRPCWeb.EnableUnsafeCORS = true
 
 		srvconfig.SetConfigTemplate(srvconfig.DefaultConfigTemplate)
 		srvconfig.WriteConfigFile(appCfgPath, appConfig)

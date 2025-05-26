@@ -81,6 +81,36 @@ func (k Keeper) Packfile(goCtx context.Context, req *types.QueryPackfileRequest)
 	return &types.QueryPackfileResponse{Packfile: packfile}, nil
 }
 
+// Packfiles returns all packfiles
+func (k Keeper) Packfiles(goCtx context.Context, req *types.QueryPackfilesRequest) (*types.QueryPackfilesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var packfiles []types.Packfile
+	store := ctx.KVStore(k.storeKey)
+	packfileStore := prefix.NewStore(store, types.KeyPrefix(types.PackfileKey))
+
+	pageRes, err := query.Paginate(packfileStore, req.Pagination, func(key []byte, value []byte) error {
+		var packfile types.Packfile
+		if err := k.cdc.Unmarshal(value, &packfile); err != nil {
+			return err
+		}
+		packfiles = append(packfiles, packfile)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryPackfilesResponse{
+		Packfiles:  packfiles,
+		Pagination: pageRes,
+	}, nil
+}
+
 // RepositoryPackfile returns a packfile for a repository
 func (k Keeper) RepositoryPackfile(goCtx context.Context, req *types.QueryRepositoryPackfileRequest) (*types.QueryRepositoryPackfileResponse, error) {
 	if req == nil {
@@ -110,6 +140,36 @@ func (k Keeper) ReleaseAsset(goCtx context.Context, req *types.QueryReleaseAsset
 		return nil, status.Errorf(codes.NotFound, "release asset not found")
 	}
 	return &types.QueryReleaseAssetResponse{ReleaseAsset: asset}, nil
+}
+
+// ReleaseAssets returns all release assets
+func (k Keeper) ReleaseAssets(goCtx context.Context, req *types.QueryReleaseAssetsRequest) (*types.QueryReleaseAssetsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var releaseAssets []types.ReleaseAsset
+	store := ctx.KVStore(k.storeKey)
+	releaseAssetStore := prefix.NewStore(store, types.KeyPrefix(types.ReleaseAssetKey))
+
+	pageRes, err := query.Paginate(releaseAssetStore, req.Pagination, func(key []byte, value []byte) error {
+		var releaseAsset types.ReleaseAsset
+		if err := k.cdc.Unmarshal(value, &releaseAsset); err != nil {
+			return err
+		}
+		releaseAssets = append(releaseAssets, releaseAsset)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryReleaseAssetsResponse{
+		ReleaseAssets: releaseAssets,
+		Pagination:    pageRes,
+	}, nil
 }
 
 // RepositoryReleaseAsset returns a release asset for a repository
@@ -142,4 +202,34 @@ func (k Keeper) Challenge(goCtx context.Context, req *types.QueryChallengeReques
 	}
 
 	return &types.QueryChallengeResponse{Challenge: challenge}, nil
+}
+
+// Challenges returns all challenges
+func (k Keeper) Challenges(goCtx context.Context, req *types.QueryChallengesRequest) (*types.QueryChallengesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var challenges []types.Challenge
+	store := ctx.KVStore(k.storeKey)
+	challengeStore := prefix.NewStore(store, types.KeyPrefix(types.ChallengeKey))
+
+	pageRes, err := query.Paginate(challengeStore, req.Pagination, func(key []byte, value []byte) error {
+		var challenge types.Challenge
+		if err := k.cdc.Unmarshal(value, &challenge); err != nil {
+			return err
+		}
+		challenges = append(challenges, challenge)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryChallengesResponse{
+		Challenges: challenges,
+		Pagination: pageRes,
+	}, nil
 }
