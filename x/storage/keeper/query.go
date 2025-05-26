@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

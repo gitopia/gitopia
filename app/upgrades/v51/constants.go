@@ -1,7 +1,7 @@
 package v51
 
 import (
-	"github.com/gitopia/gitopia/v5/app/upgrades"
+	"github.com/gitopia/gitopia/v6/app/upgrades"
 
 	store "github.com/cosmos/cosmos-sdk/store/types"
 )

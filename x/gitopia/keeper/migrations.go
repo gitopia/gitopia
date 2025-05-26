@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	v4 "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v4"
+	v4 "github.com/gitopia/gitopia/v6/x/gitopia/migrations/v4"
 )
 
 // Migrator is a struct for handling in-place store migrations.

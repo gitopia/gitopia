@@ -17,13 +17,13 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v5/x/rewards/client/cli"
-	"github.com/gitopia/gitopia/v5/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v6/x/rewards/client/cli"
+	"github.com/gitopia/gitopia/v6/x/rewards/keeper"
 
-	// v2 "github.com/gitopia/gitopia/v5/x/rewards/migrations/v2"
-	// v3 "github.com/gitopia/gitopia/v5/x/rewards/migrations/v3"
-	// v4 "github.com/gitopia/gitopia/v5/x/rewards/migrations/v4"
-	"github.com/gitopia/gitopia/v5/x/rewards/types"
+	// v2 "github.com/gitopia/gitopia/v6/x/rewards/migrations/v2"
+	// v3 "github.com/gitopia/gitopia/v6/x/rewards/migrations/v3"
+	// v4 "github.com/gitopia/gitopia/v6/x/rewards/migrations/v4"
+	"github.com/gitopia/gitopia/v6/x/rewards/types"
 )
 
 var (

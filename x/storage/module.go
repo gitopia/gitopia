@@ -17,9 +17,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/gitopia/gitopia/v5/x/storage/client/cli"
-	"github.com/gitopia/gitopia/v5/x/storage/keeper"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	"github.com/gitopia/gitopia/v6/x/storage/client/cli"
+	"github.com/gitopia/gitopia/v6/x/storage/keeper"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 var (

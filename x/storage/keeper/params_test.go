@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "github.com/gitopia/gitopia/v5/testutil/keeper"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	testkeeper "github.com/gitopia/gitopia/v6/testutil/keeper"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -2,8 +2,8 @@ package storage
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v5/x/storage/keeper"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	"github.com/gitopia/gitopia/v6/x/storage/keeper"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

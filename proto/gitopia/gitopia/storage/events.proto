@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/gitopia/gitopia/v5/x/storage/types";
+option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
 
 // EventProviderRegistered is emitted when a provider is registered
 message EventProviderRegistered {

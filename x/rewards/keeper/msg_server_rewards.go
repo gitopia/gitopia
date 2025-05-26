@@ -6,8 +6,8 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	gitopiaparams "github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/x/rewards/types"
+	gitopiaparams "github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/x/rewards/types"
 )
 
 const (

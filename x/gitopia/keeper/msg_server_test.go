@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v5/app/keepers"
-	keepertest "github.com/gitopia/gitopia/v5/testutil/keeper"
-	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/app/keepers"
+	keepertest "github.com/gitopia/gitopia/v6/testutil/keeper"
+	"github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {

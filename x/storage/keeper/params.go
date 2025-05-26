@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 // GetParams get all parameters as types.Params

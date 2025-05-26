@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 // GetPackfileCount get the total number of packfile

@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 // SetUserQuota set a specific user quota in the store

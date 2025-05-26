@@ -1,4 +1,4 @@
-package v51
+package v6
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,16 +13,14 @@ func CreateUpgradeHandler(
 	keepers *keepers.AppKeepers,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		ctx.Logger().Info("Starting upgrade v5.1.0...")
-
-		ctx.Logger().Info("Migrating DAOs to the newer implementation...")
+		ctx.Logger().Info("Starting upgrade v6...")
 
 		migrations, err := mm.RunMigrations(ctx, configurator, fromVM)
 		if err != nil {
 			return nil, err
 		}
 
-		ctx.Logger().Info("v5.1.0 Upgrade Complete")
+		ctx.Logger().Info("v6 Upgrade Complete")
 		return migrations, nil
 	}
 }

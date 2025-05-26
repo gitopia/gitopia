@@ -11,8 +11,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func (k msgServer) CreatePullRequest(goCtx context.Context, msg *types.MsgCreatePullRequest) (*types.MsgCreatePullRequestResponse, error) {

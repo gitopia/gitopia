@@ -21,7 +21,7 @@ var (
 	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 100
-	DefaultChallengeIntervalBlocks         uint64   = 10
+	DefaultChallengeIntervalBlocks         uint64   = 100
 	DefaultChallengeTimeoutBlocks          uint64   = 5
 	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(100000000))
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(50000000))

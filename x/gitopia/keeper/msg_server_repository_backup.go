@@ -6,8 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func (k msgServer) AddRepositoryBackupRef(goCtx context.Context, msg *types.MsgAddRepositoryBackupRef) (*types.MsgAddRepositoryBackupRefResponse, error) {

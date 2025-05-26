@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	testkeeper "github.com/gitopia/gitopia/v6/testutil/keeper"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 	"github.com/stretchr/testify/require"
-	testkeeper 	"github.com/gitopia/gitopia/v5/testutil/keeper"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
 )
 
 func TestParamsQuery(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/group"
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
-	v3types "github.com/gitopia/gitopia/v5/x/gitopia/migrations/v3/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	v3types "github.com/gitopia/gitopia/v6/x/gitopia/migrations/v3/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 const (

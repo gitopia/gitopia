@@ -8,11 +8,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	"github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/testutil/sample"
-	"github.com/gitopia/gitopia/v5/testutil/simapp"
-	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/testutil/sample"
+	"github.com/gitopia/gitopia/v6/testutil/simapp"
+	"github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -9,7 +9,7 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 
 	sims "github.com/cosmos/cosmos-sdk/testutil/sims"
-	gitopiaparams "github.com/gitopia/gitopia/v5/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/v6/app/params"
 )
 
 var defaultGenesisBz []byte

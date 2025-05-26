@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/gitopia/gitopia/v5/app/params"
+	"github.com/gitopia/gitopia/v6/app/params"
 )
 
 // https://github.com/cosmos/cosmos-sdk/issues/13308

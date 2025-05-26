@@ -3,7 +3,7 @@ package utils
 import (
 	"regexp"
 
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 var max_pinned_repos = 6

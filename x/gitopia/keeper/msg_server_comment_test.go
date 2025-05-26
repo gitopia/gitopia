@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 func TestCommentMsgServerCreate(t *testing.T) {

@@ -3,8 +3,8 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 const (

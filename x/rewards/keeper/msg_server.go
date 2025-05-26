@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/gitopia/gitopia/v5/x/rewards/types"
+	"github.com/gitopia/gitopia/v6/x/rewards/types"
 )
 
 type msgServer struct {

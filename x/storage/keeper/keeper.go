@@ -9,9 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	gitopiakeeper "github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	gitopiakeeper "github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 type (

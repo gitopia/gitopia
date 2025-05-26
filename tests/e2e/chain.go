@@ -21,7 +21,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	gitopiaparams "github.com/gitopia/gitopia/v5/app/params"
+	gitopiaparams "github.com/gitopia/gitopia/v6/app/params"
 )
 
 const (

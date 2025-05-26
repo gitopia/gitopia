@@ -10,8 +10,8 @@ import (
 	"github.com/wealdtech/go-merkletree/v2/sha3"
 
 	"github.com/cosmos/cosmos-sdk/types/address"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/storage/types"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 type msgServer struct {

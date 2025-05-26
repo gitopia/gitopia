@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 // /*

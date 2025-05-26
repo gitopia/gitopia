@@ -34,15 +34,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	gitopiaante "github.com/gitopia/gitopia/v5/ante"
-	"github.com/gitopia/gitopia/v5/app/keepers"
-	gitopiaappparams "github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/app/upgrades"
-	v4 "github.com/gitopia/gitopia/v5/app/upgrades/v4"
-	v5 "github.com/gitopia/gitopia/v5/app/upgrades/v5"
-	v51 "github.com/gitopia/gitopia/v5/app/upgrades/v51"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
-	rewardstypes "github.com/gitopia/gitopia/v5/x/rewards/types"
+	gitopiaante "github.com/gitopia/gitopia/v6/ante"
+	"github.com/gitopia/gitopia/v6/app/keepers"
+	gitopiaappparams "github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/app/upgrades"
+	v4 "github.com/gitopia/gitopia/v6/app/upgrades/v4"
+	v5 "github.com/gitopia/gitopia/v6/app/upgrades/v5"
+	v51 "github.com/gitopia/gitopia/v6/app/upgrades/v51"
+	v6 "github.com/gitopia/gitopia/v6/app/upgrades/v6"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	rewardstypes "github.com/gitopia/gitopia/v6/x/rewards/types"
 	"github.com/spf13/cast"
 )
 
@@ -71,6 +72,7 @@ var (
 		v4.Upgrade,
 		v5.Upgrade,
 		v51.Upgrade,
+		v6.Upgrade,
 	}
 )
 
