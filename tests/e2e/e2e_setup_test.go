@@ -1261,14 +1261,21 @@ func (s *IntegrationTestSuite) runStorageProviders() {
 				fmt.Sprintf("GIT_SERVER_ID=%d", i),
 				fmt.Sprintf("IPFS_HOST=ipfs%d", i),
 				"IPFS_PORT=5001",
-				"ENABLE_EXTERNAL_PINNING=false",
-				"PINATA_API_KEY=" + os.Getenv("PINATA_API_KEY"),
-				"PINATA_SECRET_KEY=" + os.Getenv("PINATA_SECRET_KEY"),
 				fmt.Sprintf("CHAIN_ID=%s", s.chainA.id),
+				"PINNING_SERVICE_API_URL=https://api.pinata.cloud/psa",
 			},
 			PortBindings: map[docker.Port][]docker.PortBinding{
 				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
 			},
+		}
+
+		// enable external pinning for first node
+		if i == 0 {
+			runOpts.Env = append(runOpts.Env, "ENABLE_EXTERNAL_PINNING=true",
+				"PINNING_SERVICE_API_ACCESS_TOKEN="+os.Getenv("PINNING_SERVICE_API_ACCESS_TOKEN"))
+		} else {
+			runOpts.Env = append(runOpts.Env, "ENABLE_EXTERNAL_PINNING=false",
+				"PINNING_SERVICE_API_ACCESS_TOKEN=")
 		}
 
 		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)

@@ -150,6 +150,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// query packfile
 		packfile, err := queryGitopiaRepositoryPackfile(api, 0)
+		s.T().Logf("packfile: %+v", packfile)
 		s.Require().NoError(err)
 		s.Require().NotEmpty(packfile.Packfile.Cid)
 		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
@@ -168,6 +169,11 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
+		cmd = exec.Command("git", "commit", "-m", "New commit")
+		cmd.Dir = tempDir
+		err = cmd.Run()
+		s.Require().NoError(err)
+
 		cmd = exec.Command("git", "push", "-u", "origin", "master")
 		cmd.Dir = tempDir
 		err = cmd.Run()
@@ -175,6 +181,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// query updated packfile and check if cid is different
 		newPackfile, err := queryGitopiaRepositoryPackfile(api, 0)
+		s.T().Logf("new packfile: %+v", newPackfile)
 		s.Require().NoError(err)
 		s.Require().NotEmpty(newPackfile.Packfile.Cid)
 		s.Require().Greater(newPackfile.Packfile.Size_, uint64(0))
@@ -238,6 +245,13 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
+		// query packfile
+		packfile, err = queryGitopiaRepositoryPackfile(api, 1)
+		s.T().Logf("packfile of forked repository: %+v", packfile)
+		s.Require().NoError(err)
+		s.Require().NotEmpty(packfile.Packfile.Cid)
+		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
+
 		// Sleep 5 seconds
 		time.Sleep(5 * time.Second)
 
@@ -264,6 +278,13 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Merge pull request
 		s.execGitopiaInvokeMergePullRequest(c, valIdx, alice.String(), "0", "1", "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
+
+		// query packfile
+		packfile, err = queryGitopiaRepositoryPackfile(api, 0)
+		s.T().Logf("packfile after merge: %+v", packfile)
+		s.Require().NoError(err)
+		s.Require().NotEmpty(packfile.Packfile.Cid)
+		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
 
 		// Set alice's wallet
 		os.Setenv("GITOPIA_WALLET", aliceWalletJSON)
@@ -352,13 +373,16 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		attachmentsJSON, _ := json.Marshal(attachments)
 
+		// sleep 5 seconds
+		time.Sleep(5 * time.Second)
+
 		// Create release
 		s.execGitopiaCreateRelease(
 			c,
 			valIdx,
-			bob.String(),
-			bob.String(),
-			forkRepoName,
+			alice.String(),
+			alice.String(),
+			repoName,
 			"v1.0.0",
 			"master",
 			"test release",
@@ -374,7 +398,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		releaseAsset, err := queryGitopiaRepositoryReleaseAsset(api, 0, "v1.0.0", "test-release-asset.txt")
 		s.Require().NoError(err)
 		s.Require().NotEmpty(releaseAsset.ReleaseAsset.Cid)
-		s.Require().Greater(releaseAsset.ReleaseAsset.Size_, int64(0))
+		s.Require().Greater(releaseAsset.ReleaseAsset.Size_, uint64(0))
 
 		// check if release asset is stored in public ipfs
 		ipfsResp, err := http.Get(fmt.Sprintf("https://ipfs.io/ipfs/%s", releaseAsset.ReleaseAsset.Cid))
