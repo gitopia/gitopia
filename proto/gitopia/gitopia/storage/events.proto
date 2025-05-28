@@ -24,6 +24,8 @@ message EventPackfileUpdated {
   uint64 repository_id = 1;
   string new_cid = 2;
   string old_cid = 3;
+  string new_name = 4;
+  string old_name = 5;
 }
 
 // EventReleaseAssetUpdated is emitted when a release asset is updated
@@ -33,6 +35,8 @@ message EventReleaseAssetUpdated {
   string name = 3;
   string new_cid = 4;
   string old_cid = 5;
+  string new_sha256 = 6;
+  string old_sha256 = 7;
 }
 
 // EventChallengeCreated is emitted when a new challenge is created

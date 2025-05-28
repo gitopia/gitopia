@@ -62,6 +62,7 @@ message MsgUpdateReleaseAsset {
   string cid = 5;
   bytes root_hash = 6;
   uint64 size = 7;
+  string sha256 = 8;
 }
 
 message MsgUpdateReleaseAssetResponse {}

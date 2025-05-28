@@ -286,7 +286,7 @@ func (msg *MsgCompleteUnstake) ValidateBasic() error {
 var _ sdk.Msg = &MsgUpdateReleaseAsset{}
 
 // NewMsgUpdateReleaseAsset creates a new MsgUpdateReleaseAsset instance
-func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, name string, cid string, rootHash []byte, size uint64) *MsgUpdateReleaseAsset {
+func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, name string, cid string, rootHash []byte, size uint64, sha256 string) *MsgUpdateReleaseAsset {
 	return &MsgUpdateReleaseAsset{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -295,6 +295,7 @@ func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, n
 		Cid:          cid,
 		RootHash:     rootHash,
 		Size_:        size,
+		Sha256:       sha256,
 	}
 }
 
@@ -343,6 +344,10 @@ func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
 
 	if msg.Size_ == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
+	}
+
+	if msg.Sha256 == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sha256 cannot be empty")
 	}
 
 	return nil

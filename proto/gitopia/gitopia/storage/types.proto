@@ -51,6 +51,7 @@ message ReleaseAsset {
   uint64 size = 6;
   string cid = 7;
   bytes root_hash = 8;
+  string sha256 = 9;
 }
 
 // Mapping between packfile id and repository id

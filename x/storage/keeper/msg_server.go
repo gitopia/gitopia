@@ -92,10 +92,11 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	}
 
 	// Check if packfile already exists for this repository
-	var oldCid string
+	var oldCid, oldName string
 	existingPackfile, found := k.GetPackfile(ctx, msg.RepositoryId)
 	if found {
 		oldCid = existingPackfile.Cid
+		oldName = existingPackfile.Name
 		// Calculate the difference in size between the existing and new packfile
 		existingSize := existingPackfile.Size_
 		newSize := msg.Size_
@@ -139,6 +140,8 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		RepositoryId: msg.RepositoryId,
 		NewCid:       msg.Cid,
 		OldCid:       oldCid,
+		NewName:      msg.Name,
+		OldName:      oldName,
 	})
 
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
@@ -153,10 +156,11 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 	}
 
 	// Check if release asset already exists for this repository
-	var oldCid string
+	var oldCid, oldSha256 string
 	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
 	if found {
 		oldCid = existingAsset.Cid
+		oldSha256 = existingAsset.Sha256
 		// Calculate the difference in size between the existing and new asset
 		existingSize := existingAsset.Size_
 		newSize := msg.Size_
@@ -207,6 +211,8 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		Name:         msg.Name,
 		NewCid:       msg.Cid,
 		OldCid:       oldCid,
+		NewSha256:    msg.Sha256,
+		OldSha256:    oldSha256,
 	})
 
 	return &types.MsgUpdateReleaseAssetResponse{}, nil
