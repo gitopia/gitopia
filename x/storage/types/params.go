@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -10,10 +11,14 @@ import (
 
 var _ paramtypes.ParamSet = (*Params)(nil)
 
+const (
+	DefaultChallengePeriod = 10 * time.Second
+)
+
 var (
 	KeyMinStakeAmount                  = []byte("MinStakeAmount")
 	KeyChallengeIntervalBlocks         = []byte("ChallengeIntervalBlocks")
-	KeyChallengeTimeoutBlocks          = []byte("ChallengeTimeoutBlocks")
+	KeyChallengePeriod                 = []byte("ChallengePeriod")
 	KeyChallengeReward                 = []byte("ChallengeReward")
 	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
 	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
@@ -22,7 +27,6 @@ var (
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 100
 	DefaultChallengeIntervalBlocks         uint64   = 100
-	DefaultChallengeTimeoutBlocks          uint64   = 5
 	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(100000000))
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(50000000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
@@ -39,7 +43,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 func NewParams(
 	minStakeAmount uint64,
 	challengeIntervalBlocks uint64,
-	challengeTimeoutBlocks uint64,
+	challengePeriod time.Duration,
 	challengeReward sdk.Coin,
 	challengeSlashAmount sdk.Coin,
 	consecutiveFailsThreshold uint64,
@@ -49,7 +53,7 @@ func NewParams(
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
 		ChallengeIntervalBlocks:         challengeIntervalBlocks,
-		ChallengeTimeoutBlocks:          challengeTimeoutBlocks,
+		ChallengePeriod:                 &challengePeriod,
 		ChallengeReward:                 challengeReward,
 		ChallengeSlashAmount:            challengeSlashAmount,
 		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
@@ -63,7 +67,7 @@ func DefaultParams() Params {
 	return NewParams(
 		DefaultMinStakeAmount,
 		DefaultChallengeIntervalBlocks,
-		DefaultChallengeTimeoutBlocks,
+		DefaultChallengePeriod,
 		DefaultChallengeReward,
 		DefaultChallengeSlashAmount,
 		DefaultConsecutiveFailsThreshold,
@@ -77,7 +81,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyMinStakeAmount, &p.MinStakeAmount, validateMinStakeAmount),
 		paramtypes.NewParamSetPair(KeyChallengeIntervalBlocks, &p.ChallengeIntervalBlocks, validateChallengeIntervalBlocks),
-		paramtypes.NewParamSetPair(KeyChallengeTimeoutBlocks, &p.ChallengeTimeoutBlocks, validateChallengeTimeoutBlocks),
+		paramtypes.NewParamSetPair(KeyChallengePeriod, &p.ChallengePeriod, validateChallengePeriod),
 		paramtypes.NewParamSetPair(KeyChallengeReward, &p.ChallengeReward, validateChallengeReward),
 		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
@@ -94,7 +98,7 @@ func (p Params) Validate() error {
 	if err := validateChallengeIntervalBlocks(p.ChallengeIntervalBlocks); err != nil {
 		return err
 	}
-	if err := validateChallengeTimeoutBlocks(p.ChallengeTimeoutBlocks); err != nil {
+	if err := validateChallengePeriod(p.ChallengePeriod); err != nil {
 		return err
 	}
 	if err := validateChallengeReward(p.ChallengeReward); err != nil {
@@ -146,14 +150,14 @@ func validateChallengeIntervalBlocks(v interface{}) error {
 	return nil
 }
 
-// validateChallengeTimeoutBlocks validates the ChallengeTimeoutBlocks param
-func validateChallengeTimeoutBlocks(v interface{}) error {
-	blocks, ok := v.(uint64)
+// validateChallengePeriod validates the ChallengePeriod param
+func validateChallengePeriod(v interface{}) error {
+	period, ok := v.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if blocks == 0 {
-		return fmt.Errorf("challenge timeout blocks cannot be 0")
+	if period.Seconds() <= 0 {
+		return fmt.Errorf("challenge period must be greater than 0")
 	}
 	return nil
 }

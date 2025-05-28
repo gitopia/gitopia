@@ -3,7 +3,6 @@ package keeper
 import (
 	"encoding/binary"
 	"fmt"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -161,6 +160,8 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		chunkIndex = uint64(prng.Int63n(int64(maxChunks)))
 	}
 
+	challengePeriod := k.GetParams(ctx).ChallengePeriod
+
 	challenge := &types.Challenge{
 		Provider:      providers[providerIndex].Creator,
 		ChallengeType: challengeType,
@@ -168,7 +169,7 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		RootHash:      rootHash,
 		ChunkIndex:    chunkIndex,
 		CreatedAt:     ctx.BlockTime(),
-		Deadline:      ctx.BlockTime().Add(time.Second * 15), // 15 seconds deadline
+		Deadline:      ctx.BlockTime().Add(*challengePeriod),
 		Status:        types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 
