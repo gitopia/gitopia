@@ -633,6 +633,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 				fmt.Sprintf("%s/:%s", val.configDir(), gitopiaHomePath),
 			},
 			Repository: "gitopia/gitopiad-e2e",
+			Tag:        "v5", // Use v5 tag initially
 		}
 
 		s.Require().NoError(exec.Command("chmod", "-R", "0777", val.configDir()).Run()) //nolint:gosec // this is a test
