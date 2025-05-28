@@ -43,9 +43,9 @@ func GetTxCmd() *cobra.Command {
 
 func CmdRegisterStorageProvider() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-provider [address] [stake]",
+		Use:   "register-provider [url] [description] [stake]",
 		Short: "Register a new storage provider",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -59,8 +59,35 @@ func CmdRegisterStorageProvider() *cobra.Command {
 
 			msg := types.NewMsgRegisterProvider(
 				clientCtx.GetFromAddress().String(),
-				args[0], // address
+				args[0],
+				args[1],
 				amount,
+			)
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	return cmd
+}
+
+func CmdUpdateStorageProvider() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update-provider [url] [description]",
+		Short: "Update a storage provider",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateProvider(
+				clientCtx.GetFromAddress().String(),
+				args[0],
+				args[1],
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

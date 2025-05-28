@@ -21,6 +21,10 @@ type (
 		memKey        storetypes.StoreKey
 		bankKeeper    bankkeeper.Keeper
 		gitopiaKeeper *gitopiakeeper.Keeper
+
+		// the address capable of executing a MsgUpdateParams message. Typically, this
+		// should be the x/gov module account.
+		authority string
 	}
 )
 
@@ -30,6 +34,7 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	bankKeeper bankkeeper.Keeper,
 	gitopiaKeeper *gitopiakeeper.Keeper,
+	authority string,
 ) *Keeper {
 	return &Keeper{
 		cdc:           cdc,
@@ -37,7 +42,13 @@ func NewKeeper(
 		memKey:        memKey,
 		bankKeeper:    bankKeeper,
 		gitopiaKeeper: gitopiaKeeper,
+		authority:     authority,
 	}
+}
+
+// GetAuthority returns the x/storage module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {

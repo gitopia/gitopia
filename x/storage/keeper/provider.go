@@ -83,6 +83,24 @@ func (k Keeper) GetAllProvider(ctx sdk.Context) (list []types.Provider) {
 	return
 }
 
+// GetActiveProviders returns all active providers
+func (k Keeper) GetActiveProviders(ctx sdk.Context) (list []types.Provider) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProviderKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.Provider
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		if val.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+			list = append(list, val)
+		}
+	}
+
+	return
+}
+
 // GetProviderIDBytes returns the byte representation of the ID
 func GetProviderIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)

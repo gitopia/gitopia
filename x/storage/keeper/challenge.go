@@ -104,10 +104,10 @@ func GetChallengeIDBytes(id uint64) []byte {
 
 // GenerateChallenge creates a new random challenge
 func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
-	// Get all providers
-	providers := k.GetAllProvider(ctx)
+	// Get active providers
+	providers := k.GetActiveProviders(ctx)
 	if len(providers) == 0 {
-		return nil, fmt.Errorf("no providers available")
+		return nil, fmt.Errorf("no active providers available")
 	}
 
 	packfilesCount := k.GetPackfileCount(ctx)

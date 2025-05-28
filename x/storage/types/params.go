@@ -94,6 +94,24 @@ func (p Params) Validate() error {
 	if err := validateChallengeIntervalBlocks(p.ChallengeIntervalBlocks); err != nil {
 		return err
 	}
+	if err := validateChallengeTimeoutBlocks(p.ChallengeTimeoutBlocks); err != nil {
+		return err
+	}
+	if err := validateChallengeReward(p.ChallengeReward); err != nil {
+		return err
+	}
+	if err := validateChallengeSlashAmount(p.ChallengeSlashAmount); err != nil {
+		return err
+	}
+	if err := validateConsecutiveFailsThreshold(p.ConsecutiveFailsThreshold); err != nil {
+		return err
+	}
+	if err := validateConsecutiveFailsSlashPercentage(p.ConsecutiveFailsSlashPercentage); err != nil {
+		return err
+	}
+	if err := validateUnstakeCooldownBlocks(p.UnstakeCooldownBlocks); err != nil {
+		return err
+	}
 
 	return nil
 }

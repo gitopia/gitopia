@@ -386,6 +386,7 @@ func NewAppKeeper(
 		appKeepers.keys[storagetypes.MemStoreKey],
 		appKeepers.BankKeeper,
 		&appKeepers.GitopiaKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	return appKeepers

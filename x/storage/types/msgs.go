@@ -8,22 +8,25 @@ import (
 // Message types for the storage module
 const (
 	TypeMsgRegisterProvider         = "register_provider"
+	TypeMsgUpdateProvider           = "update_provider"
 	TypeMsgUpdateRepositoryPackfile = "update_repository_packfile"
 	TypeMsgSubmitChallengeResponse  = "submit_challenge_response"
 	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
 	TypeMsgUnregisterProvider       = "unregister_provider"
 	TypeMsgCompleteUnstake          = "complete_unstake"
 	TypeMsgUpdateReleaseAsset       = "update_release_asset"
+	TypeMsgUpdateParams             = "update_params"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
 
 // NewMsgRegisterProvider creates a new MsgRegisterProvider instance
-func NewMsgRegisterProvider(creator string, address string, stake sdk.Coin) *MsgRegisterProvider {
+func NewMsgRegisterProvider(creator string, url string, description string, stake sdk.Coin) *MsgRegisterProvider {
 	return &MsgRegisterProvider{
-		Creator: creator,
-		Address: address,
-		Stake:   stake,
+		Creator:     creator,
+		Url:         url,
+		Description: description,
+		Stake:       stake,
 	}
 }
 
@@ -54,12 +57,64 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Address == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "address cannot be empty")
+	if msg.Url == "" || len(msg.Url) > 140 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "url cannot be empty or longer than 140 characters")
+	}
+
+	if msg.Description == "" || len(msg.Description) > 250 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
 	}
 
 	if msg.Stake.IsZero() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "stake amount must be greater than 0")
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateProvider{}
+
+func NewMsgUpdateProvider(creator string, url string, description string) *MsgUpdateProvider {
+	return &MsgUpdateProvider{
+		Creator:     creator,
+		Url:         url,
+		Description: description,
+	}
+}
+
+func (msg *MsgUpdateProvider) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateProvider) Type() string {
+	return TypeMsgUpdateProvider
+}
+
+func (msg *MsgUpdateProvider) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateProvider) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateProvider) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Url == "" || len(msg.Url) > 140 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "url cannot be empty or longer than 140 characters")
+	}
+
+	if msg.Description == "" || len(msg.Description) > 250 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
 	}
 
 	return nil
@@ -348,6 +403,49 @@ func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
 
 	if msg.Sha256 == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sha256 cannot be empty")
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUpdateParams{}
+
+func NewMsgUpdateParams(authority string, params Params) *MsgUpdateParams {
+	return &MsgUpdateParams{
+		Authority: authority,
+		Params:    params,
+	}
+}
+
+func (msg *MsgUpdateParams) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateParams) Type() string {
+	return TypeMsgUpdateParams
+}
+
+func (msg *MsgUpdateParams) GetSigners() []sdk.AccAddress {
+	authority, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{authority}
+}
+
+func (msg *MsgUpdateParams) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateParams) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid authority address (%s)", err)
+	}
+
+	if err := msg.Params.Validate(); err != nil {
+		return err
 	}
 
 	return nil

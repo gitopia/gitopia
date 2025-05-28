@@ -41,6 +41,12 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		return nil, fmt.Errorf("provider already registered")
 	}
 
+	// Stake amount must be greater than the minimum stake amount
+	params := k.GetParams(ctx)
+	if msg.Stake.Amount.Uint64() < params.MinStakeAmount {
+		return nil, fmt.Errorf("stake amount must be greater than the minimum stake amount")
+	}
+
 	// Create module account for the provider
 	providerAcc := ProviderModuleAddress(k.GetProviderCount(ctx))
 
@@ -61,17 +67,35 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 
 	provider := types.Provider{
 		Creator:              msg.Creator,
-		Address:              msg.Address,
+		Url:                  msg.Url,
+		Description:          msg.Description,
 		Stake:                msg.Stake,
 		TotalChallenges:      0,
 		SuccessfulChallenges: 0,
 		ConsecutiveFailures:  0,
 		JoinTime:             ctx.BlockTime(),
+		Status:               types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
 	}
 
 	k.AppendProvider(ctx, provider)
 
 	return &types.MsgRegisterProviderResponse{}, nil
+}
+
+func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdateProvider) (*types.MsgUpdateProviderResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	provider.Url = msg.Url
+	provider.Description = msg.Description
+
+	k.SetProvider(ctx, provider)
+
+	return &types.MsgUpdateProviderResponse{}, nil
 }
 
 func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.MsgUpdateRepositoryPackfile) (*types.MsgUpdateRepositoryPackfileResponse, error) {
@@ -342,6 +366,7 @@ func (k msgServer) UnregisterProvider(goCtx context.Context, msg *types.MsgUnreg
 
 	// Update provider with unstake completion time
 	provider.UnstakeCompletionTime = &unstakeCompletionTime
+	provider.Status = types.ProviderStatus_PROVIDER_STATUS_UNREGISTERING
 	k.SetProvider(ctx, provider)
 
 	// Emit event
@@ -392,16 +417,34 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
+	// Remove provider from store
+	// k.RemoveProvider(ctx, provider.Creator)
+
+	// Update provider status
+	provider.Status = types.ProviderStatus_PROVIDER_STATUS_INACTIVE
+	k.SetProvider(ctx, provider)
+
 	// Emit event
 	ctx.EventManager().EmitTypedEvent(&types.EventProviderUnstakeCompleted{
 		Address: provider.Creator,
 		Amount:  provider.Stake,
 	})
 
-	// Remove provider from store
-	k.RemoveProvider(ctx, provider.Creator)
-
 	return &types.MsgCompleteUnstakeResponse{
 		Amount: provider.Stake,
 	}, nil
+}
+
+func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if k.authority != msg.Authority {
+		return nil, fmt.Errorf("invalid authority; expected %s, got %s", k.authority, msg.Authority)
+	}
+
+	if err := k.SetParams(ctx, msg.Params); err != nil {
+		return nil, err
+	}
+
+	return &types.MsgUpdateParamsResponse{}, nil
 }
