@@ -101,6 +101,12 @@ func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdatePro
 func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.MsgUpdateRepositoryPackfile) (*types.MsgUpdateRepositoryPackfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
 	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
 		return nil, fmt.Errorf("repository not found")
@@ -173,6 +179,12 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
 
 	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
