@@ -305,11 +305,27 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		// Update provider stats for failed challenge
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
-		k.SetProvider(ctx, provider)
 
 		// Slash provider
-		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
-		k.bankKeeper.BurnCoins(ctx, types.BurnAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
+		burnAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
+		if provider.ConsecutiveFailures == params.ConsecutiveFailsThreshold {
+			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
+			burnAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
+			burnAmountCoins = sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, burnAmount.TruncateInt()))
+
+			// reset consecutive failures
+			provider.ConsecutiveFailures = 0
+		}
+
+		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.BurnAccountName, burnAmountCoins)
+		k.bankKeeper.BurnCoins(ctx, types.BurnAccountName, burnAmountCoins)
+
+		// update provider stake
+		if len(burnAmountCoins) > 0 {
+			provider.Stake = provider.Stake.Sub(burnAmountCoins[0])
+		}
+
+		k.SetProvider(ctx, provider)
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, challenge)

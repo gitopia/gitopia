@@ -25,13 +25,13 @@ var (
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
 	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
 	// Default values for parameters
-	DefaultMinStakeAmount                  uint64   = 100
-	DefaultChallengeIntervalBlocks         uint64   = 100
-	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(100000000))
-	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(50000000))
+	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
+	DefaultChallengeIntervalBlocks         uint64   = 1000
+	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_000_000_000))
+	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
-	DefaultConsecutiveFailsSlashPercentage uint64   = 10
-	DefaultUnstakeCooldownBlocks           uint64   = 5000000
+	DefaultConsecutiveFailsSlashPercentage uint64   = 5
+	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
 )
 
 // ParamKeyTable the param key table for launch module
