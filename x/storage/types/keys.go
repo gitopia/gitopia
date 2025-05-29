@@ -20,8 +20,8 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_storage"
 
-	// BurnAccountName defines the name of the account that will burn the slashed coins
-	BurnAccountName = "burn"
+	// ChallengeSlashAccountName defines the name of the account that will receive the slashed coins
+	ChallengeSlashAccountName = "challengeslash"
 )
 
 var (

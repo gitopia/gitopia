@@ -307,22 +307,21 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		provider.ConsecutiveFailures++
 
 		// Slash provider
-		burnAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
+		slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
 		if provider.ConsecutiveFailures == params.ConsecutiveFailsThreshold {
 			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
-			burnAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			burnAmountCoins = sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, burnAmount.TruncateInt()))
+			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
+			slashAmountCoins = sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
 
 			// reset consecutive failures
 			provider.ConsecutiveFailures = 0
 		}
 
-		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.BurnAccountName, burnAmountCoins)
-		k.bankKeeper.BurnCoins(ctx, types.BurnAccountName, burnAmountCoins)
+		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
 
 		// update provider stake
-		if len(burnAmountCoins) > 0 {
-			provider.Stake = provider.Stake.Sub(burnAmountCoins[0])
+		if len(slashAmountCoins) > 0 {
+			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
 		}
 
 		k.SetProvider(ctx, provider)
