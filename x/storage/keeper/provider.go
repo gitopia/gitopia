@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/binary"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -90,10 +91,14 @@ func (k Keeper) GetActiveProviders(ctx sdk.Context) (list []types.Provider) {
 
 	defer iterator.Close()
 
+	// Calculate the minimum time a provider must have joined to be considered active
+	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Provider
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		if val.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		// Check both status and join time
+		if val.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE && val.JoinTime.Before(minJoinTime) {
 			list = append(list, val)
 		}
 	}
