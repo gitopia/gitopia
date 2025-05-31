@@ -29,8 +29,6 @@ option go_package = "github.com/gitopia/gitopia/v6/x/gitopia/types";
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
   rpc ToggleForcePush(MsgToggleForcePush) returns (MsgToggleForcePushResponse);
-  rpc RevokeProviderPermission(MsgRevokeProviderPermission) returns (MsgRevokeProviderPermissionResponse);
-  rpc AuthorizeProvider(MsgAuthorizeProvider) returns (MsgAuthorizeProviderResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
   rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
   rpc DeleteTask(MsgDeleteTask) returns (MsgDeleteTaskResponse);
@@ -145,29 +143,6 @@ message MsgToggleForcePush {
 }
 
 message MsgToggleForcePushResponse {}
-
-enum ProviderPermission {
-  GIT_SERVER = 0;
-  STORAGE = 1;
-}
-
-message MsgRevokeProviderPermission {
-  string creator = 1;
-  string granter = 2;
-  string provider = 3;
-  ProviderPermission permission = 4;
-}
-
-message MsgRevokeProviderPermissionResponse {}
-
-message MsgAuthorizeProvider {
-  string creator = 1;
-  string granter = 2;
-  string provider = 3;
-  ProviderPermission permission = 4;
-}
-
-message MsgAuthorizeProviderResponse {}
 
 message MsgCreateTask {
   string creator = 1;

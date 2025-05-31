@@ -242,14 +242,6 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge";
 	}
 
-	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}";
-	}
-
-	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
-	}
-
 	rpc UserQuota(QueryUserQuotaRequest) returns (QueryUserQuotaResponse) {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/user-quota/{address}";
 	}
@@ -278,15 +270,6 @@ message QueryVestedAmountResponse {
 	 (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 
-message QueryCheckStorageProviderAuthorizationRequest {
-	string userAddress = 1;
-	string providerAddress = 2;
-}
-
-message QueryCheckStorageProviderAuthorizationResponse {
-	bool haveAuthorization = 1;
-}
-
 message QueryGetTaskRequest {
 	uint64 id = 1;
 }
@@ -302,15 +285,6 @@ message QueryAllTaskRequest {
 message QueryAllTaskResponse {
 	repeated Task Task = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryCheckGitServerAuthorizationRequest {
-	string userAddress = 1;
-	string providerAddress = 2;
-}
-
-message QueryCheckGitServerAuthorizationResponse {
-	bool haveAuthorization = 1;
 }
 
 message QueryAllBranchRequest {

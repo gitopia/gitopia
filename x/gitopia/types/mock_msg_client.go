@@ -237,43 +237,6 @@ func (_m *MockMsgClient) AddRepositoryBackupRef(ctx context.Context, in *MsgAddR
 	return r0, r1
 }
 
-// AuthorizeProvider provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) AuthorizeProvider(ctx context.Context, in *MsgAuthorizeProvider, opts ...grpc.CallOption) (*MsgAuthorizeProviderResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	if len(ret) == 0 {
-		panic("no return value specified for AuthorizeProvider")
-	}
-
-	var r0 *MsgAuthorizeProviderResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgAuthorizeProvider, ...grpc.CallOption) (*MsgAuthorizeProviderResponse, error)); ok {
-		return rf(ctx, in, opts...)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgAuthorizeProvider, ...grpc.CallOption) *MsgAuthorizeProviderResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgAuthorizeProviderResponse)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgAuthorizeProvider, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // ChangeOwner provides a mock function with given fields: ctx, in, opts
 func (_m *MockMsgClient) ChangeOwner(ctx context.Context, in *MsgChangeOwner, opts ...grpc.CallOption) (*MsgChangeOwnerResponse, error) {
 	_va := make([]interface{}, len(opts))
@@ -1968,43 +1931,6 @@ func (_m *MockMsgClient) RenameRepository(ctx context.Context, in *MsgRenameRepo
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *MsgRenameRepository, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// RevokeProviderPermission provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) RevokeProviderPermission(ctx context.Context, in *MsgRevokeProviderPermission, opts ...grpc.CallOption) (*MsgRevokeProviderPermissionResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	if len(ret) == 0 {
-		panic("no return value specified for RevokeProviderPermission")
-	}
-
-	var r0 *MsgRevokeProviderPermissionResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgRevokeProviderPermission, ...grpc.CallOption) (*MsgRevokeProviderPermissionResponse, error)); ok {
-		return rf(ctx, in, opts...)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgRevokeProviderPermission, ...grpc.CallOption) *MsgRevokeProviderPermissionResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgRevokeProviderPermissionResponse)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgRevokeProviderPermission, ...grpc.CallOption) error); ok {
 		r1 = rf(ctx, in, opts...)
 	} else {
 		r1 = ret.Error(1)

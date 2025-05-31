@@ -33,14 +33,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.ToggleArweaveBackup(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgRevokeProviderPermission:
-			res, err := msgServer.RevokeProviderPermission(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgAuthorizeProvider:
-			res, err := msgServer.AuthorizeProvider(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		// case *types.MsgCreateTask:
 		// 	res, err := msgServer.CreateTask(sdk.WrapSDKContext(ctx), msg)
 		// 	return sdk.WrapServiceResult(ctx, res, err)

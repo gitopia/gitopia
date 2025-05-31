@@ -103,17 +103,6 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		whois,
 	)
 
-	gParams := k.GetParams(ctx)
-	err = k.Keeper.AuthorizeProvider(ctx, gParams.GitServer, dao.Address, nil, types.ProviderPermission_GIT_SERVER)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.Keeper.AuthorizeProvider(ctx, gParams.StorageProvider, dao.Address, nil, types.ProviderPermission_STORAGE)
-	if err != nil {
-		return nil, err
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),

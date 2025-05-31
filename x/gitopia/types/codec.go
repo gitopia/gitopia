@@ -12,8 +12,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "gitopia/UpdateParams", nil)
 	cdc.RegisterConcrete(&MsgDistributePlatformIncentives{}, "gitopia/DistributePlatformIncentives", nil)
 
-	cdc.RegisterConcrete(&MsgRevokeProviderPermission{}, "gitopia/RevokeProviderPermission", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeProvider{}, "gitopia/AuthorizeProvider", nil)
 	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
 	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
@@ -122,10 +120,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDistributePlatformIncentives{},
 	)
 
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeProvider{},
-		&MsgRevokeProviderPermission{},
-	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		// &MsgCreateTask{},
 		&MsgUpdateTask{},

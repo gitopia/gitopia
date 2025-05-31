@@ -32,9 +32,6 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(CmdToggleArweaveBackup())
 
-	cmd.AddCommand(CmdAuthorizeProvider())
-	cmd.AddCommand(CmdRevokeProviderPermission())
-
 	cmd.AddCommand(CmdCreateTask())
 	cmd.AddCommand(CmdUpdateTask())
 	cmd.AddCommand(CmdDeleteTask())
