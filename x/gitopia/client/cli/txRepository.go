@@ -44,49 +44,6 @@ func CmdCreateRepository() *cobra.Command {
 	return cmd
 }
 
-func CmdInvokeForkRepository() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "invoke-fork-repository [id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [owner-id] [provider]",
-		Short: "Emits an event for git-server to fork an existing repository",
-		Args:  cobra.ExactArgs(7),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			argid := args[0]
-			argRepositoryName := args[1]
-			argForkRepositoryName := args[2]
-			argForkRepositoryDescription := args[3]
-			argBranch := args[4]
-			argOwnerId := args[5]
-			argProvider := args[6]
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgInvokeForkRepository(
-				clientCtx.GetFromAddress().String(),
-				types.RepositoryId{
-					Id:   argid,
-					Name: argRepositoryName,
-				},
-				argForkRepositoryName,
-				argForkRepositoryDescription,
-				argBranch,
-				argOwnerId,
-				argProvider,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fork-repository [owner-id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [fork-owner-id] [task-id]",

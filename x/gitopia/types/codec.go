@@ -88,7 +88,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteIssue{}, "gitopia/DeleteIssue", nil)
 
 	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
-	cdc.RegisterConcrete(&MsgInvokeForkRepository{}, "gitopia/InvokeForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepository{}, "gitopia/ForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
@@ -217,7 +216,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRepository{},
-		&MsgInvokeForkRepository{},
 		&MsgForkRepository{},
 		&MsgForkRepositorySuccess{},
 		&MsgRenameRepository{},

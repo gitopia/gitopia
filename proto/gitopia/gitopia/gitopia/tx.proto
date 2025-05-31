@@ -92,7 +92,6 @@ service Msg {
   rpc RemoveIssueLabels(MsgRemoveIssueLabels) returns (MsgRemoveIssueLabelsResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
-  rpc InvokeForkRepository(MsgInvokeForkRepository) returns (MsgInvokeForkRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
   rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
@@ -862,18 +861,6 @@ message MsgCreateRepository {
 message MsgCreateRepositoryResponse {
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
 }
-
-message MsgInvokeForkRepository {
-  string creator = 1;
-  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string forkRepositoryName = 3;
-  string forkRepositoryDescription = 4;
-  string branch = 5;
-  string owner = 6;
-  string provider = 7;
-}
-
-message MsgInvokeForkRepositoryResponse {}
 
 message MsgForkRepository {
   string creator = 1;

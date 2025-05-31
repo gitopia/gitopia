@@ -121,7 +121,6 @@ const (
 	ToggleRepositoryForkingEventKey         = "ToggleRepositoryForking"
 	ToggleArweaveBackupEventKey             = "ToggleArweaveBackup"
 	DeleteRepositoryEventKey                = "DeleteRepository"
-	InvokeForkRepositoryEventKey            = "InvokeForkRepository"
 	ForkRepositoryEventKey                  = "ForkRepository"
 	ForkRepositorySuccessEventKey           = "ForkRepositorySuccess"
 	SetRepositoryBranchEventKey             = "SetRepositoryBranch"

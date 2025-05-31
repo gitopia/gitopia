@@ -291,10 +291,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgInvokeForkRepository:
-			res, err := msgServer.InvokeForkRepository(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		case *types.MsgForkRepository:
 			res, err := msgServer.ForkRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
