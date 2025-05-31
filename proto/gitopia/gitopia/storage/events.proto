@@ -66,3 +66,23 @@ message EventProviderUnstakeCompleted {
   string address = 1;
   cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
 }
+
+// EventMergePullRequest is emitted when a pull request is merged
+message EventMergePullRequest {
+  string creator = 1;
+  uint64 pull_request_id = 2;
+  uint64 pull_request_iid = 3;
+  string state = 4;
+  string merge_commit_sha = 5;
+  uint64 task_id = 6;
+  string task_state = 7;
+  string repo_name = 8;
+  uint64 repo_id = 9;
+  string repo_owner_id = 10;
+  string repo_owner_type = 11;
+  string pull_request_head = 14;
+  string repo_branch = 15;
+  string merged_by = 16;
+  int64 updated_at = 17;
+  int64 merged_at = 18;
+}

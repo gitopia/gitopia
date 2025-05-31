@@ -430,17 +430,12 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 }
 
 func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetPullRequestState) (*types.MsgSetPullRequestStateResponse, error) {
-	var task types.Task
-	var found bool
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.Iid)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("pullRequest (%d) doesn't exist in repository", msg.Iid))
 	}
-
-	task, _ = k.GetTask(ctx, msg.TaskId)
 
 	blockTime := ctx.BlockTime().Unix()
 
@@ -499,7 +494,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	var baseBranch types.Branch
 	switch msg.State {
 	case types.PullRequest_OPEN.String():
 		if pullRequest.State == types.PullRequest_OPEN || pullRequest.State == types.PullRequest_MERGED {
@@ -530,98 +524,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 		pullRequest.ClosedAt = blockTime
 		pullRequest.ClosedBy = msg.Creator
-	case types.PullRequest_MERGED.String():
-		if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("can't merge (%v) pullRequest", pullRequest.State.String()))
-		}
-
-		// Update the branch ref in the base repository
-		baseBranch, found = k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("baseBranch (%v) doesn't exist", pullRequest.Base.Branch))
-		}
-		pullRequest.Base.CommitSha = baseBranch.Sha
-		baseBranch.Sha = msg.MergeCommitSha
-		baseBranch.UpdatedAt = blockTime
-
-		headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Head.RepositoryId))
-		}
-
-		if branch, found := k.GetRepositoryBranch(ctx, headRepository.Id, pullRequest.Head.Branch); found {
-			pullRequest.Head.CommitSha = branch.Sha
-		} else {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("headBranch (%v) doesn't exist", pullRequest.Head.Branch))
-		}
-
-		pullRequest.MergedAt = blockTime
-		pullRequest.MergedBy = msg.Creator
-		pullRequest.MergeCommitSha = msg.MergeCommitSha
-
-		// Update task state
-		if task.Creator != msg.Creator {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
-		}
-
-		task.State = types.StateSuccess
-		k.SetTask(ctx, task)
-		k.SetRepositoryBranch(ctx, baseBranch)
-
-		for _, issueIid := range pullRequest.Issues {
-			issue, found := k.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
-			if !found {
-				continue
-			}
-			if issue.State != types.Issue_OPEN {
-				continue
-			}
-			if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] { // continue when pull request creator is not the only assignee
-				continue
-			}
-
-			// close issue
-			issue.State = types.Issue_CLOSED
-			issue.ClosedBy = msg.Creator
-			issue.ClosedAt = blockTime
-			issue.UpdatedAt = blockTime
-			k.SetIssue(ctx, issue)
-
-			// reward bounties to pull request creator
-			for _, bountyId := range issue.Bounties {
-				bounty, found := k.GetBounty(ctx, bountyId)
-				if !found {
-					continue
-				}
-				if bounty.State != types.BountyStateSRCDEBITTED {
-					continue
-				}
-				rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
-				if err != nil {
-					continue
-				}
-
-				if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
-					continue
-				}
-				if k.bankKeeper.BlockedAddr(rewardAccAddress) {
-					continue
-				}
-				bountyAddress := GetBountyAddress(bounty.Id)
-				if err := k.bankKeeper.SendCoins(
-					ctx, bountyAddress, rewardAccAddress, bounty.Amount,
-				); err != nil {
-					continue
-				}
-
-				bounty.State = types.BountyStateDESTCREDITED
-				bounty.RewardedTo = pullRequest.Creator
-				bounty.ExpireAt = time.Time{}.Unix()
-				bounty.UpdatedAt = blockTime
-
-				k.SetBounty(ctx, bounty)
-			}
-		}
 	default:
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("invalid state (%v)", msg.State))
 	}
@@ -632,8 +534,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 
 	var commentType types.CommentType
 	switch pullRequest.State {
-	case types.PullRequest_MERGED:
-		commentType = types.CommentTypePullRequestMerged
 	case types.PullRequest_CLOSED:
 		commentType = types.CommentTypePullRequestClosed
 	case types.PullRequest_OPEN:
@@ -664,14 +564,6 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 	k.SetRepository(ctx, baseRepository)
 	k.SetPullRequest(ctx, pullRequest)
 
-	isGitRefUpdated := false
-	if pullRequest.State == types.PullRequest_MERGED {
-		isGitRefUpdated = true
-	}
-
-	headJson, _ := json.Marshal(pullRequest.Head)
-	baseBranchJson, _ := json.Marshal(baseBranch)
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -680,22 +572,13 @@ func (k msgServer) SetPullRequestState(goCtx context.Context, msg *types.MsgSetP
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, msg.State),
-			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, baseRepository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, baseRepository.Owner.Type.String()),
-			sdk.NewAttribute(types.EventAttributeIsGitRefUpdatedKey, strconv.FormatBool(isGitRefUpdated)),
-			sdk.NewAttribute(types.EventAttributeRepoEnableArweaveBackupKey, strconv.FormatBool(baseRepository.EnableArweaveBackup)),
-			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
-			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(baseBranchJson)),
-			sdk.NewAttribute(types.EventAttributePullRequestMergedByKey, pullRequest.MergedBy),
 			sdk.NewAttribute(types.EventAttributeClosedByKey, pullRequest.ClosedBy),
 			sdk.NewAttribute(types.EventAttributeClosedAtKey, strconv.FormatInt(pullRequest.ClosedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
-			sdk.NewAttribute(types.EventAttributePullRequestMergedAtKey, strconv.FormatInt(pullRequest.MergedAt, 10)),
 		),
 	)
 

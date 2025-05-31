@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/wealdtech/go-merkletree/v2/sha3"
 
 	"github.com/cosmos/cosmos-sdk/types/address"
+	"github.com/gitopia/gitopia/v6/utils"
+	gitopiakeeper "github.com/gitopia/gitopia/v6/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
@@ -474,4 +477,180 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	}
 
 	return &types.MsgUpdateParamsResponse{}, nil
+}
+
+func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePullRequest) (*types.MsgMergePullRequestResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get the pull request
+	pullRequest, found := k.gitopiaKeeper.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
+	if !found {
+		return nil, fmt.Errorf("pull request not found")
+	}
+
+	// Check if pull request can be merged
+	if pullRequest.State == gitopiatypes.PullRequest_MERGED || pullRequest.State == gitopiatypes.PullRequest_CLOSED {
+		return nil, fmt.Errorf("can't merge pull request in state %s", pullRequest.State.String())
+	}
+
+	// Get the base repository
+	baseRepository, found := k.gitopiaKeeper.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("base repository not found")
+	}
+
+	// Get the base branch
+	baseBranch, found := k.gitopiaKeeper.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
+	if !found {
+		return nil, fmt.Errorf("base branch not found")
+	}
+
+	// Get the head repository and branch
+	headRepository, found := k.gitopiaKeeper.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("head repository not found")
+	}
+
+	headBranch, found := k.gitopiaKeeper.GetRepositoryBranch(ctx, headRepository.Id, pullRequest.Head.Branch)
+	if !found {
+		return nil, fmt.Errorf("head branch not found")
+	}
+
+	blockTime := ctx.BlockTime().Unix()
+
+	// Update branch references
+	pullRequest.Base.CommitSha = baseBranch.Sha
+	baseBranch.Sha = msg.MergeCommitSha
+	baseBranch.UpdatedAt = blockTime
+	pullRequest.Head.CommitSha = headBranch.Sha
+
+	// Update pull request state
+	pullRequest.State = gitopiatypes.PullRequest_MERGED
+	pullRequest.MergedAt = blockTime
+	pullRequest.MergedBy = msg.Creator
+	pullRequest.MergeCommitSha = msg.MergeCommitSha
+	pullRequest.UpdatedAt = blockTime
+
+	// Update task state
+	task, found := k.gitopiaKeeper.GetTask(ctx, msg.TaskId)
+	if !found {
+		return nil, fmt.Errorf("task not found")
+	}
+
+	if task.Creator != msg.Creator {
+		return nil, fmt.Errorf("unauthorized")
+	}
+
+	task.State = gitopiatypes.StateSuccess
+	k.gitopiaKeeper.SetTask(ctx, task)
+
+	// Update repository and branch
+	k.gitopiaKeeper.SetRepositoryBranch(ctx, baseBranch)
+	k.gitopiaKeeper.SetPullRequest(ctx, pullRequest)
+
+	// Handle linked issues
+	for _, issueIid := range pullRequest.Issues {
+		issue, found := k.gitopiaKeeper.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
+		if !found {
+			continue
+		}
+		if issue.State != gitopiatypes.Issue_OPEN {
+			continue
+		}
+		if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] {
+			continue
+		}
+
+		// Close issue
+		issue.State = gitopiatypes.Issue_CLOSED
+		issue.ClosedBy = msg.Creator
+		issue.ClosedAt = blockTime
+		issue.UpdatedAt = blockTime
+		k.gitopiaKeeper.SetIssue(ctx, issue)
+
+		// Handle bounties
+		for _, bountyId := range issue.Bounties {
+			bounty, found := k.gitopiaKeeper.GetBounty(ctx, bountyId)
+			if !found {
+				continue
+			}
+			if bounty.State != gitopiatypes.BountyStateSRCDEBITTED {
+				continue
+			}
+
+			rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
+			if err != nil {
+				continue
+			}
+
+			if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+				continue
+			}
+			if k.bankKeeper.BlockedAddr(rewardAccAddress) {
+				continue
+			}
+
+			bountyAddress := gitopiakeeper.GetBountyAddress(bounty.Id)
+			if err := k.bankKeeper.SendCoins(
+				ctx, bountyAddress, rewardAccAddress, bounty.Amount,
+			); err != nil {
+				continue
+			}
+
+			bounty.State = gitopiatypes.BountyStateDESTCREDITED
+			bounty.RewardedTo = pullRequest.Creator
+			bounty.ExpireAt = time.Time{}.Unix()
+			bounty.UpdatedAt = blockTime
+
+			k.gitopiaKeeper.SetBounty(ctx, bounty)
+		}
+	}
+
+	// Add system comment
+	pullRequest.CommentsCount += 1
+	comment := gitopiatypes.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       gitopiatypes.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  gitopiatypes.CommentTypePullRequestMerged,
+	}
+
+	k.gitopiaKeeper.AppendComment(ctx, comment)
+
+	// Emit event
+	headJson, _ := json.Marshal(pullRequest.Head)
+	baseBranchJson, _ := json.Marshal(baseBranch)
+
+	ctx.EventManager().EmitTypedEvent(&types.EventMergePullRequest{
+		Creator:         msg.Creator,
+		PullRequestId:   pullRequest.Id,
+		PullRequestIid:  pullRequest.Iid,
+		State:           pullRequest.State.String(),
+		MergeCommitSha:  msg.MergeCommitSha,
+		TaskId:          msg.TaskId,
+		TaskState:       task.State.String(),
+		RepoName:        baseRepository.Name,
+		RepoId:          baseRepository.Id,
+		RepoOwnerId:     baseRepository.Owner.Id,
+		RepoOwnerType:   baseRepository.Owner.Type.String(),
+		PullRequestHead: string(headJson),
+		RepoBranch:      string(baseBranchJson),
+		MergedBy:        pullRequest.MergedBy,
+		UpdatedAt:       pullRequest.UpdatedAt,
+		MergedAt:        pullRequest.MergedAt,
+	})
+
+	return &types.MsgMergePullRequestResponse{}, nil
 }

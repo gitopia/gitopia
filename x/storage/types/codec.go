@@ -20,6 +20,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUnregisterProvider{}, "storage/UnregisterProvider", nil)
 	cdc.RegisterConcrete(&MsgCompleteUnstake{}, "storage/CompleteUnstake", nil)
 	cdc.RegisterConcrete(&MsgUpdateReleaseAsset{}, "storage/UpdateReleaseAsset", nil)
+	cdc.RegisterConcrete(&MsgMergePullRequest{}, "storage/MergePullRequest", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -34,6 +35,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUnregisterProvider{},
 		&MsgCompleteUnstake{},
 		&MsgUpdateReleaseAsset{},
+		&MsgMergePullRequest{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

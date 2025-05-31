@@ -40,6 +40,9 @@ service Msg {
 
   // UpdateParams updates the parameters of the storage module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // MergePullRequest merges a pull request
+  rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -140,3 +143,15 @@ message MsgUpdateParams {
 }
 
 message MsgUpdateParamsResponse {}
+
+// MsgMergePullRequest defines a message for merging a pull request
+message MsgMergePullRequest {
+  string creator = 1;
+  uint64 repository_id = 2;
+  uint64 pull_request_iid = 3;
+  string merge_commit_sha = 4;
+  uint64 task_id = 5;
+}
+
+message MsgMergePullRequestResponse {
+}
