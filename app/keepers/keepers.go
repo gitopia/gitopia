@@ -419,6 +419,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 
 	paramsKeeper.Subspace(gitopiatypes.ModuleName)
 	paramsKeeper.Subspace(rewardtypes.ModuleName)
+	paramsKeeper.Subspace(storagetypes.ModuleName)
 
 	return paramsKeeper
 }

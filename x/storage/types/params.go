@@ -152,11 +152,11 @@ func validateChallengeIntervalBlocks(v interface{}) error {
 
 // validateChallengePeriod validates the ChallengePeriod param
 func validateChallengePeriod(v interface{}) error {
-	period, ok := v.(time.Duration)
+	period, ok := v.(*time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if period.Seconds() <= 0 {
+	if period == nil || period.Seconds() <= 0 {
 		return fmt.Errorf("challenge period must be greater than 0")
 	}
 	return nil
