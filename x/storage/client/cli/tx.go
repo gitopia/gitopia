@@ -52,7 +52,7 @@ func CmdRegisterStorageProvider() *cobra.Command {
 				return err
 			}
 
-			amount, err := sdk.ParseCoinNormalized(args[1])
+			amount, err := sdk.ParseCoinNormalized(args[2])
 			if err != nil {
 				return err
 			}
