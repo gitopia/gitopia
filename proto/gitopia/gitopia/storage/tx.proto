@@ -51,6 +51,8 @@ message MsgRegisterProvider {
   string url = 2;
   string description = 3;
   cosmos.base.v1beta1.Coin stake = 4 [(gogoproto.nullable) = false];
+  string ipfs_cluster_peer_host = 5;
+  uint32 ipfs_cluster_peer_port = 6;
 }
 
 message MsgRegisterProviderResponse {}
@@ -60,6 +62,8 @@ message MsgUpdateProvider {
   string creator = 1;
   string url = 2;
   string description = 3;
+  string ipfs_cluster_peer_host = 4;
+  uint32 ipfs_cluster_peer_port = 5;
 }
 
 message MsgUpdateProviderResponse {}

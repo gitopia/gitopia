@@ -78,6 +78,8 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		ConsecutiveFailures:  0,
 		JoinTime:             ctx.BlockTime(),
 		Status:               types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
+		IpfsClusterPeerHost:  msg.IpfsClusterPeerHost,
+		IpfsClusterPeerPort:  msg.IpfsClusterPeerPort,
 	}
 
 	k.AppendProvider(ctx, provider)
@@ -95,6 +97,8 @@ func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdatePro
 
 	provider.Url = msg.Url
 	provider.Description = msg.Description
+	provider.IpfsClusterPeerHost = msg.IpfsClusterPeerHost
+	provider.IpfsClusterPeerPort = msg.IpfsClusterPeerPort
 
 	k.SetProvider(ctx, provider)
 

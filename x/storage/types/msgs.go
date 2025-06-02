@@ -22,12 +22,14 @@ const (
 var _ sdk.Msg = &MsgRegisterProvider{}
 
 // NewMsgRegisterProvider creates a new MsgRegisterProvider instance
-func NewMsgRegisterProvider(creator string, url string, description string, stake sdk.Coin) *MsgRegisterProvider {
+func NewMsgRegisterProvider(creator string, url string, description string, stake sdk.Coin, ipfsClusterPeerHost string, ipfsClusterPeerPort uint32) *MsgRegisterProvider {
 	return &MsgRegisterProvider{
-		Creator:     creator,
-		Url:         url,
-		Description: description,
-		Stake:       stake,
+		Creator:             creator,
+		Url:                 url,
+		Description:         description,
+		Stake:               stake,
+		IpfsClusterPeerHost: ipfsClusterPeerHost,
+		IpfsClusterPeerPort: ipfsClusterPeerPort,
 	}
 }
 
@@ -70,16 +72,26 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "stake amount must be greater than 0")
 	}
 
+	if msg.IpfsClusterPeerHost == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer host cannot be empty")
+	}
+
+	if msg.IpfsClusterPeerPort == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer port cannot be 0")
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateProvider{}
 
-func NewMsgUpdateProvider(creator string, url string, description string) *MsgUpdateProvider {
+func NewMsgUpdateProvider(creator string, url string, description string, ipfsClusterPeerHost string, ipfsClusterPeerPort uint32) *MsgUpdateProvider {
 	return &MsgUpdateProvider{
-		Creator:     creator,
-		Url:         url,
-		Description: description,
+		Creator:             creator,
+		Url:                 url,
+		Description:         description,
+		IpfsClusterPeerHost: ipfsClusterPeerHost,
+		IpfsClusterPeerPort: ipfsClusterPeerPort,
 	}
 }
 
@@ -116,6 +128,14 @@ func (msg *MsgUpdateProvider) ValidateBasic() error {
 
 	if msg.Description == "" || len(msg.Description) > 250 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
+	}
+
+	if msg.IpfsClusterPeerHost == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer host cannot be empty")
+	}
+
+	if msg.IpfsClusterPeerPort == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer port cannot be 0")
 	}
 
 	return nil

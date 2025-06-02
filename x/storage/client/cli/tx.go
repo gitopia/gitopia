@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -43,9 +44,9 @@ func GetTxCmd() *cobra.Command {
 
 func CmdRegisterStorageProvider() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-provider [url] [description] [stake]",
+		Use:   "register-provider [url] [description] [stake] [ipfs-cluster-peer-host] [ipfs-cluster-peer-port]",
 		Short: "Register a new storage provider",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -57,11 +58,18 @@ func CmdRegisterStorageProvider() *cobra.Command {
 				return err
 			}
 
+			ipfsClusterPeerPort, err := strconv.ParseUint(args[4], 10, 32)
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgRegisterProvider(
 				clientCtx.GetFromAddress().String(),
 				args[0],
 				args[1],
 				amount,
+				args[3],
+				uint32(ipfsClusterPeerPort),
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -75,11 +83,16 @@ func CmdRegisterStorageProvider() *cobra.Command {
 
 func CmdUpdateStorageProvider() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-provider [url] [description]",
+		Use:   "update-provider [url] [description] [ipfs-cluster-peer-host] [ipfs-cluster-peer-port]",
 		Short: "Update a storage provider",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			ipfsClusterPeerPort, err := strconv.ParseUint(args[3], 10, 32)
 			if err != nil {
 				return err
 			}
@@ -88,6 +101,8 @@ func CmdUpdateStorageProvider() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				args[0],
 				args[1],
+				args[2],
+				uint32(ipfsClusterPeerPort),
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

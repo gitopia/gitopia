@@ -28,6 +28,10 @@ message Provider {
   string description = 10;
   // status defines the current status of the provider (active/inactive/suspended)
   ProviderStatus status = 11;
+  // ipfs_cluster_peer_host defines the host address of the IPFS cluster peer
+  string ipfs_cluster_peer_host = 12;
+  // ipfs_cluster_peer_port defines the port of the IPFS cluster peer
+  uint32 ipfs_cluster_peer_port = 13;
 }
 
 // ProviderStatus represents the status of a storage provider
