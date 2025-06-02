@@ -3,6 +3,7 @@ package keeper
 import (
 	"encoding/binary"
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -105,8 +106,13 @@ func GetChallengeIDBytes(id uint64) []byte {
 func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	// Get active providers
 	providers := k.GetActiveProviders(ctx)
+
+	// Consider only providers that have been active for at least 24 hours
+	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+	providers = filterProvidersByJoinTime(providers, minJoinTime)
+
 	if len(providers) == 0 {
-		return nil, fmt.Errorf("no active providers available")
+		return nil, fmt.Errorf("no active providers that have been active for at least 24 hours available")
 	}
 
 	packfilesCount := k.GetPackfileCount(ctx)
@@ -174,4 +180,14 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	}
 
 	return challenge, nil
+}
+
+func filterProvidersByJoinTime(providers []types.Provider, minJoinTime time.Time) []types.Provider {
+	filteredProviders := make([]types.Provider, 0)
+	for _, provider := range providers {
+		if provider.JoinTime.Before(minJoinTime) {
+			filteredProviders = append(filteredProviders, provider)
+		}
+	}
+	return filteredProviders
 }
