@@ -104,7 +104,7 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, taskId uint64) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:                   creator,
 		RepositoryId:              repositoryId,
@@ -112,7 +112,6 @@ func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkReposit
 		ForkRepositoryDescription: forkRepositoryDescription,
 		Branch:                    branch,
 		Owner:                     owner,
-		TaskId:                    taskId,
 	}
 }
 
@@ -173,50 +172,6 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 		if !valid {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
 		}
-	}
-
-	return nil
-}
-
-var _ sdk.Msg = &MsgForkRepositorySuccess{}
-
-func NewMsgForkRepositorySuccess(creator string, repositoryId RepositoryId, taskId uint64) *MsgForkRepositorySuccess {
-	return &MsgForkRepositorySuccess{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		TaskId:       taskId,
-	}
-}
-
-func (msg *MsgForkRepositorySuccess) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgForkRepositorySuccess) Type() string {
-	return "ForkRepositorySuccess"
-}
-
-func (msg *MsgForkRepositorySuccess) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgForkRepositorySuccess) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgForkRepositorySuccess) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil

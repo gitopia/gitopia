@@ -1310,43 +1310,6 @@ func (_m *MockMsgClient) ForkRepository(ctx context.Context, in *MsgForkReposito
 	return r0, r1
 }
 
-// ForkRepositorySuccess provides a mock function with given fields: ctx, in, opts
-func (_m *MockMsgClient) ForkRepositorySuccess(ctx context.Context, in *MsgForkRepositorySuccess, opts ...grpc.CallOption) (*MsgForkRepositorySuccessResponse, error) {
-	_va := make([]interface{}, len(opts))
-	for _i := range opts {
-		_va[_i] = opts[_i]
-	}
-	var _ca []interface{}
-	_ca = append(_ca, ctx, in)
-	_ca = append(_ca, _va...)
-	ret := _m.Called(_ca...)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ForkRepositorySuccess")
-	}
-
-	var r0 *MsgForkRepositorySuccessResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgForkRepositorySuccess, ...grpc.CallOption) (*MsgForkRepositorySuccessResponse, error)); ok {
-		return rf(ctx, in, opts...)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *MsgForkRepositorySuccess, ...grpc.CallOption) *MsgForkRepositorySuccessResponse); ok {
-		r0 = rf(ctx, in, opts...)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*MsgForkRepositorySuccessResponse)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *MsgForkRepositorySuccess, ...grpc.CallOption) error); ok {
-		r1 = rf(ctx, in, opts...)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // InvokeDaoMergePullRequest provides a mock function with given fields: ctx, in, opts
 func (_m *MockMsgClient) InvokeDaoMergePullRequest(ctx context.Context, in *MsgInvokeDaoMergePullRequest, opts ...grpc.CallOption) (*MsgInvokeDaoMergePullRequestResponse, error) {
 	_va := make([]interface{}, len(opts))

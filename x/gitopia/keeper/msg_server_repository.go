@@ -196,11 +196,6 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		}
 	}
 
-	_, found = k.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
-	}
-
 	var forkRepository = types.Repository{
 		Creator: msg.Creator,
 		Name:    msg.ForkRepositoryName,
@@ -266,55 +261,6 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	return &types.MsgForkRepositoryResponse{
 		Id: id,
-	}, nil
-}
-
-func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgForkRepositorySuccess) (*types.MsgForkRepositorySuccessResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
-	}
-
-	if msg.Creator != repository.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "msg creator and repository creator are different")
-	}
-
-	task, found := k.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
-	}
-
-	// Update task state
-	if task.Creator != msg.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
-	}
-
-	task.State = types.StateSuccess
-	k.SetTask(ctx, task)
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositorySuccessEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(repository.Parent, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
-			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(repository.CreatedAt, 10)),
-			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
-		),
-	)
-	return &types.MsgForkRepositorySuccessResponse{
-		Id: repository.Id,
 	}, nil
 }
 

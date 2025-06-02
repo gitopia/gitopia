@@ -48,7 +48,7 @@ func CmdForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fork-repository [owner-id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [fork-owner-id] [task-id]",
 		Short: "Fork existing repository",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argid := args[0]
 			argRepositoryName := args[1]
@@ -56,11 +56,6 @@ func CmdForkRepository() *cobra.Command {
 			argForkRepositoryDescription := args[3]
 			argBranch := args[4]
 			argOwnerId := args[5]
-
-			argsTaskId, err := strconv.ParseUint(args[6], 10, 64)
-			if err != nil {
-				return err
-			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -74,7 +69,6 @@ func CmdForkRepository() *cobra.Command {
 				argForkRepositoryDescription,
 				argBranch,
 				argOwnerId,
-				argsTaskId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

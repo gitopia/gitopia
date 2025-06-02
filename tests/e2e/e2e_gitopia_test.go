@@ -198,7 +198,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Fork repository using bob
 		forkRepoName := "forked-repo"
-		s.execGitopiaForkRepository(c, valIdx, bob.String(), "alice", repoName, forkRepoName, "bob", "gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
+		s.execGitopiaForkRepository(c, valIdx, bob.String(), "alice", repoName, forkRepoName, "forked repository", "master", "bob")
 
 		// Clone forked repository
 		tempDir2, err := os.MkdirTemp("", "gitopia-test-*")
@@ -406,24 +406,33 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 }
 
 // Helper function to execute fork repository command
-func (s *IntegrationTestSuite) execGitopiaForkRepository(c *chain, valIdx int, creator, ownerId, repoName, forkRepoName, forkOwnerId, provider string) {
+func (s *IntegrationTestSuite) execGitopiaForkRepository(
+	c *chain,
+	valIdx int,
+	creator,
+	ownerId,
+	repoName,
+	forkRepoName,
+	forkRepoDescription,
+	branch,
+	forkOwnerId string,
+) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	s.T().Logf("forking repository %s to %s on chain %s", repoName, forkRepoName, c.id)
+	s.T().Logf("forking repository %s/%s to %s/%s on chain %s", ownerId, repoName, forkOwnerId, forkRepoName, c.id)
 
 	gitopiaCommand := []string{
 		gitopiadBinary,
 		txCommand,
 		gitopiatypes.ModuleName,
-		"invoke-fork-repository",
+		"fork-repository",
 		ownerId,
 		repoName,
 		forkRepoName,
-		"forked repository",
-		"master",
+		forkRepoDescription,
+		branch,
 		forkOwnerId,
-		provider,
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, creator),
 		fmt.Sprintf("--%s=%s", flags.FlagChainID, c.id),
 		fmt.Sprintf("--%s=%s", flags.FlagFees, "2000ulore"),
