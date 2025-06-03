@@ -220,6 +220,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		existingAsset.Cid = msg.Cid
 		existingAsset.RootHash = msg.RootHash
 		existingAsset.Size_ = msg.Size_
+		existingAsset.Sha256 = msg.Sha256
 
 		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
@@ -237,6 +238,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 			Cid:          msg.Cid,
 			RootHash:     msg.RootHash,
 			Size_:        msg.Size_,
+			Sha256:       msg.Sha256,
 		}
 
 		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)

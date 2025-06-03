@@ -18,6 +18,23 @@ import (
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
+type PinataListResponse struct {
+	Data struct {
+		Files []struct {
+			ID            string      `json:"id"`
+			Name          string      `json:"name"`
+			Cid           string      `json:"cid"`
+			Size          int         `json:"size"`
+			NumberOfFiles int         `json:"number_of_files"`
+			MimeType      string      `json:"mime_type"`
+			GroupID       interface{} `json:"group_id"`
+			KeyValues     interface{} `json:"keyvalues"`
+			CreatedAt     string      `json:"created_at"`
+		} `json:"files"`
+		NextPageToken string `json:"next_page_token"`
+	} `json:"data"`
+}
+
 // /*
 // TestGitopiaCreateRepository creates a test to ensure that
 //
@@ -282,6 +299,32 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.Require().NotEmpty(packfile.Packfile.Cid)
 		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
 
+		// Sleep 5 seconds to allow time for file upload
+		time.Sleep(5 * time.Second)
+
+		// List files to verify upload
+		req, err := http.NewRequest("GET", fmt.Sprintf("https://api.pinata.cloud/v3/files/public?name=%s", packfile.Packfile.Name), nil)
+		s.Require().NoError(err)
+
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", os.Getenv("PINATA_JWT")))
+
+		resp, err := http.DefaultClient.Do(req)
+		s.Require().NoError(err)
+		defer resp.Body.Close()
+
+		s.Require().Equal(http.StatusOK, resp.StatusCode)
+
+		var listResp PinataListResponse
+		err = json.NewDecoder(resp.Body).Decode(&listResp)
+		s.Require().NoError(err)
+
+		s.T().Logf("listResp: %+v", listResp)
+
+		// Verify file exists in Pinata
+		s.Require().Greater(len(listResp.Data.Files), 0)
+		s.Require().Equal(packfile.Packfile.Name, listResp.Data.Files[0].Name)
+		s.Require().NotEmpty(listResp.Data.Files[0].Cid)
+
 		// Set alice's wallet
 		os.Setenv("GITOPIA_WALLET", aliceWalletJSON)
 
@@ -337,12 +380,12 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		writer.Close()
 
 		// Make request to upload endpoint
-		req, err := http.NewRequest("POST", "http://localhost:5002/upload", body)
+		req, err = http.NewRequest("POST", "http://localhost:5002/upload", body)
 		s.Require().NoError(err)
 		req.Header.Set("Content-Type", writer.FormDataContentType())
 
 		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err = client.Do(req)
 		s.Require().NoError(err)
 		defer resp.Body.Close()
 
@@ -396,12 +439,24 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.Require().NotEmpty(releaseAsset.ReleaseAsset.Cid)
 		s.Require().Greater(releaseAsset.ReleaseAsset.Size_, uint64(0))
 
-		// check if release asset is stored in public ipfs
-		ipfsResp, err := http.Get(fmt.Sprintf("https://ipfs.io/ipfs/%s", releaseAsset.ReleaseAsset.Cid))
+		// check if release asset is stored in pinata
+		name := fmt.Sprintf("release-%d-%s-%s-%s", releaseAsset.ReleaseAsset.RepositoryId, releaseAsset.ReleaseAsset.Tag, releaseAsset.ReleaseAsset.Name, releaseAsset.ReleaseAsset.Sha256)
+		req, err = http.NewRequest("GET", fmt.Sprintf("https://api.pinata.cloud/v3/files/public?name=%s", name), nil)
 		s.Require().NoError(err)
-		defer ipfsResp.Body.Close()
-		s.Require().Equal(http.StatusOK, ipfsResp.StatusCode)
-		s.Require().Equal("test release asset content", ipfsResp.Body)
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", os.Getenv("PINATA_JWT")))
+		resp, err = http.DefaultClient.Do(req)
+		s.Require().NoError(err)
+		defer resp.Body.Close()
+		s.Require().Equal(http.StatusOK, resp.StatusCode)
+
+		var listResp2 PinataListResponse
+		err = json.NewDecoder(resp.Body).Decode(&listResp2)
+		s.Require().NoError(err)
+
+		s.T().Logf("listResp: %+v", listResp)
+		s.Require().Greater(len(listResp.Data.Files), 0)
+		s.Require().Equal(name, listResp.Data.Files[0].Name)
+		s.Require().NotEmpty(listResp.Data.Files[0].Cid)
 	})
 }
 
