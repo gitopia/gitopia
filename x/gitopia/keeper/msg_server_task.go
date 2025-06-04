@@ -43,9 +43,9 @@ func (k msgServer) UpdateTask(goCtx context.Context, msg *types.MsgUpdateTask) (
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "only pending state can be updated")
 	}
 
-	// Checks if the msg creator is the same as the current owner
-	if msg.Creator != task.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	// check if creator is same as the assigned task provider
+	if task.Provider != msg.Creator {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "only the assigned task provider can update the task")
 	}
 
 	task.State = msg.State
