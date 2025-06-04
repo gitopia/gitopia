@@ -177,8 +177,8 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
-		// Make new commit
-		err = os.WriteFile(testFile, []byte("new content"), 0644)
+		// Append new content to test.txt
+		err = os.WriteFile(testFile, []byte("test content\nnew content"), 0644)
 		s.Require().NoError(err)
 
 		cmd = exec.Command("git", "add", ".")
@@ -296,7 +296,10 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		packfile, err = queryGitopiaRepositoryPackfile(api, 0)
 		s.T().Logf("packfile after merge: %+v", packfile)
 		s.Require().NoError(err)
-		s.Require().NotEmpty(packfile.Packfile.Cid)
+		s.Require().NotEqual(packfile.Packfile.Name, newPackfile.Packfile.Name)
+		s.Require().NotEqual(packfile.Packfile.Cid, newPackfile.Packfile.Cid)
+		s.Require().NotEqual(packfile.Packfile.RootHash, newPackfile.Packfile.RootHash)
+		s.Require().NotEqual(packfile.Packfile.Size_, newPackfile.Packfile.Size_)
 		s.Require().Greater(packfile.Packfile.Size_, uint64(0))
 
 		// Sleep 5 seconds to allow time for file upload
@@ -453,10 +456,10 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = json.NewDecoder(resp.Body).Decode(&listResp2)
 		s.Require().NoError(err)
 
-		s.T().Logf("listResp: %+v", listResp)
-		s.Require().Greater(len(listResp.Data.Files), 0)
-		s.Require().Equal(name, listResp.Data.Files[0].Name)
-		s.Require().NotEmpty(listResp.Data.Files[0].Cid)
+		s.T().Logf("listResp: %+v", listResp2)
+		s.Require().Greater(len(listResp2.Data.Files), 0)
+		s.Require().Equal(name, listResp2.Data.Files[0].Name)
+		s.Require().NotEmpty(listResp2.Data.Files[0].Cid)
 	})
 }
 
