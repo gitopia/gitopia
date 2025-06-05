@@ -549,7 +549,7 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 		return nil, fmt.Errorf("task not found")
 	}
 
-	if task.Creator != msg.Creator {
+	if msg.Creator != task.Provider {
 		return nil, fmt.Errorf("unauthorized")
 	}
 

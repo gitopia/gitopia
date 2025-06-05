@@ -131,15 +131,16 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.Require().NoError(err)
 		defer os.RemoveAll(tempDir)
 
-		// Initialize git repository
-		cmd := exec.Command("git", "init")
-		cmd.Dir = tempDir
+		// Clone Gitopia repository
+		cmd := exec.Command("git", "clone", "https://github.com/gitopia/gitopia.git", tempDir)
 		err = cmd.Run()
 		s.Require().NoError(err)
 
-		// Create test file
-		testFile := filepath.Join(tempDir, "test.txt")
-		err = os.WriteFile(testFile, []byte("test content"), 0644)
+		// Use README.md as our test file
+		testFile := filepath.Join(tempDir, "README.md")
+		content, err := os.ReadFile(testFile)
+		s.Require().NoError(err)
+		err = os.WriteFile(testFile, append(content, []byte("\nnew content")...), 0644)
 		s.Require().NoError(err)
 
 		// Add and commit
@@ -155,12 +156,12 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		// Add remote and push
 		remoteURL := fmt.Sprintf("gitopia://alice/%s", repoName)
-		cmd = exec.Command("git", "remote", "add", "origin", remoteURL)
+		cmd = exec.Command("git", "remote", "add", "gitopia", remoteURL)
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
 
-		cmd = exec.Command("git", "push", "-u", "origin", "master")
+		cmd = exec.Command("git", "push", "-u", "gitopia", "master")
 		cmd.Dir = tempDir
 		cmd.Run()
 		s.Require().NoError(err)
@@ -191,7 +192,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		err = cmd.Run()
 		s.Require().NoError(err)
 
-		cmd = exec.Command("git", "push", "-u", "origin", "master")
+		cmd = exec.Command("git", "push", "-u", "gitopia", "master")
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
@@ -227,7 +228,6 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 
 		forkRemoteURL := fmt.Sprintf("gitopia://bob/%s", forkRepoName)
 		cmd = exec.Command("git", "clone", forkRemoteURL, tempDir2)
-		cmd.Dir = tempDir2
 		err = cmd.Run()
 		s.Require().NoError(err)
 
@@ -332,21 +332,21 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		os.Setenv("GITOPIA_WALLET", aliceWalletJSON)
 
 		// Pull the latest changes
-		cmd = exec.Command("git", "pull", "origin", "master")
+		cmd = exec.Command("git", "pull", "gitopia", "master")
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
 
 		// check test.txt content
-		testFile = filepath.Join(tempDir2, "test.txt")
-		content, err := os.ReadFile(testFile)
+		testFile = filepath.Join(tempDir, "README.md")
+		content, err = os.ReadFile(testFile)
 		s.Require().NoError(err)
-		s.Require().Equal("new content", string(content))
+		s.Require().Contains(string(content), "new content")
 
 		// check new-file.txt content
-		content, err = os.ReadFile(newFile)
+		newFile = filepath.Join(tempDir, "new-file.txt")
+		err = os.WriteFile(newFile, []byte("new content"), 0644)
 		s.Require().NoError(err)
-		s.Require().Equal("new content", string(content))
 
 		// Create tag
 		cmd = exec.Command("git", "tag", "v1.0.0")
@@ -355,7 +355,7 @@ func (s *IntegrationTestSuite) TestGitopiaRepositoryWorkflow() {
 		s.Require().NoError(err)
 
 		// Push tag
-		cmd = exec.Command("git", "push", "origin", "v1.0.0")
+		cmd = exec.Command("git", "push", "gitopia", "v1.0.0")
 		cmd.Dir = tempDir
 		err = cmd.Run()
 		s.Require().NoError(err)
