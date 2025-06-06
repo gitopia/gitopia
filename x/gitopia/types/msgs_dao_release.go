@@ -96,5 +96,10 @@ func (msg *MsgDaoCreateRelease) ValidateBasic() error {
 		}
 	}
 
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
 	return nil
 }

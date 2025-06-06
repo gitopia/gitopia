@@ -666,6 +666,7 @@ message MsgDaoCreateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgDaoCreateReleaseResponse {
