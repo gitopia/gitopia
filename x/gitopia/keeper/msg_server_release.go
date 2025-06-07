@@ -272,6 +272,7 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(release.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
 			sdk.NewAttribute(types.EventAttributeReleaseAttachmentsKey, string(attachmentsJson)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
