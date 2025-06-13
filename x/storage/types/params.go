@@ -24,6 +24,8 @@ var (
 	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
 	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
+	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
+	KeyFreeStorageMb                   = []byte("FreeStorageMb")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
 	DefaultChallengeIntervalBlocks         uint64   = 1000
@@ -32,6 +34,8 @@ var (
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 5
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
+	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1000))
+	DefaultFreeStorageMb                   uint64   = 104_857_600 // 100Mb
 )
 
 // ParamKeyTable the param key table for launch module
@@ -49,6 +53,8 @@ func NewParams(
 	consecutiveFailsThreshold uint64,
 	consecutiveFailsSlashPercentage uint64,
 	unstakeCooldownBlocks uint64,
+	storagePricePerMb sdk.Coin,
+	freeStorageMb uint64,
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
@@ -59,6 +65,8 @@ func NewParams(
 		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
 		ConsecutiveFailsSlashPercentage: consecutiveFailsSlashPercentage,
 		UnstakeCooldownBlocks:           unstakeCooldownBlocks,
+		StoragePricePerMb:               storagePricePerMb,
+		FreeStorageMb:                   freeStorageMb,
 	}
 }
 
@@ -73,6 +81,8 @@ func DefaultParams() Params {
 		DefaultConsecutiveFailsThreshold,
 		DefaultConsecutiveFailsSlashPercentage,
 		DefaultUnstakeCooldownBlocks,
+		DefaultStoragePricePerMb,
+		DefaultFreeStorageMb,
 	)
 }
 
@@ -87,6 +97,8 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsSlashPercentage, &p.ConsecutiveFailsSlashPercentage, validateConsecutiveFailsSlashPercentage),
 		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
+		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
+		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 	}
 }
 
@@ -114,6 +126,12 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateUnstakeCooldownBlocks(p.UnstakeCooldownBlocks); err != nil {
+		return err
+	}
+	if err := validateStoragePricePerMb(p.StoragePricePerMb); err != nil {
+		return err
+	}
+	if err := validateFreeStorageMb(p.FreeStorageMb); err != nil {
 		return err
 	}
 
@@ -219,5 +237,31 @@ func validateUnstakeCooldownBlocks(v interface{}) error {
 	if blocks == 0 {
 		return fmt.Errorf("unstake cooldown blocks cannot be 0")
 	}
+	return nil
+}
+
+// validateStoragePricePerMb validates the StoragePricePerMb param
+func validateStoragePricePerMb(v interface{}) error {
+	coin, ok := v.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if coin.IsZero() {
+		return fmt.Errorf("storage price per mb cannot be zero")
+	}
+
+	return nil
+}
+
+// validateFreeStorageMb validates the FreeStorageMb param
+func validateFreeStorageMb(v interface{}) error {
+	mb, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if mb == 0 {
+		return fmt.Errorf("free storage mb cannot be zero")
+	}
+
 	return nil
 }

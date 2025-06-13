@@ -20,6 +20,9 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_storage"
 
+	// StorageChargeAccountName defines the name of the account that will receive the storage charge
+	StorageChargeAccountName = "storagecharge"
+
 	// ChallengeSlashAccountName defines the name of the account that will receive the slashed coins
 	ChallengeSlashAccountName = "challengeslash"
 )

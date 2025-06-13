@@ -105,6 +105,35 @@ func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdatePro
 	return &types.MsgUpdateProviderResponse{}, nil
 }
 
+// calculateStorageCharge calculates the charge for storage usage beyond free limit
+func (k msgServer) calculateStorageCharge(ctx sdk.Context, currentUsage uint64, newUsage uint64) (sdk.Coin, error) {
+	params := k.GetParams(ctx)
+	freeStorageBytes := params.FreeStorageMb * 1024 * 1024 // Convert MB to bytes
+
+	// If current usage is already above free limit, charge for the entire diff
+	if currentUsage > freeStorageBytes {
+		diff := newUsage - currentUsage
+		if diff <= 0 {
+			return sdk.Coin{}, nil
+		}
+		// Calculate charge in MB and multiply by price per MB
+		diffMb := float64(diff) / (1024 * 1024)
+		chargeAmount := sdk.NewDec(int64(diffMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
+		return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+	}
+
+	// If new usage is below free limit, no charge
+	if newUsage <= freeStorageBytes {
+		return sdk.Coin{}, nil
+	}
+
+	// Calculate charge for the portion that exceeds free limit
+	excessBytes := newUsage - freeStorageBytes
+	excessMb := float64(excessBytes) / (1024 * 1024)
+	chargeAmount := sdk.NewDec(int64(excessMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
+	return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+}
+
 func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.MsgUpdateRepositoryPackfile) (*types.MsgUpdateRepositoryPackfileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -144,6 +173,24 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 			diff = -(int64(existingSize - newSize))
 		}
 
+		// Calculate storage charge
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+
 		// Update existing packfile while preserving its ID
 		existingPackfile.Creator = msg.Creator
 		existingPackfile.Name = msg.Name
@@ -156,6 +203,24 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 		k.SetPackfile(ctx, existingPackfile)
 	} else {
+		// Calculate storage charge for new packfile
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+
 		// Create new packfile
 		packfile := types.Packfile{
 			Creator:      msg.Creator,
@@ -198,6 +263,15 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		return nil, fmt.Errorf("repository not found")
 	}
 
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
 	// Check if release asset already exists for this repository
 	var oldCid, oldSha256 string
 	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
@@ -214,6 +288,24 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 			diff = -(int64(existingSize - newSize))
 		}
 
+		// Calculate storage charge
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+
 		// Update existing asset while preserving its ID
 		existingAsset.Creator = msg.Creator
 		existingAsset.Name = msg.Name
@@ -222,13 +314,29 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		existingAsset.Size_ = msg.Size_
 		existingAsset.Sha256 = msg.Sha256
 
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
-
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.SetReleaseAsset(ctx, existingAsset)
 	} else {
+		// Calculate storage charge for new asset
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+
 		// Create new release asset
 		asset := types.ReleaseAsset{
 			Creator:      msg.Creator,
@@ -240,8 +348,6 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 			Size_:        msg.Size_,
 			Sha256:       msg.Sha256,
 		}
-
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
 		userQuota.StorageUsed += msg.Size_
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
