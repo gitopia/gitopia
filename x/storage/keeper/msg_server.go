@@ -114,7 +114,7 @@ func (k msgServer) calculateStorageCharge(ctx sdk.Context, currentUsage uint64, 
 	if currentUsage > freeStorageBytes {
 		diff := newUsage - currentUsage
 		if diff <= 0 {
-			return sdk.Coin{}, nil
+			return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
 		}
 		// Calculate charge in MB and multiply by price per MB
 		diffMb := float64(diff) / (1024 * 1024)
@@ -124,7 +124,7 @@ func (k msgServer) calculateStorageCharge(ctx sdk.Context, currentUsage uint64, 
 
 	// If new usage is below free limit, no charge
 	if newUsage <= freeStorageBytes {
-		return sdk.Coin{}, nil
+		return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
 	}
 
 	// Calculate charge for the portion that exceeds free limit

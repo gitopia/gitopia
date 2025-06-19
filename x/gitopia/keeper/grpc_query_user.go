@@ -122,7 +122,12 @@ func (k Keeper) UserQuota(c context.Context, req *types.QueryUserQuotaRequest) (
 
 	userQuota, found := k.GetUserQuota(ctx, req.Address)
 	if !found {
-		return nil, sdkerrors.ErrKeyNotFound
+		// Return zero storage used if user not found
+		userQuota = types.UserQuota{
+			Address:     req.Address,
+			StorageUsed: 0,
+		}
+		return &types.QueryUserQuotaResponse{UserQuota: userQuota}, nil
 	}
 
 	return &types.QueryUserQuotaResponse{UserQuota: userQuota}, nil
