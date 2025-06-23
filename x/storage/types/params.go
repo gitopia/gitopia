@@ -29,14 +29,14 @@ var (
 	KeyMaxProviders                    = []byte("MaxProviders")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
-	DefaultChallengeIntervalBlocks         uint64   = 1000
-	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_000_000_000))
-	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))
+	DefaultChallengeIntervalBlocks         uint64   = 1000                                            // ~30 min
+	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(6_000_000_000)) // $5, $150 a month
+	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_250_000_000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
-	DefaultConsecutiveFailsSlashPercentage uint64   = 5
+	DefaultConsecutiveFailsSlashPercentage uint64   = 1
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
 	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1000))
-	DefaultFreeStorageMb                   uint64   = 104_857_600 // 100Mb
+	DefaultFreeStorageMb                   uint64   = 157_286_400 // 150Mb
 	DefaultMaxProviders                    uint64   = 5
 )
 
