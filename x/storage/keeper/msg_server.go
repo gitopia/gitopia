@@ -471,10 +471,12 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
 	k.SetChallenge(ctx, challenge)
 
+	activeProviders := k.GetActiveProviders(ctx)
+
 	// Update provider rewards
 	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
 	currentRewards := k.GetProviderRewards(ctx, providerAcc)
-	challengeReward := CalculateChallengeReward(params)
+	challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
 	currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
 	k.SetProviderRewards(ctx, providerAcc, currentRewards)
 
@@ -785,9 +787,9 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 	return &types.MsgMergePullRequestResponse{}, nil
 }
 
-func CalculateChallengeReward(params types.Params) sdk.DecCoin {
+func CalculateChallengeReward(params types.Params, numProviders int64) sdk.DecCoin {
 	blocksPerDay := int64(53000) // Average block time 1.63s
-	dec := sdk.NewDec(params.RewardPerDay.Amount.Int64())
+	dec := sdk.NewDec(params.RewardPerDay.Amount.Int64()).Mul(sdk.NewDec(numProviders))
 	reward := dec.Mul(sdk.NewDec(int64(params.ChallengeIntervalBlocks)).Quo(sdk.NewDec(blocksPerDay)))
 
 	return sdk.NewDecCoinFromDec(params.RewardPerDay.Denom, reward)
