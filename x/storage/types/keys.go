@@ -51,6 +51,8 @@ const (
 	ReleaseAssetRepositoryMappingKey = "ReleaseAssetRepositoryMapping-value-"
 	ChallengeKey                     = "Challenge-value-"
 	ChallengeCountKey                = "Challenge-count-"
+
+	TotalStorageSizeKey = "TotalStorageSize"
 )
 
 // GetProviderRewardsKey creates the key for a provider's rewards.

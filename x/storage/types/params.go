@@ -19,23 +19,25 @@ var (
 	KeyMinStakeAmount                  = []byte("MinStakeAmount")
 	KeyChallengeIntervalBlocks         = []byte("ChallengeIntervalBlocks")
 	KeyChallengePeriod                 = []byte("ChallengePeriod")
-	KeyChallengeReward                 = []byte("ChallengeReward")
+	KeyRewardPerDay                    = []byte("RewardPerDay")
 	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
 	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
 	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
 	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
 	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
 	KeyFreeStorageMb                   = []byte("FreeStorageMb")
+	KeyMaxProviders                    = []byte("MaxProviders")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
 	DefaultChallengeIntervalBlocks         uint64   = 1000
-	DefaultChallengeReward                 sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_000_000_000))
+	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_000_000_000))
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 5
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
 	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1000))
 	DefaultFreeStorageMb                   uint64   = 104_857_600 // 100Mb
+	DefaultMaxProviders                    uint64   = 5
 )
 
 // ParamKeyTable the param key table for launch module
@@ -48,25 +50,27 @@ func NewParams(
 	minStakeAmount uint64,
 	challengeIntervalBlocks uint64,
 	challengePeriod time.Duration,
-	challengeReward sdk.Coin,
+	rewardPerDay sdk.Coin,
 	challengeSlashAmount sdk.Coin,
 	consecutiveFailsThreshold uint64,
 	consecutiveFailsSlashPercentage uint64,
 	unstakeCooldownBlocks uint64,
 	storagePricePerMb sdk.Coin,
 	freeStorageMb uint64,
+	maxProviders uint64,
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
 		ChallengeIntervalBlocks:         challengeIntervalBlocks,
 		ChallengePeriod:                 &challengePeriod,
-		ChallengeReward:                 challengeReward,
+		RewardPerDay:                    rewardPerDay,
 		ChallengeSlashAmount:            challengeSlashAmount,
 		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
 		ConsecutiveFailsSlashPercentage: consecutiveFailsSlashPercentage,
 		UnstakeCooldownBlocks:           unstakeCooldownBlocks,
 		StoragePricePerMb:               storagePricePerMb,
 		FreeStorageMb:                   freeStorageMb,
+		MaxProviders:                    maxProviders,
 	}
 }
 
@@ -76,13 +80,14 @@ func DefaultParams() Params {
 		DefaultMinStakeAmount,
 		DefaultChallengeIntervalBlocks,
 		DefaultChallengePeriod,
-		DefaultChallengeReward,
+		DefaultRewardPerDay,
 		DefaultChallengeSlashAmount,
 		DefaultConsecutiveFailsThreshold,
 		DefaultConsecutiveFailsSlashPercentage,
 		DefaultUnstakeCooldownBlocks,
 		DefaultStoragePricePerMb,
 		DefaultFreeStorageMb,
+		DefaultMaxProviders,
 	)
 }
 
@@ -92,13 +97,14 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyMinStakeAmount, &p.MinStakeAmount, validateMinStakeAmount),
 		paramtypes.NewParamSetPair(KeyChallengeIntervalBlocks, &p.ChallengeIntervalBlocks, validateChallengeIntervalBlocks),
 		paramtypes.NewParamSetPair(KeyChallengePeriod, &p.ChallengePeriod, validateChallengePeriod),
-		paramtypes.NewParamSetPair(KeyChallengeReward, &p.ChallengeReward, validateChallengeReward),
+		paramtypes.NewParamSetPair(KeyRewardPerDay, &p.RewardPerDay, validateRewardPerDay),
 		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
 		paramtypes.NewParamSetPair(KeyConsecutiveFailsSlashPercentage, &p.ConsecutiveFailsSlashPercentage, validateConsecutiveFailsSlashPercentage),
 		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
 		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
+		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
 	}
 }
 
@@ -113,7 +119,7 @@ func (p Params) Validate() error {
 	if err := validateChallengePeriod(p.ChallengePeriod); err != nil {
 		return err
 	}
-	if err := validateChallengeReward(p.ChallengeReward); err != nil {
+	if err := validateRewardPerDay(p.RewardPerDay); err != nil {
 		return err
 	}
 	if err := validateChallengeSlashAmount(p.ChallengeSlashAmount); err != nil {
@@ -132,6 +138,9 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateFreeStorageMb(p.FreeStorageMb); err != nil {
+		return err
+	}
+	if err := validateMaxProviders(p.MaxProviders); err != nil {
 		return err
 	}
 
@@ -180,14 +189,14 @@ func validateChallengePeriod(v interface{}) error {
 	return nil
 }
 
-// validateChallengeReward validates the ChallengeReward param
-func validateChallengeReward(v interface{}) error {
+// validateRewardPerDay validates the RewardPerDay param
+func validateRewardPerDay(v interface{}) error {
 	coin, ok := v.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 	if coin.IsZero() {
-		return fmt.Errorf("challenge reward cannot be zero")
+		return fmt.Errorf("reward per day cannot be zero")
 	}
 	return nil
 }
@@ -263,5 +272,17 @@ func validateFreeStorageMb(v interface{}) error {
 		return fmt.Errorf("free storage mb cannot be zero")
 	}
 
+	return nil
+}
+
+// validateMaxProviders validates the MaxProviders param
+func validateMaxProviders(v interface{}) error {
+	providers, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if providers == 0 {
+		return fmt.Errorf("max providers cannot be zero")
+	}
 	return nil
 }

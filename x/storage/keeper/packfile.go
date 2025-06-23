@@ -142,3 +142,22 @@ func (k Keeper) GetPackfileRepositoryMapping(ctx sdk.Context, packfileId uint64)
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
 }
+
+// GetTotalStorageSize returns the total storage size
+func (k Keeper) GetTotalStorageSize(ctx sdk.Context) uint64 {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TotalStorageSizeKey))
+	b := store.Get(types.KeyPrefix(types.TotalStorageSizeKey))
+	if b == nil {
+		return 0
+	}
+
+	return binary.BigEndian.Uint64(b)
+}
+
+// SetTotalStorageSize set the total storage size
+func (k Keeper) SetTotalStorageSize(ctx sdk.Context, totalStorageSize uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TotalStorageSizeKey))
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, totalStorageSize)
+	store.Set(types.KeyPrefix(types.TotalStorageSizeKey), bz)
+}

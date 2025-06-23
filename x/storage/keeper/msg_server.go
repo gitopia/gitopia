@@ -38,6 +38,12 @@ func ProviderModuleAddress(providerId uint64) sdk.AccAddress {
 func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegisterProvider) (*types.MsgRegisterProviderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if active provider count has reached the maximum limit
+	activeProviders := k.GetActiveProviders(ctx)
+	if len(activeProviders) >= int(k.GetParams(ctx).MaxProviders) {
+		return nil, fmt.Errorf("active provider count has reached the maximum limit")
+	}
+
 	// Check if provider already exists
 	_, found := k.GetProvider(ctx, msg.Creator)
 	if found {
@@ -202,6 +208,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.SetPackfile(ctx, existingPackfile)
+
+		// Update total storage size
+		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new packfile
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
@@ -235,6 +244,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.AppendPackfile(ctx, packfile)
+
+		// Update total storage size
+		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
 	}
 
 	// Emit event
@@ -318,6 +330,9 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.SetReleaseAsset(ctx, existingAsset)
+
+		// Update total storage size
+		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new asset
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
@@ -353,6 +368,9 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.AppendReleaseAsset(ctx, asset)
+
+		// Update total storage size
+		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
 	}
 
 	// Emit event
@@ -456,7 +474,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	// Update provider rewards
 	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
 	currentRewards := k.GetProviderRewards(ctx, providerAcc)
-	challengeReward := sdk.NewDecCoinFromCoin(params.ChallengeReward)
+	challengeReward := CalculateChallengeReward(params)
 	currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
 	k.SetProviderRewards(ctx, providerAcc, currentRewards)
 
@@ -765,4 +783,12 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 	})
 
 	return &types.MsgMergePullRequestResponse{}, nil
+}
+
+func CalculateChallengeReward(params types.Params) sdk.DecCoin {
+	blocksPerDay := int64(53000) // Average block time 1.63s
+	dec := sdk.NewDec(params.RewardPerDay.Amount.Int64())
+	reward := dec.Mul(sdk.NewDec(int64(params.ChallengeIntervalBlocks)).Quo(sdk.NewDec(blocksPerDay)))
+
+	return sdk.NewDecCoinFromDec(params.RewardPerDay.Denom, reward)
 }

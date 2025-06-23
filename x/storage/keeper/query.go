@@ -233,3 +233,14 @@ func (k Keeper) Challenges(goCtx context.Context, req *types.QueryChallengesRequ
 		Pagination: pageRes,
 	}, nil
 }
+
+// TotalStorage returns the total storage size
+func (k Keeper) TotalStorage(goCtx context.Context, req *types.QueryTotalStorageRequest) (*types.QueryTotalStorageResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	totalStorage := k.GetTotalStorageSize(ctx)
+	return &types.QueryTotalStorageResponse{TotalStorage: totalStorage}, nil
+}
