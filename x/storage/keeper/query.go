@@ -189,6 +189,19 @@ func (k Keeper) RepositoryReleaseAsset(goCtx context.Context, req *types.QueryRe
 	}, nil
 }
 
+// RepositoryReleaseAssets returns all release assets for a repository by repository id and tag
+func (k Keeper) RepositoryReleaseAssets(goCtx context.Context, req *types.QueryRepositoryReleaseAssetsRequest) (*types.QueryRepositoryReleaseAssetsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	assets := k.GetReleaseAssets(ctx, req.RepositoryId, req.Tag)
+	return &types.QueryRepositoryReleaseAssetsResponse{
+		ReleaseAssets: assets,
+	}, nil
+}
+
 // Challenge returns a challenge by ID
 func (k Keeper) Challenge(goCtx context.Context, req *types.QueryChallengeRequest) (*types.QueryChallengeResponse, error) {
 	if req == nil {
