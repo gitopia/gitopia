@@ -44,6 +44,7 @@ import (
 	v6 "github.com/gitopia/gitopia/v6/app/upgrades/v6"
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 	rewardstypes "github.com/gitopia/gitopia/v6/x/rewards/types"
+	storagetypes "github.com/gitopia/gitopia/v6/x/storage/types"
 	"github.com/spf13/cast"
 )
 
@@ -292,6 +293,8 @@ func (app *GitopiaApp) BlockedModuleAccountAddrs() map[string]bool {
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.LiquidityBootstrappingPoolAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(gitopiatypes.EcosystemIncentivesAccountName).String())
 	delete(modAccAddrs, authtypes.NewModuleAddress(rewardstypes.SeriesModuleAccount(rewardstypes.Series_COSMOS)).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(storagetypes.StorageChargeAccountName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(storagetypes.ChallengeSlashAccountName).String())
 
 	return modAccAddrs
 }

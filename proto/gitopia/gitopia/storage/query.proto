@@ -64,6 +64,10 @@ service Query {
   rpc Challenges(QueryChallengesRequest) returns (QueryChallengesResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/challenges";
   }
+
+  rpc TotalStorage(QueryTotalStorageRequest) returns (QueryTotalStorageResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/total-storage";
+  }
 }
 
 message QueryParamsRequest {}
@@ -156,4 +160,10 @@ message QueryChallengesRequest {
 message QueryChallengesResponse {
   repeated Challenge challenges = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryTotalStorageRequest {}
+
+message QueryTotalStorageResponse {
+  uint64 total_storage = 1;
 }

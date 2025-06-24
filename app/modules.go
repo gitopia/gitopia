@@ -81,6 +81,7 @@ var maccPerms = map[string][]string{
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SIX):    {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SEVEN):  {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_COSMOS): nil,
+	storagetypes.StorageChargeAccountName:                      nil,
 	storagetypes.ChallengeSlashAccountName:                     nil,
 }
 
