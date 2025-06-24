@@ -44,6 +44,8 @@ message EventReleaseAssetDeleted {
   uint64 repository_id = 1;
   string tag = 2;
   string name = 3;
+  string cid = 4;
+  string sha256 = 5;
 }
 
 // EventChallengeCreated is emitted when a new challenge is created

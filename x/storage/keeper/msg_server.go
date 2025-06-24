@@ -449,6 +449,8 @@ func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDelet
 		RepositoryId: msg.RepositoryId,
 		Tag:          msg.Tag,
 		Name:         msg.Name,
+		Cid:          asset.Cid,
+		Sha256:       asset.Sha256,
 	})
 
 	return &types.MsgDeleteReleaseAssetResponse{}, nil
