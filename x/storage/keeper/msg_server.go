@@ -412,6 +412,48 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 	return &types.MsgUpdateReleaseAssetResponse{}, nil
 }
 
+func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDeleteReleaseAsset) (*types.MsgDeleteReleaseAssetResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the release asset
+	asset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
+	if !found {
+		return nil, fmt.Errorf("release asset not found")
+	}
+
+	// Decrease cid reference count
+	k.DecreaseCidReferenceCount(ctx, asset.Cid)
+	if count, found := k.GetCidReferenceCount(ctx, asset.Cid); found && count.Count == 0 {
+		k.RemoveCidReferenceCount(ctx, asset.Cid)
+	}
+
+	// Update total storage size
+	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-asset.Size_)
+
+	// Delete the release asset
+	k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
+
+	// Get repository
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Update user quota
+	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	userQuota.StorageUsed -= asset.Size_
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
+		RepositoryId: msg.RepositoryId,
+		Tag:          msg.Tag,
+		Name:         msg.Name,
+	})
+
+	return &types.MsgDeleteReleaseAssetResponse{}, nil
+}
+
 func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.MsgSubmitChallengeResponse) (*types.MsgSubmitChallengeResponseResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

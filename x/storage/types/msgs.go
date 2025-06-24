@@ -15,6 +15,7 @@ const (
 	TypeMsgUnregisterProvider       = "unregister_provider"
 	TypeMsgCompleteUnstake          = "complete_unstake"
 	TypeMsgUpdateReleaseAsset       = "update_release_asset"
+	TypeMsgDeleteReleaseAsset       = "delete_release_asset"
 	TypeMsgUpdateParams             = "update_params"
 	TypeMsgMergePullRequest         = "merge_pull_request"
 )
@@ -424,6 +425,55 @@ func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
 
 	if msg.Sha256 == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "sha256 cannot be empty")
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgDeleteReleaseAsset{}
+
+func NewMsgDeleteReleaseAsset(creator string, repositoryId uint64, tag string, name string) *MsgDeleteReleaseAsset {
+	return &MsgDeleteReleaseAsset{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag:          tag,
+		Name:         name,
+	}
+}
+
+func (msg *MsgDeleteReleaseAsset) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgDeleteReleaseAsset) Type() string {
+	return TypeMsgDeleteReleaseAsset
+}
+
+func (msg *MsgDeleteReleaseAsset) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgDeleteReleaseAsset) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDeleteReleaseAsset) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Tag == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "tag cannot be empty")
+	}
+
+	if msg.Name == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
 	}
 
 	return nil

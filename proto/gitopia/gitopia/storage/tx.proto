@@ -26,6 +26,10 @@ service Msg {
   // UpdateReleaseAsset updates release asset
   rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
   
+
+  // DeleteReleaseAsset deletes release asset
+  rpc DeleteReleaseAsset(MsgDeleteReleaseAsset) returns (MsgDeleteReleaseAssetResponse);
+  
   // SubmitChallengeResponse submits proof for storage challenge
   rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
 
@@ -93,6 +97,16 @@ message MsgUpdateReleaseAsset {
 }
 
 message MsgUpdateReleaseAssetResponse {}
+
+// MsgDeleteReleaseAsset defines a message for deleting release asset
+message MsgDeleteReleaseAsset {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
+}
+
+message MsgDeleteReleaseAssetResponse {}
 
 // MsgSubmitChallengeResponse defines a message for submitting challenge response
 message MsgSubmitChallengeResponse {

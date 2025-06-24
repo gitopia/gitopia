@@ -39,6 +39,13 @@ message EventReleaseAssetUpdated {
   string old_sha256 = 7;
 }
 
+// EventReleaseAssetDeleted is emitted when a release asset is deleted
+message EventReleaseAssetDeleted {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+}
+
 // EventChallengeCreated is emitted when a new challenge is created
 message EventChallengeCreated {
   uint64 challenge_id = 1;
