@@ -244,3 +244,44 @@ func (k Keeper) TotalStorage(goCtx context.Context, req *types.QueryTotalStorage
 	totalStorage := k.GetTotalStorageSize(ctx)
 	return &types.QueryTotalStorageResponse{TotalStorage: totalStorage}, nil
 }
+
+// CidReferenceCount returns the reference count for a CID
+func (k Keeper) CidReferenceCount(goCtx context.Context, req *types.QueryCidReferenceCountRequest) (*types.QueryCidReferenceCountResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	count, _ := k.GetCidReferenceCount(ctx, req.Cid)
+	return &types.QueryCidReferenceCountResponse{Count: count.Count}, nil
+}
+
+// CidReferenceCounts returns all cid reference counts
+func (k Keeper) CidReferenceCounts(goCtx context.Context, req *types.QueryCidReferenceCountsRequest) (*types.QueryCidReferenceCountsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var cidReferenceCounts []types.CidReferenceCount
+	store := ctx.KVStore(k.storeKey)
+	cidReferenceCountStore := prefix.NewStore(store, types.KeyPrefix(types.CidReferenceCountKey))
+
+	pageRes, err := query.Paginate(cidReferenceCountStore, req.Pagination, func(key []byte, value []byte) error {
+		var cidReferenceCount types.CidReferenceCount
+		if err := k.cdc.Unmarshal(value, &cidReferenceCount); err != nil {
+			return err
+		}
+		cidReferenceCounts = append(cidReferenceCounts, cidReferenceCount)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryCidReferenceCountsResponse{
+		CidReferenceCounts: cidReferenceCounts,
+		Pagination:         pageRes,
+	}, nil
+}

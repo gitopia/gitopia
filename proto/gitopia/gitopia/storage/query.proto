@@ -68,6 +68,14 @@ service Query {
   rpc TotalStorage(QueryTotalStorageRequest) returns (QueryTotalStorageResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/total-storage";
   }
+
+  rpc CidReferenceCount(QueryCidReferenceCountRequest) returns (QueryCidReferenceCountResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/cid-reference-count/{cid}";
+  }
+
+  rpc CidReferenceCounts(QueryCidReferenceCountsRequest) returns (QueryCidReferenceCountsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/cid-reference-counts";
+  }
 }
 
 message QueryParamsRequest {}
@@ -166,4 +174,21 @@ message QueryTotalStorageRequest {}
 
 message QueryTotalStorageResponse {
   uint64 total_storage = 1;
+}
+
+message QueryCidReferenceCountRequest {
+  string cid = 1;
+}
+
+message QueryCidReferenceCountResponse {
+  uint64 count = 1;
+}
+
+message QueryCidReferenceCountsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryCidReferenceCountsResponse {
+  repeated CidReferenceCount cid_reference_counts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

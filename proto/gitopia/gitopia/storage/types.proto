@@ -137,3 +137,9 @@ message Proof {
 	repeated bytes hashes = 1;
 	uint64 index = 2;
 }
+
+// CidReferenceCount represents the number of times a CID is referenced
+message CidReferenceCount {
+	string cid = 1;
+	uint64 count = 2;
+}

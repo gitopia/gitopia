@@ -53,6 +53,8 @@ const (
 	ChallengeCountKey                = "Challenge-count-"
 
 	TotalStorageSizeKey = "TotalStorageSize"
+
+	CidReferenceCountKey = "CidReferenceCount-"
 )
 
 // GetProviderRewardsKey creates the key for a provider's rewards.

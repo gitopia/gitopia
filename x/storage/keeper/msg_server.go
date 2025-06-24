@@ -197,6 +197,14 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 			}
 		}
 
+		// Decrement or remove old cid reference count
+		if oldCid != "" {
+			k.DecreaseCidReferenceCount(ctx, oldCid)
+			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
+				k.RemoveCidReferenceCount(ctx, oldCid)
+			}
+		}
+
 		// Update existing packfile while preserving its ID
 		existingPackfile.Creator = msg.Creator
 		existingPackfile.Name = msg.Name
@@ -208,6 +216,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.SetPackfile(ctx, existingPackfile)
+
+		// Increase new cid reference count
+		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
 		// Update total storage size
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
@@ -244,6 +255,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.AppendPackfile(ctx, packfile)
+
+		// Increase new cid reference count
+		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
 		// Update total storage size
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
@@ -318,6 +332,14 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 			}
 		}
 
+		// Decrement or remove old cid reference count
+		if oldCid != "" {
+			k.DecreaseCidReferenceCount(ctx, oldCid)
+			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
+				k.RemoveCidReferenceCount(ctx, oldCid)
+			}
+		}
+
 		// Update existing asset while preserving its ID
 		existingAsset.Creator = msg.Creator
 		existingAsset.Name = msg.Name
@@ -368,6 +390,9 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.AppendReleaseAsset(ctx, asset)
+
+		// Increase new cid reference count
+		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
 		// Update total storage size
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
