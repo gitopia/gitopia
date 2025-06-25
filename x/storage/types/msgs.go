@@ -23,14 +23,13 @@ const (
 var _ sdk.Msg = &MsgRegisterProvider{}
 
 // NewMsgRegisterProvider creates a new MsgRegisterProvider instance
-func NewMsgRegisterProvider(creator string, url string, description string, stake sdk.Coin, ipfsClusterPeerHost string, ipfsClusterPeerPort uint32) *MsgRegisterProvider {
+func NewMsgRegisterProvider(creator string, apiUrl string, description string, stake sdk.Coin, ipfsClusterPeerMultiaddr string) *MsgRegisterProvider {
 	return &MsgRegisterProvider{
-		Creator:             creator,
-		Url:                 url,
-		Description:         description,
-		Stake:               stake,
-		IpfsClusterPeerHost: ipfsClusterPeerHost,
-		IpfsClusterPeerPort: ipfsClusterPeerPort,
+		Creator:                  creator,
+		ApiUrl:                   apiUrl,
+		Description:              description,
+		Stake:                    stake,
+		IpfsClusterPeerMultiaddr: ipfsClusterPeerMultiaddr,
 	}
 }
 
@@ -61,8 +60,8 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Url == "" || len(msg.Url) > 140 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "url cannot be empty or longer than 140 characters")
+	if msg.ApiUrl == "" || len(msg.ApiUrl) > 140 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
 	if msg.Description == "" || len(msg.Description) > 250 {
@@ -73,12 +72,8 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "stake amount must be greater than 0")
 	}
 
-	if msg.IpfsClusterPeerHost == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer host cannot be empty")
-	}
-
-	if msg.IpfsClusterPeerPort == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer port cannot be 0")
+	if msg.IpfsClusterPeerMultiaddr == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer multiaddr cannot be empty")
 	}
 
 	return nil
@@ -86,13 +81,12 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateProvider{}
 
-func NewMsgUpdateProvider(creator string, url string, description string, ipfsClusterPeerHost string, ipfsClusterPeerPort uint32) *MsgUpdateProvider {
+func NewMsgUpdateProvider(creator string, apiUrl string, description string, ipfsClusterPeerMultiaddr string) *MsgUpdateProvider {
 	return &MsgUpdateProvider{
-		Creator:             creator,
-		Url:                 url,
-		Description:         description,
-		IpfsClusterPeerHost: ipfsClusterPeerHost,
-		IpfsClusterPeerPort: ipfsClusterPeerPort,
+		Creator:                  creator,
+		ApiUrl:                   apiUrl,
+		Description:              description,
+		IpfsClusterPeerMultiaddr: ipfsClusterPeerMultiaddr,
 	}
 }
 
@@ -123,20 +117,16 @@ func (msg *MsgUpdateProvider) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Url == "" || len(msg.Url) > 140 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "url cannot be empty or longer than 140 characters")
+	if msg.ApiUrl == "" || len(msg.ApiUrl) > 140 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
 	if msg.Description == "" || len(msg.Description) > 250 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
 	}
 
-	if msg.IpfsClusterPeerHost == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer host cannot be empty")
-	}
-
-	if msg.IpfsClusterPeerPort == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer port cannot be 0")
+	if msg.IpfsClusterPeerMultiaddr == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ipfs cluster peer multiaddr cannot be empty")
 	}
 
 	return nil

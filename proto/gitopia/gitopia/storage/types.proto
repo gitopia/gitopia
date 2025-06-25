@@ -12,7 +12,7 @@ option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
 message Provider {
   string creator = 1;
   uint64 id = 2;
-  string url = 3;
+  string api_url = 3;
   cosmos.base.v1beta1.Coin stake = 4 [(gogoproto.nullable) = false];
   uint64 total_challenges = 5;
   uint64 successful_challenges = 6;
@@ -28,10 +28,8 @@ message Provider {
   string description = 10;
   // status defines the current status of the provider (active/inactive/suspended)
   ProviderStatus status = 11;
-  // ipfs_cluster_peer_host defines the host address of the IPFS cluster peer
-  string ipfs_cluster_peer_host = 12;
-  // ipfs_cluster_peer_port defines the port of the IPFS cluster peer
-  uint32 ipfs_cluster_peer_port = 13;
+  // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
+  string ipfs_cluster_peer_multiaddr = 12;
 }
 
 // ProviderStatus represents the status of a storage provider

@@ -75,17 +75,16 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	provider := types.Provider{
-		Creator:              msg.Creator,
-		Url:                  msg.Url,
-		Description:          msg.Description,
-		Stake:                msg.Stake,
-		TotalChallenges:      0,
-		SuccessfulChallenges: 0,
-		ConsecutiveFailures:  0,
-		JoinTime:             ctx.BlockTime(),
-		Status:               types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
-		IpfsClusterPeerHost:  msg.IpfsClusterPeerHost,
-		IpfsClusterPeerPort:  msg.IpfsClusterPeerPort,
+		Creator:                  msg.Creator,
+		ApiUrl:                   msg.ApiUrl,
+		Description:              msg.Description,
+		Stake:                    msg.Stake,
+		TotalChallenges:          0,
+		SuccessfulChallenges:     0,
+		ConsecutiveFailures:      0,
+		JoinTime:                 ctx.BlockTime(),
+		Status:                   types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
+		IpfsClusterPeerMultiaddr: msg.IpfsClusterPeerMultiaddr,
 	}
 
 	k.AppendProvider(ctx, provider)
@@ -101,10 +100,9 @@ func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdatePro
 		return nil, fmt.Errorf("provider not found")
 	}
 
-	provider.Url = msg.Url
+	provider.ApiUrl = msg.ApiUrl
 	provider.Description = msg.Description
-	provider.IpfsClusterPeerHost = msg.IpfsClusterPeerHost
-	provider.IpfsClusterPeerPort = msg.IpfsClusterPeerPort
+	provider.IpfsClusterPeerMultiaddr = msg.IpfsClusterPeerMultiaddr
 
 	k.SetProvider(ctx, provider)
 
