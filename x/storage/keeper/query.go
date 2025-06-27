@@ -67,6 +67,20 @@ func (k Keeper) Providers(goCtx context.Context, req *types.QueryProvidersReques
 	}, nil
 }
 
+// ActiveProviders returns all active storage providers
+func (k Keeper) ActiveProviders(goCtx context.Context, req *types.QueryActiveProvidersRequest) (*types.QueryActiveProvidersResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	activeProviders := k.GetActiveProviders(ctx)
+
+	return &types.QueryActiveProvidersResponse{
+		Providers: activeProviders,
+	}, nil
+}
+
 // Packfile returns a packfile by ID
 func (k Keeper) Packfile(goCtx context.Context, req *types.QueryPackfileRequest) (*types.QueryPackfileResponse, error) {
 	if req == nil {

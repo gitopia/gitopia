@@ -22,6 +22,8 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/cosmos/cosmos-sdk/x/group"
+	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -128,6 +130,16 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 
 	distrKeeper.SetFeePool(ctx, distrtypes.InitialFeePool())
 
+	groupConfig := group.DefaultConfig()
+	groupKeeper := groupkeeper.NewKeeper(
+		keys[group.StoreKey],
+		appCodec,
+		bapp.NewMsgServiceRouter(),
+		appKeepers.AccountKeeper,
+		groupConfig,
+	)
+	appKeepers.GroupKeeper = &groupKeeper
+
 	appKeepers.GitopiaKeeper = *keeper.NewKeeper(
 		codec.NewProtoCodec(registry),
 		keys[types.StoreKey],
@@ -139,6 +151,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.BankKeeper,
 		appKeepers.MintKeeper,
 		&distrKeeper,
+		appKeepers.GroupKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 

@@ -90,8 +90,10 @@ func NewSimappWithCustomOptions(t *testing.T, isCheckTx bool, options SetupOptio
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
 	}
 
+	encoding := params.EncodingConfig(gitopiaApp.MakeEncodingConfig())
+
 	app := setup(app.DefaultNodeHome)
-	genesisState := gitopiaApp.NewDefaultGenesisState(app.AppCodec())
+	genesisState := gitopiaApp.NewDefaultGenesisState(encoding)
 	genesisState = *genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balance)
 
 	if !isCheckTx {
@@ -208,8 +210,9 @@ func genesisStateWithValSet(t *testing.T,
 func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.GitopiaApp {
 	t.Helper()
 
+	encoding := params.EncodingConfig(gitopiaApp.MakeEncodingConfig())
 	app := setup(app.DefaultNodeHome)
-	genesisState := gitopiaApp.NewDefaultGenesisState(app.AppCodec())
+	genesisState := gitopiaApp.NewDefaultGenesisState(encoding)
 	genesisState = *genesisStateWithValSet(t, app, genesisState, valSet, genAccs, balances...)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
@@ -275,7 +278,8 @@ func GenesisStateWithSingleValidator(t *testing.T, app *app.GitopiaApp) *app.Gen
 		},
 	}
 
-	genesisState := gitopiaApp.NewDefaultGenesisState(app.AppCodec())
+	encoding := params.EncodingConfig(gitopiaApp.MakeEncodingConfig())
+	genesisState := gitopiaApp.NewDefaultGenesisState(encoding)
 
 	return genesisStateWithValSet(t, app, genesisState, valSet, []authtypes.GenesisAccount{acc}, balances...)
 }
