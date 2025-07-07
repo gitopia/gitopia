@@ -1000,6 +1000,11 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	// Don't allow to delete repository when it has any forks
+	if len(repository.Forks) > 0 {
+		return nil, fmt.Errorf("repository %s has forks, cannot delete", repository.Name)
+	}
+
 	DoRemoveRepository(ctx, k, repository)
 
 	// Remove the repository id -> owner address, repository name mapping
@@ -1019,10 +1024,6 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 }
 
 func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repository) {
-	for _, fork := range repository.Forks {
-		DecoupleForkRepository(ctx, k, fork)
-	}
-
 	repositoryIssues := k.GetAllRepositoryIssue(ctx, repository.Id)
 	for _, i := range repositoryIssues {
 		DoRemoveIssue(ctx, k, i, repository)
@@ -1033,12 +1034,27 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repositor
 		DoRemovePullRequest(ctx, k, pr, repository)
 	}
 
+	userQuota, _ := k.GetUserQuota(ctx, repository.Owner.Id)
+
 	for _, r := range repository.Releases {
 		release, _ := k.GetRelease(ctx, r.Id)
 		DoRemoveRelease(ctx, k, release, repository)
+
+		assets := k.storageKeeper.GetReleaseAssets(ctx, repository.Id, release.TagName)
+		for _, asset := range assets {
+			k.storageKeeper.RemoveReleaseAsset(ctx, repository.Id, release.TagName, asset.Name)
+
+			userQuota.StorageUsed -= asset.Size_
+		}
 	}
 
 	k.RemoveAddressRepository(ctx, repository.Owner.Id, repository.Name)
+
+	packfile, _ := k.storageKeeper.GetPackfile(ctx, repository.Id)
+	userQuota.StorageUsed -= packfile.Size_
+	k.SetUserQuota(ctx, userQuota)
+
+	k.storageKeeper.RemovePackfile(ctx, repository.Id)
 }
 
 func DecoupleForkRepository(ctx sdk.Context, k msgServer, repositoryId uint64) error {

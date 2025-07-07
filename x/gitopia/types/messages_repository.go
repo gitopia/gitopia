@@ -759,5 +759,14 @@ func (msg *MsgDeleteRepository) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteRepository) ValidateBasic() error {
-	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	return nil
 }

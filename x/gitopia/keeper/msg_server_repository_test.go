@@ -132,30 +132,30 @@ func TestRepositoryMsgServerFork(t *testing.T) {
 	}{
 		{
 			desc:    "Repository Not Exists",
-			request: &types.MsgForkRepository{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, ForkRepositoryName: "name", Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[0], RepositoryId: types.RepositoryId{Id: users[0], Name: "name"}, ForkRepositoryName: "name", Owner: users[2]},
 			err:     sdkerrors.ErrKeyNotFound,
 		},
 		{
 			desc:    "Repository Already Exists",
-			request: &types.MsgForkRepository{Creator: users[1], RepositoryId: repositoryId, ForkRepositoryName: repositoryId.Name, Owner: users[1], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[1], RepositoryId: repositoryId, ForkRepositoryName: repositoryId.Name, Owner: users[1]},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Forking is not allowed",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: types.RepositoryId{Id: users[1], Name: "repository"}, ForkRepositoryName: "repository", Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: types.RepositoryId{Id: users[1], Name: "repository"}, ForkRepositoryName: "repository", Owner: users[2]},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Fork with all branches",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork1", Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork1", Owner: users[2]},
 		},
 		{
 			desc:    "Fork only a particular branch",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork2", Branch: "dev", Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork2", Branch: "dev", Owner: users[2]},
 		},
 		{
 			desc:    "Branch does not exist",
-			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork", Branch: "test", Owner: users[2], TaskId: 0},
+			request: &types.MsgForkRepository{Creator: users[2], RepositoryId: repositoryId, ForkRepositoryName: "fork", Branch: "test", Owner: users[2]},
 			err:     sdkerrors.ErrInvalidRequest,
 		},
 	} {
@@ -200,7 +200,7 @@ func TestRepositoryMsgServerRename(t *testing.T) {
 		{
 			desc:    "Repository Already Exists",
 			request: &types.MsgRenameRepository{Creator: users[0], RepositoryId: repositoryId, Name: "name"},
-			err:     sdkerrors.ErrKeyNotFound,
+			err:     sdkerrors.ErrInvalidRequest,
 		},
 		{
 			desc:    "Rename With Same Name",

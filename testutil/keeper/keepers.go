@@ -36,6 +36,7 @@ import (
 	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 	rewardskeeper "github.com/gitopia/gitopia/v6/x/rewards/keeper"
 	rewardstypes "github.com/gitopia/gitopia/v6/x/rewards/types"
+	storagekeeper "github.com/gitopia/gitopia/v6/x/storage/keeper"
 	"github.com/stretchr/testify/require"
 )
 
@@ -152,6 +153,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.MintKeeper,
 		&distrKeeper,
 		appKeepers.GroupKeeper,
+		nil,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
@@ -178,6 +180,17 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.DistrKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
+	appKeepers.StorageKeeper = *storagekeeper.NewKeeper(
+		appCodec,
+		keys[types.StoreKey],
+		mkeys[types.MemStoreKey],
+		appKeepers.BankKeeper,
+		&appKeepers.GitopiaKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
+	appKeepers.GitopiaKeeper.SetStorageKeeper(appKeepers.StorageKeeper)
 
 	return appKeepers, ctx
 }

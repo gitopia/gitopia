@@ -32,6 +32,7 @@ type (
 		mintKeeper    *mintkeeper.Keeper
 		distrKeeper   *distrkeeper.Keeper
 		groupKeeper   *groupkeeper.Keeper
+		storageKeeper types.StorageKeeper
 
 		// the address capable of executing a MsgUpdateParams message. Typically, this
 		// should be the x/gov module account.
@@ -51,6 +52,7 @@ func NewKeeper(
 	mintKeeper *mintkeeper.Keeper,
 	distrKeeper *distrkeeper.Keeper,
 	groupKeeper *groupkeeper.Keeper,
+	storageKeeper types.StorageKeeper,
 	authority string,
 ) *Keeper {
 	return &Keeper{
@@ -66,16 +68,17 @@ func NewKeeper(
 		mintKeeper:    mintKeeper,
 		distrKeeper:   distrKeeper,
 		groupKeeper:   groupKeeper,
+		storageKeeper: storageKeeper,
 		authority:     authority,
 	}
 }
 
 // GetAuthority returns the x/gitopia module's authority.
-func (k Keeper) GetAuthority() string {
+func (k *Keeper) GetAuthority() string {
 	return k.authority
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (k *Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
@@ -93,4 +96,8 @@ func (k Keeper) createModuleAccount(ctx sdk.Context, name string, amount sdk.Coi
 		return err
 	}
 	return nil
+}
+
+func (k *Keeper) SetStorageKeeper(storageKeeper types.StorageKeeper) {
+	k.storageKeeper = storageKeeper
 }

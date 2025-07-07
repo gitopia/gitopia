@@ -79,40 +79,40 @@ func TestMsgRenameDao_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgRenameDao{
-				Creator: "invalid_address",
-				Id:      sample.AccAddress(),
-				Name:    "name",
+				Admin: "invalid_address",
+				Id:    sample.AccAddress(),
+				Name:  "name",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgRenameDao{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Name:    "name",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Name:  "name",
 			},
 		}, {
 			name: "too short name",
 			msg: MsgRenameDao{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Name:    "n",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Name:  "n",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "name exceeds limit",
 			msg: MsgRenameDao{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Name:    strings.Repeat("n", 40),
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Name:  strings.Repeat("n", 40),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid name",
 			msg: MsgRenameDao{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Name:    "!nva1id",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Name:  "!nva1id",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
@@ -138,29 +138,29 @@ func TestMsgUpdateDaoDescription_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid id",
 			msg: MsgUpdateDaoDescription{
-				Id:      "invalid_id",
-				Creator: sample.AccAddress(),
+				Id:    "invalid_id",
+				Admin: sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
-			name: "invalid creator address",
+			name: "invalid admin address",
 			msg: MsgUpdateDaoDescription{
-				Id:      sample.AccAddress(),
-				Creator: "invalid_address",
+				Id:    sample.AccAddress(),
+				Admin: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid MsgUpdateDao",
 			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
-				Creator:     sample.AccAddress(),
+				Admin:       sample.AccAddress(),
 				Description: "description",
 			},
 		}, {
 			name: "description exceeds limit",
 			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
-				Creator:     sample.AccAddress(),
+				Admin:       sample.AccAddress(),
 				Description: strings.Repeat("d", 256),
 			},
 			err: sdkerrors.ErrInvalidRequest,
@@ -168,15 +168,15 @@ func TestMsgUpdateDaoDescription_ValidateBasic(t *testing.T) {
 			name: "description minimum length",
 			msg: MsgUpdateDaoDescription{
 				Id:          sample.AccAddress(),
-				Creator:     sample.AccAddress(),
+				Admin:       sample.AccAddress(),
 				Description: "d",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "empty description",
 			msg: MsgUpdateDaoDescription{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Admin: sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
@@ -200,54 +200,54 @@ func TestMsgUpdateDaoAvatar_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid creator address",
+			name: "invalid admin address",
 			msg: MsgUpdateDaoAvatar{
-				Creator: "invalid_address",
-				Id:      sample.AccAddress(),
+				Admin: "invalid_address",
+				Id:    sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid dao address",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      "invalid_address",
+				Admin: sample.AccAddress(),
+				Id:    "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "valid address",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Url:     "https://avatar.url",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Url:   "https://avatar.url",
 			},
 		}, {
 			name: "url exceeds limit",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Url:     strings.Repeat("u", 2049),
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Url:   strings.Repeat("u", 2049),
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "invalid url",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Url:     "url",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Url:   "url",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "empty url",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
 			},
 		}, {
 			name: "non https url",
 			msg: MsgUpdateDaoAvatar{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
-				Url:     "http://avatar.url",
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
+				Url:   "http://avatar.url",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
@@ -271,31 +271,31 @@ func TestMsgUpdateDaoPinnedRepositories_ValidateBasic(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "invalid creator address",
+			name: "invalid admin address",
 			msg: MsgUpdateDaoPinnedRepositories{
-				Creator: "invalid_address",
-				Id:      sample.AccAddress(),
+				Admin: "invalid_address",
+				Id:    sample.AccAddress(),
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "invalid dao address",
 			msg: MsgUpdateDaoPinnedRepositories{
-				Creator: sample.AccAddress(),
-				Id:      "invalid_address",
+				Admin: sample.AccAddress(),
+				Id:    "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		}, {
 			name: "valid address",
 			msg: MsgUpdateDaoPinnedRepositories{
-				Creator:      sample.AccAddress(),
+				Admin:        sample.AccAddress(),
 				Id:           sample.AccAddress(),
 				RepositoryId: 123,
 			},
 		}, {
 			name: "empty url",
 			msg: MsgUpdateDaoPinnedRepositories{
-				Creator: sample.AccAddress(),
-				Id:      sample.AccAddress(),
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
 			},
 		},
 	}
@@ -320,8 +320,8 @@ func TestMsgDeleteDao_ValidateBasic(t *testing.T) {
 		{
 			name: "WIP",
 			msg: MsgDeleteDao{
-				Id:      sample.AccAddress(),
-				Creator: sample.AccAddress(),
+				Admin: sample.AccAddress(),
+				Id:    sample.AccAddress(),
 			},
 			err: sdkerrors.ErrNotSupported,
 		},
