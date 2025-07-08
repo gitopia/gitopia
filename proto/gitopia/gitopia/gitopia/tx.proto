@@ -975,6 +975,7 @@ message MsgToggleArweaveBackupResponse {
 message MsgDeleteRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string provider = 3;
 }
 
 message MsgDeleteRepositoryResponse { }
