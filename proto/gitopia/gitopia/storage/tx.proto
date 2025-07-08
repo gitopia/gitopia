@@ -23,6 +23,9 @@ service Msg {
   // UpdateRepositoryPackfile updates repository packfile CID and root hash
   rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
 
+  // DeleteRepositoryPackfile deletes repository packfile
+  rpc DeleteRepositoryPackfile(MsgDeleteRepositoryPackfile) returns (MsgDeleteRepositoryPackfileResponse);
+
   // UpdateReleaseAsset updates release asset
   rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
   
@@ -81,6 +84,14 @@ message MsgUpdateRepositoryPackfile {
 }
 
 message MsgUpdateRepositoryPackfileResponse {}
+
+// MsgDeleteRepositoryPackfile defines a message for deleting repository packfile
+message MsgDeleteRepositoryPackfile {
+  string creator = 1;
+  uint64 repository_id = 2;
+}
+
+message MsgDeleteRepositoryPackfileResponse {}
 
 // MsgUpdateReleaseAsset defines a message for updating release asset
 message MsgUpdateReleaseAsset {

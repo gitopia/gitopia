@@ -277,6 +277,62 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
 }
 
+func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.MsgDeleteRepositoryPackfile) (*types.MsgDeleteRepositoryPackfileResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	// Check if packfile exists for this repository
+	packfile, found := k.GetPackfile(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("packfile not found")
+	}
+
+	// Decrement or remove old cid reference count
+	if packfile.Cid != "" {
+		k.DecreaseCidReferenceCount(ctx, packfile.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+			k.RemoveCidReferenceCount(ctx, packfile.Cid)
+		}
+	}
+
+	userQuota.StorageUsed -= uint64(packfile.Size_)
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	// Remove existing packfile
+	k.RemovePackfile(ctx, msg.RepositoryId)
+
+	// Update total storage size
+	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-uint64(packfile.Size_))
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
+		RepositoryId: msg.RepositoryId,
+		Name:         packfile.Name,
+		Cid:          packfile.Cid,
+	})
+
+	return &types.MsgDeleteRepositoryPackfileResponse{}, nil
+}
+
 func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

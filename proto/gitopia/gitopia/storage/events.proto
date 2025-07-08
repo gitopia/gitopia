@@ -28,6 +28,13 @@ message EventPackfileUpdated {
   string old_name = 5;
 }
 
+// EventPackfileDeleted is emitted when a packfile is deleted
+message EventPackfileDeleted {
+  uint64 repository_id = 1;
+  string name = 2;
+  string cid = 3;
+}
+
 // EventReleaseAssetUpdated is emitted when a release asset is updated
 message EventReleaseAssetUpdated {
   uint64 repository_id = 1;

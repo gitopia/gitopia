@@ -10,6 +10,7 @@ const (
 	TypeMsgRegisterProvider         = "register_provider"
 	TypeMsgUpdateProvider           = "update_provider"
 	TypeMsgUpdateRepositoryPackfile = "update_repository_packfile"
+	TypeMsgDeleteRepositoryPackfile = "delete_repository_packfile"
 	TypeMsgSubmitChallengeResponse  = "submit_challenge_response"
 	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
 	TypeMsgUnregisterProvider       = "unregister_provider"
@@ -187,6 +188,45 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 
 	if msg.Size_ == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgDeleteRepositoryPackfile{}
+
+func NewMsgDeleteRepositoryPackfile(creator string, repositoryId uint64) *MsgDeleteRepositoryPackfile {
+	return &MsgDeleteRepositoryPackfile{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+	}
+}
+
+func (msg *MsgDeleteRepositoryPackfile) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgDeleteRepositoryPackfile) Type() string {
+	return TypeMsgDeleteRepositoryPackfile
+}
+
+func (msg *MsgDeleteRepositoryPackfile) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgDeleteRepositoryPackfile) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgDeleteRepositoryPackfile) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	return nil
