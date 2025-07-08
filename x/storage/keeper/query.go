@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -213,6 +214,36 @@ func (k Keeper) RepositoryReleaseAssets(goCtx context.Context, req *types.QueryR
 	assets := k.GetReleaseAssets(ctx, req.RepositoryId, req.Tag)
 	return &types.QueryRepositoryReleaseAssetsResponse{
 		ReleaseAssets: assets,
+	}, nil
+}
+
+// RepositoryReleaseAssetsByRepositoryId returns all release assets for a repository by repository id
+func (k Keeper) RepositoryReleaseAssetsByRepositoryId(goCtx context.Context, req *types.QueryRepositoryReleaseAssetsByRepositoryIdRequest) (*types.QueryRepositoryReleaseAssetsByRepositoryIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var assets []types.ReleaseAsset
+	store := ctx.KVStore(k.storeKey)
+	releaseAssetStore := prefix.NewStore(store, types.KeyPrefix(fmt.Sprintf("%s%d", types.ReleaseAssetKey, req.RepositoryId)))
+
+	pageRes, err := query.Paginate(releaseAssetStore, req.Pagination, func(key []byte, value []byte) error {
+		var releaseAsset types.ReleaseAsset
+		if err := k.cdc.Unmarshal(value, &releaseAsset); err != nil {
+			return err
+		}
+		assets = append(assets, releaseAsset)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryRepositoryReleaseAssetsByRepositoryIdResponse{
+		ReleaseAssets: assets,
+		Pagination:    pageRes,
 	}, nil
 }
 

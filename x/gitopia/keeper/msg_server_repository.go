@@ -1035,27 +1035,12 @@ func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repositor
 		DoRemovePullRequest(ctx, k, pr, repository)
 	}
 
-	userQuota, _ := k.GetUserQuota(ctx, repository.Owner.Id)
-
 	for _, r := range repository.Releases {
 		release, _ := k.GetRelease(ctx, r.Id)
 		DoRemoveRelease(ctx, k, release, repository)
-
-		assets := k.storageKeeper.GetReleaseAssets(ctx, repository.Id, release.TagName)
-		for _, asset := range assets {
-			k.storageKeeper.RemoveReleaseAsset(ctx, repository.Id, release.TagName, asset.Name)
-
-			userQuota.StorageUsed -= asset.Size_
-		}
 	}
 
 	k.RemoveAddressRepository(ctx, repository.Owner.Id, repository.Name)
-
-	packfile, _ := k.storageKeeper.GetPackfile(ctx, repository.Id)
-	userQuota.StorageUsed -= packfile.Size_
-	k.SetUserQuota(ctx, userQuota)
-
-	k.storageKeeper.RemovePackfile(ctx, repository.Id)
 }
 
 func DecoupleForkRepository(ctx sdk.Context, k msgServer, repositoryId uint64) error {

@@ -60,6 +60,11 @@ service Query {
   rpc RepositoryReleaseAssets(QueryRepositoryReleaseAssetsRequest) returns (QueryRepositoryReleaseAssetsResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-assets/{tag}";
   }
+
+  // RepositoryReleaseAssetsByRepositoryId queries all release assets for a repository by repository id
+  rpc RepositoryReleaseAssetsByRepositoryId(QueryRepositoryReleaseAssetsByRepositoryIdRequest) returns (QueryRepositoryReleaseAssetsByRepositoryIdResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-assets";
+  }
   
   // Challenge queries a challenge by id
   rpc Challenge(QueryChallengeRequest) returns (QueryChallengeResponse) {
@@ -175,6 +180,16 @@ message QueryRepositoryReleaseAssetsRequest {
 
 message QueryRepositoryReleaseAssetsResponse {
   repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryReleaseAssetsByRepositoryIdRequest {
+  uint64 repository_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryRepositoryReleaseAssetsByRepositoryIdResponse {
+  repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryChallengeRequest {

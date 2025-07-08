@@ -450,12 +450,13 @@ func CmdToggleArweaveBackup() *cobra.Command {
 
 func CmdDeleteRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-repository [id] [repository-name]",
+		Use:   "delete-repository [id] [repository-name] [provider]",
 		Short: "Delete a repository",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argId := args[0]
 			argRepositoryName := args[1]
+			argProvider := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -465,6 +466,7 @@ func CmdDeleteRepository() *cobra.Command {
 			msg := types.NewMsgDeleteRepository(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
+				argProvider,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
