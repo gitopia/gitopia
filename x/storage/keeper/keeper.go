@@ -34,8 +34,8 @@ func NewKeeper(
 	bankKeeper bankkeeper.Keeper,
 	gitopiaKeeper *gitopiakeeper.Keeper,
 	authority string,
-) *Keeper {
-	return &Keeper{
+) Keeper {
+	return Keeper{
 		cdc:           cdc,
 		storeKey:      storeKey,
 		memKey:        memKey,
@@ -46,15 +46,15 @@ func NewKeeper(
 }
 
 // GetAuthority returns the x/storage module's authority.
-func (k *Keeper) GetAuthority() string {
+func (k Keeper) GetAuthority() string {
 	return k.authority
 }
 
-func (k *Keeper) Logger(ctx sdk.Context) log.Logger {
+func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k *Keeper) GetPreviousBlockInfo(ctx sdk.Context) types.BlockInfo {
+func (k Keeper) GetPreviousBlockInfo(ctx sdk.Context) types.BlockInfo {
 	store := ctx.KVStore(k.storeKey)
 	bytes := store.Get([]byte(types.PreviousBlockInfoKey))
 
@@ -67,7 +67,7 @@ func (k *Keeper) GetPreviousBlockInfo(ctx sdk.Context) types.BlockInfo {
 	return info
 }
 
-func (k *Keeper) SetPreviousBlockInfo(ctx sdk.Context, info *types.BlockInfo) {
+func (k Keeper) SetPreviousBlockInfo(ctx sdk.Context, info *types.BlockInfo) {
 	store := ctx.KVStore(k.storeKey)
 	b := k.cdc.MustMarshal(info)
 	store.Set([]byte(types.PreviousBlockInfoKey), b)

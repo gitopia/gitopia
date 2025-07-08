@@ -365,7 +365,6 @@ func NewAppKeeper(
 		appKeepers.MintKeeper,
 		appKeepers.DistrKeeper,
 		appKeepers.GroupKeeper,
-		nil,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
@@ -381,7 +380,7 @@ func NewAppKeeper(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	appKeepers.StorageKeeper = *storagekeeper.NewKeeper(
+	appKeepers.StorageKeeper = storagekeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[storagetypes.StoreKey],
 		appKeepers.keys[storagetypes.MemStoreKey],
@@ -389,8 +388,6 @@ func NewAppKeeper(
 		&appKeepers.GitopiaKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
-
-	appKeepers.GitopiaKeeper.SetStorageKeeper(appKeepers.StorageKeeper)
 
 	return appKeepers
 }
