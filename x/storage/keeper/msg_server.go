@@ -178,20 +178,22 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		}
 
 		// Calculate storage charge
-		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
-		if err != nil {
-			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-		}
-
-		// If there's a charge, transfer coins from user to storage charge account
-		if !charge.IsZero() {
-			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
-				return nil, fmt.Errorf("invalid user address: %v", err)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
-			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
-				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
 			}
 		}
 
@@ -222,20 +224,22 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new packfile
-		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
-		if err != nil {
-			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-		}
-
-		// If there's a charge, transfer coins from user to storage charge account
-		if !charge.IsZero() {
-			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
-				return nil, fmt.Errorf("invalid user address: %v", err)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
-			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
-				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
 			}
 		}
 
@@ -313,20 +317,22 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		}
 
 		// Calculate storage charge
-		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
-		if err != nil {
-			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-		}
-
-		// If there's a charge, transfer coins from user to storage charge account
-		if !charge.IsZero() {
-			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
-				return nil, fmt.Errorf("invalid user address: %v", err)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
-			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
-				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
 			}
 		}
 
@@ -355,20 +361,22 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new asset
-		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
-		if err != nil {
-			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-		}
-
-		// If there's a charge, transfer coins from user to storage charge account
-		if !charge.IsZero() {
-			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
-				return nil, fmt.Errorf("invalid user address: %v", err)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
-			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
-				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
 			}
 		}
 

@@ -36,7 +36,7 @@ var (
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 1
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
-	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1000))
+	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
 	DefaultFreeStorageMb                   uint64   = 157_286_400 // 150Mb
 	DefaultMaxProviders                    uint64   = 5
 	DefaultEnableStorageChallenges         bool     = false
@@ -259,12 +259,9 @@ func validateUnstakeCooldownBlocks(v interface{}) error {
 
 // validateStoragePricePerMb validates the StoragePricePerMb param
 func validateStoragePricePerMb(v interface{}) error {
-	coin, ok := v.(sdk.Coin)
+	_, ok := v.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if coin.IsZero() {
-		return fmt.Errorf("storage price per mb cannot be zero")
 	}
 
 	return nil
