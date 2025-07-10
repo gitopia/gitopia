@@ -1032,6 +1032,7 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),

@@ -195,10 +195,11 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteRepositoryPackfile{}
 
-func NewMsgDeleteRepositoryPackfile(creator string, repositoryId uint64) *MsgDeleteRepositoryPackfile {
+func NewMsgDeleteRepositoryPackfile(creator string, repositoryId uint64, ownerId string) *MsgDeleteRepositoryPackfile {
 	return &MsgDeleteRepositoryPackfile{
 		Creator:      creator,
 		RepositoryId: repositoryId,
+		OwnerId:      ownerId,
 	}
 }
 
@@ -227,6 +228,11 @@ func (msg *MsgDeleteRepositoryPackfile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 	}
 
 	return nil
@@ -462,12 +468,13 @@ func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteReleaseAsset{}
 
-func NewMsgDeleteReleaseAsset(creator string, repositoryId uint64, tag string, name string) *MsgDeleteReleaseAsset {
+func NewMsgDeleteReleaseAsset(creator string, repositoryId uint64, tag string, name string, ownerId string) *MsgDeleteReleaseAsset {
 	return &MsgDeleteReleaseAsset{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Tag:          tag,
 		Name:         name,
+		OwnerId:      ownerId,
 	}
 }
 
@@ -504,6 +511,11 @@ func (msg *MsgDeleteReleaseAsset) ValidateBasic() error {
 
 	if msg.Name == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 	}
 
 	return nil

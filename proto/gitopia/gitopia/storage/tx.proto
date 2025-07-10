@@ -89,6 +89,7 @@ message MsgUpdateRepositoryPackfileResponse {}
 message MsgDeleteRepositoryPackfile {
   string creator = 1;
   uint64 repository_id = 2;
+  string owner_id = 3;
 }
 
 message MsgDeleteRepositoryPackfileResponse {}
@@ -113,6 +114,7 @@ message MsgDeleteReleaseAsset {
   uint64 repository_id = 2;
   string tag = 3;
   string name = 4;
+  string owner_id = 5;
 }
 
 message MsgDeleteReleaseAssetResponse {}

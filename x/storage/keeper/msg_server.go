@@ -286,16 +286,11 @@ func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		return nil, fmt.Errorf("provider is not active")
 	}
 
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("repository not found")
-	}
-
-	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
 	if !found {
 		// Create new user quota
 		userQuota = gitopiatypes.UserQuota{
-			Address:     repository.Owner.Id,
+			Address:     msg.OwnerId,
 			StorageUsed: 0,
 		}
 	}
@@ -495,14 +490,8 @@ func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDelet
 	// Delete the release asset
 	k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
 
-	// Get repository
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("repository not found")
-	}
-
 	// Update user quota
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
 	userQuota.StorageUsed -= asset.Size_
 	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
