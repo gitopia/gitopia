@@ -115,6 +115,7 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.CreateReleaseEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
 			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
