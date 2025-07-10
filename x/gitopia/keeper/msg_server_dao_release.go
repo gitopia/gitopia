@@ -103,6 +103,7 @@ func (k msgServer) DaoCreateRelease(goCtx context.Context, msg *types.MsgDaoCrea
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DaoCreateReleaseEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
 			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
