@@ -1010,6 +1010,22 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	// Remove the repository id -> owner address, repository name mapping
 	k.RemoveBaseRepositoryKey(ctx, repository.Id)
 
+	// If it's a forked repository, remove the link from parent repository
+	if repository.Fork {
+		parentRepository, found := k.GetRepositoryById(ctx, repository.Parent)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("parent repository (%d) doesn't exist", repository.Parent))
+		}
+		// Update parent repository forks
+		for i, fork := range parentRepository.Forks {
+			if fork == repository.Id {
+				parentRepository.Forks = append(parentRepository.Forks[:i], parentRepository.Forks[i+1:]...)
+				break
+			}
+		}
+		k.SetRepository(ctx, parentRepository)
+	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
