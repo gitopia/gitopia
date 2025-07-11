@@ -34,9 +34,9 @@ var (
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_250_000_000))
 	DefaultConsecutiveFailsThreshold       uint64   = 3
 	DefaultConsecutiveFailsSlashPercentage uint64   = 1
-	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500 // ~28 days
-	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
-	DefaultFreeStorageMb                   uint64   = 157_286_400 // 150Mb
+	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500                                // ~28 days
+	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(12_000)) // $0.00001 per MB of storage update
+	DefaultFreeStorageMb                   uint64   = 157_286_400                              // 150Mb
 	DefaultMaxProviders                    uint64   = 5
 )
 
