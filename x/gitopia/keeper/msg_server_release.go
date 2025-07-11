@@ -104,6 +104,7 @@ func (k msgServer) CreateRelease(goCtx context.Context, msg *types.MsgCreateRele
 	}
 
 	repository.Releases = append(repository.Releases, &repositoryRelease)
+	repository.UpdatedAt = currentTime
 
 	k.SetRepository(ctx, repository)
 
@@ -211,6 +212,9 @@ func (k msgServer) UpdateRelease(goCtx context.Context, msg *types.MsgUpdateRele
 	}
 
 	k.SetRelease(ctx, release)
+
+	repository.UpdatedAt = currentTime
+	k.SetRepository(ctx, repository)
 
 	attachmentsJson, _ := json.Marshal(release.Attachments)
 

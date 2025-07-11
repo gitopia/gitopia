@@ -17,6 +17,9 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
+// Approximate upgrade time of the v6 upgrade which adds storage module
+var UpgradeTime = time.Date(2025, time.July, 11, 12, 35, 0, 0, time.UTC)
+
 type msgServer struct {
 	Keeper
 }
@@ -178,7 +181,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -224,7 +227,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new packfile
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -368,7 +371,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -412,7 +415,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
 	} else {
 		// Calculate storage charge for new asset
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() {
+		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
