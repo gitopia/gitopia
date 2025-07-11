@@ -593,6 +593,10 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 
 	activeProviders := k.GetActiveProviders(ctx)
 
+	// Consider only providers that have been active for at least 24 hours
+	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+	activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
+
 	// Update provider rewards
 	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
 	currentRewards := k.GetProviderRewards(ctx, providerAcc)

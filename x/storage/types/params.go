@@ -27,7 +27,6 @@ var (
 	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
 	KeyFreeStorageMb                   = []byte("FreeStorageMb")
 	KeyMaxProviders                    = []byte("MaxProviders")
-	KeyEnableStorageChallenges         = []byte("EnableStorageChallenges")
 	// Default values for parameters
 	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
 	DefaultChallengeIntervalBlocks         uint64   = 1000                                            // ~30 min
@@ -39,7 +38,6 @@ var (
 	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
 	DefaultFreeStorageMb                   uint64   = 157_286_400 // 150Mb
 	DefaultMaxProviders                    uint64   = 5
-	DefaultEnableStorageChallenges         bool     = false
 )
 
 // ParamKeyTable the param key table for launch module
@@ -60,7 +58,6 @@ func NewParams(
 	storagePricePerMb sdk.Coin,
 	freeStorageMb uint64,
 	maxProviders uint64,
-	enableStorageChallenges bool,
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
@@ -74,7 +71,6 @@ func NewParams(
 		StoragePricePerMb:               storagePricePerMb,
 		FreeStorageMb:                   freeStorageMb,
 		MaxProviders:                    maxProviders,
-		EnableStorageChallenges:         enableStorageChallenges,
 	}
 }
 
@@ -92,7 +88,6 @@ func DefaultParams() Params {
 		DefaultStoragePricePerMb,
 		DefaultFreeStorageMb,
 		DefaultMaxProviders,
-		DefaultEnableStorageChallenges,
 	)
 }
 
@@ -110,7 +105,6 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
-		paramtypes.NewParamSetPair(KeyEnableStorageChallenges, &p.EnableStorageChallenges, validateEnableStorageChallenges),
 	}
 }
 
@@ -147,9 +141,6 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateMaxProviders(p.MaxProviders); err != nil {
-		return err
-	}
-	if err := validateEnableStorageChallenges(p.EnableStorageChallenges); err != nil {
 		return err
 	}
 	return nil
@@ -288,15 +279,6 @@ func validateMaxProviders(v interface{}) error {
 	}
 	if providers == 0 {
 		return fmt.Errorf("max providers cannot be zero")
-	}
-	return nil
-}
-
-// validateEnableStorageChallenges validates the EnableStorageChallenges param
-func validateEnableStorageChallenges(v interface{}) error {
-	_, ok := v.(bool)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 	return nil
 }

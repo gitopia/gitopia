@@ -107,8 +107,12 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 	// Get active providers
 	providers := k.GetActiveProviders(ctx)
 
+	// Consider only providers that have been active for at least 24 hours
+	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+	providers = filterProvidersByJoinTime(providers, minJoinTime)
+
 	if len(providers) == 0 {
-		return nil, fmt.Errorf("no active providers available")
+		return nil, fmt.Errorf("no active providers that have been active for at least 24 hours available")
 	}
 
 	packfilesCount := k.GetPackfileCount(ctx)

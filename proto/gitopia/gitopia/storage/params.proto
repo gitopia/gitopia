@@ -27,7 +27,4 @@ message Params {
 
   // max providers
   uint64 max_providers = 11 [(gogoproto.moretags) = "yaml:\"max_providers\""];
-
-  // enable storage challenges
-  bool enable_storage_challenges = 12 [(gogoproto.moretags) = "yaml:\"enable_storage_challenges\""];
 }

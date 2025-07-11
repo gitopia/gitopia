@@ -144,11 +144,6 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	params := am.keeper.GetParams(ctx)
 
-	// If storage challenges are disabled, return
-	if !params.EnableStorageChallenges {
-		return
-	}
-
 	// Calculate which block numbers should generate challenges
 	currentBlockHeight := uint64(ctx.BlockHeight())
 	challengeInterval := params.ChallengeIntervalBlocks
