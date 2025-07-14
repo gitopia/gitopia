@@ -117,9 +117,10 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 
 	packfilesCount := k.GetPackfileCount(ctx)
 	releaseAssetsCount := k.GetReleaseAssetCount(ctx)
+	lfsObjectsCount := k.GetLFSObjectCount(ctx)
 
-	if packfilesCount == 0 && releaseAssetsCount == 0 {
-		return nil, fmt.Errorf("no packfiles or release assets available")
+	if packfilesCount == 0 && releaseAssetsCount == 0 && lfsObjectsCount == 0 {
+		return nil, fmt.Errorf("no packfiles, release assets, or LFS objects available")
 	}
 
 	// Initialize random number generator
@@ -127,21 +128,25 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 
 	providerIndex := uint64(prng.Int63n(int64(len(providers))))
 
-	// Randomly choose between packfile and release asset challenge
-	challengeType := types.ChallengeType_CHALLENGE_TYPE_PACKFILE
-	if packfilesCount > 0 && releaseAssetsCount > 0 {
-		if prng.Int63n(2) == 1 {
-			challengeType = types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET
-		}
-	} else if packfilesCount == 0 {
-		challengeType = types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET
+	// Randomly choose between packfile, release asset, and LFS object challenge
+	var availableTypes []types.ChallengeType
+	if packfilesCount > 0 {
+		availableTypes = append(availableTypes, types.ChallengeType_CHALLENGE_TYPE_PACKFILE)
 	}
+	if releaseAssetsCount > 0 {
+		availableTypes = append(availableTypes, types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET)
+	}
+	if lfsObjectsCount > 0 {
+		availableTypes = append(availableTypes, types.ChallengeType_CHALLENGE_TYPE_LFS_OBJECT)
+	}
+	challengeType := availableTypes[prng.Int63n(int64(len(availableTypes)))]
 
 	var contentID uint64
 	var rootHash []byte
 	var size uint64
 
-	if challengeType == types.ChallengeType_CHALLENGE_TYPE_PACKFILE {
+	switch challengeType {
+	case types.ChallengeType_CHALLENGE_TYPE_PACKFILE:
 		contentID = uint64(prng.Int63n(int64(packfilesCount)))
 		packfile, found := k.GetPackfileById(ctx, contentID)
 		if !found {
@@ -149,7 +154,7 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		}
 		rootHash = packfile.RootHash
 		size = packfile.Size_
-	} else {
+	case types.ChallengeType_CHALLENGE_TYPE_RELEASE_ASSET:
 		contentID = uint64(prng.Int63n(int64(releaseAssetsCount)))
 		releaseAsset, found := k.GetReleaseAssetById(ctx, contentID)
 		if !found {
@@ -157,6 +162,15 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		}
 		rootHash = releaseAsset.RootHash
 		size = releaseAsset.Size_
+	case types.ChallengeType_CHALLENGE_TYPE_LFS_OBJECT:
+		lfsIdx := prng.Int63n(int64(lfsObjectsCount))
+		lfsObj, found := k.GetLFSObjectById(ctx, uint64(lfsIdx))
+		if !found {
+			return nil, fmt.Errorf("LFS object not found: %d", uint64(lfsIdx))
+		}
+		contentID = lfsObj.Id
+		rootHash = lfsObj.RootHash
+		size = lfsObj.Size_
 	}
 
 	const chunkSize uint64 = 256 * 1024 // 256 KiB chunks

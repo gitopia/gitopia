@@ -475,6 +475,12 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDeleteReleaseAsset) (*types.MsgDeleteReleaseAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
 	// Get the release asset
 	asset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
 	if !found {
@@ -920,4 +926,125 @@ func CalculateChallengeReward(params types.Params, numProviders int64) sdk.DecCo
 	reward := dec.Mul(sdk.NewDec(int64(params.ChallengeIntervalBlocks)).Quo(sdk.NewDec(blocksPerDay)))
 
 	return sdk.NewDecCoinFromDec(params.RewardPerDay.Denom, reward)
+}
+
+// MsgUpdateLFSObject updates or creates an LFS object
+func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLFSObject) (*types.MsgUpdateLFSObjectResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	repo, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repo.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repo.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	// Calculate storage charge for new LFS object
+	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repo.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+	}
+
+	// Update LFS object
+	lfsObj := types.LFSObject{
+		Creator:      msg.Creator,
+		RepositoryId: msg.RepositoryId,
+		Oid:          msg.Oid,
+		Size_:        msg.Size_,
+		Cid:          msg.Cid,
+		RootHash:     msg.RootHash,
+		CreatedAt:    ctx.BlockTime(),
+	}
+
+	userQuota.StorageUsed += uint64(lfsObj.Size_)
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	k.AppendLFSObject(ctx, lfsObj)
+
+	// Increase cid reference count
+	k.IncreaseCidReferenceCount(ctx, lfsObj.Cid)
+
+	// Update total storage size
+	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(lfsObj.Size_))
+
+	ctx.EventManager().EmitTypedEvent(
+		&types.EventLFSObjectUpdated{
+			RepositoryId: msg.RepositoryId,
+			Oid:          msg.Oid,
+			Cid:          msg.Cid,
+		},
+	)
+
+	return &types.MsgUpdateLFSObjectResponse{}, nil
+}
+
+// MsgDeleteLFSObject deletes an LFS object
+func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLFSObject) (*types.MsgDeleteLFSObjectResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get the LFS object
+	lfsObj, found := k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
+	if !found {
+		return nil, fmt.Errorf("LFS object not found")
+	}
+
+	// Decrease cid reference count
+	k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
+	if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
+		k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
+	}
+
+	// Update total storage size
+	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-uint64(lfsObj.Size_))
+
+	// Remove LFS object
+	k.RemoveLFSObject(ctx, msg.RepositoryId, msg.Oid)
+
+	// Update user quota
+	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
+	userQuota.StorageUsed -= uint64(lfsObj.Size_)
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	ctx.EventManager().EmitTypedEvent(
+		&types.EventLFSObjectDeleted{
+			RepositoryId: msg.RepositoryId,
+			Oid:          msg.Oid,
+			Cid:          lfsObj.Cid,
+		},
+	)
+
+	return &types.MsgDeleteLFSObjectResponse{}, nil
 }

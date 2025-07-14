@@ -90,6 +90,18 @@ service Query {
   rpc ActiveProviders(QueryActiveProvidersRequest) returns (QueryActiveProvidersResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/active-providers";
   }
+
+  rpc LFSObjects(QueryLFSObjectsRequest) returns (QueryLFSObjectsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-objects";
+  }
+
+  rpc LFSObject(QueryLFSObjectRequest) returns (QueryLFSObjectResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object/{id}";
+  }
+
+  rpc LFSObjectsByRepositoryId(QueryLFSObjectsByRepositoryIdRequest) returns (QueryLFSObjectsByRepositoryIdResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-objects";
+  }
 }
 
 message QueryParamsRequest {}
@@ -230,4 +242,29 @@ message QueryCidReferenceCountsRequest {
 message QueryCidReferenceCountsResponse {
   repeated CidReferenceCount cid_reference_counts = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryLFSObjectsResponse {
+  repeated LFSObject lfs_objects = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectRequest {
+  uint64 id = 1;
+}
+
+message QueryLFSObjectResponse {
+  LFSObject lfs_object = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectsByRepositoryIdRequest {
+  uint64 repository_id = 1;
+}
+
+message QueryLFSObjectsByRepositoryIdResponse {
+  repeated LFSObject lfs_objects = 1 [(gogoproto.nullable) = false];
 }

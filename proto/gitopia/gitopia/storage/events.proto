@@ -102,3 +102,19 @@ message EventMergePullRequest {
   int64 updated_at = 17;
   int64 merged_at = 18;
 }
+
+// EventLFSObjectUpdated is emitted when an LFS object is updated
+message EventLFSObjectUpdated {
+  uint64 lfs_object_id = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+  string cid = 4;
+}
+
+// EventLFSObjectDeleted is emitted when an LFS object is deleted
+message EventLFSObjectDeleted {
+  uint64 lfs_object_id = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+  string cid = 4;
+}

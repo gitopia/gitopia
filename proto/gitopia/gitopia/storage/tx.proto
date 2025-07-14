@@ -50,6 +50,12 @@ service Msg {
 
   // MergePullRequest merges a pull request
   rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
+
+  // UpdateLFSObject updates an existing LFS object
+  rpc UpdateLFSObject(MsgUpdateLFSObject) returns (MsgUpdateLFSObjectResponse);
+
+  // DeleteLFSObject deletes an LFS object
+  rpc DeleteLFSObject(MsgDeleteLFSObject) returns (MsgDeleteLFSObjectResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -184,3 +190,26 @@ message MsgMergePullRequest {
 
 message MsgMergePullRequestResponse {
 }
+
+// MsgUpdateLFSObject defines a message for updating an LFS object
+message MsgUpdateLFSObject {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string oid = 4;
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+}
+
+message MsgUpdateLFSObjectResponse {}
+
+// MsgDeleteLFSObject defines a message for deleting an LFS object
+message MsgDeleteLFSObject {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+  string owner_id = 4;
+}
+
+message MsgDeleteLFSObjectResponse {}

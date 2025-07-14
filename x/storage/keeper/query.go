@@ -343,3 +343,58 @@ func (k Keeper) CidReferenceCounts(goCtx context.Context, req *types.QueryCidRef
 		Pagination:         pageRes,
 	}, nil
 }
+
+// LFSObjects returns all LFS objects
+func (k Keeper) LFSObjects(goCtx context.Context, req *types.QueryLFSObjectsRequest) (*types.QueryLFSObjectsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var lfsObjects []types.LFSObject
+	store := ctx.KVStore(k.storeKey)
+	lfsObjectStore := prefix.NewStore(store, types.KeyPrefix(types.LFSObjectKey))
+
+	pageRes, err := query.Paginate(lfsObjectStore, req.Pagination, func(key []byte, value []byte) error {
+		var lfsObject types.LFSObject
+		if err := k.cdc.Unmarshal(value, &lfsObject); err != nil {
+			return err
+		}
+		lfsObjects = append(lfsObjects, lfsObject)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryLFSObjectsResponse{
+		LfsObjects: lfsObjects,
+		Pagination: pageRes,
+	}, nil
+}
+
+// LFSObject returns an LFS object by id
+func (k Keeper) LFSObject(goCtx context.Context, req *types.QueryLFSObjectRequest) (*types.QueryLFSObjectResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	lfsObj, found := k.GetLFSObjectById(ctx, req.Id)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "LFS object not found")
+	}
+	return &types.QueryLFSObjectResponse{LfsObject: lfsObj}, nil
+}
+
+// LFSObjectsByRepositoryId returns all LFS objects for a repository by repository id
+func (k Keeper) LFSObjectsByRepositoryId(goCtx context.Context, req *types.QueryLFSObjectsByRepositoryIdRequest) (*types.QueryLFSObjectsByRepositoryIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	lfsObjects := k.GetLFSObjectsByRepositoryId(ctx, req.RepositoryId)
+	return &types.QueryLFSObjectsByRepositoryIdResponse{LfsObjects: lfsObjects}, nil
+}

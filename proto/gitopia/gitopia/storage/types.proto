@@ -79,11 +79,31 @@ message ReleaseAssetRepositoryMapping {
   string name = 4;
 }
 
+// LFSObject represents a Large File Storage object
+message LFSObject {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string oid = 4; // LFS object ID (SHA256)
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+  google.protobuf.Timestamp created_at = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+}
+
+// Mapping between LFS object id and repository id
+message LFSObjectRepositoryMapping {
+  uint64 lfs_object_id = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+}
+
 // ChallengeType represents the type of storage challenge
 enum ChallengeType {
   CHALLENGE_TYPE_UNSPECIFIED = 0;
   CHALLENGE_TYPE_PACKFILE = 1;
   CHALLENGE_TYPE_RELEASE_ASSET = 2;
+  CHALLENGE_TYPE_LFS_OBJECT = 3;
 }
 
 // Challenge represents a storage proof challenge
