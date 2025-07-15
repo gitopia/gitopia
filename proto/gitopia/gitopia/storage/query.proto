@@ -102,6 +102,10 @@ service Query {
   rpc LFSObjectsByRepositoryId(QueryLFSObjectsByRepositoryIdRequest) returns (QueryLFSObjectsByRepositoryIdResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-objects";
   }
+
+  rpc LFSObjectByRepositoryIdAndOid(QueryLFSObjectByRepositoryIdAndOidRequest) returns (QueryLFSObjectByRepositoryIdAndOidResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-object/{oid}";
+  }
 }
 
 message QueryParamsRequest {}
@@ -267,4 +271,13 @@ message QueryLFSObjectsByRepositoryIdRequest {
 
 message QueryLFSObjectsByRepositoryIdResponse {
   repeated LFSObject lfs_objects = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectByRepositoryIdAndOidRequest {
+  uint64 repository_id = 1;
+  string oid = 2;
+}
+
+message QueryLFSObjectByRepositoryIdAndOidResponse {
+  LFSObject lfs_object = 1 [(gogoproto.nullable) = false];
 }

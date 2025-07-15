@@ -139,6 +139,18 @@ func (k Keeper) GetLFSObjectsByRepositoryId(ctx sdk.Context, repositoryId uint64
 	return objs
 }
 
+// GetLFSObjectByRepositoryIdAndOid returns an LFS object by repository id and oid
+func (k Keeper) GetLFSObjectByRepositoryIdAndOid(ctx sdk.Context, repositoryId uint64, oid string) (lfsObj types.LFSObject, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LFSObjectKey))
+	lfsObjectKey := fmt.Sprintf("%d-%s", repositoryId, oid)
+	bz := store.Get([]byte(lfsObjectKey))
+	if bz == nil {
+		return lfsObj, false
+	}
+	k.cdc.MustUnmarshal(bz, &lfsObj)
+	return lfsObj, true
+}
+
 // GetLFSObjectIdBytes returns the byte representation of the ID
 func GetLFSObjectIdBytes(id uint64) []byte {
 	bz := make([]byte, 8)

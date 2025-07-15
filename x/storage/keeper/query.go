@@ -398,3 +398,17 @@ func (k Keeper) LFSObjectsByRepositoryId(goCtx context.Context, req *types.Query
 	lfsObjects := k.GetLFSObjectsByRepositoryId(ctx, req.RepositoryId)
 	return &types.QueryLFSObjectsByRepositoryIdResponse{LfsObjects: lfsObjects}, nil
 }
+
+// LFSObjectByRepositoryIdAndOid returns an LFS object by repository id and oid
+func (k Keeper) LFSObjectByRepositoryIdAndOid(goCtx context.Context, req *types.QueryLFSObjectByRepositoryIdAndOidRequest) (*types.QueryLFSObjectByRepositoryIdAndOidResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	lfsObj, found := k.GetLFSObjectByRepositoryIdAndOid(ctx, req.RepositoryId, req.Oid)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "LFS object not found")
+	}
+	return &types.QueryLFSObjectByRepositoryIdAndOidResponse{LfsObject: lfsObj}, nil
+}
