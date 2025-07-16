@@ -105,16 +105,14 @@ message EventMergePullRequest {
 
 // EventLFSObjectUpdated is emitted when an LFS object is updated
 message EventLFSObjectUpdated {
-  uint64 lfs_object_id = 1;
-  uint64 repository_id = 2;
-  string oid = 3;
-  string cid = 4;
+  uint64 repository_id = 1;
+  string oid = 2;
+  string cid = 3;
 }
 
 // EventLFSObjectDeleted is emitted when an LFS object is deleted
 message EventLFSObjectDeleted {
-  uint64 lfs_object_id = 1;
-  uint64 repository_id = 2;
-  string oid = 3;
-  string cid = 4;
+  uint64 repository_id = 1;
+  string oid = 2;
+  string cid = 3;
 }
