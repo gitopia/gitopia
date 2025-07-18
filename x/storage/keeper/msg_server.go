@@ -412,7 +412,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		k.SetReleaseAsset(ctx, existingAsset)
 
 		// Update total storage size
-		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
+		k.SetTotalStorageSize(ctx, uint64(int64(k.GetTotalStorageSize(ctx))+diff))
 	} else {
 		// Calculate storage charge for new asset
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
