@@ -45,6 +45,15 @@ service Msg {
   // CompleteUnstake completes the unstaking process after the cooldown period
   rpc CompleteUnstake(MsgCompleteUnstake) returns (MsgCompleteUnstakeResponse);
 
+  // IncreaseStake increases the stake of a storage provider
+  rpc IncreaseStake(MsgIncreaseStake) returns (MsgIncreaseStakeResponse);
+
+  // DecreaseStake decreases the stake of a storage provider with cooldown
+  rpc DecreaseStake(MsgDecreaseStake) returns (MsgDecreaseStakeResponse);
+
+  // ReactivateProvider reactivates a suspended provider
+  rpc ReactivateProvider(MsgReactivateProvider) returns (MsgReactivateProviderResponse);
+
   // UpdateParams updates the parameters of the storage module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 
@@ -164,6 +173,34 @@ message MsgCompleteUnstake {
 message MsgCompleteUnstakeResponse {
   cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
 }
+
+// MsgIncreaseStake defines a message for increasing provider stake
+message MsgIncreaseStake {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgIncreaseStakeResponse {}
+
+// MsgDecreaseStake defines a message for decreasing provider stake
+message MsgDecreaseStake {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgDecreaseStakeResponse {
+  google.protobuf.Timestamp completion_time = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// MsgReactivateProvider defines a message for reactivating a suspended provider
+message MsgReactivateProvider {
+  string creator = 1;
+}
+
+message MsgReactivateProviderResponse {}
 
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";

@@ -21,6 +21,9 @@ const (
 	TypeMsgMergePullRequest         = "merge_pull_request"
 	TypeMsgUpdateLFSObject          = "update_lfs_object"
 	TypeMsgDeleteLFSObject          = "delete_lfs_object"
+	TypeMsgIncreaseStake            = "increase_stake"
+	TypeMsgDecreaseStake            = "decrease_stake"
+	TypeMsgReactivateProvider       = "reactivate_provider"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}

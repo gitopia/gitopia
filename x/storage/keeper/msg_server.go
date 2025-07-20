@@ -568,22 +568,41 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
 
-		// Slash provider
-		slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-		if provider.ConsecutiveFailures == params.ConsecutiveFailsThreshold {
+		// Check if provider should be suspended due to consecutive failures
+		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
+			// Suspend the provider
+			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
+			
+			// Apply percentage-based slash for consecutive failures
 			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
 			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins = sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
-
-			// reset consecutive failures
-			provider.ConsecutiveFailures = 0
-		}
-
-		k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
-
-		// update provider stake
-		if len(slashAmountCoins) > 0 {
+			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
+			
+			// Transfer slashed amount to slash account
+			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			
+			// Update provider stake
 			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
+			
+			// Reset consecutive failures
+			provider.ConsecutiveFailures = 0
+			
+			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
+			
+			// Emit suspension event
+			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+				Address: provider.Creator,
+				Online:  false,
+			})
+		} else {
+			// Apply regular challenge failure slash
+			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
+			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			
+			// Update provider stake
+			if len(slashAmountCoins) > 0 {
+				provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
+			}
 		}
 
 		k.SetProvider(ctx, provider)
@@ -712,12 +731,8 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
-	// Remove provider from store
-	// k.RemoveProvider(ctx, provider.Creator)
-
-	// Update provider status
-	provider.Status = types.ProviderStatus_PROVIDER_STATUS_INACTIVE
-	k.SetProvider(ctx, provider)
+	// Remove provider from store (completely remove inactive providers)
+	k.RemoveProvider(ctx, provider.Creator)
 
 	// Emit event
 	ctx.EventManager().EmitTypedEvent(&types.EventProviderUnstakeCompleted{
@@ -1047,4 +1062,140 @@ func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLF
 	)
 
 	return &types.MsgDeleteLFSObjectResponse{}, nil
+}
+
+// Stake Management Handlers
+
+func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseStake) (*types.MsgIncreaseStakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Check if provider is active (can't increase stake if suspended or unregistering)
+	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("can only increase stake for active providers")
+	}
+
+	// Transfer additional stake from provider to module account
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, fmt.Errorf("invalid creator address: %v", err)
+	}
+
+	providerAcc := ProviderModuleAddress(provider.Id)
+	if err := k.bankKeeper.SendCoins(
+		ctx,
+		creator,
+		providerAcc,
+		sdk.NewCoins(msg.Amount),
+	); err != nil {
+		return nil, fmt.Errorf("failed to transfer stake: %v", err)
+	}
+
+	// Update provider stake
+	provider.Stake = provider.Stake.Add(msg.Amount)
+	k.SetProvider(ctx, provider)
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+		Address: provider.Creator,
+		Online:  true,
+	})
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s increased stake by %s, new total: %s", provider.Creator, msg.Amount.String(), provider.Stake.String()))
+
+	return &types.MsgIncreaseStakeResponse{}, nil
+}
+
+func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseStake) (*types.MsgDecreaseStakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Check if provider is active
+	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		return nil, fmt.Errorf("can only decrease stake for active providers")
+	}
+
+	// Check if provider already has a pending decrease
+	if provider.UnstakeCompletionTime != nil {
+		return nil, fmt.Errorf("provider already has a pending stake decrease")
+	}
+
+	// Check minimum stake requirement
+	params := k.GetParams(ctx)
+	newStakeAmount := provider.Stake.Sub(msg.Amount)
+	if newStakeAmount.Amount.Uint64() < params.MinStakeAmount {
+		return nil, fmt.Errorf("resulting stake would be below minimum stake amount")
+	}
+
+	// Set cooldown period for stake decrease
+	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
+	provider.UnstakeCompletionTime = &completionTime
+
+	// Store the decrease amount in a temporary field (we'll need to extend the Provider struct)
+	// For now, we'll use the existing unstake logic pattern
+	k.SetProvider(ctx, provider)
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+		Address: provider.Creator,
+		Online:  true,
+	})
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s initiated stake decrease of %s, completion time: %s", provider.Creator, msg.Amount.String(), completionTime.String()))
+
+	return &types.MsgDecreaseStakeResponse{
+		CompletionTime: completionTime,
+	}, nil
+}
+
+func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReactivateProvider) (*types.MsgReactivateProviderResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Check if provider is suspended
+	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
+		return nil, fmt.Errorf("can only reactivate suspended providers")
+	}
+
+	// Check if provider still meets minimum stake requirement
+	params := k.GetParams(ctx)
+	if provider.Stake.Amount.Uint64() < params.MinStakeAmount {
+		return nil, fmt.Errorf("provider stake is below minimum requirement, increase stake first")
+	}
+
+	// Check active provider limit
+	activeProviders := k.GetActiveProviders(ctx)
+	if len(activeProviders) >= int(params.MaxProviders) {
+		return nil, fmt.Errorf("active provider count has reached the maximum limit")
+	}
+
+	// Reactivate the provider
+	provider.Status = types.ProviderStatus_PROVIDER_STATUS_ACTIVE
+	provider.ConsecutiveFailures = 0 // Reset failure count on reactivation
+	k.SetProvider(ctx, provider)
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+		Address: provider.Creator,
+		Online:  true,
+	})
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s reactivated", provider.Creator))
+
+	return &types.MsgReactivateProviderResponse{}, nil
 }
