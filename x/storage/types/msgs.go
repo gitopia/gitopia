@@ -67,8 +67,8 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
-	if msg.Moniker == "" || len(msg.Moniker) > 250 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 250 characters")
+	if msg.Moniker == "" || len(msg.Moniker) > 64 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 64 characters")
 	}
 
 	if msg.Stake.IsZero() {
@@ -124,8 +124,8 @@ func (msg *MsgUpdateProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
-	if msg.Moniker == "" || len(msg.Moniker) > 250 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 250 characters")
+	if msg.Moniker == "" || len(msg.Moniker) > 64 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 64 characters")
 	}
 
 	if msg.IpfsClusterPeerMultiaddr == "" {
