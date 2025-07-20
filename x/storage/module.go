@@ -184,18 +184,52 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		// Update provider stats for failed challenge
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
-		am.keeper.SetProvider(ctx, provider)
 
 		params := am.keeper.GetParams(ctx)
 
-		// Slash provider
-		// Send slashed coins to challenge slash account
-		am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, sdk.NewCoins(params.ChallengeSlashAmount))
+		// Check if provider should be suspended due to consecutive failures
+		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
+			// Suspend the provider
+			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
+			
+			// Apply percentage-based slash for consecutive failures
+			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
+			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
+			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
+			
+			// Transfer slashed amount to slash account
+			am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			
+			// Update provider stake
+			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
+			
+			// Reset consecutive failures
+			provider.ConsecutiveFailures = 0
+			
+			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
+			
+			// Emit suspension event
+			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+				Address: provider.Creator,
+				Online:  false,
+			})
+		} else {
+			// Apply regular challenge failure slash
+			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
+			am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			
+			// Update provider stake
+			if len(slashAmountCoins) > 0 {
+				provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
+			}
+		}
+
+		am.keeper.SetProvider(ctx, provider)
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		am.keeper.SetChallenge(ctx, challenge)
 
-		ctx.Logger().Info(fmt.Sprintf("provider %s slashed for challenge %d", provider.Creator, challenge.Id))
+		ctx.Logger().Info(fmt.Sprintf("provider %s failed challenge %d", provider.Creator, challenge.Id))
 	}
 
 	return []abci.ValidatorUpdate{}
