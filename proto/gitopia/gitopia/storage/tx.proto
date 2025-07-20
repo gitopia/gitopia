@@ -51,6 +51,9 @@ service Msg {
   // DecreaseStake decreases the stake of a storage provider with cooldown
   rpc DecreaseStake(MsgDecreaseStake) returns (MsgDecreaseStakeResponse);
 
+  // CompleteDecreaseStake completes the stake decrease after cooldown period
+  rpc CompleteDecreaseStake(MsgCompleteDecreaseStake) returns (MsgCompleteDecreaseStakeResponse);
+
   // ReactivateProvider reactivates a suspended provider
   rpc ReactivateProvider(MsgReactivateProvider) returns (MsgReactivateProviderResponse);
 
@@ -193,6 +196,15 @@ message MsgDecreaseStakeResponse {
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
+}
+
+// MsgCompleteDecreaseStake defines a message for completing the stake decrease process
+message MsgCompleteDecreaseStake {
+  string creator = 1;
+}
+
+message MsgCompleteDecreaseStakeResponse {
+  cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
 }
 
 // MsgReactivateProvider defines a message for reactivating a suspended provider

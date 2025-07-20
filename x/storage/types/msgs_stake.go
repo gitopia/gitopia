@@ -132,3 +132,41 @@ func (msg *MsgReactivateProvider) ValidateBasic() error {
 	}
 	return nil
 }
+
+var _ sdk.Msg = &MsgCompleteDecreaseStake{}
+
+// NewMsgCompleteDecreaseStake creates a new MsgCompleteDecreaseStake instance
+func NewMsgCompleteDecreaseStake(creator string) *MsgCompleteDecreaseStake {
+	return &MsgCompleteDecreaseStake{
+		Creator: creator,
+	}
+}
+
+func (msg *MsgCompleteDecreaseStake) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgCompleteDecreaseStake) Type() string {
+	return TypeMsgCompleteDecreaseStake
+}
+
+func (msg *MsgCompleteDecreaseStake) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgCompleteDecreaseStake) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgCompleteDecreaseStake) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}

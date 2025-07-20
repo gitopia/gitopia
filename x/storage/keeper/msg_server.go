@@ -1125,9 +1125,14 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 		return nil, fmt.Errorf("can only decrease stake for active providers")
 	}
 
-	// Check if provider already has a pending decrease
-	if provider.UnstakeCompletionTime != nil {
+	// Check if provider already has a pending decrease (separate from full unregistration)
+	if provider.DecreaseCompletionTime != nil {
 		return nil, fmt.Errorf("provider already has a pending stake decrease")
+	}
+
+	// Check if provider is not in the middle of unregistering
+	if provider.UnstakeCompletionTime != nil {
+		return nil, fmt.Errorf("cannot decrease stake while unregistering")
 	}
 
 	// Check minimum stake requirement
@@ -1137,12 +1142,11 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 		return nil, fmt.Errorf("resulting stake would be below minimum stake amount")
 	}
 
-	// Set cooldown period for stake decrease
+	// Set cooldown period for stake decrease (separate from unregistration)
 	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
-	provider.UnstakeCompletionTime = &completionTime
+	provider.DecreaseCompletionTime = &completionTime
+	provider.PendingDecreaseAmount = &msg.Amount
 
-	// Store the decrease amount in a temporary field (we'll need to extend the Provider struct)
-	// For now, we'll use the existing unstake logic pattern
 	k.SetProvider(ctx, provider)
 
 	// Emit event
@@ -1198,4 +1202,67 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 	ctx.Logger().Info(fmt.Sprintf("provider %s reactivated", provider.Creator))
 
 	return &types.MsgReactivateProviderResponse{}, nil
+}
+
+func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCompleteDecreaseStake) (*types.MsgCompleteDecreaseStakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Check if provider has a pending decrease
+	if provider.DecreaseCompletionTime == nil {
+		return nil, fmt.Errorf("provider has no pending stake decrease")
+	}
+
+	// Check if cooldown period has passed
+	if ctx.BlockTime().Before(*provider.DecreaseCompletionTime) {
+		return nil, fmt.Errorf("decrease cooldown period has not passed yet")
+	}
+
+	// Check if pending decrease amount exists
+	if provider.PendingDecreaseAmount == nil {
+		return nil, fmt.Errorf("no pending decrease amount found")
+	}
+
+	// Get provider's module account
+	providerAcc := ProviderModuleAddress(provider.Id)
+
+	// Transfer decreased stake back to provider
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, fmt.Errorf("invalid creator address: %v", err)
+	}
+
+	if err := k.bankKeeper.SendCoins(
+		ctx,
+		providerAcc,
+		creator,
+		sdk.NewCoins(*provider.PendingDecreaseAmount),
+	); err != nil {
+		return nil, fmt.Errorf("failed to transfer decreased stake: %v", err)
+	}
+
+	// Update provider stake and clear pending decrease
+	provider.Stake = provider.Stake.Sub(*provider.PendingDecreaseAmount)
+	decreaseAmount := *provider.PendingDecreaseAmount
+	provider.PendingDecreaseAmount = nil
+	provider.DecreaseCompletionTime = nil
+
+	k.SetProvider(ctx, provider)
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+		Address: provider.Creator,
+		Online:  true,
+	})
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s completed stake decrease of %s, new stake: %s", provider.Creator, decreaseAmount.String(), provider.Stake.String()))
+
+	return &types.MsgCompleteDecreaseStakeResponse{
+		Amount: decreaseAmount,
+	}, nil
 }

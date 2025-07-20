@@ -27,6 +27,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteLFSObject{}, "storage/DeleteLFSObject", nil)
 	cdc.RegisterConcrete(&MsgIncreaseStake{}, "storage/IncreaseStake", nil)
 	cdc.RegisterConcrete(&MsgDecreaseStake{}, "storage/DecreaseStake", nil)
+	cdc.RegisterConcrete(&MsgCompleteDecreaseStake{}, "storage/CompleteDecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgReactivateProvider{}, "storage/ReactivateProvider", nil)
 }
 
@@ -49,6 +50,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDeleteLFSObject{},
 		&MsgIncreaseStake{},
 		&MsgDecreaseStake{},
+		&MsgCompleteDecreaseStake{},
 		&MsgReactivateProvider{},
 	)
 

@@ -30,6 +30,13 @@ message Provider {
   ProviderStatus status = 11;
   // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
   string ipfs_cluster_peer_multiaddr = 12;
+  // pending_decrease_amount defines the amount to be decreased after cooldown
+  cosmos.base.v1beta1.Coin pending_decrease_amount = 13 [(gogoproto.nullable) = true];
+  // decrease_completion_time defines when the stake decrease can be completed
+  google.protobuf.Timestamp decrease_completion_time = 14 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
 }
 
 // ProviderStatus represents the status of a storage provider

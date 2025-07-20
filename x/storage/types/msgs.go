@@ -23,6 +23,7 @@ const (
 	TypeMsgDeleteLFSObject          = "delete_lfs_object"
 	TypeMsgIncreaseStake            = "increase_stake"
 	TypeMsgDecreaseStake            = "decrease_stake"
+	TypeMsgCompleteDecreaseStake    = "complete_decrease_stake"
 	TypeMsgReactivateProvider       = "reactivate_provider"
 )
 
