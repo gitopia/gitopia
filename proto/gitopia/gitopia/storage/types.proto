@@ -25,7 +25,7 @@ message Provider {
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
-  string description = 10;
+  string moniker = 10;
   // status defines the current status of the provider (active/inactive/suspended)
   ProviderStatus status = 11;
   // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer

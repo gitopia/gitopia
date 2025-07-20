@@ -80,7 +80,7 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 	provider := types.Provider{
 		Creator:                  msg.Creator,
 		ApiUrl:                   msg.ApiUrl,
-		Description:              msg.Description,
+		Moniker:                  msg.Moniker,
 		Stake:                    msg.Stake,
 		TotalChallenges:          0,
 		SuccessfulChallenges:     0,
@@ -104,7 +104,7 @@ func (k msgServer) UpdateProvider(goCtx context.Context, msg *types.MsgUpdatePro
 	}
 
 	provider.ApiUrl = msg.ApiUrl
-	provider.Description = msg.Description
+	provider.Moniker = msg.Moniker
 	provider.IpfsClusterPeerMultiaddr = msg.IpfsClusterPeerMultiaddr
 
 	k.SetProvider(ctx, provider)

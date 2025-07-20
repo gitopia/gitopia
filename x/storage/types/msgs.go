@@ -26,11 +26,11 @@ const (
 var _ sdk.Msg = &MsgRegisterProvider{}
 
 // NewMsgRegisterProvider creates a new MsgRegisterProvider instance
-func NewMsgRegisterProvider(creator string, apiUrl string, description string, stake sdk.Coin, ipfsClusterPeerMultiaddr string) *MsgRegisterProvider {
+func NewMsgRegisterProvider(creator string, apiUrl string, moniker string, stake sdk.Coin, ipfsClusterPeerMultiaddr string) *MsgRegisterProvider {
 	return &MsgRegisterProvider{
 		Creator:                  creator,
 		ApiUrl:                   apiUrl,
-		Description:              description,
+		Moniker:                  moniker,
 		Stake:                    stake,
 		IpfsClusterPeerMultiaddr: ipfsClusterPeerMultiaddr,
 	}
@@ -67,8 +67,8 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
-	if msg.Description == "" || len(msg.Description) > 250 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
+	if msg.Moniker == "" || len(msg.Moniker) > 250 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 250 characters")
 	}
 
 	if msg.Stake.IsZero() {
@@ -84,11 +84,11 @@ func (msg *MsgRegisterProvider) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgUpdateProvider{}
 
-func NewMsgUpdateProvider(creator string, apiUrl string, description string, ipfsClusterPeerMultiaddr string) *MsgUpdateProvider {
+func NewMsgUpdateProvider(creator string, apiUrl string, moniker string, ipfsClusterPeerMultiaddr string) *MsgUpdateProvider {
 	return &MsgUpdateProvider{
 		Creator:                  creator,
 		ApiUrl:                   apiUrl,
-		Description:              description,
+		Moniker:                  moniker,
 		IpfsClusterPeerMultiaddr: ipfsClusterPeerMultiaddr,
 	}
 }
@@ -124,8 +124,8 @@ func (msg *MsgUpdateProvider) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "api url cannot be empty or longer than 140 characters")
 	}
 
-	if msg.Description == "" || len(msg.Description) > 250 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "description cannot be empty or longer than 250 characters")
+	if msg.Moniker == "" || len(msg.Moniker) > 250 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "moniker cannot be empty or longer than 250 characters")
 	}
 
 	if msg.IpfsClusterPeerMultiaddr == "" {

@@ -62,7 +62,7 @@ service Msg {
 message MsgRegisterProvider {
   string creator = 1;
   string api_url = 2;
-  string description = 3;
+  string moniker = 3;
   cosmos.base.v1beta1.Coin stake = 4 [(gogoproto.nullable) = false];
   string ipfs_cluster_peer_multiaddr = 5;
 }
@@ -73,7 +73,7 @@ message MsgRegisterProviderResponse {}
 message MsgUpdateProvider {
   string creator = 1;
   string api_url = 2;
-  string description = 3;
+  string moniker = 3;
   string ipfs_cluster_peer_multiaddr = 4;
 }
 
