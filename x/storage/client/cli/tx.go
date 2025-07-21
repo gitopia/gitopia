@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/spf13/cobra"
 
@@ -12,15 +11,6 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
-)
-
-var (
-	DefaultRelativePacketTimeoutTimestamp = uint64((time.Duration(10) * time.Minute).Nanoseconds())
-)
-
-const (
-	flagPacketTimeoutTimestamp = "packet-timeout-timestamp"
-	listSeparator              = ","
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -34,7 +24,12 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdRegisterStorageProvider())
+	cmd.AddCommand(CmdUpdateStorageProvider())
 	cmd.AddCommand(CmdWithdrawProviderRewards())
+	cmd.AddCommand(CmdIncreaseStake())
+	cmd.AddCommand(CmdDecreaseStake())
+	cmd.AddCommand(CmdCompleteDecreaseStake())
+	cmd.AddCommand(CmdReactivateProvider())
 
 	// this line is used by starport scaffolding # 1
 
