@@ -223,8 +223,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		// Increase new cid reference count
 		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
-		// Update total storage size
-		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(diff))
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalPackfileSize += uint64(diff)
+		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new packfile
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
@@ -264,8 +265,9 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		// Increase new cid reference count
 		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
-		// Update total storage size
-		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalPackfileSize += msg.Size_
+		k.SetStorageStats(ctx, storageStats)
 	}
 
 	// Emit event
@@ -318,8 +320,9 @@ func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	// Remove existing packfile
 	k.RemovePackfile(ctx, msg.RepositoryId)
 
-	// Update total storage size
-	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-uint64(packfile.Size_))
+	storageStats := k.GetStorageStats(ctx)
+	storageStats.TotalPackfileSize -= uint64(packfile.Size_)
+	k.SetStorageStats(ctx, storageStats)
 
 	// Emit event
 	ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
@@ -411,8 +414,9 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 
 		k.SetReleaseAsset(ctx, existingAsset)
 
-		// Update total storage size
-		k.SetTotalStorageSize(ctx, uint64(int64(k.GetTotalStorageSize(ctx))+diff))
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalReleaseAssetSize += uint64(int64(storageStats.TotalReleaseAssetSize) + diff)
+		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new asset
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
@@ -454,8 +458,9 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		// Increase new cid reference count
 		k.IncreaseCidReferenceCount(ctx, msg.Cid)
 
-		// Update total storage size
-		k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+msg.Size_)
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalReleaseAssetSize += msg.Size_
+		k.SetStorageStats(ctx, storageStats)
 	}
 
 	// Emit event
@@ -493,8 +498,9 @@ func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDelet
 		k.RemoveCidReferenceCount(ctx, asset.Cid)
 	}
 
-	// Update total storage size
-	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-asset.Size_)
+	storageStats := k.GetStorageStats(ctx)
+	storageStats.TotalReleaseAssetSize -= asset.Size_
+	k.SetStorageStats(ctx, storageStats)
 
 	// Delete the release asset
 	k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
@@ -572,23 +578,23 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
 			// Suspend the provider
 			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-			
+
 			// Apply percentage-based slash for consecutive failures
 			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
 			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
 			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
-			
+
 			// Transfer slashed amount to slash account
 			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
-			
+
 			// Update provider stake
 			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
-			
+
 			// Reset consecutive failures
 			provider.ConsecutiveFailures = 0
-			
+
 			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-			
+
 			// Emit suspension event
 			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
 				Address: provider.Creator,
@@ -598,7 +604,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 			// Apply regular challenge failure slash
 			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
 			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
-			
+
 			// Update provider stake
 			if len(slashAmountCoins) > 0 {
 				provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
@@ -1006,8 +1012,9 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 	// Increase cid reference count
 	k.IncreaseCidReferenceCount(ctx, lfsObj.Cid)
 
-	// Update total storage size
-	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)+uint64(lfsObj.Size_))
+	storageStats := k.GetStorageStats(ctx)
+	storageStats.TotalLfsObjectSize += uint64(lfsObj.Size_)
+	k.SetStorageStats(ctx, storageStats)
 
 	ctx.EventManager().EmitTypedEvent(
 		&types.EventLFSObjectUpdated{
@@ -1042,8 +1049,9 @@ func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLF
 		k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
 	}
 
-	// Update total storage size
-	k.SetTotalStorageSize(ctx, k.GetTotalStorageSize(ctx)-uint64(lfsObj.Size_))
+	storageStats := k.GetStorageStats(ctx)
+	storageStats.TotalLfsObjectSize -= uint64(lfsObj.Size_)
+	k.SetStorageStats(ctx, storageStats)
 
 	// Remove LFS object
 	k.RemoveLFSObject(ctx, msg.RepositoryId, msg.Oid)

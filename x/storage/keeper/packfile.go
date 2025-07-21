@@ -143,21 +143,21 @@ func (k Keeper) GetPackfileRepositoryMapping(ctx sdk.Context, packfileId uint64)
 	return val, true
 }
 
-// GetTotalStorageSize returns the total storage size
-func (k Keeper) GetTotalStorageSize(ctx sdk.Context) uint64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TotalStorageSizeKey))
-	b := store.Get(types.KeyPrefix(types.TotalStorageSizeKey))
+// GetStorageStats returns the total storage size
+func (k Keeper) GetStorageStats(ctx sdk.Context) types.StorageStats {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.StorageStatsKey))
+	b := store.Get(types.KeyPrefix(types.StorageStatsKey))
 	if b == nil {
-		return 0
+		return types.StorageStats{}
 	}
-
-	return binary.BigEndian.Uint64(b)
+	var storageStats types.StorageStats
+	k.cdc.MustUnmarshal(b, &storageStats)
+	return storageStats
 }
 
-// SetTotalStorageSize set the total storage size
-func (k Keeper) SetTotalStorageSize(ctx sdk.Context, totalStorageSize uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TotalStorageSizeKey))
-	bz := make([]byte, 8)
-	binary.BigEndian.PutUint64(bz, totalStorageSize)
-	store.Set(types.KeyPrefix(types.TotalStorageSizeKey), bz)
+// SetStorageStats set the total storage size
+func (k Keeper) SetStorageStats(ctx sdk.Context, storageStats types.StorageStats) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.StorageStatsKey))
+	bz := k.cdc.MustMarshal(&storageStats)
+	store.Set(types.KeyPrefix(types.StorageStatsKey), bz)
 }

@@ -75,8 +75,8 @@ service Query {
     option (google.api.http).get = "/gitopia/gitopia/storage/challenges";
   }
 
-  rpc TotalStorage(QueryTotalStorageRequest) returns (QueryTotalStorageResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/storage/total-storage";
+  rpc StorageStats(QueryStorageStatsRequest) returns (QueryStorageStatsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/stats";
   }
 
   rpc CidReferenceCount(QueryCidReferenceCountRequest) returns (QueryCidReferenceCountResponse) {
@@ -225,10 +225,10 @@ message QueryChallengesResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryTotalStorageRequest {}
+message QueryStorageStatsRequest {}
 
-message QueryTotalStorageResponse {
-  uint64 total_storage = 1;
+message QueryStorageStatsResponse {
+  StorageStats storage_stats = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryCidReferenceCountRequest {

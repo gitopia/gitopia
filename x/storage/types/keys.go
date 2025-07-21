@@ -55,7 +55,7 @@ const (
 	LFSObjectCountKey                = "LFSObject-count-"
 	LFSObjectRepositoryMappingKey    = "LFSObjectRepositoryMapping-value-"
 
-	TotalStorageSizeKey = "TotalStorageSize"
+	StorageStatsKey = "StorageStats"
 
 	CidReferenceCountKey = "CidReferenceCount-"
 )

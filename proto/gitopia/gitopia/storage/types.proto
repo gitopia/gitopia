@@ -168,3 +168,10 @@ message CidReferenceCount {
 	string cid = 1;
 	uint64 count = 2;
 }
+
+// StorageStats represents storage statistics broken down by type
+message StorageStats {
+  uint64 total_packfile_size = 1;
+  uint64 total_release_asset_size = 2;
+  uint64 total_lfs_object_size = 3;
+}

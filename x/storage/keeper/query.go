@@ -292,15 +292,15 @@ func (k Keeper) Challenges(goCtx context.Context, req *types.QueryChallengesRequ
 	}, nil
 }
 
-// TotalStorage returns the total storage size
-func (k Keeper) TotalStorage(goCtx context.Context, req *types.QueryTotalStorageRequest) (*types.QueryTotalStorageResponse, error) {
+// StorageStats returns the total storage size
+func (k Keeper) StorageStats(goCtx context.Context, req *types.QueryStorageStatsRequest) (*types.QueryStorageStatsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	totalStorage := k.GetTotalStorageSize(ctx)
-	return &types.QueryTotalStorageResponse{TotalStorage: totalStorage}, nil
+	storageStats := k.GetStorageStats(ctx)
+	return &types.QueryStorageStatsResponse{StorageStats: storageStats}, nil
 }
 
 // CidReferenceCount returns the reference count for a CID
