@@ -214,6 +214,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		existingPackfile.Cid = msg.Cid
 		existingPackfile.RootHash = msg.RootHash
 		existingPackfile.Size_ = msg.Size_
+		existingPackfile.UpdatedAt = ctx.BlockTime()
 
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
@@ -255,6 +256,8 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 			Cid:          msg.Cid,
 			RootHash:     msg.RootHash,
 			Size_:        msg.Size_,
+			CreatedAt:    ctx.BlockTime(),
+			UpdatedAt:    ctx.BlockTime(),
 		}
 
 		userQuota.StorageUsed += msg.Size_
@@ -408,6 +411,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		existingAsset.RootHash = msg.RootHash
 		existingAsset.Size_ = msg.Size_
 		existingAsset.Sha256 = msg.Sha256
+		existingAsset.UpdatedAt = ctx.BlockTime()
 
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
@@ -448,6 +452,8 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 			RootHash:     msg.RootHash,
 			Size_:        msg.Size_,
 			Sha256:       msg.Sha256,
+			CreatedAt:    ctx.BlockTime(),
+			UpdatedAt:    ctx.BlockTime(),
 		}
 
 		userQuota.StorageUsed += msg.Size_
@@ -953,6 +959,12 @@ func CalculateChallengeReward(params types.Params, numProviders int64) sdk.DecCo
 func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLFSObject) (*types.MsgUpdateLFSObjectResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// Check if lfs object exists already
+	_, found := k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
+	if found {
+		return nil, fmt.Errorf("LFS object already exists")
+	}
+
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
 	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
@@ -1002,6 +1014,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 		Cid:          msg.Cid,
 		RootHash:     msg.RootHash,
 		CreatedAt:    ctx.BlockTime(),
+		UpdatedAt:    ctx.BlockTime(),
 	}
 
 	userQuota.StorageUsed += uint64(lfsObj.Size_)
