@@ -43,7 +43,7 @@ func GetTxCmd() *cobra.Command {
 
 func CmdRegisterStorageProvider() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-provider [api-url] [description] [stake] [ipfs-cluster-peer-multiaddr]",
+		Use:   "register-provider [api-url] [moniker] [stake] [ipfs-cluster-peer-multiaddr]",
 		Short: "Register a new storage provider",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -76,7 +76,7 @@ func CmdRegisterStorageProvider() *cobra.Command {
 
 func CmdUpdateStorageProvider() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-provider [api-url] [description] [ipfs-cluster-peer-multiaddr]",
+		Use:   "update-provider [api-url] [moniker] [ipfs-cluster-peer-multiaddr]",
 		Short: "Update a storage provider",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
