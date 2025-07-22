@@ -743,6 +743,18 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
+	// Auto-withdraw any remaining rewards before removing provider to prevent loss
+	remainingRewards, err := k.Keeper.WithdrawProviderRewards(ctx, creator)
+	if err != nil && err != types.ErrNoProviderRewards {
+		return nil, fmt.Errorf("failed to withdraw remaining rewards: %v", err)
+	}
+
+	// Log if rewards were auto-withdrawn
+	if !remainingRewards.IsZero() {
+		ctx.Logger().Info(fmt.Sprintf("auto-withdrew remaining rewards %s for provider %s during unstake completion",
+			remainingRewards, provider.Creator))
+	}
+
 	// Remove provider from store (completely remove inactive providers)
 	k.RemoveProvider(ctx, provider.Creator)
 
