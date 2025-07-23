@@ -1,11 +1,11 @@
-package storage_test
+package keeper_test
 
 import (
 	"testing"
 
 	keepertest "github.com/gitopia/gitopia/v6/testutil/keeper"
 	"github.com/gitopia/gitopia/v6/testutil/nullify"
-	"github.com/gitopia/gitopia/v6/x/storage"
+	"github.com/gitopia/gitopia/v6/x/storage/keeper"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 	"github.com/stretchr/testify/require"
 )
@@ -18,8 +18,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.StorageKeeper(t)
-	storage.InitGenesis(ctx, *k, genesisState)
-	got := storage.ExportGenesis(ctx, *k)
+	keeper.InitGenesis(ctx, *k, genesisState)
+	got := keeper.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)
