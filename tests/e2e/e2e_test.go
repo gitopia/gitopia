@@ -14,7 +14,8 @@ var (
 	runVestingTest                  = true
 	runRestInterfacesTest           = true
 	runGitopiaTest                  = true
-	runGitopiaOsmosisIBCUpgradeTest = true
+	runGitopiaOsmosisIBCUpgradeTest = false
+	runV5ToV6UpgradeTest            = true
 )
 
 func (s *IntegrationTestSuite) TestRestInterfaces() {
@@ -103,11 +104,18 @@ func (s *IntegrationTestSuite) TestVesting() {
 	// s.testPeriodicVestingAccount(chainAAPI) TODO: add back when v0.45 adds the missing CLI command.
 }
 
+func (s *IntegrationTestSuite) TestChainUpgrade() {
+	if !runV5ToV6UpgradeTest {
+		s.T().Skip()
+	}
+	s.TestV5ToV6Upgrade()
+}
+
 func (s *IntegrationTestSuite) TestGitopia() {
 	if !runGitopiaTest {
 		s.T().Skip()
 	}
-	s.testGitopiaCreateRepository()
+	s.TestGitopiaRepositoryWorkflow()
 }
 
 func (s *IntegrationTestSuite) TestGitopiaOsmosisIBC() {

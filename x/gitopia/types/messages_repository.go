@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils/revision"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils/revision"
 )
 
 type Owner struct {
@@ -102,90 +102,9 @@ func (msg *MsgCreateRepository) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgInvokeForkRepository{}
-
-func NewMsgInvokeForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, provider string) *MsgInvokeForkRepository {
-	return &MsgInvokeForkRepository{
-		Creator:                   creator,
-		RepositoryId:              repositoryId,
-		ForkRepositoryName:        forkRepositoryName,
-		ForkRepositoryDescription: forkRepositoryDescription,
-		Branch:                    branch,
-		Owner:                     owner,
-		Provider:                  provider,
-	}
-}
-
-func (msg *MsgInvokeForkRepository) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgInvokeForkRepository) Type() string {
-	return "InvokeForkRepository"
-}
-
-func (msg *MsgInvokeForkRepository) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgInvokeForkRepository) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgInvokeForkRepository) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if err = ValidateRepositoryId(msg.RepositoryId); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	if err := ValidateRepositoryName(msg.ForkRepositoryName); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	if err := ValidateRepositoryDescription(msg.ForkRepositoryDescription); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	if err := ValidateOptionalBranchName(msg.Branch); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		if len(msg.Owner) < 3 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id must consist minimum 3 chars")
-		} else if len(msg.Owner) > 39 {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "owner id limit exceed: 39")
-		}
-		valid, err := regexp.MatchString("^[a-zA-Z0-9]+(?:[-]?[a-zA-Z0-9])*$", msg.Owner)
-		if err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
-		}
-		if !valid {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
-		}
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.Provider)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
-	}
-
-	return nil
-}
-
 var _ sdk.Msg = &MsgForkRepository{}
 
-func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string, taskId uint64) *MsgForkRepository {
+func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkRepositoryName string, forkRepositoryDescription string, branch string, owner string) *MsgForkRepository {
 	return &MsgForkRepository{
 		Creator:                   creator,
 		RepositoryId:              repositoryId,
@@ -193,7 +112,6 @@ func NewMsgForkRepository(creator string, repositoryId RepositoryId, forkReposit
 		ForkRepositoryDescription: forkRepositoryDescription,
 		Branch:                    branch,
 		Owner:                     owner,
-		TaskId:                    taskId,
 	}
 }
 
@@ -254,50 +172,6 @@ func (msg *MsgForkRepository) ValidateBasic() error {
 		if !valid {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid owner id (%v)", msg.Owner)
 		}
-	}
-
-	return nil
-}
-
-var _ sdk.Msg = &MsgForkRepositorySuccess{}
-
-func NewMsgForkRepositorySuccess(creator string, repositoryId RepositoryId, taskId uint64) *MsgForkRepositorySuccess {
-	return &MsgForkRepositorySuccess{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		TaskId:       taskId,
-	}
-}
-
-func (msg *MsgForkRepositorySuccess) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgForkRepositorySuccess) Type() string {
-	return "ForkRepositorySuccess"
-}
-
-func (msg *MsgForkRepositorySuccess) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgForkRepositorySuccess) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgForkRepositorySuccess) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
 	return nil
@@ -857,10 +731,11 @@ func (msg *MsgToggleArweaveBackup) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgDeleteRepository{}
 
-func NewMsgDeleteRepository(creator string, repositoryId RepositoryId) *MsgDeleteRepository {
+func NewMsgDeleteRepository(creator string, repositoryId RepositoryId, provider string) *MsgDeleteRepository {
 	return &MsgDeleteRepository{
 		Creator:      creator,
 		RepositoryId: repositoryId,
+		Provider:     provider,
 	}
 }
 func (msg *MsgDeleteRepository) Route() string {
@@ -885,5 +760,19 @@ func (msg *MsgDeleteRepository) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteRepository) ValidateBasic() error {
-	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if err := ValidateRepositoryId(msg.RepositoryId); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
+	return nil
 }

@@ -9,7 +9,7 @@ import (
 
 var _ sdk.Msg = &MsgCreateRelease{}
 
-func NewMsgCreateRelease(creator string, repositoryId RepositoryId, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool) *MsgCreateRelease {
+func NewMsgCreateRelease(creator string, repositoryId RepositoryId, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool, provider string) *MsgCreateRelease {
 	return &MsgCreateRelease{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -21,6 +21,7 @@ func NewMsgCreateRelease(creator string, repositoryId RepositoryId, tagName stri
 		Draft:        draft,
 		PreRelease:   preRelease,
 		IsTag:        isTag,
+		Provider:     provider,
 	}
 }
 
@@ -105,12 +106,17 @@ func (msg *MsgCreateRelease) ValidateBasic() error {
 		}
 	}
 
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgUpdateRelease{}
 
-func NewMsgUpdateRelease(creator string, id uint64, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool) *MsgUpdateRelease {
+func NewMsgUpdateRelease(creator string, id uint64, tagName string, target string, name string, description string, attachments string, draft bool, preRelease bool, isTag bool, provider string) *MsgUpdateRelease {
 	return &MsgUpdateRelease{
 		Id:          id,
 		Creator:     creator,
@@ -122,6 +128,7 @@ func NewMsgUpdateRelease(creator string, id uint64, tagName string, target strin
 		Draft:       draft,
 		PreRelease:  preRelease,
 		IsTag:       isTag,
+		Provider:    provider,
 	}
 }
 
@@ -200,15 +207,22 @@ func (msg *MsgUpdateRelease) ValidateBasic() error {
 			}
 		}
 	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+
 	return nil
 }
 
 var _ sdk.Msg = &MsgDeleteRelease{}
 
-func NewMsgDeleteRelease(creator string, id uint64) *MsgDeleteRelease {
+func NewMsgDeleteRelease(creator string, id uint64, provider string) *MsgDeleteRelease {
 	return &MsgDeleteRelease{
-		Id:      id,
-		Creator: creator,
+		Id:       id,
+		Creator:  creator,
+		Provider: provider,
 	}
 }
 func (msg *MsgDeleteRelease) Route() string {
@@ -236,6 +250,11 @@ func (msg *MsgDeleteRelease) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
 	}
 
 	return nil

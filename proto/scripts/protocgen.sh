@@ -13,5 +13,5 @@ for dir in $proto_dirs; do
 done
 cd ..
 # move proto files to the right places
-cp -r github.com/gitopia/gitopia/v4/* ./
+cp -r github.com/gitopia/gitopia/v6/* ./
 rm -rf github.com

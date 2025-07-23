@@ -23,7 +23,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 const (
@@ -664,7 +664,7 @@ func (s *IntegrationTestSuite) executeGitopiaTxCommand(ctx context.Context, c *c
 		AttachStdout: true,
 		AttachStderr: true,
 		Container:    s.valResources[c.id][valIdx].Container.ID,
-		User:         "nonroot",
+		User:         "root",
 		Cmd:          gitopiaCommand,
 	})
 	s.Require().NoError(err)

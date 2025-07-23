@@ -8,8 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (*types.MsgCreateUserResponse, error) {
@@ -56,17 +56,6 @@ func (k msgServer) CreateUser(goCtx context.Context, msg *types.MsgCreateUser) (
 		ctx,
 		whois,
 	)
-
-	gParams := k.GetParams(ctx)
-	err := k.Keeper.AuthorizeProvider(ctx, gParams.GitServer, msg.Creator, nil, types.ProviderPermission_GIT_SERVER)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.Keeper.AuthorizeProvider(ctx, gParams.StorageProvider, msg.Creator, nil, types.ProviderPermission_STORAGE)
-	if err != nil {
-		return nil, err
-	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,

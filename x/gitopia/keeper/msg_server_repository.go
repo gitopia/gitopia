@@ -7,8 +7,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func ElementExists(s []uint64, val uint64) (int, bool) {
@@ -162,69 +162,6 @@ func (k msgServer) ChangeOwner(goCtx context.Context, msg *types.MsgChangeOwner)
 	return &types.MsgChangeOwnerResponse{}, nil
 }
 
-func (k msgServer) InvokeForkRepository(goCtx context.Context, msg *types.MsgInvokeForkRepository) (*types.MsgInvokeForkRepositoryResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	ownerAddress, err := k.ResolveAddress(ctx, msg.Owner)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check if the user already has a repository with the same name
-	if _, found := k.GetAddressRepository(ctx, ownerAddress.Address, msg.ForkRepositoryName); found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("repository (%v/%v) already exist", msg.Owner, msg.ForkRepositoryName))
-	}
-
-	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
-	}
-
-	if !repository.AllowForking {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "forking is not allowed")
-	}
-
-	if !k.HavePermission(
-		ctx, msg.Creator,
-		types.Repository{Owner: &types.RepositoryOwner{
-			Id:   ownerAddress.Address,
-			Type: ownerAddress.OwnerType,
-		}},
-		types.RepositoryCollaborator_ADMIN,
-	) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "cannot create repository")
-	}
-
-	id := k.AppendTask(ctx, types.Task{
-		Type:     types.TaskType(types.TypeForkRepository),
-		State:    types.TaskState(types.StatePending),
-		Creator:  msg.Creator,
-		Provider: msg.Provider,
-	})
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeForkRepositoryEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
-			sdk.NewAttribute(types.EventAttributeForkRepoNameKey, msg.ForkRepositoryName),
-			sdk.NewAttribute(types.EventAttributeForkRepoDescriptionKey, msg.ForkRepositoryDescription),
-			sdk.NewAttribute(types.EventAttributeForkRepoBranchKey, msg.Branch),
-			sdk.NewAttribute(types.EventAttributeForkRepoOwnerIdKey, ownerAddress.Address),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
-		),
-	)
-	return &types.MsgInvokeForkRepositoryResponse{}, nil
-}
-
 func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepository) (*types.MsgForkRepositoryResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -259,11 +196,6 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 		}
 	}
 
-	_, found = k.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
-	}
-
 	var forkRepository = types.Repository{
 		Creator: msg.Creator,
 		Name:    msg.ForkRepositoryName,
@@ -287,7 +219,7 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, forkRepository, types.RepositoryCollaborator_ADMIN) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("cannot create repository"))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("unauthorized"))
 	}
 
 	id := k.AppendRepository(
@@ -329,55 +261,6 @@ func (k msgServer) ForkRepository(goCtx context.Context, msg *types.MsgForkRepos
 
 	return &types.MsgForkRepositoryResponse{
 		Id: id,
-	}, nil
-}
-
-func (k msgServer) ForkRepositorySuccess(goCtx context.Context, msg *types.MsgForkRepositorySuccess) (*types.MsgForkRepositorySuccessResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	address, err := k.ResolveAddress(ctx, msg.RepositoryId.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
-	}
-
-	if msg.Creator != repository.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "msg creator and repository creator are different")
-	}
-
-	task, found := k.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("task id (%d) doesn't exist", msg.TaskId))
-	}
-
-	// Update task state
-	if task.Creator != msg.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "unauthorized")
-	}
-
-	task.State = types.StateSuccess
-	k.SetTask(ctx, task)
-
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.ForkRepositorySuccessEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
-			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
-			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
-			sdk.NewAttribute(types.EventAttributeParentRepoId, strconv.FormatUint(repository.Parent, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
-			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(repository.CreatedAt, 10)),
-			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(repository.UpdatedAt, 10)),
-		),
-	)
-	return &types.MsgForkRepositorySuccessResponse{
-		Id: repository.Id,
 	}, nil
 }
 
@@ -1117,10 +1000,31 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
+	// Don't allow to delete repository when it has any forks
+	if len(repository.Forks) > 0 {
+		return nil, fmt.Errorf("repository %s has forks, cannot delete", repository.Name)
+	}
+
 	DoRemoveRepository(ctx, k, repository)
 
 	// Remove the repository id -> owner address, repository name mapping
 	k.RemoveBaseRepositoryKey(ctx, repository.Id)
+
+	// If it's a forked repository, remove the link from parent repository
+	if repository.Fork {
+		parentRepository, found := k.GetRepositoryById(ctx, repository.Parent)
+		if !found {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("parent repository (%d) doesn't exist", repository.Parent))
+		}
+		// Update parent repository forks
+		for i, fork := range parentRepository.Forks {
+			if fork == repository.Id {
+				parentRepository.Forks = append(parentRepository.Forks[:i], parentRepository.Forks[i+1:]...)
+				break
+			}
+		}
+		k.SetRepository(ctx, parentRepository)
+	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -1128,7 +1032,9 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DeleteRepositoryEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(repository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, repository.Name),
+			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
 
@@ -1136,10 +1042,6 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 }
 
 func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repository) {
-	for _, fork := range repository.Forks {
-		DecoupleForkRepository(ctx, k, fork)
-	}
-
 	repositoryIssues := k.GetAllRepositoryIssue(ctx, repository.Id)
 	for _, i := range repositoryIssues {
 		DoRemoveIssue(ctx, k, i, repository)

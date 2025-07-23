@@ -3,8 +3,8 @@ package rewards
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/gitopia/gitopia/v5/x/rewards/keeper"
-	"github.com/gitopia/gitopia/v5/x/rewards/types"
+	"github.com/gitopia/gitopia/v6/x/rewards/keeper"
+	"github.com/gitopia/gitopia/v6/x/rewards/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

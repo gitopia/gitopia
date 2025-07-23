@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/gitopia/gitopia/v5/app/keepers"
+	"github.com/gitopia/gitopia/v6/app/keepers"
 
 	// SDK v47 modules
 

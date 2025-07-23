@@ -9,10 +9,10 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/gitopia/gitopia/v5/app/apptesting"
-	"github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/app/apptesting"
+	"github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 type KeeperTestSuite struct {

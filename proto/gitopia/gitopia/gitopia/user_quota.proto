@@ -1,0 +1,12 @@
+syntax = "proto3";
+package gitopia.gitopia.gitopia;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/gitopia/gitopia/v6/x/gitopia/types";
+
+message UserQuota {
+  string address = 1;
+  // Total storage used in bytes
+  uint64 storage_used = 2;
+}

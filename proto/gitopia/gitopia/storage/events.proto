@@ -1,0 +1,123 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "google/protobuf/timestamp.proto";
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "amino/amino.proto";
+
+option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
+
+// EventProviderRegistered is emitted when a provider is registered
+message EventProviderRegistered {
+  string address = 1;
+  string peer_id = 2;
+}
+
+// EventProviderStatusUpdated is emitted when provider status is updated
+message EventProviderStatusUpdated {
+  string address = 1;
+  bool online = 2;
+}
+
+// EventPackfileUpdated is emitted when a packfile is updated
+message EventPackfileUpdated {
+  uint64 repository_id = 1;
+  string new_cid = 2;
+  string old_cid = 3;
+  string new_name = 4;
+  string old_name = 5;
+}
+
+// EventPackfileDeleted is emitted when a packfile is deleted
+message EventPackfileDeleted {
+  uint64 repository_id = 1;
+  string name = 2;
+  string cid = 3;
+}
+
+// EventReleaseAssetUpdated is emitted when a release asset is updated
+message EventReleaseAssetUpdated {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+  string new_cid = 4;
+  string old_cid = 5;
+  string new_sha256 = 6;
+  string old_sha256 = 7;
+}
+
+// EventReleaseAssetDeleted is emitted when a release asset is deleted
+message EventReleaseAssetDeleted {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+  string cid = 4;
+  string sha256 = 5;
+}
+
+// EventChallengeCreated is emitted when a new challenge is created
+message EventChallengeCreated {
+  uint64 challenge_id = 1;
+  string provider = 2;
+}
+
+// EventChallengeCompleted is emitted when a challenge is completed
+message EventChallengeCompleted {
+  uint64 challenge_id = 1;
+  string provider = 2;
+  bool success = 3;
+}
+
+// EventProviderUnregistered is emitted when a provider initiates unregistration
+message EventProviderUnregistered {
+  string address = 1;
+  google.protobuf.Timestamp unstake_completion_time = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// EventProviderUnstakeCompleted is emitted when a provider's unstaking is completed
+message EventProviderUnstakeCompleted {
+  string address = 1;
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// EventMergePullRequest is emitted when a pull request is merged
+message EventMergePullRequest {
+  string creator = 1;
+  uint64 pull_request_id = 2;
+  uint64 pull_request_iid = 3;
+  string state = 4;
+  string merge_commit_sha = 5;
+  uint64 task_id = 6;
+  string task_state = 7;
+  string repo_name = 8;
+  uint64 repo_id = 9;
+  string repo_owner_id = 10;
+  string repo_owner_type = 11;
+  string pull_request_head = 14;
+  string repo_branch = 15;
+  string merged_by = 16;
+  int64 updated_at = 17;
+  int64 merged_at = 18;
+}
+
+// EventLFSObjectUpdated is emitted when an LFS object is updated
+message EventLFSObjectUpdated {
+  uint64 repository_id = 1;
+  string oid = 2;
+  string cid = 3;
+}
+
+// EventLFSObjectDeleted is emitted when an LFS object is deleted
+message EventLFSObjectDeleted {
+  uint64 repository_id = 1;
+  string oid = 2;
+  string cid = 3;
+}

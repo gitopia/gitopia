@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
-	"github.com/gitopia/gitopia/v5/testutil/sample"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/testutil/sample"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -181,15 +181,6 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TagCount: 2,
-
-				MemberList: []types.Member{
-					{
-						Id:         0,
-						Address:    userId,
-						DaoAddress: daoId,
-					},
-				},
-				MemberCount: 1,
 
 				BountyList: []types.Bounty{
 					{
@@ -556,50 +547,6 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 				},
 				TagCount: 0,
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated member id",
-			genState: &types.GenesisState{
-				MemberList: []types.Member{
-					{
-						Id: 0,
-					},
-					{
-						Id: 0,
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated member",
-			genState: &types.GenesisState{
-				MemberList: []types.Member{
-					{
-						Id:         0,
-						Address:    userId,
-						DaoAddress: daoId,
-					},
-					{
-						Id:         1,
-						Address:    userId,
-						DaoAddress: daoId,
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "invalid member count",
-			genState: &types.GenesisState{
-				MemberList: []types.Member{
-					{
-						Id: 1,
-					},
-				},
-				MemberCount: 0,
 			},
 			valid: false,
 		},

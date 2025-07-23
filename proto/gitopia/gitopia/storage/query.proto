@@ -1,0 +1,333 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gitopia/gitopia/storage/params.proto";
+import "gitopia/gitopia/storage/types.proto";
+
+option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Params queries the parameters of the module
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/params";
+  }
+  
+  // Provider queries a storage provider by address
+  rpc Provider(QueryProviderRequest) returns (QueryProviderResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider/{address}";
+  }
+  
+  // Providers queries all storage providers
+  rpc Providers(QueryProvidersRequest) returns (QueryProvidersResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/providers";
+  }
+  
+  // Packfile queries a packfile by id
+  rpc Packfile(QueryPackfileRequest) returns (QueryPackfileResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile/{id}";
+  }
+
+  // Packfiles queries all packfiles
+  rpc Packfiles(QueryPackfilesRequest) returns (QueryPackfilesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfiles";
+  }
+  
+  // RepositoryPackfile queries a packfile for a repository
+  rpc RepositoryPackfile(QueryRepositoryPackfileRequest) returns (QueryRepositoryPackfileResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/packfile";
+  }
+
+  // ReleaseAsset queries a release asset by id
+  rpc ReleaseAsset(QueryReleaseAssetRequest) returns (QueryReleaseAssetResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-asset/{id}";
+  }
+
+  // ReleaseAssets queries all release assets
+  rpc ReleaseAssets(QueryReleaseAssetsRequest) returns (QueryReleaseAssetsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets";
+  }
+
+  // RepositoryReleaseAsset queries a release asset for a repository by repository id, tag and name
+  rpc RepositoryReleaseAsset(QueryRepositoryReleaseAssetRequest) returns (QueryRepositoryReleaseAssetResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-asset/{tag}/{name}";
+  }
+
+  // RepositoryReleaseAssets queries all release assets for a repository by repository id and tag
+  rpc RepositoryReleaseAssets(QueryRepositoryReleaseAssetsRequest) returns (QueryRepositoryReleaseAssetsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-assets/{tag}";
+  }
+
+  // RepositoryReleaseAssetsByRepositoryId queries all release assets for a repository by repository id
+  rpc RepositoryReleaseAssetsByRepositoryId(QueryRepositoryReleaseAssetsByRepositoryIdRequest) returns (QueryRepositoryReleaseAssetsByRepositoryIdResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/release-assets";
+  }
+  
+  // Challenge queries a challenge by id
+  rpc Challenge(QueryChallengeRequest) returns (QueryChallengeResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/challenge/{id}";
+  }
+
+  rpc Challenges(QueryChallengesRequest) returns (QueryChallengesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/challenges";
+  }
+
+  rpc StorageStats(QueryStorageStatsRequest) returns (QueryStorageStatsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/stats";
+  }
+
+  rpc CidReferenceCount(QueryCidReferenceCountRequest) returns (QueryCidReferenceCountResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/cid-reference-count/{cid}";
+  }
+
+  rpc CidReferenceCounts(QueryCidReferenceCountsRequest) returns (QueryCidReferenceCountsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/cid-reference-counts";
+  }
+
+  rpc ActiveProviders(QueryActiveProvidersRequest) returns (QueryActiveProvidersResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/active-providers";
+  }
+
+  rpc LFSObjects(QueryLFSObjectsRequest) returns (QueryLFSObjectsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-objects";
+  }
+
+  rpc LFSObject(QueryLFSObjectRequest) returns (QueryLFSObjectResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object/{id}";
+  }
+
+  rpc LFSObjectsByRepositoryId(QueryLFSObjectsByRepositoryIdRequest) returns (QueryLFSObjectsByRepositoryIdResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-objects";
+  }
+
+  rpc LFSObjectByRepositoryIdAndOid(QueryLFSObjectByRepositoryIdAndOidRequest) returns (QueryLFSObjectByRepositoryIdAndOidResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-object/{oid}";
+  }
+
+  rpc ProviderStake(QueryProviderStakeRequest) returns (QueryProviderStakeResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-stake/{address}";
+  }
+
+  rpc ProviderStakes(QueryProviderStakesRequest) returns (QueryProviderStakesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-stakes";
+  }
+
+  rpc ProviderRewards(QueryProviderRewardsRequest) returns (QueryProviderRewardsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards/{address}";
+  }
+
+  rpc ProviderRewardsAll(QueryProviderRewardsAllRequest) returns (QueryProviderRewardsAllResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards-all";
+  }
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderRequest {
+  string address = 1;
+}
+
+message QueryProviderResponse {
+  Provider provider = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProvidersRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProvidersResponse {
+  repeated Provider providers = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryActiveProvidersRequest {}
+
+message QueryActiveProvidersResponse {
+  repeated Provider providers = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPackfileRequest {
+  uint64 id = 1;
+}
+
+message QueryPackfileResponse {
+  Packfile packfile = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPackfilesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryPackfilesResponse {
+  repeated Packfile packfiles = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryRepositoryPackfileRequest {
+  uint64 repository_id = 1;
+}
+
+message QueryRepositoryPackfileResponse {
+  Packfile packfile = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetRequest {
+  uint64 id = 1;
+}
+
+message QueryReleaseAssetResponse {
+  ReleaseAsset release_asset = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryReleaseAssetsResponse {
+  repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryRepositoryReleaseAssetRequest {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string name = 3;
+}
+
+message QueryRepositoryReleaseAssetResponse {
+  ReleaseAsset release_asset = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryReleaseAssetsRequest {
+  uint64 repository_id = 1;
+  string tag = 2;
+}
+
+message QueryRepositoryReleaseAssetsResponse {
+  repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryReleaseAssetsByRepositoryIdRequest {
+  uint64 repository_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryRepositoryReleaseAssetsByRepositoryIdResponse {
+  repeated ReleaseAsset release_assets = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryChallengeRequest {
+  uint64 id = 1;
+}
+
+message QueryChallengeResponse {
+  Challenge challenge = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryChallengesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryChallengesResponse {
+  repeated Challenge challenges = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryStorageStatsRequest {}
+
+message QueryStorageStatsResponse {
+  StorageStats storage_stats = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryCidReferenceCountRequest {
+  string cid = 1;
+}
+
+message QueryCidReferenceCountResponse {
+  uint64 count = 1;
+}
+
+message QueryCidReferenceCountsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryCidReferenceCountsResponse {
+  repeated CidReferenceCount cid_reference_counts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryLFSObjectsResponse {
+  repeated LFSObject lfs_objects = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectRequest {
+  uint64 id = 1;
+}
+
+message QueryLFSObjectResponse {
+  LFSObject lfs_object = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectsByRepositoryIdRequest {
+  uint64 repository_id = 1;
+}
+
+message QueryLFSObjectsByRepositoryIdResponse {
+  repeated LFSObject lfs_objects = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectByRepositoryIdAndOidRequest {
+  uint64 repository_id = 1;
+  string oid = 2;
+}
+
+message QueryLFSObjectByRepositoryIdAndOidResponse {
+  LFSObject lfs_object = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderRewardsAllRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProviderRewardsAllResponse {
+  repeated ProviderRewards provider_rewards = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryProviderRewardsRequest {
+  string address = 1;
+}
+
+message QueryProviderRewardsResponse {
+  ProviderRewards provider_rewards = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderStakeRequest {
+  string address = 1;
+}
+
+message QueryProviderStakeResponse {
+  ProviderStake provider_stake = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderStakesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProviderStakesResponse {
+  repeated ProviderStake provider_stakes = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

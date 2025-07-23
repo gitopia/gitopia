@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/gitopia/gitopia/v5/x/rewards/types"
+	"github.com/gitopia/gitopia/v6/x/rewards/types"
 )
 
 var (

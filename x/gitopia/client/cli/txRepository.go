@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 func CmdCreateRepository() *cobra.Command {
@@ -44,54 +44,11 @@ func CmdCreateRepository() *cobra.Command {
 	return cmd
 }
 
-func CmdInvokeForkRepository() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "invoke-fork-repository [id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [owner-id] [provider]",
-		Short: "Emits an event for git-server to fork an existing repository",
-		Args:  cobra.ExactArgs(4),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			argid := args[0]
-			argRepositoryName := args[1]
-			argForkRepositoryName := args[2]
-			argForkRepositoryDescription := args[3]
-			argBranch := args[4]
-			argOwnerId := args[5]
-			argProvider := args[6]
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgInvokeForkRepository(
-				clientCtx.GetFromAddress().String(),
-				types.RepositoryId{
-					Id:   argid,
-					Name: argRepositoryName,
-				},
-				argForkRepositoryName,
-				argForkRepositoryDescription,
-				argBranch,
-				argOwnerId,
-				argProvider,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdForkRepository() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "fork-repository [owner-id] [repository-name] [fork-repository-name] [fork-repository-description] [branch] [fork-owner-id] [task-id]",
 		Short: "Fork existing repository",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argid := args[0]
 			argRepositoryName := args[1]
@@ -99,11 +56,6 @@ func CmdForkRepository() *cobra.Command {
 			argForkRepositoryDescription := args[3]
 			argBranch := args[4]
 			argOwnerId := args[5]
-
-			argsTaskId, err := strconv.ParseUint(args[6], 10, 64)
-			if err != nil {
-				return err
-			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -117,7 +69,6 @@ func CmdForkRepository() *cobra.Command {
 				argForkRepositoryDescription,
 				argBranch,
 				argOwnerId,
-				argsTaskId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -499,12 +450,13 @@ func CmdToggleArweaveBackup() *cobra.Command {
 
 func CmdDeleteRepository() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-repository [id] [repository-name]",
+		Use:   "delete-repository [id] [repository-name] [provider]",
 		Short: "Delete a repository",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argId := args[0]
 			argRepositoryName := args[1]
+			argProvider := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -514,6 +466,7 @@ func CmdDeleteRepository() *cobra.Command {
 			msg := types.NewMsgDeleteRepository(
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
+				argProvider,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

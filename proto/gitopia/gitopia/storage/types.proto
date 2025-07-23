@@ -1,0 +1,192 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
+import "amino/amino.proto";
+
+option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
+
+// Provider represents a storage provider in the network
+message Provider {
+  string creator = 1;
+  uint64 id = 2;
+  string api_url = 3;
+  uint64 total_challenges = 4;
+  uint64 successful_challenges = 5;
+  uint64 consecutive_failures = 6;
+  google.protobuf.Timestamp join_time = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp unstake_completion_time = 8 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
+  string moniker = 9;
+  // status defines the current status of the provider (active/inactive/suspended)
+  ProviderStatus status = 10;
+  // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
+  string ipfs_cluster_peer_multiaddr = 11;
+  // pending_decrease_amount defines the amount to be decreased after cooldown
+  cosmos.base.v1beta1.Coin pending_decrease_amount = 12 [(gogoproto.nullable) = true];
+  // decrease_completion_time defines when the stake decrease can be completed
+  google.protobuf.Timestamp decrease_completion_time = 13 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// ProviderStatus represents the status of a storage provider
+enum ProviderStatus {
+  PROVIDER_STATUS_UNSPECIFIED = 0;
+  PROVIDER_STATUS_ACTIVE = 1;
+  PROVIDER_STATUS_INACTIVE = 2;
+  PROVIDER_STATUS_SUSPENDED = 3;
+  PROVIDER_STATUS_UNREGISTERING = 4;
+}
+
+// Packfile represents a Git packfile stored in IPFS
+message Packfile {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string name = 4;
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+  google.protobuf.Timestamp created_at = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  google.protobuf.Timestamp updated_at = 9 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+}
+
+// Release asset
+message ReleaseAsset {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string tag = 4;
+  string name = 5;
+  uint64 size = 6;
+  string cid = 7;
+  bytes root_hash = 8;
+  string sha256 = 9;
+  google.protobuf.Timestamp created_at = 10 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  google.protobuf.Timestamp updated_at = 11 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+}
+
+// Mapping between packfile id and repository id
+message PackfileRepositoryMapping {
+  uint64 packfile_id = 1;
+  uint64 repository_id = 2;
+}
+
+// Mapping between release asset id and repository id, tag and name
+message ReleaseAssetRepositoryMapping {
+  uint64 release_asset_id = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
+}
+
+// LFSObject represents a Large File Storage object
+message LFSObject {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string oid = 4; // LFS object ID (SHA256)
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+  google.protobuf.Timestamp created_at = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  google.protobuf.Timestamp updated_at = 9 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+}
+
+// Mapping between LFS object id and repository id
+message LFSObjectRepositoryMapping {
+  uint64 lfs_object_id = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+}
+
+// ChallengeType represents the type of storage challenge
+enum ChallengeType {
+  CHALLENGE_TYPE_UNSPECIFIED = 0;
+  CHALLENGE_TYPE_PACKFILE = 1;
+  CHALLENGE_TYPE_RELEASE_ASSET = 2;
+  CHALLENGE_TYPE_LFS_OBJECT = 3;
+}
+
+// Challenge represents a storage proof challenge
+message Challenge {
+  uint64 id = 1;
+  string provider = 2;
+  ChallengeType challenge_type = 3;
+  uint64 content_id = 4; // ID of either packfile or release asset based on challenge_type
+  bytes root_hash = 5; 
+  uint64 chunk_index = 6;
+  google.protobuf.Timestamp created_at = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp deadline = 8 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  ChallengeStatus status = 9;
+}
+
+// ChallengeStatus represents the status of a challenge
+enum ChallengeStatus {
+  CHALLENGE_STATUS_UNSPECIFIED = 0;
+  CHALLENGE_STATUS_PENDING = 1;
+  CHALLENGE_STATUS_COMPLETED = 2;
+  CHALLENGE_STATUS_FAILED = 3;
+  CHALLENGE_STATUS_TIMEOUT = 4;
+}
+
+// BlockInfo stores information about a block
+message BlockInfo {
+  uint32 height = 1;
+  google.protobuf.Timestamp timestamp = 2
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+}
+
+// ProviderStake represents the stake of a provider
+message ProviderStake {
+  string provider = 1;
+  repeated cosmos.base.v1beta1.Coin stake = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
+}
+
+// ProviderRewards represents rewards for a provider
+message ProviderRewards {
+  string provider = 1;
+  repeated cosmos.base.v1beta1.DecCoin rewards = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins",
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true
+  ];
+}
+
+// Merkle proof
+message Proof {
+	repeated bytes hashes = 1;
+	uint64 index = 2;
+}
+
+// CidReferenceCount represents the number of times a CID is referenced
+message CidReferenceCount {
+	string cid = 1;
+	uint64 count = 2;
+}
+
+// StorageStats represents storage statistics broken down by type
+message StorageStats {
+  uint64 total_packfile_size = 1;
+  uint64 total_release_asset_size = 2;
+  uint64 total_lfs_object_size = 3;
+}

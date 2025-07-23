@@ -10,8 +10,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/group"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*types.MsgCreateDaoResponse, error) {
@@ -102,17 +102,6 @@ func (k msgServer) CreateDao(goCtx context.Context, msg *types.MsgCreateDao) (*t
 		ctx,
 		whois,
 	)
-
-	gParams := k.GetParams(ctx)
-	err = k.Keeper.AuthorizeProvider(ctx, gParams.GitServer, dao.Address, nil, types.ProviderPermission_GIT_SERVER)
-	if err != nil {
-		return nil, err
-	}
-
-	err = k.Keeper.AuthorizeProvider(ctx, gParams.StorageProvider, dao.Address, nil, types.ProviderPermission_STORAGE)
-	if err != nil {
-		return nil, err
-	}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,

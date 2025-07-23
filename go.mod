@@ -1,4 +1,4 @@
-module github.com/gitopia/gitopia/v5
+module github.com/gitopia/gitopia/v6
 
 go 1.21
 
@@ -141,6 +141,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0
 	github.com/ipfs/go-cid v0.3.2
 	github.com/ory/dockertest/v3 v3.10.0
+	github.com/wealdtech/go-merkletree/v2 v2.6.1
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	google.golang.org/genproto/googleapis/api v0.0.0-20240709173604-40e1e62336c5
 )
@@ -187,6 +188,7 @@ require (
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/huandu/skiplist v1.2.0 // indirect
+	github.com/iden3/go-iden3-crypto v0.0.16 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.4 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect

@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 // NewHandler ...
@@ -31,14 +31,6 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		case *types.MsgToggleArweaveBackup:
 			res, err := msgServer.ToggleArweaveBackup(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgRevokeProviderPermission:
-			res, err := msgServer.RevokeProviderPermission(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgAuthorizeProvider:
-			res, err := msgServer.AuthorizeProvider(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		// case *types.MsgCreateTask:
@@ -291,16 +283,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			res, err := msgServer.CreateRepository(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
-		case *types.MsgInvokeForkRepository:
-			res, err := msgServer.InvokeForkRepository(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
 		case *types.MsgForkRepository:
 			res, err := msgServer.ForkRepository(sdk.WrapSDKContext(ctx), msg)
-			return sdk.WrapServiceResult(ctx, res, err)
-
-		case *types.MsgForkRepositorySuccess:
-			res, err := msgServer.ForkRepositorySuccess(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 
 		case *types.MsgRenameRepository:

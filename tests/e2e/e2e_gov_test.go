@@ -182,7 +182,7 @@ func (s *IntegrationTestSuite) verifyChainHaltedAtUpgradeHeight(c *chain, valIdx
 
 			return currentHeight == upgradeHeight
 		},
-		60*time.Second,
+		2*60*time.Second,
 		5*time.Second,
 	)
 

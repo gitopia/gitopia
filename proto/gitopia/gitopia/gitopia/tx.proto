@@ -23,14 +23,12 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/group/v1/types.proto";
 import "amino/amino.proto";
 
-option go_package = "github.com/gitopia/gitopia/v5/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v6/x/gitopia/types";
 
 // Msg defines the Msg service.
 service Msg {
   // this line is used by starport scaffolding # proto/tx/rpc
   rpc ToggleForcePush(MsgToggleForcePush) returns (MsgToggleForcePushResponse);
-  rpc RevokeProviderPermission(MsgRevokeProviderPermission) returns (MsgRevokeProviderPermissionResponse);
-  rpc AuthorizeProvider(MsgAuthorizeProvider) returns (MsgAuthorizeProviderResponse);
   rpc CreateTask(MsgCreateTask) returns (MsgCreateTaskResponse);
   rpc UpdateTask(MsgUpdateTask) returns (MsgUpdateTaskResponse);
   rpc DeleteTask(MsgDeleteTask) returns (MsgDeleteTaskResponse);
@@ -92,9 +90,7 @@ service Msg {
   rpc RemoveIssueLabels(MsgRemoveIssueLabels) returns (MsgRemoveIssueLabelsResponse);
   rpc DeleteIssue(MsgDeleteIssue) returns (MsgDeleteIssueResponse);
   rpc CreateRepository(MsgCreateRepository) returns (MsgCreateRepositoryResponse);
-  rpc InvokeForkRepository(MsgInvokeForkRepository) returns (MsgInvokeForkRepositoryResponse);
   rpc ForkRepository(MsgForkRepository) returns (MsgForkRepositoryResponse);
-  rpc ForkRepositorySuccess(MsgForkRepositorySuccess) returns (MsgForkRepositorySuccessResponse);
   rpc RenameRepository(MsgRenameRepository) returns (MsgRenameRepositoryResponse);
   rpc UpdateRepositoryDescription(MsgUpdateRepositoryDescription) returns (MsgUpdateRepositoryDescriptionResponse);
   rpc ToggleRepositoryArchived(MsgToggleRepositoryArchived) returns (MsgToggleRepositoryArchivedResponse);
@@ -146,29 +142,6 @@ message MsgToggleForcePush {
 }
 
 message MsgToggleForcePushResponse {}
-
-enum ProviderPermission {
-  GIT_SERVER = 0;
-  STORAGE = 1;
-}
-
-message MsgRevokeProviderPermission {
-  string creator = 1;
-  string granter = 2;
-  string provider = 3;
-  ProviderPermission permission = 4;
-}
-
-message MsgRevokeProviderPermissionResponse {}
-
-message MsgAuthorizeProvider {
-  string creator = 1;
-  string granter = 2;
-  string provider = 3;
-  ProviderPermission permission = 4;
-}
-
-message MsgAuthorizeProviderResponse {}
 
 message MsgCreateTask {
   string creator = 1;
@@ -351,6 +324,7 @@ message MsgCreateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgCreateReleaseResponse {
@@ -368,6 +342,7 @@ message MsgUpdateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgUpdateReleaseResponse { }
@@ -375,6 +350,7 @@ message MsgUpdateReleaseResponse { }
 message MsgDeleteRelease {
   string creator = 1;
   uint64 id = 2;
+  string provider = 3;
 }
 
 message MsgDeleteReleaseResponse { }
@@ -690,6 +666,7 @@ message MsgDaoCreateRelease {
   bool draft = 8;
   bool preRelease = 9;
   bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgDaoCreateReleaseResponse {
@@ -860,18 +837,6 @@ message MsgCreateRepositoryResponse {
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
 }
 
-message MsgInvokeForkRepository {
-  string creator = 1;
-  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string forkRepositoryName = 3;
-  string forkRepositoryDescription = 4;
-  string branch = 5;
-  string owner = 6;
-  string provider = 7;
-}
-
-message MsgInvokeForkRepositoryResponse {}
-
 message MsgForkRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
@@ -879,20 +844,9 @@ message MsgForkRepository {
   string forkRepositoryDescription = 4;
   string branch = 5;
   string owner = 6;
-  uint64 taskId = 7;
 }
 
 message MsgForkRepositoryResponse {
-  uint64 id = 1;
-}
-
-message MsgForkRepositorySuccess {
-  string creator = 1;
-  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  uint64 taskId = 3;
-}
-
-message MsgForkRepositorySuccessResponse {
   uint64 id = 1;
 }
 
@@ -1021,6 +975,7 @@ message MsgToggleArweaveBackupResponse {
 message MsgDeleteRepository {
   string creator = 1;
   RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string provider = 3;
 }
 
 message MsgDeleteRepositoryResponse { }

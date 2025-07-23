@@ -12,8 +12,6 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "gitopia/UpdateParams", nil)
 	cdc.RegisterConcrete(&MsgDistributePlatformIncentives{}, "gitopia/DistributePlatformIncentives", nil)
 
-	cdc.RegisterConcrete(&MsgRevokeProviderPermission{}, "gitopia/RevokeProviderPermission", nil)
-	cdc.RegisterConcrete(&MsgAuthorizeProvider{}, "gitopia/AuthorizeProvider", nil)
 	// cdc.RegisterConcrete(&MsgCreateTask{}, "gitopia/CreateTask", nil)
 	cdc.RegisterConcrete(&MsgUpdateTask{}, "gitopia/UpdateTask", nil)
 	// cdc.RegisterConcrete(&MsgDeleteTask{}, "gitopia/DeleteTask", nil)
@@ -88,9 +86,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDeleteIssue{}, "gitopia/DeleteIssue", nil)
 
 	cdc.RegisterConcrete(&MsgCreateRepository{}, "gitopia/CreateRepository", nil)
-	cdc.RegisterConcrete(&MsgInvokeForkRepository{}, "gitopia/InvokeForkRepository", nil)
 	cdc.RegisterConcrete(&MsgForkRepository{}, "gitopia/ForkRepository", nil)
-	cdc.RegisterConcrete(&MsgForkRepositorySuccess{}, "gitopia/ForkRepositorySuccess", nil)
 	cdc.RegisterConcrete(&MsgRenameRepository{}, "gitopia/RenameRepository", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryDescription{}, "gitopia/UpdateRepositoryDescription", nil)
 	cdc.RegisterConcrete(&MsgToggleRepositoryArchived{}, "gitopia/ToggleRepositoryArchived", nil)
@@ -123,10 +119,6 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDistributePlatformIncentives{},
 	)
 
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgAuthorizeProvider{},
-		&MsgRevokeProviderPermission{},
-	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		// &MsgCreateTask{},
 		&MsgUpdateTask{},
@@ -217,9 +209,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateRepository{},
-		&MsgInvokeForkRepository{},
 		&MsgForkRepository{},
-		&MsgForkRepositorySuccess{},
 		&MsgRenameRepository{},
 		&MsgUpdateRepositoryDescription{},
 		&MsgChangeOwner{},

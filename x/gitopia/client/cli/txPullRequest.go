@@ -7,17 +7,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 func CmdCreatePullRequest() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [baseBranch] [baseRepoId] [reviewers] [assignees] [labelIds] [issueIids]",
+		Use:   "create-pullRequest [title] [description] [headBranch] [headRepoId] [headRepoName] [baseBranch] [baseRepoId] [baseRepoName] [reviewers] [assignees] [labelIds] [issueIids]",
 		Short: "Create a new pullRequest",
-		Args:  cobra.ExactArgs(10),
+		Args:  cobra.ExactArgs(12),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argTitle := args[0]
 			argDescription := args[1]
@@ -27,23 +27,36 @@ func CmdCreatePullRequest() *cobra.Command {
 			argBaseBranch := args[5]
 			argBaseId := args[6]
 			argBaseRepositoryName := args[7]
-			argReviewers := strings.Split(args[6], ",")
+			argReviewers := strings.Split(args[8], ",")
 			if len(argReviewers) == 1 && argReviewers[0] == "" {
-				argReviewers = nil
+				argReviewers = []string{}
 			}
-			argAssignees := strings.Split(args[7], ",")
+			argAssignees := strings.Split(args[9], ",")
 			if len(argAssignees) == 1 && argAssignees[0] == "" {
-				argAssignees = nil
+				argAssignees = []string{}
 			}
-			argLabels := strings.Split(args[8], ",")
-			labelIds, err := utils.SliceAtoi(argLabels)
-			if err != nil {
-				return err
+
+			var labelIds []uint64
+			var err error
+			argLabels := strings.Split(args[10], ",")
+			if len(argLabels) == 1 && argLabels[0] == "" {
+				labelIds = []uint64{}
+			} else {
+				labelIds, err = utils.SliceAtoi(argLabels)
+				if err != nil {
+					return err
+				}
 			}
-			argIssueIids := strings.Split(args[9], ",")
-			issueIids, err := utils.SliceAtoi(argIssueIids)
-			if err != nil {
-				return err
+
+			var issueIids []uint64
+			argIssueIids := strings.Split(args[11], ",")
+			if len(argIssueIids) == 1 && argIssueIids[0] == "" {
+				issueIids = []uint64{}
+			} else {
+				issueIids, err = utils.SliceAtoi(argIssueIids)
+				if err != nil {
+					return err
+				}
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)

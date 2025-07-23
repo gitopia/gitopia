@@ -20,8 +20,9 @@ import "gitopia/gitopia/gitopia/whois.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "gitopia/gitopia/gitopia/params.proto";
 import "cosmos/group/v1/types.proto";
+import "gitopia/gitopia/gitopia/user_quota.proto";
 
-option go_package = "github.com/gitopia/gitopia/v5/x/gitopia/types";
+option go_package = "github.com/gitopia/gitopia/v6/x/gitopia/types";
 
 // Query defines the gRPC querier service.
 service Query {
@@ -241,12 +242,8 @@ service Query {
 		option (google.api.http).get = "/gitopia/gitopia/gitopia/permissions/{userId}/repository/{repositoryId}/pull/{pullIid}/merge";
 	}
 
-	rpc CheckGitServerAuthorization(QueryCheckGitServerAuthorizationRequest) returns (QueryCheckGitServerAuthorizationResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/git-server/{userAddress}/{providerAddress}";
-	}
-
-	rpc CheckStorageProviderAuthorization(QueryCheckStorageProviderAuthorizationRequest) returns (QueryCheckStorageProviderAuthorizationResponse) {
-		option (google.api.http).get = "/gitopia/gitopia/gitopia/authorizations/storage-provider/{userAddress}/{providerAddress}";
+	rpc UserQuota(QueryUserQuotaRequest) returns (QueryUserQuotaResponse) {
+		option (google.api.http).get = "/gitopia/gitopia/gitopia/user-quota/{address}";
 	}
 }
 
@@ -273,15 +270,6 @@ message QueryVestedAmountResponse {
 	 (gogoproto.castkey) = "github.com/cosmos/cosmos-sdk/types.Coin"]; 
 }
 
-message QueryCheckStorageProviderAuthorizationRequest {
-	string userAddress = 1;
-	string providerAddress = 2;
-}
-
-message QueryCheckStorageProviderAuthorizationResponse {
-	bool haveAuthorization = 1;
-}
-
 message QueryGetTaskRequest {
 	uint64 id = 1;
 }
@@ -297,15 +285,6 @@ message QueryAllTaskRequest {
 message QueryAllTaskResponse {
 	repeated Task Task = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryCheckGitServerAuthorizationRequest {
-	string userAddress = 1;
-	string providerAddress = 2;
-}
-
-message QueryCheckGitServerAuthorizationResponse {
-	bool haveAuthorization = 1;
 }
 
 message QueryAllBranchRequest {
@@ -739,4 +718,12 @@ message QueryAllWhoisRequest {
 message QueryAllWhoisResponse {
 	repeated Whois Whois = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryUserQuotaRequest {
+	string address = 1;
+}
+
+message QueryUserQuotaResponse {
+	UserQuota user_quota = 1 [ (gogoproto.nullable) = false ];
 }

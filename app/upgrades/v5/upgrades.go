@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/gitopia/gitopia/v5/app/keepers"
+	"github.com/gitopia/gitopia/v6/app/keepers"
 )
 
 func CreateUpgradeHandler(

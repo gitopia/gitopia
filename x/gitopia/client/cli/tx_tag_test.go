@@ -11,8 +11,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gitopia/gitopia/v5/testutil/network"
-	"github.com/gitopia/gitopia/v5/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v6/testutil/network"
+	"github.com/gitopia/gitopia/v6/x/gitopia/client/cli"
 )
 
 func TestSetTag(t *testing.T) {

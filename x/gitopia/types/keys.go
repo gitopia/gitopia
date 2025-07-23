@@ -121,7 +121,6 @@ const (
 	ToggleRepositoryForkingEventKey         = "ToggleRepositoryForking"
 	ToggleArweaveBackupEventKey             = "ToggleArweaveBackup"
 	DeleteRepositoryEventKey                = "DeleteRepository"
-	InvokeForkRepositoryEventKey            = "InvokeForkRepository"
 	ForkRepositoryEventKey                  = "ForkRepository"
 	ForkRepositorySuccessEventKey           = "ForkRepositorySuccess"
 	SetRepositoryBranchEventKey             = "SetRepositoryBranch"
@@ -199,6 +198,7 @@ const (
 	EventAttributePublishedAtKey     = "PublishedAt"
 	EventAttributeAssigneesKey       = "Assignees"
 	EventAttributeLabelsKey          = "Labels"
+	EventAttributeProviderKey        = "Provider"
 )
 
 const (
@@ -294,6 +294,7 @@ const (
 	EventAttributeReleaseDescriptionKey = "ReleaseDescription"
 	EventAttributeReleaseDraftKey       = "ReleaseDraft"
 	EventAttributeReleasePreReleaseKey  = "ReleasePreRelease"
+	EventAttributeReleaseAttachmentsKey = "ReleaseAttachments"
 )
 
 const (
@@ -338,6 +339,10 @@ const (
 const (
 	GroupDaoKey      = "GroupDao-value-"
 	GroupDaoCountKey = "GroupDao-count-"
+)
+
+const (
+	UserQuotaKey = "UserQuota-value-"
 )
 
 const (

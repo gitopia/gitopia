@@ -49,11 +49,13 @@ import (
 	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	gitopiaappparams "github.com/gitopia/gitopia/v5/app/params"
-	"github.com/gitopia/gitopia/v5/x/gitopia"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/rewards"
-	rewardtypes "github.com/gitopia/gitopia/v5/x/rewards/types"
+	gitopiaappparams "github.com/gitopia/gitopia/v6/app/params"
+	"github.com/gitopia/gitopia/v6/x/gitopia"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/rewards"
+	rewardtypes "github.com/gitopia/gitopia/v6/x/rewards/types"
+	"github.com/gitopia/gitopia/v6/x/storage"
+	storagetypes "github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 var maccPerms = map[string][]string{
@@ -79,6 +81,9 @@ var maccPerms = map[string][]string{
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SIX):    {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_SEVEN):  {authtypes.Minter},
 	rewardtypes.SeriesModuleAccount(rewardtypes.Series_COSMOS): nil,
+	storagetypes.StorageBondedPoolName:                         nil,
+	storagetypes.StorageFeePoolName:                            nil,
+	storagetypes.ChallengeSlashPoolName:                        nil,
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
@@ -117,6 +122,7 @@ var ModuleBasics = module.NewBasicManager(
 	rewards.AppModule{},
 	consensus.AppModuleBasic{},
 	ica.AppModuleBasic{},
+	storage.AppModule{},
 )
 
 func appModules(
@@ -154,6 +160,7 @@ func appModules(
 		transfer.NewAppModule(app.TransferKeeper),
 		gitopia.NewAppModule(appCodec, app.GitopiaKeeper),
 		rewards.NewAppModule(appCodec, app.RewardKeeper, app.AccountKeeper, app.BankKeeper),
+		storage.NewAppModule(appCodec, app.StorageKeeper, app.AccountKeeper, app.BankKeeper),
 	}
 }
 
@@ -187,6 +194,7 @@ func orderBeginBlockers() []string {
 		vestingtypes.ModuleName,
 		rewardtypes.ModuleName,
 		consensusparamtypes.ModuleName,
+		storagetypes.ModuleName,
 	}
 }
 
@@ -215,6 +223,7 @@ func orderEndBlockers() []string {
 		gitopiatypes.ModuleName,
 		rewardtypes.ModuleName,
 		consensusparamtypes.ModuleName,
+		storagetypes.ModuleName,
 	}
 }
 
@@ -243,5 +252,6 @@ func orderInitBlockers() []string {
 		authz.ModuleName,
 		rewardtypes.ModuleName,
 		consensusparamtypes.ModuleName,
+		storagetypes.ModuleName,
 	}
 }

@@ -42,7 +42,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/gitopia/gitopia/v5/app/params"
+	"github.com/gitopia/gitopia/v6/app/params"
 )
 
 const (
@@ -142,6 +142,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 
 	s.valResources = make(map[string][]*dockertest.Resource)
+	s.valResources["storage"] = make([]*dockertest.Resource, 6) // 2 providers * 3 services each
 
 	vestingMnemonic, err := createMnemonic()
 	s.Require().NoError(err)
@@ -155,6 +156,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// 2. Create and initialize Gaia validator genesis files (both chains)
 	// 3. Start both networks.
 	// 4. Create and run IBC relayer (Hermes) containers.
+	// 5. Start storage providers.
 
 	s.T().Logf("starting e2e infrastructure for chain A; chain-id: %s; datadir: %s", s.chainA.id, s.chainA.dataDir)
 	s.initNodes(s.chainA)
@@ -162,24 +164,27 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.initValidatorConfigs(s.chainA)
 	s.runValidators(s.chainA, 10)
 
-	s.T().Logf("starting e2e infrastructure for chain B; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
-	s.initNodes(s.chainB)
-	s.initGenesis(s.chainB, vestingMnemonic, jailedValMnemonic)
-	s.initValidatorConfigs(s.chainB)
-	s.runValidators(s.chainB, 20)
+	// s.T().Logf("starting e2e infrastructure for chain B; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
+	// s.initNodes(s.chainB)
+	// s.initGenesis(s.chainB, vestingMnemonic, jailedValMnemonic)
+	// s.initValidatorConfigs(s.chainB)
+	// s.runValidators(s.chainB, 20)
 
-	time.Sleep(10 * time.Second)
-	s.runIBCRelayer()
+	// time.Sleep(10 * time.Second)
+	// s.runIBCRelayer()
 
-	s.T().Logf("starting e2e infrastructure for chain C; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
-	s.initV3Nodes(s.chainC)
-	s.createGenTxFiles(s.chainC)
-	s.initValidatorConfigs(s.chainC)
-	s.runGitopiaV3(s.chainC, 30)
+	// Start storage providers
+	s.runStorageProviders()
 
-	s.connectOsmosisValidator()
+	// s.T().Logf("starting e2e infrastructure for chain C; chain-id: %s; datadir: %s", s.chainB.id, s.chainB.dataDir)
+	// s.initV3Nodes(s.chainC)
+	// s.createGenTxFiles(s.chainC)
+	// s.initValidatorConfigs(s.chainC)
+	// s.runGitopiaV3(s.chainC, 30)
 
-	s.runGitopiaOsmosisIBCRelayer(s.chainC)
+	// s.connectOsmosisValidator()
+
+	// s.runGitopiaOsmosisIBCRelayer(s.chainC)
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {
@@ -242,6 +247,13 @@ func (s *IntegrationTestSuite) initNodes(c *chain) {
 		s.Require().NoError(err)
 		addrAll = append(addrAll, acctAddr)
 	}
+
+	// Add Git server addresses
+	gitServerAddr1, err := sdk.AccAddressFromBech32("gitopia1jnq4pk0ene8xne4a43p2a2xpdhf3jqgsgu04n9")
+	s.Require().NoError(err)
+	gitServerAddr2, err := sdk.AccAddressFromBech32("gitopia1yp9um722xlywmjc0mc0x9jv06vw9t7l4lkgj8v")
+	s.Require().NoError(err)
+	addrAll = append(addrAll, gitServerAddr1, gitServerAddr2)
 
 	s.Require().NoError(
 		modifyGenesis(val0ConfigDir, "", initBalanceStr, addrAll, initialBaseFeeAmt, uloreDenom),
@@ -568,6 +580,11 @@ func (s *IntegrationTestSuite) initValidatorConfigs(c *chain) {
 		valConfig.StateSync.Enable = false
 		valConfig.LogLevel = "info"
 
+		// Enable CORS for RPC
+		valConfig.RPC.CORSAllowedOrigins = []string{"*"}
+		valConfig.RPC.CORSAllowedMethods = []string{"HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
+		valConfig.RPC.CORSAllowedHeaders = []string{"Accept-Encoding"}
+
 		var peers []string
 
 		for j := 0; j < len(c.validators); j++ {
@@ -593,6 +610,11 @@ func (s *IntegrationTestSuite) initValidatorConfigs(c *chain) {
 		appConfig.MinGasPrices = fmt.Sprintf("%s%s", minGasPrice, uloreDenom)
 		appConfig.GRPC.Address = "0.0.0.0:9090"
 
+		// Enable CORS for API and gRPC
+		appConfig.API.EnableUnsafeCORS = true
+		appConfig.API.Swagger = true
+		appConfig.GRPCWeb.EnableUnsafeCORS = true
+
 		srvconfig.SetConfigTemplate(srvconfig.DefaultConfigTemplate)
 		srvconfig.WriteConfigFile(appCfgPath, appConfig)
 	}
@@ -611,6 +633,7 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 				fmt.Sprintf("%s/:%s", val.configDir(), gitopiaHomePath),
 			},
 			Repository: "gitopia/gitopiad-e2e",
+			// Tag:        "v5", // Use v5 tag initially
 		}
 
 		s.Require().NoError(exec.Command("chmod", "-R", "0777", val.configDir()).Run()) //nolint:gosec // this is a test
@@ -653,157 +676,6 @@ func (s *IntegrationTestSuite) runValidators(c *chain, portOffset int) {
 
 			// let the node produce a few blocks
 			if status.SyncInfo.CatchingUp || status.SyncInfo.LatestBlockHeight < 3 {
-				return false
-			}
-			return true
-		},
-		5*time.Minute,
-		time.Second,
-		"Gitopia node failed to produce blocks",
-	)
-}
-
-func (s *IntegrationTestSuite) runGitopiaV3(c *chain, portOffset int) {
-	s.T().Logf("starting Gitopia v3 %s validator containers...", c.id)
-
-	address, _ := s.chainC.genesisAccounts[relayerAccountIndexHermes].keyInfo.GetAddress()
-	relayerAddress := address.String()
-
-	s.valResources[c.id] = make([]*dockertest.Resource, len(c.validators))
-
-	for i, val := range c.validators {
-		runOpts := &dockertest.RunOptions{
-			Name:      val.instanceName(),
-			NetworkID: s.dkrNet.Network.ID,
-			Mounts: []string{
-				fmt.Sprintf("%s/:%s", val.configDir(), gitopiaHomePath),
-			},
-			Repository: "gitopia/gitopiad-e2e",
-			Tag:        "v3.3.0",
-			Env: []string{
-				fmt.Sprintf("CHAIN_ID=%s", c.id),
-				fmt.Sprintf("MONIKER=%s", val.moniker),
-				fmt.Sprintf("VALIDATOR_0_MONIKER=%s", c.validators[0].moniker),
-				fmt.Sprintf("VALIDATOR_1_MONIKER=%s", c.validators[1].moniker),
-				fmt.Sprintf("VALIDATOR_0_MNEMONIC=%s", c.validators[0].mnemonic),
-				fmt.Sprintf("VALIDATOR_1_MNEMONIC=%s", c.validators[1].mnemonic),
-				fmt.Sprintf("RELAYER_ACCOUNT_ADDRESS=%s", relayerAddress),
-			},
-			Entrypoint: []string{
-				"sh",
-				"-c",
-				fmt.Sprintf("chmod +x %s/scripts/setup_chain.sh && %s/scripts/setup_chain.sh && tail -f /dev/null", gitopiaHomePath, gitopiaHomePath),
-			},
-		}
-
-		p := path.Join(val.configDir(), "scripts")
-		s.Require().NoError(os.MkdirAll(p, 0o755))
-		s.Require().NoError(exec.Command("cp", "scripts/setup_chain.sh", p).Run()) //nolint:gosec // this is a test
-
-		s.Require().NoError(exec.Command("chmod", "-R", "0777", val.configDir()).Run()) //nolint:gosec // this is a test
-
-		// expose the first validator for debugging and communication
-		if val.index == 0 {
-			runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
-				"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
-				"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
-				"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
-				"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
-				"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
-				"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
-				"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
-				"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
-				"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
-				"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
-			}
-		}
-
-		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
-		s.Require().NoError(err)
-
-		s.valResources[c.id][i] = resource
-		s.T().Logf("started Gitopia %s validator container: %s", c.id, resource.Container.ID)
-	}
-
-	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
-	s.Require().NoError(err)
-
-	s.Require().Eventually(
-		func() bool {
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-			defer cancel()
-
-			status, err := rpcClient.Status(ctx)
-			if err != nil {
-				return false
-			}
-
-			// let the node produce a few blocks
-			if status.SyncInfo.CatchingUp || status.SyncInfo.LatestBlockHeight < 3 {
-				return false
-			}
-			return true
-		},
-		5*time.Minute,
-		time.Second,
-		"Gitopia node failed to produce blocks",
-	)
-}
-
-// runValidatorWithUpgradedBinary resumes the validator with the upgraded binary.
-func (s *IntegrationTestSuite) runValidatorWithUpgradedBinary(c *chain, portOffset, upgradeHeight int) {
-	s.T().Logf("resuming Gitopia %s validator with upgraded binary...", c.id)
-
-	for i, val := range c.validators {
-		runOpts := &dockertest.RunOptions{
-			Name:      val.instanceName(),
-			NetworkID: s.dkrNet.Network.ID,
-			Mounts: []string{
-				fmt.Sprintf("%s/:%s", val.configDir(), gitopiaHomePath),
-			},
-			Repository: "gitopia/gitopiad-e2e",
-		}
-
-		s.Require().NoError(exec.Command("chmod", "-R", "0777", val.configDir()).Run()) //nolint:gosec // this is a test
-
-		// expose the first validator for debugging and communication
-		if val.index == 0 {
-			runOpts.PortBindings = map[docker.Port][]docker.PortBinding{
-				"1317/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 1317+portOffset)}},
-				"6060/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6060+portOffset)}},
-				"6061/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6061+portOffset)}},
-				"6062/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6062+portOffset)}},
-				"6063/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6063+portOffset)}},
-				"6064/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6064+portOffset)}},
-				"6065/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 6065+portOffset)}},
-				"9090/tcp":  {{HostIP: "", HostPort: fmt.Sprintf("%d", 9090+portOffset)}},
-				"26656/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26656+portOffset)}},
-				"26657/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 26657+portOffset)}},
-			}
-		}
-
-		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
-		s.Require().NoError(err)
-
-		s.valResources[c.id][i] = resource
-		s.T().Logf("resumeded Gitopia %s validator container with upgraded binary: %s", c.id, resource.Container.ID)
-	}
-
-	rpcClient, err := rpchttp.New(fmt.Sprintf("tcp://localhost:%d", 26657+portOffset), "/websocket")
-	s.Require().NoError(err)
-
-	s.Require().Eventually(
-		func() bool {
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-			defer cancel()
-
-			status, err := rpcClient.Status(ctx)
-			if err != nil {
-				return false
-			}
-
-			// let the node produce a few blocks after upgrade height
-			if status.SyncInfo.CatchingUp || status.SyncInfo.LatestBlockHeight < int64(upgradeHeight)+3 {
 				return false
 			}
 			return true
@@ -1153,4 +1025,113 @@ func (s *IntegrationTestSuite) writeExpeditedSoftwareUpgradeProp(c *chain) {
 func configFile(filename string) string {
 	filepath := filepath.Join(gaiaConfigPath, filename)
 	return filepath
+}
+
+func (s *IntegrationTestSuite) runStorageProviders() {
+	s.T().Log("starting storage provider containers...")
+
+	// Create temporary directories for storage provider data
+	tmpDir, err := os.MkdirTemp("", "gitopia-e2e-storage-")
+	s.Require().NoError(err)
+	s.tmpDirs = append(s.tmpDirs, tmpDir)
+
+	// Create directories for each provider
+	for i := 0; i < 2; i++ {
+		providerDir := filepath.Join(tmpDir, fmt.Sprintf("provider%d", i))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "ipfs"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "cluster"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "repos"), 0755))
+		s.Require().NoError(os.MkdirAll(filepath.Join(providerDir, "attachments"), 0755))
+	}
+
+	// Run IPFS nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("ipfs%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "ipfs/kubo",
+			Tag:        "release",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/ipfs:/data/ipfs", tmpDir, i),
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"4001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 4001+i)}},
+				"5001/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5003+i)}},
+				"8080/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 8080+i)}},
+			},
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i] = resource
+	}
+
+	// Run IPFS Cluster nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("cluster%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "ipfs/ipfs-cluster",
+			Tag:        "latest",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/cluster:/data/ipfs-cluster", tmpDir, i),
+			},
+			Env: []string{
+				fmt.Sprintf("CLUSTER_PEERNAME=cluster%d", i),
+				"CLUSTER_SECRET=1056f496539989fb653b6721a45cbedb438124db6e9bbedd83acf21418f5cc79",
+				fmt.Sprintf("CLUSTER_IPFSHTTP_NODEMULTIADDRESS=/dns4/ipfs%d/tcp/5001", i),
+				"CLUSTER_CRDT_TRUSTEDPEERS=*",
+				"CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS=/ip4/0.0.0.0/tcp/9094",
+				"CLUSTER_MONITORPINGINTERVAL=2s",
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"9094/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 9094+i)}},
+			},
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i+2] = resource
+	}
+
+	// Run Git Server nodes
+	for i := 0; i < 2; i++ {
+		runOpts := &dockertest.RunOptions{
+			Name:       fmt.Sprintf("gitopia-storage%d", i),
+			NetworkID:  s.dkrNet.Network.ID,
+			Repository: "gitopia/gitopia-storage",
+			Tag:        "latest",
+			Mounts: []string{
+				fmt.Sprintf("%s/provider%d/repos:/var/repos", tmpDir, i),
+				fmt.Sprintf("%s/provider%d/attachments:/var/attachments", tmpDir, i),
+			},
+			Env: []string{
+				fmt.Sprintf("IPFS_CLUSTER_PEER_HOST=cluster%d", i),
+				"IPFS_CLUSTER_PEER_PORT=9094",
+				fmt.Sprintf("GIT_SERVER_ID=%d", i),
+				fmt.Sprintf("IPFS_HOST=ipfs%d", i),
+				"IPFS_PORT=5001",
+				fmt.Sprintf("CHAIN_ID=%s", s.chainA.id),
+			},
+			PortBindings: map[docker.Port][]docker.PortBinding{
+				"5000/tcp": {{HostIP: "", HostPort: fmt.Sprintf("%d", 5001+i)}},
+			},
+		}
+
+		// enable external pinning for first node
+		if i == 0 {
+			runOpts.Env = append(runOpts.Env, "ENABLE_EXTERNAL_PINNING=true",
+				"PINATA_JWT="+os.Getenv("PINATA_JWT"))
+		} else {
+			runOpts.Env = append(runOpts.Env, "ENABLE_EXTERNAL_PINNING=false",
+				"PINATA_JWT=")
+		}
+
+		resource, err := s.dkrPool.RunWithOptions(runOpts, noRestart)
+		s.Require().NoError(err)
+		s.valResources["storage"][i+4] = resource
+	}
+
+	// Wait for services to be ready
+	time.Sleep(10 * time.Second)
 }

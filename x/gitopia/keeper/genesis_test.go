@@ -3,10 +3,10 @@ package keeper_test
 import (
 	"testing"
 
-	keepertest "github.com/gitopia/gitopia/v5/testutil/keeper"
-	"github.com/gitopia/gitopia/v5/testutil/sample"
-	"github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	keepertest "github.com/gitopia/gitopia/v6/testutil/keeper"
+	"github.com/gitopia/gitopia/v6/testutil/sample"
+	"github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -198,19 +198,6 @@ func TestGenesis(t *testing.T) {
 		},
 		TagCount: 2,
 
-		MemberList: []types.Member{
-			{
-				Id:         0,
-				Address:    sample.AccAddress(),
-				DaoAddress: sample.AccAddress(),
-			},
-			{
-				Id:         1,
-				Address:    sample.AccAddress(),
-				DaoAddress: sample.AccAddress(),
-			},
-		},
-		MemberCount: 2,
 		BountyList: []types.Bounty{
 			{
 				Id: 0,
@@ -273,9 +260,6 @@ func TestGenesis(t *testing.T) {
 
 	require.ElementsMatch(t, genesisState.TagList, got.TagList)
 	require.Equal(t, genesisState.TagCount, got.TagCount)
-
-	require.ElementsMatch(t, genesisState.MemberList, got.MemberList)
-	require.Equal(t, genesisState.MemberCount, got.MemberCount)
 
 	require.ElementsMatch(t, genesisState.BountyList, got.BountyList)
 	require.Equal(t, genesisState.BountyCount, got.BountyCount)

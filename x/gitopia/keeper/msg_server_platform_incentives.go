@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 func (k msgServer) DistributePlatformIncentives(goCtx context.Context, req *types.MsgDistributePlatformIncentives) (*types.MsgDistributePlatformIncentivesResponse, error) {

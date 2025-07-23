@@ -1,0 +1,268 @@
+syntax = "proto3";
+package gitopia.gitopia.storage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gitopia/gitopia/storage/types.proto";
+import "gitopia/gitopia/storage/params.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "amino/amino.proto";
+
+option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
+
+// Msg defines the Msg service.
+service Msg {
+  // RegisterProvider registers a new storage provider
+  rpc RegisterProvider(MsgRegisterProvider) returns (MsgRegisterProviderResponse);
+
+  // UpdateProvider updates a storage provider
+  rpc UpdateProvider(MsgUpdateProvider) returns (MsgUpdateProviderResponse);
+  
+  // UpdateRepositoryPackfile updates repository packfile CID and root hash
+  rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
+
+  // DeleteRepositoryPackfile deletes repository packfile
+  rpc DeleteRepositoryPackfile(MsgDeleteRepositoryPackfile) returns (MsgDeleteRepositoryPackfileResponse);
+
+  // UpdateReleaseAsset updates release asset
+  rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
+  
+
+  // DeleteReleaseAsset deletes release asset
+  rpc DeleteReleaseAsset(MsgDeleteReleaseAsset) returns (MsgDeleteReleaseAssetResponse);
+  
+  // SubmitChallengeResponse submits proof for storage challenge
+  rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
+
+  // WithdrawProviderRewards withdraws accumulated rewards for a provider
+  rpc WithdrawProviderRewards(MsgWithdrawProviderRewards) returns (MsgWithdrawProviderRewardsResponse);
+
+  // UnregisterProvider initiates the process of leaving the storage network
+  rpc UnregisterProvider(MsgUnregisterProvider) returns (MsgUnregisterProviderResponse);
+
+  // CompleteUnstake completes the unstaking process after the cooldown period
+  rpc CompleteUnstake(MsgCompleteUnstake) returns (MsgCompleteUnstakeResponse);
+
+  // IncreaseStake increases the stake of a storage provider
+  rpc IncreaseStake(MsgIncreaseStake) returns (MsgIncreaseStakeResponse);
+
+  // DecreaseStake decreases the stake of a storage provider with cooldown
+  rpc DecreaseStake(MsgDecreaseStake) returns (MsgDecreaseStakeResponse);
+
+  // CompleteDecreaseStake completes the stake decrease after cooldown period
+  rpc CompleteDecreaseStake(MsgCompleteDecreaseStake) returns (MsgCompleteDecreaseStakeResponse);
+
+  // ReactivateProvider reactivates a suspended provider
+  rpc ReactivateProvider(MsgReactivateProvider) returns (MsgReactivateProviderResponse);
+
+  // UpdateParams updates the parameters of the storage module
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+
+  // MergePullRequest merges a pull request
+  rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
+
+  // UpdateLFSObject updates an existing LFS object
+  rpc UpdateLFSObject(MsgUpdateLFSObject) returns (MsgUpdateLFSObjectResponse);
+
+  // DeleteLFSObject deletes an LFS object
+  rpc DeleteLFSObject(MsgDeleteLFSObject) returns (MsgDeleteLFSObjectResponse);
+}
+
+// MsgRegisterProvider defines a message for registering as a storage provider
+message MsgRegisterProvider {
+  string creator = 1;
+  string api_url = 2;
+  string moniker = 3;
+  cosmos.base.v1beta1.Coin stake = 4 [(gogoproto.nullable) = false];
+  string ipfs_cluster_peer_multiaddr = 5;
+}
+
+message MsgRegisterProviderResponse {}
+
+// MsgUpdateProvider defines a message for updating a storage provider
+message MsgUpdateProvider {
+  string creator = 1;
+  string api_url = 2;
+  string moniker = 3;
+  string ipfs_cluster_peer_multiaddr = 4;
+}
+
+message MsgUpdateProviderResponse {}
+
+// MsgUpdateRepositoryPackfile defines a message for updating repository packfile
+message MsgUpdateRepositoryPackfile {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string name = 3;
+  string cid = 4;
+  bytes root_hash = 5;
+  uint64 size = 6;
+}
+
+message MsgUpdateRepositoryPackfileResponse {}
+
+// MsgDeleteRepositoryPackfile defines a message for deleting repository packfile
+message MsgDeleteRepositoryPackfile {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string owner_id = 3;
+}
+
+message MsgDeleteRepositoryPackfileResponse {}
+
+// MsgUpdateReleaseAsset defines a message for updating release asset
+message MsgUpdateReleaseAsset {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
+  string cid = 5;
+  bytes root_hash = 6;
+  uint64 size = 7;
+  string sha256 = 8;
+}
+
+message MsgUpdateReleaseAssetResponse {}
+
+// MsgDeleteReleaseAsset defines a message for deleting release asset
+message MsgDeleteReleaseAsset {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  string name = 4;
+  string owner_id = 5;
+}
+
+message MsgDeleteReleaseAssetResponse {}
+
+// MsgSubmitChallengeResponse defines a message for submitting challenge response
+message MsgSubmitChallengeResponse {
+  string creator = 1;
+  uint64 challenge_id = 2;
+  bytes data = 3;
+  Proof proof = 4;
+}
+
+message MsgSubmitChallengeResponseResponse {}
+
+// MsgWithdrawProviderRewards defines a message for withdrawing provider rewards
+message MsgWithdrawProviderRewards {
+  string creator = 1;
+}
+
+message MsgWithdrawProviderRewardsResponse {
+  repeated cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
+}
+
+// MsgUnregisterProvider defines a message for initiating the unregistration process
+message MsgUnregisterProvider {
+  string creator = 1;
+}
+
+message MsgUnregisterProviderResponse {
+  google.protobuf.Timestamp unstake_completion_time = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// MsgCompleteUnstake defines a message for completing the unstaking process
+message MsgCompleteUnstake {
+  string creator = 1;
+}
+
+message MsgCompleteUnstakeResponse {
+  repeated cosmos.base.v1beta1.Coin amount = 1 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgIncreaseStake defines a message for increasing provider stake
+message MsgIncreaseStake {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgIncreaseStakeResponse {}
+
+// MsgDecreaseStake defines a message for decreasing provider stake
+message MsgDecreaseStake {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgDecreaseStakeResponse {
+  google.protobuf.Timestamp completion_time = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// MsgCompleteDecreaseStake defines a message for completing the stake decrease process
+message MsgCompleteDecreaseStake {
+  string creator = 1;
+}
+
+message MsgCompleteDecreaseStakeResponse {
+  cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
+}
+
+// MsgReactivateProvider defines a message for reactivating a suspended provider
+message MsgReactivateProvider {
+  string creator = 1;
+}
+
+message MsgReactivateProviderResponse {}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name)           = "storage/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // params defines the x/storage parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message MsgUpdateParamsResponse {}
+
+// MsgMergePullRequest defines a message for merging a pull request
+message MsgMergePullRequest {
+  string creator = 1;
+  uint64 repository_id = 2;
+  uint64 pull_request_iid = 3;
+  string merge_commit_sha = 4;
+  uint64 task_id = 5;
+}
+
+message MsgMergePullRequestResponse {
+}
+
+// MsgUpdateLFSObject defines a message for updating an LFS object
+message MsgUpdateLFSObject {
+  string creator = 1;
+  uint64 id = 2;
+  uint64 repository_id = 3;
+  string oid = 4;
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+}
+
+message MsgUpdateLFSObjectResponse {}
+
+// MsgDeleteLFSObject defines a message for deleting an LFS object
+message MsgDeleteLFSObject {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+  string owner_id = 4;
+}
+
+message MsgDeleteLFSObjectResponse {}

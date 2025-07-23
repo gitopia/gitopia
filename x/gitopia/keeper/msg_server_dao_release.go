@@ -9,8 +9,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
-	"github.com/gitopia/gitopia/v5/x/gitopia/utils"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/utils"
 )
 
 func (k msgServer) DaoCreateRelease(goCtx context.Context, msg *types.MsgDaoCreateRelease) (*types.MsgDaoCreateReleaseResponse, error) {
@@ -103,12 +103,14 @@ func (k msgServer) DaoCreateRelease(goCtx context.Context, msg *types.MsgDaoCrea
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.DaoCreateReleaseEventKey),
 			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(release.RepositoryId, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, repository.Owner.Id),
 			sdk.NewAttribute(types.EventAttributeReleaseIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeReleaseTagNameKey, release.TagName),
 			sdk.NewAttribute(types.EventAttributeReleaseNameKey, release.Name),
 			sdk.NewAttribute(types.EventAttributeReleaseDescriptionKey, release.Description),
 			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
 			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
+			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(release.CreatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(release.UpdatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributePublishedAtKey, strconv.FormatInt(release.PublishedAt, 10)),

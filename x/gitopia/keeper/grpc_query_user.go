@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -111,4 +111,24 @@ func (k Keeper) AnyRepository(c context.Context, req *types.QueryGetAnyRepositor
 	}
 
 	return &types.QueryGetAnyRepositoryResponse{Repository: &repository}, nil
+}
+
+func (k Keeper) UserQuota(c context.Context, req *types.QueryUserQuotaRequest) (*types.QueryUserQuotaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	userQuota, found := k.GetUserQuota(ctx, req.Address)
+	if !found {
+		// Return zero storage used if user not found
+		userQuota = types.UserQuota{
+			Address:     req.Address,
+			StorageUsed: 0,
+		}
+		return &types.QueryUserQuotaResponse{UserQuota: userQuota}, nil
+	}
+
+	return &types.QueryUserQuotaResponse{UserQuota: userQuota}, nil
 }

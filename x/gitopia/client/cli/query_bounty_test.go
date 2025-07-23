@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gitopia/gitopia/v5/testutil/network"
-	"github.com/gitopia/gitopia/v5/testutil/nullify"
-	"github.com/gitopia/gitopia/v5/x/gitopia/client/cli"
-	"github.com/gitopia/gitopia/v5/x/gitopia/types"
+	"github.com/gitopia/gitopia/v6/testutil/network"
+	"github.com/gitopia/gitopia/v6/testutil/nullify"
+	"github.com/gitopia/gitopia/v6/x/gitopia/client/cli"
+	"github.com/gitopia/gitopia/v6/x/gitopia/types"
 )
 
 func networkWithBountyObjects(t *testing.T, n int) (*network.Network, []types.Bounty) {

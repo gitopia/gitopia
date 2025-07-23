@@ -45,10 +45,12 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	gitopiakeeper "github.com/gitopia/gitopia/v5/x/gitopia/keeper"
-	gitopiatypes "github.com/gitopia/gitopia/v5/x/gitopia/types"
-	rewardskeeper "github.com/gitopia/gitopia/v5/x/rewards/keeper"
-	rewardtypes "github.com/gitopia/gitopia/v5/x/rewards/types"
+	gitopiakeeper "github.com/gitopia/gitopia/v6/x/gitopia/keeper"
+	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
+	rewardskeeper "github.com/gitopia/gitopia/v6/x/rewards/keeper"
+	rewardtypes "github.com/gitopia/gitopia/v6/x/rewards/types"
+	storagekeeper "github.com/gitopia/gitopia/v6/x/storage/keeper"
+	storagetypes "github.com/gitopia/gitopia/v6/x/storage/types"
 
 	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
@@ -99,7 +101,7 @@ type AppKeepers struct {
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	GitopiaKeeper         gitopiakeeper.Keeper
 	RewardKeeper          rewardskeeper.Keeper
-
+	StorageKeeper         storagekeeper.Keeper
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
@@ -378,6 +380,16 @@ func NewAppKeeper(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
+	appKeepers.StorageKeeper = storagekeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[storagetypes.StoreKey],
+		appKeepers.keys[storagetypes.MemStoreKey],
+		appKeepers.AccountKeeper,
+		appKeepers.BankKeeper,
+		&appKeepers.GitopiaKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
 	return appKeepers
 }
 
@@ -408,6 +420,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 
 	paramsKeeper.Subspace(gitopiatypes.ModuleName)
 	paramsKeeper.Subspace(rewardtypes.ModuleName)
+	paramsKeeper.Subspace(storagetypes.ModuleName)
 
 	return paramsKeeper
 }
