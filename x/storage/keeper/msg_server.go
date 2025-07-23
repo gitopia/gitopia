@@ -605,7 +605,6 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 
 			// Reset consecutive failures
 			provider.ConsecutiveFailures = 0
-			k.SetProvider(ctx, provider)
 
 			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
 
