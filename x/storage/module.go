@@ -238,8 +238,6 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		am.keeper.SetChallenge(ctx, challenge)
-
-		ctx.Logger().Info(fmt.Sprintf("provider %s failed challenge %d", provider.Creator, challenge.Id))
 	}
 
 	return []abci.ValidatorUpdate{}
