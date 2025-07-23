@@ -106,6 +106,22 @@ service Query {
   rpc LFSObjectByRepositoryIdAndOid(QueryLFSObjectByRepositoryIdAndOidRequest) returns (QueryLFSObjectByRepositoryIdAndOidResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/repository/{repository_id}/lfs-object/{oid}";
   }
+
+  rpc ProviderStake(QueryProviderStakeRequest) returns (QueryProviderStakeResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-stake/{address}";
+  }
+
+  rpc ProviderStakes(QueryProviderStakesRequest) returns (QueryProviderStakesResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-stakes";
+  }
+
+  rpc ProviderRewards(QueryProviderRewardsRequest) returns (QueryProviderRewardsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards/{address}";
+  }
+
+  rpc ProviderRewardsAll(QueryProviderRewardsAllRequest) returns (QueryProviderRewardsAllResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards-all";
+  }
 }
 
 message QueryParamsRequest {}
@@ -280,4 +296,38 @@ message QueryLFSObjectByRepositoryIdAndOidRequest {
 
 message QueryLFSObjectByRepositoryIdAndOidResponse {
   LFSObject lfs_object = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderRewardsAllRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProviderRewardsAllResponse {
+  repeated ProviderRewards provider_rewards = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryProviderRewardsRequest {
+  string address = 1;
+}
+
+message QueryProviderRewardsResponse {
+  ProviderRewards provider_rewards = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderStakeRequest {
+  string address = 1;
+}
+
+message QueryProviderStakeResponse {
+  ProviderStake provider_stake = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProviderStakesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProviderStakesResponse {
+  repeated ProviderStake provider_stakes = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

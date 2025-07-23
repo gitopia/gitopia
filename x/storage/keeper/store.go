@@ -10,7 +10,7 @@ func (k Keeper) GetProviderRewards(ctx sdk.Context, provider sdk.AccAddress) (re
 	store := ctx.KVStore(k.storeKey)
 	b := store.Get(types.GetProviderRewardsKey(provider))
 	if b == nil {
-		return types.ProviderRewards{}
+		return types.ProviderRewards{Provider: provider.String(), Rewards: sdk.NewDecCoins()}
 	}
 	k.cdc.MustUnmarshal(b, &rewards)
 	return
@@ -22,7 +22,7 @@ func (k Keeper) SetProviderRewards(ctx sdk.Context, provider sdk.AccAddress, rew
 
 	store := ctx.KVStore(k.storeKey)
 	if rewards.Rewards.IsZero() {
-		bz = k.cdc.MustMarshal(&types.ProviderRewards{})
+		bz = k.cdc.MustMarshal(&types.ProviderRewards{Provider: provider.String(), Rewards: sdk.NewDecCoins()})
 	} else {
 		bz = k.cdc.MustMarshal(&rewards)
 	}
@@ -56,7 +56,7 @@ func (k Keeper) GetProviderStake(ctx sdk.Context, provider sdk.AccAddress) (stak
 	store := ctx.KVStore(k.storeKey)
 	b := store.Get(types.GetProviderStakeKey(provider))
 	if b == nil {
-		return types.ProviderStake{Stake: sdk.NewCoins()}
+		return types.ProviderStake{Provider: provider.String(), Stake: sdk.NewCoins()}
 	}
 	k.cdc.MustUnmarshal(b, &stake)
 	return
@@ -68,7 +68,7 @@ func (k Keeper) SetProviderStake(ctx sdk.Context, provider sdk.AccAddress, stake
 
 	store := ctx.KVStore(k.storeKey)
 	if stake.Stake.IsZero() {
-		bz = k.cdc.MustMarshal(&types.ProviderStake{Stake: sdk.NewCoins()})
+		bz = k.cdc.MustMarshal(&types.ProviderStake{Provider: provider.String(), Stake: sdk.NewCoins()})
 	} else {
 		bz = k.cdc.MustMarshal(&stake)
 	}

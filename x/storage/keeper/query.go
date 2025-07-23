@@ -412,3 +412,58 @@ func (k Keeper) LFSObjectByRepositoryIdAndOid(goCtx context.Context, req *types.
 	}
 	return &types.QueryLFSObjectByRepositoryIdAndOidResponse{LfsObject: lfsObj}, nil
 }
+
+// ProviderRewardsAll returns all provider rewards
+func (k Keeper) ProviderRewardsAll(goCtx context.Context, req *types.QueryProviderRewardsAllRequest) (*types.QueryProviderRewardsAllResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var providerRewards []types.ProviderRewards
+	k.IterateProviderRewards(ctx, func(provider sdk.AccAddress, rewards types.ProviderRewards) (stop bool) {
+		providerRewards = append(providerRewards, rewards)
+		return false
+	})
+
+	return &types.QueryProviderRewardsAllResponse{ProviderRewards: providerRewards}, nil
+}
+
+// ProviderRewards returns a provider rewards by address
+func (k Keeper) ProviderRewards(goCtx context.Context, req *types.QueryProviderRewardsRequest) (*types.QueryProviderRewardsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	providerAcc, _ := sdk.AccAddressFromBech32(req.Address)
+	providerRewards := k.GetProviderRewards(ctx, providerAcc)
+	return &types.QueryProviderRewardsResponse{ProviderRewards: providerRewards}, nil
+}
+
+// ProviderStake returns a provider stake by address
+func (k Keeper) ProviderStake(goCtx context.Context, req *types.QueryProviderStakeRequest) (*types.QueryProviderStakeResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	providerAcc, _ := sdk.AccAddressFromBech32(req.Address)
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+	return &types.QueryProviderStakeResponse{ProviderStake: providerStake}, nil
+}
+
+// ProviderStakes returns all provider stakes
+func (k Keeper) ProviderStakes(goCtx context.Context, req *types.QueryProviderStakesRequest) (*types.QueryProviderStakesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var providerStakes []types.ProviderStake
+	k.IterateProviderStakes(ctx, func(provider sdk.AccAddress, stake types.ProviderStake) (stop bool) {
+		providerStakes = append(providerStakes, stake)
+		return false
+	})
+	return &types.QueryProviderStakesResponse{ProviderStakes: providerStakes}, nil
+}

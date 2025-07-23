@@ -154,7 +154,8 @@ message BlockInfo {
 
 // ProviderStake represents the stake of a provider
 message ProviderStake {
-  repeated cosmos.base.v1beta1.Coin stake = 1 [
+  string provider = 1;
+  repeated cosmos.base.v1beta1.Coin stake = 2 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.nullable)     = false,
     (amino.dont_omitempty)   = true
@@ -163,7 +164,8 @@ message ProviderStake {
 
 // ProviderRewards represents rewards for a provider
 message ProviderRewards {
-  repeated cosmos.base.v1beta1.DecCoin rewards = 1 [
+  string provider = 1;
+  repeated cosmos.base.v1beta1.DecCoin rewards = 2 [
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.DecCoins",
     (gogoproto.nullable)     = false,
     (amino.dont_omitempty)   = true
