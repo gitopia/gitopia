@@ -230,6 +230,8 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
 				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
 			})
+
+			ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for no challenge response", provider.Creator, slashAmountCoins.String()))
 		}
 
 		am.keeper.SetProvider(ctx, provider)

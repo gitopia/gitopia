@@ -625,6 +625,8 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 				Provider: provider.Creator,
 				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
 			})
+
+			ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for invalid proof", provider.Creator, slashAmountCoins.String()))
 		}
 
 		k.SetProvider(ctx, provider)
