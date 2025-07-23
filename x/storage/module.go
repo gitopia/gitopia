@@ -17,6 +17,7 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	appparams "github.com/gitopia/gitopia/v6/app/params"
 	"github.com/gitopia/gitopia/v6/x/storage/client/cli"
 	"github.com/gitopia/gitopia/v6/x/storage/keeper"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
@@ -191,23 +192,29 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
 			// Suspend the provider
 			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-			
+
 			// Apply percentage-based slash for consecutive failures
-			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
+			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
+			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
+			stakeAmount := providerStake.Stake.AmountOf(appparams.BaseCoinUnit)
+			dec := sdk.NewDec(int64(stakeAmount.Int64()))
 			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
-			
+			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
+
 			// Transfer slashed amount to slash account
-			am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
-			
+			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
+			am.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+
 			// Update provider stake
-			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
-			
+			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
+				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
+			})
+
 			// Reset consecutive failures
 			provider.ConsecutiveFailures = 0
-			
+
 			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-			
+
 			// Emit suspension event
 			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
 				Address: provider.Creator,
@@ -216,12 +223,15 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		} else {
 			// Apply regular challenge failure slash
 			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			am.bankKeeper.SendCoinsFromAccountToModule(ctx, keeper.ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
-			
+			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
+			am.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+
 			// Update provider stake
-			if len(slashAmountCoins) > 0 {
-				provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
-			}
+			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
+			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
+			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
+				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
+			})
 		}
 
 		am.keeper.SetProvider(ctx, provider)

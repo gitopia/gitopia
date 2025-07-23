@@ -4,6 +4,7 @@ package gitopia.gitopia.storage;
 import "google/protobuf/timestamp.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "amino/amino.proto";
 
 option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
 
@@ -80,7 +81,11 @@ message EventProviderUnregistered {
 // EventProviderUnstakeCompleted is emitted when a provider's unstaking is completed
 message EventProviderUnstakeCompleted {
   string address = 1;
-  cosmos.base.v1beta1.Coin amount = 2 [(gogoproto.nullable) = false];
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }
 
 // EventMergePullRequest is emitted when a pull request is merged

@@ -184,6 +184,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appCodec,
 		keys[types.StoreKey],
 		mkeys[types.MemStoreKey],
+		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
 		&appKeepers.GitopiaKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),

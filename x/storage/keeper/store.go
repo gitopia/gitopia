@@ -50,3 +50,49 @@ func (k Keeper) IterateProviderRewards(ctx sdk.Context, handler func(provider sd
 		}
 	}
 }
+
+// GetProviderStake gets the stake for a provider
+func (k Keeper) GetProviderStake(ctx sdk.Context, provider sdk.AccAddress) (stake types.ProviderStake) {
+	store := ctx.KVStore(k.storeKey)
+	b := store.Get(types.GetProviderStakeKey(provider))
+	if b == nil {
+		return types.ProviderStake{Stake: sdk.NewCoins()}
+	}
+	k.cdc.MustUnmarshal(b, &stake)
+	return
+}
+
+// SetProviderStake sets the stake for a provider
+func (k Keeper) SetProviderStake(ctx sdk.Context, provider sdk.AccAddress, stake types.ProviderStake) {
+	var bz []byte
+
+	store := ctx.KVStore(k.storeKey)
+	if stake.Stake.IsZero() {
+		bz = k.cdc.MustMarshal(&types.ProviderStake{Stake: sdk.NewCoins()})
+	} else {
+		bz = k.cdc.MustMarshal(&stake)
+	}
+
+	store.Set(types.GetProviderStakeKey(provider), bz)
+}
+
+// DeleteProviderStake deletes the stake for a provider
+func (k Keeper) DeleteProviderStake(ctx sdk.Context, provider sdk.AccAddress) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.GetProviderStakeKey(provider))
+}
+
+// IterateProviderStakes iterates over all provider stakes
+func (k Keeper) IterateProviderStakes(ctx sdk.Context, handler func(provider sdk.AccAddress, stake types.ProviderStake) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iter := sdk.KVStorePrefixIterator(store, types.ProviderStakePrefix)
+	defer iter.Close()
+	for ; iter.Valid(); iter.Next() {
+		var stake types.ProviderStake
+		k.cdc.MustUnmarshal(iter.Value(), &stake)
+		provider := types.GetProviderStakeAddress(iter.Key())
+		if handler(provider, stake) {
+			break
+		}
+	}
+}

@@ -20,6 +20,7 @@ type (
 		memKey        storetypes.StoreKey
 		bankKeeper    bankkeeper.Keeper
 		gitopiaKeeper *gitopiakeeper.Keeper
+		accountKeeper types.AccountKeeper
 
 		// the address capable of executing a MsgUpdateParams message. Typically, this
 		// should be the x/gov module account.
@@ -31,10 +32,29 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey storetypes.StoreKey,
+	accountKeeper types.AccountKeeper,
 	bankKeeper bankkeeper.Keeper,
 	gitopiaKeeper *gitopiakeeper.Keeper,
 	authority string,
 ) Keeper {
+
+	if addr := accountKeeper.GetModuleAddress(types.StorageBondedPoolName); addr == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.StorageBondedPoolName))
+	}
+
+	if addr := accountKeeper.GetModuleAddress(types.StorageFeePoolName); addr == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.StorageFeePoolName))
+	}
+
+	if addr := accountKeeper.GetModuleAddress(types.ChallengeSlashPoolName); addr == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ChallengeSlashPoolName))
+	}
+
+	// ensure that authority is a valid AccAddress
+	if _, err := sdk.AccAddressFromBech32(authority); err != nil {
+		panic("authority is not a valid acc address")
+	}
+
 	return Keeper{
 		cdc:           cdc,
 		storeKey:      storeKey,

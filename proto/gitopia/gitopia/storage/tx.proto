@@ -174,7 +174,11 @@ message MsgCompleteUnstake {
 }
 
 message MsgCompleteUnstakeResponse {
-  cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
+  repeated cosmos.base.v1beta1.Coin amount = 1 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }
 
 // MsgIncreaseStake defines a message for increasing provider stake

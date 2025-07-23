@@ -384,6 +384,7 @@ func NewAppKeeper(
 		appCodec,
 		appKeepers.keys[storagetypes.StoreKey],
 		appKeepers.keys[storagetypes.MemStoreKey],
+		appKeepers.AccountKeeper,
 		appKeepers.BankKeeper,
 		&appKeepers.GitopiaKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),

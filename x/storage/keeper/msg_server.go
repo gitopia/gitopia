@@ -7,10 +7,11 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	merkletree "github.com/wealdtech/go-merkletree/v2"
 	"github.com/wealdtech/go-merkletree/v2/sha3"
 
-	"github.com/cosmos/cosmos-sdk/types/address"
+	appparams "github.com/gitopia/gitopia/v6/app/params"
 	"github.com/gitopia/gitopia/v6/utils"
 	gitopiakeeper "github.com/gitopia/gitopia/v6/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
@@ -31,12 +32,6 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 }
 
 var _ types.MsgServer = msgServer{}
-
-// ProviderModuleAddress creates a unique module account address for a provider
-func ProviderModuleAddress(providerId uint64) sdk.AccAddress {
-	key := append([]byte("provider"), sdk.Uint64ToBigEndian(providerId)...)
-	return address.Module(types.ModuleName, key)
-}
 
 func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegisterProvider) (*types.MsgRegisterProviderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -59,8 +54,10 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		return nil, fmt.Errorf("stake amount must be greater than the minimum stake amount")
 	}
 
-	// Create module account for the provider
-	providerAcc := ProviderModuleAddress(k.GetProviderCount(ctx))
+	bondedPoolAcc := k.accountKeeper.GetModuleAccount(ctx, types.StorageBondedPoolName)
+	if bondedPoolAcc == nil {
+		panic(sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "module account %s does not exist", types.StorageBondedPoolName))
+	}
 
 	// Transfer stake from provider to module account
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -71,17 +68,18 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 	if err := k.bankKeeper.SendCoins(
 		ctx,
 		creator,
-		providerAcc,
+		bondedPoolAcc.GetAddress(),
 		sdk.NewCoins(msg.Stake),
 	); err != nil {
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
+	k.SetProviderStake(ctx, creator, types.ProviderStake{Stake: sdk.NewCoins(msg.Stake)})
+
 	provider := types.Provider{
 		Creator:                  msg.Creator,
 		ApiUrl:                   msg.ApiUrl,
 		Moniker:                  msg.Moniker,
-		Stake:                    msg.Stake,
 		TotalChallenges:          0,
 		SuccessfulChallenges:     0,
 		ConsecutiveFailures:      0,
@@ -194,7 +192,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -242,7 +240,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -390,7 +388,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -436,7 +434,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -586,15 +584,21 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
 
 			// Apply percentage-based slash for consecutive failures
-			dec := sdk.NewDec(int64(provider.Stake.Amount.Int64()))
+			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
+			stake := k.GetProviderStake(ctx, providerAcc)
+			stakeAmount := stake.Stake.AmountOf(appparams.BaseCoinUnit)
+			dec := sdk.NewDec(int64(stakeAmount.Int64()))
 			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(provider.Stake.Denom, slashAmount.TruncateInt()))
+			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
 
 			// Transfer slashed amount to slash account
-			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
+			k.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
-			provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
+			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
+				Stake: stake.Stake.Sub(slashAmountCoins[0]),
+			})
 
 			// Reset consecutive failures
 			provider.ConsecutiveFailures = 0
@@ -609,12 +613,15 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		} else {
 			// Apply regular challenge failure slash
 			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			k.bankKeeper.SendCoinsFromAccountToModule(ctx, ProviderModuleAddress(provider.Id), types.ChallengeSlashAccountName, slashAmountCoins)
+			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
+			k.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
-			if len(slashAmountCoins) > 0 {
-				provider.Stake = provider.Stake.Sub(slashAmountCoins[0])
-			}
+			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
+			stake := k.GetProviderStake(ctx, providerAcc)
+			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
+				Stake: stake.Stake.Sub(slashAmountCoins[0]),
+			})
 		}
 
 		k.SetProvider(ctx, provider)
@@ -658,11 +665,16 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 func (k msgServer) WithdrawProviderRewards(goCtx context.Context, msg *types.MsgWithdrawProviderRewards) (*types.MsgWithdrawProviderRewardsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	provider, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	providerAcc, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
-	amount, err := k.Keeper.WithdrawProviderRewards(ctx, provider)
+	amount, err := k.Keeper.WithdrawProviderRewards(ctx, providerAcc)
 	if err != nil {
 		return nil, err
 	}
@@ -725,26 +737,26 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 		return nil, fmt.Errorf("unstake cooldown period has not passed yet")
 	}
 
-	// Get provider's module account
-	providerAcc := ProviderModuleAddress(provider.Id)
-
 	// Transfer stake back to provider
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
+	providerAcc, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, fmt.Errorf("invalid creator address: %v", err)
 	}
 
+	stake := k.GetProviderStake(ctx, providerAcc)
+
 	if err := k.bankKeeper.SendCoins(
 		ctx,
+		storageBondedPoolAcc,
 		providerAcc,
-		creator,
-		sdk.NewCoins(provider.Stake),
+		sdk.NewCoins(stake.Stake...),
 	); err != nil {
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
 	// Auto-withdraw any remaining rewards before removing provider to prevent loss
-	remainingRewards, err := k.Keeper.WithdrawProviderRewards(ctx, creator)
+	remainingRewards, err := k.Keeper.WithdrawProviderRewards(ctx, providerAcc)
 	if err != nil && err != types.ErrNoProviderRewards {
 		return nil, fmt.Errorf("failed to withdraw remaining rewards: %v", err)
 	}
@@ -761,11 +773,11 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 	// Emit event
 	ctx.EventManager().EmitTypedEvent(&types.EventProviderUnstakeCompleted{
 		Address: provider.Creator,
-		Amount:  provider.Stake,
+		Amount:  stake.Stake,
 	})
 
 	return &types.MsgCompleteUnstakeResponse{
-		Amount: provider.Stake,
+		Amount: stake.Stake,
 	}, nil
 }
 
@@ -1011,7 +1023,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 				return nil, fmt.Errorf("invalid user address: %v", err)
 			}
 
-			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageChargeAccountName, sdk.NewCoins(charge)); err != nil {
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
 				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 			}
 		}
@@ -1119,19 +1131,20 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 		return nil, fmt.Errorf("invalid creator address: %v", err)
 	}
 
-	providerAcc := ProviderModuleAddress(provider.Id)
+	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
 	if err := k.bankKeeper.SendCoins(
 		ctx,
 		creator,
-		providerAcc,
+		storageBondedPoolAcc,
 		sdk.NewCoins(msg.Amount),
 	); err != nil {
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
 	// Update provider stake
-	provider.Stake = provider.Stake.Add(msg.Amount)
-	k.SetProvider(ctx, provider)
+	providerStake := k.GetProviderStake(ctx, creator)
+	providerStake.Stake = providerStake.Stake.Add(msg.Amount)
+	k.SetProviderStake(ctx, creator, providerStake)
 
 	// Emit event
 	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
@@ -1139,7 +1152,7 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 		Online:  true,
 	})
 
-	ctx.Logger().Info(fmt.Sprintf("provider %s increased stake by %s, new total: %s", provider.Creator, msg.Amount.String(), provider.Stake.String()))
+	ctx.Logger().Info(fmt.Sprintf("provider %s increased stake by %s, new total: %s", provider.Creator, msg.Amount.String(), providerStake.Stake.String()))
 
 	return &types.MsgIncreaseStakeResponse{}, nil
 }
@@ -1170,8 +1183,12 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 
 	// Check minimum stake requirement
 	params := k.GetParams(ctx)
-	newStakeAmount := provider.Stake.Sub(msg.Amount)
-	if newStakeAmount.Amount.Uint64() < params.MinStakeAmount {
+
+	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+
+	newStakeAmount := providerStake.Stake.Sub(msg.Amount)
+	if newStakeAmount.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
 		return nil, fmt.Errorf("resulting stake would be below minimum stake amount")
 	}
 
@@ -1211,7 +1228,9 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 
 	// Check if provider still meets minimum stake requirement
 	params := k.GetParams(ctx)
-	if provider.Stake.Amount.Uint64() < params.MinStakeAmount {
+	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
 		return nil, fmt.Errorf("provider stake is below minimum requirement, increase stake first")
 	}
 
@@ -1261,26 +1280,28 @@ func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCo
 		return nil, fmt.Errorf("no pending decrease amount found")
 	}
 
-	// Get provider's module account
-	providerAcc := ProviderModuleAddress(provider.Id)
+	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
 
 	// Transfer decreased stake back to provider
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	providerAcc, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, fmt.Errorf("invalid creator address: %v", err)
 	}
 
 	if err := k.bankKeeper.SendCoins(
 		ctx,
+		storageBondedPoolAcc,
 		providerAcc,
-		creator,
 		sdk.NewCoins(*provider.PendingDecreaseAmount),
 	); err != nil {
 		return nil, fmt.Errorf("failed to transfer decreased stake: %v", err)
 	}
 
 	// Update provider stake and clear pending decrease
-	provider.Stake = provider.Stake.Sub(*provider.PendingDecreaseAmount)
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+	providerStake.Stake = providerStake.Stake.Sub(*provider.PendingDecreaseAmount)
+	k.SetProviderStake(ctx, providerAcc, providerStake)
+
 	decreaseAmount := *provider.PendingDecreaseAmount
 	provider.PendingDecreaseAmount = nil
 	provider.DecreaseCompletionTime = nil
@@ -1293,7 +1314,7 @@ func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCo
 		Online:  true,
 	})
 
-	ctx.Logger().Info(fmt.Sprintf("provider %s completed stake decrease of %s, new stake: %s", provider.Creator, decreaseAmount.String(), provider.Stake.String()))
+	ctx.Logger().Info(fmt.Sprintf("provider %s completed stake decrease of %s, new stake: %s", provider.Creator, decreaseAmount.String(), providerStake.Stake.String()))
 
 	return &types.MsgCompleteDecreaseStakeResponse{
 		Amount: decreaseAmount,
