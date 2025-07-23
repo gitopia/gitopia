@@ -103,14 +103,16 @@ func (k Keeper) WithdrawProviderRewards(ctx sdk.Context, provider sdk.AccAddress
 	}
 
 	amount, remainder := rewards.Rewards.TruncateDecimal()
-	k.SetProviderRewards(ctx, provider, types.ProviderRewards{Rewards: remainder}) // leave remainder to withdraw later
-
 	if !amount.IsZero() {
 		err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, gitopiatypes.EcosystemIncentivesAccountName, provider, amount)
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	// leave remainder to withdraw later
+	rewards.Rewards = remainder
+	k.SetProviderRewards(ctx, provider, rewards)
 
 	return amount, nil
 }
