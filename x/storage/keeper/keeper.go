@@ -59,6 +59,7 @@ func NewKeeper(
 		cdc:           cdc,
 		storeKey:      storeKey,
 		memKey:        memKey,
+		accountKeeper: accountKeeper,
 		bankKeeper:    bankKeeper,
 		gitopiaKeeper: gitopiaKeeper,
 		authority:     authority,
