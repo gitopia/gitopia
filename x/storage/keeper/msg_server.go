@@ -74,7 +74,10 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
 	}
 
-	k.SetProviderStake(ctx, creator, types.ProviderStake{Stake: sdk.NewCoins(msg.Stake)})
+	k.SetProviderStake(ctx, creator, types.ProviderStake{
+		Provider: msg.Creator,
+		Stake:    sdk.NewCoins(msg.Stake),
+	})
 
 	provider := types.Provider{
 		Creator:                  msg.Creator,
@@ -596,7 +599,8 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 
 			// Update provider stake
 			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: stake.Stake.Sub(slashAmountCoins[0]),
+				Provider: provider.Creator,
+				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
 			})
 
 			// Reset consecutive failures
@@ -618,7 +622,8 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
 			stake := k.GetProviderStake(ctx, providerAcc)
 			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: stake.Stake.Sub(slashAmountCoins[0]),
+				Provider: provider.Creator,
+				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
 			})
 		}
 
