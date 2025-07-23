@@ -18,6 +18,7 @@ const (
 	TypeMsgUpdateReleaseAsset       = "update_release_asset"
 	TypeMsgDeleteReleaseAsset       = "delete_release_asset"
 	TypeMsgUpdateParams             = "update_params"
+	TypeMsgClawbackProviderStake    = "clawback_provider_stake"
 	TypeMsgMergePullRequest         = "merge_pull_request"
 	TypeMsgUpdateLFSObject          = "update_lfs_object"
 	TypeMsgDeleteLFSObject          = "delete_lfs_object"
@@ -567,6 +568,50 @@ func (msg *MsgUpdateParams) ValidateBasic() error {
 		return err
 	}
 
+	return nil
+}
+
+var _ sdk.Msg = &MsgClawbackProviderStake{}
+
+func NewMsgClawbackProviderStake(authority, provider string, amount sdk.Coin) *MsgClawbackProviderStake {
+	return &MsgClawbackProviderStake{
+		Authority: authority,
+		Provider:  provider,
+		Amount:    amount,
+	}
+}
+
+func (msg *MsgClawbackProviderStake) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgClawbackProviderStake) Type() string {
+	return TypeMsgClawbackProviderStake
+}
+
+func (msg *MsgClawbackProviderStake) GetSigners() []sdk.AccAddress {
+	authority, err := sdk.AccAddressFromBech32(msg.Authority)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{authority}
+}
+
+func (msg *MsgClawbackProviderStake) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgClawbackProviderStake) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(msg.Authority); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid authority address (%s)", err)
+	}
+	if _, err := sdk.AccAddressFromBech32(msg.Provider); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid provider address (%s)", err)
+	}
+	if !msg.Amount.IsValid() || msg.Amount.IsZero() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid clawback amount")
+	}
 	return nil
 }
 

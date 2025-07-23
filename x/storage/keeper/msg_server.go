@@ -798,6 +798,62 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	return &types.MsgUpdateParamsResponse{}, nil
 }
 
+func (k msgServer) ClawbackProviderStake(goCtx context.Context, msg *types.MsgClawbackProviderStake) (*types.MsgClawbackProviderStakeResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check authority
+	if k.authority != msg.Authority {
+		return nil, fmt.Errorf("invalid authority; expected %s, got %s", k.authority, msg.Authority)
+	}
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Provider)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Get provider's stake
+	providerAcc, err := sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return nil, fmt.Errorf("invalid provider address: %v", err)
+	}
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+
+	// Validate clawback amount
+	if msg.Amount.Amount.GT(providerStake.Stake.AmountOf(msg.Amount.Denom)) {
+		return nil, fmt.Errorf("clawback amount %s exceeds provider's stake %s", msg.Amount, providerStake.Stake)
+	}
+
+	// Transfer funds from bonded pool to slash pool
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, sdk.NewCoins(msg.Amount))
+	if err != nil {
+		return nil, err
+	}
+
+	// Update provider's stake in the state
+	providerStake.Stake = providerStake.Stake.Sub(msg.Amount)
+	k.SetProviderStake(ctx, providerAcc, providerStake)
+
+	// Check if stake has fallen below minimum and suspend provider if necessary
+	params := k.GetParams(ctx)
+	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
+		if provider.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
+			k.SetProvider(ctx, provider)
+			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to stake falling below minimum after clawback", provider.Creator))
+
+			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+				Address: provider.Creator,
+				Online:  false,
+			})
+		}
+	}
+
+	ctx.Logger().Info(fmt.Sprintf("governance clawed back %s from provider %s. New stake: %s", msg.Amount.String(), msg.Provider, providerStake.Stake.String()))
+
+	return &types.MsgClawbackProviderStakeResponse{}, nil
+}
+
 func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePullRequest) (*types.MsgMergePullRequestResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

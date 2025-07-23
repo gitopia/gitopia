@@ -14,6 +14,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRegisterProvider{}, "storage/RegisterProvider", nil)
 	cdc.RegisterConcrete(&MsgUpdateProvider{}, "storage/UpdateProvider", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "storage/UpdateParams", nil)
+	cdc.RegisterConcrete(&MsgClawbackProviderStake{}, "storage/ClawbackProviderStake", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryPackfile{}, "storage/UpdateRepositoryPackfile", nil)
 	cdc.RegisterConcrete(&MsgDeleteRepositoryPackfile{}, "storage/DeleteRepositoryPackfile", nil)
 	cdc.RegisterConcrete(&MsgSubmitChallengeResponse{}, "storage/SubmitChallengeResponse", nil)
@@ -37,6 +38,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRegisterProvider{},
 		&MsgUpdateProvider{},
 		&MsgUpdateParams{},
+		&MsgClawbackProviderStake{},
 		&MsgUpdateRepositoryPackfile{},
 		&MsgDeleteRepositoryPackfile{},
 		&MsgSubmitChallengeResponse{},

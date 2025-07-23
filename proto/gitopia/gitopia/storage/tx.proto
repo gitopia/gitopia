@@ -60,6 +60,9 @@ service Msg {
   // UpdateParams updates the parameters of the storage module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 
+  // ClawbackProviderStake claws back stake from a provider via a governance proposal
+  rpc ClawbackProviderStake(MsgClawbackProviderStake) returns (MsgClawbackProviderStakeResponse);
+
   // MergePullRequest merges a pull request
   rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
 
@@ -231,6 +234,24 @@ message MsgUpdateParams {
 }
 
 message MsgUpdateParamsResponse {}
+
+// MsgClawbackProviderStake defines a message for clawing back stake from a provider.
+// This is a governance-gated transaction.
+message MsgClawbackProviderStake {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name)           = "storage/MsgClawbackProviderStake";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // provider is the address of the provider whose stake will be clawbacked.
+  string provider = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // amount is the amount of stake to clawback.
+  cosmos.base.v1beta1.Coin amount = 3 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message MsgClawbackProviderStakeResponse {}
 
 // MsgMergePullRequest defines a message for merging a pull request
 message MsgMergePullRequest {
