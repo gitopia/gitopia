@@ -592,8 +592,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
 
 			// Transfer slashed amount to slash account
-			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-			k.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
 			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
@@ -613,8 +612,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		} else {
 			// Apply regular challenge failure slash
 			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-			k.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
 			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
@@ -738,7 +736,6 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 	}
 
 	// Transfer stake back to provider
-	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
 	providerAcc, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, fmt.Errorf("invalid creator address: %v", err)
@@ -746,9 +743,9 @@ func (k msgServer) CompleteUnstake(goCtx context.Context, msg *types.MsgComplete
 
 	stake := k.GetProviderStake(ctx, providerAcc)
 
-	if err := k.bankKeeper.SendCoins(
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
-		storageBondedPoolAcc,
+		types.StorageBondedPoolName,
 		providerAcc,
 		sdk.NewCoins(stake.Stake...),
 	); err != nil {
@@ -1120,9 +1117,10 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 		return nil, fmt.Errorf("provider not found")
 	}
 
-	// Check if provider is active (can't increase stake if suspended or unregistering)
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
-		return nil, fmt.Errorf("can only increase stake for active providers")
+	// Check if provider is active or suspended.
+	// A suspended provider needs to be able to increase stake to meet the minimum for reactivation.
+	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE && provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
+		return nil, fmt.Errorf("can only increase stake for active or suspended providers, current status: %s", provider.Status)
 	}
 
 	// Transfer additional stake from provider to module account
@@ -1131,11 +1129,10 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 		return nil, fmt.Errorf("invalid creator address: %v", err)
 	}
 
-	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-	if err := k.bankKeeper.SendCoins(
+	if err := k.bankKeeper.SendCoinsFromAccountToModule(
 		ctx,
 		creator,
-		storageBondedPoolAcc,
+		types.StorageBondedPoolName,
 		sdk.NewCoins(msg.Amount),
 	); err != nil {
 		return nil, fmt.Errorf("failed to transfer stake: %v", err)
@@ -1228,6 +1225,11 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 
 	// Check if provider still meets minimum stake requirement
 	params := k.GetParams(ctx)
+
+	if len(k.GetActiveProviders(ctx)) >= int(params.MaxProviders) {
+		return nil, fmt.Errorf("active provider count has reached the maximum limit")
+	}
+
 	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
 	providerStake := k.GetProviderStake(ctx, providerAcc)
 	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
@@ -1280,17 +1282,15 @@ func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCo
 		return nil, fmt.Errorf("no pending decrease amount found")
 	}
 
-	storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-
 	// Transfer decreased stake back to provider
 	providerAcc, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, fmt.Errorf("invalid creator address: %v", err)
 	}
 
-	if err := k.bankKeeper.SendCoins(
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
-		storageBondedPoolAcc,
+		types.StorageBondedPoolName,
 		providerAcc,
 		sdk.NewCoins(*provider.PendingDecreaseAmount),
 	); err != nil {

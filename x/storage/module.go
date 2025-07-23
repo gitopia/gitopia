@@ -202,8 +202,7 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
 
 			// Transfer slashed amount to slash account
-			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-			am.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
 			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
@@ -223,8 +222,7 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		} else {
 			// Apply regular challenge failure slash
 			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			storageBondedPoolAcc, _ := sdk.AccAddressFromBech32(types.StorageBondedPoolName)
-			am.bankKeeper.SendCoinsFromAccountToModule(ctx, storageBondedPoolAcc, types.ChallengeSlashPoolName, slashAmountCoins)
+			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
 
 			// Update provider stake
 			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
