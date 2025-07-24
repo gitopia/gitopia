@@ -143,7 +143,7 @@ func (msg *MsgUpdateProvider) ValidateBasic() error {
 var _ sdk.Msg = &MsgUpdateRepositoryPackfile{}
 
 // NewMsgUpdateRepositoryPackfile creates a new MsgUpdateRepositoryPackfile instance
-func NewMsgUpdateRepositoryPackfile(creator string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64) *MsgUpdateRepositoryPackfile {
+func NewMsgUpdateRepositoryPackfile(creator string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64, oldCid string) *MsgUpdateRepositoryPackfile {
 	return &MsgUpdateRepositoryPackfile{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -151,6 +151,7 @@ func NewMsgUpdateRepositoryPackfile(creator string, repositoryId uint64, name st
 		Cid:          cid,
 		RootHash:     rootHash,
 		Size_:        size,
+		OldCid:       oldCid,
 	}
 }
 
@@ -406,7 +407,7 @@ func (msg *MsgCompleteUnstake) ValidateBasic() error {
 var _ sdk.Msg = &MsgUpdateReleaseAsset{}
 
 // NewMsgUpdateReleaseAsset creates a new MsgUpdateReleaseAsset instance
-func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, name string, cid string, rootHash []byte, size uint64, sha256 string) *MsgUpdateReleaseAsset {
+func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, name string, cid string, rootHash []byte, size uint64, sha256 string, oldCid string) *MsgUpdateReleaseAsset {
 	return &MsgUpdateReleaseAsset{
 		Creator:      creator,
 		RepositoryId: repositoryId,
@@ -416,6 +417,7 @@ func NewMsgUpdateReleaseAsset(creator string, repositoryId uint64, tag string, n
 		RootHash:     rootHash,
 		Size_:        size,
 		Sha256:       sha256,
+		OldCid:       oldCid,
 	}
 }
 

@@ -171,6 +171,11 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	if found {
 		oldCid = existingPackfile.Cid
 		oldName = existingPackfile.Name
+
+		// Optimistic concurrency control: check if the current CID matches the expected old_cid
+		if msg.OldCid != "" && oldCid != msg.OldCid {
+			return nil, fmt.Errorf("repository state has changed: expected CID %s, found %s", msg.OldCid, oldCid)
+		}
 		// Calculate the difference in size between the existing and new packfile
 		existingSize := existingPackfile.Size_
 		newSize := msg.Size_
@@ -367,6 +372,11 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 	if found {
 		oldCid = existingAsset.Cid
 		oldSha256 = existingAsset.Sha256
+
+		// Optimistic concurrency control: check if the current CID matches the expected old_cid
+		if msg.OldCid != "" && oldCid != msg.OldCid {
+			return nil, fmt.Errorf("release asset state has changed: expected CID %s, found %s", msg.OldCid, oldCid)
+		}
 		// Calculate the difference in size between the existing and new asset
 		existingSize := existingAsset.Size_
 		newSize := msg.Size_

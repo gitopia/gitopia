@@ -182,9 +182,9 @@ func CmdCompleteUnstake() *cobra.Command {
 
 func CmdUpdateRepositoryPackfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-repository-packfile [repository-id] [name] [cid] [root-hash-hex] [size]",
+		Use:   "update-repository-packfile [repository-id] [name] [cid] [root-hash-hex] [size] [old-cid]",
 		Short: "Update a repository packfile",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -209,6 +209,8 @@ func CmdUpdateRepositoryPackfile() *cobra.Command {
 				return fmt.Errorf("invalid size: %w", err)
 			}
 
+			oldCid := args[5]
+
 			msg := types.NewMsgUpdateRepositoryPackfile(
 				clientCtx.GetFromAddress().String(),
 				repositoryId,
@@ -216,6 +218,7 @@ func CmdUpdateRepositoryPackfile() *cobra.Command {
 				cid,
 				rootHash,
 				size,
+				oldCid,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -262,9 +265,9 @@ func CmdDeleteRepositoryPackfile() *cobra.Command {
 
 func CmdUpdateReleaseAsset() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-release-asset [repository-id] [tag] [name] [cid] [root-hash-hex] [size] [sha256]",
+		Use:   "update-release-asset [repository-id] [tag] [name] [cid] [root-hash-hex] [size] [sha256] [old-cid]",
 		Short: "Update a release asset",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -291,6 +294,7 @@ func CmdUpdateReleaseAsset() *cobra.Command {
 			}
 
 			sha256 := args[6]
+			oldCid := args[7]
 
 			msg := types.NewMsgUpdateReleaseAsset(
 				clientCtx.GetFromAddress().String(),
@@ -301,6 +305,7 @@ func CmdUpdateReleaseAsset() *cobra.Command {
 				rootHash,
 				size,
 				sha256,
+				oldCid,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

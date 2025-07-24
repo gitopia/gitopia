@@ -102,6 +102,9 @@ message MsgUpdateRepositoryPackfile {
   string cid = 4;
   bytes root_hash = 5;
   uint64 size = 6;
+  // old_cid is the CID of the repository when the provider processed the request
+  // only proceed with the update if the current CID matches old_cid
+  string old_cid = 7;
 }
 
 message MsgUpdateRepositoryPackfileResponse {}
@@ -125,6 +128,9 @@ message MsgUpdateReleaseAsset {
   bytes root_hash = 6;
   uint64 size = 7;
   string sha256 = 8;
+  // old_cid is the CID of the release asset when the provider processed the request
+  // only proceed with the update if the current CID matches old_cid
+  string old_cid = 9;
 }
 
 message MsgUpdateReleaseAssetResponse {}
