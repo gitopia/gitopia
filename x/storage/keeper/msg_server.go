@@ -217,6 +217,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		// Update existing packfile while preserving its ID
 		existingPackfile.Creator = msg.Creator
 		existingPackfile.Name = msg.Name
+		existingPackfile.OldCid = existingPackfile.Cid
 		existingPackfile.Cid = msg.Cid
 		existingPackfile.RootHash = msg.RootHash
 		existingPackfile.Size_ = msg.Size_

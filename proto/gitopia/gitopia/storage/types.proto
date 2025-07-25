@@ -58,6 +58,7 @@ message Packfile {
   bytes root_hash = 7;
   google.protobuf.Timestamp created_at = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
   google.protobuf.Timestamp updated_at = 9 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  string old_cid = 10;
 }
 
 // Release asset
