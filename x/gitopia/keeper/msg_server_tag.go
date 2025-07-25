@@ -29,6 +29,16 @@ func (k msgServer) SetTag(goCtx context.Context, msg *types.MsgSetTag) (*types.M
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
 
+	// Check if the packfile cid matches the packfile cid before provider updated the packfile
+	packfile, found := k.storageKeeper.GetPackfile(ctx, repository.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", repository.Id))
+	}
+
+	if packfile.OldCid != msg.PackfileCid {
+		return nil, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.OldCid, msg.PackfileCid)
+	}
+
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushTagPermission) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
@@ -91,6 +101,16 @@ func (k msgServer) MultiSetTag(goCtx context.Context, msg *types.MsgMultiSetTag)
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	// Check if the packfile cid matches the packfile cid before provider updated the packfile
+	packfile, found := k.storageKeeper.GetPackfile(ctx, repository.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", repository.Id))
+	}
+
+	if packfile.OldCid != msg.PackfileCid {
+		return nil, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.OldCid, msg.PackfileCid)
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushTagPermission) {

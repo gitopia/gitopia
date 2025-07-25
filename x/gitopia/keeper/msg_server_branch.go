@@ -25,12 +25,23 @@ func (k msgServer) SetBranch(goCtx context.Context, msg *types.MsgSetBranch) (*t
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
 	if repository.Archived {
 		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
 	}
 
+	// Optimistic concurrency control: check if the current CID matches the expected old_cid
+	packfile, found := k.storageKeeper.GetPackfile(ctx, repository.Id)
 	if !found {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", repository.Id))
+	}
+
+	// Check if the cid matches the cid before provider updated the packfile
+	if packfile.OldCid != msg.PackfileCid {
+		return nil, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.OldCid, msg.PackfileCid)
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushBranchPermission) {
@@ -105,6 +116,16 @@ func (k msgServer) MultiSetBranch(goCtx context.Context, msg *types.MsgMultiSetB
 
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
+	}
+
+	// Check if the packfile cid matches the packfile cid before provider updated the packfile
+	packfile, found := k.storageKeeper.GetPackfile(ctx, repository.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", repository.Id))
+	}
+
+	if packfile.OldCid != msg.PackfileCid {
+		return nil, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.OldCid, msg.PackfileCid)
 	}
 
 	if !k.HavePermission(ctx, msg.Creator, repository, types.PushBranchPermission) {

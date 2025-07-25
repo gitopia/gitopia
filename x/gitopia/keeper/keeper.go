@@ -16,6 +16,7 @@ import (
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	"github.com/gitopia/gitopia/v6/x/gitopia/types"
+	storagetypes "github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 type (
@@ -32,6 +33,7 @@ type (
 		mintKeeper    *mintkeeper.Keeper
 		distrKeeper   *distrkeeper.Keeper
 		groupKeeper   *groupkeeper.Keeper
+		storageKeeper storagetypes.StorageKeeperI
 
 		// the address capable of executing a MsgUpdateParams message. Typically, this
 		// should be the x/gov module account.
@@ -51,6 +53,7 @@ func NewKeeper(
 	mintKeeper *mintkeeper.Keeper,
 	distrKeeper *distrkeeper.Keeper,
 	groupKeeper *groupkeeper.Keeper,
+	storageKeeper storagetypes.StorageKeeperI,
 	authority string,
 ) *Keeper {
 	return &Keeper{
@@ -66,6 +69,7 @@ func NewKeeper(
 		mintKeeper:    mintKeeper,
 		distrKeeper:   distrKeeper,
 		groupKeeper:   groupKeeper,
+		storageKeeper: storageKeeper,
 		authority:     authority,
 	}
 }

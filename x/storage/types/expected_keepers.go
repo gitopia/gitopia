@@ -23,3 +23,9 @@ type BankKeeper interface {
 	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule string, recipientModule string, amt sdk.Coins) error
 	BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 }
+
+// StorageKeeperI defines the expected interface for storage keeper used by gitopia keeper
+type StorageKeeperI interface {
+	GetPackfile(ctx sdk.Context, repositoryId uint64) (val Packfile, found bool)
+	GetReleaseAsset(ctx sdk.Context, repositoryId uint64, tag string, name string) (val ReleaseAsset, found bool)
+}

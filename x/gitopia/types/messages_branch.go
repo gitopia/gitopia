@@ -17,11 +17,12 @@ const (
 
 var _ sdk.Msg = &MsgSetBranch{}
 
-func NewMsgSetBranch(creator string, repositoryId RepositoryId, branch MsgSetBranch_Branch) *MsgSetBranch {
+func NewMsgSetBranch(creator string, repositoryId RepositoryId, branch MsgSetBranch_Branch, packfileCid string) *MsgSetBranch {
 	return &MsgSetBranch{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Branch:       branch,
+		PackfileCid:  packfileCid,
 	}
 }
 
@@ -118,11 +119,12 @@ func (msg *MsgSetDefaultBranch) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMultiSetBranch{}
 
-func NewMsgMultiSetBranch(creator string, repositoryId RepositoryId, branches []MsgMultiSetBranch_Branch) *MsgMultiSetBranch {
+func NewMsgMultiSetBranch(creator string, repositoryId RepositoryId, branches []MsgMultiSetBranch_Branch, packfileCid string) *MsgMultiSetBranch {
 	return &MsgMultiSetBranch{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Branches:     branches,
+		PackfileCid:  packfileCid,
 	}
 }
 

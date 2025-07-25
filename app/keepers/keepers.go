@@ -365,6 +365,7 @@ func NewAppKeeper(
 		appKeepers.MintKeeper,
 		appKeepers.DistrKeeper,
 		appKeepers.GroupKeeper,
+		appKeepers.StorageKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(

@@ -7,12 +7,13 @@ import (
 
 var _ sdk.Msg = &MsgInvokeDaoMergePullRequest{}
 
-func NewMsgInvokeDaoMergePullRequest(admin string, repositoryId uint64, iid uint64, provider string) *MsgInvokeDaoMergePullRequest {
+func NewMsgInvokeDaoMergePullRequest(admin string, repositoryId uint64, iid uint64, provider string, baseCommitSha string) *MsgInvokeDaoMergePullRequest {
 	return &MsgInvokeDaoMergePullRequest{
-		Admin:        admin,
-		RepositoryId: repositoryId,
-		Iid:          iid,
-		Provider:     provider,
+		Admin:         admin,
+		RepositoryId:  repositoryId,
+		Iid:           iid,
+		Provider:      provider,
+		BaseCommitSha: baseCommitSha,
 	}
 }
 

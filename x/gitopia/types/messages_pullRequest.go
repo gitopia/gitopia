@@ -225,12 +225,13 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeMergePullRequest{}
 
-func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string) *MsgInvokeMergePullRequest {
+func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string, baseCommitSha string) *MsgInvokeMergePullRequest {
 	return &MsgInvokeMergePullRequest{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Iid:          iid,
-		Provider:     provider,
+		Creator:       creator,
+		RepositoryId:  repositoryId,
+		Iid:           iid,
+		Provider:      provider,
+		BaseCommitSha: baseCommitSha,
 	}
 }
 
