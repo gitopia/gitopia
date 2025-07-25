@@ -196,6 +196,10 @@ message MsgSetBranch {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set branch if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgSetBranchResponse {}
@@ -216,6 +220,10 @@ message MsgMultiSetBranch {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set branch if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgMultiSetBranchResponse { }
@@ -244,6 +252,10 @@ message MsgSetTag {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set tag if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgSetTagResponse { }
@@ -256,6 +268,10 @@ message MsgMultiSetTag {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set tag if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgMultiSetTagResponse { }
@@ -397,6 +413,10 @@ message MsgInvokeMergePullRequest {
   uint64 repositoryId = 2;
   uint64 iid = 3;
   string provider = 4;
+  
+  // commit sha of base branch
+  // only proceed with the merge if the current commit sha matches the expected commit sha
+  string base_commit_sha = 5;
 }
 
 message MsgInvokeMergePullRequestResponse { }
@@ -410,6 +430,10 @@ message MsgInvokeDaoMergePullRequest {
   uint64 repositoryId = 2;
   uint64 iid = 3;
   string provider = 4;
+  
+  // commit sha of base branch
+  // only proceed with the merge if the current commit sha matches the expected commit sha
+  string base_commit_sha = 5;
 }
 
 message MsgInvokeDaoMergePullRequestResponse { }
