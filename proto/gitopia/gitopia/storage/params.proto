@@ -27,4 +27,25 @@ message Params {
 
   // max providers
   uint64 max_providers = 11 [(gogoproto.moretags) = "yaml:\"max_providers\""];
+
+  // Liveness tracking parameters
+  // Number of blocks to track for liveness calculation (sliding window)
+  uint64 liveness_window_blocks = 12 [(gogoproto.moretags) = "yaml:\"liveness_window_blocks\""];
+  // Minimum liveness ratio required (e.g., 67 = 67%)
+  uint64 min_liveness_ratio = 13 [(gogoproto.moretags) = "yaml:\"min_liveness_ratio\""];
+  
+  // Liveness fault slashing parameters (less severe)
+  cosmos.base.v1beta1.Coin liveness_slash_amount = 14 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"liveness_slash_amount\""];
+  uint64 liveness_slash_percentage = 15 [(gogoproto.moretags) = "yaml:\"liveness_slash_percentage\""];
+  uint64 liveness_jail_blocks = 16 [(gogoproto.moretags) = "yaml:\"liveness_jail_blocks\""];
+  
+  // Proof fault slashing parameters (more severe for assigned provider)
+  cosmos.base.v1beta1.Coin proof_fault_slash_amount = 17 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"proof_fault_slash_amount\""];
+  uint64 proof_fault_slash_percentage = 18 [(gogoproto.moretags) = "yaml:\"proof_fault_slash_percentage\""];
+  uint64 proof_fault_jail_blocks = 19 [(gogoproto.moretags) = "yaml:\"proof_fault_jail_blocks\""];
+  
+  // Maximum number of consecutive liveness faults before suspension
+  uint64 max_liveness_faults = 20 [(gogoproto.moretags) = "yaml:\"max_liveness_faults\""];
+  // Maximum number of consecutive proof faults before suspension  
+  uint64 max_proof_faults = 21 [(gogoproto.moretags) = "yaml:\"max_proof_faults\""];
 }

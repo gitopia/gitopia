@@ -343,6 +343,15 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
 
+	baseBranch, found := k.GetRepositoryBranch(ctx, pullRequest.Base.RepositoryId, pullRequest.Base.Branch)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch (%v) doesn't exist", pullRequest.Base.Branch))
+	}
+
+	if baseBranch.Sha != msg.BaseCommitSha {
+		return nil, fmt.Errorf("SHA mismatch: expected %s, got %s", baseBranch.Sha, msg.BaseCommitSha)
+	}
+
 	// check if dao requires a proposal to merge pull request
 	if baseRepository.Owner.Type == types.OwnerType_DAO {
 		dao, found := k.GetDao(ctx, baseRepository.Owner.Id)

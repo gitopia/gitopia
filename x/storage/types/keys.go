@@ -33,8 +33,9 @@ const (
 var (
 	ParamsKey = []byte{0x00}
 
-	ProviderStakePrefix   = []byte{0x01}
-	ProviderRewardsPrefix = []byte{0x02}
+	ProviderStakePrefix       = []byte{0x01}
+	ProviderRewardsPrefix     = []byte{0x02}
+	ProviderLivenessInfoPrefix = []byte{0x03}
 )
 
 func KeyPrefix(p string) []byte {

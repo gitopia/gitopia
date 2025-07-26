@@ -193,6 +193,13 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		Status:        types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 
+	// Initialize liveness tracking for this challenge
+	// This ensures all active providers are expected to maintain liveness
+	err := k.ProcessChallengeForLiveness(ctx, challenge)
+	if err != nil {
+		ctx.Logger().Error(fmt.Sprintf("failed to initialize liveness tracking for challenge: %v", err))
+	}
+
 	return challenge, nil
 }
 

@@ -592,62 +592,23 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		provider.TotalChallenges++
 		provider.ConsecutiveFailures++
 
-		// Check if provider should be suspended due to consecutive failures
-		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
-			// Suspend the provider
-			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-
-			// Apply percentage-based slash for consecutive failures
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			stake := k.GetProviderStake(ctx, providerAcc)
-			stakeAmount := stake.Stake.AmountOf(appparams.BaseCoinUnit)
-			dec := sdk.NewDec(int64(stakeAmount.Int64()))
-			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
-
-			// Transfer slashed amount to slash account
-			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Provider: provider.Creator,
-				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			// Reset consecutive failures
-			provider.ConsecutiveFailures = 0
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-
-			// Emit suspension event
-			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
-				Address: provider.Creator,
-				Online:  false,
-			})
-		} else {
-			// Apply regular challenge failure slash
-			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			stake := k.GetProviderStake(ctx, providerAcc)
-			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Provider: provider.Creator,
-				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for invalid proof", provider.Creator, slashAmountCoins.String()))
+		// Process challenge response for liveness tracking (invalid proof)
+		err := k.ProcessChallengeResponseForLiveness(ctx, &challenge, provider.Creator, false)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("failed to process liveness for invalid proof from %s: %v", provider.Creator, err))
 		}
 
-		k.SetProvider(ctx, provider)
-
+		// Update challenge status
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, challenge)
 
-		ctx.Logger().Info(fmt.Sprintf("provider %s slashed for challenge %d", provider.Creator, challenge.Id))
-
 		return nil, fmt.Errorf("invalid proof")
+	}
+
+	// Process challenge response for liveness tracking (valid proof)
+	err = k.ProcessChallengeResponseForLiveness(ctx, &challenge, provider.Creator, true)
+	if err != nil {
+		ctx.Logger().Error(fmt.Sprintf("failed to process liveness for valid proof from %s: %v", provider.Creator, err))
 	}
 
 	// Update challenge status
@@ -1330,6 +1291,41 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 	ctx.Logger().Info(fmt.Sprintf("provider %s reactivated", provider.Creator))
 
 	return &types.MsgReactivateProviderResponse{}, nil
+}
+
+func (k msgServer) UnjailProvider(goCtx context.Context, msg *types.MsgUnjailProvider) (*types.MsgUnjailProviderResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
+	// Check if provider is actually jailed
+	if !provider.Jailed {
+		return nil, fmt.Errorf("provider is not jailed")
+	}
+
+	// Check if jail time has expired
+	if provider.JailUntil != nil && ctx.BlockTime().Before(*provider.JailUntil) {
+		return nil, fmt.Errorf("jail time has not expired, jailed until: %s", provider.JailUntil.String())
+	}
+
+	// Unjail the provider
+	provider.Jailed = false
+	provider.JailUntil = nil
+	k.SetProvider(ctx, provider)
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s has been unjailed", provider.Creator))
+
+	// Emit unjail event
+	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+		Address: provider.Creator,
+		Online:  true,
+	})
+
+	return &types.MsgUnjailProviderResponse{}, nil
 }
 
 func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCompleteDecreaseStake) (*types.MsgCompleteDecreaseStakeResponse, error) {

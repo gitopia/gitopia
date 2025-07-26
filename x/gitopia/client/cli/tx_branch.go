@@ -10,14 +10,15 @@ import (
 
 func CmdSetBranch() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set-branch [id] [repository-name] [branch-name] [sha]",
+		Use:   "set-branch [id] [repository-name] [branch-name] [sha] [packfile-cid]",
 		Short: "Set a branch",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
 			argBranchName := args[2]
 			argSha := args[3]
+			argPackfileCid := args[4]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -28,6 +29,7 @@ func CmdSetBranch() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
 				types.MsgSetBranch_Branch{Name: argBranchName, Sha: argSha},
+				argPackfileCid,
 			)
 
 			if err := msg.ValidateBasic(); err != nil {

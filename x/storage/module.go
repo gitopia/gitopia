@@ -17,7 +17,6 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	appparams "github.com/gitopia/gitopia/v6/app/params"
 	"github.com/gitopia/gitopia/v6/x/storage/client/cli"
 	"github.com/gitopia/gitopia/v6/x/storage/keeper"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
@@ -164,6 +163,35 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			})
 		}
 	}
+
+	// Tendermint-style liveness tracking and enforcement
+	// Run liveness checks every block to maintain continuous monitoring
+	err := am.keeper.PeriodicLivenessCheck(ctx)
+	if err != nil {
+		ctx.Logger().Error(fmt.Sprintf("error during liveness check: %v", err))
+	}
+
+	// Auto-unjail providers whose jail time has expired
+	err = am.keeper.AutoUnjailExpiredProviders(ctx)
+	if err != nil {
+		ctx.Logger().Error(fmt.Sprintf("error during auto-unjail: %v", err))
+	}
+
+	// Cleanup expired liveness data periodically (every 1000 blocks to avoid performance impact)
+	if currentBlockHeight%1000 == 0 {
+		err := am.keeper.CleanupExpiredLivenessData(ctx)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("error during liveness data cleanup: %v", err))
+		}
+	}
+
+	// Initialize liveness tracking for new providers (every 100 blocks)
+	if currentBlockHeight%100 == 0 {
+		err := am.keeper.StartLivenessTracking(ctx)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("error starting liveness tracking: %v", err))
+		}
+	}
 }
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
@@ -173,71 +201,23 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		Timestamp: ctx.BlockTime(),
 	})
 
-	// check last challenge expiration
-	challenge, found := am.keeper.GetChallenge(ctx, am.keeper.GetChallengeCount(ctx)-1)
-	if found && challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+	// Check for expired challenges using new Tendermint-style liveness system
+	// Process all pending challenges that have expired
+	allChallenges := am.keeper.GetAllChallenge(ctx)
+	for _, challenge := range allChallenges {
+		if challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+			// Use the new Tendermint-style challenge timeout processing
+			err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
+			}
 
-		provider, found := am.keeper.GetProvider(ctx, challenge.Provider)
-		if !found {
-			return []abci.ValidatorUpdate{}
+			// Update challenge status to failed
+			challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+			am.keeper.SetChallenge(ctx, challenge)
+
+			ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 		}
-
-		// Update provider stats for failed challenge
-		provider.TotalChallenges++
-		provider.ConsecutiveFailures++
-
-		params := am.keeper.GetParams(ctx)
-
-		// Check if provider should be suspended due to consecutive failures
-		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
-			// Suspend the provider
-			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-
-			// Apply percentage-based slash for consecutive failures
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
-			stakeAmount := providerStake.Stake.AmountOf(appparams.BaseCoinUnit)
-			dec := sdk.NewDec(int64(stakeAmount.Int64()))
-			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
-
-			// Transfer slashed amount to slash account
-			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			// Reset consecutive failures
-			provider.ConsecutiveFailures = 0
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-
-			// Emit suspension event
-			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
-				Address: provider.Creator,
-				Online:  false,
-			})
-		} else {
-			// Apply regular challenge failure slash
-			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
-			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for no challenge response", provider.Creator, slashAmountCoins.String()))
-		}
-
-		am.keeper.SetProvider(ctx, provider)
-
-		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
-		am.keeper.SetChallenge(ctx, challenge)
 	}
 
 	return []abci.ValidatorUpdate{}

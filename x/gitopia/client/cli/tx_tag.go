@@ -10,14 +10,15 @@ import (
 
 func CmdSetTag() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-tag [id] [repository-name] [tag-name] [sha]",
+		Use:   "create-tag [id] [repository-name] [tag-name] [sha] [packfile-cid]",
 		Short: "Create a new tag",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argId := args[0]
 			argRepositoryName := args[1]
 			argTagName := args[2]
 			argSha := args[3]
+			argPackfileCid := args[4]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -28,6 +29,7 @@ func CmdSetTag() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				types.RepositoryId{Id: argId, Name: argRepositoryName},
 				types.MsgSetTag_Tag{Name: argTagName, Sha: argSha},
+				argPackfileCid,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

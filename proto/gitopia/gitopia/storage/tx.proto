@@ -57,6 +57,9 @@ service Msg {
   // ReactivateProvider reactivates a suspended provider
   rpc ReactivateProvider(MsgReactivateProvider) returns (MsgReactivateProviderResponse);
 
+  // UnjailProvider unjails a jailed provider after jail time expires
+  rpc UnjailProvider(MsgUnjailProvider) returns (MsgUnjailProviderResponse);
+
   // UpdateParams updates the parameters of the storage module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 
@@ -222,11 +225,21 @@ message MsgCompleteDecreaseStakeResponse {
 
 // MsgReactivateProvider defines a message for reactivating a suspended provider
 message MsgReactivateProvider {
+  option (cosmos.msg.v1.signer) = "creator";
   string creator = 1;
 }
 
 message MsgReactivateProviderResponse {}
 
+// MsgUnjailProvider defines a message for unjailing a jailed provider
+message MsgUnjailProvider {
+  option (cosmos.msg.v1.signer) = "creator";
+  string creator = 1;
+}
+
+message MsgUnjailProviderResponse {}
+
+// MsgUpdateParams defines a message for updating the parameters of the storage module
 message MsgUpdateParams {
   option (cosmos.msg.v1.signer) = "authority";
   option (amino.name)           = "storage/MsgUpdateParams";

@@ -27,17 +27,42 @@ var (
 	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
 	KeyFreeStorageMb                   = []byte("FreeStorageMb")
 	KeyMaxProviders                    = []byte("MaxProviders")
+	
+	// Liveness tracking parameter keys
+	KeyLivenessWindowBlocks     = []byte("LivenessWindowBlocks")
+	KeyMinLivenessRatio         = []byte("MinLivenessRatio")
+	KeyLivenessSlashAmount      = []byte("LivenessSlashAmount")
+	KeyLivenessSlashPercentage  = []byte("LivenessSlashPercentage")
+	KeyLivenessJailBlocks       = []byte("LivenessJailBlocks")
+	KeyProofFaultSlashAmount    = []byte("ProofFaultSlashAmount")
+	KeyProofFaultSlashPercentage = []byte("ProofFaultSlashPercentage")
+	KeyProofFaultJailBlocks     = []byte("ProofFaultJailBlocks")
+	KeyMaxLivenessFaults        = []byte("MaxLivenessFaults")
+	KeyMaxProofFaults           = []byte("MaxProofFaults")
+
 	// Default values for parameters
-	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
+	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000 // $1134
 	DefaultChallengeIntervalBlocks         uint64   = 1000                                            // ~30 min
-	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(6_000_000_000)) // $5, $150 a month
-	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_250_000_000))
+	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(4_267_000_000)) // $4.8 a day, $150 a month per provider
+	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5
 	DefaultConsecutiveFailsThreshold       uint64   = 3
-	DefaultConsecutiveFailsSlashPercentage uint64   = 1
+	DefaultConsecutiveFailsSlashPercentage uint64   = 1 // $11 when stake is $1134
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500                                // ~28 days
 	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(12_000)) // $0.00001 per MB of storage update
 	DefaultFreeStorageMb                   uint64   = 157_286_400                              // 150Mb
 	DefaultMaxProviders                    uint64   = 5
+	
+	// Liveness tracking default values
+	DefaultLivenessWindowBlocks     uint64   = 10000                                          // ~7 hours at 2.5s blocks
+	DefaultMinLivenessRatio         uint64   = 67                                             // 67% minimum liveness
+	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))  // $0.56 (lighter penalty for liveness)
+	DefaultLivenessSlashPercentage  uint64   = 50                                             // 0.5% stake slash for liveness fault (50 basis points)
+	DefaultLivenessJailBlocks       uint64   = 86400                                          // ~2.4 days jail for liveness fault
+	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5 (heavier penalty for proof fault)
+	DefaultProofFaultSlashPercentage uint64  = 2                                              // 2% stake slash for proof fault
+	DefaultProofFaultJailBlocks     uint64   = 259200                                         // ~7.2 days jail for proof fault
+	DefaultMaxLivenessFaults        uint64   = 5                                              // Max consecutive liveness faults
+	DefaultMaxProofFaults           uint64   = 3                                              // Max consecutive proof faults
 )
 
 // ParamKeyTable the param key table for launch module
@@ -58,6 +83,17 @@ func NewParams(
 	storagePricePerMb sdk.Coin,
 	freeStorageMb uint64,
 	maxProviders uint64,
+	// Liveness tracking parameters
+	livenessWindowBlocks uint64,
+	minLivenessRatio uint64,
+	livenessSlashAmount sdk.Coin,
+	livenessSlashPercentage uint64,
+	livenessJailBlocks uint64,
+	proofFaultSlashAmount sdk.Coin,
+	proofFaultSlashPercentage uint64,
+	proofFaultJailBlocks uint64,
+	maxLivenessFaults uint64,
+	maxProofFaults uint64,
 ) Params {
 	return Params{
 		MinStakeAmount:                  minStakeAmount,
@@ -71,6 +107,17 @@ func NewParams(
 		StoragePricePerMb:               storagePricePerMb,
 		FreeStorageMb:                   freeStorageMb,
 		MaxProviders:                    maxProviders,
+		// Liveness tracking fields
+		LivenessWindowBlocks:     livenessWindowBlocks,
+		MinLivenessRatio:         minLivenessRatio,
+		LivenessSlashAmount:      livenessSlashAmount,
+		LivenessSlashPercentage:  livenessSlashPercentage,
+		LivenessJailBlocks:       livenessJailBlocks,
+		ProofFaultSlashAmount:    proofFaultSlashAmount,
+		ProofFaultSlashPercentage: proofFaultSlashPercentage,
+		ProofFaultJailBlocks:     proofFaultJailBlocks,
+		MaxLivenessFaults:        maxLivenessFaults,
+		MaxProofFaults:           maxProofFaults,
 	}
 }
 
@@ -88,6 +135,17 @@ func DefaultParams() Params {
 		DefaultStoragePricePerMb,
 		DefaultFreeStorageMb,
 		DefaultMaxProviders,
+		// Liveness tracking defaults
+		DefaultLivenessWindowBlocks,
+		DefaultMinLivenessRatio,
+		DefaultLivenessSlashAmount,
+		DefaultLivenessSlashPercentage,
+		DefaultLivenessJailBlocks,
+		DefaultProofFaultSlashAmount,
+		DefaultProofFaultSlashPercentage,
+		DefaultProofFaultJailBlocks,
+		DefaultMaxLivenessFaults,
+		DefaultMaxProofFaults,
 	)
 }
 
@@ -105,6 +163,17 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
+		// Liveness tracking parameters
+		paramtypes.NewParamSetPair(KeyLivenessWindowBlocks, &p.LivenessWindowBlocks, validateLivenessWindowBlocks),
+		paramtypes.NewParamSetPair(KeyMinLivenessRatio, &p.MinLivenessRatio, validateMinLivenessRatio),
+		paramtypes.NewParamSetPair(KeyLivenessSlashAmount, &p.LivenessSlashAmount, validateLivenessSlashAmount),
+		paramtypes.NewParamSetPair(KeyLivenessSlashPercentage, &p.LivenessSlashPercentage, validateLivenessSlashPercentage),
+		paramtypes.NewParamSetPair(KeyLivenessJailBlocks, &p.LivenessJailBlocks, validateLivenessJailBlocks),
+		paramtypes.NewParamSetPair(KeyProofFaultSlashAmount, &p.ProofFaultSlashAmount, validateProofFaultSlashAmount),
+		paramtypes.NewParamSetPair(KeyProofFaultSlashPercentage, &p.ProofFaultSlashPercentage, validateProofFaultSlashPercentage),
+		paramtypes.NewParamSetPair(KeyProofFaultJailBlocks, &p.ProofFaultJailBlocks, validateProofFaultJailBlocks),
+		paramtypes.NewParamSetPair(KeyMaxLivenessFaults, &p.MaxLivenessFaults, validateMaxLivenessFaults),
+		paramtypes.NewParamSetPair(KeyMaxProofFaults, &p.MaxProofFaults, validateMaxProofFaults),
 	}
 }
 
@@ -279,6 +348,120 @@ func validateMaxProviders(v interface{}) error {
 	}
 	if providers == 0 {
 		return fmt.Errorf("max providers cannot be zero")
+	}
+	return nil
+}
+
+// validateLivenessWindowBlocks validates the LivenessWindowBlocks param
+func validateLivenessWindowBlocks(v interface{}) error {
+	blocks, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if blocks == 0 {
+		return fmt.Errorf("liveness window blocks cannot be zero")
+	}
+	return nil
+}
+
+// validateMinLivenessRatio validates the MinLivenessRatio param
+func validateMinLivenessRatio(v interface{}) error {
+	ratio, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if ratio == 0 || ratio > 100 {
+		return fmt.Errorf("min liveness ratio must be between 1 and 100")
+	}
+	return nil
+}
+
+// validateLivenessSlashAmount validates the LivenessSlashAmount param
+func validateLivenessSlashAmount(v interface{}) error {
+	_, ok := v.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	return nil
+}
+
+// validateLivenessSlashPercentage validates the LivenessSlashPercentage param
+func validateLivenessSlashPercentage(v interface{}) error {
+	percentage, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if percentage > 10000 { // 100.00% in basis points
+		return fmt.Errorf("liveness slash percentage cannot exceed 100%%")
+	}
+	return nil
+}
+
+// validateLivenessJailBlocks validates the LivenessJailBlocks param
+func validateLivenessJailBlocks(v interface{}) error {
+	blocks, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if blocks == 0 {
+		return fmt.Errorf("liveness jail blocks cannot be zero")
+	}
+	return nil
+}
+
+// validateProofFaultSlashAmount validates the ProofFaultSlashAmount param
+func validateProofFaultSlashAmount(v interface{}) error {
+	_, ok := v.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	return nil
+}
+
+// validateProofFaultSlashPercentage validates the ProofFaultSlashPercentage param
+func validateProofFaultSlashPercentage(v interface{}) error {
+	percentage, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if percentage > 10000 { // 100.00% in basis points
+		return fmt.Errorf("proof fault slash percentage cannot exceed 100%%")
+	}
+	return nil
+}
+
+// validateProofFaultJailBlocks validates the ProofFaultJailBlocks param
+func validateProofFaultJailBlocks(v interface{}) error {
+	blocks, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if blocks == 0 {
+		return fmt.Errorf("proof fault jail blocks cannot be zero")
+	}
+	return nil
+}
+
+// validateMaxLivenessFaults validates the MaxLivenessFaults param
+func validateMaxLivenessFaults(v interface{}) error {
+	faults, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if faults == 0 {
+		return fmt.Errorf("max liveness faults cannot be zero")
+	}
+	return nil
+}
+
+// validateMaxProofFaults validates the MaxProofFaults param
+func validateMaxProofFaults(v interface{}) error {
+	faults, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if faults == 0 {
+		return fmt.Errorf("max proof faults cannot be zero")
 	}
 	return nil
 }

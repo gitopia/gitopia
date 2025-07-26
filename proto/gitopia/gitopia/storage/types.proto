@@ -36,6 +36,19 @@ message Provider {
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
+  
+  // Liveness and jail tracking fields
+  bool jailed = 14;
+  google.protobuf.Timestamp jail_until = 15 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
+  uint64 consecutive_liveness_faults = 16;
+  uint64 consecutive_proof_faults = 17;
+  google.protobuf.Timestamp last_liveness_check = 18 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
 }
 
 // ProviderStatus represents the status of a storage provider
@@ -190,4 +203,37 @@ message StorageStats {
   uint64 total_packfile_size = 1;
   uint64 total_release_asset_size = 2;
   uint64 total_lfs_object_size = 3;
+}
+
+// LivenessWindow represents a sliding window for tracking provider liveness
+message LivenessWindow {
+  string provider = 1;
+  uint64 window_start_block = 2;
+  uint64 window_end_block = 3;
+  repeated uint64 missed_blocks = 4; // Block heights where provider failed to submit proof
+  uint64 total_expected_submissions = 5;
+  uint64 actual_submissions = 6;
+}
+
+// ProviderLivenessInfo tracks comprehensive liveness information for a provider
+message ProviderLivenessInfo {
+  string provider = 1;
+  uint64 current_window_start = 2;
+  uint64 missed_submissions_in_window = 3;
+  uint64 total_submissions_in_window = 4;
+  double current_liveness_ratio = 5; // Current ratio in the sliding window
+  uint64 last_submission_block = 6;
+  repeated uint64 recent_missed_blocks = 7; // Last N missed blocks for tracking
+}
+
+// ProviderLivenessStats contains liveness statistics for querying
+message ProviderLivenessStats {
+  string provider = 1;
+  double current_liveness_ratio = 2;
+  uint64 total_submissions = 3;
+  uint64 missed_submissions = 4;
+  uint64 consecutive_liveness_faults = 5;
+  uint64 consecutive_proof_faults = 6;
+  bool is_jailed = 7;
+  google.protobuf.Timestamp jail_until = 8;
 }
