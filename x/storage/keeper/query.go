@@ -465,5 +465,154 @@ func (k Keeper) ProviderStakes(goCtx context.Context, req *types.QueryProviderSt
 		providerStakes = append(providerStakes, stake)
 		return false
 	})
-	return &types.QueryProviderStakesResponse{ProviderStakes: providerStakes}, nil
+
+	return &types.QueryProviderStakesResponse{
+		ProviderStakes: providerStakes,
+	}, nil
+}
+
+// Liveness query handlers
+
+// ProviderLiveness returns liveness info for a specific provider
+func (k Keeper) ProviderLiveness(goCtx context.Context, req *types.QueryProviderLivenessRequest) (*types.QueryProviderLivenessResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	livenessInfo := k.GetProviderLivenessInfo(ctx, req.Address)
+	if livenessInfo == nil {
+		return nil, status.Errorf(codes.NotFound, "liveness info not found for provider %s", req.Address)
+	}
+
+	return &types.QueryProviderLivenessResponse{
+		LivenessInfo: *livenessInfo,
+	}, nil
+}
+
+// ProvidersLiveness returns liveness info for all providers
+func (k Keeper) ProvidersLiveness(goCtx context.Context, req *types.QueryProvidersLivenessRequest) (*types.QueryProvidersLivenessResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var livenessInfos []types.ProviderLivenessInfo
+	store := ctx.KVStore(k.storeKey)
+	livenessStore := prefix.NewStore(store, types.ProviderLivenessInfoPrefix)
+
+	pageRes, err := query.Paginate(livenessStore, req.Pagination, func(key []byte, value []byte) error {
+		var livenessInfo types.ProviderLivenessInfo
+		if err := k.cdc.Unmarshal(value, &livenessInfo); err != nil {
+			return err
+		}
+		livenessInfos = append(livenessInfos, livenessInfo)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryProvidersLivenessResponse{
+		LivenessInfos: livenessInfos,
+		Pagination:    pageRes,
+	}, nil
+}
+
+// LivenessViolations returns providers with liveness violations
+func (k Keeper) LivenessViolations(goCtx context.Context, req *types.QueryLivenessViolationsRequest) (*types.QueryLivenessViolationsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var violations []types.ProviderLivenessViolation
+	store := ctx.KVStore(k.storeKey)
+	livenessStore := prefix.NewStore(store, types.ProviderLivenessInfoPrefix)
+
+	pageRes, err := query.Paginate(livenessStore, req.Pagination, func(key []byte, value []byte) error {
+		var livenessInfo types.ProviderLivenessInfo
+		if err := k.cdc.Unmarshal(value, &livenessInfo); err != nil {
+			return err
+		}
+
+		// Check if provider has liveness violation
+		hasViolation, err := k.CheckProviderLivenessViolation(ctx, livenessInfo.Provider)
+		if err != nil {
+			return fmt.Errorf("error checking liveness violation for %s: %w", livenessInfo.Provider, err)
+		}
+
+		if hasViolation {
+			params := k.GetParams(ctx)
+			violationReason := fmt.Sprintf("Liveness ratio %.2f%% below threshold %.2f%%", 
+				livenessInfo.CurrentLivenessRatio, params.MinLivenessRatio)
+			
+			violation := types.ProviderLivenessViolation{
+				ProviderAddress: livenessInfo.Provider,
+				LivenessInfo:    livenessInfo,
+				HasViolation:    true,
+				ViolationReason: violationReason,
+			}
+			violations = append(violations, violation)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryLivenessViolationsResponse{
+		Violations: violations,
+		Pagination: pageRes,
+	}, nil
+}
+
+// JailedProviders returns providers that are jailed
+func (k Keeper) JailedProviders(goCtx context.Context, req *types.QueryJailedProvidersRequest) (*types.QueryJailedProvidersResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var jailedProviders []types.Provider
+	store := ctx.KVStore(k.storeKey)
+	providerStore := prefix.NewStore(store, types.KeyPrefix(types.ProviderKey))
+
+	pageRes, err := query.Paginate(providerStore, req.Pagination, func(key []byte, value []byte) error {
+		var provider types.Provider
+		if err := k.cdc.Unmarshal(value, &provider); err != nil {
+			return err
+		}
+		
+		// Only include jailed providers
+		if provider.Jailed {
+			jailedProviders = append(jailedProviders, provider)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryJailedProvidersResponse{
+		Providers:  jailedProviders,
+		Pagination: pageRes,
+	}, nil
+}
+
+// ActiveProvidersForLiveness returns providers that should participate in liveness tracking
+func (k Keeper) ActiveProvidersForLiveness(goCtx context.Context, req *types.QueryActiveProvidersForLivenessRequest) (*types.QueryActiveProvidersForLivenessResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	activeProviders := k.GetActiveProvidersForLiveness(ctx)
+
+	return &types.QueryActiveProvidersForLivenessResponse{
+		Providers: activeProviders,
+	}, nil
 }
