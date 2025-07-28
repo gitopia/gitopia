@@ -8,30 +8,29 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
-// UpdateProviderLiveness updates the liveness tracking for a provider
-func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, submitted bool) error {
+// UpdateProviderLiveness updates the liveness tracking for a provider based on challenge participation
+func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, challengeId uint64, submitted bool) error {
 	params := k.GetParams(ctx)
-	currentBlock := uint64(ctx.BlockHeight())
 
 	// Get or create liveness info for provider
 	livenessInfo := k.GetProviderLivenessInfo(ctx, providerAddr)
 	if livenessInfo == nil {
 		livenessInfo = &types.ProviderLivenessInfo{
-			Provider:                  providerAddr,
-			CurrentWindowStart:        currentBlock,
-			MissedSubmissionsInWindow: 0,
-			TotalSubmissionsInWindow:  0,
-			CurrentLivenessRatio:      100.0,
-			LastSubmissionBlock:       0,
-			RecentMissedBlocks:        []uint64{},
+			Provider:                    providerAddr,
+			CurrentWindowStartChallenge: challengeId,
+			MissedSubmissionsInWindow:   0,
+			TotalSubmissionsInWindow:    0,
+			CurrentLivenessRatio:        100.0,
+			LastSubmissionChallenge:     0,
+			RecentMissedChallenges:      []uint64{},
 		}
 	}
 
 	// Check if we need to slide the window
-	windowSize := params.LivenessWindowBlocks
-	if currentBlock >= livenessInfo.CurrentWindowStart+windowSize {
+	windowSize := params.LivenessWindowChallenges
+	if challengeId >= livenessInfo.CurrentWindowStartChallenge+windowSize {
 		// Slide the window forward
-		k.slideLifenessWindow(ctx, livenessInfo, currentBlock, windowSize)
+		k.slideLivenessWindowChallenges(ctx, livenessInfo, challengeId, windowSize)
 	}
 
 	// Update submission count
@@ -39,14 +38,14 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, sub
 
 	if !submitted {
 		livenessInfo.MissedSubmissionsInWindow++
-		livenessInfo.RecentMissedBlocks = append(livenessInfo.RecentMissedBlocks, currentBlock)
+		livenessInfo.RecentMissedChallenges = append(livenessInfo.RecentMissedChallenges, challengeId)
 
-		// Keep only recent missed blocks (last 100)
-		if len(livenessInfo.RecentMissedBlocks) > 100 {
-			livenessInfo.RecentMissedBlocks = livenessInfo.RecentMissedBlocks[1:]
+		// Keep only recent missed challenges (last 100)
+		if len(livenessInfo.RecentMissedChallenges) > 100 {
+			livenessInfo.RecentMissedChallenges = livenessInfo.RecentMissedChallenges[1:]
 		}
 	} else {
-		livenessInfo.LastSubmissionBlock = currentBlock
+		livenessInfo.LastSubmissionChallenge = challengeId
 	}
 
 	// Calculate current liveness ratio
@@ -61,35 +60,35 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, sub
 	return nil
 }
 
-// slideLifenessWindow adjusts the sliding window for liveness tracking
-func (k Keeper) slideLifenessWindow(ctx sdk.Context, livenessInfo *types.ProviderLivenessInfo, currentBlock, windowSize uint64) {
-	// Calculate how many blocks to slide
-	blocksToSlide := currentBlock - (livenessInfo.CurrentWindowStart + windowSize)
-	newWindowStart := livenessInfo.CurrentWindowStart + blocksToSlide + 1
+// slideLivenessWindowChallenges adjusts the sliding window for challenge-based liveness tracking
+func (k Keeper) slideLivenessWindowChallenges(ctx sdk.Context, livenessInfo *types.ProviderLivenessInfo, currentChallengeId, windowSize uint64) {
+	// Calculate how many challenges to slide
+	challengesToSlide := currentChallengeId - (livenessInfo.CurrentWindowStartChallenge + windowSize)
+	newWindowStart := livenessInfo.CurrentWindowStartChallenge + challengesToSlide + 1
 
-	// Remove missed blocks that are now outside the window
-	var validMissedBlocks []uint64
-	for _, missedBlock := range livenessInfo.RecentMissedBlocks {
-		if missedBlock >= newWindowStart {
-			validMissedBlocks = append(validMissedBlocks, missedBlock)
+	// Remove missed challenges that are now outside the window
+	var validMissedChallenges []uint64
+	for _, missedChallenge := range livenessInfo.RecentMissedChallenges {
+		if missedChallenge >= newWindowStart {
+			validMissedChallenges = append(validMissedChallenges, missedChallenge)
 		}
 	}
 
-	// Update window and recalculate counts based on blocks still in window
-	livenessInfo.CurrentWindowStart = newWindowStart
-	livenessInfo.RecentMissedBlocks = validMissedBlocks
+	// Update window and recalculate counts based on challenges still in window
+	livenessInfo.CurrentWindowStartChallenge = newWindowStart
+	livenessInfo.RecentMissedChallenges = validMissedChallenges
 
 	// Estimate submissions in new window (this is an approximation)
 	// In practice, you might want to store more detailed history
 	estimatedTotalSubmissions := livenessInfo.TotalSubmissionsInWindow
-	if blocksToSlide > 0 {
+	if challengesToSlide > 0 {
 		// Reduce counts proportionally
-		remainingRatio := float64(windowSize-blocksToSlide) / float64(windowSize)
+		remainingRatio := float64(windowSize-challengesToSlide) / float64(windowSize)
 		estimatedTotalSubmissions = uint64(float64(livenessInfo.TotalSubmissionsInWindow) * remainingRatio)
 	}
 
 	livenessInfo.TotalSubmissionsInWindow = estimatedTotalSubmissions
-	livenessInfo.MissedSubmissionsInWindow = uint64(len(validMissedBlocks))
+	livenessInfo.MissedSubmissionsInWindow = uint64(len(validMissedChallenges))
 }
 
 // CheckProviderLivenessViolation checks if a provider has violated liveness requirements

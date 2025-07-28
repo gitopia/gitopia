@@ -16,7 +16,7 @@ func (k Keeper) ProcessChallengeForLiveness(ctx sdk.Context, challenge *types.Ch
 	// Track that a challenge has been created - all providers should respond
 	for _, provider := range activeProviders {
 		// Initialize or update liveness tracking for this challenge period
-		err := k.UpdateProviderLiveness(ctx, provider.Creator, false) // false = haven't submitted yet
+		err := k.UpdateProviderLiveness(ctx, provider.Creator, challenge.Id, false) // false = haven't submitted yet
 		if err != nil {
 			ctx.Logger().Error(fmt.Sprintf("failed to update liveness for provider %s: %v", provider.Creator, err))
 		}
@@ -29,7 +29,7 @@ func (k Keeper) ProcessChallengeForLiveness(ctx sdk.Context, challenge *types.Ch
 // ProcessChallengeResponseForLiveness handles liveness tracking when a provider submits a challenge response
 func (k Keeper) ProcessChallengeResponseForLiveness(ctx sdk.Context, challenge *types.Challenge, responderAddress string, validProof bool) error {
 	// Update liveness for the responding provider
-	err := k.UpdateProviderLiveness(ctx, responderAddress, true) // true = submitted proof
+	err := k.UpdateProviderLiveness(ctx, responderAddress, challenge.Id, true) // true = submitted proof
 	if err != nil {
 		return fmt.Errorf("failed to update liveness for responder %s: %v", responderAddress, err)
 	}
@@ -122,33 +122,35 @@ func (k Keeper) HasProviderSubmittedChallenge(ctx sdk.Context, challengeId uint6
 }
 
 // StartLivenessTracking initializes liveness tracking for all active providers
+// Updated for challenge-based liveness tracking
 func (k Keeper) StartLivenessTracking(ctx sdk.Context) error {
 	activeProviders := k.GetActiveNonJailedProviders(ctx)
-	currentBlock := uint64(ctx.BlockHeight())
+	currentChallengeId := k.GetChallengeCount(ctx)
 	
 	for _, provider := range activeProviders {
 		// Initialize liveness info if it doesn't exist
 		livenessInfo := k.GetProviderLivenessInfo(ctx, provider.Creator)
 		if livenessInfo == nil {
 			livenessInfo = &types.ProviderLivenessInfo{
-				Provider:                    provider.Creator,
-				CurrentWindowStart:         currentBlock,
-				MissedSubmissionsInWindow:   0,
-				TotalSubmissionsInWindow:    0,
-				CurrentLivenessRatio:       100.0,
-				LastSubmissionBlock:        0,
-				RecentMissedBlocks:         []uint64{},
+				Provider:                     provider.Creator,
+				CurrentWindowStartChallenge:  currentChallengeId,
+				MissedSubmissionsInWindow:    0,
+				TotalSubmissionsInWindow:     0,
+				CurrentLivenessRatio:         100.0,
+				LastSubmissionChallenge:      0,
+				RecentMissedChallenges:       []uint64{},
 			}
 			k.SetProviderLivenessInfo(ctx, livenessInfo)
 		}
 	}
 	
-	ctx.Logger().Info(fmt.Sprintf("initialized liveness tracking for %d providers at block %d", len(activeProviders), currentBlock))
+	ctx.Logger().Info(fmt.Sprintf("initialized liveness tracking for %d providers at challenge %d", len(activeProviders), currentChallengeId))
 	return nil
 }
 
-// PeriodicLivenessCheck performs periodic liveness checks and applies penalties
-func (k Keeper) PeriodicLivenessCheck(ctx sdk.Context) error {
+// CheckAndApplyLivenessViolations checks for liveness violations during challenge processing
+// This replaces the old periodic block-based checking since we now use challenge-based liveness
+func (k Keeper) CheckAndApplyLivenessViolations(ctx sdk.Context) error {
 	activeProviders := k.GetActiveNonJailedProviders(ctx)
 	
 	for _, provider := range activeProviders {
@@ -166,15 +168,9 @@ func (k Keeper) PeriodicLivenessCheck(ctx sdk.Context) error {
 				ctx.Logger().Error(fmt.Sprintf("failed to apply liveness penalty to %s: %v", provider.Creator, err))
 			}
 		}
-		
-		// Update liveness window for all providers
-		err = k.UpdateProviderLiveness(ctx, provider.Creator, false) // false = just updating window
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("failed to update liveness window for %s: %v", provider.Creator, err))
-		}
 	}
 	
-	ctx.Logger().Info(fmt.Sprintf("completed periodic liveness check for %d providers", len(activeProviders)))
+	ctx.Logger().Info(fmt.Sprintf("completed liveness violation check for %d providers", len(activeProviders)))
 	return nil
 }
 

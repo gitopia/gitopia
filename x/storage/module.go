@@ -155,7 +155,20 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		}
 		if challenge != nil {
 			id := am.keeper.AppendChallenge(ctx, *challenge)
+			challenge.Id = id // Set the ID on the challenge for liveness tracking
 			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.Provider))
+
+			// Track liveness for all providers when a challenge is created
+			err = am.keeper.ProcessChallengeForLiveness(ctx, challenge)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("error processing challenge for liveness: %v", err))
+			}
+
+			// Check and apply liveness violations after challenge processing
+			err = am.keeper.CheckAndApplyLivenessViolations(ctx)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("error checking liveness violations: %v", err))
+			}
 
 			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
 				ChallengeId: id,
@@ -164,15 +177,8 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		}
 	}
 
-	// Tendermint-style liveness tracking and enforcement
-	// Run liveness checks every block to maintain continuous monitoring
-	err := am.keeper.PeriodicLivenessCheck(ctx)
-	if err != nil {
-		ctx.Logger().Error(fmt.Sprintf("error during liveness check: %v", err))
-	}
-
 	// Auto-unjail providers whose jail time has expired
-	err = am.keeper.AutoUnjailExpiredProviders(ctx)
+	err := am.keeper.AutoUnjailExpiredProviders(ctx)
 	if err != nil {
 		ctx.Logger().Error(fmt.Sprintf("error during auto-unjail: %v", err))
 	}
@@ -203,21 +209,24 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 	// Check for expired challenges using new Tendermint-style liveness system
 	// Process all pending challenges that have expired
-	allChallenges := am.keeper.GetAllChallenge(ctx)
-	for _, challenge := range allChallenges {
-		if challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
-			// Use the new Tendermint-style challenge timeout processing
-			err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
-			if err != nil {
-				ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
-			}
-
-			// Update challenge status to failed
-			challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
-			am.keeper.SetChallenge(ctx, challenge)
-
-			ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
+	lastChallengeId := am.keeper.GetChallengeCount(ctx) - 1
+	ctx.Logger().Info(fmt.Sprintf("last challenge ID: %d", lastChallengeId))
+	challenge, found := am.keeper.GetChallenge(ctx, lastChallengeId)
+	if !found {
+		return []abci.ValidatorUpdate{}
+	}
+	if challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+		// Use the new Tendermint-style challenge timeout processing
+		err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
 		}
+
+		// Update challenge status to failed
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+		am.keeper.SetChallenge(ctx, challenge)
+
+		ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 	}
 
 	return []abci.ValidatorUpdate{}

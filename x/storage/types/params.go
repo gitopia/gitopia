@@ -27,42 +27,42 @@ var (
 	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
 	KeyFreeStorageMb                   = []byte("FreeStorageMb")
 	KeyMaxProviders                    = []byte("MaxProviders")
-	
+
 	// Liveness tracking parameter keys
-	KeyLivenessWindowBlocks     = []byte("LivenessWindowBlocks")
-	KeyMinLivenessRatio         = []byte("MinLivenessRatio")
-	KeyLivenessSlashAmount      = []byte("LivenessSlashAmount")
-	KeyLivenessSlashPercentage  = []byte("LivenessSlashPercentage")
-	KeyLivenessJailBlocks       = []byte("LivenessJailBlocks")
-	KeyProofFaultSlashAmount    = []byte("ProofFaultSlashAmount")
+	KeyLivenessWindowChallenges  = []byte("LivenessWindowChallenges")
+	KeyMinLivenessRatio          = []byte("MinLivenessRatio")
+	KeyLivenessSlashAmount       = []byte("LivenessSlashAmount")
+	KeyLivenessSlashPercentage   = []byte("LivenessSlashPercentage")
+	KeyLivenessJailBlocks        = []byte("LivenessJailBlocks")
+	KeyProofFaultSlashAmount     = []byte("ProofFaultSlashAmount")
 	KeyProofFaultSlashPercentage = []byte("ProofFaultSlashPercentage")
-	KeyProofFaultJailBlocks     = []byte("ProofFaultJailBlocks")
-	KeyMaxLivenessFaults        = []byte("MaxLivenessFaults")
-	KeyMaxProofFaults           = []byte("MaxProofFaults")
+	KeyProofFaultJailBlocks      = []byte("ProofFaultJailBlocks")
+	KeyMaxLivenessFaults         = []byte("MaxLivenessFaults")
+	KeyMaxProofFaults            = []byte("MaxProofFaults")
 
 	// Default values for parameters
-	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000 // $1134
-	DefaultChallengeIntervalBlocks         uint64   = 1000                                            // ~30 min
+	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000                               // $1134
+	DefaultChallengeIntervalBlocks         uint64   = 100                                             // ~30 min
 	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(4_267_000_000)) // $4.8 a day, $150 a month per provider
 	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5
 	DefaultConsecutiveFailsThreshold       uint64   = 3
-	DefaultConsecutiveFailsSlashPercentage uint64   = 1 // $11 when stake is $1134
+	DefaultConsecutiveFailsSlashPercentage uint64   = 1                                        // $11 when stake is $1134
 	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500                                // ~28 days
 	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(12_000)) // $0.00001 per MB of storage update
 	DefaultFreeStorageMb                   uint64   = 157_286_400                              // 150Mb
 	DefaultMaxProviders                    uint64   = 5
-	
+
 	// Liveness tracking default values
-	DefaultLivenessWindowBlocks     uint64   = 10000                                          // ~7 hours at 2.5s blocks
-	DefaultMinLivenessRatio         uint64   = 67                                             // 67% minimum liveness
-	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))  // $0.56 (lighter penalty for liveness)
-	DefaultLivenessSlashPercentage  uint64   = 50                                             // 0.5% stake slash for liveness fault (50 basis points)
-	DefaultLivenessJailBlocks       uint64   = 86400                                          // ~2.4 days jail for liveness fault
-	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5 (heavier penalty for proof fault)
-	DefaultProofFaultSlashPercentage uint64  = 2                                              // 2% stake slash for proof fault
-	DefaultProofFaultJailBlocks     uint64   = 259200                                         // ~7.2 days jail for proof fault
-	DefaultMaxLivenessFaults        uint64   = 5                                              // Max consecutive liveness faults
-	DefaultMaxProofFaults           uint64   = 3                                              // Max consecutive proof faults
+	DefaultLivenessWindowChallenges  uint64   = 100                                             // Last 100 challenges (~2.7 hours at 100 block intervals)
+	DefaultMinLivenessRatio          uint64   = 67                                              // 67% minimum liveness
+	DefaultLivenessSlashAmount       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))   // $0.56 (lighter penalty for liveness)
+	DefaultLivenessSlashPercentage   uint64   = 50                                              // 0.5% stake slash for liveness fault (50 basis points)
+	DefaultLivenessJailBlocks        uint64   = 86400                                           // ~2.4 days jail for liveness fault
+	DefaultProofFaultSlashAmount     sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5 (heavier penalty for proof fault)
+	DefaultProofFaultSlashPercentage uint64   = 2                                               // 2% stake slash for proof fault
+	DefaultProofFaultJailBlocks      uint64   = 259200                                          // ~7.2 days jail for proof fault
+	DefaultMaxLivenessFaults         uint64   = 5                                               // Max consecutive liveness faults
+	DefaultMaxProofFaults            uint64   = 3                                               // Max consecutive proof faults
 )
 
 // ParamKeyTable the param key table for launch module
@@ -84,7 +84,7 @@ func NewParams(
 	freeStorageMb uint64,
 	maxProviders uint64,
 	// Liveness tracking parameters
-	livenessWindowBlocks uint64,
+	livenessWindowChallenges uint64,
 	minLivenessRatio uint64,
 	livenessSlashAmount sdk.Coin,
 	livenessSlashPercentage uint64,
@@ -108,16 +108,16 @@ func NewParams(
 		FreeStorageMb:                   freeStorageMb,
 		MaxProviders:                    maxProviders,
 		// Liveness tracking fields
-		LivenessWindowBlocks:     livenessWindowBlocks,
-		MinLivenessRatio:         minLivenessRatio,
-		LivenessSlashAmount:      livenessSlashAmount,
-		LivenessSlashPercentage:  livenessSlashPercentage,
-		LivenessJailBlocks:       livenessJailBlocks,
-		ProofFaultSlashAmount:    proofFaultSlashAmount,
+		LivenessWindowChallenges:  livenessWindowChallenges,
+		MinLivenessRatio:          minLivenessRatio,
+		LivenessSlashAmount:       livenessSlashAmount,
+		LivenessSlashPercentage:   livenessSlashPercentage,
+		LivenessJailBlocks:        livenessJailBlocks,
+		ProofFaultSlashAmount:     proofFaultSlashAmount,
 		ProofFaultSlashPercentage: proofFaultSlashPercentage,
-		ProofFaultJailBlocks:     proofFaultJailBlocks,
-		MaxLivenessFaults:        maxLivenessFaults,
-		MaxProofFaults:           maxProofFaults,
+		ProofFaultJailBlocks:      proofFaultJailBlocks,
+		MaxLivenessFaults:         maxLivenessFaults,
+		MaxProofFaults:            maxProofFaults,
 	}
 }
 
@@ -136,7 +136,7 @@ func DefaultParams() Params {
 		DefaultFreeStorageMb,
 		DefaultMaxProviders,
 		// Liveness tracking defaults
-		DefaultLivenessWindowBlocks,
+		DefaultLivenessWindowChallenges,
 		DefaultMinLivenessRatio,
 		DefaultLivenessSlashAmount,
 		DefaultLivenessSlashPercentage,
@@ -164,7 +164,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
 		// Liveness tracking parameters
-		paramtypes.NewParamSetPair(KeyLivenessWindowBlocks, &p.LivenessWindowBlocks, validateLivenessWindowBlocks),
+		paramtypes.NewParamSetPair(KeyLivenessWindowChallenges, &p.LivenessWindowChallenges, validateLivenessWindowChallenges),
 		paramtypes.NewParamSetPair(KeyMinLivenessRatio, &p.MinLivenessRatio, validateMinLivenessRatio),
 		paramtypes.NewParamSetPair(KeyLivenessSlashAmount, &p.LivenessSlashAmount, validateLivenessSlashAmount),
 		paramtypes.NewParamSetPair(KeyLivenessSlashPercentage, &p.LivenessSlashPercentage, validateLivenessSlashPercentage),
@@ -352,14 +352,14 @@ func validateMaxProviders(v interface{}) error {
 	return nil
 }
 
-// validateLivenessWindowBlocks validates the LivenessWindowBlocks param
-func validateLivenessWindowBlocks(v interface{}) error {
-	blocks, ok := v.(uint64)
+// validateLivenessWindowChallenges validates the LivenessWindowChallenges param
+func validateLivenessWindowChallenges(v interface{}) error {
+	challenges, ok := v.(uint64)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if blocks == 0 {
-		return fmt.Errorf("liveness window blocks cannot be zero")
+	if challenges == 0 {
+		return fmt.Errorf("liveness window challenges cannot be zero")
 	}
 	return nil
 }

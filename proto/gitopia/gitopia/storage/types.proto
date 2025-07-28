@@ -223,12 +223,12 @@ message LivenessWindow {
 // ProviderLivenessInfo tracks comprehensive liveness information for a provider
 message ProviderLivenessInfo {
   string provider = 1;
-  uint64 current_window_start = 2;
+  uint64 current_window_start_challenge = 2; // Challenge ID marking start of current window
   uint64 missed_submissions_in_window = 3;
   uint64 total_submissions_in_window = 4;
   double current_liveness_ratio = 5; // Current ratio in the sliding window
-  uint64 last_submission_block = 6;
-  repeated uint64 recent_missed_blocks = 7; // Last N missed blocks for tracking
+  uint64 last_submission_challenge = 6; // Challenge ID of last submission
+  repeated uint64 recent_missed_challenges = 7; // Last N missed challenge IDs for tracking
 }
 
 // ProviderLivenessStats contains liveness statistics for querying

@@ -29,8 +29,8 @@ message Params {
   uint64 max_providers = 11 [(gogoproto.moretags) = "yaml:\"max_providers\""];
 
   // Liveness tracking parameters
-  // Number of blocks to track for liveness calculation (sliding window)
-  uint64 liveness_window_blocks = 12 [(gogoproto.moretags) = "yaml:\"liveness_window_blocks\""];
+  // Number of challenges to track for liveness calculation (sliding window)
+  uint64 liveness_window_challenges = 12 [(gogoproto.moretags) = "yaml:\"liveness_window_challenges\""];
   // Minimum liveness ratio required (e.g., 67 = 67%)
   uint64 min_liveness_ratio = 13 [(gogoproto.moretags) = "yaml:\"min_liveness_ratio\""];
   

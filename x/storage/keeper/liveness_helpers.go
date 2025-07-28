@@ -86,25 +86,31 @@ func (k Keeper) GetProviderLivenessStats(ctx sdk.Context, providerAddr string) (
 }
 
 // CleanupExpiredLivenessData removes old liveness data to prevent storage bloat
+// Updated for challenge-based liveness tracking
 func (k Keeper) CleanupExpiredLivenessData(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
-	currentBlock := uint64(ctx.BlockHeight())
+
+	// Get the latest challenge ID to determine what's "expired"
+	latestChallengeId := k.GetChallengeCount(ctx)
 
 	// Clean up liveness data older than 2x the window size
-	expirationThreshold := currentBlock - (2 * params.LivenessWindowBlocks)
+	expirationThreshold := uint64(0)
+	if latestChallengeId > (2 * params.LivenessWindowChallenges) {
+		expirationThreshold = latestChallengeId - (2 * params.LivenessWindowChallenges)
+	}
 
 	allProviders := k.GetAllProvider(ctx)
 	cleanedCount := 0
 
 	for _, provider := range allProviders {
 		livenessInfo := k.GetProviderLivenessInfo(ctx, provider.Creator)
-		if livenessInfo != nil && livenessInfo.CurrentWindowStart < expirationThreshold {
+		if livenessInfo != nil && livenessInfo.CurrentWindowStartChallenge < expirationThreshold {
 			// Reset liveness info for providers with very old data
-			livenessInfo.CurrentWindowStart = currentBlock
+			livenessInfo.CurrentWindowStartChallenge = latestChallengeId
 			livenessInfo.MissedSubmissionsInWindow = 0
 			livenessInfo.TotalSubmissionsInWindow = 0
 			livenessInfo.CurrentLivenessRatio = 100.0
-			livenessInfo.RecentMissedBlocks = []uint64{}
+			livenessInfo.RecentMissedChallenges = []uint64{}
 
 			k.SetProviderLivenessInfo(ctx, livenessInfo)
 			cleanedCount++
@@ -120,8 +126,8 @@ func (k Keeper) CleanupExpiredLivenessData(ctx sdk.Context) error {
 
 // ValidateProviderLivenessParams validates liveness-related parameters
 func ValidateProviderLivenessParams(params types.Params) error {
-	if params.LivenessWindowBlocks == 0 {
-		return fmt.Errorf("liveness window blocks must be greater than 0")
+	if params.LivenessWindowChallenges == 0 {
+		return fmt.Errorf("liveness window challenges must be greater than 0")
 	}
 
 	if params.MinLivenessRatio < 0 || params.MinLivenessRatio > 100 {
