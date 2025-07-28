@@ -549,11 +549,16 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge not found")
 	}
 
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
 	ctx.Logger().Info(fmt.Sprintf("provider %s submitted challenge response for challenge %d", msg.Creator, msg.ChallengeId))
 
-	// Verify the provider is the one being challenged
-	if challenge.Provider != msg.Creator {
-		return nil, fmt.Errorf("unauthorized: only challenged provider can submit response")
+	// Verify the provider is active
+	if !provider.Jailed && provider.Status == types.Bonded {
+		return nil, fmt.Errorf("unauthorized: only active provider can submit response")
 	}
 
 	// Check challenge hasn't expired
@@ -564,11 +569,6 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	// Check challenge is still pending
 	if challenge.Status != types.ChallengeStatus_CHALLENGE_STATUS_PENDING {
 		return nil, fmt.Errorf("challenge already completed")
-	}
-
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found {
-		return nil, fmt.Errorf("provider not found")
 	}
 
 	params := k.GetParams(ctx)
@@ -611,22 +611,25 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		ctx.Logger().Error(fmt.Sprintf("failed to process liveness for valid proof from %s: %v", provider.Creator, err))
 	}
 
-	// Update challenge status
-	challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
-	k.SetChallenge(ctx, challenge)
+	// Reward only the assigned provider
+	if provider.Creator == challenge.Provider {
+		// Update challenge status
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
+		k.SetChallenge(ctx, challenge)
 
-	activeProviders := k.GetActiveProviders(ctx)
+		activeProviders := k.GetActiveProviders(ctx)
 
-	// Consider only providers that have been active for at least 24 hours
-	minJoinTime := ctx.BlockTime().Add(-24 * time.Second)
-	activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
+		// Consider only providers that have been active for at least 24 hours
+		minJoinTime := ctx.BlockTime().Add(-24 * time.Second)
+		activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
 
-	// Update provider rewards
-	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
-	currentRewards := k.GetProviderRewards(ctx, providerAcc)
-	challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
-	currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
-	k.SetProviderRewards(ctx, providerAcc, currentRewards)
+		// Update provider rewards
+		providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+		currentRewards := k.GetProviderRewards(ctx, providerAcc)
+		challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
+		currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
+		k.SetProviderRewards(ctx, providerAcc, currentRewards)
+	}
 
 	// Update provider stats
 	provider.TotalChallenges++
