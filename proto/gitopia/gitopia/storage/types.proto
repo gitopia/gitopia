@@ -235,5 +235,5 @@ message ProviderLivenessStats {
   uint64 consecutive_liveness_faults = 5;
   uint64 consecutive_proof_faults = 6;
   bool is_jailed = 7;
-  google.protobuf.Timestamp jail_until = 8;
+  google.protobuf.Timestamp jail_until = 8 [(gogoproto.nullable) = true, (gogoproto.stdtime) = true];
 }
