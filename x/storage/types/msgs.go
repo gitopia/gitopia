@@ -26,6 +26,7 @@ const (
 	TypeMsgDecreaseStake            = "decrease_stake"
 	TypeMsgCompleteDecreaseStake    = "complete_decrease_stake"
 	TypeMsgReactivateProvider       = "reactivate_provider"
+	TypeMsgUnjailProvider           = "unjail_provider"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -767,6 +768,44 @@ func (msg *MsgDeleteLFSObject) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+	}
+
+	return nil
+}
+
+var _ sdk.Msg = &MsgUnjailProvider{}
+
+func NewMsgUnjailProvider(creator string) *MsgUnjailProvider {
+	return &MsgUnjailProvider{
+		Creator: creator,
+	}
+}
+
+func (msg *MsgUnjailProvider) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUnjailProvider) Type() string {
+	return TypeMsgUnjailProvider
+}
+
+func (msg *MsgUnjailProvider) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUnjailProvider) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUnjailProvider) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	return nil

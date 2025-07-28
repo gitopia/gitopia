@@ -30,6 +30,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgDecreaseStake{}, "storage/DecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgCompleteDecreaseStake{}, "storage/CompleteDecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgReactivateProvider{}, "storage/ReactivateProvider", nil)
+	cdc.RegisterConcrete(&MsgUnjailProvider{}, "storage/UnjailProvider", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -54,6 +55,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDecreaseStake{},
 		&MsgCompleteDecreaseStake{},
 		&MsgReactivateProvider{},
+		&MsgUnjailProvider{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
