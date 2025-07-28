@@ -75,8 +75,13 @@ func NewKeeper(
 }
 
 // GetAuthority returns the x/gitopia module's authority.
-func (k *Keeper) GetAuthority() string {
+func (k Keeper) GetAuthority() string {
 	return k.authority
+}
+
+// SetStorageKeeper sets the storage keeper after initialization to break circular dependency
+func (k *Keeper) SetStorageKeeper(storageKeeper storagetypes.StorageKeeperI) {
+	k.storageKeeper = storageKeeper
 }
 
 func (k *Keeper) Logger(ctx sdk.Context) log.Logger {

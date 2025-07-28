@@ -353,6 +353,7 @@ func NewAppKeeper(
 		appKeepers.SlashingKeeper,
 	)
 
+	// Initialize GitopiaKeeper with nil StorageKeeper to break circular dependency
 	appKeepers.GitopiaKeeper = *gitopiakeeper.NewKeeper(
 		appCodec,
 		appKeepers.keys[gitopiatypes.StoreKey],
@@ -365,7 +366,7 @@ func NewAppKeeper(
 		appKeepers.MintKeeper,
 		appKeepers.DistrKeeper,
 		appKeepers.GroupKeeper,
-		appKeepers.StorageKeeper,
+		nil, // StorageKeeper will be set later
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	appKeepers.RewardKeeper = *rewardskeeper.NewKeeper(
@@ -390,6 +391,9 @@ func NewAppKeeper(
 		&appKeepers.GitopiaKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+
+	// Set StorageKeeper on GitopiaKeeper to complete the circular dependency resolution
+	appKeepers.GitopiaKeeper.SetStorageKeeper(appKeepers.StorageKeeper)
 
 	return appKeepers
 }
