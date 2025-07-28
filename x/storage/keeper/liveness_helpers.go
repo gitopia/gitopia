@@ -16,7 +16,7 @@ func (k Keeper) GetActiveProvidersForLiveness(ctx sdk.Context) []types.Provider 
 
 	for _, provider := range allProviders {
 		// Only include providers that are not jailed and not suspended
-		if !provider.Jailed && provider.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		if !provider.Jailed && provider.Status == types.Bonded {
 			livenessProviders = append(livenessProviders, provider)
 		}
 	}

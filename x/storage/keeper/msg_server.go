@@ -87,7 +87,7 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		SuccessfulChallenges:     0,
 		ConsecutiveFailures:      0,
 		JoinTime:                 ctx.BlockTime(),
-		Status:                   types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
+		Status:                   types.Bonded,
 		IpfsClusterPeerMultiaddr: msg.IpfsClusterPeerMultiaddr,
 	}
 
@@ -147,7 +147,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -297,7 +297,7 @@ func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -349,7 +349,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -500,7 +500,7 @@ func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDelet
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -618,7 +618,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	activeProviders := k.GetActiveProviders(ctx)
 
 	// Consider only providers that have been active for at least 24 hours
-	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+	minJoinTime := ctx.BlockTime().Add(-24 * time.Second)
 	activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
 
 	// Update provider rewards
@@ -681,7 +681,7 @@ func (k msgServer) UnregisterProvider(goCtx context.Context, msg *types.MsgUnreg
 
 	// Update provider with unstake completion time
 	provider.UnstakeCompletionTime = &unstakeCompletionTime
-	provider.Status = types.ProviderStatus_PROVIDER_STATUS_UNREGISTERING
+	provider.Status = types.Unbonding
 	k.SetProvider(ctx, provider)
 
 	// Emit event
@@ -810,8 +810,8 @@ func (k msgServer) ClawbackProviderStake(goCtx context.Context, msg *types.MsgCl
 	// Check if stake has fallen below minimum and suspend provider if necessary
 	params := k.GetParams(ctx)
 	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
-		if provider.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
-			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
+		if provider.Status == types.Bonded {
+			provider.Status = types.Unbonding
 			k.SetProvider(ctx, provider)
 			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to stake falling below minimum after clawback", provider.Creator))
 
@@ -832,7 +832,7 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -1023,7 +1023,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -1102,7 +1102,7 @@ func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLF
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -1154,7 +1154,7 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 
 	// Check if provider is active or suspended.
 	// A suspended provider needs to be able to increase stake to meet the minimum for reactivation.
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE && provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
+	if provider.Status != types.Bonded {
 		return nil, fmt.Errorf("can only increase stake for active or suspended providers, current status: %s", provider.Status)
 	}
 
@@ -1199,7 +1199,7 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}
 
 	// Check if provider is active
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if provider.Status != types.Bonded {
 		return nil, fmt.Errorf("can only decrease stake for active providers")
 	}
 
@@ -1254,7 +1254,7 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 	}
 
 	// Check if provider is suspended
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
+	if !provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("can only reactivate suspended providers")
 	}
 
@@ -1278,7 +1278,7 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 	}
 
 	// Reactivate the provider
-	provider.Status = types.ProviderStatus_PROVIDER_STATUS_ACTIVE
+	provider.Status = types.Bonded
 	provider.ConsecutiveFailures = 0 // Reset failure count on reactivation
 	k.SetProvider(ctx, provider)
 

@@ -25,8 +25,8 @@ message Provider {
     (gogoproto.stdtime) = true
   ];
   string moniker = 9;
-  // status defines the current status of the provider (active/inactive/suspended)
-  ProviderStatus status = 10;
+  // status defines the current bond status of the provider
+  BondStatus status = 10;
   // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
   string ipfs_cluster_peer_multiaddr = 11;
   // pending_decrease_amount defines the amount to be decreased after cooldown
@@ -51,13 +51,18 @@ message Provider {
   ];
 }
 
-// ProviderStatus represents the status of a storage provider
-enum ProviderStatus {
-  PROVIDER_STATUS_UNSPECIFIED = 0;
-  PROVIDER_STATUS_ACTIVE = 1;
-  PROVIDER_STATUS_INACTIVE = 2;
-  PROVIDER_STATUS_SUSPENDED = 3;
-  PROVIDER_STATUS_UNREGISTERING = 4;
+// BondStatus is the status of a storage provider.
+enum BondStatus {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // UNSPECIFIED defines an invalid provider status.
+  BOND_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
+  // UNBONDED defines a provider that is not bonded.
+  BOND_STATUS_UNBONDED = 1 [(gogoproto.enumvalue_customname) = "Unbonded"];
+  // UNBONDING defines a provider that is unbonding.
+  BOND_STATUS_UNBONDING = 2 [(gogoproto.enumvalue_customname) = "Unbonding"];
+  // BONDED defines a provider that is bonded.
+  BOND_STATUS_BONDED = 3 [(gogoproto.enumvalue_customname) = "Bonded"];
 }
 
 // Packfile represents a Git packfile stored in IPFS
