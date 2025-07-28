@@ -557,7 +557,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 	ctx.Logger().Info(fmt.Sprintf("provider %s submitted challenge response for challenge %d", msg.Creator, msg.ChallengeId))
 
 	// Verify the provider is active
-	if !provider.Jailed && provider.Status == types.Bonded {
+	if provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("unauthorized: only active provider can submit response")
 	}
 
