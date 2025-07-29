@@ -158,29 +158,11 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			challenge.Id = id // Set the ID on the challenge for liveness tracking
 			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.Provider))
 
-			// Track liveness for all providers when a challenge is created
-			err = am.keeper.ProcessChallengeForLiveness(ctx, challenge)
-			if err != nil {
-				ctx.Logger().Error(fmt.Sprintf("error processing challenge for liveness: %v", err))
-			}
-
-			// Check and apply liveness violations after challenge processing
-			err = am.keeper.CheckAndApplyLivenessViolations(ctx)
-			if err != nil {
-				ctx.Logger().Error(fmt.Sprintf("error checking liveness violations: %v", err))
-			}
-
 			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
 				ChallengeId: id,
 				Provider:    challenge.Provider,
 			})
 		}
-	}
-
-	// Auto-unjail providers whose jail time has expired
-	err := am.keeper.AutoUnjailExpiredProviders(ctx)
-	if err != nil {
-		ctx.Logger().Error(fmt.Sprintf("error during auto-unjail: %v", err))
 	}
 
 	// Cleanup expired liveness data periodically (every 1000 blocks to avoid performance impact)
