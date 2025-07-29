@@ -16,17 +16,14 @@ const (
 )
 
 var (
-	KeyMinStakeAmount                  = []byte("MinStakeAmount")
-	KeyChallengeIntervalBlocks         = []byte("ChallengeIntervalBlocks")
-	KeyChallengePeriod                 = []byte("ChallengePeriod")
-	KeyRewardPerDay                    = []byte("RewardPerDay")
-	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
-	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
-	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
-	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
-	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
-	KeyFreeStorageMb                   = []byte("FreeStorageMb")
-	KeyMaxProviders                    = []byte("MaxProviders")
+	KeyMinStakeAmount          = []byte("MinStakeAmount")
+	KeyChallengeIntervalBlocks = []byte("ChallengeIntervalBlocks")
+	KeyChallengePeriod         = []byte("ChallengePeriod")
+	KeyRewardPerDay            = []byte("RewardPerDay")
+	KeyUnstakeCooldownBlocks   = []byte("UnstakeCooldownBlocks")
+	KeyStoragePricePerMb       = []byte("StoragePricePerMb")
+	KeyFreeStorageMb           = []byte("FreeStorageMb")
+	KeyMaxProviders            = []byte("MaxProviders")
 
 	// Liveness tracking parameter keys
 	KeyLivenessWindowChallenges  = []byte("LivenessWindowChallenges")
@@ -76,9 +73,6 @@ func NewParams(
 	challengeIntervalBlocks uint64,
 	challengePeriod time.Duration,
 	rewardPerDay sdk.Coin,
-	challengeSlashAmount sdk.Coin,
-	consecutiveFailsThreshold uint64,
-	consecutiveFailsSlashPercentage uint64,
 	unstakeCooldownBlocks uint64,
 	storagePricePerMb sdk.Coin,
 	freeStorageMb uint64,
@@ -96,17 +90,14 @@ func NewParams(
 	maxProofFaults uint64,
 ) Params {
 	return Params{
-		MinStakeAmount:                  minStakeAmount,
-		ChallengeIntervalBlocks:         challengeIntervalBlocks,
-		ChallengePeriod:                 &challengePeriod,
-		RewardPerDay:                    rewardPerDay,
-		ChallengeSlashAmount:            challengeSlashAmount,
-		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
-		ConsecutiveFailsSlashPercentage: consecutiveFailsSlashPercentage,
-		UnstakeCooldownBlocks:           unstakeCooldownBlocks,
-		StoragePricePerMb:               storagePricePerMb,
-		FreeStorageMb:                   freeStorageMb,
-		MaxProviders:                    maxProviders,
+		MinStakeAmount:          minStakeAmount,
+		ChallengeIntervalBlocks: challengeIntervalBlocks,
+		ChallengePeriod:         &challengePeriod,
+		RewardPerDay:            rewardPerDay,
+		UnstakeCooldownBlocks:   unstakeCooldownBlocks,
+		StoragePricePerMb:       storagePricePerMb,
+		FreeStorageMb:           freeStorageMb,
+		MaxProviders:            maxProviders,
 		// Liveness tracking fields
 		LivenessWindowChallenges:  livenessWindowChallenges,
 		MinLivenessRatio:          minLivenessRatio,
@@ -128,9 +119,6 @@ func DefaultParams() Params {
 		DefaultChallengeIntervalBlocks,
 		DefaultChallengePeriod,
 		DefaultRewardPerDay,
-		DefaultChallengeSlashAmount,
-		DefaultConsecutiveFailsThreshold,
-		DefaultConsecutiveFailsSlashPercentage,
 		DefaultUnstakeCooldownBlocks,
 		DefaultStoragePricePerMb,
 		DefaultFreeStorageMb,
@@ -156,9 +144,6 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyChallengeIntervalBlocks, &p.ChallengeIntervalBlocks, validateChallengeIntervalBlocks),
 		paramtypes.NewParamSetPair(KeyChallengePeriod, &p.ChallengePeriod, validateChallengePeriod),
 		paramtypes.NewParamSetPair(KeyRewardPerDay, &p.RewardPerDay, validateRewardPerDay),
-		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
-		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
-		paramtypes.NewParamSetPair(KeyConsecutiveFailsSlashPercentage, &p.ConsecutiveFailsSlashPercentage, validateConsecutiveFailsSlashPercentage),
 		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
 		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
@@ -189,15 +174,6 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateRewardPerDay(p.RewardPerDay); err != nil {
-		return err
-	}
-	if err := validateChallengeSlashAmount(p.ChallengeSlashAmount); err != nil {
-		return err
-	}
-	if err := validateConsecutiveFailsThreshold(p.ConsecutiveFailsThreshold); err != nil {
-		return err
-	}
-	if err := validateConsecutiveFailsSlashPercentage(p.ConsecutiveFailsSlashPercentage); err != nil {
 		return err
 	}
 	if err := validateUnstakeCooldownBlocks(p.UnstakeCooldownBlocks); err != nil {
@@ -265,42 +241,6 @@ func validateRewardPerDay(v interface{}) error {
 	}
 	if coin.IsZero() {
 		return fmt.Errorf("reward per day cannot be zero")
-	}
-	return nil
-}
-
-// validateChallengeSlashAmount validates the ChallengeSlashAmount param
-func validateChallengeSlashAmount(v interface{}) error {
-	coin, ok := v.(sdk.Coin)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if coin.IsZero() {
-		return fmt.Errorf("challenge slash amount cannot be zero")
-	}
-	return nil
-}
-
-// validateConsecutiveFailsThreshold validates the ConsecutiveFailsThreshold param
-func validateConsecutiveFailsThreshold(v interface{}) error {
-	threshold, ok := v.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if threshold == 0 {
-		return fmt.Errorf("consecutive fails threshold cannot be 0")
-	}
-	return nil
-}
-
-// validateConsecutiveFailsSlashPercentage validates the ConsecutiveFailsSlashPercentage param
-func validateConsecutiveFailsSlashPercentage(v interface{}) error {
-	percentage, ok := v.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if percentage == 0 {
-		return fmt.Errorf("consecutive fails slash percentage cannot be 0")
 	}
 	return nil
 }
