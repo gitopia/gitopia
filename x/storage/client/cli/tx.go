@@ -32,7 +32,7 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdIncreaseStake())
 	cmd.AddCommand(CmdDecreaseStake())
 	cmd.AddCommand(CmdCompleteDecreaseStake())
-	cmd.AddCommand(CmdReactivateProvider())
+	cmd.AddCommand(CmdUnjailProvider())
 	cmd.AddCommand(CmdUnregisterProvider())
 	cmd.AddCommand(CmdCompleteUnstake())
 	cmd.AddCommand(CmdUpdateRepositoryPackfile())

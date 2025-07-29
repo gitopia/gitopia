@@ -92,27 +92,3 @@ func CmdCompleteDecreaseStake() *cobra.Command {
 
 	return cmd
 }
-
-func CmdReactivateProvider() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "reactivate-provider",
-		Short: "Reactivate a suspended storage provider",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgReactivateProvider(
-				clientCtx.GetFromAddress().String(),
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
