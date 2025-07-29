@@ -1253,6 +1253,20 @@ func (k msgServer) UnjailProvider(goCtx context.Context, msg *types.MsgUnjailPro
 		return nil, fmt.Errorf("jail time has not expired, jailed until: %s", provider.JailUntil.String())
 	}
 
+	// Check minimum stake requirement
+	params := k.GetParams(ctx)
+	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
+		return nil, fmt.Errorf("minimum stake requirement not met")
+	}
+
+	// Check if active provider count has reached the maximum limit
+	activeProviders := k.GetActiveProviders(ctx)
+	if len(activeProviders) >= int(k.GetParams(ctx).MaxProviders) {
+		return nil, fmt.Errorf("active provider count has reached the maximum limit")
+	}
+
 	// Unjail the provider
 	provider.Jailed = false
 	provider.JailUntil = nil
