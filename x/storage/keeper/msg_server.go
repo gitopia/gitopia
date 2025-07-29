@@ -588,10 +588,6 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("failed to verify proof: %v", err)
 	}
 	if !verified {
-		// Update provider stats for failed challenge
-		provider.TotalChallenges++
-		provider.ConsecutiveFailures++
-
 		// Process challenge response for liveness tracking (invalid proof)
 		err := k.ProcessChallengeResponseForLiveness(ctx, &challenge, provider.Creator, false)
 		if err != nil {
@@ -620,7 +616,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		activeProviders := k.GetActiveProviders(ctx)
 
 		// Consider only providers that have been active for at least 24 hours
-		minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+		minJoinTime := ctx.BlockTime().Add(-24 * time.Second)
 		activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
 
 		// Update provider rewards
@@ -629,15 +625,9 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
 		currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
 		k.SetProviderRewards(ctx, providerAcc, currentRewards)
+
+		ctx.Logger().Info(fmt.Sprintf("provider %s rewarded for challenge %d", provider.Creator, challenge.Id))
 	}
-
-	// Update provider stats
-	provider.TotalChallenges++
-	provider.SuccessfulChallenges++
-	provider.ConsecutiveFailures = 0
-	k.SetProvider(ctx, provider)
-
-	ctx.Logger().Info(fmt.Sprintf("provider %s rewarded for challenge %d", provider.Creator, challenge.Id))
 
 	return &types.MsgSubmitChallengeResponseResponse{}, nil
 }

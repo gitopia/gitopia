@@ -13,39 +13,36 @@ message Provider {
   string creator = 1;
   uint64 id = 2;
   string api_url = 3;
-  uint64 total_challenges = 4;
-  uint64 successful_challenges = 5;
-  uint64 consecutive_failures = 6;
-  google.protobuf.Timestamp join_time = 7 [
+  google.protobuf.Timestamp join_time = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
-  google.protobuf.Timestamp unstake_completion_time = 8 [
+  google.protobuf.Timestamp unstake_completion_time = 5 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
-  string moniker = 9;
+  string moniker = 6;
   // status defines the current bond status of the provider
-  BondStatus status = 10;
+  BondStatus status = 7;
   // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
-  string ipfs_cluster_peer_multiaddr = 11;
+  string ipfs_cluster_peer_multiaddr = 8;
   // pending_decrease_amount defines the amount to be decreased after cooldown
-  cosmos.base.v1beta1.Coin pending_decrease_amount = 12 [(gogoproto.nullable) = true];
+  cosmos.base.v1beta1.Coin pending_decrease_amount = 9 [(gogoproto.nullable) = true];
   // decrease_completion_time defines when the stake decrease can be completed
-  google.protobuf.Timestamp decrease_completion_time = 13 [
+  google.protobuf.Timestamp decrease_completion_time = 10 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
   
   // Liveness and jail tracking fields
-  bool jailed = 14;
-  google.protobuf.Timestamp jail_until = 15 [
+  bool jailed = 11;
+  google.protobuf.Timestamp jail_until = 12 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
-  uint64 consecutive_liveness_faults = 16;
-  uint64 consecutive_proof_faults = 17;
-  google.protobuf.Timestamp last_liveness_check = 18 [
+  uint64 consecutive_liveness_faults = 13;
+  uint64 consecutive_proof_faults = 14;
+  google.protobuf.Timestamp last_liveness_check = 15 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
