@@ -54,9 +54,6 @@ service Msg {
   // CompleteDecreaseStake completes the stake decrease after cooldown period
   rpc CompleteDecreaseStake(MsgCompleteDecreaseStake) returns (MsgCompleteDecreaseStakeResponse);
 
-  // ReactivateProvider reactivates a suspended provider
-  rpc ReactivateProvider(MsgReactivateProvider) returns (MsgReactivateProviderResponse);
-
   // UnjailProvider unjails a jailed provider after jail time expires
   rpc UnjailProvider(MsgUnjailProvider) returns (MsgUnjailProviderResponse);
 
@@ -222,14 +219,6 @@ message MsgCompleteDecreaseStake {
 message MsgCompleteDecreaseStakeResponse {
   cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
 }
-
-// MsgReactivateProvider defines a message for reactivating a suspended provider
-message MsgReactivateProvider {
-  option (cosmos.msg.v1.signer) = "creator";
-  string creator = 1;
-}
-
-message MsgReactivateProviderResponse {}
 
 // MsgUnjailProvider defines a message for unjailing a jailed provider
 message MsgUnjailProvider {

@@ -95,44 +95,6 @@ func (msg *MsgDecreaseStake) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgReactivateProvider{}
-
-// NewMsgReactivateProvider creates a new MsgReactivateProvider instance
-func NewMsgReactivateProvider(creator string) *MsgReactivateProvider {
-	return &MsgReactivateProvider{
-		Creator: creator,
-	}
-}
-
-func (msg *MsgReactivateProvider) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgReactivateProvider) Type() string {
-	return TypeMsgReactivateProvider
-}
-
-func (msg *MsgReactivateProvider) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgReactivateProvider) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgReactivateProvider) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-	return nil
-}
-
 var _ sdk.Msg = &MsgCompleteDecreaseStake{}
 
 // NewMsgCompleteDecreaseStake creates a new MsgCompleteDecreaseStake instance

@@ -25,7 +25,6 @@ const (
 	TypeMsgIncreaseStake            = "increase_stake"
 	TypeMsgDecreaseStake            = "decrease_stake"
 	TypeMsgCompleteDecreaseStake    = "complete_decrease_stake"
-	TypeMsgReactivateProvider       = "reactivate_provider"
 	TypeMsgUnjailProvider           = "unjail_provider"
 )
 

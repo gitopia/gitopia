@@ -1247,55 +1247,6 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}, nil
 }
 
-func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReactivateProvider) (*types.MsgReactivateProviderResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Get the provider
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found {
-		return nil, fmt.Errorf("provider not found")
-	}
-
-	// Check if provider is suspended
-	if !provider.Jailed || provider.Status != types.Bonded {
-		return nil, fmt.Errorf("can only reactivate suspended providers")
-	}
-
-	// Check if provider still meets minimum stake requirement
-	params := k.GetParams(ctx)
-
-	if len(k.GetActiveProviders(ctx)) >= int(params.MaxProviders) {
-		return nil, fmt.Errorf("active provider count has reached the maximum limit")
-	}
-
-	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
-	providerStake := k.GetProviderStake(ctx, providerAcc)
-	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
-		return nil, fmt.Errorf("provider stake is below minimum requirement, increase stake first")
-	}
-
-	// Check active provider limit
-	activeProviders := k.GetActiveProviders(ctx)
-	if len(activeProviders) >= int(params.MaxProviders) {
-		return nil, fmt.Errorf("active provider count has reached the maximum limit")
-	}
-
-	// Reactivate the provider
-	provider.Status = types.Bonded
-	provider.ConsecutiveFailures = 0 // Reset failure count on reactivation
-	k.SetProvider(ctx, provider)
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
-		Address: provider.Creator,
-		Online:  true,
-	})
-
-	ctx.Logger().Info(fmt.Sprintf("provider %s reactivated", provider.Creator))
-
-	return &types.MsgReactivateProviderResponse{}, nil
-}
-
 func (k msgServer) UnjailProvider(goCtx context.Context, msg *types.MsgUnjailProvider) (*types.MsgUnjailProviderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
