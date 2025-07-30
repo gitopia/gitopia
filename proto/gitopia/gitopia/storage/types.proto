@@ -41,10 +41,6 @@ message Provider {
     (gogoproto.stdtime) = true
   ];
   uint64 consecutive_proof_faults = 13;
-  google.protobuf.Timestamp last_liveness_check = 14 [
-    (gogoproto.nullable) = true,
-    (gogoproto.stdtime) = true
-  ];
 }
 
 // BondStatus is the status of a storage provider.
@@ -225,6 +221,10 @@ message ProviderLivenessInfo {
   double current_liveness_ratio = 5; // Current ratio in the sliding window
   uint64 last_submission_challenge = 6; // Challenge ID of last submission
   repeated uint64 recent_missed_challenges = 7; // Last N missed challenge IDs for tracking
+  google.protobuf.Timestamp last_liveness_check = 8 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
 }
 
 // ProviderLivenessStats contains liveness statistics for querying

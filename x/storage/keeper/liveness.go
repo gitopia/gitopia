@@ -45,6 +45,8 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 		}
 	} else {
 		livenessInfo.LastSubmissionChallenge = challengeId
+		blockTime := ctx.BlockTime()
+		livenessInfo.LastLivenessCheck = &blockTime
 	}
 
 	// Calculate current liveness ratio
