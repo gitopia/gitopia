@@ -7,8 +7,6 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
-// Note: IsProviderJailed is already defined in liveness.go, removing duplicate
-
 // GetActiveProvidersForLiveness returns providers that should participate in liveness tracking
 func (k Keeper) GetActiveProvidersForLiveness(ctx sdk.Context) []types.Provider {
 	allProviders := k.GetActiveProviders(ctx)

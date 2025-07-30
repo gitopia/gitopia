@@ -30,7 +30,7 @@ func (k Keeper) ProcessChallengeResponseForLiveness(ctx sdk.Context, challenge *
 // ProcessChallengeTimeout handles liveness violations when a challenge times out
 func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challenge) error {
 	// Get all active providers that should have responded
-	activeProviders := k.GetActiveNonJailedProviders(ctx)
+	activeProviders := k.GetActiveProviders(ctx)
 
 	// Check which providers failed to respond and update liveness tracking
 	for _, provider := range activeProviders {
@@ -73,20 +73,6 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 	return nil
 }
 
-// GetActiveNonJailedProviders returns all active providers that are not currently jailed
-func (k Keeper) GetActiveNonJailedProviders(ctx sdk.Context) []types.Provider {
-	allProviders := k.GetActiveProviders(ctx)
-	var activeNonJailed []types.Provider
-
-	for _, provider := range allProviders {
-		if !k.IsProviderJailed(ctx, provider.Creator) {
-			activeNonJailed = append(activeNonJailed, provider)
-		}
-	}
-
-	return activeNonJailed
-}
-
 // HasProviderSubmittedChallenge checks if a provider has submitted a response to a specific challenge
 func (k Keeper) HasProviderSubmittedChallenge(ctx sdk.Context, challengeId uint64, providerAddr string) bool {
 	livenessInfo := k.GetProviderLivenessInfo(ctx, providerAddr)
@@ -100,7 +86,7 @@ func (k Keeper) HasProviderSubmittedChallenge(ctx sdk.Context, challengeId uint6
 // StartLivenessTracking initializes liveness tracking for all active providers
 // Updated for challenge-based liveness tracking
 func (k Keeper) StartLivenessTracking(ctx sdk.Context) error {
-	activeProviders := k.GetActiveNonJailedProviders(ctx)
+	activeProviders := k.GetActiveProviders(ctx)
 	currentChallengeId := k.GetChallengeCount(ctx)
 
 	for _, provider := range activeProviders {
@@ -127,7 +113,7 @@ func (k Keeper) StartLivenessTracking(ctx sdk.Context) error {
 // CheckAndApplyLivenessViolations checks for liveness violations during challenge processing
 // This replaces the old periodic block-based checking since we now use challenge-based liveness
 func (k Keeper) CheckAndApplyLivenessViolations(ctx sdk.Context) error {
-	activeProviders := k.GetActiveNonJailedProviders(ctx)
+	activeProviders := k.GetActiveProviders(ctx)
 
 	for _, provider := range activeProviders {
 		// Check liveness violation

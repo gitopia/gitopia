@@ -228,29 +228,6 @@ func (k Keeper) SlashProviderForProofFault(ctx sdk.Context, providerAddr string)
 	return nil
 }
 
-// IsProviderJailed checks if a provider is currently jailed
-func (k Keeper) IsProviderJailed(ctx sdk.Context, providerAddr string) bool {
-	provider, found := k.GetProvider(ctx, providerAddr)
-	if !found {
-		return false
-	}
-
-	if !provider.Jailed {
-		return false
-	}
-
-	// Check if jail time has expired
-	if provider.JailUntil != nil && ctx.BlockTime().After(*provider.JailUntil) {
-		// Jail time expired, unjail the provider
-		provider.Jailed = false
-		provider.JailUntil = nil
-		k.SetProvider(ctx, provider)
-		return false
-	}
-
-	return provider.Jailed
-}
-
 // GetProviderLivenessInfo retrieves liveness tracking info for a provider
 func (k Keeper) GetProviderLivenessInfo(ctx sdk.Context, providerAddr string) *types.ProviderLivenessInfo {
 	store := ctx.KVStore(k.storeKey)

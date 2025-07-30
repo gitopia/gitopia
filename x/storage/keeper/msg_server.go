@@ -144,7 +144,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -294,7 +294,7 @@ func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -346,7 +346,7 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
