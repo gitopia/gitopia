@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 // CleanupExpiredLivenessData removes old liveness data to prevent storage bloat
@@ -41,35 +40,6 @@ func (k Keeper) CleanupExpiredLivenessData(ctx sdk.Context) error {
 
 	if cleanedCount > 0 {
 		ctx.Logger().Info(fmt.Sprintf("cleaned up expired liveness data for %d providers", cleanedCount))
-	}
-
-	return nil
-}
-
-// ValidateProviderLivenessParams validates liveness-related parameters
-func ValidateProviderLivenessParams(params types.Params) error {
-	if params.LivenessWindowChallenges == 0 {
-		return fmt.Errorf("liveness window challenges must be greater than 0")
-	}
-
-	if params.MinLivenessRatio > 100 {
-		return fmt.Errorf("minimum liveness ratio must be less than 100")
-	}
-
-	if params.LivenessJailBlocks == 0 {
-		return fmt.Errorf("liveness jail blocks must be greater than 0")
-	}
-
-	if params.ProofFaultJailBlocks == 0 {
-		return fmt.Errorf("proof fault jail blocks must be greater than 0")
-	}
-
-	if params.MaxLivenessFaults == 0 {
-		return fmt.Errorf("max liveness faults must be greater than 0")
-	}
-
-	if params.MaxProofFaults == 0 {
-		return fmt.Errorf("max proof faults must be greater than 0")
 	}
 
 	return nil

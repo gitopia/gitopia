@@ -34,7 +34,6 @@ var (
 	KeyProofFaultSlashAmount     = []byte("ProofFaultSlashAmount")
 	KeyProofFaultSlashPercentage = []byte("ProofFaultSlashPercentage")
 	KeyProofFaultJailBlocks      = []byte("ProofFaultJailBlocks")
-	KeyMaxLivenessFaults         = []byte("MaxLivenessFaults")
 	KeyMaxProofFaults            = []byte("MaxProofFaults")
 
 	// Default values for parameters
@@ -58,7 +57,6 @@ var (
 	DefaultProofFaultSlashAmount     sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000)) // $2.5 (heavier penalty for proof fault)
 	DefaultProofFaultSlashPercentage uint64   = 2                                               // 2% stake slash for proof fault
 	DefaultProofFaultJailBlocks      uint64   = 259200                                          // ~7.2 days jail for proof fault
-	DefaultMaxLivenessFaults         uint64   = 5                                               // Max consecutive liveness faults
 	DefaultMaxProofFaults            uint64   = 3                                               // Max consecutive proof faults
 )
 
@@ -86,7 +84,6 @@ func NewParams(
 	proofFaultSlashAmount sdk.Coin,
 	proofFaultSlashPercentage uint64,
 	proofFaultJailBlocks uint64,
-	maxLivenessFaults uint64,
 	maxProofFaults uint64,
 ) Params {
 	return Params{
@@ -107,7 +104,6 @@ func NewParams(
 		ProofFaultSlashAmount:     proofFaultSlashAmount,
 		ProofFaultSlashPercentage: proofFaultSlashPercentage,
 		ProofFaultJailBlocks:      proofFaultJailBlocks,
-		MaxLivenessFaults:         maxLivenessFaults,
 		MaxProofFaults:            maxProofFaults,
 	}
 }
@@ -132,7 +128,6 @@ func DefaultParams() Params {
 		DefaultProofFaultSlashAmount,
 		DefaultProofFaultSlashPercentage,
 		DefaultProofFaultJailBlocks,
-		DefaultMaxLivenessFaults,
 		DefaultMaxProofFaults,
 	)
 }
@@ -157,7 +152,6 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyProofFaultSlashAmount, &p.ProofFaultSlashAmount, validateProofFaultSlashAmount),
 		paramtypes.NewParamSetPair(KeyProofFaultSlashPercentage, &p.ProofFaultSlashPercentage, validateProofFaultSlashPercentage),
 		paramtypes.NewParamSetPair(KeyProofFaultJailBlocks, &p.ProofFaultJailBlocks, validateProofFaultJailBlocks),
-		paramtypes.NewParamSetPair(KeyMaxLivenessFaults, &p.MaxLivenessFaults, validateMaxLivenessFaults),
 		paramtypes.NewParamSetPair(KeyMaxProofFaults, &p.MaxProofFaults, validateMaxProofFaults),
 	}
 }
@@ -186,6 +180,33 @@ func (p Params) Validate() error {
 		return err
 	}
 	if err := validateMaxProviders(p.MaxProviders); err != nil {
+		return err
+	}
+	if err := validateLivenessWindowChallenges(p.LivenessWindowChallenges); err != nil {
+		return err
+	}
+	if err := validateMinLivenessRatio(p.MinLivenessRatio); err != nil {
+		return err
+	}
+	if err := validateLivenessSlashAmount(p.LivenessSlashAmount); err != nil {
+		return err
+	}
+	if err := validateLivenessSlashPercentage(p.LivenessSlashPercentage); err != nil {
+		return err
+	}
+	if err := validateLivenessJailBlocks(p.LivenessJailBlocks); err != nil {
+		return err
+	}
+	if err := validateProofFaultSlashAmount(p.ProofFaultSlashAmount); err != nil {
+		return err
+	}
+	if err := validateProofFaultSlashPercentage(p.ProofFaultSlashPercentage); err != nil {
+		return err
+	}
+	if err := validateProofFaultJailBlocks(p.ProofFaultJailBlocks); err != nil {
+		return err
+	}
+	if err := validateMaxProofFaults(p.MaxProofFaults); err != nil {
 		return err
 	}
 	return nil
