@@ -45,13 +45,6 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 				continue
 			}
 
-			// Apply liveness fault penalty (lighter than proof fault)
-			err = k.SlashProviderForLivenessFault(ctx, provider.Creator)
-			if err != nil {
-				ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for liveness fault: %v", provider.Creator, err))
-				continue
-			}
-
 			// Check if provider now violates minimum liveness requirement
 			violation, err := k.CheckProviderLivenessViolation(ctx, provider.Creator)
 			if err != nil {
@@ -60,7 +53,12 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 			}
 
 			if violation {
-				ctx.Logger().Info(fmt.Sprintf("provider %s violated minimum liveness requirement", provider.Creator))
+				// Apply liveness fault penalty (lighter than proof fault)
+				err = k.SlashProviderForLivenessFault(ctx, provider.Creator)
+				if err != nil {
+					ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for liveness fault: %v", provider.Creator, err))
+					continue
+				}
 			}
 		}
 	}

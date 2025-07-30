@@ -41,8 +41,6 @@ message Params {
   uint64 proof_fault_slash_percentage = 15 [(gogoproto.moretags) = "yaml:\"proof_fault_slash_percentage\""];
   uint64 proof_fault_jail_blocks = 16 [(gogoproto.moretags) = "yaml:\"proof_fault_jail_blocks\""];
   
-  // Maximum number of consecutive liveness faults before suspension
-  uint64 max_liveness_faults = 17 [(gogoproto.moretags) = "yaml:\"max_liveness_faults\""];
   // Maximum number of consecutive proof faults before suspension  
-  uint64 max_proof_faults = 18 [(gogoproto.moretags) = "yaml:\"max_proof_faults\""];
+  uint64 max_proof_faults = 17 [(gogoproto.moretags) = "yaml:\"max_proof_faults\""];
 }

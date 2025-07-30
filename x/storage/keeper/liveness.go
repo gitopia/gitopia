@@ -119,50 +119,42 @@ func (k Keeper) SlashProviderForLivenessFault(ctx sdk.Context, providerAddr stri
 		return fmt.Errorf("provider %s not found", providerAddr)
 	}
 
-	// Increment consecutive liveness faults
-	provider.ConsecutiveLivenessFaults++
-
-	// Apply liveness slash amount (fixed amount, lighter than proof fault)
-	if provider.ConsecutiveLivenessFaults >= params.MaxLivenessFaults {
-		providerAcc, err := sdk.AccAddressFromBech32(provider.Creator)
-		if err != nil {
-			return fmt.Errorf("invalid provider address: %v", err)
-		}
-
-		stake := k.GetProviderStake(ctx, providerAcc)
-		slashAmountCoins := sdk.NewCoins(params.LivenessSlashAmount)
-
-		// Also apply percentage-based slash if configured
-		if params.LivenessSlashPercentage > 0 {
-			stakeAmount := stake.Stake.AmountOf("ulore")                                                                 // assuming ulore is the base denom
-			percentageSlash := stakeAmount.Mul(sdk.NewInt(int64(params.LivenessSlashPercentage))).Quo(sdk.NewInt(10000)) // basis points
-			percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash))
-			slashAmountCoins = slashAmountCoins.Add(percentageSlashCoins...)
-		}
-
-		// Transfer slashed amount to slash pool
-		err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-		if err != nil {
-			return fmt.Errorf("failed to slash provider: %v", err)
-		}
-
-		// Update provider stake
-		newStake := stake.Stake.Sub(slashAmountCoins...)
-		k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-			Provider: provider.Creator,
-			Stake:    newStake,
-		})
-
-		// Apply jail time for liveness fault
-		provider.Jailed = true
-		jailUntil := ctx.BlockTime().Add(time.Duration(params.LivenessJailBlocks) * time.Second * 3) // assuming ~3s block time
-		provider.JailUntil = &jailUntil
-
-		provider.ConsecutiveLivenessFaults = 0 // Reset after suspension
-
-		ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for liveness fault and jailed until %s",
-			provider.Creator, slashAmountCoins.String(), jailUntil.String()))
+	providerAcc, err := sdk.AccAddressFromBech32(provider.Creator)
+	if err != nil {
+		return fmt.Errorf("invalid provider address: %v", err)
 	}
+
+	stake := k.GetProviderStake(ctx, providerAcc)
+	slashAmountCoins := sdk.NewCoins(params.LivenessSlashAmount)
+
+	// Also apply percentage-based slash if configured
+	if params.LivenessSlashPercentage > 0 {
+		stakeAmount := stake.Stake.AmountOf("ulore")                                                                 // assuming ulore is the base denom
+		percentageSlash := stakeAmount.Mul(sdk.NewInt(int64(params.LivenessSlashPercentage))).Quo(sdk.NewInt(10000)) // basis points
+		percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash))
+		slashAmountCoins = slashAmountCoins.Add(percentageSlashCoins...)
+	}
+
+	// Transfer slashed amount to slash pool
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
+	if err != nil {
+		return fmt.Errorf("failed to slash provider: %v", err)
+	}
+
+	// Update provider stake
+	newStake := stake.Stake.Sub(slashAmountCoins...)
+	k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
+		Provider: provider.Creator,
+		Stake:    newStake,
+	})
+
+	// Apply jail time for liveness fault
+	provider.Jailed = true
+	jailUntil := ctx.BlockTime().Add(time.Duration(params.LivenessJailBlocks) * time.Second * 3) // assuming ~3s block time
+	provider.JailUntil = &jailUntil
+
+	ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for liveness fault and jailed until %s",
+		provider.Creator, slashAmountCoins.String(), jailUntil.String()))
 
 	k.SetProvider(ctx, provider)
 

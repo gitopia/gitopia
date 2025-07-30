@@ -40,9 +40,8 @@ message Provider {
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
-  uint64 consecutive_liveness_faults = 13;
-  uint64 consecutive_proof_faults = 14;
-  google.protobuf.Timestamp last_liveness_check = 15 [
+  uint64 consecutive_proof_faults = 13;
+  google.protobuf.Timestamp last_liveness_check = 14 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];

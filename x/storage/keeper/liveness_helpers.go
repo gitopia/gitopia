@@ -7,67 +7,6 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
-// ResetProviderConsecutiveFaults resets consecutive faults when a provider submits a valid proof
-func (k Keeper) ResetProviderConsecutiveFaults(ctx sdk.Context, providerAddr string, faultType string) error {
-	provider, found := k.GetProvider(ctx, providerAddr)
-	if !found {
-		return fmt.Errorf("provider not found: %s", providerAddr)
-	}
-
-	switch faultType {
-	case "liveness":
-		provider.ConsecutiveLivenessFaults = 0
-	case "proof":
-		provider.ConsecutiveProofFaults = 0
-	case "both":
-		provider.ConsecutiveLivenessFaults = 0
-		provider.ConsecutiveProofFaults = 0
-	}
-
-	k.SetProvider(ctx, provider)
-	return nil
-}
-
-// UpdateProviderLastSeen updates the last activity timestamp for a provider
-func (k Keeper) UpdateProviderLastSeen(ctx sdk.Context, providerAddr string) error {
-	provider, found := k.GetProvider(ctx, providerAddr)
-	if !found {
-		return fmt.Errorf("provider not found: %s", providerAddr)
-	}
-
-	blockTime := ctx.BlockTime()
-	provider.LastLivenessCheck = &blockTime
-	k.SetProvider(ctx, provider)
-
-	return nil
-}
-
-// GetProviderLivenessStats returns liveness statistics for a provider (simplified)
-func (k Keeper) GetProviderLivenessStats(ctx sdk.Context, providerAddr string) (map[string]interface{}, error) {
-	provider, found := k.GetProvider(ctx, providerAddr)
-	if !found {
-		return nil, fmt.Errorf("provider not found: %s", providerAddr)
-	}
-
-	livenessInfo := k.GetProviderLivenessInfo(ctx, providerAddr)
-	stats := map[string]interface{}{
-		"provider":                    providerAddr,
-		"current_liveness_ratio":      100.0,
-		"consecutive_liveness_faults": provider.ConsecutiveLivenessFaults,
-		"consecutive_proof_faults":    provider.ConsecutiveProofFaults,
-		"is_jailed":                   provider.Jailed,
-		"jail_until":                  provider.JailUntil,
-	}
-
-	if livenessInfo != nil {
-		stats["current_liveness_ratio"] = livenessInfo.CurrentLivenessRatio
-		stats["total_submissions"] = livenessInfo.TotalSubmissionsInWindow
-		stats["missed_submissions"] = livenessInfo.MissedSubmissionsInWindow
-	}
-
-	return stats, nil
-}
-
 // CleanupExpiredLivenessData removes old liveness data to prevent storage bloat
 // Updated for challenge-based liveness tracking
 func (k Keeper) CleanupExpiredLivenessData(ctx sdk.Context) error {
@@ -113,8 +52,8 @@ func ValidateProviderLivenessParams(params types.Params) error {
 		return fmt.Errorf("liveness window challenges must be greater than 0")
 	}
 
-	if params.MinLivenessRatio < 0 || params.MinLivenessRatio > 100 {
-		return fmt.Errorf("minimum liveness ratio must be between 0 and 100")
+	if params.MinLivenessRatio > 100 {
+		return fmt.Errorf("minimum liveness ratio must be less than 100")
 	}
 
 	if params.LivenessJailBlocks == 0 {
