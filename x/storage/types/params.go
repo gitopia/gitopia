@@ -12,7 +12,9 @@ import (
 var _ paramtypes.ParamSet = (*Params)(nil)
 
 const (
-	DefaultChallengePeriod = 10 * time.Second
+	DefaultChallengePeriod    = 10 * time.Second
+	DefaultLivenessJailTime   = 900 * time.Second
+	DefaultProofFaultJailTime = 4 * time.Hour
 )
 
 var (
@@ -30,10 +32,10 @@ var (
 	KeyMinLivenessRatio          = []byte("MinLivenessRatio")
 	KeyLivenessSlashAmount       = []byte("LivenessSlashAmount")
 	KeyLivenessSlashPercentage   = []byte("LivenessSlashPercentage")
-	KeyLivenessJailBlocks        = []byte("LivenessJailBlocks")
+	KeyLivenessJailTime          = []byte("LivenessJailTime")
 	KeyProofFaultSlashAmount     = []byte("ProofFaultSlashAmount")
 	KeyProofFaultSlashPercentage = []byte("ProofFaultSlashPercentage")
-	KeyProofFaultJailBlocks      = []byte("ProofFaultJailBlocks")
+	KeyProofFaultJailTime        = []byte("ProofFaultJailTime")
 	KeyMaxProofFaults            = []byte("MaxProofFaults")
 
 	// Default values for parameters
@@ -80,10 +82,10 @@ func NewParams(
 	minLivenessRatio uint64,
 	livenessSlashAmount sdk.Coin,
 	livenessSlashPercentage uint64,
-	livenessJailBlocks uint64,
+	livenessJailTime time.Duration,
 	proofFaultSlashAmount sdk.Coin,
 	proofFaultSlashPercentage uint64,
-	proofFaultJailBlocks uint64,
+	proofFaultJailTime time.Duration,
 	maxProofFaults uint64,
 ) Params {
 	return Params{
@@ -100,10 +102,10 @@ func NewParams(
 		MinLivenessRatio:          minLivenessRatio,
 		LivenessSlashAmount:       livenessSlashAmount,
 		LivenessSlashPercentage:   livenessSlashPercentage,
-		LivenessJailBlocks:        livenessJailBlocks,
+		LivenessJailTime:          &livenessJailTime,
 		ProofFaultSlashAmount:     proofFaultSlashAmount,
 		ProofFaultSlashPercentage: proofFaultSlashPercentage,
-		ProofFaultJailBlocks:      proofFaultJailBlocks,
+		ProofFaultJailTime:        &proofFaultJailTime,
 		MaxProofFaults:            maxProofFaults,
 	}
 }
@@ -124,10 +126,10 @@ func DefaultParams() Params {
 		DefaultMinLivenessRatio,
 		DefaultLivenessSlashAmount,
 		DefaultLivenessSlashPercentage,
-		DefaultLivenessJailBlocks,
+		DefaultLivenessJailTime,
 		DefaultProofFaultSlashAmount,
 		DefaultProofFaultSlashPercentage,
-		DefaultProofFaultJailBlocks,
+		DefaultProofFaultJailTime,
 		DefaultMaxProofFaults,
 	)
 }
@@ -148,10 +150,10 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyMinLivenessRatio, &p.MinLivenessRatio, validateMinLivenessRatio),
 		paramtypes.NewParamSetPair(KeyLivenessSlashAmount, &p.LivenessSlashAmount, validateLivenessSlashAmount),
 		paramtypes.NewParamSetPair(KeyLivenessSlashPercentage, &p.LivenessSlashPercentage, validateLivenessSlashPercentage),
-		paramtypes.NewParamSetPair(KeyLivenessJailBlocks, &p.LivenessJailBlocks, validateLivenessJailBlocks),
+		paramtypes.NewParamSetPair(KeyLivenessJailTime, &p.LivenessJailTime, validateLivenessJailTime),
 		paramtypes.NewParamSetPair(KeyProofFaultSlashAmount, &p.ProofFaultSlashAmount, validateProofFaultSlashAmount),
 		paramtypes.NewParamSetPair(KeyProofFaultSlashPercentage, &p.ProofFaultSlashPercentage, validateProofFaultSlashPercentage),
-		paramtypes.NewParamSetPair(KeyProofFaultJailBlocks, &p.ProofFaultJailBlocks, validateProofFaultJailBlocks),
+		paramtypes.NewParamSetPair(KeyProofFaultJailTime, &p.ProofFaultJailTime, validateProofFaultJailTime),
 		paramtypes.NewParamSetPair(KeyMaxProofFaults, &p.MaxProofFaults, validateMaxProofFaults),
 	}
 }
@@ -194,7 +196,7 @@ func (p Params) Validate() error {
 	if err := validateLivenessSlashPercentage(p.LivenessSlashPercentage); err != nil {
 		return err
 	}
-	if err := validateLivenessJailBlocks(p.LivenessJailBlocks); err != nil {
+	if err := validateLivenessJailTime(p.LivenessJailTime); err != nil {
 		return err
 	}
 	if err := validateProofFaultSlashAmount(p.ProofFaultSlashAmount); err != nil {
@@ -203,7 +205,7 @@ func (p Params) Validate() error {
 	if err := validateProofFaultSlashPercentage(p.ProofFaultSlashPercentage); err != nil {
 		return err
 	}
-	if err := validateProofFaultJailBlocks(p.ProofFaultJailBlocks); err != nil {
+	if err := validateProofFaultJailTime(p.ProofFaultJailTime); err != nil {
 		return err
 	}
 	if err := validateMaxProofFaults(p.MaxProofFaults); err != nil {
@@ -358,14 +360,14 @@ func validateLivenessSlashPercentage(v interface{}) error {
 	return nil
 }
 
-// validateLivenessJailBlocks validates the LivenessJailBlocks param
-func validateLivenessJailBlocks(v interface{}) error {
-	blocks, ok := v.(uint64)
+// validateLivenessJailTime validates the LivenessJailTime param
+func validateLivenessJailTime(v interface{}) error {
+	time, ok := v.(*time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if blocks == 0 {
-		return fmt.Errorf("liveness jail blocks cannot be zero")
+	if time == nil || time.Seconds() <= 0 {
+		return fmt.Errorf("liveness jail time cannot be zero")
 	}
 	return nil
 }
@@ -391,14 +393,14 @@ func validateProofFaultSlashPercentage(v interface{}) error {
 	return nil
 }
 
-// validateProofFaultJailBlocks validates the ProofFaultJailBlocks param
-func validateProofFaultJailBlocks(v interface{}) error {
-	blocks, ok := v.(uint64)
+// validateProofFaultJailTime validates the ProofFaultJailTime param
+func validateProofFaultJailTime(v interface{}) error {
+	time, ok := v.(*time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if blocks == 0 {
-		return fmt.Errorf("proof fault jail blocks cannot be zero")
+	if time == nil || time.Seconds() <= 0 {
+		return fmt.Errorf("proof fault jail time cannot be zero")
 	}
 	return nil
 }

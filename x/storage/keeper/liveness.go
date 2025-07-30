@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
@@ -150,7 +149,7 @@ func (k Keeper) SlashProviderForLivenessFault(ctx sdk.Context, providerAddr stri
 
 	// Apply jail time for liveness fault
 	provider.Jailed = true
-	jailUntil := ctx.BlockTime().Add(time.Duration(params.LivenessJailBlocks) * time.Second * 3) // assuming ~3s block time
+	jailUntil := ctx.BlockTime().Add(*params.LivenessJailTime)
 	provider.JailUntil = &jailUntil
 
 	ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for liveness fault and jailed until %s",
@@ -207,7 +206,7 @@ func (k Keeper) SlashProviderForProofFault(ctx sdk.Context, providerAddr string)
 
 		// Apply longer jail time for proof fault
 		provider.Jailed = true
-		jailUntil := ctx.BlockTime().Add(time.Duration(params.ProofFaultJailBlocks) * time.Second * 3)
+		jailUntil := ctx.BlockTime().Add(*params.ProofFaultJailTime)
 		provider.JailUntil = &jailUntil
 
 		provider.ConsecutiveProofFaults = 0 // Reset after suspension
