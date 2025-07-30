@@ -139,10 +139,6 @@ service Query {
   rpc JailedProviders(QueryJailedProvidersRequest) returns (QueryJailedProvidersResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/jailed-providers";
   }
-
-  rpc ActiveProvidersForLiveness(QueryActiveProvidersForLivenessRequest) returns (QueryActiveProvidersForLivenessResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/storage/active-providers-liveness";
-  }
 }
 
 message QueryParamsRequest {}
@@ -387,13 +383,6 @@ message QueryJailedProvidersRequest {
 message QueryJailedProvidersResponse {
   repeated Provider providers = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryActiveProvidersForLivenessRequest {
-}
-
-message QueryActiveProvidersForLivenessResponse {
-  repeated Provider providers = 1 [(gogoproto.nullable) = false];
 }
 
 // Helper message for liveness violations

@@ -7,21 +7,6 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
-// GetActiveProvidersForLiveness returns providers that should participate in liveness tracking
-func (k Keeper) GetActiveProvidersForLiveness(ctx sdk.Context) []types.Provider {
-	allProviders := k.GetActiveProviders(ctx)
-	var livenessProviders []types.Provider
-
-	for _, provider := range allProviders {
-		// Only include providers that are not jailed and not suspended
-		if !provider.Jailed && provider.Status == types.Bonded {
-			livenessProviders = append(livenessProviders, provider)
-		}
-	}
-
-	return livenessProviders
-}
-
 // ResetProviderConsecutiveFaults resets consecutive faults when a provider submits a valid proof
 func (k Keeper) ResetProviderConsecutiveFaults(ctx sdk.Context, providerAddr string, faultType string) error {
 	provider, found := k.GetProvider(ctx, providerAddr)

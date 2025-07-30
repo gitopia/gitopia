@@ -545,9 +545,9 @@ func (k Keeper) LivenessViolations(goCtx context.Context, req *types.QueryLivene
 
 		if hasViolation {
 			params := k.GetParams(ctx)
-			violationReason := fmt.Sprintf("Liveness ratio %.2f%% below threshold %.2f%%", 
+			violationReason := fmt.Sprintf("Liveness ratio %.2f%% below threshold %.2f%%",
 				livenessInfo.CurrentLivenessRatio, params.MinLivenessRatio)
-			
+
 			violation := types.ProviderLivenessViolation{
 				ProviderAddress: livenessInfo.Provider,
 				LivenessInfo:    livenessInfo,
@@ -585,7 +585,7 @@ func (k Keeper) JailedProviders(goCtx context.Context, req *types.QueryJailedPro
 		if err := k.cdc.Unmarshal(value, &provider); err != nil {
 			return err
 		}
-		
+
 		// Only include jailed providers
 		if provider.Jailed {
 			jailedProviders = append(jailedProviders, provider)
@@ -600,19 +600,5 @@ func (k Keeper) JailedProviders(goCtx context.Context, req *types.QueryJailedPro
 	return &types.QueryJailedProvidersResponse{
 		Providers:  jailedProviders,
 		Pagination: pageRes,
-	}, nil
-}
-
-// ActiveProvidersForLiveness returns providers that should participate in liveness tracking
-func (k Keeper) ActiveProvidersForLiveness(goCtx context.Context, req *types.QueryActiveProvidersForLivenessRequest) (*types.QueryActiveProvidersForLivenessResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	activeProviders := k.GetActiveProvidersForLiveness(ctx)
-
-	return &types.QueryActiveProvidersForLivenessResponse{
-		Providers: activeProviders,
 	}, nil
 }
