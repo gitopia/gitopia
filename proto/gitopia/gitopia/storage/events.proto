@@ -5,6 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "amino/amino.proto";
+import "gitopia/gitopia/storage/types.proto";
 
 option go_package = "github.com/gitopia/gitopia/v6/x/storage/types";
 
@@ -45,6 +46,13 @@ message EventReleaseAssetUpdated {
   string old_cid = 5;
   string new_sha256 = 6;
   string old_sha256 = 7;
+}
+
+// EventReleaseAssetsUpdated is emitted when release assets are updated
+message EventReleaseAssetsUpdated {
+  uint64 repository_id = 1;
+  string tag = 2;
+  repeated ReleaseAssetUpdate assets = 3;
 }
 
 // EventReleaseAssetDeleted is emitted when a release asset is deleted
@@ -90,6 +98,13 @@ message EventProviderUnstakeCompleted {
 
 // EventLFSObjectUpdated is emitted when an LFS object is updated
 message EventLFSObjectUpdated {
+  uint64 repository_id = 1;
+  string oid = 2;
+  string cid = 3;
+}
+
+// EventApproveLFSObject is emitted when an LFS object is approved
+message EventApproveLFSObject {
   uint64 repository_id = 1;
   string oid = 2;
   string cid = 3;

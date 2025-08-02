@@ -653,6 +653,12 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	}
 	k.SetStorageStats(ctx, storageStats)
 
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetsUpdated{
+		RepositoryId: msg.RepositoryId,
+		Tag:          msg.Tag,
+		Assets:       msg.Assets,
+	})
+
 	return &types.MsgUpdateReleaseAssetsResponse{}, nil
 }
 
@@ -1884,6 +1890,12 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_APPROVED
 	k.SetProposedReleaseAssetsUpdate(ctx, proposal)
 
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetsUpdated{
+		RepositoryId: proposal.RepositoryId,
+		Tag:          proposal.Tag,
+		Assets:       proposal.Assets,
+	})
+
 	return &types.MsgApproveReleaseAssetsUpdateResponse{}, nil
 }
 
@@ -2058,6 +2070,12 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 	// Mark proposal as approved
 	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_APPROVED
 	k.SetProposedLFSObjectUpdate(ctx, proposal)
+
+	ctx.EventManager().EmitTypedEvent(&types.EventLFSObjectUpdated{
+		RepositoryId: proposal.RepositoryId,
+		Oid:          proposal.Oid,
+		Cid:          proposal.Cid,
+	})
 
 	return &types.MsgApproveLFSObjectUpdateResponse{}, nil
 }
