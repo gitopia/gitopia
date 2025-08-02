@@ -136,6 +136,26 @@ func (k Keeper) GetPendingProposalsForUser(ctx sdk.Context, userAddress string) 
 	return pending
 }
 
+// GetPendingPackfileUpdateProposalForRepository returns all pending packfile update proposals where the repository id and user address match
+func (k Keeper) GetPendingPackfileUpdateProposalForRepositoryUser(ctx sdk.Context, repositoryId uint64, userAddress string) (types.ProposedPackfileUpdate, bool) {
+	allProposals := k.GetAllProposedPackfileUpdates(ctx)
+
+	for _, proposal := range allProposals {
+		if proposal.RepositoryId == repositoryId && proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+			// Check if proposal has expired
+			if ctx.BlockTime().After(proposal.ExpiresAt) {
+				// Mark as expired
+				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
+				k.SetProposedPackfileUpdate(ctx, proposal)
+			} else {
+				return proposal, true
+			}
+		}
+	}
+
+	return types.ProposedPackfileUpdate{}, false
+}
+
 // ExpireOldProposals marks proposals as expired if they've passed their expiration time
 func (k Keeper) ExpireOldProposals(ctx sdk.Context) {
 	allProposals := k.GetAllProposedPackfileUpdates(ctx)
@@ -320,6 +340,26 @@ func (k Keeper) GetPendingReleaseAssetsProposalsForUser(ctx sdk.Context, userAdd
 	return pending
 }
 
+// GetPendingReleaseAssetsUpdateProposalForRepositoryTagUser returns all pending release asset proposals where the repository id, tag and user address match
+func (k Keeper) GetPendingReleaseAssetsUpdateProposalForRepositoryTagUser(ctx sdk.Context, repositoryId uint64, tag string, userAddress string) (types.ProposedReleaseAssetsUpdate, bool) {
+	allProposals := k.GetAllProposedReleaseAssetsUpdates(ctx)
+
+	for _, proposal := range allProposals {
+		if proposal.RepositoryId == repositoryId && proposal.Tag == tag && proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+			// Check if proposal has expired
+			if ctx.BlockTime().After(proposal.ExpiresAt) {
+				// Mark as expired
+				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
+				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+			} else {
+				return proposal, true
+			}
+		}
+	}
+
+	return types.ProposedReleaseAssetsUpdate{}, false
+}
+
 // ExpireOldReleaseAssetsProposals marks release asset proposals as expired if they've passed their expiration time
 func (k Keeper) ExpireOldReleaseAssetsProposals(ctx sdk.Context) {
 	allProposals := k.GetAllProposedReleaseAssetsUpdates(ctx)
@@ -472,6 +512,27 @@ func (k Keeper) GetPendingLFSObjectProposalsForUser(ctx sdk.Context, userAddress
 
 	for _, proposal := range allProposals {
 		if proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+			// Check if proposal has expired
+			if ctx.BlockTime().After(proposal.ExpiresAt) {
+				// Mark as expired
+				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
+				k.SetProposedLFSObjectUpdate(ctx, proposal)
+			} else {
+				pending = append(pending, proposal)
+			}
+		}
+	}
+
+	return pending
+}
+
+// GetPendingLFSObjectProposalsForRepositoryUser returns all pending LFS object proposal where the repository id and user address match
+func (k Keeper) GetPendingLFSObjectProposalsForRepositoryUser(ctx sdk.Context, repositoryId uint64, userAddress string) []types.ProposedLFSObjectUpdate {
+	allProposals := k.GetAllProposedLFSObjectUpdates(ctx)
+	var pending []types.ProposedLFSObjectUpdate
+
+	for _, proposal := range allProposals {
+		if proposal.RepositoryId == repositoryId && proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
 			// Check if proposal has expired
 			if ctx.BlockTime().After(proposal.ExpiresAt) {
 				// Mark as expired

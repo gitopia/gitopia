@@ -139,6 +139,30 @@ service Query {
   rpc JailedProviders(QueryJailedProvidersRequest) returns (QueryJailedProvidersResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/jailed-providers";
   }
+
+  rpc PackfileUpdateProposal(QueryPackfileUpdateProposalRequest) returns (QueryPackfileUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile-update-proposal/{repository_id}/{user}";
+  }
+
+  rpc PackfileUpdateProposals(QueryPackfileUpdateProposalsRequest) returns (QueryPackfileUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile-update-proposals";
+  }
+
+  rpc ReleaseAssetsUpdateProposal(QueryReleaseAssetsUpdateProposalRequest) returns (QueryReleaseAssetsUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets-update-proposal/{repository_id}/{tag}/{user}";
+  }
+
+  rpc ReleaseAssetsUpdateProposals(QueryReleaseAssetsUpdateProposalsRequest) returns (QueryReleaseAssetsUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets-update-proposals";
+  }
+
+  rpc LFSObjectUpdateProposal(QueryLFSObjectUpdateProposalRequest) returns (QueryLFSObjectUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposal/{repository_id}/{user}";
+  }
+
+  rpc LFSObjectUpdateProposals(QueryLFSObjectUpdateProposalsRequest) returns (QueryLFSObjectUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposals";
+  }
 }
 
 message QueryParamsRequest {}
@@ -391,4 +415,61 @@ message ProviderLivenessViolation {
   ProviderLivenessInfo liveness_info = 2 [(gogoproto.nullable) = false];
   bool has_violation = 3;
   string violation_reason = 4;
+}
+
+message QueryPackfileUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+}
+
+message QueryPackfileUpdateProposalResponse {
+  ProposedPackfileUpdate packfile_update_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPackfileUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryPackfileUpdateProposalsResponse {
+  repeated ProposedPackfileUpdate packfile_update_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryReleaseAssetsUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string user = 3;
+}
+
+message QueryReleaseAssetsUpdateProposalResponse {
+  ProposedReleaseAssetsUpdate release_assets_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetsUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryReleaseAssetsUpdateProposalsResponse {
+  repeated ProposedReleaseAssetsUpdate release_assets_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryLFSObjectUpdateProposalResponse {
+  repeated ProposedLFSObjectUpdate lfs_object_proposal = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryLFSObjectUpdateProposalsResponse {
+  repeated ProposedLFSObjectUpdate lfs_object_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

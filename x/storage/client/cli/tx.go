@@ -41,7 +41,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdDeleteReleaseAsset())
 	cmd.AddCommand(CmdUpdateLFSObject())
 	cmd.AddCommand(CmdDeleteLFSObject())
-	cmd.AddCommand(CmdMergePullRequest())
 	cmd.AddCommand(CmdSubmitChallengeResponse())
 	// this line is used by starport scaffolding # 1
 
@@ -426,51 +425,6 @@ func CmdDeleteLFSObject() *cobra.Command {
 				repositoryId,
 				oid,
 				ownerId,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
-
-func CmdMergePullRequest() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "merge-pull-request [repository-id] [pull-request-iid] [merge-commit-sha] [task-id]",
-		Short: "Merge a pull request",
-		Args:  cobra.ExactArgs(4),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid repository-id: %w", err)
-			}
-
-			pullRequestIid, err := strconv.ParseUint(args[1], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid pull-request-iid: %w", err)
-			}
-
-			mergeCommitSha := args[2]
-
-			taskId, err := strconv.ParseUint(args[3], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid task-id: %w", err)
-			}
-
-			msg := types.NewMsgMergePullRequest(
-				clientCtx.GetFromAddress().String(),
-				repositoryId,
-				pullRequestIid,
-				mergeCommitSha,
-				taskId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

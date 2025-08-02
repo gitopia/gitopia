@@ -1506,7 +1506,28 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 	headJson, _ := json.Marshal(pullRequest.Head)
 	baseBranchJson, _ := json.Marshal(baseBranch)
 
-	// TODO: Emit event
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.MergePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
+			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
+			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
+			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, baseRepository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, baseRepository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
+			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(baseBranchJson)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedByKey, pullRequest.MergedBy),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedAtKey, strconv.FormatInt(pullRequest.MergedAt, 10)),
+		),
+	)
 
 	return &types.MsgMergePullRequestResponse{}, nil
 }
