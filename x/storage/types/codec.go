@@ -23,13 +23,21 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCompleteUnstake{}, "storage/CompleteUnstake", nil)
 	cdc.RegisterConcrete(&MsgUpdateReleaseAsset{}, "storage/UpdateReleaseAsset", nil)
 	cdc.RegisterConcrete(&MsgDeleteReleaseAsset{}, "storage/DeleteReleaseAsset", nil)
-	cdc.RegisterConcrete(&MsgMergePullRequest{}, "storage/MergePullRequest", nil)
 	cdc.RegisterConcrete(&MsgUpdateLFSObject{}, "storage/UpdateLFSObject", nil)
 	cdc.RegisterConcrete(&MsgDeleteLFSObject{}, "storage/DeleteLFSObject", nil)
 	cdc.RegisterConcrete(&MsgIncreaseStake{}, "storage/IncreaseStake", nil)
 	cdc.RegisterConcrete(&MsgDecreaseStake{}, "storage/DecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgCompleteDecreaseStake{}, "storage/CompleteDecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgUnjailProvider{}, "storage/UnjailProvider", nil)
+	cdc.RegisterConcrete(&MsgProposeRepositoryPackfileUpdate{}, "storage/ProposeRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveRepositoryPackfileUpdate{}, "storage/ApproveRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectRepositoryPackfileUpdate{}, "storage/RejectRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeReleaseAssetsUpdate{}, "storage/ProposeReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveReleaseAssetsUpdate{}, "storage/ApproveReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectReleaseAssetsUpdate{}, "storage/RejectReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeLFSObjectUpdate{}, "storage/ProposeLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveLFSObjectUpdate{}, "storage/ApproveLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectLFSObjectUpdate{}, "storage/RejectLFSObjectUpdate", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -47,13 +55,21 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCompleteUnstake{},
 		&MsgUpdateReleaseAsset{},
 		&MsgDeleteReleaseAsset{},
-		&MsgMergePullRequest{},
 		&MsgUpdateLFSObject{},
 		&MsgDeleteLFSObject{},
 		&MsgIncreaseStake{},
 		&MsgDecreaseStake{},
 		&MsgCompleteDecreaseStake{},
 		&MsgUnjailProvider{},
+		&MsgProposeRepositoryPackfileUpdate{},
+		&MsgApproveRepositoryPackfileUpdate{},
+		&MsgRejectRepositoryPackfileUpdate{},
+		&MsgProposeReleaseAssetsUpdate{},
+		&MsgApproveReleaseAssetsUpdate{},
+		&MsgRejectReleaseAssetsUpdate{},
+		&MsgProposeLFSObjectUpdate{},
+		&MsgApproveLFSObjectUpdate{},
+		&MsgRejectLFSObjectUpdate{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

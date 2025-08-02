@@ -54,6 +54,7 @@ service Msg {
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc InvokeMergePullRequest(MsgInvokeMergePullRequest) returns (MsgInvokeMergePullRequestResponse);
   rpc InvokeDaoMergePullRequest(MsgInvokeDaoMergePullRequest) returns (MsgInvokeDaoMergePullRequestResponse);
+  rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc AddPullRequestReviewers(MsgAddPullRequestReviewers) returns (MsgAddPullRequestReviewersResponse);
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
@@ -437,6 +438,17 @@ message MsgInvokeDaoMergePullRequest {
 }
 
 message MsgInvokeDaoMergePullRequestResponse { }
+
+// MsgMergePullRequest defines a message for completing a pull request merge
+message MsgMergePullRequest {
+  string creator = 1;
+  uint64 repository_id = 2;
+  uint64 pull_request_iid = 3;
+  string merge_commit_sha = 4;
+  uint64 task_id = 5;
+}
+
+message MsgMergePullRequestResponse {}
 
 message MsgSetPullRequestState {
   string creator = 1;

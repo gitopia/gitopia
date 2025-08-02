@@ -630,6 +630,111 @@ func (m *MsgUpdateReleaseAssetResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateReleaseAssetResponse proto.InternalMessageInfo
 
+// MsgUpdateReleaseAssets defines a message for updating multiple release assets
+type MsgUpdateReleaseAssets struct {
+	Creator      string                `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	RepositoryId uint64                `protobuf:"varint,2,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Tag          string                `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	Assets       []*ReleaseAssetUpdate `protobuf:"bytes,4,rep,name=assets,proto3" json:"assets,omitempty"`
+}
+
+func (m *MsgUpdateReleaseAssets) Reset()         { *m = MsgUpdateReleaseAssets{} }
+func (m *MsgUpdateReleaseAssets) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateReleaseAssets) ProtoMessage()    {}
+func (*MsgUpdateReleaseAssets) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{10}
+}
+func (m *MsgUpdateReleaseAssets) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateReleaseAssets) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateReleaseAssets.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateReleaseAssets) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateReleaseAssets.Merge(m, src)
+}
+func (m *MsgUpdateReleaseAssets) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateReleaseAssets) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateReleaseAssets.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateReleaseAssets proto.InternalMessageInfo
+
+func (m *MsgUpdateReleaseAssets) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgUpdateReleaseAssets) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *MsgUpdateReleaseAssets) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *MsgUpdateReleaseAssets) GetAssets() []*ReleaseAssetUpdate {
+	if m != nil {
+		return m.Assets
+	}
+	return nil
+}
+
+type MsgUpdateReleaseAssetsResponse struct {
+}
+
+func (m *MsgUpdateReleaseAssetsResponse) Reset()         { *m = MsgUpdateReleaseAssetsResponse{} }
+func (m *MsgUpdateReleaseAssetsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateReleaseAssetsResponse) ProtoMessage()    {}
+func (*MsgUpdateReleaseAssetsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{11}
+}
+func (m *MsgUpdateReleaseAssetsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateReleaseAssetsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateReleaseAssetsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateReleaseAssetsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateReleaseAssetsResponse.Merge(m, src)
+}
+func (m *MsgUpdateReleaseAssetsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateReleaseAssetsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateReleaseAssetsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateReleaseAssetsResponse proto.InternalMessageInfo
+
 // MsgDeleteReleaseAsset defines a message for deleting release asset
 type MsgDeleteReleaseAsset struct {
 	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
@@ -643,7 +748,7 @@ func (m *MsgDeleteReleaseAsset) Reset()         { *m = MsgDeleteReleaseAsset{} }
 func (m *MsgDeleteReleaseAsset) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteReleaseAsset) ProtoMessage()    {}
 func (*MsgDeleteReleaseAsset) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{10}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{12}
 }
 func (m *MsgDeleteReleaseAsset) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -714,7 +819,7 @@ func (m *MsgDeleteReleaseAssetResponse) Reset()         { *m = MsgDeleteReleaseA
 func (m *MsgDeleteReleaseAssetResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDeleteReleaseAssetResponse) ProtoMessage()    {}
 func (*MsgDeleteReleaseAssetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{11}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{13}
 }
 func (m *MsgDeleteReleaseAssetResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -755,7 +860,7 @@ func (m *MsgSubmitChallengeResponse) Reset()         { *m = MsgSubmitChallengeRe
 func (m *MsgSubmitChallengeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitChallengeResponse) ProtoMessage()    {}
 func (*MsgSubmitChallengeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{12}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{14}
 }
 func (m *MsgSubmitChallengeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -819,7 +924,7 @@ func (m *MsgSubmitChallengeResponseResponse) Reset()         { *m = MsgSubmitCha
 func (m *MsgSubmitChallengeResponseResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitChallengeResponseResponse) ProtoMessage()    {}
 func (*MsgSubmitChallengeResponseResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{13}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{15}
 }
 func (m *MsgSubmitChallengeResponseResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -857,7 +962,7 @@ func (m *MsgWithdrawProviderRewards) Reset()         { *m = MsgWithdrawProviderR
 func (m *MsgWithdrawProviderRewards) String() string { return proto.CompactTextString(m) }
 func (*MsgWithdrawProviderRewards) ProtoMessage()    {}
 func (*MsgWithdrawProviderRewards) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{14}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{16}
 }
 func (m *MsgWithdrawProviderRewards) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -901,7 +1006,7 @@ func (m *MsgWithdrawProviderRewardsResponse) Reset()         { *m = MsgWithdrawP
 func (m *MsgWithdrawProviderRewardsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgWithdrawProviderRewardsResponse) ProtoMessage()    {}
 func (*MsgWithdrawProviderRewardsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{15}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{17}
 }
 func (m *MsgWithdrawProviderRewardsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -946,7 +1051,7 @@ func (m *MsgUnregisterProvider) Reset()         { *m = MsgUnregisterProvider{} }
 func (m *MsgUnregisterProvider) String() string { return proto.CompactTextString(m) }
 func (*MsgUnregisterProvider) ProtoMessage()    {}
 func (*MsgUnregisterProvider) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{16}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{18}
 }
 func (m *MsgUnregisterProvider) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -990,7 +1095,7 @@ func (m *MsgUnregisterProviderResponse) Reset()         { *m = MsgUnregisterProv
 func (m *MsgUnregisterProviderResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUnregisterProviderResponse) ProtoMessage()    {}
 func (*MsgUnregisterProviderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{17}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{19}
 }
 func (m *MsgUnregisterProviderResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1035,7 +1140,7 @@ func (m *MsgCompleteUnstake) Reset()         { *m = MsgCompleteUnstake{} }
 func (m *MsgCompleteUnstake) String() string { return proto.CompactTextString(m) }
 func (*MsgCompleteUnstake) ProtoMessage()    {}
 func (*MsgCompleteUnstake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{18}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{20}
 }
 func (m *MsgCompleteUnstake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1079,7 +1184,7 @@ func (m *MsgCompleteUnstakeResponse) Reset()         { *m = MsgCompleteUnstakeRe
 func (m *MsgCompleteUnstakeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCompleteUnstakeResponse) ProtoMessage()    {}
 func (*MsgCompleteUnstakeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{19}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{21}
 }
 func (m *MsgCompleteUnstakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1125,7 +1230,7 @@ func (m *MsgIncreaseStake) Reset()         { *m = MsgIncreaseStake{} }
 func (m *MsgIncreaseStake) String() string { return proto.CompactTextString(m) }
 func (*MsgIncreaseStake) ProtoMessage()    {}
 func (*MsgIncreaseStake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{20}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{22}
 }
 func (m *MsgIncreaseStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1175,7 +1280,7 @@ func (m *MsgIncreaseStakeResponse) Reset()         { *m = MsgIncreaseStakeRespon
 func (m *MsgIncreaseStakeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgIncreaseStakeResponse) ProtoMessage()    {}
 func (*MsgIncreaseStakeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{21}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{23}
 }
 func (m *MsgIncreaseStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1214,7 +1319,7 @@ func (m *MsgDecreaseStake) Reset()         { *m = MsgDecreaseStake{} }
 func (m *MsgDecreaseStake) String() string { return proto.CompactTextString(m) }
 func (*MsgDecreaseStake) ProtoMessage()    {}
 func (*MsgDecreaseStake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{22}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{24}
 }
 func (m *MsgDecreaseStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1265,7 +1370,7 @@ func (m *MsgDecreaseStakeResponse) Reset()         { *m = MsgDecreaseStakeRespon
 func (m *MsgDecreaseStakeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDecreaseStakeResponse) ProtoMessage()    {}
 func (*MsgDecreaseStakeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{23}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{25}
 }
 func (m *MsgDecreaseStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1310,7 +1415,7 @@ func (m *MsgCompleteDecreaseStake) Reset()         { *m = MsgCompleteDecreaseSta
 func (m *MsgCompleteDecreaseStake) String() string { return proto.CompactTextString(m) }
 func (*MsgCompleteDecreaseStake) ProtoMessage()    {}
 func (*MsgCompleteDecreaseStake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{24}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{26}
 }
 func (m *MsgCompleteDecreaseStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1354,7 +1459,7 @@ func (m *MsgCompleteDecreaseStakeResponse) Reset()         { *m = MsgCompleteDec
 func (m *MsgCompleteDecreaseStakeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCompleteDecreaseStakeResponse) ProtoMessage()    {}
 func (*MsgCompleteDecreaseStakeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{25}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{27}
 }
 func (m *MsgCompleteDecreaseStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1399,7 +1504,7 @@ func (m *MsgUnjailProvider) Reset()         { *m = MsgUnjailProvider{} }
 func (m *MsgUnjailProvider) String() string { return proto.CompactTextString(m) }
 func (*MsgUnjailProvider) ProtoMessage()    {}
 func (*MsgUnjailProvider) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{26}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{28}
 }
 func (m *MsgUnjailProvider) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1442,7 +1547,7 @@ func (m *MsgUnjailProviderResponse) Reset()         { *m = MsgUnjailProviderResp
 func (m *MsgUnjailProviderResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUnjailProviderResponse) ProtoMessage()    {}
 func (*MsgUnjailProviderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{27}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{29}
 }
 func (m *MsgUnjailProviderResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1485,7 +1590,7 @@ func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
 func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParams) ProtoMessage()    {}
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{28}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{30}
 }
 func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1535,7 +1640,7 @@ func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse
 func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParamsResponse) ProtoMessage()    {}
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{29}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{31}
 }
 func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1579,7 +1684,7 @@ func (m *MsgClawbackProviderStake) Reset()         { *m = MsgClawbackProviderSta
 func (m *MsgClawbackProviderStake) String() string { return proto.CompactTextString(m) }
 func (*MsgClawbackProviderStake) ProtoMessage()    {}
 func (*MsgClawbackProviderStake) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{30}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{32}
 }
 func (m *MsgClawbackProviderStake) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1636,7 +1741,7 @@ func (m *MsgClawbackProviderStakeResponse) Reset()         { *m = MsgClawbackPro
 func (m *MsgClawbackProviderStakeResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgClawbackProviderStakeResponse) ProtoMessage()    {}
 func (*MsgClawbackProviderStakeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{31}
+	return fileDescriptor_210c9a5bb7eaa48c, []int{33}
 }
 func (m *MsgClawbackProviderStakeResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1664,119 +1769,6 @@ func (m *MsgClawbackProviderStakeResponse) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_MsgClawbackProviderStakeResponse proto.InternalMessageInfo
-
-// MsgMergePullRequest defines a message for merging a pull request
-type MsgMergePullRequest struct {
-	Creator        string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	RepositoryId   uint64 `protobuf:"varint,2,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
-	PullRequestIid uint64 `protobuf:"varint,3,opt,name=pull_request_iid,json=pullRequestIid,proto3" json:"pull_request_iid,omitempty"`
-	MergeCommitSha string `protobuf:"bytes,4,opt,name=merge_commit_sha,json=mergeCommitSha,proto3" json:"merge_commit_sha,omitempty"`
-	TaskId         uint64 `protobuf:"varint,5,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-}
-
-func (m *MsgMergePullRequest) Reset()         { *m = MsgMergePullRequest{} }
-func (m *MsgMergePullRequest) String() string { return proto.CompactTextString(m) }
-func (*MsgMergePullRequest) ProtoMessage()    {}
-func (*MsgMergePullRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{32}
-}
-func (m *MsgMergePullRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgMergePullRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgMergePullRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgMergePullRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgMergePullRequest.Merge(m, src)
-}
-func (m *MsgMergePullRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgMergePullRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgMergePullRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgMergePullRequest proto.InternalMessageInfo
-
-func (m *MsgMergePullRequest) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
-
-func (m *MsgMergePullRequest) GetRepositoryId() uint64 {
-	if m != nil {
-		return m.RepositoryId
-	}
-	return 0
-}
-
-func (m *MsgMergePullRequest) GetPullRequestIid() uint64 {
-	if m != nil {
-		return m.PullRequestIid
-	}
-	return 0
-}
-
-func (m *MsgMergePullRequest) GetMergeCommitSha() string {
-	if m != nil {
-		return m.MergeCommitSha
-	}
-	return ""
-}
-
-func (m *MsgMergePullRequest) GetTaskId() uint64 {
-	if m != nil {
-		return m.TaskId
-	}
-	return 0
-}
-
-type MsgMergePullRequestResponse struct {
-}
-
-func (m *MsgMergePullRequestResponse) Reset()         { *m = MsgMergePullRequestResponse{} }
-func (m *MsgMergePullRequestResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgMergePullRequestResponse) ProtoMessage()    {}
-func (*MsgMergePullRequestResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_210c9a5bb7eaa48c, []int{33}
-}
-func (m *MsgMergePullRequestResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgMergePullRequestResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgMergePullRequestResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgMergePullRequestResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgMergePullRequestResponse.Merge(m, src)
-}
-func (m *MsgMergePullRequestResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgMergePullRequestResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgMergePullRequestResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgMergePullRequestResponse proto.InternalMessageInfo
 
 // MsgUpdateLFSObject defines a message for updating an LFS object
 type MsgUpdateLFSObject struct {
@@ -2012,6 +2004,965 @@ func (m *MsgDeleteLFSObjectResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgDeleteLFSObjectResponse proto.InternalMessageInfo
 
+// MsgProposeRepositoryPackfileUpdate defines a message for proposing a packfile update
+type MsgProposeRepositoryPackfileUpdate struct {
+	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	RepositoryId uint64 `protobuf:"varint,2,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Name         string `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Cid          string `protobuf:"bytes,4,opt,name=cid,proto3" json:"cid,omitempty"`
+	RootHash     []byte `protobuf:"bytes,5,opt,name=root_hash,json=rootHash,proto3" json:"root_hash,omitempty"`
+	Size_        uint64 `protobuf:"varint,6,opt,name=size,proto3" json:"size,omitempty"`
+	// old_cid is the CID of the repository when the provider processed the request
+	OldCid string `protobuf:"bytes,7,opt,name=old_cid,json=oldCid,proto3" json:"old_cid,omitempty"`
+	// merge_commit_sha is the commit SHA when this proposal is for a merge pull request
+	MergeCommitSha string `protobuf:"bytes,8,opt,name=merge_commit_sha,json=mergeCommitSha,proto3" json:"merge_commit_sha,omitempty"`
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) Reset()         { *m = MsgProposeRepositoryPackfileUpdate{} }
+func (m *MsgProposeRepositoryPackfileUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeRepositoryPackfileUpdate) ProtoMessage()    {}
+func (*MsgProposeRepositoryPackfileUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{38}
+}
+func (m *MsgProposeRepositoryPackfileUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRepositoryPackfileUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRepositoryPackfileUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRepositoryPackfileUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRepositoryPackfileUpdate.Merge(m, src)
+}
+func (m *MsgProposeRepositoryPackfileUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRepositoryPackfileUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRepositoryPackfileUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRepositoryPackfileUpdate proto.InternalMessageInfo
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetRootHash() []byte {
+	if m != nil {
+		return m.RootHash
+	}
+	return nil
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetSize_() uint64 {
+	if m != nil {
+		return m.Size_
+	}
+	return 0
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetOldCid() string {
+	if m != nil {
+		return m.OldCid
+	}
+	return ""
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) GetMergeCommitSha() string {
+	if m != nil {
+		return m.MergeCommitSha
+	}
+	return ""
+}
+
+type MsgProposeRepositoryPackfileUpdateResponse struct {
+	ProposalId uint64 `protobuf:"varint,1,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) Reset() {
+	*m = MsgProposeRepositoryPackfileUpdateResponse{}
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgProposeRepositoryPackfileUpdateResponse) ProtoMessage() {}
+func (*MsgProposeRepositoryPackfileUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{39}
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRepositoryPackfileUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRepositoryPackfileUpdateResponse.Merge(m, src)
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRepositoryPackfileUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRepositoryPackfileUpdateResponse proto.InternalMessageInfo
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+// MsgApproveRepositoryPackfileUpdate defines a message for approving a proposed packfile update
+type MsgApproveRepositoryPackfileUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) Reset()         { *m = MsgApproveRepositoryPackfileUpdate{} }
+func (m *MsgApproveRepositoryPackfileUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveRepositoryPackfileUpdate) ProtoMessage()    {}
+func (*MsgApproveRepositoryPackfileUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{40}
+}
+func (m *MsgApproveRepositoryPackfileUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRepositoryPackfileUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRepositoryPackfileUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRepositoryPackfileUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRepositoryPackfileUpdate.Merge(m, src)
+}
+func (m *MsgApproveRepositoryPackfileUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRepositoryPackfileUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRepositoryPackfileUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRepositoryPackfileUpdate proto.InternalMessageInfo
+
+func (m *MsgApproveRepositoryPackfileUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+type MsgApproveRepositoryPackfileUpdateResponse struct {
+}
+
+func (m *MsgApproveRepositoryPackfileUpdateResponse) Reset() {
+	*m = MsgApproveRepositoryPackfileUpdateResponse{}
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgApproveRepositoryPackfileUpdateResponse) ProtoMessage() {}
+func (*MsgApproveRepositoryPackfileUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{41}
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRepositoryPackfileUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRepositoryPackfileUpdateResponse.Merge(m, src)
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRepositoryPackfileUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRepositoryPackfileUpdateResponse proto.InternalMessageInfo
+
+// MsgRejectRepositoryPackfileUpdate defines a message for rejecting a proposed packfile update
+type MsgRejectRepositoryPackfileUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+	Reason     string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) Reset()         { *m = MsgRejectRepositoryPackfileUpdate{} }
+func (m *MsgRejectRepositoryPackfileUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgRejectRepositoryPackfileUpdate) ProtoMessage()    {}
+func (*MsgRejectRepositoryPackfileUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{42}
+}
+func (m *MsgRejectRepositoryPackfileUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectRepositoryPackfileUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectRepositoryPackfileUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectRepositoryPackfileUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectRepositoryPackfileUpdate.Merge(m, src)
+}
+func (m *MsgRejectRepositoryPackfileUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectRepositoryPackfileUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectRepositoryPackfileUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectRepositoryPackfileUpdate proto.InternalMessageInfo
+
+func (m *MsgRejectRepositoryPackfileUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+type MsgRejectRepositoryPackfileUpdateResponse struct {
+}
+
+func (m *MsgRejectRepositoryPackfileUpdateResponse) Reset() {
+	*m = MsgRejectRepositoryPackfileUpdateResponse{}
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*MsgRejectRepositoryPackfileUpdateResponse) ProtoMessage() {}
+func (*MsgRejectRepositoryPackfileUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{43}
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectRepositoryPackfileUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectRepositoryPackfileUpdateResponse.Merge(m, src)
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectRepositoryPackfileUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectRepositoryPackfileUpdateResponse proto.InternalMessageInfo
+
+// MsgProposeReleaseAssetsUpdate defines a message for proposing a release assets update
+type MsgProposeReleaseAssetsUpdate struct {
+	Creator      string                `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	RepositoryId uint64                `protobuf:"varint,2,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Tag          string                `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	Assets       []*ReleaseAssetUpdate `protobuf:"bytes,4,rep,name=assets,proto3" json:"assets,omitempty"`
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) Reset()         { *m = MsgProposeReleaseAssetsUpdate{} }
+func (m *MsgProposeReleaseAssetsUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeReleaseAssetsUpdate) ProtoMessage()    {}
+func (*MsgProposeReleaseAssetsUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{44}
+}
+func (m *MsgProposeReleaseAssetsUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeReleaseAssetsUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeReleaseAssetsUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeReleaseAssetsUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeReleaseAssetsUpdate.Merge(m, src)
+}
+func (m *MsgProposeReleaseAssetsUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeReleaseAssetsUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeReleaseAssetsUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeReleaseAssetsUpdate proto.InternalMessageInfo
+
+func (m *MsgProposeReleaseAssetsUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) GetAssets() []*ReleaseAssetUpdate {
+	if m != nil {
+		return m.Assets
+	}
+	return nil
+}
+
+type MsgProposeReleaseAssetsUpdateResponse struct {
+	ProposalId uint64 `protobuf:"varint,1,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) Reset()         { *m = MsgProposeReleaseAssetsUpdateResponse{} }
+func (m *MsgProposeReleaseAssetsUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeReleaseAssetsUpdateResponse) ProtoMessage()    {}
+func (*MsgProposeReleaseAssetsUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{45}
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeReleaseAssetsUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeReleaseAssetsUpdateResponse.Merge(m, src)
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeReleaseAssetsUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeReleaseAssetsUpdateResponse proto.InternalMessageInfo
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+// MsgApproveReleaseAssetsUpdate defines a message for approving a proposed release assets update
+type MsgApproveReleaseAssetsUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) Reset()         { *m = MsgApproveReleaseAssetsUpdate{} }
+func (m *MsgApproveReleaseAssetsUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveReleaseAssetsUpdate) ProtoMessage()    {}
+func (*MsgApproveReleaseAssetsUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{46}
+}
+func (m *MsgApproveReleaseAssetsUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveReleaseAssetsUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveReleaseAssetsUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveReleaseAssetsUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveReleaseAssetsUpdate.Merge(m, src)
+}
+func (m *MsgApproveReleaseAssetsUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveReleaseAssetsUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveReleaseAssetsUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveReleaseAssetsUpdate proto.InternalMessageInfo
+
+func (m *MsgApproveReleaseAssetsUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+type MsgApproveReleaseAssetsUpdateResponse struct {
+}
+
+func (m *MsgApproveReleaseAssetsUpdateResponse) Reset()         { *m = MsgApproveReleaseAssetsUpdateResponse{} }
+func (m *MsgApproveReleaseAssetsUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveReleaseAssetsUpdateResponse) ProtoMessage()    {}
+func (*MsgApproveReleaseAssetsUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{47}
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveReleaseAssetsUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveReleaseAssetsUpdateResponse.Merge(m, src)
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveReleaseAssetsUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveReleaseAssetsUpdateResponse proto.InternalMessageInfo
+
+// MsgRejectReleaseAssetsUpdate defines a message for rejecting a proposed release assets update
+type MsgRejectReleaseAssetsUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+	Reason     string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) Reset()         { *m = MsgRejectReleaseAssetsUpdate{} }
+func (m *MsgRejectReleaseAssetsUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgRejectReleaseAssetsUpdate) ProtoMessage()    {}
+func (*MsgRejectReleaseAssetsUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{48}
+}
+func (m *MsgRejectReleaseAssetsUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectReleaseAssetsUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectReleaseAssetsUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectReleaseAssetsUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectReleaseAssetsUpdate.Merge(m, src)
+}
+func (m *MsgRejectReleaseAssetsUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectReleaseAssetsUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectReleaseAssetsUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectReleaseAssetsUpdate proto.InternalMessageInfo
+
+func (m *MsgRejectReleaseAssetsUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+type MsgRejectReleaseAssetsUpdateResponse struct {
+}
+
+func (m *MsgRejectReleaseAssetsUpdateResponse) Reset()         { *m = MsgRejectReleaseAssetsUpdateResponse{} }
+func (m *MsgRejectReleaseAssetsUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRejectReleaseAssetsUpdateResponse) ProtoMessage()    {}
+func (*MsgRejectReleaseAssetsUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{49}
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectReleaseAssetsUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectReleaseAssetsUpdateResponse.Merge(m, src)
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectReleaseAssetsUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectReleaseAssetsUpdateResponse proto.InternalMessageInfo
+
+// MsgProposeLFSObjectUpdate defines a message for proposing an LFS object update
+type MsgProposeLFSObjectUpdate struct {
+	Creator      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	RepositoryId uint64 `protobuf:"varint,2,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Oid          string `protobuf:"bytes,3,opt,name=oid,proto3" json:"oid,omitempty"`
+	Size_        uint64 `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"`
+	Cid          string `protobuf:"bytes,5,opt,name=cid,proto3" json:"cid,omitempty"`
+	RootHash     []byte `protobuf:"bytes,6,opt,name=root_hash,json=rootHash,proto3" json:"root_hash,omitempty"`
+}
+
+func (m *MsgProposeLFSObjectUpdate) Reset()         { *m = MsgProposeLFSObjectUpdate{} }
+func (m *MsgProposeLFSObjectUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeLFSObjectUpdate) ProtoMessage()    {}
+func (*MsgProposeLFSObjectUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{50}
+}
+func (m *MsgProposeLFSObjectUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeLFSObjectUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeLFSObjectUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeLFSObjectUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeLFSObjectUpdate.Merge(m, src)
+}
+func (m *MsgProposeLFSObjectUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeLFSObjectUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeLFSObjectUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeLFSObjectUpdate proto.InternalMessageInfo
+
+func (m *MsgProposeLFSObjectUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgProposeLFSObjectUpdate) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *MsgProposeLFSObjectUpdate) GetOid() string {
+	if m != nil {
+		return m.Oid
+	}
+	return ""
+}
+
+func (m *MsgProposeLFSObjectUpdate) GetSize_() uint64 {
+	if m != nil {
+		return m.Size_
+	}
+	return 0
+}
+
+func (m *MsgProposeLFSObjectUpdate) GetCid() string {
+	if m != nil {
+		return m.Cid
+	}
+	return ""
+}
+
+func (m *MsgProposeLFSObjectUpdate) GetRootHash() []byte {
+	if m != nil {
+		return m.RootHash
+	}
+	return nil
+}
+
+type MsgProposeLFSObjectUpdateResponse struct {
+	ProposalId uint64 `protobuf:"varint,1,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgProposeLFSObjectUpdateResponse) Reset()         { *m = MsgProposeLFSObjectUpdateResponse{} }
+func (m *MsgProposeLFSObjectUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeLFSObjectUpdateResponse) ProtoMessage()    {}
+func (*MsgProposeLFSObjectUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{51}
+}
+func (m *MsgProposeLFSObjectUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeLFSObjectUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeLFSObjectUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeLFSObjectUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeLFSObjectUpdateResponse.Merge(m, src)
+}
+func (m *MsgProposeLFSObjectUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeLFSObjectUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeLFSObjectUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeLFSObjectUpdateResponse proto.InternalMessageInfo
+
+func (m *MsgProposeLFSObjectUpdateResponse) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+// MsgApproveLFSObjectUpdate defines a message for approving a proposed LFS object update
+type MsgApproveLFSObjectUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+}
+
+func (m *MsgApproveLFSObjectUpdate) Reset()         { *m = MsgApproveLFSObjectUpdate{} }
+func (m *MsgApproveLFSObjectUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveLFSObjectUpdate) ProtoMessage()    {}
+func (*MsgApproveLFSObjectUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{52}
+}
+func (m *MsgApproveLFSObjectUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveLFSObjectUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveLFSObjectUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveLFSObjectUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveLFSObjectUpdate.Merge(m, src)
+}
+func (m *MsgApproveLFSObjectUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveLFSObjectUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveLFSObjectUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveLFSObjectUpdate proto.InternalMessageInfo
+
+func (m *MsgApproveLFSObjectUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgApproveLFSObjectUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+type MsgApproveLFSObjectUpdateResponse struct {
+}
+
+func (m *MsgApproveLFSObjectUpdateResponse) Reset()         { *m = MsgApproveLFSObjectUpdateResponse{} }
+func (m *MsgApproveLFSObjectUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveLFSObjectUpdateResponse) ProtoMessage()    {}
+func (*MsgApproveLFSObjectUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{53}
+}
+func (m *MsgApproveLFSObjectUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveLFSObjectUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveLFSObjectUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveLFSObjectUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveLFSObjectUpdateResponse.Merge(m, src)
+}
+func (m *MsgApproveLFSObjectUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveLFSObjectUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveLFSObjectUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveLFSObjectUpdateResponse proto.InternalMessageInfo
+
+// MsgRejectLFSObjectUpdate defines a message for rejecting a proposed LFS object update
+type MsgRejectLFSObjectUpdate struct {
+	Creator    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	ProposalId uint64 `protobuf:"varint,2,opt,name=proposal_id,json=proposalId,proto3" json:"proposal_id,omitempty"`
+	Reason     string `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+}
+
+func (m *MsgRejectLFSObjectUpdate) Reset()         { *m = MsgRejectLFSObjectUpdate{} }
+func (m *MsgRejectLFSObjectUpdate) String() string { return proto.CompactTextString(m) }
+func (*MsgRejectLFSObjectUpdate) ProtoMessage()    {}
+func (*MsgRejectLFSObjectUpdate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{54}
+}
+func (m *MsgRejectLFSObjectUpdate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectLFSObjectUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectLFSObjectUpdate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectLFSObjectUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectLFSObjectUpdate.Merge(m, src)
+}
+func (m *MsgRejectLFSObjectUpdate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectLFSObjectUpdate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectLFSObjectUpdate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectLFSObjectUpdate proto.InternalMessageInfo
+
+func (m *MsgRejectLFSObjectUpdate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgRejectLFSObjectUpdate) GetProposalId() uint64 {
+	if m != nil {
+		return m.ProposalId
+	}
+	return 0
+}
+
+func (m *MsgRejectLFSObjectUpdate) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
+type MsgRejectLFSObjectUpdateResponse struct {
+}
+
+func (m *MsgRejectLFSObjectUpdateResponse) Reset()         { *m = MsgRejectLFSObjectUpdateResponse{} }
+func (m *MsgRejectLFSObjectUpdateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRejectLFSObjectUpdateResponse) ProtoMessage()    {}
+func (*MsgRejectLFSObjectUpdateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_210c9a5bb7eaa48c, []int{55}
+}
+func (m *MsgRejectLFSObjectUpdateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRejectLFSObjectUpdateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRejectLFSObjectUpdateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRejectLFSObjectUpdateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRejectLFSObjectUpdateResponse.Merge(m, src)
+}
+func (m *MsgRejectLFSObjectUpdateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRejectLFSObjectUpdateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRejectLFSObjectUpdateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRejectLFSObjectUpdateResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgRegisterProvider)(nil), "gitopia.gitopia.storage.MsgRegisterProvider")
 	proto.RegisterType((*MsgRegisterProviderResponse)(nil), "gitopia.gitopia.storage.MsgRegisterProviderResponse")
@@ -2023,6 +2974,8 @@ func init() {
 	proto.RegisterType((*MsgDeleteRepositoryPackfileResponse)(nil), "gitopia.gitopia.storage.MsgDeleteRepositoryPackfileResponse")
 	proto.RegisterType((*MsgUpdateReleaseAsset)(nil), "gitopia.gitopia.storage.MsgUpdateReleaseAsset")
 	proto.RegisterType((*MsgUpdateReleaseAssetResponse)(nil), "gitopia.gitopia.storage.MsgUpdateReleaseAssetResponse")
+	proto.RegisterType((*MsgUpdateReleaseAssets)(nil), "gitopia.gitopia.storage.MsgUpdateReleaseAssets")
+	proto.RegisterType((*MsgUpdateReleaseAssetsResponse)(nil), "gitopia.gitopia.storage.MsgUpdateReleaseAssetsResponse")
 	proto.RegisterType((*MsgDeleteReleaseAsset)(nil), "gitopia.gitopia.storage.MsgDeleteReleaseAsset")
 	proto.RegisterType((*MsgDeleteReleaseAssetResponse)(nil), "gitopia.gitopia.storage.MsgDeleteReleaseAssetResponse")
 	proto.RegisterType((*MsgSubmitChallengeResponse)(nil), "gitopia.gitopia.storage.MsgSubmitChallengeResponse")
@@ -2045,120 +2998,159 @@ func init() {
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "gitopia.gitopia.storage.MsgUpdateParamsResponse")
 	proto.RegisterType((*MsgClawbackProviderStake)(nil), "gitopia.gitopia.storage.MsgClawbackProviderStake")
 	proto.RegisterType((*MsgClawbackProviderStakeResponse)(nil), "gitopia.gitopia.storage.MsgClawbackProviderStakeResponse")
-	proto.RegisterType((*MsgMergePullRequest)(nil), "gitopia.gitopia.storage.MsgMergePullRequest")
-	proto.RegisterType((*MsgMergePullRequestResponse)(nil), "gitopia.gitopia.storage.MsgMergePullRequestResponse")
 	proto.RegisterType((*MsgUpdateLFSObject)(nil), "gitopia.gitopia.storage.MsgUpdateLFSObject")
 	proto.RegisterType((*MsgUpdateLFSObjectResponse)(nil), "gitopia.gitopia.storage.MsgUpdateLFSObjectResponse")
 	proto.RegisterType((*MsgDeleteLFSObject)(nil), "gitopia.gitopia.storage.MsgDeleteLFSObject")
 	proto.RegisterType((*MsgDeleteLFSObjectResponse)(nil), "gitopia.gitopia.storage.MsgDeleteLFSObjectResponse")
+	proto.RegisterType((*MsgProposeRepositoryPackfileUpdate)(nil), "gitopia.gitopia.storage.MsgProposeRepositoryPackfileUpdate")
+	proto.RegisterType((*MsgProposeRepositoryPackfileUpdateResponse)(nil), "gitopia.gitopia.storage.MsgProposeRepositoryPackfileUpdateResponse")
+	proto.RegisterType((*MsgApproveRepositoryPackfileUpdate)(nil), "gitopia.gitopia.storage.MsgApproveRepositoryPackfileUpdate")
+	proto.RegisterType((*MsgApproveRepositoryPackfileUpdateResponse)(nil), "gitopia.gitopia.storage.MsgApproveRepositoryPackfileUpdateResponse")
+	proto.RegisterType((*MsgRejectRepositoryPackfileUpdate)(nil), "gitopia.gitopia.storage.MsgRejectRepositoryPackfileUpdate")
+	proto.RegisterType((*MsgRejectRepositoryPackfileUpdateResponse)(nil), "gitopia.gitopia.storage.MsgRejectRepositoryPackfileUpdateResponse")
+	proto.RegisterType((*MsgProposeReleaseAssetsUpdate)(nil), "gitopia.gitopia.storage.MsgProposeReleaseAssetsUpdate")
+	proto.RegisterType((*MsgProposeReleaseAssetsUpdateResponse)(nil), "gitopia.gitopia.storage.MsgProposeReleaseAssetsUpdateResponse")
+	proto.RegisterType((*MsgApproveReleaseAssetsUpdate)(nil), "gitopia.gitopia.storage.MsgApproveReleaseAssetsUpdate")
+	proto.RegisterType((*MsgApproveReleaseAssetsUpdateResponse)(nil), "gitopia.gitopia.storage.MsgApproveReleaseAssetsUpdateResponse")
+	proto.RegisterType((*MsgRejectReleaseAssetsUpdate)(nil), "gitopia.gitopia.storage.MsgRejectReleaseAssetsUpdate")
+	proto.RegisterType((*MsgRejectReleaseAssetsUpdateResponse)(nil), "gitopia.gitopia.storage.MsgRejectReleaseAssetsUpdateResponse")
+	proto.RegisterType((*MsgProposeLFSObjectUpdate)(nil), "gitopia.gitopia.storage.MsgProposeLFSObjectUpdate")
+	proto.RegisterType((*MsgProposeLFSObjectUpdateResponse)(nil), "gitopia.gitopia.storage.MsgProposeLFSObjectUpdateResponse")
+	proto.RegisterType((*MsgApproveLFSObjectUpdate)(nil), "gitopia.gitopia.storage.MsgApproveLFSObjectUpdate")
+	proto.RegisterType((*MsgApproveLFSObjectUpdateResponse)(nil), "gitopia.gitopia.storage.MsgApproveLFSObjectUpdateResponse")
+	proto.RegisterType((*MsgRejectLFSObjectUpdate)(nil), "gitopia.gitopia.storage.MsgRejectLFSObjectUpdate")
+	proto.RegisterType((*MsgRejectLFSObjectUpdateResponse)(nil), "gitopia.gitopia.storage.MsgRejectLFSObjectUpdateResponse")
 }
 
 func init() { proto.RegisterFile("gitopia/gitopia/storage/tx.proto", fileDescriptor_210c9a5bb7eaa48c) }
 
 var fileDescriptor_210c9a5bb7eaa48c = []byte{
-	// 1624 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x59, 0x4d, 0x6c, 0xdc, 0x44,
-	0x1b, 0x8e, 0x93, 0xcd, 0x26, 0x99, 0xa6, 0x69, 0xea, 0xaf, 0xfd, 0x76, 0xb3, 0xf9, 0xba, 0xc9,
-	0xe7, 0x16, 0x29, 0x4d, 0xe9, 0x2e, 0xf9, 0x69, 0x10, 0x6d, 0x39, 0x34, 0xa9, 0x80, 0x48, 0xac,
-	0x88, 0x36, 0x54, 0x48, 0xfc, 0x68, 0x35, 0xbb, 0x9e, 0x78, 0xa7, 0xb1, 0x3d, 0xc6, 0xe3, 0x4d,
-	0x5a, 0x04, 0x12, 0x42, 0x82, 0x03, 0x48, 0xa8, 0x37, 0x8e, 0x1c, 0xb8, 0x20, 0x4e, 0x3d, 0x70,
-	0x80, 0x23, 0xb7, 0x0a, 0x71, 0xa8, 0x38, 0xf5, 0x44, 0x51, 0x7b, 0xe8, 0x95, 0x3b, 0x17, 0x34,
-	0x3f, 0x9e, 0x5d, 0xef, 0xda, 0x5e, 0xa7, 0x55, 0xb9, 0x74, 0x6d, 0xcf, 0xf3, 0xce, 0x3c, 0xcf,
-	0xfb, 0x8e, 0xfd, 0x3e, 0xd3, 0x80, 0x45, 0x0b, 0x07, 0xc4, 0xc3, 0xb0, 0x1a, 0xfe, 0xd2, 0x80,
-	0xf8, 0xd0, 0x42, 0xd5, 0xe0, 0x56, 0xc5, 0xf3, 0x49, 0x40, 0xf4, 0x82, 0x1c, 0xa9, 0x84, 0xbf,
-	0x12, 0x51, 0x3a, 0x65, 0x11, 0x8b, 0x70, 0x4c, 0x95, 0x5d, 0x09, 0x78, 0xa9, 0xdc, 0x22, 0xd4,
-	0x21, 0xb4, 0xda, 0x84, 0x14, 0x55, 0x0f, 0x56, 0x9a, 0x28, 0x80, 0x2b, 0xd5, 0x16, 0xc1, 0xae,
-	0x1c, 0x3f, 0x9b, 0xb8, 0xe0, 0x6d, 0x0f, 0x51, 0x09, 0x3a, 0x97, 0x04, 0xf2, 0xa0, 0x0f, 0x9d,
-	0x10, 0xb5, 0x60, 0x11, 0x62, 0xd9, 0xa8, 0xca, 0xef, 0x9a, 0x9d, 0xbd, 0x6a, 0x80, 0x1d, 0x44,
-	0x03, 0xe8, 0x78, 0x12, 0x50, 0x90, 0x5c, 0x1c, 0x6a, 0x55, 0x0f, 0x56, 0xd8, 0x8f, 0x1c, 0x98,
-	0x13, 0x03, 0x0d, 0xc1, 0x5e, 0xdc, 0xc8, 0xa1, 0x93, 0xd0, 0xc1, 0x2e, 0xa9, 0xf2, 0x7f, 0xc5,
-	0x23, 0xe3, 0x81, 0x06, 0xfe, 0x53, 0xa3, 0x56, 0x1d, 0x59, 0x98, 0x06, 0xc8, 0xdf, 0xf1, 0xc9,
-	0x01, 0x36, 0x91, 0xaf, 0x17, 0xc1, 0x44, 0xcb, 0x47, 0x30, 0x20, 0x7e, 0x51, 0x5b, 0xd4, 0x96,
-	0xa6, 0xea, 0xe1, 0xad, 0x5e, 0x00, 0x13, 0xd0, 0xc3, 0x8d, 0x8e, 0x6f, 0x17, 0x47, 0xf9, 0x48,
-	0x1e, 0x7a, 0xf8, 0x86, 0x6f, 0xb3, 0x10, 0x87, 0xb8, 0x78, 0x1f, 0xf9, 0xc5, 0x31, 0x11, 0x22,
-	0x6f, 0xf5, 0x4b, 0x60, 0x9c, 0x06, 0x70, 0x1f, 0x15, 0x73, 0x8b, 0xda, 0xd2, 0xb1, 0xd5, 0xb9,
-	0x8a, 0x64, 0xc5, 0xf2, 0x58, 0x91, 0x79, 0xac, 0x6c, 0x11, 0xec, 0x6e, 0xe6, 0xee, 0xfd, 0xb1,
-	0x30, 0x52, 0x17, 0x68, 0xfd, 0x55, 0x30, 0x8f, 0xbd, 0x3d, 0xda, 0x68, 0xd9, 0x1d, 0xc6, 0xad,
-	0xe1, 0x21, 0xe4, 0x37, 0x9c, 0x8e, 0x1d, 0x60, 0x68, 0x9a, 0x7e, 0x71, 0x9c, 0x2f, 0x52, 0x64,
-	0x90, 0x2d, 0x81, 0xd8, 0x41, 0xc8, 0xaf, 0x85, 0xe3, 0xc6, 0x19, 0x30, 0x1f, 0xa3, 0xac, 0x8e,
-	0xa8, 0x47, 0x5c, 0x8a, 0x8c, 0x6f, 0x35, 0x70, 0xb2, 0x46, 0xad, 0x1b, 0x9e, 0x09, 0x03, 0xf4,
-	0x7c, 0x74, 0x0f, 0x11, 0x90, 0x1b, 0x22, 0x60, 0x1e, 0xcc, 0x0d, 0x10, 0x54, 0xf4, 0x7f, 0xd3,
-	0xb8, 0x3c, 0x31, 0x5a, 0x47, 0x1e, 0xa1, 0x38, 0x20, 0xfe, 0xed, 0x1d, 0xd8, 0xda, 0xdf, 0xc3,
-	0x36, 0x4a, 0x11, 0x72, 0x16, 0x1c, 0xf7, 0x15, 0xbe, 0x81, 0x4d, 0x2e, 0x27, 0x57, 0x9f, 0xee,
-	0x3e, 0xdc, 0x36, 0x75, 0x1d, 0xe4, 0x5c, 0xe8, 0x20, 0xa9, 0x88, 0x5f, 0xeb, 0xb3, 0x60, 0xac,
-	0x85, 0x4d, 0x49, 0x9b, 0x5d, 0xea, 0xf3, 0x60, 0xca, 0x27, 0x24, 0x68, 0xb4, 0x21, 0x6d, 0xf3,
-	0x7a, 0x4c, 0xd7, 0x27, 0xd9, 0x83, 0x37, 0x20, 0x6d, 0xb3, 0x29, 0x28, 0xfe, 0x08, 0x15, 0xf3,
-	0x7c, 0x7a, 0x7e, 0xcd, 0x92, 0x48, 0x6c, 0xb3, 0xc1, 0xa6, 0x99, 0x10, 0x49, 0x24, 0xb6, 0xb9,
-	0x85, 0x4d, 0xe3, 0x05, 0x70, 0x36, 0x45, 0x8d, 0x52, 0x7d, 0xc8, 0x45, 0x5f, 0x47, 0x36, 0x7a,
-	0x1e, 0xa2, 0xe7, 0xc0, 0x24, 0x39, 0x74, 0x91, 0xcf, 0xc6, 0x65, 0x29, 0xf9, 0xfd, 0x76, 0xc8,
-	0x2f, 0x69, 0x61, 0xc5, 0xef, 0x2f, 0x0d, 0x9c, 0xee, 0xd1, 0x61, 0x23, 0x48, 0xd1, 0x35, 0x4a,
-	0x51, 0xf0, 0xac, 0xd4, 0x66, 0xc1, 0x58, 0x00, 0x2d, 0xc9, 0x8a, 0x5d, 0xaa, 0x0a, 0xe5, 0x06,
-	0x2b, 0x34, 0x9e, 0x50, 0xa1, 0x7c, 0x42, 0x85, 0x26, 0x7a, 0x2a, 0xf4, 0x5f, 0x90, 0xa7, 0x6d,
-	0xb8, 0x7a, 0x69, 0xa3, 0x38, 0x29, 0x0a, 0x24, 0xee, 0x7a, 0x2b, 0x37, 0x15, 0xa9, 0xdc, 0x02,
-	0x38, 0x13, 0xab, 0x58, 0xe5, 0xe4, 0x1b, 0x91, 0x93, 0x30, 0x77, 0xff, 0x76, 0x4e, 0x7a, 0x8b,
-	0x3a, 0x1e, 0x2d, 0xaa, 0xa0, 0x3e, 0x48, 0x4c, 0x51, 0xff, 0x4e, 0x03, 0xa5, 0x1a, 0xb5, 0x76,
-	0x3b, 0x4d, 0x07, 0x07, 0x5b, 0x6d, 0x68, 0xdb, 0xc8, 0xb5, 0x54, 0xb5, 0x53, 0xf8, 0xff, 0x1f,
-	0x4c, 0xb7, 0x42, 0x78, 0x97, 0xfe, 0x31, 0xf5, 0x4c, 0xbc, 0x61, 0x26, 0x0c, 0x20, 0xa7, 0x3f,
-	0x5d, 0xe7, 0xd7, 0xfa, 0x3a, 0x18, 0xf7, 0x7c, 0x42, 0xf6, 0xe4, 0x87, 0xb2, 0x5c, 0x49, 0xe8,
-	0x4f, 0x95, 0x1d, 0x86, 0xaa, 0x0b, 0xb0, 0x71, 0x0e, 0x18, 0xc9, 0x24, 0x95, 0x96, 0x0d, 0x2e,
-	0xe5, 0x1d, 0x1c, 0xb4, 0x4d, 0x1f, 0x1e, 0x76, 0xbf, 0x27, 0x87, 0xd0, 0x37, 0x69, 0xb2, 0x14,
-	0xe3, 0x03, 0x3e, 0x7b, 0x42, 0x9c, 0x4a, 0xc5, 0xcb, 0x20, 0x0f, 0x1d, 0xd2, 0x71, 0x83, 0xa2,
-	0xb6, 0x38, 0x96, 0xe5, 0x1b, 0x2f, 0xe1, 0xc6, 0x8a, 0x78, 0x61, 0x5c, 0x3f, 0x73, 0x07, 0x32,
-	0x3e, 0x11, 0x3b, 0x6e, 0x20, 0x44, 0x91, 0x79, 0x1f, 0x14, 0x3a, 0x2e, 0xef, 0x21, 0x8d, 0x16,
-	0x71, 0x3c, 0x1b, 0x05, 0x98, 0xb8, 0x0d, 0xd6, 0x41, 0xf9, 0x54, 0xc7, 0x56, 0x4b, 0x15, 0xd1,
-	0x5e, 0x2b, 0x61, 0x7b, 0xad, 0xbc, 0x1d, 0xb6, 0xd7, 0xcd, 0x49, 0x46, 0xef, 0xce, 0xc3, 0x05,
-	0xad, 0x7e, 0x5a, 0x4e, 0xb2, 0xa5, 0xe6, 0x60, 0x28, 0xa3, 0x02, 0xf4, 0x1a, 0xb5, 0xe4, 0x43,
-	0x74, 0x43, 0x60, 0x52, 0xe8, 0x7e, 0x21, 0x36, 0x51, 0x5f, 0x80, 0x22, 0xdb, 0xce, 0x9e, 0xb9,
-	0x4b, 0x8c, 0xda, 0x0f, 0x0f, 0x17, 0x96, 0x2c, 0x1c, 0xb4, 0x3b, 0xcd, 0x4a, 0x8b, 0x38, 0xb2,
-	0xc1, 0xcb, 0x9f, 0x8b, 0xd4, 0xdc, 0x97, 0x66, 0x83, 0x05, 0xd0, 0xef, 0x9f, 0xdc, 0x5d, 0xd6,
-	0x54, 0xaa, 0x11, 0x98, 0xad, 0x51, 0x6b, 0xdb, 0x65, 0xc4, 0x28, 0xda, 0x4d, 0xa7, 0xdd, 0x53,
-	0xd1, 0xd1, 0x6c, 0x5d, 0x3b, 0x5c, 0xa6, 0x04, 0x8a, 0xfd, 0xcb, 0xa8, 0x4d, 0x28, 0x28, 0x5c,
-	0x47, 0xcf, 0x99, 0x02, 0xe6, 0x14, 0x22, 0xcb, 0xa8, 0x7c, 0xd7, 0xc0, 0x89, 0x67, 0xd9, 0x14,
-	0x33, 0xad, 0xe8, 0x6e, 0x58, 0xe7, 0x4b, 0x85, 0xc5, 0xcd, 0xa8, 0xcc, 0x78, 0x0f, 0x2c, 0x26,
-	0x45, 0xc5, 0xbe, 0x52, 0x47, 0x52, 0x7f, 0x45, 0x18, 0x1b, 0xf7, 0x26, 0xc4, 0xf6, 0xf0, 0xd7,
-	0xe9, 0xf2, 0xf4, 0x67, 0x4f, 0xee, 0x2e, 0x2b, 0x66, 0xd2, 0x74, 0x44, 0x82, 0x55, 0xf9, 0x7e,
-	0xd6, 0xc0, 0x89, 0xae, 0x25, 0xe1, 0x7e, 0x55, 0xdf, 0x00, 0x53, 0xb0, 0x13, 0xb4, 0x89, 0x8f,
-	0x83, 0xdb, 0x62, 0xea, 0xcd, 0xe2, 0xef, 0x3f, 0x5e, 0x3c, 0x25, 0xc9, 0x5e, 0x33, 0x4d, 0x1f,
-	0x51, 0xba, 0x1b, 0xf8, 0xd8, 0xb5, 0xea, 0x5d, 0xa8, 0xbe, 0x09, 0xf2, 0xc2, 0xf1, 0xca, 0xe2,
-	0x2e, 0x24, 0x7f, 0xec, 0x38, 0x6c, 0x73, 0x8a, 0x89, 0x94, 0x3b, 0x5a, 0x44, 0x5e, 0x5e, 0x66,
-	0xd4, 0xbb, 0x73, 0x7e, 0xf9, 0xe4, 0xee, 0x72, 0x21, 0xb4, 0xd3, 0x7d, 0x3c, 0x8d, 0x39, 0x50,
-	0xe8, 0x7b, 0xa4, 0x64, 0xfd, 0xad, 0x89, 0x22, 0xda, 0xf0, 0xb0, 0x09, 0x5b, 0xfb, 0xa1, 0x6c,
-	0x51, 0xc4, 0xa7, 0xd5, 0xb7, 0x0e, 0x26, 0x3d, 0x39, 0x91, 0x30, 0x8c, 0x29, 0x61, 0x0a, 0xa9,
-	0x5f, 0x55, 0x45, 0x1f, 0x1b, 0x56, 0xf4, 0xde, 0x7c, 0x88, 0x98, 0xcb, 0x6b, 0x83, 0xf9, 0x58,
-	0xec, 0xc9, 0x47, 0xac, 0x40, 0xc3, 0x10, 0x7b, 0x31, 0x6e, 0x4c, 0x65, 0xe8, 0x17, 0x71, 0x4c,
-	0xa8, 0x21, 0xdf, 0x42, 0x3b, 0x1d, 0xdb, 0xae, 0xa3, 0x0f, 0x3b, 0x88, 0x3e, 0x73, 0x07, 0x5f,
-	0x02, 0xb3, 0x5e, 0xc7, 0xb6, 0x1b, 0xbe, 0x98, 0xae, 0x81, 0xa5, 0xf1, 0xca, 0xd5, 0x67, 0xbc,
-	0xee, 0x2a, 0xdb, 0x98, 0x23, 0x1d, 0xb6, 0x38, 0xfb, 0xa0, 0x3b, 0x38, 0x68, 0xd0, 0x36, 0x94,
-	0x5d, 0x7e, 0x86, 0x3f, 0xdf, 0xe2, 0x8f, 0x77, 0xdb, 0x90, 0x19, 0x95, 0x00, 0xd2, 0xfd, 0xb0,
-	0xdd, 0xe7, 0xea, 0x79, 0x76, 0xbb, 0x6d, 0xca, 0xf3, 0x40, 0xbf, 0x04, 0x25, 0xf1, 0x27, 0x8d,
-	0x7f, 0xd7, 0xc5, 0x06, 0x79, 0xf3, 0xb5, 0xdd, 0xb7, 0x9a, 0x37, 0x51, 0x2b, 0x4d, 0xe1, 0x0c,
-	0x18, 0x55, 0xb2, 0x46, 0xb1, 0x39, 0xa8, 0x78, 0x2c, 0xde, 0xb3, 0x90, 0xae, 0x87, 0x26, 0xd8,
-	0x54, 0x26, 0x6c, 0xbc, 0xc7, 0x84, 0x49, 0x1f, 0x97, 0x4f, 0xf0, 0x71, 0x13, 0x51, 0x1f, 0x67,
-	0xfc, 0x8f, 0x37, 0x98, 0x3e, 0xe6, 0x4a, 0xd8, 0xa7, 0x42, 0x98, 0xb0, 0x39, 0x59, 0x84, 0x65,
-	0x35, 0x5f, 0x44, 0xd9, 0x64, 0x2e, 0xa4, 0xd7, 0x68, 0xe5, 0xa2, 0x46, 0x4b, 0x10, 0xec, 0x63,
-	0x10, 0x12, 0x5c, 0xfd, 0x55, 0x07, 0x63, 0x35, 0x6a, 0xe9, 0x07, 0x60, 0x76, 0xe0, 0x1c, 0xfa,
-	0x62, 0xe2, 0x57, 0x21, 0xe6, 0x6c, 0x57, 0x5a, 0x3f, 0x0a, 0x5a, 0x7d, 0x68, 0x3d, 0x30, 0xd3,
-	0x77, 0x0a, 0x5c, 0x4e, 0x9b, 0x27, 0x8a, 0x2d, 0xad, 0x66, 0xc7, 0xaa, 0x15, 0xbf, 0xd6, 0x40,
-	0x31, 0xf1, 0xe4, 0xb6, 0x3e, 0x7c, 0xc2, 0xc1, 0xa8, 0xd2, 0xd5, 0xa7, 0x89, 0x8a, 0x10, 0x4a,
-	0x3c, 0x55, 0xa5, 0x12, 0x4a, 0x8a, 0x4a, 0x27, 0x34, 0xec, 0x20, 0xa5, 0x7f, 0x0c, 0xf4, 0x98,
-	0x43, 0x54, 0x25, 0x8b, 0xc8, 0x2e, 0xbe, 0xb4, 0x71, 0x34, 0x7c, 0xef, 0xea, 0x31, 0xc7, 0x95,
-	0x4a, 0x16, 0x45, 0x59, 0x57, 0x4f, 0x3e, 0x75, 0xe8, 0x5f, 0x69, 0xa0, 0x90, 0x74, 0xe4, 0x58,
-	0x4b, 0x9b, 0x33, 0x21, 0xa8, 0x74, 0xe5, 0x29, 0x82, 0x22, 0x6c, 0x92, 0x4e, 0x0d, 0xa9, 0x6c,
-	0x12, 0x82, 0xd2, 0xd9, 0x0c, 0x3b, 0x67, 0xb0, 0x7d, 0x31, 0x78, 0x56, 0x48, 0xdf, 0x17, 0x03,
-	0xf8, 0x21, 0xfb, 0x22, 0xf9, 0x60, 0x41, 0xc1, 0x89, 0x7e, 0xdf, 0x7f, 0x21, 0x6d, 0xaa, 0x3e,
-	0x70, 0x69, 0xed, 0x08, 0x60, 0xb5, 0xa8, 0x03, 0x8e, 0x47, 0x3d, 0xfb, 0xf9, 0xb4, 0x59, 0x22,
-	0xd0, 0xd2, 0x4a, 0x66, 0x68, 0xef, 0x72, 0x51, 0x17, 0x7b, 0x3e, 0x7d, 0x1b, 0x67, 0x5e, 0x2e,
-	0xde, 0xe5, 0x7e, 0xae, 0x81, 0xd3, 0xf1, 0xee, 0x79, 0x25, 0x4b, 0xb2, 0xa2, 0xeb, 0xbf, 0x72,
-	0xe4, 0x90, 0x48, 0x13, 0x88, 0x3a, 0xe6, 0xf4, 0x26, 0x10, 0xc1, 0x0e, 0x69, 0x02, 0xb1, 0x66,
-	0x5a, 0xbf, 0x09, 0xa6, 0x23, 0x46, 0x7a, 0x29, 0x43, 0x23, 0xe1, 0xc8, 0xd2, 0x4b, 0x59, 0x91,
-	0xd1, 0x2c, 0xc7, 0xda, 0xdb, 0xf4, 0x2c, 0xc7, 0x85, 0x0c, 0xc9, 0x72, 0x9a, 0x8f, 0x64, 0x2d,
-	0x7e, 0xc0, 0x43, 0xa6, 0xb6, 0xf8, 0x7e, 0x74, 0x7a, 0x8b, 0x4f, 0x32, 0x77, 0xec, 0xc5, 0xed,
-	0x37, 0x76, 0x17, 0x86, 0x27, 0x51, 0x81, 0xd3, 0x5f, 0xdc, 0x04, 0xe3, 0xc5, 0x16, 0xed, 0x37,
-	0x5d, 0x17, 0x86, 0xb7, 0x84, 0x8c, 0x8b, 0x26, 0x98, 0xa9, 0xcd, 0xd7, 0xef, 0x3d, 0x2a, 0x6b,
-	0xf7, 0x1f, 0x95, 0xb5, 0x3f, 0x1f, 0x95, 0xb5, 0x3b, 0x8f, 0xcb, 0x23, 0xf7, 0x1f, 0x97, 0x47,
-	0x1e, 0x3c, 0x2e, 0x8f, 0xbc, 0x7b, 0xb1, 0xe7, 0x7f, 0x0d, 0xfa, 0xff, 0x06, 0x71, 0xb0, 0x51,
-	0xbd, 0x15, 0xfd, 0x6b, 0x45, 0x33, 0xcf, 0x8f, 0xc1, 0x6b, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff,
-	0xb1, 0xff, 0x4e, 0x20, 0x46, 0x19, 0x00, 0x00,
+	// 1989 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5a, 0x41, 0x6f, 0x1c, 0x49,
+	0x15, 0x4e, 0xdb, 0xe3, 0xb1, 0xfd, 0xec, 0x4d, 0xbc, 0xbd, 0x9b, 0x78, 0xdc, 0xd9, 0x8c, 0xbd,
+	0x9d, 0x2c, 0x38, 0xf6, 0x66, 0x06, 0x3b, 0x8e, 0x57, 0xeb, 0xdd, 0x45, 0x8a, 0x1d, 0xc1, 0x46,
+	0x62, 0x84, 0x35, 0x26, 0x20, 0x2d, 0xa0, 0x51, 0x79, 0xba, 0xd2, 0xd3, 0xf1, 0xf4, 0x54, 0xd3,
+	0xd5, 0x63, 0x6f, 0x10, 0x08, 0x84, 0x04, 0x42, 0x20, 0xa1, 0x45, 0x42, 0xe2, 0x08, 0x62, 0x2f,
+	0x88, 0x03, 0xe4, 0x00, 0x12, 0xfc, 0x83, 0x3d, 0x70, 0x58, 0x71, 0xda, 0x13, 0x8b, 0x92, 0x43,
+	0xae, 0xdc, 0x11, 0x12, 0xea, 0xaa, 0xea, 0x9a, 0xe9, 0x9e, 0xee, 0xea, 0x1e, 0xc7, 0x41, 0xda,
+	0x4b, 0xa6, 0xbb, 0xeb, 0xbd, 0x7a, 0xdf, 0xf7, 0xde, 0xab, 0xaa, 0x57, 0x2f, 0x86, 0x15, 0xdb,
+	0x09, 0x88, 0xe7, 0xa0, 0x7a, 0xf4, 0x4b, 0x03, 0xe2, 0x23, 0x1b, 0xd7, 0x83, 0xf7, 0x6b, 0x9e,
+	0x4f, 0x02, 0xa2, 0x2f, 0x8a, 0x91, 0x5a, 0xf4, 0x2b, 0x24, 0x8c, 0x97, 0x6d, 0x62, 0x13, 0x26,
+	0x53, 0x0f, 0x9f, 0xb8, 0xb8, 0x51, 0x6d, 0x13, 0xea, 0x12, 0x5a, 0x3f, 0x44, 0x14, 0xd7, 0x8f,
+	0x37, 0x0e, 0x71, 0x80, 0x36, 0xea, 0x6d, 0xe2, 0xf4, 0xc4, 0xf8, 0xd5, 0x4c, 0x83, 0x0f, 0x3d,
+	0x4c, 0x85, 0xd0, 0xb5, 0x2c, 0x21, 0x0f, 0xf9, 0xc8, 0x8d, 0xa4, 0x96, 0x6d, 0x42, 0xec, 0x2e,
+	0xae, 0xb3, 0xb7, 0xc3, 0xfe, 0xfd, 0x7a, 0xe0, 0xb8, 0x98, 0x06, 0xc8, 0xf5, 0x84, 0xc0, 0xa2,
+	0xc0, 0xe2, 0x52, 0xbb, 0x7e, 0xbc, 0x11, 0xfe, 0x88, 0x81, 0x25, 0x3e, 0xd0, 0xe2, 0xe8, 0xf9,
+	0x8b, 0x18, 0x7a, 0x11, 0xb9, 0x4e, 0x8f, 0xd4, 0xd9, 0xbf, 0xfc, 0x93, 0xf9, 0x89, 0x06, 0x2f,
+	0x35, 0xa8, 0xdd, 0xc4, 0xb6, 0x43, 0x03, 0xec, 0xef, 0xfb, 0xe4, 0xd8, 0xb1, 0xb0, 0xaf, 0x57,
+	0x60, 0xba, 0xed, 0x63, 0x14, 0x10, 0xbf, 0xa2, 0xad, 0x68, 0xab, 0xb3, 0xcd, 0xe8, 0x55, 0x5f,
+	0x84, 0x69, 0xe4, 0x39, 0xad, 0xbe, 0xdf, 0xad, 0x4c, 0xb0, 0x91, 0x32, 0xf2, 0x9c, 0x7b, 0x7e,
+	0x37, 0x54, 0x71, 0x49, 0xcf, 0x39, 0xc2, 0x7e, 0x65, 0x92, 0xab, 0x88, 0x57, 0xfd, 0x16, 0x4c,
+	0xd1, 0x00, 0x1d, 0xe1, 0x4a, 0x69, 0x45, 0x5b, 0x9d, 0xdb, 0x5c, 0xaa, 0x09, 0x54, 0xa1, 0x1f,
+	0x6b, 0xc2, 0x8f, 0xb5, 0x3d, 0xe2, 0xf4, 0x76, 0x4b, 0x1f, 0xfd, 0x73, 0xf9, 0x5c, 0x93, 0x4b,
+	0xeb, 0xef, 0xc0, 0x65, 0xc7, 0xbb, 0x4f, 0x5b, 0xed, 0x6e, 0x3f, 0xc4, 0xd6, 0xf2, 0x30, 0xf6,
+	0x5b, 0x6e, 0xbf, 0x1b, 0x38, 0xc8, 0xb2, 0xfc, 0xca, 0x14, 0x33, 0x52, 0x09, 0x45, 0xf6, 0xb8,
+	0xc4, 0x3e, 0xc6, 0x7e, 0x23, 0x1a, 0x37, 0xaf, 0xc0, 0xe5, 0x14, 0x66, 0x4d, 0x4c, 0x3d, 0xd2,
+	0xa3, 0xd8, 0xfc, 0x8d, 0x06, 0x2f, 0x36, 0xa8, 0x7d, 0xcf, 0xb3, 0x50, 0x80, 0x9f, 0x0f, 0xef,
+	0x1c, 0x02, 0xa5, 0x1c, 0x02, 0x97, 0x61, 0x69, 0x04, 0xa0, 0x84, 0xff, 0x77, 0x8d, 0xd1, 0xe3,
+	0xa3, 0x4d, 0xec, 0x11, 0xea, 0x04, 0xc4, 0x7f, 0xb8, 0x8f, 0xda, 0x47, 0xf7, 0x9d, 0x2e, 0x56,
+	0x10, 0xb9, 0x0a, 0x2f, 0xf8, 0x52, 0xbe, 0xe5, 0x58, 0x8c, 0x4e, 0xa9, 0x39, 0x3f, 0xf8, 0x78,
+	0xd7, 0xd2, 0x75, 0x28, 0xf5, 0x90, 0x8b, 0x05, 0x23, 0xf6, 0xac, 0x2f, 0xc0, 0x64, 0xdb, 0xb1,
+	0x04, 0xec, 0xf0, 0x51, 0xbf, 0x0c, 0xb3, 0x3e, 0x21, 0x41, 0xab, 0x83, 0x68, 0x87, 0xc5, 0x63,
+	0xbe, 0x39, 0x13, 0x7e, 0x78, 0x17, 0xd1, 0x4e, 0x38, 0x05, 0x75, 0xbe, 0x8b, 0x2b, 0x65, 0x36,
+	0x3d, 0x7b, 0x0e, 0x9d, 0x48, 0xba, 0x56, 0x2b, 0x9c, 0x66, 0x9a, 0x3b, 0x91, 0x74, 0xad, 0x3d,
+	0xc7, 0x32, 0x5f, 0x83, 0xab, 0x0a, 0x36, 0x92, 0xf5, 0x09, 0x23, 0x7d, 0x07, 0x77, 0xf1, 0xf3,
+	0x20, 0xbd, 0x04, 0x33, 0xe4, 0xa4, 0x87, 0xfd, 0x70, 0x5c, 0x84, 0x92, 0xbd, 0xdf, 0x8d, 0xf0,
+	0x65, 0x19, 0x96, 0xf8, 0xfe, 0xad, 0xc1, 0xc5, 0x21, 0x1e, 0x5d, 0x8c, 0x28, 0xbe, 0x4d, 0x29,
+	0x0e, 0x9e, 0x15, 0xda, 0x02, 0x4c, 0x06, 0xc8, 0x16, 0xa8, 0xc2, 0x47, 0x19, 0xa1, 0xd2, 0x68,
+	0x84, 0xa6, 0x32, 0x22, 0x54, 0xce, 0x88, 0xd0, 0xf4, 0x50, 0x84, 0x2e, 0x41, 0x99, 0x76, 0xd0,
+	0xe6, 0xad, 0xed, 0xca, 0x0c, 0x0f, 0x10, 0x7f, 0x1b, 0x8e, 0xdc, 0x6c, 0x2c, 0x72, 0xcb, 0x70,
+	0x25, 0x95, 0xb1, 0xf4, 0xc9, 0x1f, 0x35, 0xb8, 0x94, 0x2a, 0x41, 0xcf, 0xde, 0x29, 0x7b, 0x50,
+	0x46, 0x6c, 0xea, 0x4a, 0x69, 0x65, 0x72, 0x75, 0x6e, 0x73, 0xbd, 0x96, 0xb1, 0xc3, 0xd7, 0x86,
+	0x81, 0x08, 0x68, 0x42, 0xd5, 0x5c, 0x81, 0x6a, 0x3a, 0x5e, 0x49, 0xe9, 0xd7, 0x3c, 0xcc, 0x51,
+	0x3a, 0xfc, 0xbf, 0xc3, 0x3c, 0x9c, 0xa7, 0x53, 0xf1, 0x3c, 0xe5, 0xd1, 0x18, 0x05, 0x26, 0xa1,
+	0x7f, 0xa8, 0x81, 0xd1, 0xa0, 0xf6, 0x41, 0xff, 0xd0, 0x75, 0x82, 0xbd, 0x0e, 0xea, 0x76, 0x71,
+	0xcf, 0x96, 0x09, 0xac, 0xc0, 0xff, 0x2a, 0xcc, 0xb7, 0x23, 0xf1, 0x01, 0xfc, 0x39, 0xf9, 0x8d,
+	0x6f, 0x1a, 0x16, 0x0a, 0x10, 0x83, 0x3f, 0xdf, 0x64, 0xcf, 0xfa, 0x16, 0x4c, 0x79, 0x3e, 0x21,
+	0xf7, 0xc5, 0xde, 0x5f, 0xcd, 0x0c, 0xc8, 0x7e, 0x28, 0xd5, 0xe4, 0xc2, 0xe6, 0x35, 0x30, 0xb3,
+	0x41, 0x4a, 0x2e, 0xdb, 0x8c, 0xca, 0x37, 0x9c, 0xa0, 0x63, 0xf9, 0xe8, 0x64, 0xb0, 0x45, 0x9e,
+	0x20, 0xdf, 0x52, 0x24, 0x97, 0xf9, 0x6d, 0x36, 0x7b, 0x86, 0x9e, 0x74, 0xc5, 0x1b, 0x50, 0x46,
+	0x2e, 0xe9, 0xf7, 0x82, 0x8a, 0xc6, 0x72, 0x29, 0xf7, 0xd8, 0x12, 0xe2, 0xe6, 0x06, 0xdf, 0x03,
+	0x7a, 0x7e, 0xe1, 0x43, 0xd5, 0xfc, 0x3e, 0x5f, 0x44, 0x23, 0x2a, 0x12, 0xcc, 0xb7, 0x60, 0xb1,
+	0xdf, 0x63, 0xc7, 0x62, 0xab, 0x4d, 0x5c, 0xaf, 0x8b, 0x03, 0x87, 0xf4, 0x5a, 0x61, 0x51, 0xc0,
+	0xa6, 0x9a, 0xdb, 0x34, 0x6a, 0xbc, 0x62, 0xa8, 0x45, 0x15, 0x43, 0xed, 0x6b, 0x51, 0xc5, 0xb0,
+	0x3b, 0x13, 0xc2, 0xfb, 0xe0, 0xd3, 0x65, 0xad, 0x79, 0x51, 0x4c, 0xb2, 0x27, 0xe7, 0x08, 0xa5,
+	0xcc, 0x1a, 0xe8, 0x0d, 0x6a, 0x8b, 0x8f, 0xf8, 0x1e, 0x97, 0x51, 0xc0, 0xfd, 0x09, 0x4f, 0xa2,
+	0x84, 0x82, 0x04, 0xdb, 0x29, 0xee, 0xb9, 0x5b, 0x21, 0xb4, 0x3f, 0x7c, 0xba, 0xbc, 0x6a, 0x3b,
+	0x41, 0xa7, 0x7f, 0x58, 0x6b, 0x13, 0x57, 0xd4, 0x2c, 0xe2, 0xe7, 0x06, 0xb5, 0x8e, 0x44, 0xfd,
+	0x14, 0x2a, 0xd0, 0xdf, 0x3f, 0x7d, 0xb4, 0xa6, 0x49, 0x57, 0x63, 0x58, 0x68, 0x50, 0xfb, 0x6e,
+	0x2f, 0x04, 0x46, 0xf1, 0x81, 0x1a, 0xf6, 0x50, 0x44, 0x27, 0x8a, 0x15, 0x22, 0x91, 0x19, 0x03,
+	0x2a, 0x49, 0x33, 0x32, 0x09, 0x39, 0x84, 0x3b, 0xf8, 0x39, 0x43, 0x70, 0x18, 0x84, 0x98, 0x19,
+	0xe9, 0xef, 0x06, 0x5c, 0x78, 0x96, 0xa4, 0x38, 0xdf, 0x8e, 0x67, 0xc3, 0x16, 0x33, 0x15, 0x05,
+	0xb7, 0x20, 0x33, 0xf3, 0x9b, 0xb0, 0x92, 0xa5, 0x95, 0xba, 0xa4, 0xc6, 0x62, 0xff, 0x16, 0xaf,
+	0xd5, 0x7a, 0x0f, 0x90, 0xd3, 0xcd, 0x5f, 0x4e, 0x3b, 0xf3, 0x3f, 0x7a, 0xfa, 0x68, 0x4d, 0x22,
+	0x13, 0x75, 0x54, 0x4c, 0x59, 0x86, 0xef, 0x6f, 0x1a, 0x5c, 0x18, 0x54, 0x59, 0xac, 0x04, 0xd7,
+	0xb7, 0x61, 0x16, 0xf5, 0x83, 0x0e, 0xf1, 0x9d, 0xe0, 0x21, 0x9f, 0x7a, 0xb7, 0xf2, 0x8f, 0x3f,
+	0xdf, 0x78, 0x59, 0x80, 0xbd, 0x6d, 0x59, 0x3e, 0xa6, 0xf4, 0x20, 0xf0, 0x9d, 0x9e, 0xdd, 0x1c,
+	0x88, 0xea, 0xbb, 0x50, 0xe6, 0x45, 0xbc, 0x08, 0xee, 0x72, 0xf6, 0x66, 0xc7, 0xc4, 0x76, 0x67,
+	0x43, 0x92, 0x22, 0xa3, 0xb9, 0xe6, 0xce, 0x5a, 0x08, 0x7d, 0x30, 0xe7, 0xcf, 0x9e, 0x3e, 0x5a,
+	0x5b, 0x8c, 0x6e, 0x08, 0x09, 0x9c, 0xe6, 0x12, 0x2c, 0x26, 0x3e, 0x49, 0x5a, 0xff, 0xd1, 0x78,
+	0x10, 0xbb, 0xe8, 0xe4, 0x10, 0xb5, 0x8f, 0x22, 0xda, 0x3c, 0x88, 0xa7, 0xe5, 0xb7, 0x05, 0x33,
+	0x9e, 0x98, 0x88, 0xd7, 0xc0, 0x0a, 0x35, 0x29, 0xa9, 0xbf, 0x2d, 0x83, 0x3e, 0x99, 0x17, 0xf4,
+	0x61, 0x7f, 0x70, 0x9d, 0x9d, 0x9b, 0xa3, 0xfe, 0x58, 0x19, 0xf2, 0x47, 0x2a, 0x41, 0xd3, 0xe4,
+	0xb9, 0x98, 0x36, 0x26, 0x3d, 0xf4, 0x57, 0x8d, 0x6d, 0x7a, 0xdc, 0x7b, 0x5f, 0xf9, 0xd2, 0xc1,
+	0x57, 0x0f, 0x1f, 0xe0, 0xb6, 0xea, 0x00, 0x3f, 0x0f, 0x13, 0xf2, 0xd8, 0x9b, 0x70, 0xac, 0xd1,
+	0x03, 0x7d, 0x32, 0xfd, 0x40, 0x27, 0x83, 0x9a, 0x99, 0x38, 0x96, 0x2c, 0xba, 0xa6, 0x86, 0x8a,
+	0x2e, 0x51, 0xb7, 0x95, 0x33, 0xea, 0xb6, 0xe9, 0x78, 0xdd, 0x66, 0xbe, 0xc2, 0x76, 0xdf, 0x04,
+	0x72, 0x49, 0xec, 0x87, 0x9c, 0x18, 0xaf, 0x01, 0x8a, 0x10, 0x2b, 0x5a, 0x99, 0x10, 0x59, 0x16,
+	0x33, 0x22, 0xc3, 0x55, 0x48, 0x29, 0x5e, 0x85, 0x70, 0x80, 0x09, 0x04, 0x12, 0xe0, 0x7f, 0x35,
+	0x76, 0xfe, 0xee, 0xfb, 0xc4, 0x23, 0x34, 0xa5, 0x9a, 0xe6, 0xc4, 0x3e, 0x63, 0x37, 0x18, 0x7d,
+	0x15, 0x16, 0x5c, 0xec, 0xdb, 0xec, 0x7c, 0x76, 0x9d, 0xa0, 0x45, 0x3b, 0x48, 0x94, 0xd0, 0xe7,
+	0xd9, 0xf7, 0x3d, 0xf6, 0xf9, 0xa0, 0x83, 0xcc, 0x06, 0xac, 0xe5, 0xd3, 0x97, 0x7b, 0xe6, 0x32,
+	0xcc, 0x79, 0x4c, 0x14, 0x75, 0x43, 0xaa, 0x1a, 0xc3, 0x02, 0xd1, 0xa7, 0xbb, 0x96, 0xd9, 0x62,
+	0xde, 0xbc, 0xed, 0x85, 0x0b, 0xee, 0x34, 0xde, 0x4c, 0x18, 0x98, 0x18, 0x31, 0xf0, 0x3a, 0xc3,
+	0x9b, 0x63, 0x40, 0x46, 0xf7, 0x18, 0x5e, 0x65, 0xd7, 0x6e, 0x1e, 0xf2, 0x33, 0x47, 0x13, 0x5e,
+	0x50, 0xc2, 0x93, 0x85, 0xf4, 0x44, 0x64, 0xc5, 0x9b, 0xb9, 0x0e, 0xd7, 0x73, 0xed, 0x4a, 0x90,
+	0x7f, 0xd1, 0x58, 0xc1, 0x25, 0x63, 0x30, 0x54, 0xe4, 0x9f, 0x4d, 0xf6, 0x3d, 0xa7, 0xab, 0xc9,
+	0xbb, 0xf0, 0x9a, 0x12, 0x76, 0xf1, 0xac, 0x79, 0x8f, 0x39, 0x40, 0x06, 0x75, 0x1c, 0x07, 0xe4,
+	0x26, 0xcc, 0xe7, 0x19, 0xca, 0xec, 0xb9, 0x65, 0x18, 0xbe, 0x03, 0xaf, 0x0c, 0xc5, 0xec, 0x2c,
+	0x31, 0x64, 0xa6, 0xc9, 0xe7, 0xe0, 0x9a, 0xca, 0xa4, 0x84, 0xf6, 0x27, 0x8d, 0x55, 0x0d, 0xc2,
+	0xd5, 0x72, 0x13, 0x3b, 0xb3, 0xec, 0x48, 0x6c, 0xa6, 0xd1, 0x56, 0x53, 0x1a, 0x3d, 0x15, 0x0a,
+	0xde, 0xe6, 0xcd, 0x3b, 0x6c, 0xe1, 0xa5, 0x03, 0x2e, 0x9e, 0x17, 0x5f, 0x67, 0xb4, 0x45, 0xec,
+	0x8a, 0xd3, 0xce, 0xcd, 0x89, 0xab, 0x0c, 0x5d, 0xfa, 0xbc, 0xd2, 0xe9, 0x2e, 0x2b, 0x5a, 0x78,
+	0x70, 0xce, 0xce, 0x76, 0x66, 0x2e, 0xf0, 0x32, 0x21, 0xd5, 0x5c, 0x04, 0x69, 0xf3, 0x77, 0x57,
+	0x60, 0xb2, 0x41, 0x6d, 0xfd, 0x18, 0x16, 0x46, 0x9a, 0xa4, 0xaf, 0x67, 0x2e, 0xe1, 0x94, 0xc6,
+	0xa3, 0xb1, 0x35, 0x8e, 0xb4, 0x0c, 0x98, 0x07, 0xe7, 0x13, 0x2d, 0xca, 0x35, 0xd5, 0x3c, 0x71,
+	0x59, 0x63, 0xb3, 0xb8, 0xac, 0xb4, 0xf8, 0x0b, 0x0d, 0x2a, 0x99, 0x6d, 0xc5, 0xad, 0xfc, 0x09,
+	0x47, 0xb5, 0x8c, 0xb7, 0x4f, 0xa3, 0x15, 0x03, 0x94, 0xd9, 0xf2, 0x53, 0x02, 0xca, 0xd2, 0x52,
+	0x03, 0xca, 0xeb, 0xf2, 0xe9, 0xdf, 0x03, 0x3d, 0xa5, 0xc3, 0x57, 0x2b, 0x42, 0x72, 0x20, 0x6f,
+	0x6c, 0x8f, 0x27, 0x2f, 0xad, 0xff, 0x00, 0x5e, 0x4a, 0xeb, 0xa5, 0xd5, 0xc7, 0x9b, 0x8e, 0x1a,
+	0x6f, 0x8c, 0xa9, 0x30, 0x4c, 0x3f, 0xa5, 0xf3, 0x55, 0x2b, 0xe2, 0xd2, 0xa2, 0xf4, 0xb3, 0x1b,
+	0x58, 0xfa, 0xcf, 0x35, 0x58, 0xcc, 0xea, 0x5e, 0xdd, 0x54, 0xcd, 0x99, 0xa1, 0x64, 0xbc, 0x75,
+	0x0a, 0xa5, 0x18, 0x9a, 0xac, 0x06, 0x94, 0x12, 0x4d, 0x86, 0x92, 0x1a, 0x4d, 0x5e, 0xcb, 0x2a,
+	0x4c, 0xcc, 0xd1, 0xb6, 0x93, 0x3a, 0x31, 0x47, 0xe4, 0x73, 0x12, 0x33, 0xbb, 0x47, 0x45, 0xe1,
+	0x42, 0xb2, 0x85, 0xb4, 0xae, 0x9a, 0x2a, 0x21, 0x6c, 0xdc, 0x1c, 0x43, 0x58, 0x1a, 0x75, 0xe1,
+	0x85, 0x78, 0xfb, 0xe7, 0xba, 0x6a, 0x96, 0x98, 0xa8, 0xb1, 0x51, 0x58, 0x74, 0xd8, 0x5c, 0xbc,
+	0x21, 0x72, 0x5d, 0x9d, 0xc6, 0x85, 0xcd, 0xa5, 0x37, 0x4c, 0x7e, 0xac, 0xc1, 0xc5, 0xf4, 0x46,
+	0xcc, 0x46, 0x11, 0x67, 0xc5, 0xed, 0xbf, 0x39, 0xb6, 0x4a, 0xec, 0x14, 0x8a, 0x37, 0x5f, 0xd4,
+	0xa7, 0x50, 0x4c, 0x36, 0xe7, 0x14, 0x4a, 0xed, 0xcb, 0xe8, 0x1f, 0x6a, 0xb0, 0x9c, 0x77, 0x43,
+	0x54, 0xae, 0x95, 0x1c, 0x65, 0x63, 0xef, 0x19, 0x94, 0x63, 0x28, 0xf3, 0x6e, 0x5e, 0x4a, 0x94,
+	0x39, 0xca, 0x6a, 0x94, 0x05, 0xaf, 0x64, 0xfa, 0x6f, 0x35, 0xa8, 0xe6, 0x5c, 0xc8, 0x76, 0xd4,
+	0xc5, 0x89, 0x4a, 0xd7, 0xd8, 0x3d, 0xbd, 0xae, 0x84, 0xf8, 0x00, 0xe6, 0x63, 0x2d, 0xb8, 0xd5,
+	0x02, 0x85, 0x0b, 0x93, 0x34, 0xbe, 0x50, 0x54, 0x32, 0xbe, 0xa8, 0x52, 0x1b, 0x63, 0xea, 0x45,
+	0x95, 0xa6, 0x92, 0xb3, 0xa8, 0x54, 0x1d, 0xa8, 0x70, 0xbf, 0x4c, 0x76, 0x9f, 0xd6, 0xf3, 0xc9,
+	0x48, 0x61, 0xf5, 0x7e, 0x99, 0xd1, 0x1d, 0x0a, 0x8d, 0x26, 0x3b, 0x43, 0xeb, 0xf9, 0x27, 0x71,
+	0x41, 0xa3, 0x19, 0x1d, 0x1f, 0xfd, 0x57, 0x1a, 0x18, 0x8a, 0xbb, 0xf6, 0x76, 0xa1, 0xa5, 0x38,
+	0xa2, 0x67, 0x7c, 0xf1, 0x74, 0x7a, 0x31, 0x58, 0x8a, 0x1b, 0xf0, 0x76, 0xa1, 0xb5, 0x37, 0x26,
+	0xac, 0xfc, 0x5b, 0xb1, 0xfe, 0x4b, 0x0d, 0x96, 0xb2, 0xef, 0xc4, 0xb7, 0x8a, 0xac, 0xb6, 0x51,
+	0x50, 0xef, 0x9c, 0x4a, 0x4d, 0x62, 0xfa, 0xa9, 0x06, 0x97, 0x32, 0xee, 0xc2, 0x9b, 0x05, 0xa2,
+	0x90, 0xd0, 0x31, 0x76, 0xc6, 0xd7, 0x89, 0x41, 0xc9, 0xb8, 0x9f, 0x6e, 0x16, 0xf0, 0xfc, 0x58,
+	0x50, 0xd4, 0xf7, 0x55, 0xb6, 0x93, 0xa4, 0xdf, 0x56, 0x37, 0xf2, 0xdd, 0x9d, 0x04, 0xf2, 0xe6,
+	0xd8, 0x2a, 0x11, 0x8e, 0xdd, 0x2f, 0x7f, 0xf4, 0xb8, 0xaa, 0x7d, 0xfc, 0xb8, 0xaa, 0xfd, 0xeb,
+	0x71, 0x55, 0xfb, 0xe0, 0x49, 0xf5, 0xdc, 0xc7, 0x4f, 0xaa, 0xe7, 0x3e, 0x79, 0x52, 0x3d, 0xf7,
+	0xde, 0x8d, 0xa1, 0xff, 0x57, 0x4b, 0xfe, 0xe1, 0xd1, 0xf1, 0x76, 0xfd, 0xfd, 0xf8, 0x9f, 0x28,
+	0x1d, 0x96, 0xd9, 0x7f, 0x14, 0xdd, 0xfc, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x63, 0x09, 0xef,
+	0x5a, 0x3b, 0x25, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2183,6 +3175,8 @@ type MsgClient interface {
 	DeleteRepositoryPackfile(ctx context.Context, in *MsgDeleteRepositoryPackfile, opts ...grpc.CallOption) (*MsgDeleteRepositoryPackfileResponse, error)
 	// UpdateReleaseAsset updates release asset
 	UpdateReleaseAsset(ctx context.Context, in *MsgUpdateReleaseAsset, opts ...grpc.CallOption) (*MsgUpdateReleaseAssetResponse, error)
+	// UpdateReleaseAssets updates multiple release assets in a single transaction
+	UpdateReleaseAssets(ctx context.Context, in *MsgUpdateReleaseAssets, opts ...grpc.CallOption) (*MsgUpdateReleaseAssetsResponse, error)
 	// DeleteReleaseAsset deletes release asset
 	DeleteReleaseAsset(ctx context.Context, in *MsgDeleteReleaseAsset, opts ...grpc.CallOption) (*MsgDeleteReleaseAssetResponse, error)
 	// SubmitChallengeResponse submits proof for storage challenge
@@ -2201,16 +3195,32 @@ type MsgClient interface {
 	CompleteDecreaseStake(ctx context.Context, in *MsgCompleteDecreaseStake, opts ...grpc.CallOption) (*MsgCompleteDecreaseStakeResponse, error)
 	// UnjailProvider unjails a jailed provider after jail time expires
 	UnjailProvider(ctx context.Context, in *MsgUnjailProvider, opts ...grpc.CallOption) (*MsgUnjailProviderResponse, error)
+	// ProposeRepositoryPackfileUpdate proposes a packfile update for user approval
+	ProposeRepositoryPackfileUpdate(ctx context.Context, in *MsgProposeRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgProposeRepositoryPackfileUpdateResponse, error)
+	// ApproveRepositoryPackfileUpdate approves a proposed packfile update
+	ApproveRepositoryPackfileUpdate(ctx context.Context, in *MsgApproveRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgApproveRepositoryPackfileUpdateResponse, error)
+	// RejectRepositoryPackfileUpdate rejects a proposed packfile update
+	RejectRepositoryPackfileUpdate(ctx context.Context, in *MsgRejectRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgRejectRepositoryPackfileUpdateResponse, error)
 	// UpdateParams updates the parameters of the storage module
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	// ClawbackProviderStake claws back stake from a provider via a governance proposal
 	ClawbackProviderStake(ctx context.Context, in *MsgClawbackProviderStake, opts ...grpc.CallOption) (*MsgClawbackProviderStakeResponse, error)
-	// MergePullRequest merges a pull request
-	MergePullRequest(ctx context.Context, in *MsgMergePullRequest, opts ...grpc.CallOption) (*MsgMergePullRequestResponse, error)
 	// UpdateLFSObject updates an existing LFS object
 	UpdateLFSObject(ctx context.Context, in *MsgUpdateLFSObject, opts ...grpc.CallOption) (*MsgUpdateLFSObjectResponse, error)
 	// DeleteLFSObject deletes an LFS object
 	DeleteLFSObject(ctx context.Context, in *MsgDeleteLFSObject, opts ...grpc.CallOption) (*MsgDeleteLFSObjectResponse, error)
+	// ProposeReleaseAssetsUpdate proposes a release assets update for user approval
+	ProposeReleaseAssetsUpdate(ctx context.Context, in *MsgProposeReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgProposeReleaseAssetsUpdateResponse, error)
+	// ApproveReleaseAssetsUpdate approves a proposed release assets update
+	ApproveReleaseAssetsUpdate(ctx context.Context, in *MsgApproveReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgApproveReleaseAssetsUpdateResponse, error)
+	// RejectReleaseAssetsUpdate rejects a proposed release assets update
+	RejectReleaseAssetsUpdate(ctx context.Context, in *MsgRejectReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgRejectReleaseAssetsUpdateResponse, error)
+	// ProposeLFSObjectUpdate proposes an LFS object update for user approval
+	ProposeLFSObjectUpdate(ctx context.Context, in *MsgProposeLFSObjectUpdate, opts ...grpc.CallOption) (*MsgProposeLFSObjectUpdateResponse, error)
+	// ApproveLFSObjectUpdate approves a proposed LFS object update
+	ApproveLFSObjectUpdate(ctx context.Context, in *MsgApproveLFSObjectUpdate, opts ...grpc.CallOption) (*MsgApproveLFSObjectUpdateResponse, error)
+	// RejectLFSObjectUpdate rejects a proposed LFS object update
+	RejectLFSObjectUpdate(ctx context.Context, in *MsgRejectLFSObjectUpdate, opts ...grpc.CallOption) (*MsgRejectLFSObjectUpdateResponse, error)
 }
 
 type msgClient struct {
@@ -2260,6 +3270,15 @@ func (c *msgClient) DeleteRepositoryPackfile(ctx context.Context, in *MsgDeleteR
 func (c *msgClient) UpdateReleaseAsset(ctx context.Context, in *MsgUpdateReleaseAsset, opts ...grpc.CallOption) (*MsgUpdateReleaseAssetResponse, error) {
 	out := new(MsgUpdateReleaseAssetResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/UpdateReleaseAsset", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UpdateReleaseAssets(ctx context.Context, in *MsgUpdateReleaseAssets, opts ...grpc.CallOption) (*MsgUpdateReleaseAssetsResponse, error) {
+	out := new(MsgUpdateReleaseAssetsResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/UpdateReleaseAssets", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2347,6 +3366,33 @@ func (c *msgClient) UnjailProvider(ctx context.Context, in *MsgUnjailProvider, o
 	return out, nil
 }
 
+func (c *msgClient) ProposeRepositoryPackfileUpdate(ctx context.Context, in *MsgProposeRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgProposeRepositoryPackfileUpdateResponse, error) {
+	out := new(MsgProposeRepositoryPackfileUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ProposeRepositoryPackfileUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveRepositoryPackfileUpdate(ctx context.Context, in *MsgApproveRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgApproveRepositoryPackfileUpdateResponse, error) {
+	out := new(MsgApproveRepositoryPackfileUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ApproveRepositoryPackfileUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RejectRepositoryPackfileUpdate(ctx context.Context, in *MsgRejectRepositoryPackfileUpdate, opts ...grpc.CallOption) (*MsgRejectRepositoryPackfileUpdateResponse, error) {
+	out := new(MsgRejectRepositoryPackfileUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/RejectRepositoryPackfileUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error) {
 	out := new(MsgUpdateParamsResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/UpdateParams", in, out, opts...)
@@ -2359,15 +3405,6 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 func (c *msgClient) ClawbackProviderStake(ctx context.Context, in *MsgClawbackProviderStake, opts ...grpc.CallOption) (*MsgClawbackProviderStakeResponse, error) {
 	out := new(MsgClawbackProviderStakeResponse)
 	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ClawbackProviderStake", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) MergePullRequest(ctx context.Context, in *MsgMergePullRequest, opts ...grpc.CallOption) (*MsgMergePullRequestResponse, error) {
-	out := new(MsgMergePullRequestResponse)
-	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/MergePullRequest", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2392,6 +3429,60 @@ func (c *msgClient) DeleteLFSObject(ctx context.Context, in *MsgDeleteLFSObject,
 	return out, nil
 }
 
+func (c *msgClient) ProposeReleaseAssetsUpdate(ctx context.Context, in *MsgProposeReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgProposeReleaseAssetsUpdateResponse, error) {
+	out := new(MsgProposeReleaseAssetsUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ProposeReleaseAssetsUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveReleaseAssetsUpdate(ctx context.Context, in *MsgApproveReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgApproveReleaseAssetsUpdateResponse, error) {
+	out := new(MsgApproveReleaseAssetsUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ApproveReleaseAssetsUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RejectReleaseAssetsUpdate(ctx context.Context, in *MsgRejectReleaseAssetsUpdate, opts ...grpc.CallOption) (*MsgRejectReleaseAssetsUpdateResponse, error) {
+	out := new(MsgRejectReleaseAssetsUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/RejectReleaseAssetsUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ProposeLFSObjectUpdate(ctx context.Context, in *MsgProposeLFSObjectUpdate, opts ...grpc.CallOption) (*MsgProposeLFSObjectUpdateResponse, error) {
+	out := new(MsgProposeLFSObjectUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ProposeLFSObjectUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveLFSObjectUpdate(ctx context.Context, in *MsgApproveLFSObjectUpdate, opts ...grpc.CallOption) (*MsgApproveLFSObjectUpdateResponse, error) {
+	out := new(MsgApproveLFSObjectUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/ApproveLFSObjectUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RejectLFSObjectUpdate(ctx context.Context, in *MsgRejectLFSObjectUpdate, opts ...grpc.CallOption) (*MsgRejectLFSObjectUpdateResponse, error) {
+	out := new(MsgRejectLFSObjectUpdateResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Msg/RejectLFSObjectUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// RegisterProvider registers a new storage provider
@@ -2404,6 +3495,8 @@ type MsgServer interface {
 	DeleteRepositoryPackfile(context.Context, *MsgDeleteRepositoryPackfile) (*MsgDeleteRepositoryPackfileResponse, error)
 	// UpdateReleaseAsset updates release asset
 	UpdateReleaseAsset(context.Context, *MsgUpdateReleaseAsset) (*MsgUpdateReleaseAssetResponse, error)
+	// UpdateReleaseAssets updates multiple release assets in a single transaction
+	UpdateReleaseAssets(context.Context, *MsgUpdateReleaseAssets) (*MsgUpdateReleaseAssetsResponse, error)
 	// DeleteReleaseAsset deletes release asset
 	DeleteReleaseAsset(context.Context, *MsgDeleteReleaseAsset) (*MsgDeleteReleaseAssetResponse, error)
 	// SubmitChallengeResponse submits proof for storage challenge
@@ -2422,16 +3515,32 @@ type MsgServer interface {
 	CompleteDecreaseStake(context.Context, *MsgCompleteDecreaseStake) (*MsgCompleteDecreaseStakeResponse, error)
 	// UnjailProvider unjails a jailed provider after jail time expires
 	UnjailProvider(context.Context, *MsgUnjailProvider) (*MsgUnjailProviderResponse, error)
+	// ProposeRepositoryPackfileUpdate proposes a packfile update for user approval
+	ProposeRepositoryPackfileUpdate(context.Context, *MsgProposeRepositoryPackfileUpdate) (*MsgProposeRepositoryPackfileUpdateResponse, error)
+	// ApproveRepositoryPackfileUpdate approves a proposed packfile update
+	ApproveRepositoryPackfileUpdate(context.Context, *MsgApproveRepositoryPackfileUpdate) (*MsgApproveRepositoryPackfileUpdateResponse, error)
+	// RejectRepositoryPackfileUpdate rejects a proposed packfile update
+	RejectRepositoryPackfileUpdate(context.Context, *MsgRejectRepositoryPackfileUpdate) (*MsgRejectRepositoryPackfileUpdateResponse, error)
 	// UpdateParams updates the parameters of the storage module
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	// ClawbackProviderStake claws back stake from a provider via a governance proposal
 	ClawbackProviderStake(context.Context, *MsgClawbackProviderStake) (*MsgClawbackProviderStakeResponse, error)
-	// MergePullRequest merges a pull request
-	MergePullRequest(context.Context, *MsgMergePullRequest) (*MsgMergePullRequestResponse, error)
 	// UpdateLFSObject updates an existing LFS object
 	UpdateLFSObject(context.Context, *MsgUpdateLFSObject) (*MsgUpdateLFSObjectResponse, error)
 	// DeleteLFSObject deletes an LFS object
 	DeleteLFSObject(context.Context, *MsgDeleteLFSObject) (*MsgDeleteLFSObjectResponse, error)
+	// ProposeReleaseAssetsUpdate proposes a release assets update for user approval
+	ProposeReleaseAssetsUpdate(context.Context, *MsgProposeReleaseAssetsUpdate) (*MsgProposeReleaseAssetsUpdateResponse, error)
+	// ApproveReleaseAssetsUpdate approves a proposed release assets update
+	ApproveReleaseAssetsUpdate(context.Context, *MsgApproveReleaseAssetsUpdate) (*MsgApproveReleaseAssetsUpdateResponse, error)
+	// RejectReleaseAssetsUpdate rejects a proposed release assets update
+	RejectReleaseAssetsUpdate(context.Context, *MsgRejectReleaseAssetsUpdate) (*MsgRejectReleaseAssetsUpdateResponse, error)
+	// ProposeLFSObjectUpdate proposes an LFS object update for user approval
+	ProposeLFSObjectUpdate(context.Context, *MsgProposeLFSObjectUpdate) (*MsgProposeLFSObjectUpdateResponse, error)
+	// ApproveLFSObjectUpdate approves a proposed LFS object update
+	ApproveLFSObjectUpdate(context.Context, *MsgApproveLFSObjectUpdate) (*MsgApproveLFSObjectUpdateResponse, error)
+	// RejectLFSObjectUpdate rejects a proposed LFS object update
+	RejectLFSObjectUpdate(context.Context, *MsgRejectLFSObjectUpdate) (*MsgRejectLFSObjectUpdateResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -2452,6 +3561,9 @@ func (*UnimplementedMsgServer) DeleteRepositoryPackfile(ctx context.Context, req
 }
 func (*UnimplementedMsgServer) UpdateReleaseAsset(ctx context.Context, req *MsgUpdateReleaseAsset) (*MsgUpdateReleaseAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateReleaseAsset not implemented")
+}
+func (*UnimplementedMsgServer) UpdateReleaseAssets(ctx context.Context, req *MsgUpdateReleaseAssets) (*MsgUpdateReleaseAssetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateReleaseAssets not implemented")
 }
 func (*UnimplementedMsgServer) DeleteReleaseAsset(ctx context.Context, req *MsgDeleteReleaseAsset) (*MsgDeleteReleaseAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteReleaseAsset not implemented")
@@ -2480,20 +3592,44 @@ func (*UnimplementedMsgServer) CompleteDecreaseStake(ctx context.Context, req *M
 func (*UnimplementedMsgServer) UnjailProvider(ctx context.Context, req *MsgUnjailProvider) (*MsgUnjailProviderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnjailProvider not implemented")
 }
+func (*UnimplementedMsgServer) ProposeRepositoryPackfileUpdate(ctx context.Context, req *MsgProposeRepositoryPackfileUpdate) (*MsgProposeRepositoryPackfileUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeRepositoryPackfileUpdate not implemented")
+}
+func (*UnimplementedMsgServer) ApproveRepositoryPackfileUpdate(ctx context.Context, req *MsgApproveRepositoryPackfileUpdate) (*MsgApproveRepositoryPackfileUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveRepositoryPackfileUpdate not implemented")
+}
+func (*UnimplementedMsgServer) RejectRepositoryPackfileUpdate(ctx context.Context, req *MsgRejectRepositoryPackfileUpdate) (*MsgRejectRepositoryPackfileUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectRepositoryPackfileUpdate not implemented")
+}
 func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
 }
 func (*UnimplementedMsgServer) ClawbackProviderStake(ctx context.Context, req *MsgClawbackProviderStake) (*MsgClawbackProviderStakeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ClawbackProviderStake not implemented")
 }
-func (*UnimplementedMsgServer) MergePullRequest(ctx context.Context, req *MsgMergePullRequest) (*MsgMergePullRequestResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MergePullRequest not implemented")
-}
 func (*UnimplementedMsgServer) UpdateLFSObject(ctx context.Context, req *MsgUpdateLFSObject) (*MsgUpdateLFSObjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLFSObject not implemented")
 }
 func (*UnimplementedMsgServer) DeleteLFSObject(ctx context.Context, req *MsgDeleteLFSObject) (*MsgDeleteLFSObjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLFSObject not implemented")
+}
+func (*UnimplementedMsgServer) ProposeReleaseAssetsUpdate(ctx context.Context, req *MsgProposeReleaseAssetsUpdate) (*MsgProposeReleaseAssetsUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeReleaseAssetsUpdate not implemented")
+}
+func (*UnimplementedMsgServer) ApproveReleaseAssetsUpdate(ctx context.Context, req *MsgApproveReleaseAssetsUpdate) (*MsgApproveReleaseAssetsUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveReleaseAssetsUpdate not implemented")
+}
+func (*UnimplementedMsgServer) RejectReleaseAssetsUpdate(ctx context.Context, req *MsgRejectReleaseAssetsUpdate) (*MsgRejectReleaseAssetsUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectReleaseAssetsUpdate not implemented")
+}
+func (*UnimplementedMsgServer) ProposeLFSObjectUpdate(ctx context.Context, req *MsgProposeLFSObjectUpdate) (*MsgProposeLFSObjectUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeLFSObjectUpdate not implemented")
+}
+func (*UnimplementedMsgServer) ApproveLFSObjectUpdate(ctx context.Context, req *MsgApproveLFSObjectUpdate) (*MsgApproveLFSObjectUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveLFSObjectUpdate not implemented")
+}
+func (*UnimplementedMsgServer) RejectLFSObjectUpdate(ctx context.Context, req *MsgRejectLFSObjectUpdate) (*MsgRejectLFSObjectUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectLFSObjectUpdate not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -2586,6 +3722,24 @@ func _Msg_UpdateReleaseAsset_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).UpdateReleaseAsset(ctx, req.(*MsgUpdateReleaseAsset))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdateReleaseAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateReleaseAssets)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateReleaseAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/UpdateReleaseAssets",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateReleaseAssets(ctx, req.(*MsgUpdateReleaseAssets))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2752,6 +3906,60 @@ func _Msg_UnjailProvider_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ProposeRepositoryPackfileUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeRepositoryPackfileUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeRepositoryPackfileUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ProposeRepositoryPackfileUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeRepositoryPackfileUpdate(ctx, req.(*MsgProposeRepositoryPackfileUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveRepositoryPackfileUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveRepositoryPackfileUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveRepositoryPackfileUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ApproveRepositoryPackfileUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveRepositoryPackfileUpdate(ctx, req.(*MsgApproveRepositoryPackfileUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RejectRepositoryPackfileUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRejectRepositoryPackfileUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RejectRepositoryPackfileUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/RejectRepositoryPackfileUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RejectRepositoryPackfileUpdate(ctx, req.(*MsgRejectRepositoryPackfileUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUpdateParams)
 	if err := dec(in); err != nil {
@@ -2784,24 +3992,6 @@ func _Msg_ClawbackProviderStake_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).ClawbackProviderStake(ctx, req.(*MsgClawbackProviderStake))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_MergePullRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgMergePullRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).MergePullRequest(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gitopia.gitopia.storage.Msg/MergePullRequest",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).MergePullRequest(ctx, req.(*MsgMergePullRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2842,6 +4032,114 @@ func _Msg_DeleteLFSObject_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ProposeReleaseAssetsUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeReleaseAssetsUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeReleaseAssetsUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ProposeReleaseAssetsUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeReleaseAssetsUpdate(ctx, req.(*MsgProposeReleaseAssetsUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveReleaseAssetsUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveReleaseAssetsUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveReleaseAssetsUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ApproveReleaseAssetsUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveReleaseAssetsUpdate(ctx, req.(*MsgApproveReleaseAssetsUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RejectReleaseAssetsUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRejectReleaseAssetsUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RejectReleaseAssetsUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/RejectReleaseAssetsUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RejectReleaseAssetsUpdate(ctx, req.(*MsgRejectReleaseAssetsUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ProposeLFSObjectUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeLFSObjectUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeLFSObjectUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ProposeLFSObjectUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeLFSObjectUpdate(ctx, req.(*MsgProposeLFSObjectUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveLFSObjectUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveLFSObjectUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveLFSObjectUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/ApproveLFSObjectUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveLFSObjectUpdate(ctx, req.(*MsgApproveLFSObjectUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RejectLFSObjectUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRejectLFSObjectUpdate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RejectLFSObjectUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Msg/RejectLFSObjectUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RejectLFSObjectUpdate(ctx, req.(*MsgRejectLFSObjectUpdate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "gitopia.gitopia.storage.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -2865,6 +4163,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateReleaseAsset",
 			Handler:    _Msg_UpdateReleaseAsset_Handler,
+		},
+		{
+			MethodName: "UpdateReleaseAssets",
+			Handler:    _Msg_UpdateReleaseAssets_Handler,
 		},
 		{
 			MethodName: "DeleteReleaseAsset",
@@ -2903,6 +4205,18 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_UnjailProvider_Handler,
 		},
 		{
+			MethodName: "ProposeRepositoryPackfileUpdate",
+			Handler:    _Msg_ProposeRepositoryPackfileUpdate_Handler,
+		},
+		{
+			MethodName: "ApproveRepositoryPackfileUpdate",
+			Handler:    _Msg_ApproveRepositoryPackfileUpdate_Handler,
+		},
+		{
+			MethodName: "RejectRepositoryPackfileUpdate",
+			Handler:    _Msg_RejectRepositoryPackfileUpdate_Handler,
+		},
+		{
 			MethodName: "UpdateParams",
 			Handler:    _Msg_UpdateParams_Handler,
 		},
@@ -2911,16 +4225,36 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_ClawbackProviderStake_Handler,
 		},
 		{
-			MethodName: "MergePullRequest",
-			Handler:    _Msg_MergePullRequest_Handler,
-		},
-		{
 			MethodName: "UpdateLFSObject",
 			Handler:    _Msg_UpdateLFSObject_Handler,
 		},
 		{
 			MethodName: "DeleteLFSObject",
 			Handler:    _Msg_DeleteLFSObject_Handler,
+		},
+		{
+			MethodName: "ProposeReleaseAssetsUpdate",
+			Handler:    _Msg_ProposeReleaseAssetsUpdate_Handler,
+		},
+		{
+			MethodName: "ApproveReleaseAssetsUpdate",
+			Handler:    _Msg_ApproveReleaseAssetsUpdate_Handler,
+		},
+		{
+			MethodName: "RejectReleaseAssetsUpdate",
+			Handler:    _Msg_RejectReleaseAssetsUpdate_Handler,
+		},
+		{
+			MethodName: "ProposeLFSObjectUpdate",
+			Handler:    _Msg_ProposeLFSObjectUpdate_Handler,
+		},
+		{
+			MethodName: "ApproveLFSObjectUpdate",
+			Handler:    _Msg_ApproveLFSObjectUpdate_Handler,
+		},
+		{
+			MethodName: "RejectLFSObjectUpdate",
+			Handler:    _Msg_RejectLFSObjectUpdate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3339,6 +4673,85 @@ func (m *MsgUpdateReleaseAssetResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgUpdateReleaseAssetResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateReleaseAssets) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateReleaseAssets) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateReleaseAssets) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Assets) > 0 {
+		for iNdEx := len(m.Assets) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Assets[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTx(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Tag) > 0 {
+		i -= len(m.Tag)
+		copy(dAtA[i:], m.Tag)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Tag)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateReleaseAssetsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateReleaseAssetsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateReleaseAssetsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4080,81 +5493,6 @@ func (m *MsgClawbackProviderStakeResponse) MarshalToSizedBuffer(dAtA []byte) (in
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgMergePullRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgMergePullRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgMergePullRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.TaskId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.TaskId))
-		i--
-		dAtA[i] = 0x28
-	}
-	if len(m.MergeCommitSha) > 0 {
-		i -= len(m.MergeCommitSha)
-		copy(dAtA[i:], m.MergeCommitSha)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.MergeCommitSha)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.PullRequestIid != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PullRequestIid))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.RepositoryId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgMergePullRequestResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgMergePullRequestResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgMergePullRequestResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
 func (m *MsgUpdateLFSObject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -4309,6 +5647,651 @@ func (m *MsgDeleteLFSObjectResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgDeleteLFSObjectResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MergeCommitSha) > 0 {
+		i -= len(m.MergeCommitSha)
+		copy(dAtA[i:], m.MergeCommitSha)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.MergeCommitSha)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.OldCid) > 0 {
+		i -= len(m.OldCid)
+		copy(dAtA[i:], m.OldCid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OldCid)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.Size_ != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Size_))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.RootHash) > 0 {
+		i -= len(m.RootHash)
+		copy(dAtA[i:], m.RootHash)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.RootHash)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Cid) > 0 {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cid)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRepositoryPackfileUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRepositoryPackfileUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRepositoryPackfileUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Reason) > 0 {
+		i -= len(m.Reason)
+		copy(dAtA[i:], m.Reason)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Reason)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectRepositoryPackfileUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectRepositoryPackfileUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectRepositoryPackfileUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Assets) > 0 {
+		for iNdEx := len(m.Assets) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Assets[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTx(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Tag) > 0 {
+		i -= len(m.Tag)
+		copy(dAtA[i:], m.Tag)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Tag)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveReleaseAssetsUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveReleaseAssetsUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveReleaseAssetsUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Reason) > 0 {
+		i -= len(m.Reason)
+		copy(dAtA[i:], m.Reason)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Reason)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectReleaseAssetsUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectReleaseAssetsUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectReleaseAssetsUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeLFSObjectUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeLFSObjectUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeLFSObjectUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.RootHash) > 0 {
+		i -= len(m.RootHash)
+		copy(dAtA[i:], m.RootHash)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.RootHash)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Cid) > 0 {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cid)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Size_ != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Size_))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Oid) > 0 {
+		i -= len(m.Oid)
+		copy(dAtA[i:], m.Oid)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Oid)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeLFSObjectUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeLFSObjectUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeLFSObjectUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveLFSObjectUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveLFSObjectUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveLFSObjectUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveLFSObjectUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveLFSObjectUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveLFSObjectUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectLFSObjectUpdate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectLFSObjectUpdate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectLFSObjectUpdate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Reason) > 0 {
+		i -= len(m.Reason)
+		copy(dAtA[i:], m.Reason)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Reason)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.ProposalId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ProposalId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRejectLFSObjectUpdateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRejectLFSObjectUpdateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRejectLFSObjectUpdateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -4514,6 +6497,41 @@ func (m *MsgUpdateReleaseAsset) Size() (n int) {
 }
 
 func (m *MsgUpdateReleaseAssetResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdateReleaseAssets) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RepositoryId != 0 {
+		n += 1 + sovTx(uint64(m.RepositoryId))
+	}
+	l = len(m.Tag)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Assets) > 0 {
+		for _, e := range m.Assets {
+			l = e.Size()
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgUpdateReleaseAssetsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -4820,41 +6838,6 @@ func (m *MsgClawbackProviderStakeResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgMergePullRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.RepositoryId != 0 {
-		n += 1 + sovTx(uint64(m.RepositoryId))
-	}
-	if m.PullRequestIid != 0 {
-		n += 1 + sovTx(uint64(m.PullRequestIid))
-	}
-	l = len(m.MergeCommitSha)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.TaskId != 0 {
-		n += 1 + sovTx(uint64(m.TaskId))
-	}
-	return n
-}
-
-func (m *MsgMergePullRequestResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
 func (m *MsgUpdateLFSObject) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4923,6 +6906,300 @@ func (m *MsgDeleteLFSObject) Size() (n int) {
 }
 
 func (m *MsgDeleteLFSObjectResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeRepositoryPackfileUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RepositoryId != 0 {
+		n += 1 + sovTx(uint64(m.RepositoryId))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Cid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.RootHash)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Size_ != 0 {
+		n += 1 + sovTx(uint64(m.Size_))
+	}
+	l = len(m.OldCid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.MergeCommitSha)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgProposeRepositoryPackfileUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveRepositoryPackfileUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveRepositoryPackfileUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRejectRepositoryPackfileUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	l = len(m.Reason)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRejectRepositoryPackfileUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeReleaseAssetsUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RepositoryId != 0 {
+		n += 1 + sovTx(uint64(m.RepositoryId))
+	}
+	l = len(m.Tag)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Assets) > 0 {
+		for _, e := range m.Assets {
+			l = e.Size()
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MsgProposeReleaseAssetsUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveReleaseAssetsUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveReleaseAssetsUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRejectReleaseAssetsUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	l = len(m.Reason)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRejectReleaseAssetsUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeLFSObjectUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.RepositoryId != 0 {
+		n += 1 + sovTx(uint64(m.RepositoryId))
+	}
+	l = len(m.Oid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Size_ != 0 {
+		n += 1 + sovTx(uint64(m.Size_))
+	}
+	l = len(m.Cid)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.RootHash)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgProposeLFSObjectUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveLFSObjectUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	return n
+}
+
+func (m *MsgApproveLFSObjectUpdateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRejectLFSObjectUpdate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.ProposalId != 0 {
+		n += 1 + sovTx(uint64(m.ProposalId))
+	}
+	l = len(m.Reason)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRejectLFSObjectUpdateResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -6250,6 +8527,223 @@ func (m *MsgUpdateReleaseAssetResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgUpdateReleaseAssetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateReleaseAssets) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateReleaseAssets: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateReleaseAssets: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Tag", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Tag = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Assets", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Assets = append(m.Assets, &ReleaseAssetUpdate{})
+			if err := m.Assets[len(m.Assets)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateReleaseAssetsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateReleaseAssetsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateReleaseAssetsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -8260,227 +10754,6 @@ func (m *MsgClawbackProviderStakeResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgMergePullRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgMergePullRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgMergePullRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
-			}
-			m.RepositoryId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.RepositoryId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PullRequestIid", wireType)
-			}
-			m.PullRequestIid = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PullRequestIid |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MergeCommitSha", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MergeCommitSha = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TaskId", wireType)
-			}
-			m.TaskId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TaskId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgMergePullRequestResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgMergePullRequestResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgMergePullRequestResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *MsgUpdateLFSObject) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -8960,6 +11233,1882 @@ func (m *MsgDeleteLFSObjectResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgDeleteLFSObjectResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRepositoryPackfileUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRepositoryPackfileUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRepositoryPackfileUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RootHash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RootHash = append(m.RootHash[:0], dAtA[iNdEx:postIndex]...)
+			if m.RootHash == nil {
+				m.RootHash = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Size_", wireType)
+			}
+			m.Size_ = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Size_ |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OldCid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OldCid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MergeCommitSha", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MergeCommitSha = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRepositoryPackfileUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRepositoryPackfileUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRepositoryPackfileUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRepositoryPackfileUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRepositoryPackfileUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRepositoryPackfileUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRepositoryPackfileUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRepositoryPackfileUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRepositoryPackfileUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectRepositoryPackfileUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectRepositoryPackfileUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectRepositoryPackfileUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectRepositoryPackfileUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectRepositoryPackfileUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectRepositoryPackfileUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeReleaseAssetsUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeReleaseAssetsUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeReleaseAssetsUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Tag", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Tag = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Assets", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Assets = append(m.Assets, &ReleaseAssetUpdate{})
+			if err := m.Assets[len(m.Assets)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeReleaseAssetsUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeReleaseAssetsUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeReleaseAssetsUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveReleaseAssetsUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveReleaseAssetsUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveReleaseAssetsUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveReleaseAssetsUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveReleaseAssetsUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveReleaseAssetsUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectReleaseAssetsUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectReleaseAssetsUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectReleaseAssetsUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectReleaseAssetsUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectReleaseAssetsUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectReleaseAssetsUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeLFSObjectUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeLFSObjectUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeLFSObjectUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Oid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Oid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Size_", wireType)
+			}
+			m.Size_ = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Size_ |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RootHash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RootHash = append(m.RootHash[:0], dAtA[iNdEx:postIndex]...)
+			if m.RootHash == nil {
+				m.RootHash = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeLFSObjectUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeLFSObjectUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeLFSObjectUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveLFSObjectUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveLFSObjectUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveLFSObjectUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveLFSObjectUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveLFSObjectUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveLFSObjectUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectLFSObjectUpdate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectLFSObjectUpdate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectLFSObjectUpdate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProposalId", wireType)
+			}
+			m.ProposalId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ProposalId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reason", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Reason = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRejectLFSObjectUpdateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRejectLFSObjectUpdateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRejectLFSObjectUpdateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

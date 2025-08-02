@@ -28,6 +28,9 @@ service Msg {
 
   // UpdateReleaseAsset updates release asset
   rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
+
+  // UpdateReleaseAssets updates multiple release assets in a single transaction
+  rpc UpdateReleaseAssets(MsgUpdateReleaseAssets) returns (MsgUpdateReleaseAssetsResponse);
   
 
   // DeleteReleaseAsset deletes release asset
@@ -57,20 +60,44 @@ service Msg {
   // UnjailProvider unjails a jailed provider after jail time expires
   rpc UnjailProvider(MsgUnjailProvider) returns (MsgUnjailProviderResponse);
 
+  // ProposeRepositoryPackfileUpdate proposes a packfile update for user approval
+  rpc ProposeRepositoryPackfileUpdate(MsgProposeRepositoryPackfileUpdate) returns (MsgProposeRepositoryPackfileUpdateResponse);
+
+  // ApproveRepositoryPackfileUpdate approves a proposed packfile update
+  rpc ApproveRepositoryPackfileUpdate(MsgApproveRepositoryPackfileUpdate) returns (MsgApproveRepositoryPackfileUpdateResponse);
+
+  // RejectRepositoryPackfileUpdate rejects a proposed packfile update
+  rpc RejectRepositoryPackfileUpdate(MsgRejectRepositoryPackfileUpdate) returns (MsgRejectRepositoryPackfileUpdateResponse);
+
   // UpdateParams updates the parameters of the storage module
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
 
   // ClawbackProviderStake claws back stake from a provider via a governance proposal
   rpc ClawbackProviderStake(MsgClawbackProviderStake) returns (MsgClawbackProviderStakeResponse);
 
-  // MergePullRequest merges a pull request
-  rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
-
   // UpdateLFSObject updates an existing LFS object
   rpc UpdateLFSObject(MsgUpdateLFSObject) returns (MsgUpdateLFSObjectResponse);
 
   // DeleteLFSObject deletes an LFS object
   rpc DeleteLFSObject(MsgDeleteLFSObject) returns (MsgDeleteLFSObjectResponse);
+
+  // ProposeReleaseAssetsUpdate proposes a release assets update for user approval
+  rpc ProposeReleaseAssetsUpdate(MsgProposeReleaseAssetsUpdate) returns (MsgProposeReleaseAssetsUpdateResponse);
+
+  // ApproveReleaseAssetsUpdate approves a proposed release assets update
+  rpc ApproveReleaseAssetsUpdate(MsgApproveReleaseAssetsUpdate) returns (MsgApproveReleaseAssetsUpdateResponse);
+
+  // RejectReleaseAssetsUpdate rejects a proposed release assets update
+  rpc RejectReleaseAssetsUpdate(MsgRejectReleaseAssetsUpdate) returns (MsgRejectReleaseAssetsUpdateResponse);
+
+  // ProposeLFSObjectUpdate proposes an LFS object update for user approval
+  rpc ProposeLFSObjectUpdate(MsgProposeLFSObjectUpdate) returns (MsgProposeLFSObjectUpdateResponse);
+
+  // ApproveLFSObjectUpdate approves a proposed LFS object update
+  rpc ApproveLFSObjectUpdate(MsgApproveLFSObjectUpdate) returns (MsgApproveLFSObjectUpdateResponse);
+
+  // RejectLFSObjectUpdate rejects a proposed LFS object update
+  rpc RejectLFSObjectUpdate(MsgRejectLFSObjectUpdate) returns (MsgRejectLFSObjectUpdateResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -134,6 +161,16 @@ message MsgUpdateReleaseAsset {
 }
 
 message MsgUpdateReleaseAssetResponse {}
+
+// MsgUpdateReleaseAssets defines a message for updating multiple release assets
+message MsgUpdateReleaseAssets {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  repeated ReleaseAssetUpdate assets = 4;
+}
+
+message MsgUpdateReleaseAssetsResponse {}
 
 // MsgDeleteReleaseAsset defines a message for deleting release asset
 message MsgDeleteReleaseAsset {
@@ -261,18 +298,6 @@ message MsgClawbackProviderStake {
 
 message MsgClawbackProviderStakeResponse {}
 
-// MsgMergePullRequest defines a message for merging a pull request
-message MsgMergePullRequest {
-  string creator = 1;
-  uint64 repository_id = 2;
-  uint64 pull_request_iid = 3;
-  string merge_commit_sha = 4;
-  uint64 task_id = 5;
-}
-
-message MsgMergePullRequestResponse {
-}
-
 // MsgUpdateLFSObject defines a message for updating an LFS object
 message MsgUpdateLFSObject {
   string creator = 1;
@@ -295,3 +320,98 @@ message MsgDeleteLFSObject {
 }
 
 message MsgDeleteLFSObjectResponse {}
+
+// MsgProposeRepositoryPackfileUpdate defines a message for proposing a packfile update
+message MsgProposeRepositoryPackfileUpdate {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string name = 3;
+  string cid = 4;
+  bytes root_hash = 5;
+  uint64 size = 6;
+  // old_cid is the CID of the repository when the provider processed the request
+  string old_cid = 7;
+  // merge_commit_sha is the commit SHA when this proposal is for a merge pull request
+  string merge_commit_sha = 8;
+}
+
+message MsgProposeRepositoryPackfileUpdateResponse {
+  uint64 proposal_id = 1;
+}
+
+// MsgApproveRepositoryPackfileUpdate defines a message for approving a proposed packfile update
+message MsgApproveRepositoryPackfileUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+}
+
+message MsgApproveRepositoryPackfileUpdateResponse {}
+
+// MsgRejectRepositoryPackfileUpdate defines a message for rejecting a proposed packfile update
+message MsgRejectRepositoryPackfileUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+  string reason = 3; // optional reason for rejection
+}
+
+message MsgRejectRepositoryPackfileUpdateResponse {}
+
+// MsgProposeReleaseAssetsUpdate defines a message for proposing a release assets update
+message MsgProposeReleaseAssetsUpdate {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string tag = 3;
+  repeated ReleaseAssetUpdate assets = 4;
+}
+
+message MsgProposeReleaseAssetsUpdateResponse {
+  uint64 proposal_id = 1;
+}
+
+// MsgApproveReleaseAssetsUpdate defines a message for approving a proposed release assets update
+message MsgApproveReleaseAssetsUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+}
+
+message MsgApproveReleaseAssetsUpdateResponse {}
+
+// MsgRejectReleaseAssetsUpdate defines a message for rejecting a proposed release assets update
+message MsgRejectReleaseAssetsUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+  string reason = 3; // optional reason for rejection
+}
+
+message MsgRejectReleaseAssetsUpdateResponse {}
+
+// MsgProposeLFSObjectUpdate defines a message for proposing an LFS object update
+message MsgProposeLFSObjectUpdate {
+  string creator = 1;
+  uint64 repository_id = 2;
+  string oid = 3;
+  uint64 size = 4;
+  string cid = 5;
+  bytes root_hash = 6;
+}
+
+message MsgProposeLFSObjectUpdateResponse {
+  uint64 proposal_id = 1;
+}
+
+// MsgApproveLFSObjectUpdate defines a message for approving a proposed LFS object update
+message MsgApproveLFSObjectUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+}
+
+message MsgApproveLFSObjectUpdateResponse {}
+
+// MsgRejectLFSObjectUpdate defines a message for rejecting a proposed LFS object update
+message MsgRejectLFSObjectUpdate {
+  string creator = 1;
+  uint64 proposal_id = 2;
+  string reason = 3; // optional reason for rejection
+}
+
+message MsgRejectLFSObjectUpdateResponse {}

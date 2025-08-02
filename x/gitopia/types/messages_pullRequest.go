@@ -784,3 +784,49 @@ func (msg *MsgDeletePullRequest) GetSignBytes() []byte {
 func (msg *MsgDeletePullRequest) ValidateBasic() error {
 	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
 }
+
+var _ sdk.Msg = &MsgMergePullRequest{}
+
+func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string, taskId uint64) *MsgMergePullRequest {
+	return &MsgMergePullRequest{
+		Creator:        creator,
+		RepositoryId:   repositoryId,
+		PullRequestIid: pullRequestIid,
+		MergeCommitSha: mergeCommitSha,
+		TaskId:         taskId,
+	}
+}
+
+func (msg *MsgMergePullRequest) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMergePullRequest) Type() string {
+	return "MergePullRequest"
+}
+
+func (msg *MsgMergePullRequest) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMergePullRequest) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMergePullRequest) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.MergeCommitSha == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "merge commit sha cannot be empty")
+	}
+
+	return nil
+}

@@ -7,25 +7,34 @@ import (
 
 // Message types for the storage module
 const (
-	TypeMsgRegisterProvider         = "register_provider"
-	TypeMsgUpdateProvider           = "update_provider"
-	TypeMsgUpdateRepositoryPackfile = "update_repository_packfile"
-	TypeMsgDeleteRepositoryPackfile = "delete_repository_packfile"
-	TypeMsgSubmitChallengeResponse  = "submit_challenge_response"
-	TypeMsgWithdrawProviderRewards  = "withdraw_provider_rewards"
-	TypeMsgUnregisterProvider       = "unregister_provider"
-	TypeMsgCompleteUnstake          = "complete_unstake"
-	TypeMsgUpdateReleaseAsset       = "update_release_asset"
-	TypeMsgDeleteReleaseAsset       = "delete_release_asset"
-	TypeMsgUpdateParams             = "update_params"
-	TypeMsgClawbackProviderStake    = "clawback_provider_stake"
-	TypeMsgMergePullRequest         = "merge_pull_request"
-	TypeMsgUpdateLFSObject          = "update_lfs_object"
-	TypeMsgDeleteLFSObject          = "delete_lfs_object"
-	TypeMsgIncreaseStake            = "increase_stake"
-	TypeMsgDecreaseStake            = "decrease_stake"
-	TypeMsgCompleteDecreaseStake    = "complete_decrease_stake"
-	TypeMsgUnjailProvider           = "unjail_provider"
+	TypeMsgRegisterProvider                = "register_provider"
+	TypeMsgUpdateProvider                  = "update_provider"
+	TypeMsgUpdateRepositoryPackfile        = "update_repository_packfile"
+	TypeMsgDeleteRepositoryPackfile        = "delete_repository_packfile"
+	TypeMsgSubmitChallengeResponse         = "submit_challenge_response"
+	TypeMsgWithdrawProviderRewards         = "withdraw_provider_rewards"
+	TypeMsgUnregisterProvider              = "unregister_provider"
+	TypeMsgCompleteUnstake                 = "complete_unstake"
+	TypeMsgUpdateReleaseAsset              = "update_release_asset"
+	TypeMsgUpdateReleaseAssets             = "update_release_assets"
+	TypeMsgDeleteReleaseAsset              = "delete_release_asset"
+	TypeMsgUpdateParams                    = "update_params"
+	TypeMsgClawbackProviderStake           = "clawback_provider_stake"
+	TypeMsgUpdateLFSObject                 = "update_lfs_object"
+	TypeMsgDeleteLFSObject                 = "delete_lfs_object"
+	TypeMsgIncreaseStake                   = "increase_stake"
+	TypeMsgDecreaseStake                   = "decrease_stake"
+	TypeMsgCompleteDecreaseStake           = "complete_decrease_stake"
+	TypeMsgUnjailProvider                  = "unjail_provider"
+	TypeMsgProposeRepositoryPackfileUpdate = "propose_repository_packfile_update"
+	TypeMsgApproveRepositoryPackfileUpdate = "approve_repository_packfile_update"
+	TypeMsgRejectRepositoryPackfileUpdate  = "reject_repository_packfile_update"
+	TypeMsgProposeReleaseAssetsUpdate      = "propose_release_assets_update"
+	TypeMsgApproveReleaseAssetsUpdate      = "approve_release_assets_update"
+	TypeMsgRejectReleaseAssetsUpdate       = "reject_release_assets_update"
+	TypeMsgProposeLFSObjectUpdate          = "propose_lfs_object_update"
+	TypeMsgApproveLFSObjectUpdate          = "approve_lfs_object_update"
+	TypeMsgRejectLFSObjectUpdate           = "reject_lfs_object_update"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -475,6 +484,86 @@ func (msg *MsgUpdateReleaseAsset) ValidateBasic() error {
 	return nil
 }
 
+var _ sdk.Msg = &MsgUpdateReleaseAssets{}
+
+// NewMsgUpdateReleaseAssets creates a new MsgUpdateReleaseAssets instance
+func NewMsgUpdateReleaseAssets(creator string, repositoryId uint64, tag string, assets []*ReleaseAssetUpdate) *MsgUpdateReleaseAssets {
+	return &MsgUpdateReleaseAssets{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag:          tag,
+		Assets:       assets,
+	}
+}
+
+func (msg *MsgUpdateReleaseAssets) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgUpdateReleaseAssets) Type() string {
+	return TypeMsgUpdateReleaseAssets
+}
+
+func (msg *MsgUpdateReleaseAssets) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgUpdateReleaseAssets) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgUpdateReleaseAssets) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Tag == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "tag cannot be empty")
+	}
+
+	if len(msg.Assets) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "assets cannot be empty")
+	}
+
+	// Validate each asset update
+	assetNames := make(map[string]bool)
+	for i, asset := range msg.Assets {
+		if asset.Name == "" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] name cannot be empty", i)
+		}
+
+		// Check for duplicate asset names
+		if assetNames[asset.Name] {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "duplicate asset name: %s", asset.Name)
+		}
+		assetNames[asset.Name] = true
+
+		if asset.Cid == "" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] CID cannot be empty", i)
+		}
+
+		if len(asset.RootHash) == 0 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] root hash cannot be empty", i)
+		}
+
+		if asset.Size_ == 0 {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] size cannot be 0", i)
+		}
+
+		if asset.Sha256 == "" {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] sha256 cannot be empty", i)
+		}
+	}
+
+	return nil
+}
+
 var _ sdk.Msg = &MsgDeleteReleaseAsset{}
 
 func NewMsgDeleteReleaseAsset(creator string, repositoryId uint64, tag string, name string, ownerId string) *MsgDeleteReleaseAsset {
@@ -614,52 +703,6 @@ func (msg *MsgClawbackProviderStake) ValidateBasic() error {
 	if !msg.Amount.IsValid() || msg.Amount.IsZero() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid clawback amount")
 	}
-	return nil
-}
-
-var _ sdk.Msg = &MsgMergePullRequest{}
-
-func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string, taskId uint64) *MsgMergePullRequest {
-	return &MsgMergePullRequest{
-		Creator:        creator,
-		RepositoryId:   repositoryId,
-		PullRequestIid: pullRequestIid,
-		MergeCommitSha: mergeCommitSha,
-		TaskId:         taskId,
-	}
-}
-
-func (msg *MsgMergePullRequest) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgMergePullRequest) Type() string {
-	return TypeMsgMergePullRequest
-}
-
-func (msg *MsgMergePullRequest) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgMergePullRequest) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgMergePullRequest) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.MergeCommitSha == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "merge commit sha cannot be empty")
-	}
-
 	return nil
 }
 
@@ -805,6 +848,443 @@ func (msg *MsgUnjailProvider) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
+// MsgProposeRepositoryPackfileUpdate implementation
+var _ sdk.Msg = &MsgProposeRepositoryPackfileUpdate{}
+
+func NewMsgProposeRepositoryPackfileUpdate(creator string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64, oldCid string, mergeCommitSha string) *MsgProposeRepositoryPackfileUpdate {
+	return &MsgProposeRepositoryPackfileUpdate{
+		Creator:        creator,
+		RepositoryId:   repositoryId,
+		Name:           name,
+		Cid:            cid,
+		RootHash:       rootHash,
+		Size_:          size,
+		OldCid:         oldCid,
+		MergeCommitSha: mergeCommitSha,
+	}
+}
+
+func (msg *MsgProposeRepositoryPackfileUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgProposeRepositoryPackfileUpdate) Type() string {
+	return TypeMsgProposeRepositoryPackfileUpdate
+}
+
+func (msg *MsgProposeRepositoryPackfileUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgProposeRepositoryPackfileUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgProposeRepositoryPackfileUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Name == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
+	}
+
+	if msg.Cid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CID cannot be empty")
+	}
+
+	if len(msg.RootHash) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "root hash cannot be empty")
+	}
+
+	if msg.Size_ == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgApproveRepositoryPackfileUpdate implementation
+var _ sdk.Msg = &MsgApproveRepositoryPackfileUpdate{}
+
+func NewMsgApproveRepositoryPackfileUpdate(creator string, proposalId uint64) *MsgApproveRepositoryPackfileUpdate {
+	return &MsgApproveRepositoryPackfileUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+	}
+}
+
+func (msg *MsgApproveRepositoryPackfileUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgApproveRepositoryPackfileUpdate) Type() string {
+	return TypeMsgApproveRepositoryPackfileUpdate
+}
+
+func (msg *MsgApproveRepositoryPackfileUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgApproveRepositoryPackfileUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgApproveRepositoryPackfileUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgRejectRepositoryPackfileUpdate implementation
+var _ sdk.Msg = &MsgRejectRepositoryPackfileUpdate{}
+
+func NewMsgRejectRepositoryPackfileUpdate(creator string, proposalId uint64, reason string) *MsgRejectRepositoryPackfileUpdate {
+	return &MsgRejectRepositoryPackfileUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+		Reason:     reason,
+	}
+}
+
+func (msg *MsgRejectRepositoryPackfileUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRejectRepositoryPackfileUpdate) Type() string {
+	return TypeMsgRejectRepositoryPackfileUpdate
+}
+
+func (msg *MsgRejectRepositoryPackfileUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRejectRepositoryPackfileUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRejectRepositoryPackfileUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgProposeReleaseAssetUpdate implementation
+var _ sdk.Msg = &MsgProposeReleaseAssetsUpdate{}
+
+func NewMsgProposeReleaseAssetUpdate(creator string, repositoryId uint64, tag string, assets []*ReleaseAssetUpdate) *MsgProposeReleaseAssetsUpdate {
+	return &MsgProposeReleaseAssetsUpdate{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Tag:          tag,
+		Assets:       assets,
+	}
+}
+
+func (msg *MsgProposeReleaseAssetsUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgProposeReleaseAssetsUpdate) Type() string {
+	return TypeMsgProposeReleaseAssetsUpdate
+}
+
+func (msg *MsgProposeReleaseAssetsUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgProposeReleaseAssetsUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgProposeReleaseAssetsUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Tag == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "tag cannot be empty")
+	}
+
+	// TODO: validate assets
+
+	return nil
+}
+
+// MsgApproveReleaseAssetUpdate implementation
+var _ sdk.Msg = &MsgApproveReleaseAssetsUpdate{}
+
+func NewMsgApproveReleaseAssetUpdate(creator string, proposalId uint64) *MsgApproveReleaseAssetsUpdate {
+	return &MsgApproveReleaseAssetsUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+	}
+}
+
+func (msg *MsgApproveReleaseAssetsUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgApproveReleaseAssetsUpdate) Type() string {
+	return TypeMsgApproveReleaseAssetsUpdate
+}
+
+func (msg *MsgApproveReleaseAssetsUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgApproveReleaseAssetsUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgApproveReleaseAssetsUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgRejectReleaseAssetsUpdate implementation
+var _ sdk.Msg = &MsgRejectReleaseAssetsUpdate{}
+
+func NewMsgRejectReleaseAssetsUpdate(creator string, proposalId uint64, reason string) *MsgRejectReleaseAssetsUpdate {
+	return &MsgRejectReleaseAssetsUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+		Reason:     reason,
+	}
+}
+
+func (msg *MsgRejectReleaseAssetsUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRejectReleaseAssetsUpdate) Type() string {
+	return TypeMsgRejectReleaseAssetsUpdate
+}
+
+func (msg *MsgRejectReleaseAssetsUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRejectReleaseAssetsUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRejectReleaseAssetsUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgProposeLFSObjectUpdate implementation
+var _ sdk.Msg = &MsgProposeLFSObjectUpdate{}
+
+func NewMsgProposeLFSObjectUpdate(creator string, repositoryId uint64, oid string, size uint64, cid string, rootHash []byte) *MsgProposeLFSObjectUpdate {
+	return &MsgProposeLFSObjectUpdate{
+		Creator:      creator,
+		RepositoryId: repositoryId,
+		Oid:          oid,
+		Size_:        size,
+		Cid:          cid,
+		RootHash:     rootHash,
+	}
+}
+
+func (msg *MsgProposeLFSObjectUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgProposeLFSObjectUpdate) Type() string {
+	return TypeMsgProposeLFSObjectUpdate
+}
+
+func (msg *MsgProposeLFSObjectUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgProposeLFSObjectUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgProposeLFSObjectUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.Oid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "oid cannot be empty")
+	}
+
+	if msg.Cid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CID cannot be empty")
+	}
+
+	if len(msg.RootHash) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "root hash cannot be empty")
+	}
+
+	if msg.Size_ == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgApproveLFSObjectUpdate implementation
+var _ sdk.Msg = &MsgApproveLFSObjectUpdate{}
+
+func NewMsgApproveLFSObjectUpdate(creator string, proposalId uint64) *MsgApproveLFSObjectUpdate {
+	return &MsgApproveLFSObjectUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+	}
+}
+
+func (msg *MsgApproveLFSObjectUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgApproveLFSObjectUpdate) Type() string {
+	return TypeMsgApproveLFSObjectUpdate
+}
+
+func (msg *MsgApproveLFSObjectUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgApproveLFSObjectUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgApproveLFSObjectUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
+	}
+
+	return nil
+}
+
+// MsgRejectLFSObjectUpdate implementation
+var _ sdk.Msg = &MsgRejectLFSObjectUpdate{}
+
+func NewMsgRejectLFSObjectUpdate(creator string, proposalId uint64, reason string) *MsgRejectLFSObjectUpdate {
+	return &MsgRejectLFSObjectUpdate{
+		Creator:    creator,
+		ProposalId: proposalId,
+		Reason:     reason,
+	}
+}
+
+func (msg *MsgRejectLFSObjectUpdate) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRejectLFSObjectUpdate) Type() string {
+	return TypeMsgRejectLFSObjectUpdate
+}
+
+func (msg *MsgRejectLFSObjectUpdate) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRejectLFSObjectUpdate) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgRejectLFSObjectUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.ProposalId == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
 	}
 
 	return nil

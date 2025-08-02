@@ -238,3 +238,85 @@ message ProviderLivenessStats {
   bool is_jailed = 7;
   google.protobuf.Timestamp jail_until = 8 [(gogoproto.nullable) = true, (gogoproto.stdtime) = true];
 }
+
+// ProposalStatus represents the status of a packfile update proposal
+enum ProposalStatus {
+  PROPOSAL_STATUS_UNSPECIFIED = 0;
+  PROPOSAL_STATUS_PENDING = 1;
+  PROPOSAL_STATUS_APPROVED = 2;
+  PROPOSAL_STATUS_REJECTED = 3;
+  PROPOSAL_STATUS_EXPIRED = 4;
+}
+
+// ProposedPackfileUpdate represents a proposed packfile update awaiting approval
+message ProposedPackfileUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string name = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+  uint64 size = 8;
+  string old_cid = 9;
+  ProposalStatus status = 10;
+  google.protobuf.Timestamp proposed_at = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 12 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// ReleaseAssetUpdate represents a single release asset update within a batch
+message ReleaseAssetUpdate {
+  string name = 1;
+  string cid = 2;
+  bytes root_hash = 3;
+  uint64 size = 4;
+  string sha256 = 5;
+  // old_cid is the CID of the release asset when the provider processed the request
+  string old_cid = 6;
+}
+
+// ProposedReleaseAssetsUpdate represents a proposed release asset update awaiting approval
+message ProposedReleaseAssetsUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string tag = 5;
+  repeated ReleaseAssetUpdate assets = 6;
+  ProposalStatus status = 7;
+  google.protobuf.Timestamp proposed_at = 8 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 9 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// ProposedLFSObjectUpdate represents a proposed LFS object update awaiting approval
+message ProposedLFSObjectUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string oid = 5;
+  uint64 size = 6;
+  string cid = 7;
+  bytes root_hash = 8;
+  ProposalStatus status = 9;
+  google.protobuf.Timestamp proposed_at = 10 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
