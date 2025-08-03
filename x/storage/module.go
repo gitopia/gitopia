@@ -211,5 +211,10 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 	}
 
+	// Expire old proposals
+	am.keeper.ExpireOldProposals(ctx)
+	am.keeper.ExpireOldLFSObjectProposals(ctx)
+	am.keeper.ExpireOldReleaseAssetsProposals(ctx)
+
 	return []abci.ValidatorUpdate{}
 }

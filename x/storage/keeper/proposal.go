@@ -156,15 +156,14 @@ func (k Keeper) GetPendingPackfileUpdateProposalForRepositoryUser(ctx sdk.Contex
 	return types.ProposedPackfileUpdate{}, false
 }
 
-// ExpireOldProposals marks proposals as expired if they've passed their expiration time
+// ExpireOldProposals removes expired proposals
 func (k Keeper) ExpireOldProposals(ctx sdk.Context) {
 	allProposals := k.GetAllProposedPackfileUpdates(ctx)
 	currentTime := ctx.BlockTime()
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-			k.SetProposedPackfileUpdate(ctx, proposal)
+			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 		}
 	}
 }
@@ -360,15 +359,14 @@ func (k Keeper) GetPendingReleaseAssetsUpdateProposalForRepositoryTagUser(ctx sd
 	return types.ProposedReleaseAssetsUpdate{}, false
 }
 
-// ExpireOldReleaseAssetsProposals marks release asset proposals as expired if they've passed their expiration time
+// ExpireOldReleaseAssetsProposals removes expired release asset proposals
 func (k Keeper) ExpireOldReleaseAssetsProposals(ctx sdk.Context) {
 	allProposals := k.GetAllProposedReleaseAssetsUpdates(ctx)
 	currentTime := ctx.BlockTime()
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-			k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+			k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		}
 	}
 }
@@ -533,29 +531,21 @@ func (k Keeper) GetPendingLFSObjectProposalsForRepositoryUser(ctx sdk.Context, r
 
 	for _, proposal := range allProposals {
 		if proposal.RepositoryId == repositoryId && proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
-			// Check if proposal has expired
-			if ctx.BlockTime().After(proposal.ExpiresAt) {
-				// Mark as expired
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-				k.SetProposedLFSObjectUpdate(ctx, proposal)
-			} else {
-				pending = append(pending, proposal)
-			}
+			pending = append(pending, proposal)
 		}
 	}
 
 	return pending
 }
 
-// ExpireOldLFSObjectProposals marks LFS object proposals as expired if they've passed their expiration time
+// ExpireOldLFSObjectProposals removes expired LFS object proposals
 func (k Keeper) ExpireOldLFSObjectProposals(ctx sdk.Context) {
 	allProposals := k.GetAllProposedLFSObjectUpdates(ctx)
 	currentTime := ctx.BlockTime()
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-			k.SetProposedLFSObjectUpdate(ctx, proposal)
+			k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 		}
 	}
 }
