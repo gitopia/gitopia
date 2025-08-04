@@ -191,24 +191,23 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 	// Check for expired challenges using new Tendermint-style liveness system
 	// Process all pending challenges that have expired
-	lastChallengeId := am.keeper.GetChallengeCount(ctx) - 1
-	ctx.Logger().Info(fmt.Sprintf("last challenge ID: %d", lastChallengeId))
-	challenge, found := am.keeper.GetChallenge(ctx, lastChallengeId)
-	if !found {
-		return []abci.ValidatorUpdate{}
-	}
-	if challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
-		// Use the new Tendermint-style challenge timeout processing
-		err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
+	challengeCount := am.keeper.GetChallengeCount(ctx)
+	if challengeCount > 0 {
+		lastChallengeId := challengeCount - 1
+		challenge, found := am.keeper.GetChallenge(ctx, lastChallengeId)
+		if found && challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+			// Use the new Tendermint-style challenge timeout processing
+			err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
+			}
+
+			// Update challenge status to failed
+			challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+			am.keeper.SetChallenge(ctx, challenge)
+
+			ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 		}
-
-		// Update challenge status to failed
-		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
-		am.keeper.SetChallenge(ctx, challenge)
-
-		ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 	}
 
 	// Expire old proposals
