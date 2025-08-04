@@ -1375,6 +1375,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		OldCid:       oldCid,
 		NewName:      proposal.Name,
 		OldName:      oldName,
+		Provider:     proposal.Provider,
 	})
 
 	// Mark proposal as approved
@@ -1894,6 +1895,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		RepositoryId: proposal.RepositoryId,
 		Tag:          proposal.Tag,
 		Assets:       proposal.Assets,
+		Provider:     proposal.Provider,
 	})
 
 	return &types.MsgApproveReleaseAssetsUpdateResponse{}, nil
@@ -2075,6 +2077,7 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		RepositoryId: proposal.RepositoryId,
 		Oid:          proposal.Oid,
 		Cid:          proposal.Cid,
+		Provider:     proposal.Provider,
 	})
 
 	return &types.MsgApproveLFSObjectUpdateResponse{}, nil

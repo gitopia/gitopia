@@ -28,6 +28,7 @@ message EventPackfileUpdated {
   string old_cid = 3;
   string new_name = 4;
   string old_name = 5;
+  string provider = 6;
 }
 
 // EventPackfileDeleted is emitted when a packfile is deleted
@@ -53,6 +54,7 @@ message EventReleaseAssetsUpdated {
   uint64 repository_id = 1;
   string tag = 2;
   repeated ReleaseAssetUpdate assets = 3;
+  string provider = 4;
 }
 
 // EventReleaseAssetDeleted is emitted when a release asset is deleted
@@ -101,13 +103,7 @@ message EventLFSObjectUpdated {
   uint64 repository_id = 1;
   string oid = 2;
   string cid = 3;
-}
-
-// EventApproveLFSObject is emitted when an LFS object is approved
-message EventApproveLFSObject {
-  uint64 repository_id = 1;
-  string oid = 2;
-  string cid = 3;
+  string provider = 4;
 }
 
 // EventLFSObjectDeleted is emitted when an LFS object is deleted
