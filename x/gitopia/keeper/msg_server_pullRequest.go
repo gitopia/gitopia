@@ -367,13 +367,6 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	id := k.AppendTask(ctx, types.Task{
-		Type:     types.TaskType(types.TypeSetPullRequestState),
-		State:    types.TaskState(types.StatePending),
-		Creator:  msg.Creator,
-		Provider: msg.Provider,
-	})
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -382,7 +375,6 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
@@ -416,13 +408,6 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 		return nil, err
 	}
 
-	id := k.AppendTask(ctx, types.Task{
-		Type:     types.TaskType(types.TypeSetPullRequestState),
-		State:    types.TaskState(types.StatePending),
-		Creator:  dao.Address,
-		Provider: msg.Provider,
-	})
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -431,7 +416,6 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
@@ -1410,19 +1394,6 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 	pullRequest.MergeCommitSha = msg.MergeCommitSha
 	pullRequest.UpdatedAt = blockTime
 
-	// Update task state
-	task, found := k.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, fmt.Errorf("task not found")
-	}
-
-	if msg.Creator != task.Provider {
-		return nil, fmt.Errorf("unauthorized")
-	}
-
-	task.State = types.StateSuccess
-	k.SetTask(ctx, task)
-
 	// Update repository and branch
 	k.SetRepositoryBranch(ctx, baseBranch)
 	k.SetPullRequest(ctx, pullRequest)
@@ -1515,8 +1486,6 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
 			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(msg.TaskId, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskStateKey, task.State.String()),
 			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
 			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, baseRepository.Owner.Id),

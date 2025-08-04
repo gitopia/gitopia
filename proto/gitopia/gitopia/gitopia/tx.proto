@@ -445,7 +445,6 @@ message MsgMergePullRequest {
   uint64 repository_id = 2;
   uint64 pull_request_iid = 3;
   string merge_commit_sha = 4;
-  uint64 task_id = 5;
 }
 
 message MsgMergePullRequestResponse {}

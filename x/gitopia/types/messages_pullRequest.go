@@ -787,13 +787,12 @@ func (msg *MsgDeletePullRequest) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMergePullRequest{}
 
-func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string, taskId uint64) *MsgMergePullRequest {
+func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string) *MsgMergePullRequest {
 	return &MsgMergePullRequest{
 		Creator:        creator,
 		RepositoryId:   repositoryId,
 		PullRequestIid: pullRequestIid,
 		MergeCommitSha: mergeCommitSha,
-		TaskId:         taskId,
 	}
 }
 
