@@ -524,6 +524,19 @@ func (k Keeper) GetPendingLFSObjectProposalsForUser(ctx sdk.Context, userAddress
 	return pending
 }
 
+// GetPendingLFSObjectProposalsForRepositoryOid returns all pending LFS object proposals for a repository
+func (k Keeper) GetPendingLFSObjectProposalsForRepositoryOid(ctx sdk.Context, repositoryId uint64, oid string, userAddress string) (types.ProposedLFSObjectUpdate, bool) {
+	allProposals := k.GetAllProposedLFSObjectUpdates(ctx)
+
+	for _, proposal := range allProposals {
+		if proposal.RepositoryId == repositoryId && proposal.Oid == oid && proposal.User == userAddress && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+			return proposal, true
+		}
+	}
+
+	return types.ProposedLFSObjectUpdate{}, false
+}
+
 // GetPendingLFSObjectProposalsForRepositoryUser returns all pending LFS object proposal where the repository id and user address match
 func (k Keeper) GetPendingLFSObjectProposalsForRepositoryUser(ctx sdk.Context, repositoryId uint64, userAddress string) []types.ProposedLFSObjectUpdate {
 	allProposals := k.GetAllProposedLFSObjectUpdates(ctx)

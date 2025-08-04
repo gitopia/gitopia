@@ -667,10 +667,26 @@ func (k Keeper) LFSObjectUpdateProposal(goCtx context.Context, req *types.QueryL
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	proposals := k.GetPendingLFSObjectProposalsForRepositoryUser(ctx, req.RepositoryId, req.User)
+	proposal, found := k.GetPendingLFSObjectProposalsForRepositoryOid(ctx, req.RepositoryId, req.Oid, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "lfs object update proposal not found")
+	}
 
 	return &types.QueryLFSObjectUpdateProposalResponse{
-		LfsObjectProposal: proposals,
+		LfsObjectProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) LFSObjectUpdateProposalsByRepositoryId(goCtx context.Context, req *types.QueryLFSObjectUpdateProposalsByRepositoryIdRequest) (*types.QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetPendingLFSObjectProposalsForRepositoryUser(ctx, req.RepositoryId, req.User)
+
+	return &types.QueryLFSObjectUpdateProposalsByRepositoryIdResponse{
+		LfsObjectProposals: proposals,
 	}, nil
 }
 
