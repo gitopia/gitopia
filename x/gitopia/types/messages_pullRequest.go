@@ -787,12 +787,13 @@ func (msg *MsgDeletePullRequest) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMergePullRequest{}
 
-func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string) *MsgMergePullRequest {
+func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string, packfileCid string) *MsgMergePullRequest {
 	return &MsgMergePullRequest{
 		Creator:        creator,
 		RepositoryId:   repositoryId,
 		PullRequestIid: pullRequestIid,
 		MergeCommitSha: mergeCommitSha,
+		PackfileCid:    packfileCid,
 	}
 }
 
@@ -825,6 +826,10 @@ func (msg *MsgMergePullRequest) ValidateBasic() error {
 
 	if msg.MergeCommitSha == "" {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "merge commit sha cannot be empty")
+	}
+
+	if msg.PackfileCid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "packfile cid cannot be empty")
 	}
 
 	return nil

@@ -1362,6 +1362,17 @@ func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePu
 		return nil, fmt.Errorf("base repository not found")
 	}
 
+	// Optimistic concurrency control: check if the current CID matches the expected old_cid
+	packfile, found := k.storageKeeper.GetPackfile(ctx, baseRepository.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", baseRepository.Id))
+	}
+
+	// Check if the cid matches the cid provider updated the packfile
+	if packfile.Cid != msg.PackfileCid {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.Cid, msg.PackfileCid).Error())
+	}
+
 	// Get the base branch
 	baseBranch, found := k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
 	if !found {
