@@ -1167,7 +1167,7 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		msg.RootHash,
 		msg.GetSize_(),
 		msg.OldCid,
-		15, // 15 seconds expiration
+		300, // 300 seconds expiration
 	)
 
 	return &types.MsgProposeRepositoryPackfileUpdateResponse{
@@ -1657,7 +1657,7 @@ func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		repository.Owner.Id,
 		msg.Tag,
 		msg.Assets,
-		15, // 15 seconds expiration
+		300, // 300 seconds expiration
 	)
 
 	return &types.MsgProposeReleaseAssetsUpdateResponse{
@@ -1959,7 +1959,7 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 		msg.Size_,
 		msg.Cid,
 		msg.RootHash,
-		15, // 15 seconds expiration
+		300, // 300 seconds expiration
 	)
 
 	return &types.MsgProposeLFSObjectUpdateResponse{

@@ -952,10 +952,6 @@ func (msg *MsgApproveRepositoryPackfileUpdate) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
-	}
-
 	return nil
 }
 
@@ -995,10 +991,6 @@ func (msg *MsgRejectRepositoryPackfileUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
 	}
 
 	return nil
@@ -1089,10 +1081,6 @@ func (msg *MsgApproveReleaseAssetsUpdate) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
-	}
-
 	return nil
 }
 
@@ -1132,10 +1120,6 @@ func (msg *MsgRejectReleaseAssetsUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
 	}
 
 	return nil
@@ -1238,10 +1222,6 @@ func (msg *MsgApproveLFSObjectUpdate) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
-	}
-
 	return nil
 }
 
@@ -1281,10 +1261,6 @@ func (msg *MsgRejectLFSObjectUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.ProposalId == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "proposal ID cannot be 0")
 	}
 
 	return nil
