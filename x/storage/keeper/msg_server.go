@@ -1140,12 +1140,10 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		return nil, fmt.Errorf("repository not found")
 	}
 
-	// Check if there's already a pending proposal for this repository from this provider
+	// Check if there's already a pending proposal for this repository
 	pendingProposals := k.GetPendingProposalsForRepository(ctx, msg.RepositoryId)
-	for _, proposal := range pendingProposals {
-		if proposal.Provider == msg.Creator {
-			return nil, fmt.Errorf("provider already has a pending proposal for this repository")
-		}
+	if len(pendingProposals) > 0 {
+		return nil, fmt.Errorf("there is already a pending proposal for this repository")
 	}
 
 	// Verify old_cid matches current repository state if specified
@@ -1641,11 +1639,11 @@ func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		return nil, fmt.Errorf("repository not found")
 	}
 
-	// Check if there's already a pending proposal for this specific release asset from this provider
+	// Check if there's already a pending proposal for this release
 	pendingProposals := k.GetPendingReleaseAssetsProposalsForRepository(ctx, msg.RepositoryId)
 	for _, proposal := range pendingProposals {
-		if proposal.Provider == msg.Creator && proposal.Tag == msg.Tag {
-			return nil, fmt.Errorf("provider already has a pending proposal for this release")
+		if proposal.Tag == msg.Tag {
+			return nil, fmt.Errorf("there is already a pending proposal for this release")
 		}
 	}
 
