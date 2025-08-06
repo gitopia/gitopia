@@ -856,9 +856,10 @@ func (msg *MsgUnjailProvider) ValidateBasic() error {
 // MsgProposeRepositoryPackfileUpdate implementation
 var _ sdk.Msg = &MsgProposeRepositoryPackfileUpdate{}
 
-func NewMsgProposeRepositoryPackfileUpdate(creator string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64, oldCid string, mergeCommitSha string) *MsgProposeRepositoryPackfileUpdate {
+func NewMsgProposeRepositoryPackfileUpdate(creator string, user string, repositoryId uint64, name string, cid string, rootHash []byte, size uint64, oldCid string, mergeCommitSha string) *MsgProposeRepositoryPackfileUpdate {
 	return &MsgProposeRepositoryPackfileUpdate{
 		Creator:        creator,
+		User:           user,
 		RepositoryId:   repositoryId,
 		Name:           name,
 		Cid:            cid,
@@ -894,6 +895,11 @@ func (msg *MsgProposeRepositoryPackfileUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
 	}
 
 	if msg.Name == "" {
@@ -999,9 +1005,10 @@ func (msg *MsgRejectRepositoryPackfileUpdate) ValidateBasic() error {
 // MsgProposeReleaseAssetUpdate implementation
 var _ sdk.Msg = &MsgProposeReleaseAssetsUpdate{}
 
-func NewMsgProposeReleaseAssetUpdate(creator string, repositoryId uint64, tag string, assets []*ReleaseAssetUpdate) *MsgProposeReleaseAssetsUpdate {
+func NewMsgProposeReleaseAssetUpdate(creator string, user string, repositoryId uint64, tag string, assets []*ReleaseAssetUpdate) *MsgProposeReleaseAssetsUpdate {
 	return &MsgProposeReleaseAssetsUpdate{
 		Creator:      creator,
+		User:         user,
 		RepositoryId: repositoryId,
 		Tag:          tag,
 		Assets:       assets,
@@ -1033,6 +1040,11 @@ func (msg *MsgProposeReleaseAssetsUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
 	}
 
 	if msg.Tag == "" {
@@ -1128,9 +1140,10 @@ func (msg *MsgRejectReleaseAssetsUpdate) ValidateBasic() error {
 // MsgProposeLFSObjectUpdate implementation
 var _ sdk.Msg = &MsgProposeLFSObjectUpdate{}
 
-func NewMsgProposeLFSObjectUpdate(creator string, repositoryId uint64, oid string, size uint64, cid string, rootHash []byte) *MsgProposeLFSObjectUpdate {
+func NewMsgProposeLFSObjectUpdate(creator string, user string, repositoryId uint64, oid string, size uint64, cid string, rootHash []byte) *MsgProposeLFSObjectUpdate {
 	return &MsgProposeLFSObjectUpdate{
 		Creator:      creator,
+		User:         user,
 		RepositoryId: repositoryId,
 		Oid:          oid,
 		Size_:        size,
@@ -1164,6 +1177,11 @@ func (msg *MsgProposeLFSObjectUpdate) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
 	}
 
 	if msg.Oid == "" {

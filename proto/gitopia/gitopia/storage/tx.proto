@@ -324,15 +324,16 @@ message MsgDeleteLFSObjectResponse {}
 // MsgProposeRepositoryPackfileUpdate defines a message for proposing a packfile update
 message MsgProposeRepositoryPackfileUpdate {
   string creator = 1;
-  uint64 repository_id = 2;
-  string name = 3;
-  string cid = 4;
-  bytes root_hash = 5;
-  uint64 size = 6;
+  string user = 2;
+  uint64 repository_id = 3;
+  string name = 4;
+  string cid = 5;
+  bytes root_hash = 6;
+  uint64 size = 7;
   // old_cid is the CID of the repository when the provider processed the request
-  string old_cid = 7;
+  string old_cid = 8;
   // merge_commit_sha is the commit SHA when this proposal is for a merge pull request
-  string merge_commit_sha = 8;
+  string merge_commit_sha = 9;
 }
 
 message MsgProposeRepositoryPackfileUpdateResponse {
@@ -359,9 +360,10 @@ message MsgRejectRepositoryPackfileUpdateResponse {}
 // MsgProposeReleaseAssetsUpdate defines a message for proposing a release assets update
 message MsgProposeReleaseAssetsUpdate {
   string creator = 1;
-  uint64 repository_id = 2;
-  string tag = 3;
-  repeated ReleaseAssetUpdate assets = 4;
+  string user = 2;
+  uint64 repository_id = 3;
+  string tag = 4;
+  repeated ReleaseAssetUpdate assets = 5;
 }
 
 message MsgProposeReleaseAssetsUpdateResponse {
@@ -388,11 +390,12 @@ message MsgRejectReleaseAssetsUpdateResponse {}
 // MsgProposeLFSObjectUpdate defines a message for proposing an LFS object update
 message MsgProposeLFSObjectUpdate {
   string creator = 1;
-  uint64 repository_id = 2;
-  string oid = 3;
-  uint64 size = 4;
-  string cid = 5;
-  bytes root_hash = 6;
+  string user = 2;
+  uint64 repository_id = 3;
+  string oid = 4;
+  uint64 size = 5;
+  string cid = 6;
+  bytes root_hash = 7;
 }
 
 message MsgProposeLFSObjectUpdateResponse {

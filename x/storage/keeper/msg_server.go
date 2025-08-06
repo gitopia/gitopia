@@ -1135,7 +1135,7 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 	}
 
 	// Get repository to verify it exists and get owner
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
 		return nil, fmt.Errorf("repository not found")
 	}
@@ -1159,11 +1159,11 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		ctx,
 		msg.Creator,
 		msg.RepositoryId,
-		repository.Owner.Id,
+		msg.User,
 		msg.Name,
 		msg.Cid,
 		msg.RootHash,
-		msg.GetSize_(),
+		msg.Size_,
 		msg.OldCid,
 		msg.MergeCommitSha,
 		300, // 300 seconds expiration
@@ -1634,7 +1634,7 @@ func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	}
 
 	// Get repository to verify it exists and get owner
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
 		return nil, fmt.Errorf("repository not found")
 	}
@@ -1652,7 +1652,7 @@ func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		ctx,
 		msg.Creator,
 		msg.RepositoryId,
-		repository.Owner.Id,
+		msg.User,
 		msg.Tag,
 		msg.Assets,
 		300, // 300 seconds expiration
@@ -1936,7 +1936,7 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 	}
 
 	// Get repository information
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
 		return nil, fmt.Errorf("repository not found")
 	}
@@ -1951,7 +1951,7 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 		ctx,
 		msg.Creator,
 		msg.RepositoryId,
-		repository.Owner.Id,
+		msg.User,
 		msg.Oid,
 		msg.Size_,
 		msg.Cid,
