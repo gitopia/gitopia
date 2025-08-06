@@ -1376,9 +1376,8 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		Provider:     proposal.Provider,
 	})
 
-	// Mark proposal as approved
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_APPROVED
-	k.SetProposedPackfileUpdate(ctx, proposal)
+	// Remove proposal
+	k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 
 	return &types.MsgApproveRepositoryPackfileUpdateResponse{}, nil
 }
@@ -1885,9 +1884,8 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	}
 	k.SetStorageStats(ctx, storageStats)
 
-	// Mark proposal as approved
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_APPROVED
-	k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+	// Remove proposal
+	k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 
 	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetsUpdated{
 		RepositoryId: proposal.RepositoryId,
@@ -2067,9 +2065,8 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 	storageStats.TotalLfsObjectSize += uint64(lfsObj.Size_)
 	k.SetStorageStats(ctx, storageStats)
 
-	// Mark proposal as approved
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_APPROVED
-	k.SetProposedLFSObjectUpdate(ctx, proposal)
+	// Remove proposal
+	k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 
 	ctx.EventManager().EmitTypedEvent(&types.EventLFSObjectUpdated{
 		RepositoryId: proposal.RepositoryId,
