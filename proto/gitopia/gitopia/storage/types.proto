@@ -259,12 +259,13 @@ message ProposedPackfileUpdate {
   bytes root_hash = 7;
   uint64 size = 8;
   string old_cid = 9;
-  ProposalStatus status = 10;
-  google.protobuf.Timestamp proposed_at = 11 [
+  string merge_commit_sha = 10;
+  ProposalStatus status = 11;
+  google.protobuf.Timestamp proposed_at = 12 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
-  google.protobuf.Timestamp expires_at = 12 [
+  google.protobuf.Timestamp expires_at = 13 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];

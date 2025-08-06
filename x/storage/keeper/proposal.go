@@ -170,20 +170,22 @@ func (k Keeper) CreatePackfileUpdateProposal(
 	rootHash []byte,
 	size uint64,
 	oldCid string,
+	mergeCommitSha string,
 	expirationSeconds uint64,
 ) uint64 {
 	proposal := types.ProposedPackfileUpdate{
-		Provider:     provider,
-		RepositoryId: repositoryId,
-		User:         user,
-		Name:         name,
-		Cid:          cid,
-		RootHash:     rootHash,
-		Size_:        size,
-		OldCid:       oldCid,
-		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
-		ProposedAt:   ctx.BlockTime(),
-		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		Provider:       provider,
+		RepositoryId:   repositoryId,
+		User:           user,
+		Name:           name,
+		Cid:            cid,
+		RootHash:       rootHash,
+		Size_:          size,
+		OldCid:         oldCid,
+		MergeCommitSha: mergeCommitSha,
+		Status:         types.ProposalStatus_PROPOSAL_STATUS_PENDING,
+		ProposedAt:     ctx.BlockTime(),
+		ExpiresAt:      ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
 	}
 
 	return k.AppendProposedPackfileUpdate(ctx, proposal)

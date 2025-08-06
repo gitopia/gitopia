@@ -1165,6 +1165,7 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		msg.RootHash,
 		msg.GetSize_(),
 		msg.OldCid,
+		msg.MergeCommitSha,
 		300, // 300 seconds expiration
 	)
 
