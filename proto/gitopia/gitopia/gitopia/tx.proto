@@ -697,16 +697,17 @@ message MsgDaoCreateRelease {
 
   // admin is the account address of the group admin
   string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
-  string tagName = 3;
-  string target = 4;
-  string name = 5;
-  string description = 6;
-  string attachments = 7;
-  bool draft = 8;
-  bool preRelease = 9;
-  bool isTag = 10;
-  string provider = 11;
+  string creator = 2;
+  RepositoryId repositoryId = 3 [(gogoproto.nullable) = false];
+  string tagName = 4;
+  string target = 5;
+  string name = 6;
+  string description = 7;
+  string attachments = 8;
+  bool draft = 9;
+  bool preRelease = 10;
+  bool isTag = 11;
+  string provider = 12;
 }
 
 message MsgDaoCreateReleaseResponse {
