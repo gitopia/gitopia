@@ -7,9 +7,10 @@ import (
 
 var _ sdk.Msg = &MsgInvokeDaoMergePullRequest{}
 
-func NewMsgInvokeDaoMergePullRequest(admin string, repositoryId uint64, iid uint64, provider string, baseCommitSha string) *MsgInvokeDaoMergePullRequest {
+func NewMsgInvokeDaoMergePullRequest(admin string, creator string, repositoryId uint64, iid uint64, provider string, baseCommitSha string) *MsgInvokeDaoMergePullRequest {
 	return &MsgInvokeDaoMergePullRequest{
 		Admin:         admin,
+		Creator:       creator,
 		RepositoryId:  repositoryId,
 		Iid:           iid,
 		Provider:      provider,
@@ -42,6 +43,11 @@ func (msg *MsgInvokeDaoMergePullRequest) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Admin)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid admin address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
 	_, err = sdk.AccAddressFromBech32(msg.Provider)

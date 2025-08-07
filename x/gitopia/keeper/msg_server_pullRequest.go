@@ -412,7 +412,7 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.InvokeDaoMergePullRequestEventKey),
-			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Admin),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
