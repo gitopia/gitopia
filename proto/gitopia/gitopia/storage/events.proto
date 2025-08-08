@@ -36,6 +36,7 @@ message EventPackfileDeleted {
   uint64 repository_id = 1;
   string name = 2;
   string cid = 3;
+  string provider = 4;
 }
 
 // EventReleaseAssetUpdated is emitted when a release asset is updated
@@ -111,4 +112,5 @@ message EventLFSObjectDeleted {
   uint64 repository_id = 1;
   string oid = 2;
   string cid = 3;
+  string provider = 4;
 }

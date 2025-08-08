@@ -36,11 +36,8 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUnregisterProvider())
 	cmd.AddCommand(CmdCompleteUnstake())
 	cmd.AddCommand(CmdUpdateRepositoryPackfile())
-	cmd.AddCommand(CmdDeleteRepositoryPackfile())
 	cmd.AddCommand(CmdUpdateReleaseAsset())
-	cmd.AddCommand(CmdDeleteReleaseAsset())
 	cmd.AddCommand(CmdUpdateLFSObject())
-	cmd.AddCommand(CmdDeleteLFSObject())
 	cmd.AddCommand(CmdSubmitChallengeResponse())
 	// this line is used by starport scaffolding # 1
 
@@ -229,39 +226,6 @@ func CmdUpdateRepositoryPackfile() *cobra.Command {
 	return cmd
 }
 
-func CmdDeleteRepositoryPackfile() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-repository-packfile [repository-id] [owner-id]",
-		Short: "Delete a repository packfile",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid repository-id: %w", err)
-			}
-
-			ownerId := args[1]
-
-			msg := types.NewMsgDeleteRepositoryPackfile(
-				clientCtx.GetFromAddress().String(),
-				repositoryId,
-				ownerId,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
-
 func CmdUpdateReleaseAsset() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-release-asset [repository-id] [tag] [name] [cid] [root-hash-hex] [size] [sha256] [old-cid]",
@@ -316,43 +280,6 @@ func CmdUpdateReleaseAsset() *cobra.Command {
 	return cmd
 }
 
-func CmdDeleteReleaseAsset() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-release-asset [repository-id] [tag] [name] [owner-id]",
-		Short: "Delete a release asset",
-		Args:  cobra.ExactArgs(4),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid repository-id: %w", err)
-			}
-
-			tag := args[1]
-			name := args[2]
-			ownerId := args[3]
-
-			msg := types.NewMsgDeleteReleaseAsset(
-				clientCtx.GetFromAddress().String(),
-				repositoryId,
-				tag,
-				name,
-				ownerId,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
-
 func CmdUpdateLFSObject() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-lfs-object [repository-id] [oid] [size] [cid] [root-hash-hex]",
@@ -390,41 +317,6 @@ func CmdUpdateLFSObject() *cobra.Command {
 				size,
 				cid,
 				rootHash,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
-
-func CmdDeleteLFSObject() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-lfs-object [repository-id] [oid] [owner-id]",
-		Short: "Delete an LFS object",
-		Args:  cobra.ExactArgs(3),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid repository-id: %w", err)
-			}
-
-			oid := args[1]
-			ownerId := args[2]
-
-			msg := types.NewMsgDeleteLFSObject(
-				clientCtx.GetFromAddress().String(),
-				repositoryId,
-				oid,
-				ownerId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

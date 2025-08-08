@@ -16,15 +16,12 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "storage/UpdateParams", nil)
 	cdc.RegisterConcrete(&MsgClawbackProviderStake{}, "storage/ClawbackProviderStake", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryPackfile{}, "storage/UpdateRepositoryPackfile", nil)
-	cdc.RegisterConcrete(&MsgDeleteRepositoryPackfile{}, "storage/DeleteRepositoryPackfile", nil)
 	cdc.RegisterConcrete(&MsgSubmitChallengeResponse{}, "storage/SubmitChallengeResponse", nil)
 	cdc.RegisterConcrete(&MsgWithdrawProviderRewards{}, "storage/WithdrawProviderRewards", nil)
 	cdc.RegisterConcrete(&MsgUnregisterProvider{}, "storage/UnregisterProvider", nil)
 	cdc.RegisterConcrete(&MsgCompleteUnstake{}, "storage/CompleteUnstake", nil)
 	cdc.RegisterConcrete(&MsgUpdateReleaseAsset{}, "storage/UpdateReleaseAsset", nil)
-	cdc.RegisterConcrete(&MsgDeleteReleaseAsset{}, "storage/DeleteReleaseAsset", nil)
 	cdc.RegisterConcrete(&MsgUpdateLFSObject{}, "storage/UpdateLFSObject", nil)
-	cdc.RegisterConcrete(&MsgDeleteLFSObject{}, "storage/DeleteLFSObject", nil)
 	cdc.RegisterConcrete(&MsgIncreaseStake{}, "storage/IncreaseStake", nil)
 	cdc.RegisterConcrete(&MsgDecreaseStake{}, "storage/DecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgCompleteDecreaseStake{}, "storage/CompleteDecreaseStake", nil)
@@ -48,15 +45,12 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgUpdateParams{},
 		&MsgClawbackProviderStake{},
 		&MsgUpdateRepositoryPackfile{},
-		&MsgDeleteRepositoryPackfile{},
 		&MsgSubmitChallengeResponse{},
 		&MsgWithdrawProviderRewards{},
 		&MsgUnregisterProvider{},
 		&MsgCompleteUnstake{},
 		&MsgUpdateReleaseAsset{},
-		&MsgDeleteReleaseAsset{},
 		&MsgUpdateLFSObject{},
-		&MsgDeleteLFSObject{},
 		&MsgIncreaseStake{},
 		&MsgDecreaseStake{},
 		&MsgCompleteDecreaseStake{},

@@ -23,19 +23,12 @@ service Msg {
   // UpdateRepositoryPackfile updates repository packfile CID and root hash
   rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
 
-  // DeleteRepositoryPackfile deletes repository packfile
-  rpc DeleteRepositoryPackfile(MsgDeleteRepositoryPackfile) returns (MsgDeleteRepositoryPackfileResponse);
-
   // UpdateReleaseAsset updates release asset
   rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
 
   // UpdateReleaseAssets updates multiple release assets in a single transaction
   rpc UpdateReleaseAssets(MsgUpdateReleaseAssets) returns (MsgUpdateReleaseAssetsResponse);
-  
 
-  // DeleteReleaseAsset deletes release asset
-  rpc DeleteReleaseAsset(MsgDeleteReleaseAsset) returns (MsgDeleteReleaseAssetResponse);
-  
   // SubmitChallengeResponse submits proof for storage challenge
   rpc SubmitChallengeResponse(MsgSubmitChallengeResponse) returns (MsgSubmitChallengeResponseResponse);
 
@@ -77,9 +70,6 @@ service Msg {
 
   // UpdateLFSObject updates an existing LFS object
   rpc UpdateLFSObject(MsgUpdateLFSObject) returns (MsgUpdateLFSObjectResponse);
-
-  // DeleteLFSObject deletes an LFS object
-  rpc DeleteLFSObject(MsgDeleteLFSObject) returns (MsgDeleteLFSObjectResponse);
 
   // ProposeReleaseAssetsUpdate proposes a release assets update for user approval
   rpc ProposeReleaseAssetsUpdate(MsgProposeReleaseAssetsUpdate) returns (MsgProposeReleaseAssetsUpdateResponse);
@@ -136,15 +126,6 @@ message MsgUpdateRepositoryPackfile {
 
 message MsgUpdateRepositoryPackfileResponse {}
 
-// MsgDeleteRepositoryPackfile defines a message for deleting repository packfile
-message MsgDeleteRepositoryPackfile {
-  string creator = 1;
-  uint64 repository_id = 2;
-  string owner_id = 3;
-}
-
-message MsgDeleteRepositoryPackfileResponse {}
-
 // MsgUpdateReleaseAsset defines a message for updating release asset
 message MsgUpdateReleaseAsset {
   string creator = 1;
@@ -171,17 +152,6 @@ message MsgUpdateReleaseAssets {
 }
 
 message MsgUpdateReleaseAssetsResponse {}
-
-// MsgDeleteReleaseAsset defines a message for deleting release asset
-message MsgDeleteReleaseAsset {
-  string creator = 1;
-  uint64 repository_id = 2;
-  string tag = 3;
-  string name = 4;
-  string owner_id = 5;
-}
-
-message MsgDeleteReleaseAssetResponse {}
 
 // MsgSubmitChallengeResponse defines a message for submitting challenge response
 message MsgSubmitChallengeResponse {
@@ -311,16 +281,6 @@ message MsgUpdateLFSObject {
 
 message MsgUpdateLFSObjectResponse {}
 
-// MsgDeleteLFSObject defines a message for deleting an LFS object
-message MsgDeleteLFSObject {
-  string creator = 1;
-  uint64 repository_id = 2;
-  string oid = 3;
-  string owner_id = 4;
-}
-
-message MsgDeleteLFSObjectResponse {}
-
 // MsgProposeRepositoryPackfileUpdate defines a message for proposing a packfile update
 message MsgProposeRepositoryPackfileUpdate {
   string creator = 1;
@@ -334,6 +294,8 @@ message MsgProposeRepositoryPackfileUpdate {
   string old_cid = 8;
   // merge_commit_sha is the commit SHA when this proposal is for a merge pull request
   string merge_commit_sha = 9;
+  // delete indicates this proposal is to delete the packfile instead of update
+  bool delete = 10;
 }
 
 message MsgProposeRepositoryPackfileUpdateResponse {
@@ -396,6 +358,8 @@ message MsgProposeLFSObjectUpdate {
   uint64 size = 5;
   string cid = 6;
   bytes root_hash = 7;
+  // delete indicates this proposal is to delete the LFS object instead of create
+  bool delete = 8;
 }
 
 message MsgProposeLFSObjectUpdateResponse {

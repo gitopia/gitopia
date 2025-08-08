@@ -286,58 +286,6 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
 }
 
-func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.MsgDeleteRepositoryPackfile) (*types.MsgDeleteRepositoryPackfileResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Jailed || provider.Status != types.Bonded {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	if !found {
-		// Create new user quota
-		userQuota = gitopiatypes.UserQuota{
-			Address:     msg.OwnerId,
-			StorageUsed: 0,
-		}
-	}
-
-	// Check if packfile exists for this repository
-	packfile, found := k.GetPackfile(ctx, msg.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("packfile not found")
-	}
-
-	// Decrement or remove old cid reference count
-	if packfile.Cid != "" {
-		k.DecreaseCidReferenceCount(ctx, packfile.Cid)
-		if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
-			k.RemoveCidReferenceCount(ctx, packfile.Cid)
-		}
-	}
-
-	userQuota.StorageUsed -= uint64(packfile.Size_)
-	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-	// Remove existing packfile
-	k.RemovePackfile(ctx, msg.RepositoryId)
-
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalPackfileSize -= uint64(packfile.Size_)
-	k.SetStorageStats(ctx, storageStats)
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
-		RepositoryId: msg.RepositoryId,
-		Name:         packfile.Name,
-		Cid:          packfile.Cid,
-	})
-
-	return &types.MsgDeleteRepositoryPackfileResponse{}, nil
-}
-
 func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -699,51 +647,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	})
 
 	return &types.MsgUpdateReleaseAssetsResponse{}, nil
-}
-
-func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDeleteReleaseAsset) (*types.MsgDeleteReleaseAssetResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	// Get the release asset
-	asset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-	if !found {
-		return nil, fmt.Errorf("release asset not found")
-	}
-
-	// Decrease cid reference count
-	k.DecreaseCidReferenceCount(ctx, asset.Cid)
-	if count, found := k.GetCidReferenceCount(ctx, asset.Cid); found && count.Count == 0 {
-		k.RemoveCidReferenceCount(ctx, asset.Cid)
-	}
-
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalReleaseAssetSize -= asset.Size_
-	k.SetStorageStats(ctx, storageStats)
-
-	// Delete the release asset
-	k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-
-	// Update user quota
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	userQuota.StorageUsed -= asset.Size_
-	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
-		RepositoryId: msg.RepositoryId,
-		Tag:          msg.Tag,
-		Name:         msg.Name,
-		Cid:          asset.Cid,
-		Sha256:       asset.Sha256,
-	})
-
-	return &types.MsgDeleteReleaseAssetResponse{}, nil
 }
 
 func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.MsgSubmitChallengeResponse) (*types.MsgSubmitChallengeResponseResponse, error) {
@@ -1119,51 +1022,6 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 	return &types.MsgUpdateLFSObjectResponse{}, nil
 }
 
-// MsgDeleteLFSObject deletes an LFS object
-func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLFSObject) (*types.MsgDeleteLFSObjectResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	// Get the LFS object
-	lfsObj, found := k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
-	if !found {
-		return nil, fmt.Errorf("LFS object not found")
-	}
-
-	// Decrease cid reference count
-	k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
-	if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
-		k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
-	}
-
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalLfsObjectSize -= uint64(lfsObj.Size_)
-	k.SetStorageStats(ctx, storageStats)
-
-	// Remove LFS object
-	k.RemoveLFSObject(ctx, msg.RepositoryId, msg.Oid)
-
-	// Update user quota
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	userQuota.StorageUsed -= uint64(lfsObj.Size_)
-	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-	ctx.EventManager().EmitTypedEvent(
-		&types.EventLFSObjectDeleted{
-			RepositoryId: msg.RepositoryId,
-			Oid:          msg.Oid,
-			Cid:          lfsObj.Cid,
-		},
-	)
-
-	return &types.MsgDeleteLFSObjectResponse{}, nil
-}
-
 func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *types.MsgProposeRepositoryPackfileUpdate) (*types.MsgProposeRepositoryPackfileUpdateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -1193,6 +1051,13 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		}
 	}
 
+	// For delete proposals, ensure the packfile exists
+	if msg.Delete {
+		if _, found := k.GetPackfile(ctx, msg.RepositoryId); !found {
+			return nil, fmt.Errorf("packfile not found for delete proposal")
+		}
+	}
+
 	// Create the proposal
 	proposalId := k.CreatePackfileUpdateProposal(
 		ctx,
@@ -1206,6 +1071,7 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		msg.OldCid,
 		msg.MergeCommitSha,
 		300, // 300 seconds expiration
+		msg.Delete,
 	)
 
 	return &types.MsgProposeRepositoryPackfileUpdateResponse{
@@ -1275,6 +1141,59 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 			Address:     repository.Owner.Id,
 			StorageUsed: 0,
 		}
+	}
+
+	// If this is a delete proposal, perform deletion
+	if proposal.Delete {
+		// Get existing packfile
+		packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+		if !found {
+			// Mark proposal as rejected due to missing packfile
+			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
+			k.SetProposedPackfileUpdate(ctx, proposal)
+			return nil, fmt.Errorf("packfile not found")
+		}
+
+		// Decrement or remove old cid reference count
+		if packfile.Cid != "" {
+			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
+			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+				k.RemoveCidReferenceCount(ctx, packfile.Cid)
+			}
+		}
+
+		// Update quota and stats
+		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if userQuota.StorageUsed >= uint64(packfile.Size_) {
+			userQuota.StorageUsed -= uint64(packfile.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalPackfileSize >= uint64(packfile.Size_) {
+			storageStats.TotalPackfileSize -= uint64(packfile.Size_)
+		} else {
+			storageStats.TotalPackfileSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		// Remove packfile
+		k.RemovePackfile(ctx, proposal.RepositoryId)
+
+		// Emit delete event with provider
+		ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
+			RepositoryId: proposal.RepositoryId,
+			Name:         packfile.Name,
+			Cid:          packfile.Cid,
+			Provider:     proposal.Provider,
+		})
+
+		// Remove proposal
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+
+		return &types.MsgApproveRepositoryPackfileUpdateResponse{}, nil
 	}
 
 	// Check if packfile already exists for this repository
@@ -2022,10 +1941,16 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 		return nil, fmt.Errorf("repository not found")
 	}
 
-	// Check if LFS object exists
+	// Check if LFS object exists for create vs delete
 	_, found = k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
-	if found {
-		return nil, fmt.Errorf("LFS object already exists")
+	if msg.Delete {
+		if !found {
+			return nil, fmt.Errorf("LFS object not found for delete proposal")
+		}
+	} else {
+		if found {
+			return nil, fmt.Errorf("LFS object already exists")
+		}
 	}
 
 	proposalId := k.CreateLFSObjectUpdateProposal(
@@ -2038,6 +1963,7 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 		msg.Cid,
 		msg.RootHash,
 		300, // 300 seconds expiration
+		msg.Delete,
 	)
 
 	return &types.MsgProposeLFSObjectUpdateResponse{
@@ -2075,6 +2001,53 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
 		k.SetProposedLFSObjectUpdate(ctx, proposal)
 		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// If delete proposal, perform deletion
+	if proposal.Delete {
+		// Get the LFS object
+		lfsObj, found := k.GetLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
+		if !found {
+			return nil, fmt.Errorf("LFS object not found")
+		}
+
+		// Decrease cid reference count
+		k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
+			k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
+		}
+
+		// Update stats and quota
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalLfsObjectSize >= uint64(lfsObj.Size_) {
+			storageStats.TotalLfsObjectSize -= uint64(lfsObj.Size_)
+		} else {
+			storageStats.TotalLfsObjectSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if userQuota.StorageUsed >= uint64(lfsObj.Size_) {
+			userQuota.StorageUsed -= uint64(lfsObj.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		// Remove LFS object
+		k.RemoveLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
+
+		// Emit deletion event with provider
+		ctx.EventManager().EmitTypedEvent(&types.EventLFSObjectDeleted{
+			RepositoryId: proposal.RepositoryId,
+			Oid:          proposal.Oid,
+			Cid:          lfsObj.Cid,
+			Provider:     proposal.Provider,
+		})
+
+		// Remove proposal
+		k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
+		return &types.MsgApproveLFSObjectUpdateResponse{}, nil
 	}
 
 	// Check if lfs object exists already

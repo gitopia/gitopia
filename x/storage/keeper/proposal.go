@@ -172,6 +172,7 @@ func (k Keeper) CreatePackfileUpdateProposal(
 	oldCid string,
 	mergeCommitSha string,
 	expirationSeconds uint64,
+	deleteFlag bool,
 ) uint64 {
 	proposal := types.ProposedPackfileUpdate{
 		Provider:       provider,
@@ -186,6 +187,7 @@ func (k Keeper) CreatePackfileUpdateProposal(
 		Status:         types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:     ctx.BlockTime(),
 		ExpiresAt:      ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		Delete:         deleteFlag,
 	}
 
 	return k.AppendProposedPackfileUpdate(ctx, proposal)
@@ -520,6 +522,7 @@ func (k Keeper) CreateLFSObjectUpdateProposal(
 	cid string,
 	rootHash []byte,
 	expirationSeconds uint64,
+	deleteFlag bool,
 ) uint64 {
 	proposal := types.ProposedLFSObjectUpdate{
 		Provider:     provider,
@@ -532,6 +535,7 @@ func (k Keeper) CreateLFSObjectUpdateProposal(
 		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:   ctx.BlockTime(),
 		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		Delete:       deleteFlag,
 	}
 
 	return k.AppendProposedLFSObjectUpdate(ctx, proposal)

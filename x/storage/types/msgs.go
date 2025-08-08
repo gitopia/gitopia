@@ -10,18 +10,15 @@ const (
 	TypeMsgRegisterProvider                = "register_provider"
 	TypeMsgUpdateProvider                  = "update_provider"
 	TypeMsgUpdateRepositoryPackfile        = "update_repository_packfile"
-	TypeMsgDeleteRepositoryPackfile        = "delete_repository_packfile"
 	TypeMsgSubmitChallengeResponse         = "submit_challenge_response"
 	TypeMsgWithdrawProviderRewards         = "withdraw_provider_rewards"
 	TypeMsgUnregisterProvider              = "unregister_provider"
 	TypeMsgCompleteUnstake                 = "complete_unstake"
 	TypeMsgUpdateReleaseAsset              = "update_release_asset"
 	TypeMsgUpdateReleaseAssets             = "update_release_assets"
-	TypeMsgDeleteReleaseAsset              = "delete_release_asset"
 	TypeMsgUpdateParams                    = "update_params"
 	TypeMsgClawbackProviderStake           = "clawback_provider_stake"
 	TypeMsgUpdateLFSObject                 = "update_lfs_object"
-	TypeMsgDeleteLFSObject                 = "delete_lfs_object"
 	TypeMsgIncreaseStake                   = "increase_stake"
 	TypeMsgDecreaseStake                   = "decrease_stake"
 	TypeMsgCompleteDecreaseStake           = "complete_decrease_stake"
@@ -205,51 +202,6 @@ func (msg *MsgUpdateRepositoryPackfile) ValidateBasic() error {
 
 	if msg.Size_ == 0 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "size cannot be 0")
-	}
-
-	return nil
-}
-
-var _ sdk.Msg = &MsgDeleteRepositoryPackfile{}
-
-func NewMsgDeleteRepositoryPackfile(creator string, repositoryId uint64, ownerId string) *MsgDeleteRepositoryPackfile {
-	return &MsgDeleteRepositoryPackfile{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		OwnerId:      ownerId,
-	}
-}
-
-func (msg *MsgDeleteRepositoryPackfile) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgDeleteRepositoryPackfile) Type() string {
-	return TypeMsgDeleteRepositoryPackfile
-}
-
-func (msg *MsgDeleteRepositoryPackfile) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgDeleteRepositoryPackfile) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgDeleteRepositoryPackfile) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 	}
 
 	return nil
@@ -572,61 +524,6 @@ func (msg *MsgUpdateReleaseAssets) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgDeleteReleaseAsset{}
-
-func NewMsgDeleteReleaseAsset(creator string, repositoryId uint64, tag string, name string, ownerId string) *MsgDeleteReleaseAsset {
-	return &MsgDeleteReleaseAsset{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Tag:          tag,
-		Name:         name,
-		OwnerId:      ownerId,
-	}
-}
-
-func (msg *MsgDeleteReleaseAsset) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgDeleteReleaseAsset) Type() string {
-	return TypeMsgDeleteReleaseAsset
-}
-
-func (msg *MsgDeleteReleaseAsset) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgDeleteReleaseAsset) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgDeleteReleaseAsset) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.Tag == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "tag cannot be empty")
-	}
-
-	if msg.Name == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty")
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-	}
-
-	return nil
-}
-
 var _ sdk.Msg = &MsgUpdateParams{}
 
 func NewMsgUpdateParams(authority string, params Params) *MsgUpdateParams {
@@ -773,56 +670,6 @@ func (msg *MsgUpdateLFSObject) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgDeleteLFSObject{}
-
-func NewMsgDeleteLFSObject(creator string, repositoryId uint64, oid string, ownerId string) *MsgDeleteLFSObject {
-	return &MsgDeleteLFSObject{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Oid:          oid,
-		OwnerId:      ownerId,
-	}
-}
-
-func (msg *MsgDeleteLFSObject) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgDeleteLFSObject) Type() string {
-	return TypeMsgDeleteLFSObject
-}
-
-func (msg *MsgDeleteLFSObject) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgDeleteLFSObject) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
-func (msg *MsgDeleteLFSObject) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
-
-	if msg.Oid == "" {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "oid cannot be empty")
-	}
-
-	_, err = sdk.AccAddressFromBech32(msg.OwnerId)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
-	}
-
-	return nil
-}
-
 var _ sdk.Msg = &MsgUnjailProvider{}
 
 func NewMsgUnjailProvider(creator string) *MsgUnjailProvider {
@@ -908,6 +755,14 @@ func (msg *MsgProposeRepositoryPackfileUpdate) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+
+	if msg.Delete {
+		// For delete proposals, only name is required; CID/RootHash/Size are ignored
+		if msg.Name == "" {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "name cannot be empty for delete")
+		}
+		return nil
 	}
 
 	if msg.Name == "" {
@@ -1190,6 +1045,13 @@ func (msg *MsgProposeLFSObjectUpdate) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.User)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+
+	if msg.Delete {
+		if msg.Oid == "" {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "oid cannot be empty for delete")
+		}
+		return nil
 	}
 
 	if msg.Oid == "" {

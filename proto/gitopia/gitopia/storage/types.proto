@@ -269,6 +269,8 @@ message ProposedPackfileUpdate {
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
+  // delete indicates this proposal is to delete the packfile instead of update
+  bool delete = 14;
 }
 
 // ReleaseAssetUpdate represents a single release asset update within a batch
@@ -322,4 +324,6 @@ message ProposedLFSObjectUpdate {
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
+  // delete indicates this proposal is to delete the LFS object instead of create
+  bool delete = 12;
 }
