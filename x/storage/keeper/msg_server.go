@@ -520,6 +520,20 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	// First pass: validate all assets and check optimistic concurrency control
 	for i, assetUpdate := range msg.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			// For delete, asset must exist and match old_cid if provided
+			if !found {
+				return nil, fmt.Errorf("asset[%d] (%s) not found for delete", i, assetUpdate.Name)
+			}
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+			oldCids = append(oldCids, existingAsset.Cid)
+			oldSha256s = append(oldSha256s, existingAsset.Sha256)
+			totalSizeDiff -= int64(existingAsset.Size_)
+			continue
+		}
+
 		if found {
 			// Optimistic concurrency control: check if the current CID matches the expected old_cid
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
@@ -578,6 +592,31 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	// Second pass: perform all updates atomically
 	for i, assetUpdate := range msg.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if found {
+				// Decrease cid reference count for the asset being deleted
+				if existingAsset.Cid != "" {
+					k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+					if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+						k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+					}
+				}
+
+				// Remove asset (storage stats and quota will be updated by total diff logic below)
+				k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
+
+				// Emit delete event
+				ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
+					RepositoryId: msg.RepositoryId,
+					Tag:          msg.Tag,
+					Name:         assetUpdate.Name,
+					Cid:          oldCids[i],
+					Sha256:       oldSha256s[i],
+				})
+			}
+			continue
+		}
+
 		if found {
 			// Decrement old CID reference count
 			if existingAsset.Cid != "" {
@@ -1740,6 +1779,24 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	// First pass: validate all assets and check optimistic concurrency control
 	for i, assetUpdate := range proposal.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if !found {
+				// Mark proposal as rejected due to missing asset to delete
+				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
+				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				return nil, fmt.Errorf("asset[%d] (%s) not found for delete", i, assetUpdate.Name)
+			}
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				// Mark proposal as rejected due to concurrency conflict
+				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
+				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+			oldCids = append(oldCids, existingAsset.Cid)
+			oldSha256s = append(oldSha256s, existingAsset.Sha256)
+			totalSizeDiff -= int64(existingAsset.Size_)
+			continue
+		}
 		if found {
 			// Optimistic concurrency control: check if the current CID matches the expected old_cid
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
@@ -1810,6 +1867,30 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	// Second pass: perform all updates atomically
 	for i, assetUpdate := range proposal.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if found {
+				// Decrease cid reference count
+				if existingAsset.Cid != "" {
+					k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+					if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+						k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+					}
+				}
+				// Remove asset (storage stats and quota will be updated by total diff logic below)
+				k.RemoveReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+
+				// Emit delete event
+				ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
+					RepositoryId: proposal.RepositoryId,
+					Tag:          proposal.Tag,
+					Name:         assetUpdate.Name,
+					Cid:          oldCids[i],
+					Sha256:       oldSha256s[i],
+				})
+			}
+			continue
+		}
+
 		if found {
 			// Decrement old CID reference count
 			if existingAsset.Cid != "" {

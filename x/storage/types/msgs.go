@@ -544,6 +544,14 @@ func (msg *MsgUpdateReleaseAssets) ValidateBasic() error {
 		}
 		assetNames[asset.Name] = true
 
+		// If delete entry, relax field requirements and require old_cid
+		if asset.Delete {
+			if asset.OldCid == "" {
+				return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] delete requires old_cid", i)
+			}
+			continue
+		}
+
 		if asset.Cid == "" {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "asset[%d] CID cannot be empty", i)
 		}
