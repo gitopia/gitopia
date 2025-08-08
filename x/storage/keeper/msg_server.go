@@ -1158,6 +1158,12 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		if packfile.Cid != "" {
 			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
 			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+				ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+					RepositoryId: proposal.RepositoryId,
+					Cids:         []string{packfile.Cid},
+					Provider:     proposal.Provider,
+				})
+
 				k.RemoveCidReferenceCount(ctx, packfile.Cid)
 			}
 		}
@@ -1246,6 +1252,12 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		if oldCid != "" {
 			k.DecreaseCidReferenceCount(ctx, oldCid)
 			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
+				ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+					RepositoryId: proposal.RepositoryId,
+					Cids:         []string{oldCid},
+					Provider:     proposal.Provider,
+				})
+
 				k.RemoveCidReferenceCount(ctx, oldCid)
 			}
 		}
@@ -1784,6 +1796,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	}
 
 	// Second pass: perform all updates atomically
+	var cids []string
 	for i, assetUpdate := range proposal.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
 		if assetUpdate.Delete {
@@ -1792,6 +1805,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 				if existingAsset.Cid != "" {
 					k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
 					if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+						cids = append(cids, existingAsset.Cid)
 						k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
 					}
 				}
@@ -1815,6 +1829,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 			if existingAsset.Cid != "" {
 				k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
 				if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+					cids = append(cids, existingAsset.Cid)
 					k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
 				}
 			}
@@ -1892,6 +1907,12 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		RepositoryId: proposal.RepositoryId,
 		Tag:          proposal.Tag,
 		Assets:       proposal.Assets,
+		Provider:     proposal.Provider,
+	})
+
+	ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+		Cids:         cids,
+		RepositoryId: proposal.RepositoryId,
 		Provider:     proposal.Provider,
 	})
 
@@ -2014,6 +2035,12 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		// Decrease cid reference count
 		k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
 		if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
+			ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+				RepositoryId: proposal.RepositoryId,
+				Cids:         []string{lfsObj.Cid},
+				Provider:     proposal.Provider,
+			})
+
 			k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
 		}
 

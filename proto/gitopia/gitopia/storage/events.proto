@@ -114,3 +114,10 @@ message EventLFSObjectDeleted {
   string cid = 3;
   string provider = 4;
 }
+
+// EventDeleteStorageObject is emitted when older storage objects are deleted
+message EventDeleteStorageObject {
+  repeated string cids = 1;
+  uint64 repository_id = 2;
+  string provider = 3;
+}
