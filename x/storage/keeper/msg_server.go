@@ -1910,11 +1910,13 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		Provider:     proposal.Provider,
 	})
 
-	ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
-		Cids:         cids,
-		RepositoryId: proposal.RepositoryId,
-		Provider:     proposal.Provider,
-	})
+	if len(cids) > 0 {
+		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+			Cids:         cids,
+			RepositoryId: proposal.RepositoryId,
+			Provider:     proposal.Provider,
+		})
+	}
 
 	return &types.MsgApproveReleaseAssetsUpdateResponse{}, nil
 }
