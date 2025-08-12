@@ -286,157 +286,6 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
 }
 
-func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Jailed || provider.Status != types.Bonded {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("repository not found")
-	}
-
-	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
-	if !found {
-		// Create new user quota
-		userQuota = gitopiatypes.UserQuota{
-			Address:     repository.Owner.Id,
-			StorageUsed: 0,
-		}
-	}
-
-	// Check if release asset already exists for this repository
-	var oldCid, oldSha256 string
-	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-	if found {
-		oldCid = existingAsset.Cid
-		oldSha256 = existingAsset.Sha256
-
-		// Optimistic concurrency control: check if the current CID matches the expected old_cid
-		if msg.OldCid != "" && oldCid != msg.OldCid {
-			return nil, fmt.Errorf("release asset state has changed: expected CID %s, found %s", msg.OldCid, oldCid)
-		}
-		// Calculate the difference in size between the existing and new asset
-		existingSize := existingAsset.Size_
-		newSize := msg.Size_
-		var diff int64
-		if newSize >= existingSize {
-			diff = int64(newSize - existingSize)
-		} else {
-			diff = -(int64(existingSize - newSize))
-		}
-
-		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
-			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
-			if err != nil {
-				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-			}
-
-			// If there's a charge, transfer coins from user to storage charge account
-			if !charge.IsZero() {
-				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
-				if err != nil {
-					return nil, fmt.Errorf("invalid user address: %v", err)
-				}
-
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
-				}
-			}
-		}
-
-		// Decrement or remove old cid reference count
-		if oldCid != "" {
-			k.DecreaseCidReferenceCount(ctx, oldCid)
-			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
-				k.RemoveCidReferenceCount(ctx, oldCid)
-			}
-		}
-
-		// Update existing asset while preserving its ID
-		existingAsset.Creator = msg.Creator
-		existingAsset.Name = msg.Name
-		existingAsset.Cid = msg.Cid
-		existingAsset.RootHash = msg.RootHash
-		existingAsset.Size_ = msg.Size_
-		existingAsset.Sha256 = msg.Sha256
-		existingAsset.UpdatedAt = ctx.BlockTime()
-
-		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
-		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-		k.SetReleaseAsset(ctx, existingAsset)
-
-		storageStats := k.GetStorageStats(ctx)
-		storageStats.TotalReleaseAssetSize += uint64(int64(storageStats.TotalReleaseAssetSize) + diff)
-		k.SetStorageStats(ctx, storageStats)
-	} else {
-		// Calculate storage charge for new asset
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
-			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
-			if err != nil {
-				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-			}
-
-			// If there's a charge, transfer coins from user to storage charge account
-			if !charge.IsZero() {
-				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
-				if err != nil {
-					return nil, fmt.Errorf("invalid user address: %v", err)
-				}
-
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
-				}
-			}
-		}
-
-		// Create new release asset
-		asset := types.ReleaseAsset{
-			Creator:      msg.Creator,
-			RepositoryId: msg.RepositoryId,
-			Tag:          msg.Tag,
-			Name:         msg.Name,
-			Cid:          msg.Cid,
-			RootHash:     msg.RootHash,
-			Size_:        msg.Size_,
-			Sha256:       msg.Sha256,
-			CreatedAt:    ctx.BlockTime(),
-			UpdatedAt:    ctx.BlockTime(),
-		}
-
-		userQuota.StorageUsed += msg.Size_
-		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-		k.AppendReleaseAsset(ctx, asset)
-
-		// Increase new cid reference count
-		k.IncreaseCidReferenceCount(ctx, msg.Cid)
-
-		storageStats := k.GetStorageStats(ctx)
-		storageStats.TotalReleaseAssetSize += msg.Size_
-		k.SetStorageStats(ctx, storageStats)
-	}
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetUpdated{
-		RepositoryId: msg.RepositoryId,
-		Tag:          msg.Tag,
-		Name:         msg.Name,
-		NewCid:       msg.Cid,
-		OldCid:       oldCid,
-		NewSha256:    msg.Sha256,
-		OldSha256:    oldSha256,
-	})
-
-	return &types.MsgUpdateReleaseAssetResponse{}, nil
-}
-
 func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpdateReleaseAssets) (*types.MsgUpdateReleaseAssetsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -462,8 +311,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 
 	// Track changes for storage calculation and events
 	var totalSizeDiff int64
-	oldCids := make([]string, 0, len(msg.Assets))
-	oldSha256s := make([]string, 0, len(msg.Assets))
 
 	// First pass: validate all assets and check optimistic concurrency control
 	for i, assetUpdate := range msg.Assets {
@@ -476,8 +323,7 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
-			oldCids = append(oldCids, existingAsset.Cid)
-			oldSha256s = append(oldSha256s, existingAsset.Sha256)
+
 			totalSizeDiff -= int64(existingAsset.Size_)
 			continue
 		}
@@ -487,8 +333,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
-			oldCids = append(oldCids, existingAsset.Cid)
-			oldSha256s = append(oldSha256s, existingAsset.Sha256)
 
 			// Calculate size difference
 			existingSize := existingAsset.Size_
@@ -500,8 +344,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 			}
 		} else {
 			// New asset
-			oldCids = append(oldCids, "")
-			oldSha256s = append(oldSha256s, "")
 			totalSizeDiff += int64(assetUpdate.Size_)
 		}
 	}
@@ -538,7 +380,7 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	}
 
 	// Second pass: perform all updates atomically
-	for i, assetUpdate := range msg.Assets {
+	for _, assetUpdate := range msg.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
 		if assetUpdate.Delete {
 			if found {
@@ -552,15 +394,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 
 				// Remove asset (storage stats and quota will be updated by total diff logic below)
 				k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
-
-				// Emit delete event
-				ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
-					RepositoryId: msg.RepositoryId,
-					Tag:          msg.Tag,
-					Name:         assetUpdate.Name,
-					Cid:          oldCids[i],
-					Sha256:       oldSha256s[i],
-				})
 			}
 			continue
 		}
@@ -603,17 +436,6 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 
 		// Increase new CID reference count
 		k.IncreaseCidReferenceCount(ctx, assetUpdate.Cid)
-
-		// Emit individual asset update event
-		ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetUpdated{
-			RepositoryId: msg.RepositoryId,
-			Tag:          msg.Tag,
-			Name:         assetUpdate.Name,
-			NewCid:       assetUpdate.Cid,
-			OldCid:       oldCids[i],
-			NewSha256:    assetUpdate.Sha256,
-			OldSha256:    oldSha256s[i],
-		})
 	}
 
 	// Update user quota and storage stats
@@ -1188,14 +1010,6 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		// Remove packfile
 		k.RemovePackfile(ctx, proposal.RepositoryId)
 
-		// Emit delete event with provider
-		ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
-			RepositoryId: proposal.RepositoryId,
-			Name:         packfile.Name,
-			Cid:          packfile.Cid,
-			Provider:     proposal.Provider,
-		})
-
 		// Remove proposal
 		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 
@@ -1345,6 +1159,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		NewName:      proposal.Name,
 		OldName:      oldName,
 		Provider:     proposal.Provider,
+		Deleted:      proposal.Delete,
 	})
 
 	// Remove proposal
@@ -1797,7 +1612,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 	// Second pass: perform all updates atomically
 	var cids []string
-	for i, assetUpdate := range proposal.Assets {
+	for _, assetUpdate := range proposal.Assets {
 		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
 		if assetUpdate.Delete {
 			if found {
@@ -1811,15 +1626,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 				}
 				// Remove asset (storage stats and quota will be updated by total diff logic below)
 				k.RemoveReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
-
-				// Emit delete event
-				ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
-					RepositoryId: proposal.RepositoryId,
-					Tag:          proposal.Tag,
-					Name:         assetUpdate.Name,
-					Cid:          oldCids[i],
-					Sha256:       oldSha256s[i],
-				})
 			}
 			continue
 		}
@@ -1863,17 +1669,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 		// Increase new CID reference count
 		k.IncreaseCidReferenceCount(ctx, assetUpdate.Cid)
-
-		// Emit individual asset update event
-		ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetUpdated{
-			RepositoryId: proposal.RepositoryId,
-			Tag:          proposal.Tag,
-			Name:         assetUpdate.Name,
-			NewCid:       assetUpdate.Cid,
-			OldCid:       oldCids[i],
-			NewSha256:    assetUpdate.Sha256,
-			OldSha256:    oldSha256s[i],
-		})
 	}
 
 	// Update user quota and storage stats
@@ -2066,14 +1861,6 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		// Remove LFS object
 		k.RemoveLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
 
-		// Emit deletion event with provider
-		ctx.EventManager().EmitTypedEvent(&types.EventLFSObjectDeleted{
-			RepositoryId: proposal.RepositoryId,
-			Oid:          proposal.Oid,
-			Cid:          lfsObj.Cid,
-			Provider:     proposal.Provider,
-		})
-
 		// Remove proposal
 		k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 		return &types.MsgApproveLFSObjectUpdateResponse{}, nil
@@ -2157,6 +1944,7 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		Oid:          proposal.Oid,
 		Cid:          proposal.Cid,
 		Provider:     proposal.Provider,
+		Deleted:      proposal.Delete,
 	})
 
 	return &types.MsgApproveLFSObjectUpdateResponse{}, nil

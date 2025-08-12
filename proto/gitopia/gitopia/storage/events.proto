@@ -29,25 +29,7 @@ message EventPackfileUpdated {
   string new_name = 4;
   string old_name = 5;
   string provider = 6;
-}
-
-// EventPackfileDeleted is emitted when a packfile is deleted
-message EventPackfileDeleted {
-  uint64 repository_id = 1;
-  string name = 2;
-  string cid = 3;
-  string provider = 4;
-}
-
-// EventReleaseAssetUpdated is emitted when a release asset is updated
-message EventReleaseAssetUpdated {
-  uint64 repository_id = 1;
-  string tag = 2;
-  string name = 3;
-  string new_cid = 4;
-  string old_cid = 5;
-  string new_sha256 = 6;
-  string old_sha256 = 7;
+  bool deleted = 7;
 }
 
 // EventReleaseAssetsUpdated is emitted when release assets are updated
@@ -56,15 +38,6 @@ message EventReleaseAssetsUpdated {
   string tag = 2;
   repeated ReleaseAssetUpdate assets = 3;
   string provider = 4;
-}
-
-// EventReleaseAssetDeleted is emitted when a release asset is deleted
-message EventReleaseAssetDeleted {
-  uint64 repository_id = 1;
-  string tag = 2;
-  string name = 3;
-  string cid = 4;
-  string sha256 = 5;
 }
 
 // EventChallengeCreated is emitted when a new challenge is created
@@ -105,14 +78,7 @@ message EventLFSObjectUpdated {
   string oid = 2;
   string cid = 3;
   string provider = 4;
-}
-
-// EventLFSObjectDeleted is emitted when an LFS object is deleted
-message EventLFSObjectDeleted {
-  uint64 repository_id = 1;
-  string oid = 2;
-  string cid = 3;
-  string provider = 4;
+  bool deleted = 5;
 }
 
 // EventDeleteStorageObject is emitted when older storage objects are deleted

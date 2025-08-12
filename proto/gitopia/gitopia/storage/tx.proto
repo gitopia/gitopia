@@ -23,9 +23,6 @@ service Msg {
   // UpdateRepositoryPackfile updates repository packfile CID and root hash
   rpc UpdateRepositoryPackfile(MsgUpdateRepositoryPackfile) returns (MsgUpdateRepositoryPackfileResponse);
 
-  // UpdateReleaseAsset updates release asset
-  rpc UpdateReleaseAsset(MsgUpdateReleaseAsset) returns (MsgUpdateReleaseAssetResponse);
-
   // UpdateReleaseAssets updates multiple release assets in a single transaction
   rpc UpdateReleaseAssets(MsgUpdateReleaseAssets) returns (MsgUpdateReleaseAssetsResponse);
 
@@ -125,23 +122,6 @@ message MsgUpdateRepositoryPackfile {
 }
 
 message MsgUpdateRepositoryPackfileResponse {}
-
-// MsgUpdateReleaseAsset defines a message for updating release asset
-message MsgUpdateReleaseAsset {
-  string creator = 1;
-  uint64 repository_id = 2;
-  string tag = 3;
-  string name = 4;
-  string cid = 5;
-  bytes root_hash = 6;
-  uint64 size = 7;
-  string sha256 = 8;
-  // old_cid is the CID of the release asset when the provider processed the request
-  // only proceed with the update if the current CID matches old_cid
-  string old_cid = 9;
-}
-
-message MsgUpdateReleaseAssetResponse {}
 
 // MsgUpdateReleaseAssets defines a message for updating multiple release assets
 message MsgUpdateReleaseAssets {
