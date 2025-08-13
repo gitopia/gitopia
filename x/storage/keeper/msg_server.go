@@ -1999,9 +1999,8 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
 	var cids []string
-	var deletedPackfile *types.Packfile
-	deletedReleaseAssets := make([]*types.ReleaseAsset, 0)
-	deletedLfsObjects := make([]*types.LFSObject, 0)
+	deletedReleaseAssets := make([]*types.ReleaseAssetInfo, 0)
+	deletedLfsObjects := make([]*types.LFSObjectInfo, 0)
 
 	// Delete packfile
 	packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
@@ -2010,7 +2009,6 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
 			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
 				cids = append(cids, packfile.Cid)
-				deletedPackfile = &packfile
 				k.RemoveCidReferenceCount(ctx, packfile.Cid)
 			}
 		}
@@ -2038,7 +2036,10 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		k.DecreaseCidReferenceCount(ctx, lfsObject.Cid)
 		if count, found := k.GetCidReferenceCount(ctx, lfsObject.Cid); found && count.Count == 0 {
 			cids = append(cids, lfsObject.Cid)
-			deletedLfsObjects = append(deletedLfsObjects, &lfsObject)
+			deletedLfsObjects = append(deletedLfsObjects, &types.LFSObjectInfo{
+				Oid: lfsObject.Oid,
+				Cid: lfsObject.Cid,
+			})
 			k.RemoveCidReferenceCount(ctx, lfsObject.Cid)
 		}
 
@@ -2065,7 +2066,12 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		k.DecreaseCidReferenceCount(ctx, releaseAsset.Cid)
 		if count, found := k.GetCidReferenceCount(ctx, releaseAsset.Cid); found && count.Count == 0 {
 			cids = append(cids, releaseAsset.Cid)
-			deletedReleaseAssets = append(deletedReleaseAssets, &releaseAsset)
+			deletedReleaseAssets = append(deletedReleaseAssets, &types.ReleaseAssetInfo{
+				Tag:    releaseAsset.Tag,
+				Name:   releaseAsset.Name,
+				Cid:    releaseAsset.Cid,
+				Sha256: releaseAsset.Sha256,
+			})
 			k.RemoveCidReferenceCount(ctx, releaseAsset.Cid)
 		}
 
@@ -2102,7 +2108,8 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	ctx.EventManager().EmitTypedEvent(&types.EventRepositoryDeleted{
 		RepositoryId:  proposal.RepositoryId,
 		Provider:      proposal.Provider,
-		Packfile:      deletedPackfile,
+		PackfileCid:   packfile.Cid,
+		PackfileName:  packfile.Name,
 		LfsObjects:    deletedLfsObjects,
 		ReleaseAssets: deletedReleaseAssets,
 	})

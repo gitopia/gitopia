@@ -92,7 +92,22 @@ message EventDeleteStorageObject {
 message EventRepositoryDeleted {
   uint64 repository_id = 1;
   string provider = 2;
-  Packfile packfile = 3;
-  repeated ReleaseAsset release_assets = 4;
-  repeated LFSObject lfs_objects = 5;
+  string packfile_cid = 3;
+  string packfile_name = 4;
+  repeated ReleaseAssetInfo release_assets = 5;
+  repeated LFSObjectInfo lfs_objects = 6;
+}
+
+// ReleaseAssetInfo contains minimal information about a release asset
+message ReleaseAssetInfo {
+  string name = 1;
+  string cid = 2;
+  string sha256 = 3;
+  string tag = 4;
+}
+
+// LFSObjectInfo contains minimal information about an LFS object
+message LFSObjectInfo {
+  string oid = 1;
+  string cid = 2;
 }
