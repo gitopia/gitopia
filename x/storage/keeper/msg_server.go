@@ -1489,8 +1489,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 	// Track changes for storage calculation and events
 	var totalSizeDiff int64
-	oldCids := make([]string, 0, len(proposal.Assets))
-	oldSha256s := make([]string, 0, len(proposal.Assets))
 
 	// First pass: validate all assets and check optimistic concurrency control
 	for i, assetUpdate := range proposal.Assets {
@@ -1504,8 +1502,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
-			oldCids = append(oldCids, existingAsset.Cid)
-			oldSha256s = append(oldSha256s, existingAsset.Sha256)
+
 			totalSizeDiff -= int64(existingAsset.Size_)
 			continue
 		}
@@ -1515,8 +1512,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
-			oldCids = append(oldCids, existingAsset.Cid)
-			oldSha256s = append(oldSha256s, existingAsset.Sha256)
 
 			// Calculate size difference
 			existingSize := existingAsset.Size_
@@ -1528,8 +1523,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 			}
 		} else {
 			// New asset
-			oldCids = append(oldCids, "")
-			oldSha256s = append(oldSha256s, "")
 			totalSizeDiff += int64(assetUpdate.Size_)
 		}
 	}

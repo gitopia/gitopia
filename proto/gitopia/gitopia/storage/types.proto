@@ -280,10 +280,11 @@ message ReleaseAssetUpdate {
   bytes root_hash = 3;
   uint64 size = 4;
   string sha256 = 5;
+  string old_sha256 = 6;
   // old_cid is the CID of the release asset when the provider processed the request
-  string old_cid = 6;
+  string old_cid = 7;
   // delete indicates this entry requests deletion of the named asset
-  bool delete = 7;
+  bool delete = 8;
 }
 
 // ProposedReleaseAssetsUpdate represents a proposed release asset update awaiting approval
