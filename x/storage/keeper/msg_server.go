@@ -917,8 +917,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 
 	// Check if proposal has expired
 	if ctx.BlockTime().After(proposal.ExpiresAt) {
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-		k.SetProposedPackfileUpdate(ctx, proposal)
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("proposal has expired")
 	}
 
@@ -930,9 +929,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 	// Verify provider is still active
 	provider, found := k.GetProvider(ctx, proposal.Provider)
 	if !found || provider.Status != types.Bonded {
-		// Mark proposal as rejected due to provider being inactive
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedPackfileUpdate(ctx, proposal)
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("provider is no longer active")
 	}
 
@@ -940,9 +937,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 	if proposal.OldCid != "" {
 		existingPackfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
 		if found && existingPackfile.Cid != proposal.OldCid {
-			// Mark proposal as rejected due to state change
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-			k.SetProposedPackfileUpdate(ctx, proposal)
+			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 			return nil, fmt.Errorf("repository state has changed since proposal was made")
 		}
 	}
@@ -950,9 +945,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 	// Execute the packfile update logic directly
 	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
 	if !found {
-		// Mark proposal as rejected due to repository not found
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedPackfileUpdate(ctx, proposal)
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("repository not found")
 	}
 
@@ -970,9 +963,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		// Get existing packfile
 		packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
 		if !found {
-			// Mark proposal as rejected due to missing packfile
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-			k.SetProposedPackfileUpdate(ctx, proposal)
+			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 			return nil, fmt.Errorf("packfile not found")
 		}
 
@@ -1037,9 +1028,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
-				// Mark proposal as rejected due to storage charge calculation failure
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedPackfileUpdate(ctx, proposal)
+				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
@@ -1047,16 +1036,12 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 			if !charge.IsZero() {
 				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
 				if err != nil {
-					// Mark proposal as rejected due to invalid user address
-					proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-					k.SetProposedPackfileUpdate(ctx, proposal)
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
 				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					// Mark proposal as rejected due to storage charge transfer failure
-					proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-					k.SetProposedPackfileUpdate(ctx, proposal)
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -1101,9 +1086,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.GetSize_())
 			if err != nil {
-				// Mark proposal as rejected due to storage charge calculation failure
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedPackfileUpdate(ctx, proposal)
+				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 			}
 
@@ -1111,16 +1094,12 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 			if !charge.IsZero() {
 				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
 				if err != nil {
-					// Mark proposal as rejected due to invalid user address
-					proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-					k.SetProposedPackfileUpdate(ctx, proposal)
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 					return nil, fmt.Errorf("invalid user address: %v", err)
 				}
 
 				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					// Mark proposal as rejected due to storage charge transfer failure
-					proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-					k.SetProposedPackfileUpdate(ctx, proposal)
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 				}
 			}
@@ -1187,9 +1166,7 @@ func (k msgServer) RejectRepositoryPackfileUpdate(goCtx context.Context, msg *ty
 		return nil, fmt.Errorf("only the user who initiated the proposal can reject it")
 	}
 
-	// Mark proposal as rejected
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-	k.SetProposedPackfileUpdate(ctx, proposal)
+	k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 
 	return &types.MsgRejectRepositoryPackfileUpdateResponse{}, nil
 }
@@ -1464,8 +1441,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 	// Check if proposal has expired
 	if ctx.BlockTime().After(proposal.ExpiresAt) {
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-		k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("proposal has expired")
 	}
 
@@ -1483,9 +1459,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	// Verify provider is still active
 	provider, found := k.GetProvider(ctx, proposal.Provider)
 	if !found || provider.Status != types.Bonded {
-		// Mark proposal as rejected due to provider being inactive
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("provider is no longer active")
 	}
 
@@ -1494,17 +1468,13 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	// Check if provider is active
 	provider, found = k.GetProvider(ctx, proposal.Provider)
 	if !found || provider.Jailed || provider.Status != types.Bonded {
-		// Mark proposal as rejected due to inactive provider
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("provider is not active")
 	}
 
 	repository, found = k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
 	if !found {
-		// Mark proposal as rejected due to missing repository
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("repository not found")
 	}
 
@@ -1527,15 +1497,11 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
 		if assetUpdate.Delete {
 			if !found {
-				// Mark proposal as rejected due to missing asset to delete
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("asset[%d] (%s) not found for delete", i, assetUpdate.Name)
 			}
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
-				// Mark proposal as rejected due to concurrency conflict
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
 			oldCids = append(oldCids, existingAsset.Cid)
@@ -1546,9 +1512,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		if found {
 			// Optimistic concurrency control: check if the current CID matches the expected old_cid
 			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
-				// Mark proposal as rejected due to concurrency conflict
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
 			}
 			oldCids = append(oldCids, existingAsset.Cid)
@@ -1585,9 +1549,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, newStorageUsed)
 		if err != nil {
-			// Mark proposal as rejected due to charge calculation failure
-			proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-			k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+			k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
 		}
 
@@ -1595,16 +1557,12 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		if !charge.IsZero() {
 			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
 			if err != nil {
-				// Mark proposal as rejected due to invalid address
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("invalid user address: %v", err)
 			}
 
 			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-				// Mark proposal as rejected due to transfer failure
-				proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-				k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 			}
 		}
@@ -1735,9 +1693,7 @@ func (k msgServer) RejectReleaseAssetsUpdate(goCtx context.Context, msg *types.M
 		return nil, fmt.Errorf("only repository owner can reject this proposal")
 	}
 
-	// Mark proposal as rejected
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-	k.SetProposedReleaseAssetsUpdate(ctx, proposal)
+	k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 
 	return &types.MsgRejectReleaseAssetsUpdateResponse{}, nil
 }
@@ -1816,8 +1772,7 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 
 	// Check if proposal has expired
 	if ctx.BlockTime().After(proposal.ExpiresAt) {
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-		k.SetProposedLFSObjectUpdate(ctx, proposal)
+		k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 		return nil, fmt.Errorf("proposal has expired")
 	}
 
@@ -1969,9 +1924,7 @@ func (k msgServer) RejectLFSObjectUpdate(goCtx context.Context, msg *types.MsgRe
 		return nil, fmt.Errorf("only the user who initiated the proposal can reject it")
 	}
 
-	// Mark proposal as rejected
-	proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-	k.SetProposedLFSObjectUpdate(ctx, proposal)
+	k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 
 	return &types.MsgRejectLFSObjectUpdateResponse{}, nil
 }
@@ -2021,8 +1974,7 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 
 	// Check if proposal has expired
 	if ctx.BlockTime().After(proposal.ExpiresAt) {
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
-		k.SetProposedRepositoryDelete(ctx, proposal)
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
 		return nil, fmt.Errorf("proposal has expired")
 	}
 
@@ -2034,17 +1986,13 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	// Verify provider is still active
 	_, found = k.GetProvider(ctx, proposal.Provider)
 	if !found {
-		// Mark proposal as rejected due to provider being inactive
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedRepositoryDelete(ctx, proposal)
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
 		return nil, fmt.Errorf("provider is no longer active")
 	}
 
 	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
 	if !found {
-		// Mark proposal as rejected due to repository not found
-		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
-		k.SetProposedRepositoryDelete(ctx, proposal)
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
 		return nil, fmt.Errorf("repository not found")
 	}
 
