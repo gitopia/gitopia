@@ -87,3 +87,12 @@ message EventDeleteStorageObject {
   uint64 repository_id = 2;
   string provider = 3;
 }
+
+// EventRepositoryDeleted is emitted when a repository is deleted
+message EventRepositoryDeleted {
+  uint64 repository_id = 1;
+  string provider = 2;
+  Packfile packfile = 3;
+  repeated ReleaseAsset release_assets = 4;
+  repeated LFSObject lfs_objects = 5;
+}

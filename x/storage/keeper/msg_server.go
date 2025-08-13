@@ -1999,6 +1999,9 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
 
 	var cids []string
+	var deletedPackfile *types.Packfile
+	deletedReleaseAssets := make([]*types.ReleaseAsset, 0)
+	deletedLfsObjects := make([]*types.LFSObject, 0)
 
 	// Delete packfile
 	packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
@@ -2007,6 +2010,7 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
 			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
 				cids = append(cids, packfile.Cid)
+				deletedPackfile = &packfile
 				k.RemoveCidReferenceCount(ctx, packfile.Cid)
 			}
 		}
@@ -2034,6 +2038,7 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		k.DecreaseCidReferenceCount(ctx, lfsObject.Cid)
 		if count, found := k.GetCidReferenceCount(ctx, lfsObject.Cid); found && count.Count == 0 {
 			cids = append(cids, lfsObject.Cid)
+			deletedLfsObjects = append(deletedLfsObjects, &lfsObject)
 			k.RemoveCidReferenceCount(ctx, lfsObject.Cid)
 		}
 
@@ -2060,6 +2065,7 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		k.DecreaseCidReferenceCount(ctx, releaseAsset.Cid)
 		if count, found := k.GetCidReferenceCount(ctx, releaseAsset.Cid); found && count.Count == 0 {
 			cids = append(cids, releaseAsset.Cid)
+			deletedReleaseAssets = append(deletedReleaseAssets, &releaseAsset)
 			k.RemoveCidReferenceCount(ctx, releaseAsset.Cid)
 		}
 
@@ -2082,6 +2088,9 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 
 	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
+	// Remove proposal
+	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+
 	if len(cids) > 0 {
 		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
 			RepositoryId: proposal.RepositoryId,
@@ -2090,8 +2099,13 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		})
 	}
 
-	// Remove proposal
-	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+	ctx.EventManager().EmitTypedEvent(&types.EventRepositoryDeleted{
+		RepositoryId:  proposal.RepositoryId,
+		Provider:      proposal.Provider,
+		Packfile:      deletedPackfile,
+		LfsObjects:    deletedLfsObjects,
+		ReleaseAssets: deletedReleaseAssets,
+	})
 
 	return &types.MsgApproveRepositoryDeleteResponse{}, nil
 }
