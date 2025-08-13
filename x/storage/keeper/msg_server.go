@@ -2090,6 +2090,12 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	// Remove proposal
 	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
 
+	// Purge the repository from gitopia module
+	err := k.gitopiaKeeper.PurgeRepository(ctx, proposal.RepositoryId)
+	if err != nil {
+		return nil, err
+	}
+
 	if len(cids) > 0 {
 		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
 			RepositoryId: proposal.RepositoryId,

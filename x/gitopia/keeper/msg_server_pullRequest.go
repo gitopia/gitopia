@@ -1314,7 +1314,7 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
 
-	DoRemovePullRequest(ctx, k, pullRequest, repository)
+	k.DoRemovePullRequest(ctx, pullRequest, repository)
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -1331,15 +1331,6 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	)
 
 	return &types.MsgDeletePullRequestResponse{}, nil
-}
-
-func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
-	comments := k.GetAllPullRequestComment(ctx, repository.Id, pullRequest.Iid)
-	for _, comment := range comments {
-		k.RemovePullRequestComment(ctx, repository.Id, pullRequest.Iid, comment.CommentIid)
-	}
-
-	k.RemoveRepositoryPullRequest(ctx, repository.Id, pullRequest.Iid)
 }
 
 func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePullRequest) (*types.MsgMergePullRequestResponse, error) {

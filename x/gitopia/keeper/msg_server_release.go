@@ -267,7 +267,7 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	DoRemoveRelease(ctx, k, release, repository)
+	k.DoRemoveRelease(ctx, release, repository)
 
 	attachmentsJson, _ := json.Marshal(release.Attachments)
 
@@ -286,15 +286,4 @@ func (k msgServer) DeleteRelease(goCtx context.Context, msg *types.MsgDeleteRele
 	)
 
 	return &types.MsgDeleteReleaseResponse{}, nil
-}
-
-func DoRemoveRelease(ctx sdk.Context, k msgServer, release types.Release, repository types.Repository) {
-	if i, exists := utils.RepositoryReleaseIdExists(repository.Releases, release.Id); exists {
-		repository.Releases = append(repository.Releases[:i], repository.Releases[i+1:]...)
-	}
-
-	repository.UpdatedAt = ctx.BlockTime().Unix()
-
-	k.SetRepository(ctx, repository)
-	k.RemoveRelease(ctx, release.Id)
 }

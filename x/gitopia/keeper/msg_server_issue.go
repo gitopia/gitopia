@@ -791,7 +791,7 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 		}
 	}
 
-	DoRemoveIssue(ctx, k, issue, repository)
+	k.DoRemoveIssue(ctx, issue, repository)
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -808,63 +808,4 @@ func (k msgServer) DeleteIssue(goCtx context.Context, msg *types.MsgDeleteIssue)
 	)
 
 	return &types.MsgDeleteIssueResponse{}, nil
-}
-
-func DoRemoveIssue(ctx sdk.Context, k msgServer, issue types.Issue, repository types.Repository) {
-	blockTime := ctx.BlockTime().Unix()
-
-	comments := k.GetAllIssueComment(ctx, repository.Id, issue.Iid)
-	for _, comment := range comments {
-		k.RemoveIssueComment(ctx, repository.Id, issue.Iid, comment.CommentIid)
-	}
-
-	for _, pullRequestIid := range issue.PullRequests {
-		pullRequest, found := k.GetRepositoryPullRequest(ctx, repository.Id, pullRequestIid.Iid)
-		if !found {
-			continue
-		}
-		if i, exists := utils.IssueIidExists(pullRequest.Issues, issue.Iid); exists {
-			pullRequest.Issues = append(pullRequest.Issues[:i], pullRequest.Issues[i+1:]...)
-		} else {
-			continue
-		}
-		pullRequest.UpdatedAt = blockTime
-
-		k.SetPullRequest(ctx, pullRequest)
-	}
-
-	for _, bountyId := range issue.Bounties {
-		bounty, found := k.GetBounty(ctx, bountyId)
-		if !found {
-			continue
-		}
-		if bounty.State != types.BountyStateSRCDEBITTED {
-			continue
-		}
-		creatorAccAddress, err := sdk.AccAddressFromBech32(bounty.Creator)
-		if err != nil {
-			continue
-		}
-
-		if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
-			continue
-		}
-		if k.bankKeeper.BlockedAddr(creatorAccAddress) {
-			continue
-		}
-		bountyAddress := GetBountyAddress(bounty.Id)
-		if err := k.bankKeeper.SendCoins(
-			ctx, bountyAddress, creatorAccAddress, bounty.Amount,
-		); err != nil {
-			continue
-		}
-
-		bounty.State = types.BountyStateREVERTEDBACK
-		bounty.ExpireAt = time.Time{}.Unix()
-		bounty.UpdatedAt = blockTime
-
-		k.SetBounty(ctx, bounty)
-	}
-
-	k.RemoveRepositoryIssue(ctx, repository.Id, issue.Iid)
 }
