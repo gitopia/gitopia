@@ -167,6 +167,14 @@ service Query {
   rpc LFSObjectUpdateProposals(QueryLFSObjectUpdateProposalsRequest) returns (QueryLFSObjectUpdateProposalsResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposals";
   }
+
+  rpc RepositoryDeleteProposal(QueryRepositoryDeleteProposalRequest) returns (QueryRepositoryDeleteProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository-delete-proposal/{repository_id}/{user}";
+  }
+
+  rpc RepositoryDeleteProposals(QueryRepositoryDeleteProposalsRequest) returns (QueryRepositoryDeleteProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository-delete-proposals";
+  }
 }
 
 message QueryParamsRequest {}
@@ -483,5 +491,23 @@ message QueryLFSObjectUpdateProposalsRequest {
 
 message QueryLFSObjectUpdateProposalsResponse {
   repeated ProposedLFSObjectUpdate lfs_object_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryRepositoryDeleteProposalRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+}
+
+message QueryRepositoryDeleteProposalResponse {
+  ProposedRepositoryDelete repository_delete_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryDeleteProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryRepositoryDeleteProposalsResponse {
+  repeated ProposedRepositoryDelete repository_delete_proposals = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

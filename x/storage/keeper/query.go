@@ -702,3 +702,32 @@ func (k Keeper) LFSObjectUpdateProposals(goCtx context.Context, req *types.Query
 		LfsObjectProposals: proposals,
 	}, nil
 }
+
+func (k Keeper) RepositoryDeleteProposal(goCtx context.Context, req *types.QueryRepositoryDeleteProposalRequest) (*types.QueryRepositoryDeleteProposalResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposal, found := k.GetPendingRepositoryDeleteProposalByRepositoryIdUser(ctx, req.RepositoryId, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "repository delete proposal not found")
+	}
+
+	return &types.QueryRepositoryDeleteProposalResponse{
+		RepositoryDeleteProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) RepositoryDeleteProposals(goCtx context.Context, req *types.QueryRepositoryDeleteProposalsRequest) (*types.QueryRepositoryDeleteProposalsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetAllProposedRepositoryDeletes(ctx)
+
+	return &types.QueryRepositoryDeleteProposalsResponse{
+		RepositoryDeleteProposals: proposals,
+	}, nil
+}

@@ -599,6 +599,33 @@ func (k Keeper) GetProposedRepositoryDelete(ctx sdk.Context, id uint64) (val typ
 	return val, true
 }
 
+// GetAllProposedRepositoryDeletes returns all repository delete proposals
+func (k Keeper) GetAllProposedRepositoryDeletes(ctx sdk.Context) (list []types.ProposedRepositoryDelete) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.ProposedRepositoryDelete
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
+// GetPendingRepositoryDeleteProposalByRepositoryIdUser returns a pending repository delete proposal by repository ID and user
+func (k Keeper) GetPendingRepositoryDeleteProposalByRepositoryIdUser(ctx sdk.Context, repositoryId uint64, user string) (val types.ProposedRepositoryDelete, found bool) {
+	proposals := k.GetAllProposedRepositoryDeletes(ctx)
+	for _, proposal := range proposals {
+		if proposal.RepositoryId == repositoryId && proposal.User == user && proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+			return proposal, true
+		}
+	}
+	return val, false
+}
+
 // SetProposedRepositoryDelete sets a repository delete proposal
 func (k Keeper) SetProposedRepositoryDelete(ctx sdk.Context, proposal types.ProposedRepositoryDelete) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
@@ -630,4 +657,16 @@ func (k Keeper) CreateRepositoryDeleteProposal(
 	}
 
 	return k.AppendProposedRepositoryDelete(ctx, proposal)
+}
+
+// ExpireOldRepositoryDeleteProposals removes expired proposals
+func (k Keeper) ExpireOldRepositoryDeleteProposals(ctx sdk.Context) {
+	allProposals := k.GetAllProposedRepositoryDeletes(ctx)
+	currentTime := ctx.BlockTime()
+
+	for _, proposal := range allProposals {
+		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
+			k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+		}
+	}
 }

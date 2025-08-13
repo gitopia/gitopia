@@ -214,6 +214,7 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 	am.keeper.ExpireOldProposals(ctx)
 	am.keeper.ExpireOldLFSObjectProposals(ctx)
 	am.keeper.ExpireOldReleaseAssetsProposals(ctx)
+	am.keeper.ExpireOldRepositoryDeleteProposals(ctx)
 
 	return []abci.ValidatorUpdate{}
 }
