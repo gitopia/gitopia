@@ -36,7 +36,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdUnregisterProvider())
 	cmd.AddCommand(CmdCompleteUnstake())
 	cmd.AddCommand(CmdUpdateRepositoryPackfile())
-	cmd.AddCommand(CmdUpdateReleaseAsset())
 	cmd.AddCommand(CmdUpdateLFSObject())
 	cmd.AddCommand(CmdSubmitChallengeResponse())
 	// this line is used by starport scaffolding # 1
@@ -214,60 +213,6 @@ func CmdUpdateRepositoryPackfile() *cobra.Command {
 				cid,
 				rootHash,
 				size,
-				oldCid,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	return cmd
-}
-
-func CmdUpdateReleaseAsset() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "update-release-asset [repository-id] [tag] [name] [cid] [root-hash-hex] [size] [sha256] [old-cid]",
-		Short: "Update a release asset",
-		Args:  cobra.ExactArgs(8),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			repositoryId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid repository-id: %w", err)
-			}
-
-			tag := args[1]
-			name := args[2]
-			cid := args[3]
-
-			rootHash, err := hex.DecodeString(args[4])
-			if err != nil {
-				return fmt.Errorf("invalid root-hash-hex: %w", err)
-			}
-
-			size, err := strconv.ParseUint(args[5], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid size: %w", err)
-			}
-
-			sha256 := args[6]
-			oldCid := args[7]
-
-			msg := types.NewMsgUpdateReleaseAsset(
-				clientCtx.GetFromAddress().String(),
-				repositoryId,
-				tag,
-				name,
-				cid,
-				rootHash,
-				size,
-				sha256,
 				oldCid,
 			)
 			if err := msg.ValidateBasic(); err != nil {

@@ -66,6 +66,8 @@ const (
 	ProposedReleaseAssetsUpdateCountKey = "ProposedReleaseAssetsUpdate-count-"
 	ProposedLFSObjectUpdateKey          = "ProposedLFSObjectUpdate-value-"
 	ProposedLFSObjectUpdateCountKey     = "ProposedLFSObjectUpdate-count-"
+	ProposedRepositoryDeleteKey         = "ProposedRepositoryDelete-value-"
+	ProposedRepositoryDeleteCountKey    = "ProposedRepositoryDelete-count-"
 
 	StorageStatsKey = "StorageStats"
 

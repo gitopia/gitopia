@@ -35,6 +35,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgProposeLFSObjectUpdate{}, "storage/ProposeLFSObjectUpdate", nil)
 	cdc.RegisterConcrete(&MsgApproveLFSObjectUpdate{}, "storage/ApproveLFSObjectUpdate", nil)
 	cdc.RegisterConcrete(&MsgRejectLFSObjectUpdate{}, "storage/RejectLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeRepositoryDelete{}, "storage/ProposeRepositoryDelete", nil)
+	cdc.RegisterConcrete(&MsgApproveRepositoryDelete{}, "storage/ApproveRepositoryDelete", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -64,6 +66,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgProposeLFSObjectUpdate{},
 		&MsgApproveLFSObjectUpdate{},
 		&MsgRejectLFSObjectUpdate{},
+		&MsgProposeRepositoryDelete{},
+		&MsgApproveRepositoryDelete{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

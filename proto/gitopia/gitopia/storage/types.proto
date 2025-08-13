@@ -327,3 +327,20 @@ message ProposedLFSObjectUpdate {
   // delete indicates this proposal is to delete the LFS object instead of create
   bool delete = 12;
 }
+
+// ProposedRepositoryDelete represents a proposed repository delete awaiting approval
+message ProposedRepositoryDelete {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the delete
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the delete
+  ProposalStatus status = 5;
+  google.protobuf.Timestamp proposed_at = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}

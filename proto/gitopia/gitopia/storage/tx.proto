@@ -85,6 +85,12 @@ service Msg {
 
   // RejectLFSObjectUpdate rejects a proposed LFS object update
   rpc RejectLFSObjectUpdate(MsgRejectLFSObjectUpdate) returns (MsgRejectLFSObjectUpdateResponse);
+
+  // ProposeRepositoryDelete proposes a repository deletion
+  rpc ProposeRepositoryDelete(MsgProposeRepositoryDelete) returns (MsgProposeRepositoryDeleteResponse);
+
+  // ApproveRepositoryDelete approves a proposed repository deletion
+  rpc ApproveRepositoryDelete(MsgApproveRepositoryDelete) returns (MsgApproveRepositoryDeleteResponse);
 }
 
 // MsgRegisterProvider defines a message for registering as a storage provider
@@ -362,3 +368,22 @@ message MsgRejectLFSObjectUpdate {
 }
 
 message MsgRejectLFSObjectUpdateResponse {}
+
+// MsgProposeRepositoryDelete defines a message for proposing a repository deletion
+message MsgProposeRepositoryDelete {
+  string creator = 1;
+  string user = 2;
+  uint64 repository_id = 3;
+}
+
+message MsgProposeRepositoryDeleteResponse {
+  uint64 proposal_id = 1;
+}
+
+// MsgApproveRepositoryDelete defines a message for approving a proposed repository deletion
+message MsgApproveRepositoryDelete {
+  string creator = 1;
+  uint64 proposal_id = 2;
+}
+
+message MsgApproveRepositoryDeleteResponse {}

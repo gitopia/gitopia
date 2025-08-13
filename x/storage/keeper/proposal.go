@@ -540,3 +540,94 @@ func (k Keeper) CreateLFSObjectUpdateProposal(
 
 	return k.AppendProposedLFSObjectUpdate(ctx, proposal)
 }
+
+// Repository Delete Proposal Methods
+
+// GetRepositoryDeleteProposalCount get the total number of repository delete proposals
+func (k Keeper) GetRepositoryDeleteProposalCount(ctx sdk.Context) uint64 {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteCountKey))
+	byteKey := types.KeyPrefix(types.ProposedRepositoryDeleteCountKey)
+	bz := store.Get(byteKey)
+
+	// Count doesn't exist: no element
+	if bz == nil {
+		return 0
+	}
+
+	// Parse bytes
+	return binary.BigEndian.Uint64(bz)
+}
+
+// SetRepositoryDeleteProposalCount set the total number of repository delete proposals
+func (k Keeper) SetRepositoryDeleteProposalCount(ctx sdk.Context, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteCountKey))
+	byteKey := types.KeyPrefix(types.ProposedRepositoryDeleteCountKey)
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, count)
+	store.Set(byteKey, bz)
+}
+
+// AppendProposedRepositoryDelete creates a new repository delete proposal and returns its ID
+func (k Keeper) AppendProposedRepositoryDelete(
+	ctx sdk.Context,
+	proposal types.ProposedRepositoryDelete,
+) uint64 {
+	// Get and increment proposal count
+	count := k.GetRepositoryDeleteProposalCount(ctx)
+	proposal.Id = count
+
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
+	appendedValue := k.cdc.MustMarshal(&proposal)
+	store.Set(GetProposalIdBytes(proposal.Id), appendedValue)
+
+	// Update count
+	k.SetRepositoryDeleteProposalCount(ctx, count+1)
+
+	return count
+}
+
+// GetProposedRepositoryDelete returns a repository delete proposal by ID
+func (k Keeper) GetProposedRepositoryDelete(ctx sdk.Context, id uint64) (val types.ProposedRepositoryDelete, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
+
+	b := store.Get(GetProposalIdBytes(id))
+	if b == nil {
+		return val, false
+	}
+
+	k.cdc.MustUnmarshal(b, &val)
+	return val, true
+}
+
+// SetProposedRepositoryDelete sets a repository delete proposal
+func (k Keeper) SetProposedRepositoryDelete(ctx sdk.Context, proposal types.ProposedRepositoryDelete) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
+	b := k.cdc.MustMarshal(&proposal)
+	store.Set(GetProposalIdBytes(proposal.Id), b)
+}
+
+// RemoveProposedRepositoryDelete removes a repository delete proposal from the store
+func (k Keeper) RemoveProposedRepositoryDelete(ctx sdk.Context, id uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedRepositoryDeleteKey))
+	store.Delete(GetProposalIdBytes(id))
+}
+
+// CreateRepositoryDeleteProposal creates a new repository delete proposal
+func (k Keeper) CreateRepositoryDeleteProposal(
+	ctx sdk.Context,
+	provider string,
+	repositoryId uint64,
+	user string,
+	expirationSeconds uint64,
+) uint64 {
+	proposal := types.ProposedRepositoryDelete{
+		Provider:     provider,
+		RepositoryId: repositoryId,
+		User:         user,
+		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
+		ProposedAt:   ctx.BlockTime(),
+		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+	}
+
+	return k.AppendProposedRepositoryDelete(ctx, proposal)
+}

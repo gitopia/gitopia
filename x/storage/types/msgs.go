@@ -32,6 +32,8 @@ const (
 	TypeMsgProposeLFSObjectUpdate          = "propose_lfs_object_update"
 	TypeMsgApproveLFSObjectUpdate          = "approve_lfs_object_update"
 	TypeMsgRejectLFSObjectUpdate           = "reject_lfs_object_update"
+	TypeMsgProposeRepositoryDelete         = "propose_repository_delete"
+	TypeMsgApproveRepositoryDelete         = "approve_repository_delete"
 )
 
 var _ sdk.Msg = &MsgRegisterProvider{}
@@ -1034,6 +1036,92 @@ func (msg *MsgApproveLFSObjectUpdate) GetSignBytes() []byte {
 }
 
 func (msg *MsgApproveLFSObjectUpdate) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	return nil
+}
+
+// MsgProposeRepositoryDelete implementation
+var _ sdk.Msg = &MsgProposeRepositoryDelete{}
+
+func NewMsgProposeRepositoryDelete(creator string, user string, repositoryId uint64) *MsgProposeRepositoryDelete {
+	return &MsgProposeRepositoryDelete{
+		Creator:      creator,
+		User:         user,
+		RepositoryId: repositoryId,
+	}
+}
+
+func (msg *MsgProposeRepositoryDelete) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgProposeRepositoryDelete) Type() string {
+	return TypeMsgProposeRepositoryDelete
+}
+
+func (msg *MsgProposeRepositoryDelete) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgProposeRepositoryDelete) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgProposeRepositoryDelete) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	_, err = sdk.AccAddressFromBech32(msg.User)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid user address (%s)", err)
+	}
+
+	return nil
+}
+
+// MsgApproveRepositoryDelete implementation
+var _ sdk.Msg = &MsgApproveRepositoryDelete{}
+
+func NewMsgApproveRepositoryDelete(creator string, proposalId uint64) *MsgApproveRepositoryDelete {
+	return &MsgApproveRepositoryDelete{
+		Creator:    creator,
+		ProposalId: proposalId,
+	}
+}
+
+func (msg *MsgApproveRepositoryDelete) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgApproveRepositoryDelete) Type() string {
+	return TypeMsgApproveRepositoryDelete
+}
+
+func (msg *MsgApproveRepositoryDelete) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgApproveRepositoryDelete) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgApproveRepositoryDelete) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)

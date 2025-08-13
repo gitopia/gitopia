@@ -1975,3 +1975,175 @@ func (k msgServer) RejectLFSObjectUpdate(goCtx context.Context, msg *types.MsgRe
 
 	return &types.MsgRejectLFSObjectUpdateResponse{}, nil
 }
+
+func (k msgServer) ProposeRepositoryDelete(goCtx context.Context, msg *types.MsgProposeRepositoryDelete) (*types.MsgProposeRepositoryDeleteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get repository to verify it exists
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Create the proposal
+	proposalId := k.CreateRepositoryDeleteProposal(
+		ctx,
+		msg.Creator,
+		msg.RepositoryId,
+		msg.User,
+		300, // 300 seconds expiration
+	)
+
+	return &types.MsgProposeRepositoryDeleteResponse{
+		ProposalId: proposalId,
+	}, nil
+}
+
+func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.MsgApproveRepositoryDelete) (*types.MsgApproveRepositoryDeleteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedRepositoryDelete(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Check if proposal has expired
+	if ctx.BlockTime().After(proposal.ExpiresAt) {
+		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_EXPIRED
+		k.SetProposedRepositoryDelete(ctx, proposal)
+		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// Verify that the approver is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only the user who initiated the proposal can approve it")
+	}
+
+	// Verify provider is still active
+	_, found = k.GetProvider(ctx, proposal.Provider)
+	if !found {
+		// Mark proposal as rejected due to provider being inactive
+		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
+		k.SetProposedRepositoryDelete(ctx, proposal)
+		return nil, fmt.Errorf("provider is no longer active")
+	}
+
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		// Mark proposal as rejected due to repository not found
+		proposal.Status = types.ProposalStatus_PROPOSAL_STATUS_REJECTED
+		k.SetProposedRepositoryDelete(ctx, proposal)
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+
+	var cids []string
+
+	// Delete packfile
+	packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+	if found {
+		if packfile.Cid != "" {
+			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
+			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+				cids = append(cids, packfile.Cid)
+				k.RemoveCidReferenceCount(ctx, packfile.Cid)
+			}
+		}
+
+		if userQuota.StorageUsed >= uint64(packfile.Size_) {
+			userQuota.StorageUsed -= uint64(packfile.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalPackfileSize >= uint64(packfile.Size_) {
+			storageStats.TotalPackfileSize -= uint64(packfile.Size_)
+		} else {
+			storageStats.TotalPackfileSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		k.RemovePackfile(ctx, proposal.RepositoryId)
+	}
+
+	// Delete LFS objects
+	lfsObjects := k.GetLFSObjectsByRepositoryId(ctx, proposal.RepositoryId)
+	for _, lfsObject := range lfsObjects {
+		k.DecreaseCidReferenceCount(ctx, lfsObject.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, lfsObject.Cid); found && count.Count == 0 {
+			cids = append(cids, lfsObject.Cid)
+			k.RemoveCidReferenceCount(ctx, lfsObject.Cid)
+		}
+
+		if userQuota.StorageUsed >= uint64(lfsObject.Size_) {
+			userQuota.StorageUsed -= uint64(lfsObject.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalLfsObjectSize >= uint64(lfsObject.Size_) {
+			storageStats.TotalLfsObjectSize -= uint64(lfsObject.Size_)
+		} else {
+			storageStats.TotalLfsObjectSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		k.RemoveLFSObject(ctx, proposal.RepositoryId, lfsObject.Oid)
+	}
+
+	// Delete release assets
+	releaseAssets := k.GetReleaseAssetsByRepositoryId(ctx, proposal.RepositoryId)
+	for _, releaseAsset := range releaseAssets {
+		k.DecreaseCidReferenceCount(ctx, releaseAsset.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, releaseAsset.Cid); found && count.Count == 0 {
+			cids = append(cids, releaseAsset.Cid)
+			k.RemoveCidReferenceCount(ctx, releaseAsset.Cid)
+		}
+
+		if userQuota.StorageUsed >= uint64(releaseAsset.Size_) {
+			userQuota.StorageUsed -= uint64(releaseAsset.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalReleaseAssetSize >= uint64(releaseAsset.Size_) {
+			storageStats.TotalReleaseAssetSize -= uint64(releaseAsset.Size_)
+		} else {
+			storageStats.TotalReleaseAssetSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		k.RemoveReleaseAsset(ctx, proposal.RepositoryId, releaseAsset.Tag, releaseAsset.Name)
+	}
+
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	if len(cids) > 0 {
+		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+			RepositoryId: proposal.RepositoryId,
+			Cids:         cids,
+			Provider:     proposal.Provider,
+		})
+	}
+
+	// Remove proposal
+	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+
+	return &types.MsgApproveRepositoryDeleteResponse{}, nil
+}
