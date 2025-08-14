@@ -98,6 +98,12 @@ message EventRepositoryDeleted {
   repeated LFSObjectInfo lfs_objects = 6;
 }
 
+// EventProposalTimeout is emitted when a storage update proposal times out
+message EventProposalTimeout {
+  string provider = 1;
+  repeated string cids = 2;
+}
+
 // ReleaseAssetInfo contains minimal information about a release asset
 message ReleaseAssetInfo {
   string name = 1;

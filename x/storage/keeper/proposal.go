@@ -142,6 +142,12 @@ func (k Keeper) ExpireOldProposals(ctx sdk.Context) {
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
+			if !proposal.Delete {
+				ctx.EventManager().EmitTypedEvent(&types.EventProposalTimeout{
+					Provider: proposal.Provider,
+					Cids:     []string{proposal.Cid},
+				})
+			}
 			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 		}
 	}
@@ -328,6 +334,18 @@ func (k Keeper) ExpireOldReleaseAssetsProposals(ctx sdk.Context) {
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
+			var cids []string
+			for _, asset := range proposal.Assets {
+				if !asset.Delete {
+					cids = append(cids, asset.Cid)
+				}
+			}
+			if len(cids) > 0 {
+				ctx.EventManager().EmitTypedEvent(&types.EventProposalTimeout{
+					Provider: proposal.Provider,
+					Cids:     cids,
+				})
+			}
 			k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
 		}
 	}
@@ -506,6 +524,12 @@ func (k Keeper) ExpireOldLFSObjectProposals(ctx sdk.Context) {
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
+			if !proposal.Delete {
+				ctx.EventManager().EmitTypedEvent(&types.EventProposalTimeout{
+					Provider: proposal.Provider,
+					Cids:     []string{proposal.Cid},
+				})
+			}
 			k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
 		}
 	}
