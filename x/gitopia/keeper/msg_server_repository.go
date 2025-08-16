@@ -1003,7 +1003,6 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 
 	// Instead of deleting, mark as archived to start the deletion process.
 	repository.Archived = true
-	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
 
 	ctx.EventManager().EmitEvent(

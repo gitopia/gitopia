@@ -690,6 +690,13 @@ func (k Keeper) ExpireOldRepositoryDeleteProposals(ctx sdk.Context) {
 
 	for _, proposal := range allProposals {
 		if proposal.Status == types.ProposalStatus_PROPOSAL_STATUS_PENDING && currentTime.After(proposal.ExpiresAt) {
+			// Reset repository archive status
+			repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+			if found {
+				repository.Archived = false
+				k.gitopiaKeeper.SetRepository(ctx, repository)
+			}
+
 			k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
 		}
 	}
