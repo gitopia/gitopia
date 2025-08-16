@@ -982,7 +982,13 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		}
 
 		// Update quota and stats
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if !found {
+			userQuota = gitopiatypes.UserQuota{
+				Address:     repository.Owner.Id,
+				StorageUsed: 0,
+			}
+		}
 		if userQuota.StorageUsed >= uint64(packfile.Size_) {
 			userQuota.StorageUsed -= uint64(packfile.Size_)
 		} else {
@@ -1798,7 +1804,13 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 		}
 		k.SetStorageStats(ctx, storageStats)
 
-		userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if !found {
+			userQuota = gitopiatypes.UserQuota{
+				Address:     repository.Owner.Id,
+				StorageUsed: 0,
+			}
+		}
 		if userQuota.StorageUsed >= uint64(lfsObj.Size_) {
 			userQuota.StorageUsed -= uint64(lfsObj.Size_)
 		} else {
@@ -1989,7 +2001,13 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("repository not found")
 	}
 
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
 
 	var cids []string
 	deletedReleaseAssets := make([]*types.ReleaseAssetInfo, 0)
