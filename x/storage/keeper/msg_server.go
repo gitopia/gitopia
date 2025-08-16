@@ -771,7 +771,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.Bonded {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -1698,7 +1698,7 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Jailed || provider.Status != types.Bonded {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 

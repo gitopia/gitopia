@@ -428,14 +428,13 @@ message MsgInvokeDaoMergePullRequest {
 
   // admin is the account address of the group admin
   string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string creator = 2;
-  uint64 repositoryId = 3;
-  uint64 iid = 4;
-  string provider = 5;
+  uint64 repositoryId = 2;
+  uint64 iid = 3;
+  string provider = 4;
   
   // commit sha of base branch
   // only proceed with the merge if the current commit sha matches the expected commit sha
-  string base_commit_sha = 6;
+  string base_commit_sha = 5;
 }
 
 message MsgInvokeDaoMergePullRequestResponse { }
@@ -697,17 +696,16 @@ message MsgDaoCreateRelease {
 
   // admin is the account address of the group admin
   string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string creator = 2;
-  RepositoryId repositoryId = 3 [(gogoproto.nullable) = false];
-  string tagName = 4;
-  string target = 5;
-  string name = 6;
-  string description = 7;
-  string attachments = 8;
-  bool draft = 9;
-  bool preRelease = 10;
-  bool isTag = 11;
-  string provider = 12;
+  RepositoryId repositoryId = 2 [(gogoproto.nullable) = false];
+  string tagName = 3;
+  string target = 4;
+  string name = 5;
+  string description = 6;
+  string attachments = 7;
+  bool draft = 8;
+  bool preRelease = 9;
+  bool isTag = 10;
+  string provider = 11;
 }
 
 message MsgDaoCreateReleaseResponse {
