@@ -18,7 +18,7 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 			Provider:                    providerAddr,
 			CurrentWindowStartChallenge: challengeId,
 			MissedSubmissionsInWindow:   0,
-			TotalSubmissionsInWindow:    0,
+			TotalSubmissionsInWindow:    params.LivenessWindowChallenges,
 			CurrentLivenessRatio:        100.0,
 			LastSubmissionChallenge:     0,
 			RecentMissedChallenges:      []uint64{},
@@ -31,9 +31,6 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 		// Slide the window forward
 		k.slideLivenessWindowChallenges(ctx, livenessInfo, challengeId, windowSize)
 	}
-
-	// Update submission count
-	livenessInfo.TotalSubmissionsInWindow++
 
 	if !submitted {
 		livenessInfo.MissedSubmissionsInWindow++
