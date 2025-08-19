@@ -90,7 +90,11 @@ func (k Keeper) CheckProviderLivenessViolation(ctx sdk.Context, providerAddr str
 	}
 
 	// Check if liveness ratio is below minimum required
-	minLivenessRatio := float64(params.MinLivenessRatio)
+	minLivenessRatio, err := params.MinLivenessPerWindow.Float64()
+	if err != nil {
+		return false, err
+	}
+
 	if livenessInfo.CurrentLivenessRatio < minLivenessRatio {
 		return true, nil
 	}
@@ -117,10 +121,10 @@ func (k Keeper) SlashProviderForLivenessFault(ctx sdk.Context, providerAddr stri
 	slashAmountCoins := sdk.NewCoins(params.LivenessSlashAmount)
 
 	// Also apply percentage-based slash if configured
-	if params.LivenessSlashPercentage > 0 {
-		stakeAmount := stake.Stake.AmountOf("ulore")                                                                 // assuming ulore is the base denom
-		percentageSlash := stakeAmount.Mul(sdk.NewInt(int64(params.LivenessSlashPercentage))).Quo(sdk.NewInt(10000)) // basis points
-		percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash))
+	if !params.LivenessSlashFraction.IsZero() {
+		stakeAmount := stake.Stake.AmountOf("ulore")
+		percentageSlash := params.LivenessSlashFraction.MulInt(stakeAmount)
+		percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash.RoundInt()))
 		slashAmountCoins = slashAmountCoins.Add(percentageSlashCoins...)
 	}
 
@@ -139,7 +143,7 @@ func (k Keeper) SlashProviderForLivenessFault(ctx sdk.Context, providerAddr stri
 
 	// Apply jail time for liveness fault
 	provider.Jailed = true
-	jailUntil := ctx.BlockTime().Add(*params.LivenessJailTime)
+	jailUntil := ctx.BlockTime().Add(params.LivenessJailTime)
 	provider.JailUntil = &jailUntil
 
 	ctx.Logger().Info(fmt.Sprintf("provider %s slashed %s for liveness fault and jailed until %s",
@@ -174,10 +178,10 @@ func (k Keeper) SlashProviderForProofFault(ctx sdk.Context, providerAddr string)
 		slashAmountCoins := sdk.NewCoins(params.ProofFaultSlashAmount)
 
 		// Apply percentage-based slash (heavier than liveness)
-		if params.ProofFaultSlashPercentage > 0 {
+		if !params.ProofFaultSlashFraction.IsZero() {
 			stakeAmount := stake.Stake.AmountOf("ulore")
-			percentageSlash := stakeAmount.Mul(sdk.NewInt(int64(params.ProofFaultSlashPercentage))).Quo(sdk.NewInt(10000))
-			percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash))
+			percentageSlash := params.ProofFaultSlashFraction.MulInt(stakeAmount)
+			percentageSlashCoins := sdk.NewCoins(sdk.NewCoin("ulore", percentageSlash.RoundInt()))
 			slashAmountCoins = slashAmountCoins.Add(percentageSlashCoins...)
 		}
 
@@ -196,7 +200,7 @@ func (k Keeper) SlashProviderForProofFault(ctx sdk.Context, providerAddr string)
 
 		// Apply longer jail time for proof fault
 		provider.Jailed = true
-		jailUntil := ctx.BlockTime().Add(*params.ProofFaultJailTime)
+		jailUntil := ctx.BlockTime().Add(params.ProofFaultJailTime)
 		provider.JailUntil = &jailUntil
 
 		provider.ConsecutiveProofFaults = 0 // Reset after suspension

@@ -80,29 +80,3 @@ func (k Keeper) HasProviderSubmittedChallenge(ctx sdk.Context, challengeId uint6
 
 	return livenessInfo.LastSubmissionChallenge == challengeId
 }
-
-// CheckAndApplyLivenessViolations checks for liveness violations during challenge processing
-// This replaces the old periodic block-based checking since we now use challenge-based liveness
-func (k Keeper) CheckAndApplyLivenessViolations(ctx sdk.Context) error {
-	activeProviders := k.GetActiveProviders(ctx)
-
-	for _, provider := range activeProviders {
-		// Check liveness violation
-		violation, err := k.CheckProviderLivenessViolation(ctx, provider.Creator)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("failed to check liveness for provider %s: %v", provider.Creator, err))
-			continue
-		}
-
-		if violation {
-			// Apply liveness fault penalty
-			err := k.SlashProviderForLivenessFault(ctx, provider.Creator)
-			if err != nil {
-				ctx.Logger().Error(fmt.Sprintf("failed to apply liveness penalty to %s: %v", provider.Creator, err))
-			}
-		}
-	}
-
-	ctx.Logger().Info(fmt.Sprintf("completed liveness violation check for %d providers", len(activeProviders)))
-	return nil
-}

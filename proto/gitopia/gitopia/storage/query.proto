@@ -132,14 +132,6 @@ service Query {
     option (google.api.http).get = "/gitopia/gitopia/storage/providers-liveness";
   }
 
-  rpc LivenessViolations(QueryLivenessViolationsRequest) returns (QueryLivenessViolationsResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/storage/liveness-violations";
-  }
-
-  rpc JailedProviders(QueryJailedProvidersRequest) returns (QueryJailedProvidersResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/storage/jailed-providers";
-  }
-
   rpc PackfileUpdateProposal(QueryPackfileUpdateProposalRequest) returns (QueryPackfileUpdateProposalResponse) {
     option (google.api.http).get = "/gitopia/gitopia/storage/packfile-update-proposal/{repository_id}/{user}";
   }
@@ -401,32 +393,6 @@ message QueryProvidersLivenessRequest {
 message QueryProvidersLivenessResponse {
   repeated ProviderLivenessInfo liveness_infos = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryLivenessViolationsRequest {
-  cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryLivenessViolationsResponse {
-  repeated ProviderLivenessViolation violations = 1 [(gogoproto.nullable) = false];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryJailedProvidersRequest {
-  cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryJailedProvidersResponse {
-  repeated Provider providers = 1 [(gogoproto.nullable) = false];
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-// Helper message for liveness violations
-message ProviderLivenessViolation {
-  string provider_address = 1;
-  ProviderLivenessInfo liveness_info = 2 [(gogoproto.nullable) = false];
-  bool has_violation = 3;
-  string violation_reason = 4;
 }
 
 message QueryPackfileUpdateProposalRequest {
