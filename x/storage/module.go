@@ -164,14 +164,6 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			})
 		}
 	}
-
-	// Cleanup expired liveness data periodically (every 1000 blocks to avoid performance impact)
-	if currentBlockHeight%1000 == 0 {
-		err := am.keeper.CleanupExpiredLivenessData(ctx)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("error during liveness data cleanup: %v", err))
-		}
-	}
 }
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
