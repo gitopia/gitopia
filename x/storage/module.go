@@ -172,14 +172,6 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			ctx.Logger().Error(fmt.Sprintf("error during liveness data cleanup: %v", err))
 		}
 	}
-
-	// Initialize liveness tracking for new providers (every 100 blocks)
-	if currentBlockHeight%100 == 0 {
-		err := am.keeper.StartLivenessTracking(ctx)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("error starting liveness tracking: %v", err))
-		}
-	}
 }
 
 // EndBlock contains the logic that is automatically triggered at the end of each block

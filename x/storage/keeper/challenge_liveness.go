@@ -81,33 +81,6 @@ func (k Keeper) HasProviderSubmittedChallenge(ctx sdk.Context, challengeId uint6
 	return livenessInfo.LastSubmissionChallenge == challengeId
 }
 
-// StartLivenessTracking initializes liveness tracking for all active providers
-// Updated for challenge-based liveness tracking
-func (k Keeper) StartLivenessTracking(ctx sdk.Context) error {
-	activeProviders := k.GetActiveProviders(ctx)
-	currentChallengeId := k.GetChallengeCount(ctx)
-
-	for _, provider := range activeProviders {
-		// Initialize liveness info if it doesn't exist
-		livenessInfo := k.GetProviderLivenessInfo(ctx, provider.Creator)
-		if livenessInfo == nil {
-			livenessInfo = &types.ProviderLivenessInfo{
-				Provider:                    provider.Creator,
-				CurrentWindowStartChallenge: currentChallengeId,
-				MissedSubmissionsInWindow:   0,
-				TotalSubmissionsInWindow:    0,
-				CurrentLivenessRatio:        100.0,
-				LastSubmissionChallenge:     0,
-				RecentMissedChallenges:      []uint64{},
-			}
-			k.SetProviderLivenessInfo(ctx, livenessInfo)
-		}
-	}
-
-	ctx.Logger().Info(fmt.Sprintf("initialized liveness tracking for %d providers at challenge %d", len(activeProviders), currentChallengeId))
-	return nil
-}
-
 // CheckAndApplyLivenessViolations checks for liveness violations during challenge processing
 // This replaces the old periodic block-based checking since we now use challenge-based liveness
 func (k Keeper) CheckAndApplyLivenessViolations(ctx sdk.Context) error {
