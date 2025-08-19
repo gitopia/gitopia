@@ -79,16 +79,7 @@ func (k Keeper) slideLivenessWindowChallenges(ctx sdk.Context, livenessInfo *typ
 	livenessInfo.CurrentWindowStartChallenge = newWindowStart
 	livenessInfo.RecentMissedChallenges = validMissedChallenges
 
-	// Estimate submissions in new window (this is an approximation)
-	// In practice, you might want to store more detailed history
-	estimatedTotalSubmissions := livenessInfo.TotalSubmissionsInWindow
-	if challengesToSlide > 0 {
-		// Reduce counts proportionally
-		remainingRatio := float64(windowSize-challengesToSlide) / float64(windowSize)
-		estimatedTotalSubmissions = uint64(float64(livenessInfo.TotalSubmissionsInWindow) * remainingRatio)
-	}
-
-	livenessInfo.TotalSubmissionsInWindow = estimatedTotalSubmissions
+	livenessInfo.TotalSubmissionsInWindow = windowSize
 	livenessInfo.MissedSubmissionsInWindow = uint64(len(validMissedChallenges))
 }
 
