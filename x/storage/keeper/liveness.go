@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
@@ -16,10 +17,9 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 	livenessInfo := k.GetProviderLivenessInfo(ctx, providerAddr)
 	if livenessInfo == nil {
 		livenessInfo = &types.ProviderLivenessInfo{
-			Provider:                 providerAddr,
-			TotalSubmissionsInWindow: windowSize, // Represents the constant size of the sliding window
-			CurrentLivenessRatio:     100.0,
-			RecentMissedChallenges:   []uint64{},
+			Provider:               providerAddr,
+			CurrentLivenessRatio:   sdk.NewDecWithPrec(100, 2),
+			RecentMissedChallenges: []uint64{},
 		}
 	}
 
@@ -53,19 +53,8 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 	// Recalculate the liveness ratio based on the state of the sliding window
 	livenessInfo.MissedSubmissionsInWindow = uint64(len(livenessInfo.RecentMissedChallenges))
 
-	// The denominator for the ratio is the number of challenges that have occurred within the window's timeframe,
-	// which can be less than the full windowSize at the beginning of the chain.
-	numChallengesInWindow := challengeId + 1 // Assuming challengeId starts from 0
-	if numChallengesInWindow > windowSize {
-		numChallengesInWindow = windowSize
-	}
-
-	if numChallengesInWindow == 0 { // Avoid division by zero
-		livenessInfo.CurrentLivenessRatio = 100.0
-	} else {
-		successfulSubmissions := numChallengesInWindow - livenessInfo.MissedSubmissionsInWindow
-		livenessInfo.CurrentLivenessRatio = float64(successfulSubmissions) / float64(numChallengesInWindow) * 100.0
-	}
+	successfulSubmissions := windowSize - livenessInfo.MissedSubmissionsInWindow
+	livenessInfo.CurrentLivenessRatio = math.LegacyNewDec(int64(successfulSubmissions)).Quo(math.LegacyNewDec(int64(windowSize)))
 
 	// Store updated liveness info
 	k.SetProviderLivenessInfo(ctx, livenessInfo)
@@ -82,13 +71,7 @@ func (k Keeper) CheckProviderLivenessViolation(ctx sdk.Context, providerAddr str
 		return false, nil // No violation if no tracking info exists yet
 	}
 
-	// Check if liveness ratio is below minimum required
-	minLivenessRatio, err := params.MinLivenessPerWindow.Float64()
-	if err != nil {
-		return false, err
-	}
-
-	if livenessInfo.CurrentLivenessRatio < minLivenessRatio {
+	if livenessInfo.CurrentLivenessRatio.LT(params.MinLivenessPerWindow) {
 		return true, nil
 	}
 
