@@ -497,8 +497,8 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge deadline exceeded")
 	}
 
-	// Check challenge is still pending
-	if challenge.Status != types.ChallengeStatus_CHALLENGE_STATUS_PENDING {
+	// Check challenge is still pending in case of assigned provider
+	if provider.Creator == challenge.Provider && challenge.Status != types.ChallengeStatus_CHALLENGE_STATUS_PENDING {
 		return nil, fmt.Errorf("challenge already completed")
 	}
 
