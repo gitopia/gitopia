@@ -66,6 +66,11 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 	// Special handling for the assigned provider who failed to respond
 	if !k.HasProviderSubmittedChallenge(ctx, challenge.Id, challenge.Provider) {
 		ctx.Logger().Info(fmt.Sprintf("assigned provider %s failed to respond to challenge %d", challenge.Provider, challenge.Id))
+		err := k.SlashProviderForProofFault(ctx, challenge.Provider)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for proof fault: %v", challenge.Provider, err))
+
+		}
 	}
 
 	return nil
