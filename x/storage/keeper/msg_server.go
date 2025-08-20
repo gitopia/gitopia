@@ -731,13 +731,13 @@ func (k msgServer) ClawbackProviderStake(goCtx context.Context, msg *types.MsgCl
 	providerStake.Stake = providerStake.Stake.Sub(msg.Amount)
 	k.SetProviderStake(ctx, providerAcc, providerStake)
 
-	// Check if stake has fallen below minimum and suspend provider if necessary
+	// Check if stake has fallen below minimum and jail provider if necessary
 	params := k.GetParams(ctx)
 	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
-		if provider.Status == types.Bonded {
-			provider.Status = types.Unbonding
+		if provider.Status == types.Bonded && !provider.Jailed {
+			provider.Jailed = true
 			k.SetProvider(ctx, provider)
-			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to stake falling below minimum after clawback", provider.Creator))
+			ctx.Logger().Info(fmt.Sprintf("provider %s jailed due to stake falling below minimum after clawback", provider.Creator))
 
 			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
 				Address: provider.Creator,
