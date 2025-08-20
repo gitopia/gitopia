@@ -242,12 +242,12 @@ func validateChallengeIntervalBlocks(v interface{}) error {
 
 // validateChallengePeriod validates the ChallengePeriod param
 func validateChallengePeriod(v interface{}) error {
-	period, ok := v.(*time.Duration)
+	period, ok := v.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if period == nil || period.Seconds() <= 0 {
-		return fmt.Errorf("challenge period must be greater than 0")
+	if period <= 0 {
+		return fmt.Errorf("challenge period must be positive: %s", v)
 	}
 	return nil
 }
@@ -372,12 +372,12 @@ func validateLivenessSlashFraction(v interface{}) error {
 
 // validateLivenessJailTime validates the LivenessJailTime param
 func validateLivenessJailTime(v interface{}) error {
-	time, ok := v.(*time.Duration)
+	time, ok := v.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if time == nil || time.Seconds() <= 0 {
-		return fmt.Errorf("liveness jail time cannot be zero")
+	if time <= 0 {
+		return fmt.Errorf("liveness jail time must be positive: %s", v)
 	}
 	return nil
 }
@@ -413,12 +413,12 @@ func validateProofFaultSlashFraction(v interface{}) error {
 
 // validateProofFaultJailTime validates the ProofFaultJailTime param
 func validateProofFaultJailTime(v interface{}) error {
-	time, ok := v.(*time.Duration)
+	time, ok := v.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if time == nil || time.Seconds() <= 0 {
-		return fmt.Errorf("proof fault jail time cannot be zero")
+	if time <= 0 {
+		return fmt.Errorf("proof fault jail time must be positive: %s", v)
 	}
 	return nil
 }
