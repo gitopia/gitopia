@@ -189,7 +189,7 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		RootHash:      rootHash,
 		ChunkIndex:    chunkIndex,
 		CreatedAt:     ctx.BlockTime(),
-		Deadline:      ctx.BlockTime().Add(*challengePeriod),
+		Deadline:      ctx.BlockTime().Add(challengePeriod),
 		Status:        types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 

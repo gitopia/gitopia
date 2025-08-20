@@ -69,8 +69,10 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 		err := k.SlashProviderForProofFault(ctx, challenge.Provider)
 		if err != nil {
 			ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for proof fault: %v", challenge.Provider, err))
-
 		}
+		// Update challenge status to failed
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
+		k.SetChallenge(ctx, *challenge)
 	}
 
 	return nil

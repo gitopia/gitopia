@@ -43,7 +43,17 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 
 	// Add the result of the current challenge
 	if !submitted {
-		livenessInfo.RecentMissedChallenges = append(livenessInfo.RecentMissedChallenges, challengeId)
+		// ensure we don't add duplicates
+		isAlreadyMissed := false
+		for _, missedId := range livenessInfo.RecentMissedChallenges {
+			if missedId == challengeId {
+				isAlreadyMissed = true
+				break
+			}
+		}
+		if !isAlreadyMissed {
+			livenessInfo.RecentMissedChallenges = append(livenessInfo.RecentMissedChallenges, challengeId)
+		}
 	} else {
 		livenessInfo.LastSubmissionChallenge = challengeId
 		blockTime := ctx.BlockTime()
@@ -86,6 +96,10 @@ func (k Keeper) SlashProviderForLivenessFault(ctx sdk.Context, providerAddr stri
 	provider, found := k.GetProvider(ctx, providerAddr)
 	if !found {
 		return fmt.Errorf("provider %s not found", providerAddr)
+	}
+
+	if provider.Jailed {
+		return nil
 	}
 
 	providerAcc, err := sdk.AccAddressFromBech32(provider.Creator)
@@ -138,6 +152,10 @@ func (k Keeper) SlashProviderForProofFault(ctx sdk.Context, providerAddr string)
 	provider, found := k.GetProvider(ctx, providerAddr)
 	if !found {
 		return fmt.Errorf("provider %s not found", providerAddr)
+	}
+
+	if provider.Jailed {
+		return nil
 	}
 
 	// Increment consecutive proof faults
