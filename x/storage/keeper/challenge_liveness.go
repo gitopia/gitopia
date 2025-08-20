@@ -10,7 +10,7 @@ import (
 // ProcessChallengeResponseForLiveness handles liveness tracking when a provider submits a challenge response
 func (k Keeper) ProcessChallengeResponseForLiveness(ctx sdk.Context, challenge *types.Challenge, responderAddress string, validProof bool) error {
 	// Update liveness for the responding provider
-	err := k.UpdateProviderLiveness(ctx, responderAddress, challenge.Id, true) // true = submitted proof
+	err := k.UpdateProviderLiveness(ctx, responderAddress, challenge.Id, validProof)
 	if err != nil {
 		return fmt.Errorf("failed to update liveness for responder %s: %v", responderAddress, err)
 	}
