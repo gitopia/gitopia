@@ -9,6 +9,12 @@ import (
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
+// The expiry is set high to prevent expiration of lfs object update proposals
+// When a repo with lfs objects is pushed, first lfs object update proposals are submitted by the provider
+// after that, repository update proposal is submitted by the provider after processing the git push request
+// But git client approves them together
+const ProposalExpiry = 5 * time.Minute
+
 // GetProposalCount get the total number of proposals
 func (k Keeper) GetProposalCount(ctx sdk.Context) uint64 {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedPackfileUpdateCountKey))
@@ -177,7 +183,6 @@ func (k Keeper) CreatePackfileUpdateProposal(
 	size uint64,
 	oldCid string,
 	mergeCommitSha string,
-	expirationSeconds uint64,
 	deleteFlag bool,
 ) uint64 {
 	proposal := types.ProposedPackfileUpdate{
@@ -192,7 +197,7 @@ func (k Keeper) CreatePackfileUpdateProposal(
 		MergeCommitSha: mergeCommitSha,
 		Status:         types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:     ctx.BlockTime(),
-		ExpiresAt:      ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		ExpiresAt:      ctx.BlockTime().Add(ProposalExpiry),
 		Delete:         deleteFlag,
 	}
 
@@ -359,7 +364,6 @@ func (k Keeper) CreateReleaseAssetsUpdateProposal(
 	user string,
 	tag string,
 	assets []*types.ReleaseAssetUpdate,
-	expirationSeconds uint64,
 ) uint64 {
 	proposal := types.ProposedReleaseAssetsUpdate{
 		Provider:     provider,
@@ -369,7 +373,7 @@ func (k Keeper) CreateReleaseAssetsUpdateProposal(
 		Assets:       assets,
 		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:   ctx.BlockTime(),
-		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		ExpiresAt:    ctx.BlockTime().Add(ProposalExpiry),
 	}
 
 	return k.AppendProposedReleaseAssetsUpdate(ctx, proposal)
@@ -545,7 +549,6 @@ func (k Keeper) CreateLFSObjectUpdateProposal(
 	size uint64,
 	cid string,
 	rootHash []byte,
-	expirationSeconds uint64,
 	deleteFlag bool,
 ) uint64 {
 	proposal := types.ProposedLFSObjectUpdate{
@@ -558,7 +561,7 @@ func (k Keeper) CreateLFSObjectUpdateProposal(
 		RootHash:     rootHash,
 		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:   ctx.BlockTime(),
-		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		ExpiresAt:    ctx.BlockTime().Add(ProposalExpiry),
 		Delete:       deleteFlag,
 	}
 
@@ -669,7 +672,6 @@ func (k Keeper) CreateRepositoryDeleteProposal(
 	provider string,
 	repositoryId uint64,
 	user string,
-	expirationSeconds uint64,
 ) uint64 {
 	proposal := types.ProposedRepositoryDelete{
 		Provider:     provider,
@@ -677,7 +679,7 @@ func (k Keeper) CreateRepositoryDeleteProposal(
 		User:         user,
 		Status:       types.ProposalStatus_PROPOSAL_STATUS_PENDING,
 		ProposedAt:   ctx.BlockTime(),
-		ExpiresAt:    ctx.BlockTime().Add(time.Duration(expirationSeconds) * time.Second),
+		ExpiresAt:    ctx.BlockTime().Add(ProposalExpiry),
 	}
 
 	return k.AppendProposedRepositoryDelete(ctx, proposal)

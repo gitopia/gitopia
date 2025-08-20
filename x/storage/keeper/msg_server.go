@@ -892,7 +892,6 @@ func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		msg.Size_,
 		msg.OldCid,
 		msg.MergeCommitSha,
-		300, // 300 seconds expiration
 		msg.Delete,
 	)
 
@@ -1423,7 +1422,6 @@ func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.
 		msg.User,
 		msg.Tag,
 		msg.Assets,
-		300, // 300 seconds expiration
 	)
 
 	return &types.MsgProposeReleaseAssetsUpdateResponse{
@@ -1735,7 +1733,6 @@ func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgP
 		msg.Size_,
 		msg.Cid,
 		msg.RootHash,
-		300, // 300 seconds expiration
 		msg.Delete,
 	)
 
@@ -1955,7 +1952,6 @@ func (k msgServer) ProposeRepositoryDelete(goCtx context.Context, msg *types.Msg
 		msg.Creator,
 		msg.RepositoryId,
 		msg.User,
-		300, // 300 seconds expiration
 	)
 
 	return &types.MsgProposeRepositoryDeleteResponse{
