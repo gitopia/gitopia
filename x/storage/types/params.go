@@ -53,10 +53,8 @@ var (
 	DefaultMinLivenessPerWindow     sdk.Dec  = sdk.NewDecWithPrec(5, 1)                         // 50% minimum liveness
 	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))    // $0.56 (lighter penalty for liveness)
 	DefaultLivenessSlashFraction    sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(100)) // 1% stake slash for liveness fault
-	DefaultLivenessJailBlocks       uint64   = 86400                                            // ~2.4 days jail for liveness fault
 	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000))  // $2.5 (heavier penalty for proof fault)
 	DefaultProofFaultSlashFraction  sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(20))  // 5% stake slash for proof fault
-	DefaultProofFaultJailBlocks     uint64   = 259200                                           // ~7.2 days jail for proof fault
 	DefaultMaxProofFaults           uint64   = 3                                                // Max consecutive proof faults
 )
 
@@ -237,7 +235,7 @@ func validateChallengeIntervalBlocks(v interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 	if amount == 0 {
-		return fmt.Errorf("challenges per day cannot be 0")
+		return fmt.Errorf("challenge interval blocks cannot be 0")
 	}
 	return nil
 }
