@@ -15,11 +15,21 @@ func (k Keeper) ProcessChallengeResponseForLiveness(ctx sdk.Context, challenge *
 		return fmt.Errorf("failed to update liveness for responder %s: %v", responderAddress, err)
 	}
 
-	// If this is the assigned provider with an invalid proof, apply proof fault slashing
-	if challenge.Provider == responderAddress && !validProof {
-		err := k.SlashProviderForProofFault(ctx, responderAddress)
-		if err != nil {
-			ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for proof fault: %v", responderAddress, err))
+	// If this is the assigned provider
+	if challenge.Provider == responderAddress {
+		if !validProof {
+			// with an invalid proof, apply proof fault slashing
+			err := k.SlashProviderForProofFault(ctx, responderAddress)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("failed to slash provider %s for proof fault: %v", responderAddress, err))
+			}
+		} else {
+			// with a valid proof, reset consecutive proof faults
+			provider, _ := k.GetProvider(ctx, responderAddress)
+			if provider.ConsecutiveProofFaults > 0 {
+				provider.ConsecutiveProofFaults = 0
+				k.SetProvider(ctx, provider)
+			}
 		}
 	}
 
