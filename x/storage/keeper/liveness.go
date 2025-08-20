@@ -26,7 +26,7 @@ func (k Keeper) UpdateProviderLiveness(ctx sdk.Context, providerAddr string, cha
 	// Evict old challenges that fall outside the new sliding window.
 	// The window is defined as [challengeId - windowSize + 1, challengeId].
 	if windowSize > 0 {
-		minChallengeId := uint64(1) // Prevent underflow if challengeId < windowSize
+		minChallengeId := uint64(0) // Prevent underflow if challengeId < windowSize
 		if challengeId >= windowSize {
 			minChallengeId = challengeId - windowSize + 1
 		}
