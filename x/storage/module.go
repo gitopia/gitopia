@@ -175,6 +175,10 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 
 	// Check for expired challenges using new Tendermint-style liveness system
 	// Process all pending challenges that have expired
+	// NOTE: This logic only checks the last challenge in the queue.
+	// ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
+	// to ensure that only one challenge is active at a time. If multiple challenges
+	// are active during the same period, this logic will not process all of them correctly.
 	challengeCount := am.keeper.GetChallengeCount(ctx)
 	if challengeCount > 0 {
 		lastChallengeId := challengeCount - 1

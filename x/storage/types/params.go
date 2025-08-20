@@ -18,6 +18,10 @@ const (
 	DefaultProofFaultJailTime = 4 * time.Hour
 )
 
+// NOTE: ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
+// to ensure that only one challenge is active at a time. The EndBlock logic in module.go
+// only checks the last challenge in the queue, so if multiple challenges are active
+// during the same period, the logic will not process all of them correctly.
 var (
 	KeyMinStakeAmount          = []byte("MinStakeAmount")
 	KeyChallengeIntervalBlocks = []byte("ChallengeIntervalBlocks")
