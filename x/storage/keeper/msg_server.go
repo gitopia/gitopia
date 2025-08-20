@@ -2013,6 +2013,8 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 	deletedReleaseAssets := make([]*types.ReleaseAssetInfo, 0)
 	deletedLfsObjects := make([]*types.LFSObjectInfo, 0)
 
+	storageStats := k.GetStorageStats(ctx)
+
 	// Delete packfile
 	packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
 	if found {
@@ -2030,13 +2032,11 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 			userQuota.StorageUsed = 0
 		}
 
-		storageStats := k.GetStorageStats(ctx)
 		if storageStats.TotalPackfileSize >= uint64(packfile.Size_) {
 			storageStats.TotalPackfileSize -= uint64(packfile.Size_)
 		} else {
 			storageStats.TotalPackfileSize = 0
 		}
-		k.SetStorageStats(ctx, storageStats)
 
 		k.RemovePackfile(ctx, proposal.RepositoryId)
 	}
@@ -2060,13 +2060,11 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 			userQuota.StorageUsed = 0
 		}
 
-		storageStats := k.GetStorageStats(ctx)
 		if storageStats.TotalLfsObjectSize >= uint64(lfsObject.Size_) {
 			storageStats.TotalLfsObjectSize -= uint64(lfsObject.Size_)
 		} else {
 			storageStats.TotalLfsObjectSize = 0
 		}
-		k.SetStorageStats(ctx, storageStats)
 
 		k.RemoveLFSObject(ctx, proposal.RepositoryId, lfsObject.Oid)
 	}
@@ -2092,18 +2090,17 @@ func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.Msg
 			userQuota.StorageUsed = 0
 		}
 
-		storageStats := k.GetStorageStats(ctx)
 		if storageStats.TotalReleaseAssetSize >= uint64(releaseAsset.Size_) {
 			storageStats.TotalReleaseAssetSize -= uint64(releaseAsset.Size_)
 		} else {
 			storageStats.TotalReleaseAssetSize = 0
 		}
-		k.SetStorageStats(ctx, storageStats)
 
 		k.RemoveReleaseAsset(ctx, proposal.RepositoryId, releaseAsset.Tag, releaseAsset.Name)
 	}
 
 	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+	k.SetStorageStats(ctx, storageStats)
 
 	// Remove proposal
 	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
