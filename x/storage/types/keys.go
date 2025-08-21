@@ -56,6 +56,7 @@ const (
 	ReleaseAssetRepositoryMappingKey = "ReleaseAssetRepositoryMapping-value-"
 	ChallengeKey                     = "Challenge-value-"
 	ChallengeCountKey                = "Challenge-count-"
+	NextChallengeIDKey               = "NextChallengeID-"
 	LFSObjectKey                     = "LFSObject-value-"
 	LFSObjectCountKey                = "LFSObject-count-"
 	LFSObjectRepositoryMappingKey    = "LFSObjectRepositoryMapping-value-"

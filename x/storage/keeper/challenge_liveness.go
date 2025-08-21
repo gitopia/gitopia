@@ -84,6 +84,7 @@ func (k Keeper) ProcessChallengeTimeout(ctx sdk.Context, challenge *types.Challe
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, *challenge)
 	}
+	k.SetNextChallengeID(ctx, challenge.Id+1)
 
 	return nil
 }

@@ -179,18 +179,19 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 	// ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
 	// to ensure that only one challenge is active at a time. If multiple challenges
 	// are active during the same period, this logic will not process all of them correctly.
+	nextChallengeID := am.keeper.GetNextChallengeID(ctx)
 	challengeCount := am.keeper.GetChallengeCount(ctx)
-	if challengeCount > 0 {
-		lastChallengeId := challengeCount - 1
-		challenge, found := am.keeper.GetChallenge(ctx, lastChallengeId)
+
+	if nextChallengeID < challengeCount {
+		challenge, found := am.keeper.GetChallenge(ctx, nextChallengeID)
 		if found && challenge.Deadline.Before(ctx.BlockTime()) {
 			// Use the new Tendermint-style challenge timeout processing
 			err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
 			if err != nil {
 				ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
+			} else {
+				ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 			}
-
-			ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
 		}
 	}
 
