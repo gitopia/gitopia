@@ -14,8 +14,8 @@ var _ paramtypes.ParamSet = (*Params)(nil)
 
 const (
 	DefaultChallengePeriod    = 10 * time.Second
-	DefaultLivenessJailTime   = 900 * time.Second
-	DefaultProofFaultJailTime = 4 * time.Hour
+	DefaultLivenessJailTime   = 4 * time.Hour
+	DefaultProofFaultJailTime = 24 * time.Hour
 )
 
 // NOTE: ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
@@ -45,21 +45,21 @@ var (
 
 	// Default values for parameters
 	DefaultMinStakeAmount          uint64   = 1_000_000_000_000                               // $1134
-	DefaultChallengeIntervalBlocks uint64   = 100                                             // ~30 min
-	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(4_267_000_000)) // $4.8 a day, $150 a month per provider
+	DefaultChallengeIntervalBlocks uint64   = 1000                                            // ~30 min
+	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(8_889_000_000)) // $10 a day, $300 a month per provider
 	DefaultUnstakeCooldownBlocks   uint64   = 1_521_500                                       // ~28 days
-	DefaultStoragePricePerMb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(12_000))        // $0.00001 per MB of storage update
+	DefaultStoragePricePerMb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(120_000))       // $0.0001 per MB of storage update
 	DefaultFreeStorageMb           uint64   = 157_286_400                                     // 150Mb
 	DefaultMaxProviders            uint64   = 5
 
 	// Liveness tracking default values
-	DefaultLivenessWindowChallenges uint64   = 100                                              // Last 100 challenges (~50 hours at 100 block intervals)
-	DefaultMinLivenessPerWindow     sdk.Dec  = sdk.NewDecWithPrec(5, 1)                         // 50% minimum liveness
-	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(500_000_000))    // $0.56 (lighter penalty for liveness)
-	DefaultLivenessSlashFraction    sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(100)) // 1% stake slash for liveness fault
-	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_200_000_000))  // $2.5 (heavier penalty for proof fault)
-	DefaultProofFaultSlashFraction  sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(20))  // 5% stake slash for proof fault
-	DefaultMaxProofFaults           uint64   = 3                                                // Max consecutive proof faults
+	DefaultLivenessWindowChallenges uint64   = 336                      // Last 336 challenges (~7 days at 1000 block intervals)
+	DefaultMinLivenessPerWindow     sdk.Dec  = sdk.NewDecWithPrec(5, 1) // 50% minimum liveness
+	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
+	DefaultLivenessSlashFraction    sdk.Dec  = math.LegacyNewDec(5).Quo(math.LegacyNewDec(1000)) // 0.5% stake slash for liveness fault
+	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
+	DefaultProofFaultSlashFraction  sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(20)) // 5% stake slash for proof fault
+	DefaultMaxProofFaults           uint64   = 3                                               // Max consecutive proof faults
 )
 
 // ParamKeyTable the param key table for launch module
