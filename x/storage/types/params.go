@@ -44,9 +44,9 @@ var (
 	KeyMaxProofFaults           = []byte("MaxProofFaults")
 
 	// Default values for parameters
-	DefaultMinStakeAmount          uint64   = 1_000_000_000_000                               // $1134
+	DefaultMinStakeAmount          uint64   = 1_000_000_000_000                               // $1292
 	DefaultChallengeIntervalBlocks uint64   = 1000                                            // ~30 min
-	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(8_889_000_000)) // $10 a day, $300 a month per provider
+	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(7_740_000_000)) // $10 a day, $300 a month per provider
 	DefaultUnstakeCooldownBlocks   uint64   = 1_521_500                                       // ~28 days
 	DefaultStoragePricePerMb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(120_000))       // $0.0001 per MB of storage update
 	DefaultFreeStorageMb           uint64   = 157_286_400                                     // 150Mb
