@@ -1021,7 +1021,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 
 		// Calculate the difference in size between the existing and new packfile
 		existingSize := existingPackfile.Size_
-		newSize := proposal.GetSize_()
+		newSize := proposal.Size_
 		var diff int64
 		if newSize >= existingSize {
 			diff = int64(newSize - existingSize)
@@ -1072,7 +1072,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		existingPackfile.OldCid = existingPackfile.Cid
 		existingPackfile.Cid = proposal.Cid
 		existingPackfile.RootHash = proposal.RootHash
-		existingPackfile.Size_ = proposal.GetSize_()
+		existingPackfile.Size_ = proposal.Size_
 		existingPackfile.UpdatedAt = ctx.BlockTime()
 
 		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
@@ -1089,7 +1089,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 	} else {
 		// Calculate storage charge for new packfile
 		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
-			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.GetSize_())
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
 			if err != nil {
 				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -1117,12 +1117,12 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 			Name:         proposal.Name,
 			Cid:          proposal.Cid,
 			RootHash:     proposal.RootHash,
-			Size_:        proposal.GetSize_(),
+			Size_:        proposal.Size_,
 			CreatedAt:    ctx.BlockTime(),
 			UpdatedAt:    ctx.BlockTime(),
 		}
 
-		userQuota.StorageUsed += proposal.GetSize_()
+		userQuota.StorageUsed += proposal.Size_
 		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
 		k.AppendPackfile(ctx, packfile)
@@ -1131,7 +1131,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		k.IncreaseCidReferenceCount(ctx, proposal.Cid)
 
 		storageStats := k.GetStorageStats(ctx)
-		storageStats.TotalPackfileSize += proposal.GetSize_()
+		storageStats.TotalPackfileSize += proposal.Size_
 		k.SetStorageStats(ctx, storageStats)
 	}
 
