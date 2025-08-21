@@ -28,7 +28,7 @@ var (
 	KeyChallengePeriod         = []byte("ChallengePeriod")
 	KeyRewardPerDay            = []byte("RewardPerDay")
 	KeyUnstakeCooldownBlocks   = []byte("UnstakeCooldownBlocks")
-	KeyStoragePricePerMb       = []byte("StoragePricePerMb")
+	KeyStoragePricePerGb       = []byte("StoragePricePerGb")
 	KeyFreeStorageMb           = []byte("FreeStorageMb")
 	KeyMaxProviders            = []byte("MaxProviders")
 
@@ -48,7 +48,7 @@ var (
 	DefaultChallengeIntervalBlocks uint64   = 1000                                            // ~30 min
 	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(7_740_000_000)) // $10 a day, $300 a month per provider
 	DefaultUnstakeCooldownBlocks   uint64   = 1_521_500                                       // ~28 days
-	DefaultStoragePricePerMb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(120_000))       // $0.0001 per MB of storage update
+	DefaultStoragePricePerGb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(122_880_000))   // $0.1 per GB of storage update
 	DefaultFreeStorageMb           uint64   = 157_286_400                                     // 150Mb
 	DefaultMaxProviders            uint64   = 5
 
@@ -74,7 +74,7 @@ func NewParams(
 	challengePeriod time.Duration,
 	rewardPerDay sdk.Coin,
 	unstakeCooldownBlocks uint64,
-	storagePricePerMb sdk.Coin,
+	storagePricePerGb sdk.Coin,
 	freeStorageMb uint64,
 	maxProviders uint64,
 	// Liveness tracking parameters
@@ -94,7 +94,7 @@ func NewParams(
 		ChallengePeriod:         challengePeriod,
 		RewardPerDay:            rewardPerDay,
 		UnstakeCooldownBlocks:   unstakeCooldownBlocks,
-		StoragePricePerMb:       storagePricePerMb,
+		StoragePricePerGb:       storagePricePerGb,
 		FreeStorageMb:           freeStorageMb,
 		MaxProviders:            maxProviders,
 		// Liveness tracking fields
@@ -118,7 +118,7 @@ func DefaultParams() Params {
 		DefaultChallengePeriod,
 		DefaultRewardPerDay,
 		DefaultUnstakeCooldownBlocks,
-		DefaultStoragePricePerMb,
+		DefaultStoragePricePerGb,
 		DefaultFreeStorageMb,
 		DefaultMaxProviders,
 		// Liveness tracking defaults
@@ -142,7 +142,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyChallengePeriod, &p.ChallengePeriod, validateChallengePeriod),
 		paramtypes.NewParamSetPair(KeyRewardPerDay, &p.RewardPerDay, validateRewardPerDay),
 		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
-		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
+		paramtypes.NewParamSetPair(KeyStoragePricePerGb, &p.StoragePricePerGb, validateStoragePricePerGb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
 		// Liveness tracking parameters
@@ -175,7 +175,7 @@ func (p Params) Validate() error {
 	if err := validateUnstakeCooldownBlocks(p.UnstakeCooldownBlocks); err != nil {
 		return err
 	}
-	if err := validateStoragePricePerMb(p.StoragePricePerMb); err != nil {
+	if err := validateStoragePricePerGb(p.StoragePricePerGb); err != nil {
 		return err
 	}
 	if err := validateFreeStorageMb(p.FreeStorageMb); err != nil {
@@ -280,8 +280,8 @@ func validateUnstakeCooldownBlocks(v interface{}) error {
 	return nil
 }
 
-// validateStoragePricePerMb validates the StoragePricePerMb param
-func validateStoragePricePerMb(v interface{}) error {
+// validateStoragePricePerGb validates the StoragePricePerGb param
+func validateStoragePricePerGb(v interface{}) error {
 	_, ok := v.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)

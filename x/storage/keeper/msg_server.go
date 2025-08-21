@@ -116,24 +116,24 @@ func (k msgServer) calculateStorageCharge(ctx sdk.Context, currentUsage uint64, 
 	if currentUsage > freeStorageBytes {
 		diff := newUsage - currentUsage
 		if diff <= 0 {
-			return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
+			return sdk.NewCoin(params.StoragePricePerGb.Denom, sdk.ZeroInt()), nil
 		}
-		// Calculate charge in MB and multiply by price per MB
-		diffMb := float64(diff) / (1024 * 1024)
-		chargeAmount := sdk.NewDec(int64(diffMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
-		return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+		// Calculate charge in GB and multiply by price per GB
+		diffGb := float64(diff) / (1024 * 1024 * 1024)
+		chargeAmount := sdk.NewDec(int64(diffGb)).Mul(sdk.NewDecFromInt(params.StoragePricePerGb.Amount))
+		return sdk.NewCoin(params.StoragePricePerGb.Denom, chargeAmount.TruncateInt()), nil
 	}
 
 	// If new usage is below free limit, no charge
 	if newUsage <= freeStorageBytes {
-		return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
+		return sdk.NewCoin(params.StoragePricePerGb.Denom, sdk.ZeroInt()), nil
 	}
 
 	// Calculate charge for the portion that exceeds free limit
 	excessBytes := newUsage - freeStorageBytes
-	excessMb := float64(excessBytes) / (1024 * 1024)
-	chargeAmount := sdk.NewDec(int64(excessMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
-	return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+	excessGb := float64(excessBytes) / (1024 * 1024 * 1024)
+	chargeAmount := sdk.NewDec(int64(excessGb)).Mul(sdk.NewDecFromInt(params.StoragePricePerGb.Amount))
+	return sdk.NewCoin(params.StoragePricePerGb.Denom, chargeAmount.TruncateInt()), nil
 }
 
 func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.MsgUpdateRepositoryPackfile) (*types.MsgUpdateRepositoryPackfileResponse, error) {
@@ -181,7 +181,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -230,7 +230,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new packfile
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -349,7 +349,7 @@ func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpda
 	}
 
 	// Calculate storage charge for the total size difference
-	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 		var newStorageUsed uint64
 		if totalSizeDiff >= 0 {
 			newStorageUsed = userQuota.StorageUsed + uint64(totalSizeDiff)
@@ -547,7 +547,7 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		activeProviders := k.GetActiveProviders(ctx)
 
 		// Consider only providers that have been active for at least 24 hours
-		minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+		minJoinTime := ctx.BlockTime().Add(-24 * time.Second)
 		activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
 
 		// Update provider rewards
@@ -790,7 +790,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 	}
 
 	// Calculate storage charge for new LFS object
-	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -1030,7 +1030,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
@@ -1088,7 +1088,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new packfile
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
 			if err != nil {
 				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
@@ -1532,7 +1532,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	}
 
 	// Calculate storage charge for the total size difference
-	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 		var newStorageUsed uint64
 		if totalSizeDiff >= 0 {
 			newStorageUsed = userQuota.StorageUsed + uint64(totalSizeDiff)
@@ -1850,7 +1850,7 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 	}
 
 	// Calculate storage charge for new LFS object
-	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)

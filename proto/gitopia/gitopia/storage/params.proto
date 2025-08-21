@@ -18,8 +18,8 @@ message Params {
   cosmos.base.v1beta1.Coin reward_per_day = 4 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"reward_per_day\""];
   uint64 unstake_cooldown_blocks = 5 [(gogoproto.moretags) = "yaml:\"unstake_cooldown_blocks\""];
 
-  // cost per MB of storage
-  cosmos.base.v1beta1.Coin storage_price_per_mb = 6 [(gogoproto.nullable) = false];
+  // cost per GB of storage
+  cosmos.base.v1beta1.Coin storage_price_per_gb = 6 [(gogoproto.nullable) = false];
   // free storage in MB
   uint64 free_storage_mb = 7 [(gogoproto.moretags) = "yaml:\"free_storage_mb\""];
 
