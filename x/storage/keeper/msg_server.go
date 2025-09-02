@@ -601,7 +601,7 @@ func (k msgServer) UnregisterProvider(goCtx context.Context, msg *types.MsgUnreg
 
 	// Get params for cooldown period
 	params := k.GetParams(ctx)
-	unstakeCompletionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
+	unstakeCompletionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * 1590 * time.Millisecond)
 
 	// Update provider with unstake completion time
 	provider.UnstakeCompletionTime = &unstakeCompletionTime
@@ -1260,7 +1260,7 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}
 
 	// Set cooldown period for stake decrease (separate from unregistration)
-	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
+	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * 1590 * time.Millisecond)
 	provider.DecreaseCompletionTime = &completionTime
 	provider.PendingDecreaseAmount = &msg.Amount
 

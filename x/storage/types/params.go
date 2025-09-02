@@ -46,9 +46,9 @@ var (
 	// Default values for parameters
 	DefaultMinStakeAmount          uint64   = 1_000_000_000_000                               // $1292
 	DefaultChallengeIntervalBlocks uint64   = 1000                                            // ~30 min
-	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(7_740_000_000)) // $10 a day, $300 a month per provider
+	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_675_000_000)) // $5 a day, $150 a month per provider
 	DefaultUnstakeCooldownBlocks   uint64   = 1_521_500                                       // ~28 days
-	DefaultStoragePricePerGb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(122_880_000))   // $0.1 per GB of storage update
+	DefaultStoragePricePerGb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_070_000_000)) // $2 per GB of storage update
 	DefaultFreeStorageMb           uint64   = 157_286_400                                     // 150Mb
 	DefaultMaxProviders            uint64   = 5
 
