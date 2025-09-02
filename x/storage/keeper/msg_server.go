@@ -16,7 +16,7 @@ import (
 )
 
 // Approximate upgrade time of the v6 upgrade which adds storage module
-var UpgradeTime = time.Date(2025, time.July, 11, 12, 35, 0, 0, time.UTC)
+var UpgradeTime = time.Date(2025, time.September, 5, 14, 0, 0, 0, time.UTC)
 
 type msgServer struct {
 	Keeper
@@ -1030,7 +1030,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
@@ -1088,7 +1088,7 @@ func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *t
 		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new packfile
-		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
 			if err != nil {
 				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
@@ -1532,7 +1532,7 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 	}
 
 	// Calculate storage charge for the total size difference
-	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
 		var newStorageUsed uint64
 		if totalSizeDiff >= 0 {
 			newStorageUsed = userQuota.StorageUsed + uint64(totalSizeDiff)
@@ -1850,7 +1850,7 @@ func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgA
 	}
 
 	// Calculate storage charge for new LFS object
-	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
