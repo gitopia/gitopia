@@ -170,6 +170,7 @@ const (
 	DeletePullRequestEventKey            = "DeletePullRequest"
 	LinkPullRequestIssueByIidEventKey    = "LinkPullRequestIssueByIid"
 	UnlinkPullRequestIssueByIidEventKey  = "UnlinkPullRequestIssueByIid"
+	MergePullRequestEventKey             = "MergePullRequest"
 )
 
 const (

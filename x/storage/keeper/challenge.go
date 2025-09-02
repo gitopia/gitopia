@@ -189,7 +189,7 @@ func (k Keeper) GenerateChallenge(ctx sdk.Context) (*types.Challenge, error) {
 		RootHash:      rootHash,
 		ChunkIndex:    chunkIndex,
 		CreatedAt:     ctx.BlockTime(),
-		Deadline:      ctx.BlockTime().Add(*challengePeriod),
+		Deadline:      ctx.BlockTime().Add(challengePeriod),
 		Status:        types.ChallengeStatus_CHALLENGE_STATUS_PENDING,
 	}
 
@@ -204,4 +204,26 @@ func filterProvidersByJoinTime(providers []types.Provider, minJoinTime time.Time
 		}
 	}
 	return filteredProviders
+}
+
+// GetNextChallengeID gets the next challenge ID to be processed.
+func (k Keeper) GetNextChallengeID(ctx sdk.Context) uint64 {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NextChallengeIDKey))
+	byteKey := types.KeyPrefix(types.NextChallengeIDKey)
+	bz := store.Get(byteKey)
+
+	if bz == nil {
+		return 0
+	}
+
+	return binary.BigEndian.Uint64(bz)
+}
+
+// SetNextChallengeID sets the next challenge ID to be processed.
+func (k Keeper) SetNextChallengeID(ctx sdk.Context, id uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NextChallengeIDKey))
+	byteKey := types.KeyPrefix(types.NextChallengeIDKey)
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+	store.Set(byteKey, bz)
 }

@@ -54,6 +54,7 @@ service Msg {
   rpc UpdatePullRequestDescription(MsgUpdatePullRequestDescription) returns (MsgUpdatePullRequestDescriptionResponse);
   rpc InvokeMergePullRequest(MsgInvokeMergePullRequest) returns (MsgInvokeMergePullRequestResponse);
   rpc InvokeDaoMergePullRequest(MsgInvokeDaoMergePullRequest) returns (MsgInvokeDaoMergePullRequestResponse);
+  rpc MergePullRequest(MsgMergePullRequest) returns (MsgMergePullRequestResponse);
   rpc SetPullRequestState(MsgSetPullRequestState) returns (MsgSetPullRequestStateResponse);
   rpc AddPullRequestReviewers(MsgAddPullRequestReviewers) returns (MsgAddPullRequestReviewersResponse);
   rpc RemovePullRequestReviewers(MsgRemovePullRequestReviewers) returns (MsgRemovePullRequestReviewersResponse);
@@ -196,6 +197,10 @@ message MsgSetBranch {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set branch if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgSetBranchResponse {}
@@ -216,6 +221,10 @@ message MsgMultiSetBranch {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set branch if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgMultiSetBranchResponse { }
@@ -244,6 +253,10 @@ message MsgSetTag {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set tag if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgSetTagResponse { }
@@ -256,6 +269,10 @@ message MsgMultiSetTag {
     string name = 1;
     string sha = 2;
   }
+
+  // cid of repository packfile
+  // only proceed with the set tag if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 4;
 }
 
 message MsgMultiSetTagResponse { }
@@ -397,6 +414,10 @@ message MsgInvokeMergePullRequest {
   uint64 repositoryId = 2;
   uint64 iid = 3;
   string provider = 4;
+  
+  // commit sha of base branch
+  // only proceed with the merge if the current commit sha matches the expected commit sha
+  string base_commit_sha = 5;
 }
 
 message MsgInvokeMergePullRequestResponse { }
@@ -410,9 +431,27 @@ message MsgInvokeDaoMergePullRequest {
   uint64 repositoryId = 2;
   uint64 iid = 3;
   string provider = 4;
+  
+  // commit sha of base branch
+  // only proceed with the merge if the current commit sha matches the expected commit sha
+  string base_commit_sha = 5;
 }
 
 message MsgInvokeDaoMergePullRequestResponse { }
+
+// MsgMergePullRequest defines a message for completing a pull request merge
+message MsgMergePullRequest {
+  string creator = 1;
+  uint64 repository_id = 2;
+  uint64 pull_request_iid = 3;
+  string merge_commit_sha = 4;
+
+  // cid of repository packfile
+  // only proceed with the merge if the current packfile cid matches the expected packfile cid
+  string packfile_cid = 5;
+}
+
+message MsgMergePullRequestResponse {}
 
 message MsgSetPullRequestState {
   string creator = 1;

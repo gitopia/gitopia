@@ -988,10 +988,6 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	}
 
 	repository, found := k.GetAddressRepository(ctx, address.Address, msg.RepositoryId.Name)
-	if repository.Archived {
-		return nil, fmt.Errorf("don't allow any modifications to repository %s when archived is set to true", msg.RepositoryId.Name)
-	}
-
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%v/%v) doesn't exist", msg.RepositoryId.Id, msg.RepositoryId.Name))
 	}
@@ -1005,26 +1001,9 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 		return nil, fmt.Errorf("repository %s has forks, cannot delete", repository.Name)
 	}
 
-	DoRemoveRepository(ctx, k, repository)
-
-	// Remove the repository id -> owner address, repository name mapping
-	k.RemoveBaseRepositoryKey(ctx, repository.Id)
-
-	// If it's a forked repository, remove the link from parent repository
-	if repository.Fork {
-		parentRepository, found := k.GetRepositoryById(ctx, repository.Parent)
-		if !found {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("parent repository (%d) doesn't exist", repository.Parent))
-		}
-		// Update parent repository forks
-		for i, fork := range parentRepository.Forks {
-			if fork == repository.Id {
-				parentRepository.Forks = append(parentRepository.Forks[:i], parentRepository.Forks[i+1:]...)
-				break
-			}
-		}
-		k.SetRepository(ctx, parentRepository)
-	}
+	// Instead of deleting, mark as archived to start the deletion process.
+	repository.Archived = true
+	k.SetRepository(ctx, repository)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
@@ -1041,20 +1020,57 @@ func (k msgServer) DeleteRepository(goCtx context.Context, msg *types.MsgDeleteR
 	return &types.MsgDeleteRepositoryResponse{}, nil
 }
 
+// PurgeRepository should be called by the storage module after storage is deleted.
+// This function should be part of the GitopiaKeeper interface.
+func (k msgServer) PurgeRepository(ctx sdk.Context, repositoryId uint64) error {
+	repository, found := k.GetRepositoryById(ctx, repositoryId)
+	if !found {
+		return sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository (%d) doesn't exist", repositoryId))
+	}
+
+	// Sanity check
+	if !repository.Archived {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "repository not marked for deletion")
+	}
+
+	DoRemoveRepository(ctx, k, repository)
+
+	// Remove the repository id -> owner address, repository name mapping
+	k.RemoveBaseRepositoryKey(ctx, repository.Id)
+
+	// If it's a forked repository, remove the link from parent repository
+	if repository.Fork {
+		parentRepository, found := k.GetRepositoryById(ctx, repository.Parent)
+		if !found {
+			return sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("parent repository (%d) doesn't exist", repository.Parent))
+		}
+		// Update parent repository forks
+		for i, fork := range parentRepository.Forks {
+			if fork == repository.Id {
+				parentRepository.Forks = append(parentRepository.Forks[:i], parentRepository.Forks[i+1:]...)
+				break
+			}
+		}
+		k.SetRepository(ctx, parentRepository)
+	}
+
+	return nil
+}
+
 func DoRemoveRepository(ctx sdk.Context, k msgServer, repository types.Repository) {
 	repositoryIssues := k.GetAllRepositoryIssue(ctx, repository.Id)
 	for _, i := range repositoryIssues {
-		DoRemoveIssue(ctx, k, i, repository)
+		k.DoRemoveIssue(ctx, i, repository)
 	}
 
 	repositoryPullRequests := k.GetAllRepositoryPullRequest(ctx, repository.Id)
 	for _, pr := range repositoryPullRequests {
-		DoRemovePullRequest(ctx, k, pr, repository)
+		k.DoRemovePullRequest(ctx, pr, repository)
 	}
 
 	for _, r := range repository.Releases {
 		release, _ := k.GetRelease(ctx, r.Id)
-		DoRemoveRelease(ctx, k, release, repository)
+		k.DoRemoveRelease(ctx, release, repository)
 	}
 
 	k.RemoveAddressRepository(ctx, repository.Owner.Id, repository.Name)

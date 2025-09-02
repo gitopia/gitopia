@@ -2,6 +2,13 @@
 
 All notable changes will be documented here.
 
+## [6.0.0] - 2025-09-02
+
+- implement storage module to manage storage providers, storage information and storage challenges
+- handle race conditions in repository update transactions by including repository state in the transaction
+- implement storage update proposal and approval process
+- implement charging for storage usage beyond free limit
+
 ## [5.1.0] - 2024-11-30
 
 - fix errors in pull request merge messages

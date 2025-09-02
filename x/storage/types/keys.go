@@ -33,8 +33,9 @@ const (
 var (
 	ParamsKey = []byte{0x00}
 
-	ProviderStakePrefix   = []byte{0x01}
-	ProviderRewardsPrefix = []byte{0x02}
+	ProviderStakePrefix        = []byte{0x01}
+	ProviderRewardsPrefix      = []byte{0x02}
+	ProviderLivenessInfoPrefix = []byte{0x03}
 )
 
 func KeyPrefix(p string) []byte {
@@ -55,9 +56,19 @@ const (
 	ReleaseAssetRepositoryMappingKey = "ReleaseAssetRepositoryMapping-value-"
 	ChallengeKey                     = "Challenge-value-"
 	ChallengeCountKey                = "Challenge-count-"
+	NextChallengeIDKey               = "NextChallengeID-"
 	LFSObjectKey                     = "LFSObject-value-"
 	LFSObjectCountKey                = "LFSObject-count-"
 	LFSObjectRepositoryMappingKey    = "LFSObjectRepositoryMapping-value-"
+
+	ProposedPackfileUpdateKey           = "ProposedPackfileUpdate-value-"
+	ProposedPackfileUpdateCountKey      = "ProposedPackfileUpdate-count-"
+	ProposedReleaseAssetsUpdateKey      = "ProposedReleaseAssetsUpdate-value-"
+	ProposedReleaseAssetsUpdateCountKey = "ProposedReleaseAssetsUpdate-count-"
+	ProposedLFSObjectUpdateKey          = "ProposedLFSObjectUpdate-value-"
+	ProposedLFSObjectUpdateCountKey     = "ProposedLFSObjectUpdate-count-"
+	ProposedRepositoryDeleteKey         = "ProposedRepositoryDelete-value-"
+	ProposedRepositoryDeleteCountKey    = "ProposedRepositoryDelete-count-"
 
 	StorageStatsKey = "StorageStats"
 

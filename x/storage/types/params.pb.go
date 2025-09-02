@@ -5,7 +5,9 @@ package types
 
 import (
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
 	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
@@ -30,20 +32,32 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
-	MinStakeAmount                  uint64         `protobuf:"varint,1,opt,name=min_stake_amount,json=minStakeAmount,proto3" json:"min_stake_amount,omitempty" yaml:"min_stake_amount"`
-	ChallengeIntervalBlocks         uint64         `protobuf:"varint,2,opt,name=challenge_interval_blocks,json=challengeIntervalBlocks,proto3" json:"challenge_interval_blocks,omitempty" yaml:"challenge_interval_blocks"`
-	ChallengePeriod                 *time.Duration `protobuf:"bytes,3,opt,name=challenge_period,json=challengePeriod,proto3,stdduration" json:"challenge_period,omitempty" yaml:"challenge_period"`
-	RewardPerDay                    types.Coin     `protobuf:"bytes,4,opt,name=reward_per_day,json=rewardPerDay,proto3" json:"reward_per_day" yaml:"reward_per_day"`
-	ChallengeSlashAmount            types.Coin     `protobuf:"bytes,5,opt,name=challenge_slash_amount,json=challengeSlashAmount,proto3" json:"challenge_slash_amount" yaml:"challenge_slash_amount"`
-	ConsecutiveFailsThreshold       uint64         `protobuf:"varint,6,opt,name=consecutive_fails_threshold,json=consecutiveFailsThreshold,proto3" json:"consecutive_fails_threshold,omitempty" yaml:"consecutive_fails_threshold"`
-	ConsecutiveFailsSlashPercentage uint64         `protobuf:"varint,7,opt,name=consecutive_fails_slash_percentage,json=consecutiveFailsSlashPercentage,proto3" json:"consecutive_fails_slash_percentage,omitempty" yaml:"consecutive_fails_slash_percentage"`
-	UnstakeCooldownBlocks           uint64         `protobuf:"varint,8,opt,name=unstake_cooldown_blocks,json=unstakeCooldownBlocks,proto3" json:"unstake_cooldown_blocks,omitempty" yaml:"unstake_cooldown_blocks"`
-	// cost per MB of storage
-	StoragePricePerMb types.Coin `protobuf:"bytes,9,opt,name=storage_price_per_mb,json=storagePricePerMb,proto3" json:"storage_price_per_mb"`
+	MinStakeAmount          uint64        `protobuf:"varint,1,opt,name=min_stake_amount,json=minStakeAmount,proto3" json:"min_stake_amount,omitempty" yaml:"min_stake_amount"`
+	ChallengeIntervalBlocks uint64        `protobuf:"varint,2,opt,name=challenge_interval_blocks,json=challengeIntervalBlocks,proto3" json:"challenge_interval_blocks,omitempty" yaml:"challenge_interval_blocks"`
+	ChallengePeriod         time.Duration `protobuf:"bytes,3,opt,name=challenge_period,json=challengePeriod,proto3,stdduration" json:"challenge_period" yaml:"challenge_period"`
+	RewardPerDay            types.Coin    `protobuf:"bytes,4,opt,name=reward_per_day,json=rewardPerDay,proto3" json:"reward_per_day" yaml:"reward_per_day"`
+	UnstakeCooldownBlocks   uint64        `protobuf:"varint,5,opt,name=unstake_cooldown_blocks,json=unstakeCooldownBlocks,proto3" json:"unstake_cooldown_blocks,omitempty" yaml:"unstake_cooldown_blocks"`
+	// cost per GB of storage
+	StoragePricePerGb types.Coin `protobuf:"bytes,6,opt,name=storage_price_per_gb,json=storagePricePerGb,proto3" json:"storage_price_per_gb"`
 	// free storage in MB
-	FreeStorageMb uint64 `protobuf:"varint,10,opt,name=free_storage_mb,json=freeStorageMb,proto3" json:"free_storage_mb,omitempty" yaml:"free_storage_mb"`
+	FreeStorageMb uint64 `protobuf:"varint,7,opt,name=free_storage_mb,json=freeStorageMb,proto3" json:"free_storage_mb,omitempty" yaml:"free_storage_mb"`
 	// max providers
-	MaxProviders uint64 `protobuf:"varint,11,opt,name=max_providers,json=maxProviders,proto3" json:"max_providers,omitempty" yaml:"max_providers"`
+	MaxProviders uint64 `protobuf:"varint,8,opt,name=max_providers,json=maxProviders,proto3" json:"max_providers,omitempty" yaml:"max_providers"`
+	// Liveness tracking parameters
+	// Number of challenges to track for liveness calculation (sliding window)
+	LivenessWindowChallenges uint64 `protobuf:"varint,9,opt,name=liveness_window_challenges,json=livenessWindowChallenges,proto3" json:"liveness_window_challenges,omitempty" yaml:"liveness_window_challenges"`
+	// Minimum liveness ratio required (e.g., 67 = 67%)
+	MinLivenessPerWindow github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,10,opt,name=min_liveness_per_window,json=minLivenessPerWindow,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"min_liveness_per_window"`
+	// Liveness fault slashing parameters (less severe)
+	LivenessSlashAmount   types.Coin                             `protobuf:"bytes,11,opt,name=liveness_slash_amount,json=livenessSlashAmount,proto3" json:"liveness_slash_amount" yaml:"liveness_slash_amount"`
+	LivenessSlashFraction github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,12,opt,name=liveness_slash_fraction,json=livenessSlashFraction,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"liveness_slash_fraction" yaml:"liveness_slash_fraction"`
+	LivenessJailTime      time.Duration                          `protobuf:"bytes,13,opt,name=liveness_jail_time,json=livenessJailTime,proto3,stdduration" json:"liveness_jail_time" yaml:"liveness_jail_time"`
+	// Proof fault slashing parameters (more severe for assigned provider)
+	ProofFaultSlashAmount   types.Coin                             `protobuf:"bytes,14,opt,name=proof_fault_slash_amount,json=proofFaultSlashAmount,proto3" json:"proof_fault_slash_amount" yaml:"proof_fault_slash_amount"`
+	ProofFaultSlashFraction github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,15,opt,name=proof_fault_slash_fraction,json=proofFaultSlashFraction,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"proof_fault_slash_fraction" yaml:"proof_fault_slash_fraction"`
+	ProofFaultJailTime      time.Duration                          `protobuf:"bytes,16,opt,name=proof_fault_jail_time,json=proofFaultJailTime,proto3,stdduration" json:"proof_fault_jail_time" yaml:"proof_fault_jail_time"`
+	// Maximum number of consecutive proof faults before suspension
+	MaxProofFaults uint64 `protobuf:"varint,17,opt,name=max_proof_faults,json=maxProofFaults,proto3" json:"max_proof_faults,omitempty" yaml:"max_proof_faults"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -92,11 +106,11 @@ func (m *Params) GetChallengeIntervalBlocks() uint64 {
 	return 0
 }
 
-func (m *Params) GetChallengePeriod() *time.Duration {
+func (m *Params) GetChallengePeriod() time.Duration {
 	if m != nil {
 		return m.ChallengePeriod
 	}
-	return nil
+	return 0
 }
 
 func (m *Params) GetRewardPerDay() types.Coin {
@@ -106,27 +120,6 @@ func (m *Params) GetRewardPerDay() types.Coin {
 	return types.Coin{}
 }
 
-func (m *Params) GetChallengeSlashAmount() types.Coin {
-	if m != nil {
-		return m.ChallengeSlashAmount
-	}
-	return types.Coin{}
-}
-
-func (m *Params) GetConsecutiveFailsThreshold() uint64 {
-	if m != nil {
-		return m.ConsecutiveFailsThreshold
-	}
-	return 0
-}
-
-func (m *Params) GetConsecutiveFailsSlashPercentage() uint64 {
-	if m != nil {
-		return m.ConsecutiveFailsSlashPercentage
-	}
-	return 0
-}
-
 func (m *Params) GetUnstakeCooldownBlocks() uint64 {
 	if m != nil {
 		return m.UnstakeCooldownBlocks
@@ -134,9 +127,9 @@ func (m *Params) GetUnstakeCooldownBlocks() uint64 {
 	return 0
 }
 
-func (m *Params) GetStoragePricePerMb() types.Coin {
+func (m *Params) GetStoragePricePerGb() types.Coin {
 	if m != nil {
-		return m.StoragePricePerMb
+		return m.StoragePricePerGb
 	}
 	return types.Coin{}
 }
@@ -155,6 +148,48 @@ func (m *Params) GetMaxProviders() uint64 {
 	return 0
 }
 
+func (m *Params) GetLivenessWindowChallenges() uint64 {
+	if m != nil {
+		return m.LivenessWindowChallenges
+	}
+	return 0
+}
+
+func (m *Params) GetLivenessSlashAmount() types.Coin {
+	if m != nil {
+		return m.LivenessSlashAmount
+	}
+	return types.Coin{}
+}
+
+func (m *Params) GetLivenessJailTime() time.Duration {
+	if m != nil {
+		return m.LivenessJailTime
+	}
+	return 0
+}
+
+func (m *Params) GetProofFaultSlashAmount() types.Coin {
+	if m != nil {
+		return m.ProofFaultSlashAmount
+	}
+	return types.Coin{}
+}
+
+func (m *Params) GetProofFaultJailTime() time.Duration {
+	if m != nil {
+		return m.ProofFaultJailTime
+	}
+	return 0
+}
+
+func (m *Params) GetMaxProofFaults() uint64 {
+	if m != nil {
+		return m.MaxProofFaults
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "gitopia.gitopia.storage.Params")
 }
@@ -164,48 +199,61 @@ func init() {
 }
 
 var fileDescriptor_bb167628a29d109b = []byte{
-	// 649 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0x4f, 0x4f, 0xd4, 0x4e,
-	0x18, 0xde, 0xfe, 0x7e, 0x2b, 0xe2, 0xf0, 0xd7, 0x66, 0x61, 0x0b, 0x84, 0x96, 0x4c, 0xd0, 0xe0,
-	0x81, 0x36, 0x68, 0xe2, 0x81, 0xc4, 0x83, 0x0b, 0x6a, 0x3c, 0x90, 0x34, 0xc5, 0x13, 0x07, 0xeb,
-	0xb4, 0x9d, 0xed, 0x4e, 0x68, 0x3b, 0xcd, 0x4c, 0x77, 0x61, 0xfd, 0x0a, 0x5e, 0x3c, 0x72, 0xf4,
-	0xe3, 0x70, 0xe4, 0xe8, 0xa9, 0x1a, 0xf8, 0x06, 0xfd, 0x04, 0xa6, 0xd3, 0xe9, 0xb2, 0x36, 0x6e,
-	0x38, 0xb5, 0x7d, 0x9e, 0xe7, 0x7d, 0x9f, 0x79, 0xff, 0x4c, 0xc1, 0x6e, 0x48, 0x32, 0x9a, 0x12,
-	0x64, 0xd5, 0x4f, 0x9e, 0x51, 0x86, 0x42, 0x6c, 0xa5, 0x88, 0xa1, 0x98, 0x9b, 0x29, 0xa3, 0x19,
-	0x55, 0xbb, 0x92, 0x35, 0xeb, 0xa7, 0x54, 0x6d, 0x76, 0x42, 0x1a, 0x52, 0xa1, 0xb1, 0xca, 0xb7,
-	0x4a, 0xbe, 0xa9, 0xfb, 0x94, 0xc7, 0x94, 0x5b, 0x1e, 0xe2, 0xd8, 0x1a, 0x1d, 0x78, 0x38, 0x43,
-	0x07, 0x96, 0x4f, 0x49, 0x52, 0xf3, 0x21, 0xa5, 0x61, 0x84, 0x2d, 0xf1, 0xe5, 0x0d, 0xfb, 0x56,
-	0x30, 0x64, 0x28, 0x23, 0x54, 0xf2, 0xf0, 0xdb, 0x3c, 0x98, 0xb3, 0x85, 0xbf, 0xfa, 0x0e, 0xac,
-	0xc6, 0x24, 0x71, 0x79, 0x86, 0xce, 0xb1, 0x8b, 0x62, 0x3a, 0x4c, 0x32, 0x4d, 0xd9, 0x51, 0xf6,
-	0xda, 0xbd, 0xad, 0x22, 0x37, 0xba, 0x63, 0x14, 0x47, 0x87, 0xb0, 0xa9, 0x80, 0xce, 0x72, 0x4c,
-	0x92, 0xd3, 0x12, 0x79, 0x2b, 0x00, 0xf5, 0x0b, 0xd8, 0xf0, 0x07, 0x28, 0x8a, 0x70, 0x12, 0x62,
-	0x97, 0x24, 0x19, 0x66, 0x23, 0x14, 0xb9, 0x5e, 0x44, 0xfd, 0x73, 0xae, 0xfd, 0x27, 0xf2, 0xed,
-	0x16, 0xb9, 0xb1, 0x53, 0xe5, 0x9b, 0x29, 0x85, 0x4e, 0x77, 0xc2, 0x7d, 0x94, 0x54, 0x4f, 0x30,
-	0x2a, 0x06, 0xab, 0xf7, 0x61, 0x29, 0x66, 0x84, 0x06, 0xda, 0xff, 0x3b, 0xca, 0xde, 0xc2, 0xcb,
-	0x0d, 0xb3, 0x2a, 0xd7, 0xac, 0xcb, 0x35, 0x8f, 0x65, 0xb9, 0x3d, 0xe3, 0xbe, 0x86, 0x66, 0x30,
-	0xbc, 0xfa, 0x65, 0x28, 0xce, 0xca, 0x04, 0xb6, 0x05, 0xaa, 0x7e, 0x06, 0xcb, 0x0c, 0x5f, 0x20,
-	0x16, 0x94, 0x32, 0x37, 0x40, 0x63, 0xad, 0x2d, 0x4d, 0xaa, 0x9e, 0x9b, 0x65, 0xcf, 0x4d, 0xd9,
-	0x73, 0xf3, 0x88, 0x92, 0xa4, 0xb7, 0x7d, 0x9d, 0x1b, 0xad, 0x22, 0x37, 0xd6, 0x2a, 0xa3, 0xbf,
-	0xc3, 0xa1, 0xb3, 0x58, 0x01, 0x36, 0x66, 0xc7, 0x68, 0xac, 0x8e, 0xc0, 0xfa, 0xfd, 0x49, 0x78,
-	0x84, 0xf8, 0xa0, 0xee, 0xfa, 0xa3, 0x87, 0x7c, 0x9e, 0x49, 0x9f, 0xed, 0x66, 0x41, 0xd3, 0x69,
-	0xa0, 0xd3, 0x99, 0x10, 0xa7, 0x25, 0x2e, 0x07, 0xd4, 0x07, 0x5b, 0x3e, 0x4d, 0x38, 0xf6, 0x87,
-	0x19, 0x19, 0x61, 0xb7, 0x8f, 0x48, 0xc4, 0xdd, 0x6c, 0xc0, 0x30, 0x1f, 0xd0, 0x28, 0xd0, 0xe6,
-	0xc4, 0x88, 0x9e, 0x17, 0xb9, 0x01, 0x65, 0xf6, 0xd9, 0x62, 0xe8, 0x6c, 0x4c, 0xb1, 0xef, 0x4b,
-	0xf2, 0x53, 0xcd, 0xa9, 0x5f, 0xc1, 0x3f, 0x42, 0xab, 0x03, 0xa6, 0x98, 0xf9, 0x38, 0xc9, 0x50,
-	0x88, 0xb5, 0xc7, 0xc2, 0x6e, 0xbf, 0xc8, 0x8d, 0x17, 0xb3, 0xec, 0x9a, 0x31, 0xd0, 0x31, 0x9a,
-	0xae, 0xa2, 0x3e, 0x7b, 0xa2, 0x50, 0xcf, 0x40, 0x77, 0x98, 0x54, 0x7b, 0xea, 0x53, 0x1a, 0x05,
-	0xf4, 0x22, 0xa9, 0x57, 0x70, 0x5e, 0x18, 0xc2, 0x22, 0x37, 0xf4, 0xca, 0x70, 0x86, 0x10, 0x3a,
-	0x6b, 0x92, 0x39, 0x92, 0x84, 0x5c, 0x3f, 0x1b, 0x74, 0xe4, 0x9d, 0x74, 0x53, 0x46, 0x7c, 0xb1,
-	0x45, 0x6e, 0xec, 0x69, 0x4f, 0x1e, 0x9a, 0x5a, 0xbb, 0x9c, 0x9a, 0xf3, 0x54, 0x06, 0xdb, 0x65,
-	0xac, 0x8d, 0xd9, 0x89, 0xa7, 0xf6, 0xc0, 0x4a, 0x9f, 0x61, 0xec, 0xd6, 0x69, 0x63, 0x4f, 0x03,
-	0xe2, 0x94, 0x9b, 0x45, 0x6e, 0xac, 0x57, 0xa7, 0x6c, 0x08, 0xa0, 0xb3, 0x54, 0x22, 0xa7, 0x15,
-	0x70, 0xe2, 0xa9, 0x6f, 0xc0, 0x52, 0x8c, 0x2e, 0xdd, 0x94, 0xd1, 0x11, 0x09, 0x30, 0xe3, 0xda,
-	0x82, 0xc8, 0xa0, 0x15, 0xb9, 0xd1, 0x91, 0x57, 0x77, 0x9a, 0x86, 0xce, 0x62, 0x8c, 0x2e, 0xed,
-	0xfa, 0xf3, 0xb0, 0x7d, 0xf5, 0xc3, 0x68, 0xf5, 0x3e, 0x5c, 0xdf, 0xea, 0xca, 0xcd, 0xad, 0xae,
-	0xfc, 0xbe, 0xd5, 0x95, 0xef, 0x77, 0x7a, 0xeb, 0xe6, 0x4e, 0x6f, 0xfd, 0xbc, 0xd3, 0x5b, 0x67,
-	0xfb, 0x21, 0xc9, 0x06, 0x43, 0xcf, 0xf4, 0x69, 0x6c, 0x35, 0xff, 0x63, 0xa3, 0xd7, 0xd6, 0xe5,
-	0xe4, 0x67, 0x96, 0x8d, 0x53, 0xcc, 0xbd, 0x39, 0x71, 0x01, 0x5f, 0xfd, 0x09, 0x00, 0x00, 0xff,
-	0xff, 0x99, 0x8e, 0x47, 0xe8, 0xf4, 0x04, 0x00, 0x00,
+	// 859 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0x4f, 0x8f, 0xdb, 0x44,
+	0x14, 0x8f, 0x61, 0x59, 0x60, 0xba, 0x7f, 0x4d, 0x42, 0xbc, 0x01, 0xec, 0xd4, 0x6c, 0x21, 0x42,
+	0xaa, 0xad, 0x52, 0x89, 0x43, 0x25, 0x0e, 0x64, 0x97, 0x56, 0x20, 0x90, 0x2c, 0x2f, 0x08, 0xd4,
+	0x03, 0x66, 0x6c, 0x4f, 0xbc, 0xd3, 0xb5, 0x3d, 0xd6, 0x8c, 0x93, 0x6c, 0xc4, 0x67, 0x40, 0xe2,
+	0x82, 0xd4, 0x23, 0x47, 0x8e, 0x7c, 0x8c, 0x5e, 0x90, 0x7a, 0x44, 0x1c, 0x0c, 0xda, 0x3d, 0x70,
+	0xcf, 0x27, 0x40, 0x9e, 0x19, 0x3b, 0x89, 0xdb, 0x28, 0xda, 0xcb, 0xce, 0xfa, 0xfd, 0xde, 0xfb,
+	0xbd, 0x79, 0xbf, 0xf7, 0x5e, 0x06, 0x1c, 0x47, 0x38, 0x27, 0x19, 0x86, 0x76, 0x75, 0xb2, 0x9c,
+	0x50, 0x18, 0x21, 0x3b, 0x83, 0x14, 0x26, 0xcc, 0xca, 0x28, 0xc9, 0x89, 0xda, 0x95, 0xa8, 0x55,
+	0x9d, 0xd2, 0xab, 0xd7, 0x8e, 0x48, 0x44, 0xb8, 0x8f, 0x5d, 0xfe, 0x27, 0xdc, 0x7b, 0x7a, 0x40,
+	0x58, 0x42, 0x98, 0xed, 0x43, 0x86, 0xec, 0xc9, 0x3d, 0x1f, 0xe5, 0xf0, 0x9e, 0x1d, 0x10, 0x9c,
+	0x56, 0x78, 0x44, 0x48, 0x14, 0x23, 0x9b, 0x7f, 0xf9, 0xe3, 0x91, 0x1d, 0x8e, 0x29, 0xcc, 0x31,
+	0xa9, 0xf0, 0x43, 0x98, 0xe0, 0x94, 0xd8, 0xfc, 0xaf, 0x30, 0x99, 0x7f, 0xee, 0x82, 0x6d, 0x87,
+	0x5f, 0x49, 0xfd, 0x1c, 0x1c, 0x24, 0x38, 0xf5, 0x58, 0x0e, 0x2f, 0x90, 0x07, 0x13, 0x32, 0x4e,
+	0x73, 0x4d, 0xe9, 0x2b, 0x83, 0xad, 0xe1, 0x3b, 0xf3, 0xc2, 0xe8, 0xce, 0x60, 0x12, 0x3f, 0x30,
+	0x9b, 0x1e, 0xa6, 0xbb, 0x97, 0xe0, 0xf4, 0xac, 0xb4, 0x7c, 0xc6, 0x0d, 0xea, 0x8f, 0xe0, 0x28,
+	0x38, 0x87, 0x71, 0x8c, 0xd2, 0x08, 0x79, 0x38, 0xcd, 0x11, 0x9d, 0xc0, 0xd8, 0xf3, 0x63, 0x12,
+	0x5c, 0x30, 0xed, 0x15, 0xce, 0x77, 0x3c, 0x2f, 0x8c, 0xbe, 0xe0, 0x5b, 0xeb, 0x6a, 0xba, 0xdd,
+	0x1a, 0xfb, 0x42, 0x42, 0x43, 0x8e, 0xa8, 0x18, 0x1c, 0x2c, 0xc2, 0x32, 0x44, 0x31, 0x09, 0xb5,
+	0x57, 0xfb, 0xca, 0xe0, 0xd6, 0xc7, 0x47, 0x96, 0x50, 0xc0, 0xaa, 0x14, 0xb0, 0x4e, 0xa5, 0x02,
+	0xc3, 0xf7, 0x9f, 0x15, 0x46, 0x6b, 0x51, 0x47, 0x93, 0xc0, 0x7c, 0xfa, 0x8f, 0xa1, 0xb8, 0xfb,
+	0xb5, 0xd9, 0xe1, 0x56, 0xf5, 0x07, 0xb0, 0x47, 0xd1, 0x14, 0xd2, 0xb0, 0x74, 0xf3, 0x42, 0x38,
+	0xd3, 0xb6, 0x64, 0x22, 0xd1, 0x0a, 0xab, 0x6c, 0x85, 0x25, 0x5b, 0x61, 0x9d, 0x10, 0x9c, 0x0e,
+	0xdf, 0x93, 0x89, 0x3a, 0x22, 0xd1, 0x6a, 0xb8, 0xe9, 0xee, 0x08, 0x83, 0x83, 0xe8, 0x29, 0x9c,
+	0xa9, 0x8f, 0x41, 0x77, 0x9c, 0x0a, 0x3d, 0x03, 0x42, 0xe2, 0x90, 0x4c, 0xd3, 0x4a, 0xaa, 0xd7,
+	0xb8, 0x54, 0xe6, 0xbc, 0x30, 0x74, 0xc1, 0xb4, 0xc6, 0xd1, 0x74, 0x3b, 0x12, 0x39, 0x91, 0x80,
+	0x94, 0xc9, 0x01, 0x6d, 0x39, 0x4e, 0x5e, 0x46, 0x71, 0xc0, 0x2b, 0xf5, 0x22, 0x5f, 0xdb, 0xde,
+	0x54, 0xc1, 0x56, 0x59, 0x81, 0x7b, 0x28, 0x83, 0x9d, 0x32, 0xd6, 0x41, 0xf4, 0x91, 0xaf, 0x0e,
+	0xc1, 0xfe, 0x88, 0x22, 0xe4, 0x55, 0xb4, 0x89, 0xaf, 0xbd, 0xce, 0x6f, 0xd9, 0x9b, 0x17, 0xc6,
+	0xdb, 0xe2, 0x96, 0x0d, 0x07, 0xd3, 0xdd, 0x2d, 0x2d, 0x67, 0xc2, 0xf0, 0xb5, 0xaf, 0x7e, 0x0a,
+	0x76, 0x13, 0x78, 0xe9, 0x65, 0x94, 0x4c, 0x70, 0x88, 0x28, 0xd3, 0xde, 0xe0, 0x0c, 0xda, 0xbc,
+	0x30, 0xda, 0x72, 0xc4, 0x96, 0x61, 0xd3, 0xdd, 0x49, 0xe0, 0xa5, 0x53, 0x7d, 0xaa, 0x01, 0xe8,
+	0xc5, 0x78, 0x82, 0x52, 0xc4, 0x98, 0x37, 0xc5, 0x69, 0x48, 0xa6, 0x5e, 0xdd, 0x33, 0xa6, 0xbd,
+	0xc9, 0xb9, 0xee, 0xcc, 0x0b, 0xe3, 0xb6, 0xe0, 0x5a, 0xef, 0x6b, 0xba, 0x5a, 0x05, 0x7e, 0xc7,
+	0xb1, 0x93, 0x1a, 0x52, 0x9f, 0x80, 0x6e, 0x39, 0xe7, 0x75, 0x70, 0x29, 0x9c, 0x20, 0xd0, 0x40,
+	0x5f, 0x19, 0xec, 0x0c, 0xef, 0x97, 0x0a, 0xfd, 0x5d, 0x18, 0x1f, 0x44, 0x38, 0x3f, 0x1f, 0xfb,
+	0x56, 0x40, 0x12, 0x5b, 0xee, 0xa6, 0x38, 0xee, 0xb2, 0xf0, 0xc2, 0xce, 0x67, 0x19, 0x62, 0xd6,
+	0x29, 0x0a, 0x7e, 0xff, 0xef, 0x8f, 0x8f, 0x14, 0xb7, 0x9d, 0xe0, 0xf4, 0x2b, 0x49, 0xe9, 0x20,
+	0x2a, 0xb2, 0xaa, 0x0c, 0x74, 0xea, 0x3c, 0x2c, 0x86, 0xec, 0xbc, 0x5a, 0xbd, 0x5b, 0x9b, 0xda,
+	0x74, 0x2c, 0x07, 0xed, 0xdd, 0x46, 0xa9, 0xcb, 0x2c, 0xa6, 0xfb, 0x56, 0x65, 0x3f, 0x2b, 0xcd,
+	0x72, 0x47, 0x7f, 0x56, 0x40, 0xb7, 0xe1, 0x3f, 0xa2, 0x30, 0x28, 0x17, 0x45, 0xdb, 0xe1, 0x15,
+	0x7e, 0x7b, 0xb3, 0x0a, 0x17, 0x53, 0xba, 0x86, 0xd6, 0x14, 0x1a, 0x74, 0x56, 0x6e, 0xf3, 0x50,
+	0x82, 0x6a, 0x0a, 0xd4, 0x3a, 0xee, 0x09, 0xc4, 0xb1, 0x97, 0xe3, 0x04, 0x69, 0xbb, 0x9b, 0x76,
+	0xfa, 0x8e, 0x54, 0xe0, 0xa8, 0x91, 0xba, 0xa6, 0x10, 0x5b, 0x7d, 0x50, 0x01, 0x5f, 0x42, 0x1c,
+	0x7f, 0x83, 0x13, 0xa4, 0xfe, 0x04, 0xb4, 0x8c, 0x12, 0x32, 0xf2, 0x46, 0x70, 0x1c, 0xe7, 0xab,
+	0xba, 0xef, 0x6d, 0xd2, 0xfd, 0x43, 0x99, 0xd5, 0x10, 0x59, 0xd7, 0x11, 0x99, 0x6e, 0x87, 0x43,
+	0x0f, 0x4b, 0x64, 0x59, 0xfc, 0x5f, 0x15, 0xd0, 0x7b, 0x31, 0xa8, 0xd6, 0x7f, 0x9f, 0xeb, 0xff,
+	0xfd, 0x8d, 0xf5, 0xbf, 0xbd, 0xee, 0x3a, 0x8d, 0x16, 0x74, 0x1b, 0xb7, 0xaa, 0x9b, 0x30, 0x01,
+	0x9d, 0xe5, 0xe0, 0x45, 0x1f, 0x0e, 0x36, 0xf5, 0x61, 0xb0, 0x3a, 0x89, 0x2f, 0x65, 0x11, 0xad,
+	0x50, 0x17, 0xc9, 0xeb, 0x66, 0x94, 0xef, 0x8e, 0x58, 0xf9, 0x2a, 0x8a, 0x69, 0x87, 0x2f, 0xbc,
+	0x3b, 0x0d, 0x8f, 0xf2, 0xdd, 0xe1, 0xbf, 0x0b, 0x92, 0x8d, 0x3d, 0xd8, 0x7a, 0xfa, 0x9b, 0xd1,
+	0x1a, 0x3e, 0x7a, 0x76, 0xa5, 0x2b, 0xcf, 0xaf, 0x74, 0xe5, 0xdf, 0x2b, 0x5d, 0xf9, 0xe5, 0x5a,
+	0x6f, 0x3d, 0xbf, 0xd6, 0x5b, 0x7f, 0x5d, 0xeb, 0xad, 0xc7, 0x77, 0x97, 0x94, 0x6c, 0x3e, 0xce,
+	0x93, 0x4f, 0xec, 0xcb, 0xfa, 0x85, 0xe6, 0xa2, 0xfa, 0xdb, 0xbc, 0xcc, 0xfb, 0xff, 0x07, 0x00,
+	0x00, 0xff, 0xff, 0x45, 0x6a, 0x70, 0x9d, 0xc9, 0x07, 0x00, 0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -228,18 +276,98 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.MaxProofFaults != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.MaxProofFaults))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x88
+	}
+	n1, err1 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.ProofFaultJailTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ProofFaultJailTime):])
+	if err1 != nil {
+		return 0, err1
+	}
+	i -= n1
+	i = encodeVarintParams(dAtA, i, uint64(n1))
+	i--
+	dAtA[i] = 0x1
+	i--
+	dAtA[i] = 0x82
+	{
+		size := m.ProofFaultSlashFraction.Size()
+		i -= size
+		if _, err := m.ProofFaultSlashFraction.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x7a
+	{
+		size, err := m.ProofFaultSlashAmount.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x72
+	n3, err3 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.LivenessJailTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.LivenessJailTime):])
+	if err3 != nil {
+		return 0, err3
+	}
+	i -= n3
+	i = encodeVarintParams(dAtA, i, uint64(n3))
+	i--
+	dAtA[i] = 0x6a
+	{
+		size := m.LivenessSlashFraction.Size()
+		i -= size
+		if _, err := m.LivenessSlashFraction.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x62
+	{
+		size, err := m.LivenessSlashAmount.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x5a
+	{
+		size := m.MinLivenessPerWindow.Size()
+		i -= size
+		if _, err := m.MinLivenessPerWindow.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintParams(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x52
+	if m.LivenessWindowChallenges != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.LivenessWindowChallenges))
+		i--
+		dAtA[i] = 0x48
+	}
 	if m.MaxProviders != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.MaxProviders))
 		i--
-		dAtA[i] = 0x58
+		dAtA[i] = 0x40
 	}
 	if m.FreeStorageMb != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.FreeStorageMb))
 		i--
-		dAtA[i] = 0x50
+		dAtA[i] = 0x38
 	}
 	{
-		size, err := m.StoragePricePerMb.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.StoragePricePerGb.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -247,32 +375,12 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x4a
+	dAtA[i] = 0x32
 	if m.UnstakeCooldownBlocks != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.UnstakeCooldownBlocks))
 		i--
-		dAtA[i] = 0x40
+		dAtA[i] = 0x28
 	}
-	if m.ConsecutiveFailsSlashPercentage != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.ConsecutiveFailsSlashPercentage))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.ConsecutiveFailsThreshold != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.ConsecutiveFailsThreshold))
-		i--
-		dAtA[i] = 0x30
-	}
-	{
-		size, err := m.ChallengeSlashAmount.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x2a
 	{
 		size, err := m.RewardPerDay.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -283,16 +391,14 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	i--
 	dAtA[i] = 0x22
-	if m.ChallengePeriod != nil {
-		n4, err4 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(*m.ChallengePeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(*m.ChallengePeriod):])
-		if err4 != nil {
-			return 0, err4
-		}
-		i -= n4
-		i = encodeVarintParams(dAtA, i, uint64(n4))
-		i--
-		dAtA[i] = 0x1a
+	n7, err7 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.ChallengePeriod, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ChallengePeriod):])
+	if err7 != nil {
+		return 0, err7
 	}
+	i -= n7
+	i = encodeVarintParams(dAtA, i, uint64(n7))
+	i--
+	dAtA[i] = 0x1a
 	if m.ChallengeIntervalBlocks != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.ChallengeIntervalBlocks))
 		i--
@@ -329,30 +435,40 @@ func (m *Params) Size() (n int) {
 	if m.ChallengeIntervalBlocks != 0 {
 		n += 1 + sovParams(uint64(m.ChallengeIntervalBlocks))
 	}
-	if m.ChallengePeriod != nil {
-		l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(*m.ChallengePeriod)
-		n += 1 + l + sovParams(uint64(l))
-	}
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ChallengePeriod)
+	n += 1 + l + sovParams(uint64(l))
 	l = m.RewardPerDay.Size()
 	n += 1 + l + sovParams(uint64(l))
-	l = m.ChallengeSlashAmount.Size()
-	n += 1 + l + sovParams(uint64(l))
-	if m.ConsecutiveFailsThreshold != 0 {
-		n += 1 + sovParams(uint64(m.ConsecutiveFailsThreshold))
-	}
-	if m.ConsecutiveFailsSlashPercentage != 0 {
-		n += 1 + sovParams(uint64(m.ConsecutiveFailsSlashPercentage))
-	}
 	if m.UnstakeCooldownBlocks != 0 {
 		n += 1 + sovParams(uint64(m.UnstakeCooldownBlocks))
 	}
-	l = m.StoragePricePerMb.Size()
+	l = m.StoragePricePerGb.Size()
 	n += 1 + l + sovParams(uint64(l))
 	if m.FreeStorageMb != 0 {
 		n += 1 + sovParams(uint64(m.FreeStorageMb))
 	}
 	if m.MaxProviders != 0 {
 		n += 1 + sovParams(uint64(m.MaxProviders))
+	}
+	if m.LivenessWindowChallenges != 0 {
+		n += 1 + sovParams(uint64(m.LivenessWindowChallenges))
+	}
+	l = m.MinLivenessPerWindow.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.LivenessSlashAmount.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.LivenessSlashFraction.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.LivenessJailTime)
+	n += 1 + l + sovParams(uint64(l))
+	l = m.ProofFaultSlashAmount.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.ProofFaultSlashFraction.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.ProofFaultJailTime)
+	n += 2 + l + sovParams(uint64(l))
+	if m.MaxProofFaults != 0 {
+		n += 2 + sovParams(uint64(m.MaxProofFaults))
 	}
 	return n
 }
@@ -459,10 +575,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.ChallengePeriod == nil {
-				m.ChallengePeriod = new(time.Duration)
-			}
-			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(m.ChallengePeriod, dAtA[iNdEx:postIndex]); err != nil {
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.ChallengePeriod, dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -500,77 +613,6 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChallengeSlashAmount", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.ChallengeSlashAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ConsecutiveFailsThreshold", wireType)
-			}
-			m.ConsecutiveFailsThreshold = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ConsecutiveFailsThreshold |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ConsecutiveFailsSlashPercentage", wireType)
-			}
-			m.ConsecutiveFailsSlashPercentage = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ConsecutiveFailsSlashPercentage |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UnstakeCooldownBlocks", wireType)
 			}
@@ -589,9 +631,9 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 9:
+		case 6:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field StoragePricePerMb", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field StoragePricePerGb", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -618,11 +660,11 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.StoragePricePerMb.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.StoragePricePerGb.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 10:
+		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FreeStorageMb", wireType)
 			}
@@ -641,7 +683,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 11:
+		case 8:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MaxProviders", wireType)
 			}
@@ -656,6 +698,275 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.MaxProviders |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessWindowChallenges", wireType)
+			}
+			m.LivenessWindowChallenges = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LivenessWindowChallenges |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinLivenessPerWindow", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.MinLivenessPerWindow.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessSlashAmount", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.LivenessSlashAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessSlashFraction", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.LivenessSlashFraction.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessJailTime", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.LivenessJailTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProofFaultSlashAmount", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ProofFaultSlashAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProofFaultSlashFraction", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ProofFaultSlashFraction.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProofFaultJailTime", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.ProofFaultJailTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 17:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxProofFaults", wireType)
+			}
+			m.MaxProofFaults = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxProofFaults |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

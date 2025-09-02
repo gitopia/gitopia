@@ -153,6 +153,7 @@ func AppKeepers(t testing.TB) (keepers.AppKeepers, sdk.Context) {
 		appKeepers.MintKeeper,
 		&distrKeeper,
 		appKeepers.GroupKeeper,
+		appKeepers.StorageKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 

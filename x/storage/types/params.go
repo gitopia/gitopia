@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
@@ -12,32 +13,53 @@ import (
 var _ paramtypes.ParamSet = (*Params)(nil)
 
 const (
-	DefaultChallengePeriod = 10 * time.Second
+	DefaultChallengePeriod    = 10 * time.Second
+	DefaultLivenessJailTime   = 4 * time.Hour
+	DefaultProofFaultJailTime = 24 * time.Hour
 )
 
+// NOTE: ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
+// to ensure that only one challenge is active at a time. The EndBlock logic in module.go
+// only checks the last challenge in the queue, so if multiple challenges are active
+// during the same period, the logic will not process all of them correctly.
 var (
-	KeyMinStakeAmount                  = []byte("MinStakeAmount")
-	KeyChallengeIntervalBlocks         = []byte("ChallengeIntervalBlocks")
-	KeyChallengePeriod                 = []byte("ChallengePeriod")
-	KeyRewardPerDay                    = []byte("RewardPerDay")
-	KeyChallengeSlashAmount            = []byte("ChallengeSlashAmount")
-	KeyConsecutiveFailsThreshold       = []byte("ConsecutiveFailsThreshold")
-	KeyConsecutiveFailsSlashPercentage = []byte("ConsecutiveFailsSlashPercentage")
-	KeyUnstakeCooldownBlocks           = []byte("UnstakeCooldownBlocks")
-	KeyStoragePricePerMb               = []byte("StoragePricePerMb")
-	KeyFreeStorageMb                   = []byte("FreeStorageMb")
-	KeyMaxProviders                    = []byte("MaxProviders")
+	KeyMinStakeAmount          = []byte("MinStakeAmount")
+	KeyChallengeIntervalBlocks = []byte("ChallengeIntervalBlocks")
+	KeyChallengePeriod         = []byte("ChallengePeriod")
+	KeyRewardPerDay            = []byte("RewardPerDay")
+	KeyUnstakeCooldownBlocks   = []byte("UnstakeCooldownBlocks")
+	KeyStoragePricePerGb       = []byte("StoragePricePerGb")
+	KeyFreeStorageMb           = []byte("FreeStorageMb")
+	KeyMaxProviders            = []byte("MaxProviders")
+
+	// Liveness tracking parameter keys
+	KeyLivenessWindowChallenges = []byte("LivenessWindowChallenges")
+	KeyMinLivenessPerWindow     = []byte("MinLivenessPerWindow")
+	KeyLivenessSlashAmount      = []byte("LivenessSlashAmount")
+	KeyLivenessSlashFraction    = []byte("LivenessSlashFraction")
+	KeyLivenessJailTime         = []byte("LivenessJailTime")
+	KeyProofFaultSlashAmount    = []byte("ProofFaultSlashAmount")
+	KeyProofFaultSlashFraction  = []byte("ProofFaultSlashFraction")
+	KeyProofFaultJailTime       = []byte("ProofFaultJailTime")
+	KeyMaxProofFaults           = []byte("MaxProofFaults")
+
 	// Default values for parameters
-	DefaultMinStakeAmount                  uint64   = 1_000_000_000_000
-	DefaultChallengeIntervalBlocks         uint64   = 1000                                            // ~30 min
-	DefaultRewardPerDay                    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(6_000_000_000)) // $5, $150 a month
-	DefaultChallengeSlashAmount            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_250_000_000))
-	DefaultConsecutiveFailsThreshold       uint64   = 3
-	DefaultConsecutiveFailsSlashPercentage uint64   = 1
-	DefaultUnstakeCooldownBlocks           uint64   = 1_521_500                                // ~28 days
-	DefaultStoragePricePerMb               sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(12_000)) // $0.00001 per MB of storage update
-	DefaultFreeStorageMb                   uint64   = 157_286_400                              // 150Mb
-	DefaultMaxProviders                    uint64   = 5
+	DefaultMinStakeAmount          uint64   = 1_000_000_000_000                               // $1292
+	DefaultChallengeIntervalBlocks uint64   = 1000                                            // ~30 min
+	DefaultRewardPerDay            sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(2_675_000_000)) // $5 a day, $150 a month per provider
+	DefaultUnstakeCooldownBlocks   uint64   = 1_521_500                                       // ~28 days
+	DefaultStoragePricePerGb       sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(1_070_000_000)) // $2 per GB of storage update
+	DefaultFreeStorageMb           uint64   = 157_286_400                                     // 150Mb
+	DefaultMaxProviders            uint64   = 5
+
+	// Liveness tracking default values
+	DefaultLivenessWindowChallenges uint64   = 336                      // Last 336 challenges (~7 days at 1000 block intervals)
+	DefaultMinLivenessPerWindow     sdk.Dec  = sdk.NewDecWithPrec(5, 1) // 50% minimum liveness
+	DefaultLivenessSlashAmount      sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
+	DefaultLivenessSlashFraction    sdk.Dec  = math.LegacyNewDec(5).Quo(math.LegacyNewDec(1000)) // 0.5% stake slash for liveness fault
+	DefaultProofFaultSlashAmount    sdk.Coin = sdk.NewCoin("ulore", sdk.NewInt(0))
+	DefaultProofFaultSlashFraction  sdk.Dec  = math.LegacyNewDec(1).Quo(math.LegacyNewDec(20)) // 5% stake slash for proof fault
+	DefaultMaxProofFaults           uint64   = 3                                               // Max consecutive proof faults
 )
 
 // ParamKeyTable the param key table for launch module
@@ -51,26 +73,40 @@ func NewParams(
 	challengeIntervalBlocks uint64,
 	challengePeriod time.Duration,
 	rewardPerDay sdk.Coin,
-	challengeSlashAmount sdk.Coin,
-	consecutiveFailsThreshold uint64,
-	consecutiveFailsSlashPercentage uint64,
 	unstakeCooldownBlocks uint64,
-	storagePricePerMb sdk.Coin,
+	storagePricePerGb sdk.Coin,
 	freeStorageMb uint64,
 	maxProviders uint64,
+	// Liveness tracking parameters
+	livenessWindowChallenges uint64,
+	minLivenessPerWindow sdk.Dec,
+	livenessSlashAmount sdk.Coin,
+	livenessSlashFraction sdk.Dec,
+	livenessJailTime time.Duration,
+	proofFaultSlashAmount sdk.Coin,
+	proofFaultSlashFraction sdk.Dec,
+	proofFaultJailTime time.Duration,
+	maxProofFaults uint64,
 ) Params {
 	return Params{
-		MinStakeAmount:                  minStakeAmount,
-		ChallengeIntervalBlocks:         challengeIntervalBlocks,
-		ChallengePeriod:                 &challengePeriod,
-		RewardPerDay:                    rewardPerDay,
-		ChallengeSlashAmount:            challengeSlashAmount,
-		ConsecutiveFailsThreshold:       consecutiveFailsThreshold,
-		ConsecutiveFailsSlashPercentage: consecutiveFailsSlashPercentage,
-		UnstakeCooldownBlocks:           unstakeCooldownBlocks,
-		StoragePricePerMb:               storagePricePerMb,
-		FreeStorageMb:                   freeStorageMb,
-		MaxProviders:                    maxProviders,
+		MinStakeAmount:          minStakeAmount,
+		ChallengeIntervalBlocks: challengeIntervalBlocks,
+		ChallengePeriod:         challengePeriod,
+		RewardPerDay:            rewardPerDay,
+		UnstakeCooldownBlocks:   unstakeCooldownBlocks,
+		StoragePricePerGb:       storagePricePerGb,
+		FreeStorageMb:           freeStorageMb,
+		MaxProviders:            maxProviders,
+		// Liveness tracking fields
+		LivenessWindowChallenges: livenessWindowChallenges,
+		MinLivenessPerWindow:     minLivenessPerWindow,
+		LivenessSlashAmount:      livenessSlashAmount,
+		LivenessSlashFraction:    livenessSlashFraction,
+		LivenessJailTime:         livenessJailTime,
+		ProofFaultSlashAmount:    proofFaultSlashAmount,
+		ProofFaultSlashFraction:  proofFaultSlashFraction,
+		ProofFaultJailTime:       proofFaultJailTime,
+		MaxProofFaults:           maxProofFaults,
 	}
 }
 
@@ -81,13 +117,20 @@ func DefaultParams() Params {
 		DefaultChallengeIntervalBlocks,
 		DefaultChallengePeriod,
 		DefaultRewardPerDay,
-		DefaultChallengeSlashAmount,
-		DefaultConsecutiveFailsThreshold,
-		DefaultConsecutiveFailsSlashPercentage,
 		DefaultUnstakeCooldownBlocks,
-		DefaultStoragePricePerMb,
+		DefaultStoragePricePerGb,
 		DefaultFreeStorageMb,
 		DefaultMaxProviders,
+		// Liveness tracking defaults
+		DefaultLivenessWindowChallenges,
+		DefaultMinLivenessPerWindow,
+		DefaultLivenessSlashAmount,
+		DefaultLivenessSlashFraction,
+		DefaultLivenessJailTime,
+		DefaultProofFaultSlashAmount,
+		DefaultProofFaultSlashFraction,
+		DefaultProofFaultJailTime,
+		DefaultMaxProofFaults,
 	)
 }
 
@@ -98,13 +141,20 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyChallengeIntervalBlocks, &p.ChallengeIntervalBlocks, validateChallengeIntervalBlocks),
 		paramtypes.NewParamSetPair(KeyChallengePeriod, &p.ChallengePeriod, validateChallengePeriod),
 		paramtypes.NewParamSetPair(KeyRewardPerDay, &p.RewardPerDay, validateRewardPerDay),
-		paramtypes.NewParamSetPair(KeyChallengeSlashAmount, &p.ChallengeSlashAmount, validateChallengeSlashAmount),
-		paramtypes.NewParamSetPair(KeyConsecutiveFailsThreshold, &p.ConsecutiveFailsThreshold, validateConsecutiveFailsThreshold),
-		paramtypes.NewParamSetPair(KeyConsecutiveFailsSlashPercentage, &p.ConsecutiveFailsSlashPercentage, validateConsecutiveFailsSlashPercentage),
 		paramtypes.NewParamSetPair(KeyUnstakeCooldownBlocks, &p.UnstakeCooldownBlocks, validateUnstakeCooldownBlocks),
-		paramtypes.NewParamSetPair(KeyStoragePricePerMb, &p.StoragePricePerMb, validateStoragePricePerMb),
+		paramtypes.NewParamSetPair(KeyStoragePricePerGb, &p.StoragePricePerGb, validateStoragePricePerGb),
 		paramtypes.NewParamSetPair(KeyFreeStorageMb, &p.FreeStorageMb, validateFreeStorageMb),
 		paramtypes.NewParamSetPair(KeyMaxProviders, &p.MaxProviders, validateMaxProviders),
+		// Liveness tracking parameters
+		paramtypes.NewParamSetPair(KeyLivenessWindowChallenges, &p.LivenessWindowChallenges, validateLivenessWindowChallenges),
+		paramtypes.NewParamSetPair(KeyMinLivenessPerWindow, &p.MinLivenessPerWindow, validateMinLivenessPerWindow),
+		paramtypes.NewParamSetPair(KeyLivenessSlashAmount, &p.LivenessSlashAmount, validateLivenessSlashAmount),
+		paramtypes.NewParamSetPair(KeyLivenessSlashFraction, &p.LivenessSlashFraction, validateLivenessSlashFraction),
+		paramtypes.NewParamSetPair(KeyLivenessJailTime, &p.LivenessJailTime, validateLivenessJailTime),
+		paramtypes.NewParamSetPair(KeyProofFaultSlashAmount, &p.ProofFaultSlashAmount, validateProofFaultSlashAmount),
+		paramtypes.NewParamSetPair(KeyProofFaultSlashFraction, &p.ProofFaultSlashFraction, validateProofFaultSlashFraction),
+		paramtypes.NewParamSetPair(KeyProofFaultJailTime, &p.ProofFaultJailTime, validateProofFaultJailTime),
+		paramtypes.NewParamSetPair(KeyMaxProofFaults, &p.MaxProofFaults, validateMaxProofFaults),
 	}
 }
 
@@ -122,25 +172,43 @@ func (p Params) Validate() error {
 	if err := validateRewardPerDay(p.RewardPerDay); err != nil {
 		return err
 	}
-	if err := validateChallengeSlashAmount(p.ChallengeSlashAmount); err != nil {
-		return err
-	}
-	if err := validateConsecutiveFailsThreshold(p.ConsecutiveFailsThreshold); err != nil {
-		return err
-	}
-	if err := validateConsecutiveFailsSlashPercentage(p.ConsecutiveFailsSlashPercentage); err != nil {
-		return err
-	}
 	if err := validateUnstakeCooldownBlocks(p.UnstakeCooldownBlocks); err != nil {
 		return err
 	}
-	if err := validateStoragePricePerMb(p.StoragePricePerMb); err != nil {
+	if err := validateStoragePricePerGb(p.StoragePricePerGb); err != nil {
 		return err
 	}
 	if err := validateFreeStorageMb(p.FreeStorageMb); err != nil {
 		return err
 	}
 	if err := validateMaxProviders(p.MaxProviders); err != nil {
+		return err
+	}
+	if err := validateLivenessWindowChallenges(p.LivenessWindowChallenges); err != nil {
+		return err
+	}
+	if err := validateMinLivenessPerWindow(p.MinLivenessPerWindow); err != nil {
+		return err
+	}
+	if err := validateLivenessSlashAmount(p.LivenessSlashAmount); err != nil {
+		return err
+	}
+	if err := validateLivenessSlashFraction(p.LivenessSlashFraction); err != nil {
+		return err
+	}
+	if err := validateLivenessJailTime(p.LivenessJailTime); err != nil {
+		return err
+	}
+	if err := validateProofFaultSlashAmount(p.ProofFaultSlashAmount); err != nil {
+		return err
+	}
+	if err := validateProofFaultSlashFraction(p.ProofFaultSlashFraction); err != nil {
+		return err
+	}
+	if err := validateProofFaultJailTime(p.ProofFaultJailTime); err != nil {
+		return err
+	}
+	if err := validateMaxProofFaults(p.MaxProofFaults); err != nil {
 		return err
 	}
 	return nil
@@ -171,19 +239,19 @@ func validateChallengeIntervalBlocks(v interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
 	if amount == 0 {
-		return fmt.Errorf("challenges per day cannot be 0")
+		return fmt.Errorf("challenge interval blocks cannot be 0")
 	}
 	return nil
 }
 
 // validateChallengePeriod validates the ChallengePeriod param
 func validateChallengePeriod(v interface{}) error {
-	period, ok := v.(*time.Duration)
+	period, ok := v.(time.Duration)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
 	}
-	if period == nil || period.Seconds() <= 0 {
-		return fmt.Errorf("challenge period must be greater than 0")
+	if period <= 0 {
+		return fmt.Errorf("challenge period must be positive: %s", v)
 	}
 	return nil
 }
@@ -200,42 +268,6 @@ func validateRewardPerDay(v interface{}) error {
 	return nil
 }
 
-// validateChallengeSlashAmount validates the ChallengeSlashAmount param
-func validateChallengeSlashAmount(v interface{}) error {
-	coin, ok := v.(sdk.Coin)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if coin.IsZero() {
-		return fmt.Errorf("challenge slash amount cannot be zero")
-	}
-	return nil
-}
-
-// validateConsecutiveFailsThreshold validates the ConsecutiveFailsThreshold param
-func validateConsecutiveFailsThreshold(v interface{}) error {
-	threshold, ok := v.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if threshold == 0 {
-		return fmt.Errorf("consecutive fails threshold cannot be 0")
-	}
-	return nil
-}
-
-// validateConsecutiveFailsSlashPercentage validates the ConsecutiveFailsSlashPercentage param
-func validateConsecutiveFailsSlashPercentage(v interface{}) error {
-	percentage, ok := v.(uint64)
-	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", v)
-	}
-	if percentage == 0 {
-		return fmt.Errorf("consecutive fails slash percentage cannot be 0")
-	}
-	return nil
-}
-
 // validateUnstakeCooldownBlocks validates the UnstakeCooldownBlocks param
 func validateUnstakeCooldownBlocks(v interface{}) error {
 	blocks, ok := v.(uint64)
@@ -248,8 +280,8 @@ func validateUnstakeCooldownBlocks(v interface{}) error {
 	return nil
 }
 
-// validateStoragePricePerMb validates the StoragePricePerMb param
-func validateStoragePricePerMb(v interface{}) error {
+// validateStoragePricePerGb validates the StoragePricePerGb param
+func validateStoragePricePerGb(v interface{}) error {
 	_, ok := v.(sdk.Coin)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", v)
@@ -279,6 +311,130 @@ func validateMaxProviders(v interface{}) error {
 	}
 	if providers == 0 {
 		return fmt.Errorf("max providers cannot be zero")
+	}
+	return nil
+}
+
+// validateLivenessWindowChallenges validates the LivenessWindowChallenges param
+func validateLivenessWindowChallenges(v interface{}) error {
+	challenges, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if challenges == 0 {
+		return fmt.Errorf("liveness window challenges cannot be zero")
+	}
+	return nil
+}
+
+// validateMinLivenessPerWindow validates the MinLivenessPerWindow param
+func validateMinLivenessPerWindow(v interface{}) error {
+	ratio, ok := v.(sdk.Dec)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if ratio.IsNil() {
+		return fmt.Errorf("min liveness per window cannot be nil: %s", v)
+	}
+	if ratio.IsNegative() {
+		return fmt.Errorf("min liveness per window cannot be negative: %s", v)
+	}
+	if ratio.GT(math.LegacyOneDec()) {
+		return fmt.Errorf("min liveness per window too large: %s", v)
+	}
+	return nil
+}
+
+// validateLivenessSlashAmount validates the LivenessSlashAmount param
+func validateLivenessSlashAmount(v interface{}) error {
+	_, ok := v.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	return nil
+}
+
+// validateLivenessSlashFraction validates the LivenessSlashFraction param
+func validateLivenessSlashFraction(v interface{}) error {
+	fraction, ok := v.(sdk.Dec)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	if fraction.IsNil() {
+		return fmt.Errorf("liveness slash fraction cannot be nil: %s", v)
+	}
+	if fraction.IsNegative() {
+		return fmt.Errorf("liveness slash fraction cannot be negative: %s", v)
+	}
+	if fraction.GT(math.LegacyOneDec()) {
+		return fmt.Errorf("liveness slash fraction too large: %s", v)
+	}
+
+	return nil
+}
+
+// validateLivenessJailTime validates the LivenessJailTime param
+func validateLivenessJailTime(v interface{}) error {
+	time, ok := v.(time.Duration)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if time <= 0 {
+		return fmt.Errorf("liveness jail time must be positive: %s", v)
+	}
+	return nil
+}
+
+// validateProofFaultSlashAmount validates the ProofFaultSlashAmount param
+func validateProofFaultSlashAmount(v interface{}) error {
+	_, ok := v.(sdk.Coin)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	return nil
+}
+
+// validateProofFaultSlashFraction validates the ProofFaultSlashFraction param
+func validateProofFaultSlashFraction(v interface{}) error {
+	fraction, ok := v.(sdk.Dec)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+
+	if fraction.IsNil() {
+		return fmt.Errorf("proof fault slash fraction cannot be nil: %s", v)
+	}
+	if fraction.IsNegative() {
+		return fmt.Errorf("proof fault slash fraction cannot be negative: %s", v)
+	}
+	if fraction.GT(math.LegacyOneDec()) {
+		return fmt.Errorf("proof fault slash fraction too large: %s", v)
+	}
+
+	return nil
+}
+
+// validateProofFaultJailTime validates the ProofFaultJailTime param
+func validateProofFaultJailTime(v interface{}) error {
+	time, ok := v.(time.Duration)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if time <= 0 {
+		return fmt.Errorf("proof fault jail time must be positive: %s", v)
+	}
+	return nil
+}
+
+// validateMaxProofFaults validates the MaxProofFaults param
+func validateMaxProofFaults(v interface{}) error {
+	faults, ok := v.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", v)
+	}
+	if faults == 0 {
+		return fmt.Errorf("max proof faults cannot be zero")
 	}
 	return nil
 }

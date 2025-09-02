@@ -17,7 +17,6 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	appparams "github.com/gitopia/gitopia/v6/app/params"
 	"github.com/gitopia/gitopia/v6/x/storage/client/cli"
 	"github.com/gitopia/gitopia/v6/x/storage/keeper"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
@@ -156,6 +155,7 @@ func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		}
 		if challenge != nil {
 			id := am.keeper.AppendChallenge(ctx, *challenge)
+			challenge.Id = id // Set the ID on the challenge for liveness tracking
 			ctx.Logger().Info(fmt.Sprintf("generated new challenge ID: %d for provider: %s", id, challenge.Provider))
 
 			ctx.EventManager().EmitTypedEvent(&types.EventChallengeCreated{
@@ -173,72 +173,33 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 		Timestamp: ctx.BlockTime(),
 	})
 
-	// check last challenge expiration
-	challenge, found := am.keeper.GetChallenge(ctx, am.keeper.GetChallengeCount(ctx)-1)
-	if found && challenge.Status == types.ChallengeStatus_CHALLENGE_STATUS_PENDING && challenge.Deadline.Before(ctx.BlockTime()) {
+	// Check for expired challenges using new Tendermint-style liveness system
+	// Process all pending challenges that have expired
+	// NOTE: This logic only checks the last challenge in the queue.
+	// ChallengeIntervalBlocks should be set to a value greater than ChallengePeriod
+	// to ensure that only one challenge is active at a time. If multiple challenges
+	// are active during the same period, this logic will not process all of them correctly.
+	nextChallengeID := am.keeper.GetNextChallengeID(ctx)
+	challengeCount := am.keeper.GetChallengeCount(ctx)
 
-		provider, found := am.keeper.GetProvider(ctx, challenge.Provider)
-		if !found {
-			return []abci.ValidatorUpdate{}
+	if nextChallengeID < challengeCount {
+		challenge, found := am.keeper.GetChallenge(ctx, nextChallengeID)
+		if found && challenge.Deadline.Before(ctx.BlockTime()) {
+			// Use the new Tendermint-style challenge timeout processing
+			err := am.keeper.ProcessChallengeTimeout(ctx, &challenge)
+			if err != nil {
+				ctx.Logger().Error(fmt.Sprintf("error processing challenge timeout for challenge %d: %v", challenge.Id, err))
+			} else {
+				ctx.Logger().Info(fmt.Sprintf("challenge %d expired and processed with Tendermint-style liveness penalties", challenge.Id))
+			}
 		}
-
-		// Update provider stats for failed challenge
-		provider.TotalChallenges++
-		provider.ConsecutiveFailures++
-
-		params := am.keeper.GetParams(ctx)
-
-		// Check if provider should be suspended due to consecutive failures
-		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
-			// Suspend the provider
-			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-
-			// Apply percentage-based slash for consecutive failures
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
-			stakeAmount := providerStake.Stake.AmountOf(appparams.BaseCoinUnit)
-			dec := sdk.NewDec(int64(stakeAmount.Int64()))
-			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
-
-			// Transfer slashed amount to slash account
-			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			// Reset consecutive failures
-			provider.ConsecutiveFailures = 0
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-
-			// Emit suspension event
-			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
-				Address: provider.Creator,
-				Online:  false,
-			})
-		} else {
-			// Apply regular challenge failure slash
-			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			am.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			providerStake := am.keeper.GetProviderStake(ctx, providerAcc)
-			am.keeper.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Stake: providerStake.Stake.Sub(slashAmountCoins[0]),
-			})
-		}
-
-		am.keeper.SetProvider(ctx, provider)
-
-		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
-		am.keeper.SetChallenge(ctx, challenge)
-
-		ctx.Logger().Info(fmt.Sprintf("provider %s failed challenge %d", provider.Creator, challenge.Id))
 	}
+
+	// Expire old proposals
+	am.keeper.ExpireOldProposals(ctx)
+	am.keeper.ExpireOldLFSObjectProposals(ctx)
+	am.keeper.ExpireOldReleaseAssetsProposals(ctx)
+	am.keeper.ExpireOldRepositoryDeleteProposals(ctx)
 
 	return []abci.ValidatorUpdate{}
 }

@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -12,14 +11,12 @@ import (
 	"github.com/wealdtech/go-merkletree/v2/sha3"
 
 	appparams "github.com/gitopia/gitopia/v6/app/params"
-	"github.com/gitopia/gitopia/v6/utils"
-	gitopiakeeper "github.com/gitopia/gitopia/v6/x/gitopia/keeper"
 	gitopiatypes "github.com/gitopia/gitopia/v6/x/gitopia/types"
 	"github.com/gitopia/gitopia/v6/x/storage/types"
 )
 
 // Approximate upgrade time of the v6 upgrade which adds storage module
-var UpgradeTime = time.Date(2025, time.July, 11, 12, 35, 0, 0, time.UTC)
+var UpgradeTime = time.Date(2025, time.September, 5, 14, 0, 0, 0, time.UTC)
 
 type msgServer struct {
 	Keeper
@@ -83,11 +80,8 @@ func (k msgServer) RegisterProvider(goCtx context.Context, msg *types.MsgRegiste
 		Creator:                  msg.Creator,
 		ApiUrl:                   msg.ApiUrl,
 		Moniker:                  msg.Moniker,
-		TotalChallenges:          0,
-		SuccessfulChallenges:     0,
-		ConsecutiveFailures:      0,
 		JoinTime:                 ctx.BlockTime(),
-		Status:                   types.ProviderStatus_PROVIDER_STATUS_ACTIVE,
+		Status:                   types.Bonded,
 		IpfsClusterPeerMultiaddr: msg.IpfsClusterPeerMultiaddr,
 	}
 
@@ -122,24 +116,24 @@ func (k msgServer) calculateStorageCharge(ctx sdk.Context, currentUsage uint64, 
 	if currentUsage > freeStorageBytes {
 		diff := newUsage - currentUsage
 		if diff <= 0 {
-			return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
+			return sdk.NewCoin(params.StoragePricePerGb.Denom, sdk.ZeroInt()), nil
 		}
-		// Calculate charge in MB and multiply by price per MB
-		diffMb := float64(diff) / (1024 * 1024)
-		chargeAmount := sdk.NewDec(int64(diffMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
-		return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+		// Calculate charge in GB and multiply by price per GB
+		diffGb := float64(diff) / (1024 * 1024 * 1024)
+		chargeAmount := sdk.NewDec(int64(diffGb)).Mul(sdk.NewDecFromInt(params.StoragePricePerGb.Amount))
+		return sdk.NewCoin(params.StoragePricePerGb.Denom, chargeAmount.TruncateInt()), nil
 	}
 
 	// If new usage is below free limit, no charge
 	if newUsage <= freeStorageBytes {
-		return sdk.NewCoin(params.StoragePricePerMb.Denom, sdk.ZeroInt()), nil
+		return sdk.NewCoin(params.StoragePricePerGb.Denom, sdk.ZeroInt()), nil
 	}
 
 	// Calculate charge for the portion that exceeds free limit
 	excessBytes := newUsage - freeStorageBytes
-	excessMb := float64(excessBytes) / (1024 * 1024)
-	chargeAmount := sdk.NewDec(int64(excessMb)).Mul(sdk.NewDecFromInt(params.StoragePricePerMb.Amount))
-	return sdk.NewCoin(params.StoragePricePerMb.Denom, chargeAmount.TruncateInt()), nil
+	excessGb := float64(excessBytes) / (1024 * 1024 * 1024)
+	chargeAmount := sdk.NewDec(int64(excessGb)).Mul(sdk.NewDecFromInt(params.StoragePricePerGb.Amount))
+	return sdk.NewCoin(params.StoragePricePerGb.Denom, chargeAmount.TruncateInt()), nil
 }
 
 func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.MsgUpdateRepositoryPackfile) (*types.MsgUpdateRepositoryPackfileResponse, error) {
@@ -147,7 +141,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -171,6 +165,11 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	if found {
 		oldCid = existingPackfile.Cid
 		oldName = existingPackfile.Name
+
+		// Optimistic concurrency control: check if the current CID matches the expected old_cid
+		if msg.OldCid != "" && oldCid != msg.OldCid {
+			return nil, fmt.Errorf("repository state has changed: expected CID %s, found %s", msg.OldCid, oldCid)
+		}
 		// Calculate the difference in size between the existing and new packfile
 		existingSize := existingPackfile.Size_
 		newSize := msg.Size_
@@ -182,7 +181,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		}
 
 		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -212,6 +211,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		// Update existing packfile while preserving its ID
 		existingPackfile.Creator = msg.Creator
 		existingPackfile.Name = msg.Name
+		existingPackfile.OldCid = existingPackfile.Cid
 		existingPackfile.Cid = msg.Cid
 		existingPackfile.RootHash = msg.RootHash
 		existingPackfile.Size_ = msg.Size_
@@ -230,7 +230,7 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 		k.SetStorageStats(ctx, storageStats)
 	} else {
 		// Calculate storage charge for new packfile
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
 			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 			if err != nil {
 				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -286,64 +286,12 @@ func (k msgServer) UpdateRepositoryPackfile(goCtx context.Context, msg *types.Ms
 	return &types.MsgUpdateRepositoryPackfileResponse{}, nil
 }
 
-func (k msgServer) DeleteRepositoryPackfile(goCtx context.Context, msg *types.MsgDeleteRepositoryPackfile) (*types.MsgDeleteRepositoryPackfileResponse, error) {
+func (k msgServer) UpdateReleaseAssets(goCtx context.Context, msg *types.MsgUpdateReleaseAssets) (*types.MsgUpdateReleaseAssetsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	if !found {
-		// Create new user quota
-		userQuota = gitopiatypes.UserQuota{
-			Address:     msg.OwnerId,
-			StorageUsed: 0,
-		}
-	}
-
-	// Check if packfile exists for this repository
-	packfile, found := k.GetPackfile(ctx, msg.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("packfile not found")
-	}
-
-	// Decrement or remove old cid reference count
-	if packfile.Cid != "" {
-		k.DecreaseCidReferenceCount(ctx, packfile.Cid)
-		if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
-			k.RemoveCidReferenceCount(ctx, packfile.Cid)
-		}
-	}
-
-	userQuota.StorageUsed -= uint64(packfile.Size_)
-	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-	// Remove existing packfile
-	k.RemovePackfile(ctx, msg.RepositoryId)
-
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalPackfileSize -= uint64(packfile.Size_)
-	k.SetStorageStats(ctx, storageStats)
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventPackfileDeleted{
-		RepositoryId: msg.RepositoryId,
-		Name:         packfile.Name,
-		Cid:          packfile.Cid,
-	})
-
-	return &types.MsgDeleteRepositoryPackfileResponse{}, nil
-}
-
-func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdateReleaseAsset) (*types.MsgUpdateReleaseAssetResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -361,172 +309,166 @@ func (k msgServer) UpdateReleaseAsset(goCtx context.Context, msg *types.MsgUpdat
 		}
 	}
 
-	// Check if release asset already exists for this repository
-	var oldCid, oldSha256 string
-	existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-	if found {
-		oldCid = existingAsset.Cid
-		oldSha256 = existingAsset.Sha256
-		// Calculate the difference in size between the existing and new asset
-		existingSize := existingAsset.Size_
-		newSize := msg.Size_
-		var diff int64
-		if newSize >= existingSize {
-			diff = int64(newSize - existingSize)
+	// Track changes for storage calculation and events
+	var totalSizeDiff int64
+
+	// First pass: validate all assets and check optimistic concurrency control
+	for i, assetUpdate := range msg.Assets {
+		existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			// For delete, asset must exist and match old_cid if provided
+			if !found {
+				return nil, fmt.Errorf("asset[%d] (%s) not found for delete", i, assetUpdate.Name)
+			}
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+
+			totalSizeDiff -= int64(existingAsset.Size_)
+			continue
+		}
+
+		if found {
+			// Optimistic concurrency control: check if the current CID matches the expected old_cid
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+
+			// Calculate size difference
+			existingSize := existingAsset.Size_
+			newSize := assetUpdate.Size_
+			if newSize >= existingSize {
+				totalSizeDiff += int64(newSize - existingSize)
+			} else {
+				totalSizeDiff -= int64(existingSize - newSize)
+			}
 		} else {
-			diff = -(int64(existingSize - newSize))
+			// New asset
+			totalSizeDiff += int64(assetUpdate.Size_)
+		}
+	}
+
+	// Calculate storage charge for the total size difference
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
+		var newStorageUsed uint64
+		if totalSizeDiff >= 0 {
+			newStorageUsed = userQuota.StorageUsed + uint64(totalSizeDiff)
+		} else {
+			if uint64(-totalSizeDiff) > userQuota.StorageUsed {
+				newStorageUsed = 0
+			} else {
+				newStorageUsed = userQuota.StorageUsed - uint64(-totalSizeDiff)
+			}
 		}
 
-		// Calculate storage charge
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
-			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, newStorageUsed)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
 			if err != nil {
-				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+				return nil, fmt.Errorf("invalid user address: %v", err)
 			}
 
-			// If there's a charge, transfer coins from user to storage charge account
-			if !charge.IsZero() {
-				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
-				if err != nil {
-					return nil, fmt.Errorf("invalid user address: %v", err)
-				}
-
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
-				}
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
 			}
 		}
+	}
 
-		// Decrement or remove old cid reference count
-		if oldCid != "" {
-			k.DecreaseCidReferenceCount(ctx, oldCid)
-			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
-				k.RemoveCidReferenceCount(ctx, oldCid)
+	// Second pass: perform all updates atomically
+	for _, assetUpdate := range msg.Assets {
+		existingAsset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if found {
+				// Decrease cid reference count for the asset being deleted
+				if existingAsset.Cid != "" {
+					k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+					if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+						k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+					}
+				}
+
+				// Remove asset (storage stats and quota will be updated by total diff logic below)
+				k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, assetUpdate.Name)
 			}
+			continue
 		}
 
-		// Update existing asset while preserving its ID
-		existingAsset.Creator = msg.Creator
-		existingAsset.Name = msg.Name
-		existingAsset.Cid = msg.Cid
-		existingAsset.RootHash = msg.RootHash
-		existingAsset.Size_ = msg.Size_
-		existingAsset.Sha256 = msg.Sha256
-		existingAsset.UpdatedAt = ctx.BlockTime()
+		if found {
+			// Decrement old CID reference count
+			if existingAsset.Cid != "" {
+				k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+				if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+					k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+				}
+			}
 
-		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
-		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+			// Update existing asset
+			existingAsset.Creator = msg.Creator
+			existingAsset.Cid = assetUpdate.Cid
+			existingAsset.RootHash = assetUpdate.RootHash
+			existingAsset.Size_ = assetUpdate.Size_
+			existingAsset.Sha256 = assetUpdate.Sha256
+			existingAsset.UpdatedAt = ctx.BlockTime()
 
-		k.SetReleaseAsset(ctx, existingAsset)
+			k.SetReleaseAsset(ctx, existingAsset)
+		} else {
+			// Create new asset
+			asset := types.ReleaseAsset{
+				Creator:      msg.Creator,
+				RepositoryId: msg.RepositoryId,
+				Tag:          msg.Tag,
+				Name:         assetUpdate.Name,
+				Cid:          assetUpdate.Cid,
+				RootHash:     assetUpdate.RootHash,
+				Size_:        assetUpdate.Size_,
+				Sha256:       assetUpdate.Sha256,
+				CreatedAt:    ctx.BlockTime(),
+				UpdatedAt:    ctx.BlockTime(),
+			}
 
-		storageStats := k.GetStorageStats(ctx)
-		storageStats.TotalReleaseAssetSize += uint64(int64(storageStats.TotalReleaseAssetSize) + diff)
-		k.SetStorageStats(ctx, storageStats)
+			k.AppendReleaseAsset(ctx, asset)
+		}
+
+		// Increase new CID reference count
+		k.IncreaseCidReferenceCount(ctx, assetUpdate.Cid)
+	}
+
+	// Update user quota and storage stats
+	if totalSizeDiff >= 0 {
+		userQuota.StorageUsed += uint64(totalSizeDiff)
 	} else {
-		// Calculate storage charge for new asset
-		if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repository.UpdatedAt > UpgradeTime.Unix() {
-			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
-			if err != nil {
-				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
-			}
-
-			// If there's a charge, transfer coins from user to storage charge account
-			if !charge.IsZero() {
-				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
-				if err != nil {
-					return nil, fmt.Errorf("invalid user address: %v", err)
-				}
-
-				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
-					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
-				}
-			}
+		if uint64(-totalSizeDiff) > userQuota.StorageUsed {
+			userQuota.StorageUsed = 0
+		} else {
+			userQuota.StorageUsed -= uint64(-totalSizeDiff)
 		}
-
-		// Create new release asset
-		asset := types.ReleaseAsset{
-			Creator:      msg.Creator,
-			RepositoryId: msg.RepositoryId,
-			Tag:          msg.Tag,
-			Name:         msg.Name,
-			Cid:          msg.Cid,
-			RootHash:     msg.RootHash,
-			Size_:        msg.Size_,
-			Sha256:       msg.Sha256,
-			CreatedAt:    ctx.BlockTime(),
-			UpdatedAt:    ctx.BlockTime(),
-		}
-
-		userQuota.StorageUsed += msg.Size_
-		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-		k.AppendReleaseAsset(ctx, asset)
-
-		// Increase new cid reference count
-		k.IncreaseCidReferenceCount(ctx, msg.Cid)
-
-		storageStats := k.GetStorageStats(ctx)
-		storageStats.TotalReleaseAssetSize += msg.Size_
-		k.SetStorageStats(ctx, storageStats)
 	}
-
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetUpdated{
-		RepositoryId: msg.RepositoryId,
-		Tag:          msg.Tag,
-		Name:         msg.Name,
-		NewCid:       msg.Cid,
-		OldCid:       oldCid,
-		NewSha256:    msg.Sha256,
-		OldSha256:    oldSha256,
-	})
-
-	return &types.MsgUpdateReleaseAssetResponse{}, nil
-}
-
-func (k msgServer) DeleteReleaseAsset(goCtx context.Context, msg *types.MsgDeleteReleaseAsset) (*types.MsgDeleteReleaseAssetResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
-		return nil, fmt.Errorf("provider is not active")
-	}
-
-	// Get the release asset
-	asset, found := k.GetReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-	if !found {
-		return nil, fmt.Errorf("release asset not found")
-	}
-
-	// Decrease cid reference count
-	k.DecreaseCidReferenceCount(ctx, asset.Cid)
-	if count, found := k.GetCidReferenceCount(ctx, asset.Cid); found && count.Count == 0 {
-		k.RemoveCidReferenceCount(ctx, asset.Cid)
-	}
-
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalReleaseAssetSize -= asset.Size_
-	k.SetStorageStats(ctx, storageStats)
-
-	// Delete the release asset
-	k.RemoveReleaseAsset(ctx, msg.RepositoryId, msg.Tag, msg.Name)
-
-	// Update user quota
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	userQuota.StorageUsed -= asset.Size_
 	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
 
-	// Emit event
-	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetDeleted{
+	storageStats := k.GetStorageStats(ctx)
+	if totalSizeDiff >= 0 {
+		storageStats.TotalReleaseAssetSize += uint64(totalSizeDiff)
+	} else {
+		if uint64(-totalSizeDiff) > storageStats.TotalReleaseAssetSize {
+			storageStats.TotalReleaseAssetSize = 0
+		} else {
+			storageStats.TotalReleaseAssetSize -= uint64(-totalSizeDiff)
+		}
+	}
+	k.SetStorageStats(ctx, storageStats)
+
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetsUpdated{
 		RepositoryId: msg.RepositoryId,
 		Tag:          msg.Tag,
-		Name:         msg.Name,
-		Cid:          asset.Cid,
-		Sha256:       asset.Sha256,
+		Assets:       msg.Assets,
 	})
 
-	return &types.MsgDeleteReleaseAssetResponse{}, nil
+	return &types.MsgUpdateReleaseAssetsResponse{}, nil
 }
 
 func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.MsgSubmitChallengeResponse) (*types.MsgSubmitChallengeResponseResponse, error) {
@@ -538,11 +480,16 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge not found")
 	}
 
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found {
+		return nil, fmt.Errorf("provider not found")
+	}
+
 	ctx.Logger().Info(fmt.Sprintf("provider %s submitted challenge response for challenge %d", msg.Creator, msg.ChallengeId))
 
-	// Verify the provider is the one being challenged
-	if challenge.Provider != msg.Creator {
-		return nil, fmt.Errorf("unauthorized: only challenged provider can submit response")
+	// Verify the provider is active
+	if provider.Jailed || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("unauthorized: only active provider can submit response")
 	}
 
 	// Check challenge hasn't expired
@@ -550,14 +497,9 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("challenge deadline exceeded")
 	}
 
-	// Check challenge is still pending
-	if challenge.Status != types.ChallengeStatus_CHALLENGE_STATUS_PENDING {
+	// Check challenge is still pending in case of assigned provider
+	if provider.Creator == challenge.Provider && challenge.Status != types.ChallengeStatus_CHALLENGE_STATUS_PENDING {
 		return nil, fmt.Errorf("challenge already completed")
-	}
-
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found {
-		return nil, fmt.Errorf("provider not found")
 	}
 
 	params := k.GetParams(ctx)
@@ -577,91 +519,46 @@ func (k msgServer) SubmitChallengeResponse(goCtx context.Context, msg *types.Msg
 		return nil, fmt.Errorf("failed to verify proof: %v", err)
 	}
 	if !verified {
-		// Update provider stats for failed challenge
-		provider.TotalChallenges++
-		provider.ConsecutiveFailures++
-
-		// Check if provider should be suspended due to consecutive failures
-		if provider.ConsecutiveFailures >= params.ConsecutiveFailsThreshold {
-			// Suspend the provider
-			provider.Status = types.ProviderStatus_PROVIDER_STATUS_SUSPENDED
-
-			// Apply percentage-based slash for consecutive failures
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			stake := k.GetProviderStake(ctx, providerAcc)
-			stakeAmount := stake.Stake.AmountOf(appparams.BaseCoinUnit)
-			dec := sdk.NewDec(int64(stakeAmount.Int64()))
-			slashAmount := dec.Mul(sdk.NewDec(int64(params.ConsecutiveFailsSlashPercentage))).Quo(sdk.NewDec(100))
-			slashAmountCoins := sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, slashAmount.TruncateInt()))
-
-			// Transfer slashed amount to slash account
-			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Provider: provider.Creator,
-				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
-			})
-
-			// Reset consecutive failures
-			provider.ConsecutiveFailures = 0
-			k.SetProvider(ctx, provider)
-
-			ctx.Logger().Info(fmt.Sprintf("provider %s suspended due to consecutive failures and slashed %s", provider.Creator, slashAmountCoins.String()))
-
-			// Emit suspension event
-			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
-				Address: provider.Creator,
-				Online:  false,
-			})
-		} else {
-			// Apply regular challenge failure slash
-			slashAmountCoins := sdk.NewCoins(params.ChallengeSlashAmount)
-			k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, slashAmountCoins)
-
-			// Update provider stake
-			providerAcc, _ := sdk.AccAddressFromBech32(provider.Creator)
-			stake := k.GetProviderStake(ctx, providerAcc)
-			k.SetProviderStake(ctx, providerAcc, types.ProviderStake{
-				Provider: provider.Creator,
-				Stake:    stake.Stake.Sub(slashAmountCoins[0]),
-			})
+		// Process challenge response for liveness tracking (invalid proof)
+		err := k.ProcessChallengeResponseForLiveness(ctx, &challenge, provider.Creator, false)
+		if err != nil {
+			ctx.Logger().Error(fmt.Sprintf("failed to process liveness for invalid proof from %s: %v", provider.Creator, err))
 		}
 
-		k.SetProvider(ctx, provider)
-
+		// Update challenge status
 		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_FAILED
 		k.SetChallenge(ctx, challenge)
-
-		ctx.Logger().Info(fmt.Sprintf("provider %s slashed for challenge %d", provider.Creator, challenge.Id))
 
 		return nil, fmt.Errorf("invalid proof")
 	}
 
-	// Update challenge status
-	challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
-	k.SetChallenge(ctx, challenge)
+	// Process challenge response for liveness tracking (valid proof)
+	err = k.ProcessChallengeResponseForLiveness(ctx, &challenge, provider.Creator, true)
+	if err != nil {
+		ctx.Logger().Error(fmt.Sprintf("failed to process liveness for valid proof from %s: %v", provider.Creator, err))
+	}
 
-	activeProviders := k.GetActiveProviders(ctx)
+	// Reward only the assigned provider
+	if provider.Creator == challenge.Provider {
+		// Update challenge status
+		challenge.Status = types.ChallengeStatus_CHALLENGE_STATUS_COMPLETED
+		k.SetChallenge(ctx, challenge)
 
-	// Consider only providers that have been active for at least 24 hours
-	minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
-	activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
+		activeProviders := k.GetActiveProviders(ctx)
 
-	// Update provider rewards
-	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
-	currentRewards := k.GetProviderRewards(ctx, providerAcc)
-	challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
-	currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
-	k.SetProviderRewards(ctx, providerAcc, currentRewards)
+		// Consider only providers that have been active for at least 24 hours
+		minJoinTime := ctx.BlockTime().Add(-24 * time.Hour)
+		activeProviders = filterProvidersByJoinTime(activeProviders, minJoinTime)
 
-	// Update provider stats
-	provider.TotalChallenges++
-	provider.SuccessfulChallenges++
-	provider.ConsecutiveFailures = 0
-	k.SetProvider(ctx, provider)
+		// Update provider rewards
+		providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
+		currentRewards := k.GetProviderRewards(ctx, providerAcc)
+		challengeReward := CalculateChallengeReward(params, int64(len(activeProviders)))
+		currentRewards.Rewards = currentRewards.Rewards.Add(challengeReward)
+		k.SetProviderRewards(ctx, providerAcc, currentRewards)
 
-	ctx.Logger().Info(fmt.Sprintf("provider %s rewarded for challenge %d", provider.Creator, challenge.Id))
+		ctx.Logger().Info(fmt.Sprintf("provider %s rewarded for challenge %d", provider.Creator, challenge.Id))
+	}
 
 	return &types.MsgSubmitChallengeResponseResponse{}, nil
 }
@@ -704,11 +601,11 @@ func (k msgServer) UnregisterProvider(goCtx context.Context, msg *types.MsgUnreg
 
 	// Get params for cooldown period
 	params := k.GetParams(ctx)
-	unstakeCompletionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
+	unstakeCompletionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * 1590 * time.Millisecond)
 
 	// Update provider with unstake completion time
 	provider.UnstakeCompletionTime = &unstakeCompletionTime
-	provider.Status = types.ProviderStatus_PROVIDER_STATUS_UNREGISTERING
+	provider.Status = types.Unbonding
 	k.SetProvider(ctx, provider)
 
 	// Emit event
@@ -798,180 +695,60 @@ func (k msgServer) UpdateParams(goCtx context.Context, msg *types.MsgUpdateParam
 	return &types.MsgUpdateParamsResponse{}, nil
 }
 
-func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePullRequest) (*types.MsgMergePullRequestResponse, error) {
+func (k msgServer) ClawbackProviderStake(goCtx context.Context, msg *types.MsgClawbackProviderStake) (*types.MsgClawbackProviderStakeResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if provider is active
-	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
-		return nil, fmt.Errorf("provider is not active")
+	// Check authority
+	if k.authority != msg.Authority {
+		return nil, fmt.Errorf("invalid authority; expected %s, got %s", k.authority, msg.Authority)
 	}
 
-	// Get the pull request
-	pullRequest, found := k.gitopiaKeeper.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
+	// Get the provider
+	provider, found := k.GetProvider(ctx, msg.Provider)
 	if !found {
-		return nil, fmt.Errorf("pull request not found")
+		return nil, fmt.Errorf("provider not found")
 	}
 
-	// Check if pull request can be merged
-	if pullRequest.State == gitopiatypes.PullRequest_MERGED || pullRequest.State == gitopiatypes.PullRequest_CLOSED {
-		return nil, fmt.Errorf("can't merge pull request in state %s", pullRequest.State.String())
+	// Get provider's stake
+	providerAcc, err := sdk.AccAddressFromBech32(msg.Provider)
+	if err != nil {
+		return nil, fmt.Errorf("invalid provider address: %v", err)
+	}
+	providerStake := k.GetProviderStake(ctx, providerAcc)
+
+	// Validate clawback amount
+	if msg.Amount.Amount.GT(providerStake.Stake.AmountOf(msg.Amount.Denom)) {
+		return nil, fmt.Errorf("clawback amount %s exceeds provider's stake %s", msg.Amount, providerStake.Stake)
 	}
 
-	// Get the base repository
-	baseRepository, found := k.gitopiaKeeper.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("base repository not found")
+	// Transfer funds from bonded pool to slash pool
+	err = k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.StorageBondedPoolName, types.ChallengeSlashPoolName, sdk.NewCoins(msg.Amount))
+	if err != nil {
+		return nil, err
 	}
 
-	// Get the base branch
-	baseBranch, found := k.gitopiaKeeper.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
-	if !found {
-		return nil, fmt.Errorf("base branch not found")
-	}
+	// Update provider's stake in the state
+	providerStake.Stake = providerStake.Stake.Sub(msg.Amount)
+	k.SetProviderStake(ctx, providerAcc, providerStake)
 
-	// Get the head repository and branch
-	headRepository, found := k.gitopiaKeeper.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
-	if !found {
-		return nil, fmt.Errorf("head repository not found")
-	}
+	// Check if stake has fallen below minimum and jail provider if necessary
+	params := k.GetParams(ctx)
+	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
+		if provider.Status == types.Bonded && !provider.Jailed {
+			provider.Jailed = true
+			k.SetProvider(ctx, provider)
+			ctx.Logger().Info(fmt.Sprintf("provider %s jailed due to stake falling below minimum after clawback", provider.Creator))
 
-	headBranch, found := k.gitopiaKeeper.GetRepositoryBranch(ctx, headRepository.Id, pullRequest.Head.Branch)
-	if !found {
-		return nil, fmt.Errorf("head branch not found")
-	}
-
-	blockTime := ctx.BlockTime().Unix()
-
-	// Update branch references
-	pullRequest.Base.CommitSha = baseBranch.Sha
-	baseBranch.Sha = msg.MergeCommitSha
-	baseBranch.UpdatedAt = blockTime
-	pullRequest.Head.CommitSha = headBranch.Sha
-
-	// Update pull request state
-	pullRequest.State = gitopiatypes.PullRequest_MERGED
-	pullRequest.MergedAt = blockTime
-	pullRequest.MergedBy = msg.Creator
-	pullRequest.MergeCommitSha = msg.MergeCommitSha
-	pullRequest.UpdatedAt = blockTime
-
-	// Update task state
-	task, found := k.gitopiaKeeper.GetTask(ctx, msg.TaskId)
-	if !found {
-		return nil, fmt.Errorf("task not found")
-	}
-
-	if msg.Creator != task.Provider {
-		return nil, fmt.Errorf("unauthorized")
-	}
-
-	task.State = gitopiatypes.StateSuccess
-	k.gitopiaKeeper.SetTask(ctx, task)
-
-	// Update repository and branch
-	k.gitopiaKeeper.SetRepositoryBranch(ctx, baseBranch)
-	k.gitopiaKeeper.SetPullRequest(ctx, pullRequest)
-
-	// Handle linked issues
-	for _, issueIid := range pullRequest.Issues {
-		issue, found := k.gitopiaKeeper.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
-		if !found {
-			continue
-		}
-		if issue.State != gitopiatypes.Issue_OPEN {
-			continue
-		}
-		if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] {
-			continue
-		}
-
-		// Close issue
-		issue.State = gitopiatypes.Issue_CLOSED
-		issue.ClosedBy = msg.Creator
-		issue.ClosedAt = blockTime
-		issue.UpdatedAt = blockTime
-		k.gitopiaKeeper.SetIssue(ctx, issue)
-
-		// Handle bounties
-		for _, bountyId := range issue.Bounties {
-			bounty, found := k.gitopiaKeeper.GetBounty(ctx, bountyId)
-			if !found {
-				continue
-			}
-			if bounty.State != gitopiatypes.BountyStateSRCDEBITTED {
-				continue
-			}
-
-			rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
-			if err != nil {
-				continue
-			}
-
-			if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
-				continue
-			}
-			if k.bankKeeper.BlockedAddr(rewardAccAddress) {
-				continue
-			}
-
-			bountyAddress := gitopiakeeper.GetBountyAddress(bounty.Id)
-			if err := k.bankKeeper.SendCoins(
-				ctx, bountyAddress, rewardAccAddress, bounty.Amount,
-			); err != nil {
-				continue
-			}
-
-			bounty.State = gitopiatypes.BountyStateDESTCREDITED
-			bounty.RewardedTo = pullRequest.Creator
-			bounty.ExpireAt = time.Time{}.Unix()
-			bounty.UpdatedAt = blockTime
-
-			k.gitopiaKeeper.SetBounty(ctx, bounty)
+			ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
+				Address: provider.Creator,
+				Online:  false,
+			})
 		}
 	}
 
-	// Add system comment
-	pullRequest.CommentsCount += 1
-	comment := gitopiatypes.Comment{
-		Creator:      "GITOPIA",
-		RepositoryId: pullRequest.Base.RepositoryId,
-		ParentIid:    pullRequest.Iid,
-		Parent:       gitopiatypes.CommentParentPullRequest,
-		CommentIid:   pullRequest.CommentsCount,
-		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
-		System:       true,
-		CreatedAt:    blockTime,
-		UpdatedAt:    blockTime,
-		CommentType:  gitopiatypes.CommentTypePullRequestMerged,
-	}
+	ctx.Logger().Info(fmt.Sprintf("governance clawed back %s from provider %s. New stake: %s", msg.Amount.String(), msg.Provider, providerStake.Stake.String()))
 
-	k.gitopiaKeeper.AppendComment(ctx, comment)
-
-	// Emit event
-	headJson, _ := json.Marshal(pullRequest.Head)
-	baseBranchJson, _ := json.Marshal(baseBranch)
-
-	ctx.EventManager().EmitTypedEvent(&types.EventMergePullRequest{
-		Creator:         msg.Creator,
-		PullRequestId:   pullRequest.Id,
-		PullRequestIid:  pullRequest.Iid,
-		State:           pullRequest.State.String(),
-		MergeCommitSha:  msg.MergeCommitSha,
-		TaskId:          msg.TaskId,
-		TaskState:       task.State.String(),
-		RepoName:        baseRepository.Name,
-		RepoId:          baseRepository.Id,
-		RepoOwnerId:     baseRepository.Owner.Id,
-		RepoOwnerType:   baseRepository.Owner.Type.String(),
-		PullRequestHead: string(headJson),
-		RepoBranch:      string(baseBranchJson),
-		MergedBy:        pullRequest.MergedBy,
-		UpdatedAt:       pullRequest.UpdatedAt,
-		MergedAt:        pullRequest.MergedAt,
-	})
-
-	return &types.MsgMergePullRequestResponse{}, nil
+	return &types.MsgClawbackProviderStakeResponse{}, nil
 }
 
 func CalculateChallengeReward(params types.Params, numProviders int64) sdk.DecCoin {
@@ -994,7 +771,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Jailed || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
@@ -1013,7 +790,7 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 	}
 
 	// Calculate storage charge for new LFS object
-	if !k.GetParams(ctx).StoragePricePerMb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() && repo.UpdatedAt > UpgradeTime.Unix() {
 		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+msg.Size_)
 		if err != nil {
 			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
@@ -1067,49 +844,336 @@ func (k msgServer) UpdateLFSObject(goCtx context.Context, msg *types.MsgUpdateLF
 	return &types.MsgUpdateLFSObjectResponse{}, nil
 }
 
-// MsgDeleteLFSObject deletes an LFS object
-func (k msgServer) DeleteLFSObject(goCtx context.Context, msg *types.MsgDeleteLFSObject) (*types.MsgDeleteLFSObjectResponse, error) {
+func (k msgServer) ProposeRepositoryPackfileUpdate(goCtx context.Context, msg *types.MsgProposeRepositoryPackfileUpdate) (*types.MsgProposeRepositoryPackfileUpdateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if provider is active
 	provider, found := k.GetProvider(ctx, msg.Creator)
-	if !found || provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if !found || provider.Status != types.Bonded {
 		return nil, fmt.Errorf("provider is not active")
 	}
 
-	// Get the LFS object
-	lfsObj, found := k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
+	// Get repository to verify it exists and get owner
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
 	if !found {
-		return nil, fmt.Errorf("LFS object not found")
+		return nil, fmt.Errorf("repository not found")
 	}
 
-	// Decrease cid reference count
-	k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
-	if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
-		k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
+	// Check if there's already a pending proposal for this repository
+	pendingProposals := k.GetPendingProposalsForRepository(ctx, msg.RepositoryId)
+	if len(pendingProposals) > 0 {
+		return nil, fmt.Errorf("there is already a pending proposal for this repository")
 	}
 
-	storageStats := k.GetStorageStats(ctx)
-	storageStats.TotalLfsObjectSize -= uint64(lfsObj.Size_)
-	k.SetStorageStats(ctx, storageStats)
+	// Verify old_cid matches current repository state if specified
+	if msg.OldCid != "" {
+		existingPackfile, found := k.GetPackfile(ctx, msg.RepositoryId)
+		if found && existingPackfile.Cid != msg.OldCid {
+			return nil, fmt.Errorf("repository state has changed: expected CID %s, found %s", msg.OldCid, existingPackfile.Cid)
+		}
+	}
 
-	// Remove LFS object
-	k.RemoveLFSObject(ctx, msg.RepositoryId, msg.Oid)
+	// For delete proposals, ensure the packfile exists
+	if msg.Delete {
+		if _, found := k.GetPackfile(ctx, msg.RepositoryId); !found {
+			return nil, fmt.Errorf("packfile not found for delete proposal")
+		}
+	}
 
-	// Update user quota
-	userQuota, _ := k.gitopiaKeeper.GetUserQuota(ctx, msg.OwnerId)
-	userQuota.StorageUsed -= uint64(lfsObj.Size_)
-	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
-
-	ctx.EventManager().EmitTypedEvent(
-		&types.EventLFSObjectDeleted{
-			RepositoryId: msg.RepositoryId,
-			Oid:          msg.Oid,
-			Cid:          lfsObj.Cid,
-		},
+	// Create the proposal
+	proposalId := k.CreatePackfileUpdateProposal(
+		ctx,
+		msg.Creator,
+		msg.RepositoryId,
+		msg.User,
+		msg.Name,
+		msg.Cid,
+		msg.RootHash,
+		msg.Size_,
+		msg.OldCid,
+		msg.MergeCommitSha,
+		msg.Delete,
 	)
 
-	return &types.MsgDeleteLFSObjectResponse{}, nil
+	return &types.MsgProposeRepositoryPackfileUpdateResponse{
+		ProposalId: proposalId,
+	}, nil
+}
+
+func (k msgServer) ApproveRepositoryPackfileUpdate(goCtx context.Context, msg *types.MsgApproveRepositoryPackfileUpdate) (*types.MsgApproveRepositoryPackfileUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedPackfileUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Check if proposal has expired
+	if ctx.BlockTime().After(proposal.ExpiresAt) {
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// Verify that the approver is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only the user who initiated the proposal can approve it")
+	}
+
+	// Verify provider is still active
+	provider, found := k.GetProvider(ctx, proposal.Provider)
+	if !found || provider.Status != types.Bonded {
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("provider is no longer active")
+	}
+
+	// Re-verify repository state hasn't changed since proposal was made
+	if proposal.OldCid != "" {
+		existingPackfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+		if found && existingPackfile.Cid != proposal.OldCid {
+			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+			return nil, fmt.Errorf("repository state has changed since proposal was made")
+		}
+	}
+
+	// Execute the packfile update logic directly
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	// If this is a delete proposal, perform deletion
+	if proposal.Delete {
+		// Get existing packfile
+		packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+		if !found {
+			k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+			return nil, fmt.Errorf("packfile not found")
+		}
+
+		// Decrement or remove old cid reference count
+		if packfile.Cid != "" {
+			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
+			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+				ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+					RepositoryId: proposal.RepositoryId,
+					Cids:         []string{packfile.Cid},
+					Provider:     proposal.Provider,
+				})
+
+				k.RemoveCidReferenceCount(ctx, packfile.Cid)
+			}
+		}
+
+		// Update quota and stats
+		userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if !found {
+			userQuota = gitopiatypes.UserQuota{
+				Address:     repository.Owner.Id,
+				StorageUsed: 0,
+			}
+		}
+		if userQuota.StorageUsed >= uint64(packfile.Size_) {
+			userQuota.StorageUsed -= uint64(packfile.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalPackfileSize >= uint64(packfile.Size_) {
+			storageStats.TotalPackfileSize -= uint64(packfile.Size_)
+		} else {
+			storageStats.TotalPackfileSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		// Remove packfile
+		k.RemovePackfile(ctx, proposal.RepositoryId)
+
+		// Remove proposal
+		k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+
+		return &types.MsgApproveRepositoryPackfileUpdateResponse{}, nil
+	}
+
+	// Check if packfile already exists for this repository
+	var oldCid, oldName string
+	existingPackfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+	if found {
+		oldCid = existingPackfile.Cid
+		oldName = existingPackfile.Name
+
+		// Calculate the difference in size between the existing and new packfile
+		existingSize := existingPackfile.Size_
+		newSize := proposal.Size_
+		var diff int64
+		if newSize >= existingSize {
+			diff = int64(newSize - existingSize)
+		} else {
+			diff = -(int64(existingSize - newSize))
+		}
+
+		// Calculate storage charge
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+uint64(diff))
+			if err != nil {
+				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+			}
+
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
+			}
+		}
+
+		// Decrement or remove old cid reference count
+		if oldCid != "" {
+			k.DecreaseCidReferenceCount(ctx, oldCid)
+			if count, found := k.GetCidReferenceCount(ctx, oldCid); found && count.Count == 0 {
+				ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+					RepositoryId: proposal.RepositoryId,
+					Cids:         []string{oldCid},
+					Provider:     proposal.Provider,
+				})
+
+				k.RemoveCidReferenceCount(ctx, oldCid)
+			}
+		}
+
+		// Update existing packfile while preserving its ID
+		existingPackfile.Creator = proposal.Provider
+		existingPackfile.Name = proposal.Name
+		existingPackfile.OldCid = existingPackfile.Cid
+		existingPackfile.Cid = proposal.Cid
+		existingPackfile.RootHash = proposal.RootHash
+		existingPackfile.Size_ = proposal.Size_
+		existingPackfile.UpdatedAt = ctx.BlockTime()
+
+		userQuota.StorageUsed += uint64(int64(userQuota.StorageUsed) + diff)
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		k.SetPackfile(ctx, existingPackfile)
+
+		// Increase new cid reference count
+		k.IncreaseCidReferenceCount(ctx, proposal.Cid)
+
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalPackfileSize += uint64(diff)
+		k.SetStorageStats(ctx, storageStats)
+	} else {
+		// Calculate storage charge for new packfile
+		if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
+			charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
+			if err != nil {
+				k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+			}
+
+			// If there's a charge, transfer coins from user to storage charge account
+			if !charge.IsZero() {
+				userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+				if err != nil {
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+					return nil, fmt.Errorf("invalid user address: %v", err)
+				}
+
+				if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
+					k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+					return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+				}
+			}
+		}
+
+		// Create new packfile
+		packfile := types.Packfile{
+			Creator:      proposal.Provider,
+			RepositoryId: proposal.RepositoryId,
+			Name:         proposal.Name,
+			Cid:          proposal.Cid,
+			RootHash:     proposal.RootHash,
+			Size_:        proposal.Size_,
+			CreatedAt:    ctx.BlockTime(),
+			UpdatedAt:    ctx.BlockTime(),
+		}
+
+		userQuota.StorageUsed += proposal.Size_
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		k.AppendPackfile(ctx, packfile)
+
+		// Increase new cid reference count
+		k.IncreaseCidReferenceCount(ctx, proposal.Cid)
+
+		storageStats := k.GetStorageStats(ctx)
+		storageStats.TotalPackfileSize += proposal.Size_
+		k.SetStorageStats(ctx, storageStats)
+	}
+
+	// Emit event
+	ctx.EventManager().EmitTypedEvent(&types.EventPackfileUpdated{
+		RepositoryId: proposal.RepositoryId,
+		NewCid:       proposal.Cid,
+		OldCid:       oldCid,
+		NewName:      proposal.Name,
+		OldName:      oldName,
+		Provider:     proposal.Provider,
+		Deleted:      proposal.Delete,
+	})
+
+	// Remove proposal
+	k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+
+	return &types.MsgApproveRepositoryPackfileUpdateResponse{}, nil
+}
+
+func (k msgServer) RejectRepositoryPackfileUpdate(goCtx context.Context, msg *types.MsgRejectRepositoryPackfileUpdate) (*types.MsgRejectRepositoryPackfileUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedPackfileUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Verify that the rejector is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only the user who initiated the proposal can reject it")
+	}
+
+	k.RemoveProposedPackfileUpdate(ctx, proposal.Id)
+
+	return &types.MsgRejectRepositoryPackfileUpdateResponse{}, nil
 }
 
 // Stake Management Handlers
@@ -1125,7 +1189,7 @@ func (k msgServer) IncreaseStake(goCtx context.Context, msg *types.MsgIncreaseSt
 
 	// Check if provider is active or suspended.
 	// A suspended provider needs to be able to increase stake to meet the minimum for reactivation.
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE && provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
+	if provider.Status != types.Bonded {
 		return nil, fmt.Errorf("can only increase stake for active or suspended providers, current status: %s", provider.Status)
 	}
 
@@ -1170,7 +1234,7 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}
 
 	// Check if provider is active
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+	if provider.Status != types.Bonded {
 		return nil, fmt.Errorf("can only decrease stake for active providers")
 	}
 
@@ -1196,7 +1260,7 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}
 
 	// Set cooldown period for stake decrease (separate from unregistration)
-	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * time.Second)
+	completionTime := ctx.BlockTime().Add(time.Duration(params.UnstakeCooldownBlocks) * 1590 * time.Millisecond)
 	provider.DecreaseCompletionTime = &completionTime
 	provider.PendingDecreaseAmount = &msg.Amount
 
@@ -1215,7 +1279,7 @@ func (k msgServer) DecreaseStake(goCtx context.Context, msg *types.MsgDecreaseSt
 	}, nil
 }
 
-func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReactivateProvider) (*types.MsgReactivateProviderResponse, error) {
+func (k msgServer) UnjailProvider(goCtx context.Context, msg *types.MsgUnjailProvider) (*types.MsgUnjailProviderResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Get the provider
@@ -1224,44 +1288,44 @@ func (k msgServer) ReactivateProvider(goCtx context.Context, msg *types.MsgReact
 		return nil, fmt.Errorf("provider not found")
 	}
 
-	// Check if provider is suspended
-	if provider.Status != types.ProviderStatus_PROVIDER_STATUS_SUSPENDED {
-		return nil, fmt.Errorf("can only reactivate suspended providers")
+	// Check if provider is actually jailed
+	if !provider.Jailed {
+		return nil, fmt.Errorf("provider is not jailed")
 	}
 
-	// Check if provider still meets minimum stake requirement
+	// Check if jail time has expired
+	if provider.JailUntil != nil && ctx.BlockTime().Before(*provider.JailUntil) {
+		return nil, fmt.Errorf("jail time has not expired, jailed until: %s", provider.JailUntil.String())
+	}
+
+	// Check minimum stake requirement
 	params := k.GetParams(ctx)
-
-	if len(k.GetActiveProviders(ctx)) >= int(params.MaxProviders) {
-		return nil, fmt.Errorf("active provider count has reached the maximum limit")
-	}
-
 	providerAcc, _ := sdk.AccAddressFromBech32(msg.Creator)
 	providerStake := k.GetProviderStake(ctx, providerAcc)
 	if providerStake.Stake.AmountOf(appparams.BaseCoinUnit).Uint64() < params.MinStakeAmount {
-		return nil, fmt.Errorf("provider stake is below minimum requirement, increase stake first")
+		return nil, fmt.Errorf("minimum stake requirement not met")
 	}
 
-	// Check active provider limit
+	// Check if active provider count has reached the maximum limit
 	activeProviders := k.GetActiveProviders(ctx)
-	if len(activeProviders) >= int(params.MaxProviders) {
+	if len(activeProviders) >= int(k.GetParams(ctx).MaxProviders) {
 		return nil, fmt.Errorf("active provider count has reached the maximum limit")
 	}
 
-	// Reactivate the provider
-	provider.Status = types.ProviderStatus_PROVIDER_STATUS_ACTIVE
-	provider.ConsecutiveFailures = 0 // Reset failure count on reactivation
+	// Unjail the provider
+	provider.Jailed = false
+	provider.JailUntil = nil
 	k.SetProvider(ctx, provider)
 
-	// Emit event
+	ctx.Logger().Info(fmt.Sprintf("provider %s has been unjailed", provider.Creator))
+
+	// Emit unjail event
 	ctx.EventManager().EmitTypedEvent(&types.EventProviderStatusUpdated{
 		Address: provider.Creator,
 		Online:  true,
 	})
 
-	ctx.Logger().Info(fmt.Sprintf("provider %s reactivated", provider.Creator))
-
-	return &types.MsgReactivateProviderResponse{}, nil
+	return &types.MsgUnjailProviderResponse{}, nil
 }
 
 func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCompleteDecreaseStake) (*types.MsgCompleteDecreaseStakeResponse, error) {
@@ -1325,4 +1389,740 @@ func (k msgServer) CompleteDecreaseStake(goCtx context.Context, msg *types.MsgCo
 	return &types.MsgCompleteDecreaseStakeResponse{
 		Amount: decreaseAmount,
 	}, nil
+}
+
+func (k msgServer) ProposeReleaseAssetsUpdate(goCtx context.Context, msg *types.MsgProposeReleaseAssetsUpdate) (*types.MsgProposeReleaseAssetsUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get repository to verify it exists and get owner
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Check if there's already a pending proposal for this release
+	pendingProposals := k.GetPendingReleaseAssetsProposalsForRepository(ctx, msg.RepositoryId)
+	for _, proposal := range pendingProposals {
+		if proposal.Tag == msg.Tag {
+			return nil, fmt.Errorf("there is already a pending proposal for this release")
+		}
+	}
+
+	// Create the proposal
+	proposalId := k.CreateReleaseAssetsUpdateProposal(
+		ctx,
+		msg.Creator,
+		msg.RepositoryId,
+		msg.User,
+		msg.Tag,
+		msg.Assets,
+	)
+
+	return &types.MsgProposeReleaseAssetsUpdateResponse{
+		ProposalId: proposalId,
+	}, nil
+}
+
+func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.MsgApproveReleaseAssetsUpdate) (*types.MsgApproveReleaseAssetsUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedReleaseAssetsUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Check if proposal has expired
+	if ctx.BlockTime().After(proposal.ExpiresAt) {
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// Get repository information
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Verify that the approver has permission to perform this operation
+	if !k.gitopiaKeeper.HavePermission(ctx, msg.Creator, repository, gitopiatypes.PushBranchPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	// Verify provider is still active
+	provider, found := k.GetProvider(ctx, proposal.Provider)
+	if !found || provider.Status != types.Bonded {
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("provider is no longer active")
+	}
+
+	var userQuota gitopiatypes.UserQuota
+
+	// Check if provider is active
+	provider, found = k.GetProvider(ctx, proposal.Provider)
+	if !found || provider.Jailed || provider.Status != types.Bonded {
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	repository, found = k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found = k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	// Track changes for storage calculation and events
+	var totalSizeDiff int64
+
+	// First pass: validate all assets and check optimistic concurrency control
+	for i, assetUpdate := range proposal.Assets {
+		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if !found {
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("asset[%d] (%s) not found for delete", i, assetUpdate.Name)
+			}
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+
+			totalSizeDiff -= int64(existingAsset.Size_)
+			continue
+		}
+		if found {
+			// Optimistic concurrency control: check if the current CID matches the expected old_cid
+			if assetUpdate.OldCid != "" && existingAsset.Cid != assetUpdate.OldCid {
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("asset[%d] (%s) state has changed: expected CID %s, found %s", i, assetUpdate.Name, assetUpdate.OldCid, existingAsset.Cid)
+			}
+
+			// Calculate size difference
+			existingSize := existingAsset.Size_
+			newSize := assetUpdate.Size_
+			if newSize >= existingSize {
+				totalSizeDiff += int64(newSize - existingSize)
+			} else {
+				totalSizeDiff -= int64(existingSize - newSize)
+			}
+		} else {
+			// New asset
+			totalSizeDiff += int64(assetUpdate.Size_)
+		}
+	}
+
+	// Calculate storage charge for the total size difference
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
+		var newStorageUsed uint64
+		if totalSizeDiff >= 0 {
+			newStorageUsed = userQuota.StorageUsed + uint64(totalSizeDiff)
+		} else {
+			if uint64(-totalSizeDiff) > userQuota.StorageUsed {
+				newStorageUsed = 0
+			} else {
+				newStorageUsed = userQuota.StorageUsed - uint64(-totalSizeDiff)
+			}
+		}
+
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, newStorageUsed)
+		if err != nil {
+			k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repository.Owner.Id)
+			if err != nil {
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
+				k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+	}
+
+	// Second pass: perform all updates atomically
+	var cids []string
+	for _, assetUpdate := range proposal.Assets {
+		existingAsset, found := k.GetReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+		if assetUpdate.Delete {
+			if found {
+				// Decrease cid reference count
+				if existingAsset.Cid != "" {
+					k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+					if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+						cids = append(cids, existingAsset.Cid)
+						k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+					}
+				}
+				// Remove asset (storage stats and quota will be updated by total diff logic below)
+				k.RemoveReleaseAsset(ctx, proposal.RepositoryId, proposal.Tag, assetUpdate.Name)
+			}
+			continue
+		}
+
+		if found {
+			// Decrement old CID reference count
+			if existingAsset.Cid != "" {
+				k.DecreaseCidReferenceCount(ctx, existingAsset.Cid)
+				if count, found := k.GetCidReferenceCount(ctx, existingAsset.Cid); found && count.Count == 0 {
+					cids = append(cids, existingAsset.Cid)
+					k.RemoveCidReferenceCount(ctx, existingAsset.Cid)
+				}
+			}
+
+			// Update existing asset
+			existingAsset.Creator = proposal.Provider
+			existingAsset.Cid = assetUpdate.Cid
+			existingAsset.RootHash = assetUpdate.RootHash
+			existingAsset.Size_ = assetUpdate.Size_
+			existingAsset.Sha256 = assetUpdate.Sha256
+			existingAsset.UpdatedAt = ctx.BlockTime()
+
+			k.SetReleaseAsset(ctx, existingAsset)
+		} else {
+			// Create new asset
+			asset := types.ReleaseAsset{
+				Creator:      proposal.Provider,
+				RepositoryId: proposal.RepositoryId,
+				Tag:          proposal.Tag,
+				Name:         assetUpdate.Name,
+				Cid:          assetUpdate.Cid,
+				RootHash:     assetUpdate.RootHash,
+				Size_:        assetUpdate.Size_,
+				Sha256:       assetUpdate.Sha256,
+				CreatedAt:    ctx.BlockTime(),
+				UpdatedAt:    ctx.BlockTime(),
+			}
+
+			k.AppendReleaseAsset(ctx, asset)
+		}
+
+		// Increase new CID reference count
+		k.IncreaseCidReferenceCount(ctx, assetUpdate.Cid)
+	}
+
+	// Update user quota and storage stats
+	if totalSizeDiff >= 0 {
+		userQuota.StorageUsed += uint64(totalSizeDiff)
+	} else {
+		if uint64(-totalSizeDiff) > userQuota.StorageUsed {
+			userQuota.StorageUsed = 0
+		} else {
+			userQuota.StorageUsed -= uint64(-totalSizeDiff)
+		}
+	}
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	storageStats := k.GetStorageStats(ctx)
+	if totalSizeDiff >= 0 {
+		storageStats.TotalReleaseAssetSize += uint64(totalSizeDiff)
+	} else {
+		if uint64(-totalSizeDiff) > storageStats.TotalReleaseAssetSize {
+			storageStats.TotalReleaseAssetSize = 0
+		} else {
+			storageStats.TotalReleaseAssetSize -= uint64(-totalSizeDiff)
+		}
+	}
+	k.SetStorageStats(ctx, storageStats)
+
+	// Remove proposal
+	k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+
+	ctx.EventManager().EmitTypedEvent(&types.EventReleaseAssetsUpdated{
+		RepositoryId: proposal.RepositoryId,
+		Tag:          proposal.Tag,
+		Assets:       proposal.Assets,
+		Provider:     proposal.Provider,
+	})
+
+	if len(cids) > 0 {
+		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+			Cids:         cids,
+			RepositoryId: proposal.RepositoryId,
+			Provider:     proposal.Provider,
+		})
+	}
+
+	return &types.MsgApproveReleaseAssetsUpdateResponse{}, nil
+}
+
+func (k msgServer) RejectReleaseAssetsUpdate(goCtx context.Context, msg *types.MsgRejectReleaseAssetsUpdate) (*types.MsgRejectReleaseAssetsUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedReleaseAssetsUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Verify that the rejector is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only repository owner can reject this proposal")
+	}
+
+	k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
+
+	return &types.MsgRejectReleaseAssetsUpdateResponse{}, nil
+}
+
+// LFS Object Proposal Handlers
+
+func (k msgServer) ProposeLFSObjectUpdate(goCtx context.Context, msg *types.MsgProposeLFSObjectUpdate) (*types.MsgProposeLFSObjectUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get repository information
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Check if LFS object exists for create vs delete
+	_, found = k.GetLFSObject(ctx, msg.RepositoryId, msg.Oid)
+	if msg.Delete {
+		if !found {
+			return nil, fmt.Errorf("LFS object not found for delete proposal")
+		}
+	} else {
+		if found {
+			return nil, fmt.Errorf("LFS object already exists")
+		}
+	}
+
+	proposalId := k.CreateLFSObjectUpdateProposal(
+		ctx,
+		msg.Creator,
+		msg.RepositoryId,
+		msg.User,
+		msg.Oid,
+		msg.Size_,
+		msg.Cid,
+		msg.RootHash,
+		msg.Delete,
+	)
+
+	return &types.MsgProposeLFSObjectUpdateResponse{
+		ProposalId: proposalId,
+	}, nil
+}
+
+func (k msgServer) ApproveLFSObjectUpdate(goCtx context.Context, msg *types.MsgApproveLFSObjectUpdate) (*types.MsgApproveLFSObjectUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedLFSObjectUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Get repository information
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Verify that the approver has permission to perform this operation
+	if !k.gitopiaKeeper.HavePermission(ctx, msg.Creator, repository, gitopiatypes.PushBranchPermission) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
+	}
+
+	// Check if proposal has expired
+	if ctx.BlockTime().After(proposal.ExpiresAt) {
+		k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
+		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// If delete proposal, perform deletion
+	if proposal.Delete {
+		// Get the LFS object
+		lfsObj, found := k.GetLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
+		if !found {
+			return nil, fmt.Errorf("LFS object not found")
+		}
+
+		// Decrease cid reference count
+		k.DecreaseCidReferenceCount(ctx, lfsObj.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, lfsObj.Cid); found && count.Count == 0 {
+			ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+				RepositoryId: proposal.RepositoryId,
+				Cids:         []string{lfsObj.Cid},
+				Provider:     proposal.Provider,
+			})
+
+			k.RemoveCidReferenceCount(ctx, lfsObj.Cid)
+		}
+
+		// Update stats and quota
+		storageStats := k.GetStorageStats(ctx)
+		if storageStats.TotalLfsObjectSize >= uint64(lfsObj.Size_) {
+			storageStats.TotalLfsObjectSize -= uint64(lfsObj.Size_)
+		} else {
+			storageStats.TotalLfsObjectSize = 0
+		}
+		k.SetStorageStats(ctx, storageStats)
+
+		userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+		if !found {
+			userQuota = gitopiatypes.UserQuota{
+				Address:     repository.Owner.Id,
+				StorageUsed: 0,
+			}
+		}
+		if userQuota.StorageUsed >= uint64(lfsObj.Size_) {
+			userQuota.StorageUsed -= uint64(lfsObj.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+		k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+		// Remove LFS object
+		k.RemoveLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
+
+		// Remove proposal
+		k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
+		return &types.MsgApproveLFSObjectUpdateResponse{}, nil
+	}
+
+	// Check if lfs object exists already
+	_, found = k.GetLFSObject(ctx, proposal.RepositoryId, proposal.Oid)
+	if found {
+		return nil, fmt.Errorf("LFS object already exists")
+	}
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, proposal.Provider)
+	if !found || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	repo, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repo.Owner.Id)
+	if !found {
+		// Create new user quota
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repo.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	// Calculate storage charge for new LFS object
+	if !k.GetParams(ctx).StoragePricePerGb.IsZero() {
+		charge, err := k.calculateStorageCharge(ctx, userQuota.StorageUsed, userQuota.StorageUsed+proposal.Size_)
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate storage charge: %v", err)
+		}
+
+		// If there's a charge, transfer coins from user to storage charge account
+		if !charge.IsZero() {
+			userAddr, err := sdk.AccAddressFromBech32(repo.Owner.Id)
+			if err != nil {
+				return nil, fmt.Errorf("invalid user address: %v", err)
+			}
+
+			if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, userAddr, types.StorageFeePoolName, sdk.NewCoins(charge)); err != nil {
+				return nil, fmt.Errorf("failed to transfer storage charge: %v", err)
+			}
+		}
+	}
+
+	// Update LFS object
+	lfsObj := types.LFSObject{
+		Creator:      proposal.Provider,
+		RepositoryId: proposal.RepositoryId,
+		Oid:          proposal.Oid,
+		Size_:        proposal.Size_,
+		Cid:          proposal.Cid,
+		RootHash:     proposal.RootHash,
+		CreatedAt:    ctx.BlockTime(),
+		UpdatedAt:    ctx.BlockTime(),
+	}
+
+	userQuota.StorageUsed += uint64(lfsObj.Size_)
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+
+	k.AppendLFSObject(ctx, lfsObj)
+
+	// Increase cid reference count
+	k.IncreaseCidReferenceCount(ctx, lfsObj.Cid)
+
+	storageStats := k.GetStorageStats(ctx)
+	storageStats.TotalLfsObjectSize += uint64(lfsObj.Size_)
+	k.SetStorageStats(ctx, storageStats)
+
+	// Remove proposal
+	k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
+
+	ctx.EventManager().EmitTypedEvent(&types.EventLFSObjectUpdated{
+		RepositoryId: proposal.RepositoryId,
+		Oid:          proposal.Oid,
+		Cid:          proposal.Cid,
+		Provider:     proposal.Provider,
+		Deleted:      proposal.Delete,
+	})
+
+	return &types.MsgApproveLFSObjectUpdateResponse{}, nil
+}
+
+func (k msgServer) RejectLFSObjectUpdate(goCtx context.Context, msg *types.MsgRejectLFSObjectUpdate) (*types.MsgRejectLFSObjectUpdateResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedLFSObjectUpdate(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Verify that the rejector is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only the user who initiated the proposal can reject it")
+	}
+
+	k.RemoveProposedLFSObjectUpdate(ctx, proposal.Id)
+
+	return &types.MsgRejectLFSObjectUpdateResponse{}, nil
+}
+
+func (k msgServer) ProposeRepositoryDelete(goCtx context.Context, msg *types.MsgProposeRepositoryDelete) (*types.MsgProposeRepositoryDeleteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Check if provider is active
+	provider, found := k.GetProvider(ctx, msg.Creator)
+	if !found || provider.Status != types.Bonded {
+		return nil, fmt.Errorf("provider is not active")
+	}
+
+	// Get repository to verify it exists
+	_, found = k.gitopiaKeeper.GetRepositoryById(ctx, msg.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	// Create the proposal
+	proposalId := k.CreateRepositoryDeleteProposal(
+		ctx,
+		msg.Creator,
+		msg.RepositoryId,
+		msg.User,
+	)
+
+	return &types.MsgProposeRepositoryDeleteResponse{
+		ProposalId: proposalId,
+	}, nil
+}
+
+func (k msgServer) ApproveRepositoryDelete(goCtx context.Context, msg *types.MsgApproveRepositoryDelete) (*types.MsgApproveRepositoryDeleteResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the proposal
+	proposal, found := k.GetProposedRepositoryDelete(ctx, msg.ProposalId)
+	if !found {
+		return nil, fmt.Errorf("proposal not found")
+	}
+
+	// Verify proposal is still pending
+	if proposal.Status != types.ProposalStatus_PROPOSAL_STATUS_PENDING {
+		return nil, fmt.Errorf("proposal is not pending (status: %s)", proposal.Status.String())
+	}
+
+	// Check if proposal has expired
+	if ctx.BlockTime().After(proposal.ExpiresAt) {
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+		return nil, fmt.Errorf("proposal has expired")
+	}
+
+	// Verify that the approver is the user who initiated the proposal
+	if proposal.User != msg.Creator {
+		return nil, fmt.Errorf("only the user who initiated the proposal can approve it")
+	}
+
+	// Verify provider is still active
+	_, found = k.GetProvider(ctx, proposal.Provider)
+	if !found {
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+		return nil, fmt.Errorf("provider is no longer active")
+	}
+
+	repository, found := k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
+	if !found {
+		k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+		return nil, fmt.Errorf("repository not found")
+	}
+
+	userQuota, found := k.gitopiaKeeper.GetUserQuota(ctx, repository.Owner.Id)
+	if !found {
+		userQuota = gitopiatypes.UserQuota{
+			Address:     repository.Owner.Id,
+			StorageUsed: 0,
+		}
+	}
+
+	var cids []string
+	deletedReleaseAssets := make([]*types.ReleaseAssetInfo, 0)
+	deletedLfsObjects := make([]*types.LFSObjectInfo, 0)
+
+	storageStats := k.GetStorageStats(ctx)
+
+	// Delete packfile
+	packfile, found := k.GetPackfile(ctx, proposal.RepositoryId)
+	if found {
+		if packfile.Cid != "" {
+			k.DecreaseCidReferenceCount(ctx, packfile.Cid)
+			if count, found := k.GetCidReferenceCount(ctx, packfile.Cid); found && count.Count == 0 {
+				cids = append(cids, packfile.Cid)
+				k.RemoveCidReferenceCount(ctx, packfile.Cid)
+			}
+		}
+
+		if userQuota.StorageUsed >= uint64(packfile.Size_) {
+			userQuota.StorageUsed -= uint64(packfile.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		if storageStats.TotalPackfileSize >= uint64(packfile.Size_) {
+			storageStats.TotalPackfileSize -= uint64(packfile.Size_)
+		} else {
+			storageStats.TotalPackfileSize = 0
+		}
+
+		k.RemovePackfile(ctx, proposal.RepositoryId)
+	}
+
+	// Delete LFS objects
+	lfsObjects := k.GetLFSObjectsByRepositoryId(ctx, proposal.RepositoryId)
+	for _, lfsObject := range lfsObjects {
+		k.DecreaseCidReferenceCount(ctx, lfsObject.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, lfsObject.Cid); found && count.Count == 0 {
+			cids = append(cids, lfsObject.Cid)
+			deletedLfsObjects = append(deletedLfsObjects, &types.LFSObjectInfo{
+				Oid: lfsObject.Oid,
+				Cid: lfsObject.Cid,
+			})
+			k.RemoveCidReferenceCount(ctx, lfsObject.Cid)
+		}
+
+		if userQuota.StorageUsed >= uint64(lfsObject.Size_) {
+			userQuota.StorageUsed -= uint64(lfsObject.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		if storageStats.TotalLfsObjectSize >= uint64(lfsObject.Size_) {
+			storageStats.TotalLfsObjectSize -= uint64(lfsObject.Size_)
+		} else {
+			storageStats.TotalLfsObjectSize = 0
+		}
+
+		k.RemoveLFSObject(ctx, proposal.RepositoryId, lfsObject.Oid)
+	}
+
+	// Delete release assets
+	releaseAssets := k.GetReleaseAssetsByRepositoryId(ctx, proposal.RepositoryId)
+	for _, releaseAsset := range releaseAssets {
+		k.DecreaseCidReferenceCount(ctx, releaseAsset.Cid)
+		if count, found := k.GetCidReferenceCount(ctx, releaseAsset.Cid); found && count.Count == 0 {
+			cids = append(cids, releaseAsset.Cid)
+			deletedReleaseAssets = append(deletedReleaseAssets, &types.ReleaseAssetInfo{
+				Tag:    releaseAsset.Tag,
+				Name:   releaseAsset.Name,
+				Cid:    releaseAsset.Cid,
+				Sha256: releaseAsset.Sha256,
+			})
+			k.RemoveCidReferenceCount(ctx, releaseAsset.Cid)
+		}
+
+		if userQuota.StorageUsed >= uint64(releaseAsset.Size_) {
+			userQuota.StorageUsed -= uint64(releaseAsset.Size_)
+		} else {
+			userQuota.StorageUsed = 0
+		}
+
+		if storageStats.TotalReleaseAssetSize >= uint64(releaseAsset.Size_) {
+			storageStats.TotalReleaseAssetSize -= uint64(releaseAsset.Size_)
+		} else {
+			storageStats.TotalReleaseAssetSize = 0
+		}
+
+		k.RemoveReleaseAsset(ctx, proposal.RepositoryId, releaseAsset.Tag, releaseAsset.Name)
+	}
+
+	k.gitopiaKeeper.SetUserQuota(ctx, userQuota)
+	k.SetStorageStats(ctx, storageStats)
+
+	// Remove proposal
+	k.RemoveProposedRepositoryDelete(ctx, proposal.Id)
+
+	// Purge the repository from gitopia module
+	err := k.gitopiaKeeper.PurgeRepository(ctx, proposal.RepositoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(cids) > 0 {
+		ctx.EventManager().EmitTypedEvent(&types.EventDeleteStorageObject{
+			RepositoryId: proposal.RepositoryId,
+			Cids:         cids,
+			Provider:     proposal.Provider,
+		})
+	}
+
+	ctx.EventManager().EmitTypedEvent(&types.EventRepositoryDeleted{
+		RepositoryId:  proposal.RepositoryId,
+		Provider:      proposal.Provider,
+		PackfileCid:   packfile.Cid,
+		PackfileName:  packfile.Name,
+		LfsObjects:    deletedLfsObjects,
+		ReleaseAssets: deletedReleaseAssets,
+	})
+
+	return &types.MsgApproveRepositoryDeleteResponse{}, nil
 }

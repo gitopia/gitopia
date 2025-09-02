@@ -13,38 +13,48 @@ message Provider {
   string creator = 1;
   uint64 id = 2;
   string api_url = 3;
-  uint64 total_challenges = 4;
-  uint64 successful_challenges = 5;
-  uint64 consecutive_failures = 6;
-  google.protobuf.Timestamp join_time = 7 [
+  google.protobuf.Timestamp join_time = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true
   ];
-  google.protobuf.Timestamp unstake_completion_time = 8 [
+  google.protobuf.Timestamp unstake_completion_time = 5 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
-  string moniker = 9;
-  // status defines the current status of the provider (active/inactive/suspended)
-  ProviderStatus status = 10;
+  string moniker = 6;
+  // status defines the current bond status of the provider
+  BondStatus status = 7;
   // ipfs_cluster_peer_multiaddr defines the multiaddr of the IPFS cluster peer
-  string ipfs_cluster_peer_multiaddr = 11;
+  string ipfs_cluster_peer_multiaddr = 8;
   // pending_decrease_amount defines the amount to be decreased after cooldown
-  cosmos.base.v1beta1.Coin pending_decrease_amount = 12 [(gogoproto.nullable) = true];
+  cosmos.base.v1beta1.Coin pending_decrease_amount = 9 [(gogoproto.nullable) = true];
   // decrease_completion_time defines when the stake decrease can be completed
-  google.protobuf.Timestamp decrease_completion_time = 13 [
+  google.protobuf.Timestamp decrease_completion_time = 10 [
     (gogoproto.nullable) = true,
     (gogoproto.stdtime) = true
   ];
+  
+  // Liveness and jail tracking fields
+  bool jailed = 11;
+  google.protobuf.Timestamp jail_until = 12 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
+  uint64 consecutive_proof_faults = 13;
 }
 
-// ProviderStatus represents the status of a storage provider
-enum ProviderStatus {
-  PROVIDER_STATUS_UNSPECIFIED = 0;
-  PROVIDER_STATUS_ACTIVE = 1;
-  PROVIDER_STATUS_INACTIVE = 2;
-  PROVIDER_STATUS_SUSPENDED = 3;
-  PROVIDER_STATUS_UNREGISTERING = 4;
+// BondStatus is the status of a storage provider.
+enum BondStatus {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // UNSPECIFIED defines an invalid provider status.
+  BOND_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "Unspecified"];
+  // UNBONDED defines a provider that is not bonded.
+  BOND_STATUS_UNBONDED = 1 [(gogoproto.enumvalue_customname) = "Unbonded"];
+  // UNBONDING defines a provider that is unbonding.
+  BOND_STATUS_UNBONDING = 2 [(gogoproto.enumvalue_customname) = "Unbonding"];
+  // BONDED defines a provider that is bonded.
+  BOND_STATUS_BONDED = 3 [(gogoproto.enumvalue_customname) = "Bonded"];
 }
 
 // Packfile represents a Git packfile stored in IPFS
@@ -58,6 +68,7 @@ message Packfile {
   bytes root_hash = 7;
   google.protobuf.Timestamp created_at = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
   google.protobuf.Timestamp updated_at = 9 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+  string old_cid = 10;
 }
 
 // Release asset
@@ -189,4 +200,138 @@ message StorageStats {
   uint64 total_packfile_size = 1;
   uint64 total_release_asset_size = 2;
   uint64 total_lfs_object_size = 3;
+}
+
+// LivenessWindow represents a sliding window for tracking provider liveness
+message LivenessWindow {
+  string provider = 1;
+  uint64 window_start_block = 2;
+  uint64 window_end_block = 3;
+  repeated uint64 missed_blocks = 4; // Block heights where provider failed to submit proof
+  uint64 total_expected_submissions = 5;
+  uint64 actual_submissions = 6;
+}
+
+// ProviderLivenessInfo tracks comprehensive liveness information for a provider
+message ProviderLivenessInfo {
+  string provider = 1;
+  uint64 missed_submissions_in_window = 2;
+  bytes current_liveness_ratio = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable)   = false,
+    (amino.dont_omitempty) = true
+  ];
+  uint64 last_submission_challenge = 4; // Challenge ID of last submission
+  repeated uint64 recent_missed_challenges = 5; // Last N missed challenge IDs for tracking
+  google.protobuf.Timestamp last_liveness_check = 6 [
+    (gogoproto.nullable) = true,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// ProposalStatus represents the status of a packfile update proposal
+enum ProposalStatus {
+  PROPOSAL_STATUS_UNSPECIFIED = 0;
+  PROPOSAL_STATUS_PENDING = 1;
+  PROPOSAL_STATUS_APPROVED = 2;
+  PROPOSAL_STATUS_REJECTED = 3;
+  PROPOSAL_STATUS_EXPIRED = 4;
+}
+
+// ProposedPackfileUpdate represents a proposed packfile update awaiting approval
+message ProposedPackfileUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string name = 5;
+  string cid = 6;
+  bytes root_hash = 7;
+  uint64 size = 8;
+  string old_cid = 9;
+  string merge_commit_sha = 10;
+  ProposalStatus status = 11;
+  google.protobuf.Timestamp proposed_at = 12 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 13 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  // delete indicates this proposal is to delete the packfile instead of update
+  bool delete = 14;
+}
+
+// ReleaseAssetUpdate represents a single release asset update within a batch
+message ReleaseAssetUpdate {
+  string name = 1;
+  string cid = 2;
+  bytes root_hash = 3;
+  uint64 size = 4;
+  string sha256 = 5;
+  string old_sha256 = 6;
+  // old_cid is the CID of the release asset when the provider processed the request
+  string old_cid = 7;
+  // delete indicates this entry requests deletion of the named asset
+  bool delete = 8;
+}
+
+// ProposedReleaseAssetsUpdate represents a proposed release asset update awaiting approval
+message ProposedReleaseAssetsUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string tag = 5;
+  repeated ReleaseAssetUpdate assets = 6;
+  ProposalStatus status = 7;
+  google.protobuf.Timestamp proposed_at = 8 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 9 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+}
+
+// ProposedLFSObjectUpdate represents a proposed LFS object update awaiting approval
+message ProposedLFSObjectUpdate {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the update
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the update
+  string oid = 5;
+  uint64 size = 6;
+  string cid = 7;
+  bytes root_hash = 8;
+  ProposalStatus status = 9;
+  google.protobuf.Timestamp proposed_at = 10 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 11 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  // delete indicates this proposal is to delete the LFS object instead of create
+  bool delete = 12;
+}
+
+// ProposedRepositoryDelete represents a proposed repository delete awaiting approval
+message ProposedRepositoryDelete {
+  uint64 id = 1;
+  string provider = 2; // provider who proposed the delete
+  uint64 repository_id = 3;
+  string user = 4; // user who initiated the delete
+  ProposalStatus status = 5;
+  google.protobuf.Timestamp proposed_at = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
+  google.protobuf.Timestamp expires_at = 7 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true
+  ];
 }

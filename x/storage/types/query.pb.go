@@ -2334,6 +2334,1091 @@ func (m *QueryProviderStakesResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+// Liveness query messages
+type QueryProviderLivenessRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryProviderLivenessRequest) Reset()         { *m = QueryProviderLivenessRequest{} }
+func (m *QueryProviderLivenessRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryProviderLivenessRequest) ProtoMessage()    {}
+func (*QueryProviderLivenessRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{50}
+}
+func (m *QueryProviderLivenessRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryProviderLivenessRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryProviderLivenessRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryProviderLivenessRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryProviderLivenessRequest.Merge(m, src)
+}
+func (m *QueryProviderLivenessRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryProviderLivenessRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryProviderLivenessRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryProviderLivenessRequest proto.InternalMessageInfo
+
+func (m *QueryProviderLivenessRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryProviderLivenessResponse struct {
+	LivenessInfo ProviderLivenessInfo `protobuf:"bytes,1,opt,name=liveness_info,json=livenessInfo,proto3" json:"liveness_info"`
+}
+
+func (m *QueryProviderLivenessResponse) Reset()         { *m = QueryProviderLivenessResponse{} }
+func (m *QueryProviderLivenessResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryProviderLivenessResponse) ProtoMessage()    {}
+func (*QueryProviderLivenessResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{51}
+}
+func (m *QueryProviderLivenessResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryProviderLivenessResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryProviderLivenessResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryProviderLivenessResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryProviderLivenessResponse.Merge(m, src)
+}
+func (m *QueryProviderLivenessResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryProviderLivenessResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryProviderLivenessResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryProviderLivenessResponse proto.InternalMessageInfo
+
+func (m *QueryProviderLivenessResponse) GetLivenessInfo() ProviderLivenessInfo {
+	if m != nil {
+		return m.LivenessInfo
+	}
+	return ProviderLivenessInfo{}
+}
+
+type QueryProvidersLivenessRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryProvidersLivenessRequest) Reset()         { *m = QueryProvidersLivenessRequest{} }
+func (m *QueryProvidersLivenessRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryProvidersLivenessRequest) ProtoMessage()    {}
+func (*QueryProvidersLivenessRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{52}
+}
+func (m *QueryProvidersLivenessRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryProvidersLivenessRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryProvidersLivenessRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryProvidersLivenessRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryProvidersLivenessRequest.Merge(m, src)
+}
+func (m *QueryProvidersLivenessRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryProvidersLivenessRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryProvidersLivenessRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryProvidersLivenessRequest proto.InternalMessageInfo
+
+func (m *QueryProvidersLivenessRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryProvidersLivenessResponse struct {
+	LivenessInfos []ProviderLivenessInfo `protobuf:"bytes,1,rep,name=liveness_infos,json=livenessInfos,proto3" json:"liveness_infos"`
+	Pagination    *query.PageResponse    `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryProvidersLivenessResponse) Reset()         { *m = QueryProvidersLivenessResponse{} }
+func (m *QueryProvidersLivenessResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryProvidersLivenessResponse) ProtoMessage()    {}
+func (*QueryProvidersLivenessResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{53}
+}
+func (m *QueryProvidersLivenessResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryProvidersLivenessResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryProvidersLivenessResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryProvidersLivenessResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryProvidersLivenessResponse.Merge(m, src)
+}
+func (m *QueryProvidersLivenessResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryProvidersLivenessResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryProvidersLivenessResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryProvidersLivenessResponse proto.InternalMessageInfo
+
+func (m *QueryProvidersLivenessResponse) GetLivenessInfos() []ProviderLivenessInfo {
+	if m != nil {
+		return m.LivenessInfos
+	}
+	return nil
+}
+
+func (m *QueryProvidersLivenessResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryPackfileUpdateProposalRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	User         string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *QueryPackfileUpdateProposalRequest) Reset()         { *m = QueryPackfileUpdateProposalRequest{} }
+func (m *QueryPackfileUpdateProposalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryPackfileUpdateProposalRequest) ProtoMessage()    {}
+func (*QueryPackfileUpdateProposalRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{54}
+}
+func (m *QueryPackfileUpdateProposalRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryPackfileUpdateProposalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryPackfileUpdateProposalRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryPackfileUpdateProposalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPackfileUpdateProposalRequest.Merge(m, src)
+}
+func (m *QueryPackfileUpdateProposalRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryPackfileUpdateProposalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPackfileUpdateProposalRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryPackfileUpdateProposalRequest proto.InternalMessageInfo
+
+func (m *QueryPackfileUpdateProposalRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryPackfileUpdateProposalRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+type QueryPackfileUpdateProposalResponse struct {
+	PackfileUpdateProposal ProposedPackfileUpdate `protobuf:"bytes,1,opt,name=packfile_update_proposal,json=packfileUpdateProposal,proto3" json:"packfile_update_proposal"`
+}
+
+func (m *QueryPackfileUpdateProposalResponse) Reset()         { *m = QueryPackfileUpdateProposalResponse{} }
+func (m *QueryPackfileUpdateProposalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryPackfileUpdateProposalResponse) ProtoMessage()    {}
+func (*QueryPackfileUpdateProposalResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{55}
+}
+func (m *QueryPackfileUpdateProposalResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryPackfileUpdateProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryPackfileUpdateProposalResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryPackfileUpdateProposalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPackfileUpdateProposalResponse.Merge(m, src)
+}
+func (m *QueryPackfileUpdateProposalResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryPackfileUpdateProposalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPackfileUpdateProposalResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryPackfileUpdateProposalResponse proto.InternalMessageInfo
+
+func (m *QueryPackfileUpdateProposalResponse) GetPackfileUpdateProposal() ProposedPackfileUpdate {
+	if m != nil {
+		return m.PackfileUpdateProposal
+	}
+	return ProposedPackfileUpdate{}
+}
+
+type QueryPackfileUpdateProposalsRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryPackfileUpdateProposalsRequest) Reset()         { *m = QueryPackfileUpdateProposalsRequest{} }
+func (m *QueryPackfileUpdateProposalsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryPackfileUpdateProposalsRequest) ProtoMessage()    {}
+func (*QueryPackfileUpdateProposalsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{56}
+}
+func (m *QueryPackfileUpdateProposalsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryPackfileUpdateProposalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryPackfileUpdateProposalsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryPackfileUpdateProposalsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPackfileUpdateProposalsRequest.Merge(m, src)
+}
+func (m *QueryPackfileUpdateProposalsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryPackfileUpdateProposalsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPackfileUpdateProposalsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryPackfileUpdateProposalsRequest proto.InternalMessageInfo
+
+func (m *QueryPackfileUpdateProposalsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryPackfileUpdateProposalsResponse struct {
+	PackfileUpdateProposals []ProposedPackfileUpdate `protobuf:"bytes,1,rep,name=packfile_update_proposals,json=packfileUpdateProposals,proto3" json:"packfile_update_proposals"`
+	Pagination              *query.PageResponse      `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) Reset()         { *m = QueryPackfileUpdateProposalsResponse{} }
+func (m *QueryPackfileUpdateProposalsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryPackfileUpdateProposalsResponse) ProtoMessage()    {}
+func (*QueryPackfileUpdateProposalsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{57}
+}
+func (m *QueryPackfileUpdateProposalsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryPackfileUpdateProposalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryPackfileUpdateProposalsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryPackfileUpdateProposalsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryPackfileUpdateProposalsResponse.Merge(m, src)
+}
+func (m *QueryPackfileUpdateProposalsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryPackfileUpdateProposalsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryPackfileUpdateProposalsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryPackfileUpdateProposalsResponse proto.InternalMessageInfo
+
+func (m *QueryPackfileUpdateProposalsResponse) GetPackfileUpdateProposals() []ProposedPackfileUpdate {
+	if m != nil {
+		return m.PackfileUpdateProposals
+	}
+	return nil
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryReleaseAssetsUpdateProposalRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Tag          string `protobuf:"bytes,2,opt,name=tag,proto3" json:"tag,omitempty"`
+	User         string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) Reset() {
+	*m = QueryReleaseAssetsUpdateProposalRequest{}
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryReleaseAssetsUpdateProposalRequest) ProtoMessage()    {}
+func (*QueryReleaseAssetsUpdateProposalRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{58}
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryReleaseAssetsUpdateProposalRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalRequest.Merge(m, src)
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryReleaseAssetsUpdateProposalRequest proto.InternalMessageInfo
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) GetTag() string {
+	if m != nil {
+		return m.Tag
+	}
+	return ""
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+type QueryReleaseAssetsUpdateProposalResponse struct {
+	ReleaseAssetsProposal ProposedReleaseAssetsUpdate `protobuf:"bytes,1,opt,name=release_assets_proposal,json=releaseAssetsProposal,proto3" json:"release_assets_proposal"`
+}
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) Reset() {
+	*m = QueryReleaseAssetsUpdateProposalResponse{}
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryReleaseAssetsUpdateProposalResponse) ProtoMessage()    {}
+func (*QueryReleaseAssetsUpdateProposalResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{59}
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryReleaseAssetsUpdateProposalResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalResponse.Merge(m, src)
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryReleaseAssetsUpdateProposalResponse proto.InternalMessageInfo
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) GetReleaseAssetsProposal() ProposedReleaseAssetsUpdate {
+	if m != nil {
+		return m.ReleaseAssetsProposal
+	}
+	return ProposedReleaseAssetsUpdate{}
+}
+
+type QueryReleaseAssetsUpdateProposalsRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) Reset() {
+	*m = QueryReleaseAssetsUpdateProposalsRequest{}
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryReleaseAssetsUpdateProposalsRequest) ProtoMessage()    {}
+func (*QueryReleaseAssetsUpdateProposalsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{60}
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryReleaseAssetsUpdateProposalsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalsRequest.Merge(m, src)
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryReleaseAssetsUpdateProposalsRequest proto.InternalMessageInfo
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryReleaseAssetsUpdateProposalsResponse struct {
+	ReleaseAssetsProposals []ProposedReleaseAssetsUpdate `protobuf:"bytes,1,rep,name=release_assets_proposals,json=releaseAssetsProposals,proto3" json:"release_assets_proposals"`
+	Pagination             *query.PageResponse           `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) Reset() {
+	*m = QueryReleaseAssetsUpdateProposalsResponse{}
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryReleaseAssetsUpdateProposalsResponse) ProtoMessage() {}
+func (*QueryReleaseAssetsUpdateProposalsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{61}
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryReleaseAssetsUpdateProposalsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalsResponse.Merge(m, src)
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryReleaseAssetsUpdateProposalsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryReleaseAssetsUpdateProposalsResponse proto.InternalMessageInfo
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) GetReleaseAssetsProposals() []ProposedReleaseAssetsUpdate {
+	if m != nil {
+		return m.ReleaseAssetsProposals
+	}
+	return nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryLFSObjectUpdateProposalRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	Oid          string `protobuf:"bytes,2,opt,name=oid,proto3" json:"oid,omitempty"`
+	User         string `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) Reset()         { *m = QueryLFSObjectUpdateProposalRequest{} }
+func (m *QueryLFSObjectUpdateProposalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryLFSObjectUpdateProposalRequest) ProtoMessage()    {}
+func (*QueryLFSObjectUpdateProposalRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{62}
+}
+func (m *QueryLFSObjectUpdateProposalRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalRequest.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalRequest proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) GetOid() string {
+	if m != nil {
+		return m.Oid
+	}
+	return ""
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+type QueryLFSObjectUpdateProposalResponse struct {
+	LfsObjectProposal ProposedLFSObjectUpdate `protobuf:"bytes,1,opt,name=lfs_object_proposal,json=lfsObjectProposal,proto3" json:"lfs_object_proposal"`
+}
+
+func (m *QueryLFSObjectUpdateProposalResponse) Reset()         { *m = QueryLFSObjectUpdateProposalResponse{} }
+func (m *QueryLFSObjectUpdateProposalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryLFSObjectUpdateProposalResponse) ProtoMessage()    {}
+func (*QueryLFSObjectUpdateProposalResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{63}
+}
+func (m *QueryLFSObjectUpdateProposalResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalResponse.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalResponse proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalResponse) GetLfsObjectProposal() ProposedLFSObjectUpdate {
+	if m != nil {
+		return m.LfsObjectProposal
+	}
+	return ProposedLFSObjectUpdate{}
+}
+
+type QueryLFSObjectUpdateProposalsByRepositoryIdRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	User         string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) Reset() {
+	*m = QueryLFSObjectUpdateProposalsByRepositoryIdRequest{}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryLFSObjectUpdateProposalsByRepositoryIdRequest) ProtoMessage() {}
+func (*QueryLFSObjectUpdateProposalsByRepositoryIdRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{64}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdRequest.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdRequest proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+type QueryLFSObjectUpdateProposalsByRepositoryIdResponse struct {
+	LfsObjectProposals []ProposedLFSObjectUpdate `protobuf:"bytes,1,rep,name=lfs_object_proposals,json=lfsObjectProposals,proto3" json:"lfs_object_proposals"`
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) Reset() {
+	*m = QueryLFSObjectUpdateProposalsByRepositoryIdResponse{}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse) ProtoMessage() {}
+func (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{65}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdResponse.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalsByRepositoryIdResponse proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) GetLfsObjectProposals() []ProposedLFSObjectUpdate {
+	if m != nil {
+		return m.LfsObjectProposals
+	}
+	return nil
+}
+
+type QueryLFSObjectUpdateProposalsRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryLFSObjectUpdateProposalsRequest) Reset()         { *m = QueryLFSObjectUpdateProposalsRequest{} }
+func (m *QueryLFSObjectUpdateProposalsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryLFSObjectUpdateProposalsRequest) ProtoMessage()    {}
+func (*QueryLFSObjectUpdateProposalsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{66}
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsRequest.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalsRequest proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryLFSObjectUpdateProposalsResponse struct {
+	LfsObjectProposals []ProposedLFSObjectUpdate `protobuf:"bytes,1,rep,name=lfs_object_proposals,json=lfsObjectProposals,proto3" json:"lfs_object_proposals"`
+	Pagination         *query.PageResponse       `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) Reset()         { *m = QueryLFSObjectUpdateProposalsResponse{} }
+func (m *QueryLFSObjectUpdateProposalsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryLFSObjectUpdateProposalsResponse) ProtoMessage()    {}
+func (*QueryLFSObjectUpdateProposalsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{67}
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryLFSObjectUpdateProposalsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsResponse.Merge(m, src)
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryLFSObjectUpdateProposalsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryLFSObjectUpdateProposalsResponse proto.InternalMessageInfo
+
+func (m *QueryLFSObjectUpdateProposalsResponse) GetLfsObjectProposals() []ProposedLFSObjectUpdate {
+	if m != nil {
+		return m.LfsObjectProposals
+	}
+	return nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryRepositoryDeleteProposalRequest struct {
+	RepositoryId uint64 `protobuf:"varint,1,opt,name=repository_id,json=repositoryId,proto3" json:"repository_id,omitempty"`
+	User         string `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) Reset()         { *m = QueryRepositoryDeleteProposalRequest{} }
+func (m *QueryRepositoryDeleteProposalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryRepositoryDeleteProposalRequest) ProtoMessage()    {}
+func (*QueryRepositoryDeleteProposalRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{68}
+}
+func (m *QueryRepositoryDeleteProposalRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRepositoryDeleteProposalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRepositoryDeleteProposalRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRepositoryDeleteProposalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRepositoryDeleteProposalRequest.Merge(m, src)
+}
+func (m *QueryRepositoryDeleteProposalRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRepositoryDeleteProposalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRepositoryDeleteProposalRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRepositoryDeleteProposalRequest proto.InternalMessageInfo
+
+func (m *QueryRepositoryDeleteProposalRequest) GetRepositoryId() uint64 {
+	if m != nil {
+		return m.RepositoryId
+	}
+	return 0
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) GetUser() string {
+	if m != nil {
+		return m.User
+	}
+	return ""
+}
+
+type QueryRepositoryDeleteProposalResponse struct {
+	RepositoryDeleteProposal ProposedRepositoryDelete `protobuf:"bytes,1,opt,name=repository_delete_proposal,json=repositoryDeleteProposal,proto3" json:"repository_delete_proposal"`
+}
+
+func (m *QueryRepositoryDeleteProposalResponse) Reset()         { *m = QueryRepositoryDeleteProposalResponse{} }
+func (m *QueryRepositoryDeleteProposalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryRepositoryDeleteProposalResponse) ProtoMessage()    {}
+func (*QueryRepositoryDeleteProposalResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{69}
+}
+func (m *QueryRepositoryDeleteProposalResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRepositoryDeleteProposalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRepositoryDeleteProposalResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRepositoryDeleteProposalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRepositoryDeleteProposalResponse.Merge(m, src)
+}
+func (m *QueryRepositoryDeleteProposalResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRepositoryDeleteProposalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRepositoryDeleteProposalResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRepositoryDeleteProposalResponse proto.InternalMessageInfo
+
+func (m *QueryRepositoryDeleteProposalResponse) GetRepositoryDeleteProposal() ProposedRepositoryDelete {
+	if m != nil {
+		return m.RepositoryDeleteProposal
+	}
+	return ProposedRepositoryDelete{}
+}
+
+type QueryRepositoryDeleteProposalsRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryRepositoryDeleteProposalsRequest) Reset()         { *m = QueryRepositoryDeleteProposalsRequest{} }
+func (m *QueryRepositoryDeleteProposalsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryRepositoryDeleteProposalsRequest) ProtoMessage()    {}
+func (*QueryRepositoryDeleteProposalsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{70}
+}
+func (m *QueryRepositoryDeleteProposalsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRepositoryDeleteProposalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRepositoryDeleteProposalsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRepositoryDeleteProposalsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRepositoryDeleteProposalsRequest.Merge(m, src)
+}
+func (m *QueryRepositoryDeleteProposalsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRepositoryDeleteProposalsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRepositoryDeleteProposalsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRepositoryDeleteProposalsRequest proto.InternalMessageInfo
+
+func (m *QueryRepositoryDeleteProposalsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryRepositoryDeleteProposalsResponse struct {
+	RepositoryDeleteProposals []ProposedRepositoryDelete `protobuf:"bytes,1,rep,name=repository_delete_proposals,json=repositoryDeleteProposals,proto3" json:"repository_delete_proposals"`
+	Pagination                *query.PageResponse        `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) Reset() {
+	*m = QueryRepositoryDeleteProposalsResponse{}
+}
+func (m *QueryRepositoryDeleteProposalsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryRepositoryDeleteProposalsResponse) ProtoMessage()    {}
+func (*QueryRepositoryDeleteProposalsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3e3064f8a874606e, []int{71}
+}
+func (m *QueryRepositoryDeleteProposalsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryRepositoryDeleteProposalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryRepositoryDeleteProposalsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryRepositoryDeleteProposalsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryRepositoryDeleteProposalsResponse.Merge(m, src)
+}
+func (m *QueryRepositoryDeleteProposalsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryRepositoryDeleteProposalsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryRepositoryDeleteProposalsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryRepositoryDeleteProposalsResponse proto.InternalMessageInfo
+
+func (m *QueryRepositoryDeleteProposalsResponse) GetRepositoryDeleteProposals() []ProposedRepositoryDelete {
+	if m != nil {
+		return m.RepositoryDeleteProposals
+	}
+	return nil
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "gitopia.gitopia.storage.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "gitopia.gitopia.storage.QueryParamsResponse")
@@ -2385,6 +3470,28 @@ func init() {
 	proto.RegisterType((*QueryProviderStakeResponse)(nil), "gitopia.gitopia.storage.QueryProviderStakeResponse")
 	proto.RegisterType((*QueryProviderStakesRequest)(nil), "gitopia.gitopia.storage.QueryProviderStakesRequest")
 	proto.RegisterType((*QueryProviderStakesResponse)(nil), "gitopia.gitopia.storage.QueryProviderStakesResponse")
+	proto.RegisterType((*QueryProviderLivenessRequest)(nil), "gitopia.gitopia.storage.QueryProviderLivenessRequest")
+	proto.RegisterType((*QueryProviderLivenessResponse)(nil), "gitopia.gitopia.storage.QueryProviderLivenessResponse")
+	proto.RegisterType((*QueryProvidersLivenessRequest)(nil), "gitopia.gitopia.storage.QueryProvidersLivenessRequest")
+	proto.RegisterType((*QueryProvidersLivenessResponse)(nil), "gitopia.gitopia.storage.QueryProvidersLivenessResponse")
+	proto.RegisterType((*QueryPackfileUpdateProposalRequest)(nil), "gitopia.gitopia.storage.QueryPackfileUpdateProposalRequest")
+	proto.RegisterType((*QueryPackfileUpdateProposalResponse)(nil), "gitopia.gitopia.storage.QueryPackfileUpdateProposalResponse")
+	proto.RegisterType((*QueryPackfileUpdateProposalsRequest)(nil), "gitopia.gitopia.storage.QueryPackfileUpdateProposalsRequest")
+	proto.RegisterType((*QueryPackfileUpdateProposalsResponse)(nil), "gitopia.gitopia.storage.QueryPackfileUpdateProposalsResponse")
+	proto.RegisterType((*QueryReleaseAssetsUpdateProposalRequest)(nil), "gitopia.gitopia.storage.QueryReleaseAssetsUpdateProposalRequest")
+	proto.RegisterType((*QueryReleaseAssetsUpdateProposalResponse)(nil), "gitopia.gitopia.storage.QueryReleaseAssetsUpdateProposalResponse")
+	proto.RegisterType((*QueryReleaseAssetsUpdateProposalsRequest)(nil), "gitopia.gitopia.storage.QueryReleaseAssetsUpdateProposalsRequest")
+	proto.RegisterType((*QueryReleaseAssetsUpdateProposalsResponse)(nil), "gitopia.gitopia.storage.QueryReleaseAssetsUpdateProposalsResponse")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalRequest)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalRequest")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalResponse)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalResponse")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalsByRepositoryIdRequest)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalsByRepositoryIdRequest")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalsByRepositoryIdResponse)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalsByRepositoryIdResponse")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalsRequest)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalsRequest")
+	proto.RegisterType((*QueryLFSObjectUpdateProposalsResponse)(nil), "gitopia.gitopia.storage.QueryLFSObjectUpdateProposalsResponse")
+	proto.RegisterType((*QueryRepositoryDeleteProposalRequest)(nil), "gitopia.gitopia.storage.QueryRepositoryDeleteProposalRequest")
+	proto.RegisterType((*QueryRepositoryDeleteProposalResponse)(nil), "gitopia.gitopia.storage.QueryRepositoryDeleteProposalResponse")
+	proto.RegisterType((*QueryRepositoryDeleteProposalsRequest)(nil), "gitopia.gitopia.storage.QueryRepositoryDeleteProposalsRequest")
+	proto.RegisterType((*QueryRepositoryDeleteProposalsResponse)(nil), "gitopia.gitopia.storage.QueryRepositoryDeleteProposalsResponse")
 }
 
 func init() {
@@ -2392,125 +3499,171 @@ func init() {
 }
 
 var fileDescriptor_3e3064f8a874606e = []byte{
-	// 1881 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5a, 0x4d, 0x6c, 0x1b, 0xc7,
-	0x15, 0xd6, 0x48, 0xb6, 0x6b, 0x3e, 0xeb, 0xc7, 0x9d, 0xaa, 0xb6, 0xca, 0xda, 0x94, 0x3d, 0xfa,
-	0xb5, 0x64, 0x72, 0xad, 0x3f, 0xbb, 0xad, 0x7f, 0x0a, 0x49, 0xb6, 0xe4, 0x3f, 0xd4, 0x2a, 0xd5,
-	0x16, 0x68, 0x61, 0x80, 0x5d, 0x71, 0x57, 0xf4, 0xd6, 0x14, 0x97, 0xe6, 0xae, 0xe4, 0xba, 0x82,
-	0x2e, 0x3d, 0xfb, 0x50, 0xa0, 0x97, 0x16, 0xa8, 0x8b, 0x1e, 0x9b, 0x20, 0x3e, 0x04, 0x41, 0x0e,
-	0x41, 0x90, 0x20, 0x97, 0x00, 0xbe, 0x24, 0x70, 0x90, 0x4b, 0x4e, 0x41, 0x20, 0xe7, 0x10, 0x20,
-	0xf7, 0x9c, 0x83, 0x9d, 0x7d, 0xbb, 0xdc, 0x5d, 0xee, 0x72, 0x76, 0xa9, 0xf5, 0x21, 0x27, 0x91,
-	0x33, 0xf3, 0xe6, 0x7d, 0xdf, 0x7b, 0x6f, 0xfe, 0x3e, 0x11, 0x46, 0x2a, 0x9a, 0xa9, 0xd7, 0x35,
-	0x59, 0x72, 0xfe, 0x1a, 0xa6, 0xde, 0x90, 0x2b, 0xaa, 0xf4, 0x68, 0x5b, 0x6d, 0x3c, 0x29, 0xd4,
-	0x1b, 0xba, 0xa9, 0xd3, 0x93, 0xd8, 0x59, 0x70, 0xfe, 0xe2, 0xa0, 0xec, 0x60, 0x45, 0xaf, 0xe8,
-	0x7c, 0x8c, 0x64, 0x7d, 0xb2, 0x87, 0x67, 0x4f, 0x55, 0x74, 0xbd, 0x52, 0x55, 0x25, 0xb9, 0xae,
-	0x49, 0x72, 0xad, 0xa6, 0x9b, 0xb2, 0xa9, 0xe9, 0x35, 0x03, 0x7b, 0xa7, 0xca, 0xba, 0xb1, 0xa5,
-	0x1b, 0xd2, 0x86, 0x6c, 0xa0, 0x17, 0x69, 0x67, 0x66, 0x43, 0x35, 0xe5, 0x19, 0xa9, 0x2e, 0x57,
-	0xb4, 0x1a, 0x1f, 0x8c, 0x63, 0x47, 0xa3, 0xd0, 0xd5, 0xe5, 0x86, 0xbc, 0xe5, 0xcc, 0x18, 0xc9,
-	0xc1, 0x7c, 0x52, 0x57, 0x71, 0x10, 0x1b, 0x04, 0xfa, 0x5b, 0xcb, 0xd9, 0x1a, 0xb7, 0x2c, 0xaa,
-	0x8f, 0xb6, 0x55, 0xc3, 0x64, 0xbf, 0x83, 0x9f, 0xf8, 0x5a, 0x8d, 0xba, 0x5e, 0x33, 0x54, 0x7a,
-	0x15, 0x8e, 0xd8, 0x1e, 0x86, 0xc8, 0x19, 0x32, 0x79, 0x6c, 0x76, 0xb8, 0x10, 0x11, 0x81, 0x82,
-	0x6d, 0xb8, 0x74, 0xe8, 0xc5, 0x97, 0xc3, 0x5d, 0x45, 0x34, 0x62, 0x17, 0x60, 0xd0, 0x9e, 0xb5,
-	0xa1, 0xef, 0x68, 0x8a, 0xda, 0x40, 0x6f, 0x74, 0x08, 0x7e, 0x24, 0x2b, 0x4a, 0x43, 0x35, 0xec,
-	0x79, 0x33, 0x45, 0xe7, 0x2b, 0xbb, 0x0f, 0x3f, 0x0d, 0x58, 0x20, 0x92, 0x65, 0x38, 0x5a, 0xc7,
-	0x36, 0xc4, 0x72, 0x36, 0x1a, 0x0b, 0x0e, 0x44, 0x34, 0xae, 0x21, 0x2b, 0x05, 0x66, 0x77, 0xe8,
-	0xd3, 0x15, 0x80, 0x66, 0xcc, 0x71, 0xfe, 0xf1, 0x82, 0x9d, 0xa0, 0x82, 0x95, 0xa0, 0x82, 0x5d,
-	0x06, 0x98, 0xa0, 0xc2, 0x9a, 0x5c, 0x51, 0xd1, 0xb6, 0xe8, 0xb1, 0x64, 0xff, 0x27, 0x70, 0x22,
-	0xe8, 0x01, 0x09, 0xdc, 0x80, 0x8c, 0x83, 0xc3, 0x62, 0xdd, 0x93, 0x84, 0x41, 0xd3, 0x92, 0xae,
-	0xfa, 0x90, 0x76, 0x73, 0xa4, 0x13, 0x42, 0xa4, 0x36, 0x06, 0x1f, 0xd4, 0xd3, 0xf0, 0x73, 0x8e,
-	0x74, 0xb1, 0x6c, 0x6a, 0x3b, 0x6a, 0x30, 0x22, 0x4c, 0x85, 0x53, 0xe1, 0xdd, 0xa9, 0xd2, 0x61,
-	0xe3, 0x4e, 0x85, 0xc8, 0xe5, 0x87, 0x9b, 0x5a, 0xd5, 0x09, 0x2a, 0xed, 0x87, 0x6e, 0x4d, 0xe1,
-	0x89, 0x38, 0x54, 0xec, 0xd6, 0x94, 0x66, 0x5d, 0xb8, 0xe3, 0x3c, 0x75, 0x81, 0x6d, 0xe2, 0xba,
-	0xc0, 0x81, 0x6e, 0x5d, 0xe0, 0xf7, 0x66, 0x5d, 0x60, 0xc3, 0x6b, 0xac, 0x8b, 0xa6, 0x07, 0x4f,
-	0x20, 0x9d, 0x46, 0x71, 0x20, 0xfd, 0x0c, 0x9a, 0x96, 0xe9, 0xd5, 0xc5, 0x0d, 0xc8, 0x71, 0xa4,
-	0x45, 0xb5, 0xae, 0x1b, 0x9a, 0xa9, 0xb7, 0xe6, 0x66, 0x04, 0xfa, 0x1a, 0x6e, 0x67, 0xc9, 0x4d,
-	0x53, 0x6f, 0xb3, 0xf1, 0x96, 0xc2, 0x36, 0x61, 0x38, 0x72, 0x9a, 0x34, 0x53, 0x37, 0x05, 0x43,
-	0xe8, 0xa7, 0xaa, 0xca, 0x86, 0xba, 0x68, 0x18, 0xaa, 0x19, 0x55, 0x44, 0x5b, 0xf0, 0xb3, 0x90,
-	0xb1, 0x88, 0x66, 0xcd, 0x62, 0xc5, 0xdb, 0x4b, 0xb2, 0xd5, 0x81, 0x90, 0xc6, 0x22, 0x21, 0x79,
-	0x67, 0x41, 0x58, 0xbd, 0x0d, 0x4f, 0x1b, 0x2b, 0x87, 0xb8, 0x4b, 0xbd, 0xb2, 0xde, 0x23, 0x90,
-	0x0d, 0xf3, 0x82, 0xac, 0x8a, 0xd0, 0xef, 0x63, 0xe5, 0x94, 0x58, 0x22, 0x5a, 0x7d, 0x5e, 0x5a,
-	0x29, 0x96, 0x9a, 0x0e, 0x2c, 0x50, 0x23, 0x61, 0x59, 0x8c, 0x53, 0x6e, 0xf4, 0x38, 0xf4, 0x98,
-	0x72, 0x85, 0x83, 0xc9, 0x14, 0xad, 0x8f, 0x94, 0xc2, 0xa1, 0x9a, 0xbc, 0xa5, 0x0e, 0xf5, 0xf0,
-	0x26, 0xfe, 0x99, 0x3d, 0x86, 0x91, 0xb6, 0x0e, 0x5f, 0x5b, 0x29, 0xdc, 0x6f, 0xeb, 0xd8, 0x38,
-	0x18, 0x55, 0xf6, 0x37, 0x18, 0x6d, 0x3f, 0xfb, 0xeb, 0x2b, 0x06, 0xf6, 0x3f, 0x02, 0x33, 0xed,
-	0x9c, 0x2f, 0x79, 0x3a, 0x6e, 0x29, 0x89, 0x88, 0xae, 0x84, 0xd4, 0x59, 0x27, 0x4b, 0xe4, 0x33,
-	0x02, 0xb3, 0x49, 0x20, 0xfe, 0x10, 0x96, 0xce, 0x04, 0x9e, 0x58, 0xcb, 0x0f, 0xe4, 0x6a, 0x55,
-	0xad, 0x55, 0x22, 0x0f, 0xce, 0x3f, 0xe3, 0xc1, 0xe3, 0x19, 0x88, 0xfc, 0x56, 0x20, 0x53, 0x76,
-	0x1a, 0xb1, 0xc2, 0x59, 0x24, 0x35, 0xd7, 0xdc, 0x39, 0x79, 0x5c, 0xd3, 0x56, 0x0f, 0xa9, 0xef,
-	0x71, 0x6f, 0x11, 0x38, 0xd9, 0xe2, 0x02, 0x59, 0xdc, 0x04, 0x70, 0xa1, 0x38, 0x19, 0x8a, 0x4f,
-	0xc3, 0x63, 0x9b, 0x5e, 0x6e, 0xb2, 0x78, 0x24, 0xad, 0xdb, 0x4e, 0xd7, 0x4d, 0xd9, 0x5d, 0xe1,
-	0xee, 0x11, 0xe4, 0xef, 0x6b, 0xee, 0x3b, 0x08, 0xb4, 0x64, 0x58, 0x1d, 0xc2, 0x7d, 0xc7, 0x3b,
-	0x8b, 0xb3, 0xef, 0x18, 0x9e, 0x36, 0x36, 0x03, 0xa7, 0xed, 0xc0, 0x69, 0x4a, 0x51, 0xdd, 0x54,
-	0x1b, 0x6a, 0xad, 0xac, 0x2e, 0xeb, 0xdb, 0x35, 0x77, 0x73, 0x3d, 0x0e, 0x3d, 0x65, 0xac, 0x97,
-	0x4c, 0xd1, 0xfa, 0xc8, 0x2e, 0xe2, 0xf9, 0x1f, 0x62, 0x82, 0x30, 0x07, 0xe1, 0x70, 0xd9, 0x6a,
-	0xc0, 0x2a, 0xb3, 0xbf, 0xb0, 0x07, 0x51, 0x76, 0xa9, 0x97, 0xc3, 0xa7, 0x04, 0xef, 0x16, 0x61,
-	0xae, 0x10, 0xe3, 0x06, 0x0c, 0x96, 0x35, 0xa5, 0xd4, 0x70, 0xba, 0x4b, 0x1c, 0xa4, 0x53, 0x20,
-	0x53, 0xd1, 0x05, 0x12, 0x9c, 0x12, 0xc3, 0x4a, 0xcb, 0x2d, 0xbe, 0xd2, 0x2b, 0x18, 0x67, 0x05,
-	0xdd, 0x5d, 0x59, 0xbf, 0xb7, 0xf1, 0x17, 0xb5, 0x9c, 0x7e, 0xc8, 0x9e, 0x3b, 0x2b, 0xc8, 0xeb,
-	0x02, 0x43, 0x75, 0x0b, 0x8e, 0x55, 0x37, 0x8d, 0x92, 0x6e, 0x37, 0x0b, 0x97, 0x90, 0x3b, 0x83,
-	0xb3, 0x84, 0xaa, 0x9b, 0x06, 0x4e, 0x99, 0xfe, 0xf6, 0xe6, 0x3a, 0x8b, 0xda, 0xde, 0xe4, 0x60,
-	0xe8, 0x5c, 0x5a, 0xab, 0x00, 0x4d, 0x5a, 0xc2, 0xfd, 0x2d, 0xc8, 0x2a, 0xe3, 0xb2, 0x62, 0x77,
-	0xf0, 0x74, 0x6d, 0x86, 0xae, 0xf3, 0x33, 0x8d, 0x35, 0x60, 0x4c, 0x30, 0x59, 0xea, 0x59, 0x61,
-	0x1b, 0x70, 0xce, 0xef, 0xd3, 0xef, 0x72, 0xb1, 0xa6, 0xdc, 0xd3, 0x94, 0xa4, 0x57, 0x10, 0x5d,
-	0x53, 0x9c, 0x2b, 0x88, 0xae, 0x29, 0x6c, 0x1b, 0xa6, 0xe2, 0xf8, 0x48, 0x3b, 0x37, 0xce, 0xa6,
-	0xd3, 0x94, 0x0b, 0x1e, 0xcb, 0x0d, 0xc5, 0x58, 0xac, 0x56, 0xd3, 0x5e, 0x41, 0x1f, 0x3b, 0x9b,
-	0x4e, 0x98, 0x2b, 0xa4, 0xf5, 0x47, 0x38, 0xee, 0xbc, 0x6c, 0x4b, 0x0d, 0xbb, 0x1b, 0x13, 0x37,
-	0x29, 0x7c, 0x1a, 0xe3, 0x74, 0x48, 0x71, 0xa0, 0xee, 0x6f, 0x4e, 0x6f, 0x65, 0x5d, 0xc2, 0x67,
-	0x7f, 0xc0, 0xaf, 0x58, 0x99, 0x79, 0x82, 0x82, 0x40, 0x8b, 0x61, 0x5b, 0xf2, 0x24, 0x05, 0xf2,
-	0x6c, 0x01, 0x0f, 0x4d, 0x67, 0xf8, 0xba, 0x29, 0x3f, 0x54, 0xc5, 0x88, 0x1f, 0xe1, 0xcb, 0x28,
-	0x60, 0x86, 0x78, 0xd7, 0xa1, 0xdf, 0xc5, 0x6b, 0x58, 0x3d, 0x6e, 0x71, 0x88, 0xd0, 0xf2, 0x79,
-	0x9c, 0xfb, 0x5d, 0xdd, 0xdb, 0xc8, 0x94, 0x30, 0x97, 0xa9, 0xef, 0xe6, 0x1f, 0x90, 0x40, 0x12,
-	0x1d, 0x37, 0x48, 0xed, 0xf7, 0x30, 0xe0, 0xa7, 0xe6, 0x94, 0x61, 0x32, 0x6e, 0xfd, 0x3e, 0x6e,
-	0xe9, 0xd5, 0xe0, 0xec, 0xbb, 0xa3, 0x70, 0x98, 0xe3, 0xa7, 0x4f, 0x09, 0x1c, 0xb1, 0x95, 0x43,
-	0x3a, 0x1d, 0x89, 0xad, 0x55, 0xae, 0xcc, 0x9e, 0x8f, 0x37, 0xd8, 0xf6, 0xcd, 0x26, 0xfe, 0xfe,
-	0xf9, 0xd7, 0xff, 0xec, 0x3e, 0x4b, 0x87, 0xa5, 0xf6, 0x32, 0x2a, 0xfd, 0x2f, 0x81, 0xa3, 0x4e,
-	0x24, 0x68, 0x5e, 0xe0, 0xc3, 0xaf, 0x69, 0x66, 0x0b, 0x71, 0x87, 0x23, 0xa8, 0x39, 0x0e, 0x2a,
-	0x4f, 0xa7, 0xa3, 0x41, 0xa1, 0x89, 0xb4, 0x8b, 0x15, 0xbd, 0x47, 0xff, 0x45, 0x20, 0xe3, 0x6a,
-	0x71, 0x34, 0xa6, 0x4b, 0x37, 0x6a, 0x52, 0xec, 0xf1, 0x88, 0x71, 0x8a, 0x63, 0x1c, 0xa5, 0x4c,
-	0x88, 0xd1, 0xa0, 0xff, 0xb6, 0x62, 0x87, 0xaa, 0x8c, 0x30, 0x76, 0x7e, 0x45, 0x49, 0x18, 0xbb,
-	0x80, 0x72, 0xc4, 0x0a, 0x1c, 0xd7, 0x24, 0x1d, 0x6f, 0x93, 0x50, 0xdb, 0x44, 0xda, 0xd5, 0x14,
-	0x0c, 0x9b, 0x2b, 0x95, 0xc5, 0xf4, 0x16, 0x3b, 0x6c, 0x41, 0x49, 0x2f, 0x4e, 0xd8, 0x5c, 0x30,
-	0x9f, 0x10, 0xa0, 0xad, 0x1a, 0x19, 0xbd, 0xd4, 0xde, 0x67, 0xa4, 0x38, 0x97, 0xfd, 0x45, 0x72,
-	0x43, 0x44, 0x7d, 0x9d, 0xa3, 0xbe, 0x46, 0xaf, 0x44, 0xa2, 0x6e, 0xde, 0x01, 0xa4, 0x5d, 0xdf,
-	0x25, 0x61, 0xcf, 0x25, 0x44, 0xdf, 0x24, 0xd0, 0xeb, 0x7d, 0x07, 0xd3, 0x19, 0x11, 0xa0, 0x16,
-	0xc5, 0x27, 0x3b, 0x9b, 0xc4, 0x24, 0xf6, 0x72, 0xc2, 0x97, 0x78, 0x9e, 0x3f, 0xe6, 0xed, 0xba,
-	0x78, 0x83, 0x40, 0x9f, 0x4f, 0x0a, 0xa0, 0x09, 0x5c, 0xbb, 0xf5, 0x31, 0x97, 0xc8, 0x06, 0xf1,
-	0x4a, 0x1c, 0xef, 0x39, 0x3a, 0x11, 0x0f, 0xaf, 0x41, 0xbf, 0x25, 0x70, 0x22, 0x5c, 0xc0, 0xa0,
-	0x97, 0xe3, 0xe6, 0x3c, 0x2c, 0xd8, 0x57, 0x3a, 0x33, 0x46, 0x1a, 0x7f, 0xe0, 0x34, 0xd6, 0xe8,
-	0x6f, 0x3a, 0x29, 0x9a, 0x40, 0x46, 0x4c, 0xb9, 0xb2, 0x27, 0xed, 0xd6, 0xe4, 0x2d, 0x75, 0x8f,
-	0x7e, 0x43, 0xe0, 0x64, 0x84, 0x5c, 0x43, 0x3b, 0x42, 0xec, 0x66, 0xeb, 0x6a, 0x87, 0xd6, 0x48,
-	0x78, 0x8d, 0x13, 0xbe, 0x4d, 0x6f, 0x1e, 0x98, 0xb0, 0x61, 0x33, 0xa6, 0x4f, 0xbb, 0x61, 0x2c,
-	0x96, 0x32, 0x45, 0x6f, 0x77, 0x04, 0x3d, 0xf4, 0xb5, 0x92, 0xbd, 0x93, 0xca, 0x5c, 0x18, 0x94,
-	0xdb, 0x3c, 0x28, 0xd7, 0xe9, 0xd2, 0xc1, 0x83, 0x42, 0x9f, 0x11, 0xc8, 0xb8, 0x32, 0x8d, 0x68,
-	0xaf, 0x0e, 0xca, 0x5f, 0xa2, 0xbd, 0xba, 0x45, 0x05, 0x8b, 0xb1, 0x0e, 0x5d, 0x89, 0xc8, 0xde,
-	0x33, 0xfe, 0x43, 0x00, 0x9a, 0x3a, 0x14, 0x8d, 0xeb, 0xd0, 0xad, 0xbf, 0x0b, 0xf1, 0x0d, 0x10,
-	0xe2, 0x34, 0x87, 0x38, 0x46, 0x47, 0xc4, 0x10, 0x79, 0xf8, 0x7a, 0xbd, 0xb2, 0x90, 0x68, 0xff,
-	0x0d, 0x11, 0xa9, 0x44, 0xfb, 0x6f, 0x98, 0x76, 0xc5, 0xc6, 0x39, 0xc8, 0x33, 0x34, 0x17, 0x09,
-	0x92, 0x4b, 0x5a, 0xf4, 0x23, 0x02, 0x3f, 0x6e, 0x11, 0x59, 0xe8, 0x45, 0x41, 0x50, 0x22, 0xe4,
-	0xab, 0xec, 0xa5, 0xc4, 0x76, 0x08, 0xf7, 0x57, 0x1c, 0xee, 0x3c, 0x9d, 0x8d, 0x8e, 0xa9, 0xa6,
-	0xe4, 0x5d, 0xf9, 0x28, 0xcf, 0xe5, 0x23, 0x69, 0xb7, 0x6c, 0x55, 0xc0, 0x87, 0x04, 0x68, 0xab,
-	0xf4, 0x44, 0x93, 0x62, 0x31, 0x62, 0x1e, 0xd9, 0xd1, 0x2a, 0x17, 0x5b, 0xe0, 0x2c, 0x24, 0x9a,
-	0x4f, 0xc2, 0xc2, 0xa0, 0x6f, 0x13, 0x18, 0x08, 0xfc, 0x5f, 0x97, 0xce, 0xb7, 0x07, 0x11, 0xfe,
-	0x5f, 0xe2, 0xec, 0x42, 0x42, 0x2b, 0xc4, 0x3d, 0xc3, 0x71, 0x4f, 0xd3, 0x73, 0x91, 0xb8, 0x65,
-	0x6e, 0x99, 0x6f, 0x5e, 0x2f, 0x9f, 0x11, 0x80, 0xa6, 0x68, 0x22, 0x5a, 0x76, 0x2d, 0x4a, 0x9a,
-	0x68, 0xd9, 0xb5, 0xea, 0x62, 0xec, 0x3c, 0x07, 0x39, 0x4e, 0x47, 0x23, 0x41, 0x56, 0x37, 0x8d,
-	0x3c, 0x0a, 0x34, 0xd6, 0xd3, 0x21, 0xe3, 0x4e, 0x22, 0xda, 0xb6, 0x82, 0xb2, 0x56, 0x56, 0x8a,
-	0x3d, 0x1e, 0xc1, 0x5d, 0xe0, 0xe0, 0xa6, 0xe8, 0x64, 0x0c, 0x70, 0xf6, 0xbe, 0xb5, 0x4f, 0x60,
-	0x28, 0x4a, 0x75, 0xa2, 0x57, 0xe3, 0x46, 0x27, 0xfc, 0x30, 0xb9, 0xd6, 0xa9, 0x39, 0xb2, 0x59,
-	0xe5, 0x6c, 0x16, 0xe9, 0xaf, 0x3b, 0x39, 0x3f, 0xbc, 0x59, 0xf8, 0x8e, 0xc0, 0xe9, 0xb6, 0x12,
-	0x14, 0x5d, 0x8a, 0x09, 0xb5, 0x8d, 0x46, 0x96, 0x5d, 0x3e, 0xd0, 0x1c, 0xc8, 0xf9, 0x2e, 0xe7,
-	0xbc, 0x42, 0xaf, 0x1f, 0x8c, 0xb3, 0xb4, 0xab, 0x5b, 0xd9, 0x7d, 0x87, 0x40, 0x9f, 0xef, 0x0d,
-	0x2f, 0xba, 0xc9, 0x86, 0x69, 0x29, 0xa2, 0x9b, 0x6c, 0xa8, 0x90, 0xc2, 0x7e, 0xc9, 0x89, 0xcc,
-	0xd1, 0x19, 0xe1, 0x23, 0x31, 0xcf, 0xc5, 0x08, 0xcf, 0x73, 0xf6, 0x39, 0x81, 0x7e, 0xbf, 0x86,
-	0x41, 0x93, 0x40, 0x70, 0x17, 0xf7, 0x7c, 0x32, 0xa3, 0xd8, 0x6b, 0xc8, 0x0f, 0xdc, 0xa0, 0xef,
-	0x13, 0x18, 0x08, 0x68, 0x56, 0x74, 0x3e, 0xee, 0xbb, 0xdf, 0xab, 0xb3, 0x89, 0x36, 0xce, 0x08,
-	0x91, 0x8d, 0x5d, 0xe6, 0x90, 0x17, 0xe8, 0x9c, 0x18, 0x32, 0x6a, 0x70, 0x9e, 0x68, 0x5b, 0xe7,
-	0x56, 0xab, 0x7a, 0x29, 0x3a, 0xb7, 0x22, 0xa5, 0x55, 0xd1, 0xb9, 0x15, 0x2d, 0x94, 0xc6, 0x38,
-	0xb7, 0x82, 0x34, 0xf2, 0x72, 0xb5, 0xba, 0xb4, 0xfa, 0x62, 0x3f, 0x47, 0x5e, 0xee, 0xe7, 0xc8,
-	0x57, 0xfb, 0x39, 0xf2, 0x8f, 0x57, 0xb9, 0xae, 0x97, 0xaf, 0x72, 0x5d, 0x5f, 0xbc, 0xca, 0x75,
-	0xfd, 0x29, 0x5f, 0xd1, 0xcc, 0x07, 0xdb, 0x1b, 0x85, 0xb2, 0xbe, 0xd5, 0x32, 0xe5, 0xce, 0x45,
-	0xe9, 0xaf, 0xfe, 0x5f, 0xc2, 0x6d, 0x1c, 0xe1, 0x3f, 0x85, 0x9b, 0xfb, 0x3e, 0x00, 0x00, 0xff,
-	0xff, 0xca, 0x33, 0x08, 0xb7, 0xf5, 0x27, 0x00, 0x00,
+	// 2610 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x5b, 0x5d, 0x6c, 0x1c, 0x57,
+	0x15, 0xce, 0x75, 0xd2, 0x50, 0x9f, 0xc6, 0x4e, 0x72, 0xea, 0xc6, 0xce, 0x26, 0x71, 0xda, 0x49,
+	0xe2, 0x24, 0x4e, 0x77, 0x27, 0xfe, 0xc9, 0x0f, 0x6d, 0xd2, 0xd6, 0x4e, 0x9a, 0x34, 0x3f, 0x50,
+	0xb3, 0x6e, 0xab, 0x52, 0x05, 0x2d, 0xe3, 0xdd, 0xf1, 0x66, 0xe8, 0x7a, 0x67, 0xb3, 0xb3, 0x4e,
+	0x08, 0x96, 0x25, 0xc4, 0x73, 0x55, 0x21, 0x21, 0xa1, 0x22, 0xd1, 0xc0, 0x23, 0x20, 0xfa, 0x80,
+	0x78, 0x2a, 0x88, 0x9f, 0x17, 0xa4, 0xbe, 0x80, 0x0a, 0x3c, 0x80, 0xfa, 0x80, 0x90, 0x03, 0x02,
+	0x81, 0x90, 0x78, 0xe2, 0x19, 0xed, 0x9d, 0x73, 0x67, 0x67, 0x66, 0xe7, 0xce, 0x9d, 0x99, 0x9d,
+	0x20, 0xf1, 0x94, 0xf5, 0xcc, 0x3d, 0xf7, 0x7c, 0xdf, 0x77, 0xce, 0xfd, 0x3d, 0x13, 0x38, 0x52,
+	0xb7, 0x3a, 0x76, 0xcb, 0x32, 0x74, 0xf1, 0xaf, 0xd3, 0xb1, 0xdb, 0x46, 0xdd, 0xd4, 0xef, 0xac,
+	0x9b, 0xed, 0xfb, 0xa5, 0x56, 0xdb, 0xee, 0xd8, 0x38, 0x4e, 0x2f, 0x4b, 0xe2, 0x5f, 0x6a, 0x54,
+	0x18, 0xab, 0xdb, 0x75, 0x9b, 0xb7, 0xd1, 0xbb, 0xbf, 0xdc, 0xe6, 0x85, 0x83, 0x75, 0xdb, 0xae,
+	0x37, 0x4c, 0xdd, 0x68, 0x59, 0xba, 0xd1, 0x6c, 0xda, 0x1d, 0xa3, 0x63, 0xd9, 0x4d, 0x87, 0xde,
+	0x4e, 0x57, 0x6d, 0x67, 0xcd, 0x76, 0xf4, 0x15, 0xc3, 0x21, 0x2f, 0xfa, 0xdd, 0x99, 0x15, 0xb3,
+	0x63, 0xcc, 0xe8, 0x2d, 0xa3, 0x6e, 0x35, 0x79, 0x63, 0x6a, 0x7b, 0x54, 0x86, 0xae, 0x65, 0xb4,
+	0x8d, 0x35, 0xd1, 0xa3, 0x94, 0x43, 0xe7, 0x7e, 0xcb, 0xa4, 0x46, 0xda, 0x18, 0xe0, 0xe7, 0xba,
+	0xce, 0x96, 0xb8, 0x65, 0xd9, 0xbc, 0xb3, 0x6e, 0x3a, 0x1d, 0xed, 0x35, 0x78, 0x32, 0xf0, 0xd4,
+	0x69, 0xd9, 0x4d, 0xc7, 0xc4, 0x8b, 0xb0, 0xd3, 0xf5, 0x30, 0xc1, 0x9e, 0x66, 0x27, 0x9e, 0x98,
+	0x3d, 0x5c, 0x92, 0x28, 0x50, 0x72, 0x0d, 0x17, 0x77, 0x7c, 0xf4, 0xa7, 0xc3, 0xdb, 0xca, 0x64,
+	0xa4, 0x9d, 0x86, 0x31, 0xb7, 0xd7, 0xb6, 0x7d, 0xd7, 0xaa, 0x99, 0x6d, 0xf2, 0x86, 0x13, 0xf0,
+	0x29, 0xa3, 0x56, 0x6b, 0x9b, 0x8e, 0xdb, 0xef, 0x70, 0x59, 0xfc, 0xa9, 0xdd, 0x82, 0xa7, 0x42,
+	0x16, 0x84, 0xe4, 0x12, 0x3c, 0xde, 0xa2, 0x67, 0x84, 0xe5, 0x19, 0x39, 0x16, 0x6a, 0x48, 0x68,
+	0x3c, 0x43, 0xad, 0x12, 0xea, 0x5d, 0xd0, 0xc7, 0x2b, 0x00, 0x3d, 0xcd, 0xa9, 0xff, 0xa9, 0x92,
+	0x1b, 0xa0, 0x52, 0x37, 0x40, 0x25, 0x37, 0x0d, 0x28, 0x40, 0xa5, 0x25, 0xa3, 0x6e, 0x92, 0x6d,
+	0xd9, 0x67, 0xa9, 0x7d, 0x8f, 0xc1, 0xbe, 0xb0, 0x07, 0x22, 0xf0, 0x32, 0x0c, 0x0b, 0x1c, 0x5d,
+	0xd6, 0xdb, 0xd3, 0x30, 0xe8, 0x59, 0xe2, 0xd5, 0x00, 0xd2, 0x21, 0x8e, 0xf4, 0xb8, 0x12, 0xa9,
+	0x8b, 0x21, 0x00, 0xf5, 0x10, 0x1c, 0xe0, 0x48, 0x17, 0xaa, 0x1d, 0xeb, 0xae, 0x19, 0x56, 0x44,
+	0x33, 0xe1, 0x60, 0xf4, 0xeb, 0x5c, 0xe9, 0x68, 0x53, 0x22, 0x43, 0x8c, 0xea, 0xdb, 0xab, 0x56,
+	0x43, 0x88, 0x8a, 0xa3, 0x30, 0x64, 0xd5, 0x78, 0x20, 0x76, 0x94, 0x87, 0xac, 0x5a, 0x2f, 0x2f,
+	0xbc, 0x76, 0xbe, 0xbc, 0xa0, 0x67, 0xea, 0xbc, 0xa0, 0x86, 0x5e, 0x5e, 0xd0, 0xdf, 0xbd, 0xbc,
+	0xa0, 0x07, 0x8f, 0x30, 0x2f, 0x7a, 0x1e, 0x7c, 0x42, 0x8a, 0x87, 0x6a, 0x21, 0x83, 0x0c, 0x7a,
+	0x96, 0xf9, 0xe5, 0xc5, 0xcb, 0x30, 0xc9, 0x91, 0x96, 0xcd, 0x96, 0xed, 0x58, 0x1d, 0xbb, 0x3f,
+	0x36, 0x47, 0x60, 0xa4, 0xed, 0xbd, 0xac, 0x78, 0x61, 0xda, 0xd5, 0x7b, 0x78, 0xad, 0xa6, 0xad,
+	0xc2, 0x61, 0x69, 0x37, 0x79, 0x86, 0x6e, 0x1a, 0x26, 0xc8, 0x4f, 0xc3, 0x34, 0x1c, 0x73, 0xc1,
+	0x71, 0xcc, 0x8e, 0x2c, 0x89, 0xd6, 0x60, 0x7f, 0x44, 0x5b, 0x42, 0xb3, 0xd4, 0x65, 0xc5, 0x9f,
+	0x57, 0x8c, 0xee, 0x0b, 0x82, 0x74, 0x4c, 0x0a, 0xc9, 0xdf, 0x0b, 0xc1, 0xda, 0xd5, 0xf6, 0x3d,
+	0xd3, 0xaa, 0x11, 0xee, 0x72, 0xcf, 0xac, 0x0f, 0x19, 0x14, 0xa2, 0xbc, 0x10, 0xab, 0x32, 0x8c,
+	0x06, 0x58, 0x89, 0x14, 0x4b, 0x45, 0x6b, 0xc4, 0x4f, 0x2b, 0xc7, 0x54, 0xb3, 0x41, 0x0b, 0xe5,
+	0x48, 0x54, 0x14, 0x93, 0xa4, 0x1b, 0xee, 0x81, 0xed, 0x1d, 0xa3, 0xce, 0xc1, 0x0c, 0x97, 0xbb,
+	0x3f, 0x11, 0x61, 0x47, 0xd3, 0x58, 0x33, 0x27, 0xb6, 0xf3, 0x47, 0xfc, 0xb7, 0x76, 0x0f, 0x8e,
+	0xc4, 0x3a, 0x7c, 0x64, 0xa9, 0x70, 0x2b, 0xd6, 0xb1, 0x33, 0x18, 0x55, 0xed, 0x2b, 0x70, 0x34,
+	0xbe, 0xf7, 0x47, 0x97, 0x0c, 0xda, 0x77, 0x19, 0xcc, 0xc4, 0x39, 0x5f, 0xf4, 0xbd, 0xb8, 0x56,
+	0x4b, 0x45, 0xf4, 0x4a, 0x44, 0x9e, 0x65, 0x19, 0x22, 0xbf, 0x65, 0x30, 0x9b, 0x06, 0xe2, 0xff,
+	0xc3, 0xd0, 0x39, 0x4e, 0x2b, 0xd6, 0xa5, 0xdb, 0x46, 0xa3, 0x61, 0x36, 0xeb, 0xd2, 0x85, 0xf3,
+	0x8b, 0xb4, 0xf0, 0xf8, 0x1a, 0x12, 0xbf, 0x2b, 0x30, 0x5c, 0x15, 0x0f, 0x29, 0xc3, 0x35, 0x29,
+	0x35, 0xcf, 0x5c, 0xac, 0x3c, 0x9e, 0x69, 0xbf, 0x87, 0xdc, 0xe7, 0xb8, 0x1f, 0x32, 0x18, 0xef,
+	0x73, 0x41, 0x2c, 0x5e, 0x01, 0xf0, 0xa0, 0x88, 0x08, 0x25, 0xa7, 0xe1, 0xb3, 0xcd, 0x2f, 0x36,
+	0x05, 0x5a, 0x92, 0x96, 0x5d, 0xa7, 0xcb, 0x1d, 0xc3, 0x1b, 0xe1, 0xde, 0x12, 0x14, 0x7c, 0xd7,
+	0x9b, 0x77, 0x08, 0x68, 0xc5, 0xe9, 0xbe, 0x50, 0xce, 0x3b, 0xfe, 0x5e, 0xc4, 0xbc, 0xe3, 0xf8,
+	0x9e, 0x69, 0x33, 0x70, 0xc8, 0x15, 0xce, 0xaa, 0x95, 0xcd, 0x55, 0xb3, 0x6d, 0x36, 0xab, 0xe6,
+	0x25, 0x7b, 0xbd, 0xe9, 0x4d, 0xae, 0x7b, 0x60, 0x7b, 0x95, 0xf2, 0x65, 0xb8, 0xdc, 0xfd, 0xa9,
+	0x9d, 0xa5, 0xf5, 0x3f, 0xc2, 0x84, 0x60, 0x8e, 0xc1, 0x63, 0xd5, 0xee, 0x03, 0xca, 0x32, 0xf7,
+	0x0f, 0xed, 0xb6, 0xcc, 0x2e, 0xf7, 0x74, 0xf8, 0x0d, 0xa3, 0xbd, 0x45, 0x94, 0x2b, 0xc2, 0xb8,
+	0x02, 0x63, 0x55, 0xab, 0x56, 0x69, 0x8b, 0xd7, 0x15, 0x0e, 0x52, 0x24, 0xc8, 0xb4, 0x3c, 0x41,
+	0xc2, 0x5d, 0x92, 0xac, 0x58, 0xed, 0xf3, 0x95, 0x5f, 0xc2, 0x88, 0x11, 0x74, 0xf3, 0xca, 0xf2,
+	0xab, 0x2b, 0x5f, 0x32, 0xab, 0xf9, 0x4b, 0xf6, 0x81, 0x18, 0x41, 0x7e, 0x17, 0x24, 0xd5, 0x35,
+	0x78, 0xa2, 0xb1, 0xea, 0x54, 0x6c, 0xf7, 0xb1, 0x72, 0x08, 0x79, 0x3d, 0x88, 0x21, 0xd4, 0x58,
+	0x75, 0xa8, 0xcb, 0xfc, 0xa7, 0x37, 0xcf, 0x99, 0x6c, 0x7a, 0x33, 0xc2, 0xd2, 0x79, 0xb4, 0xae,
+	0x02, 0xf4, 0x68, 0x29, 0xe7, 0xb7, 0x30, 0xab, 0x61, 0x8f, 0x95, 0x76, 0x83, 0x56, 0xd7, 0x9e,
+	0x74, 0xd9, 0xd7, 0x34, 0xad, 0x0d, 0xc7, 0x14, 0x9d, 0xe5, 0x1e, 0x15, 0x6d, 0x05, 0x4e, 0x06,
+	0x7d, 0x06, 0x5d, 0x2e, 0x34, 0x6b, 0xaf, 0x5a, 0xb5, 0xb4, 0x5b, 0x10, 0xdb, 0xaa, 0x89, 0x2d,
+	0x88, 0x6d, 0xd5, 0xb4, 0x75, 0x98, 0x4e, 0xe2, 0x23, 0xef, 0xd8, 0x88, 0x49, 0xa7, 0x77, 0x5d,
+	0x70, 0xcf, 0x68, 0xd7, 0x9c, 0x85, 0x46, 0x23, 0xef, 0x11, 0xf4, 0x2b, 0x31, 0xe9, 0x44, 0xb9,
+	0x22, 0x5a, 0x9f, 0x87, 0x3d, 0xe2, 0x64, 0x5b, 0x69, 0xbb, 0xaf, 0x29, 0x70, 0x27, 0x94, 0x47,
+	0x63, 0xea, 0x8e, 0x28, 0xee, 0x6e, 0x05, 0x1f, 0xe7, 0x37, 0xb2, 0xce, 0xd1, 0xb1, 0x3f, 0xe4,
+	0x57, 0x7d, 0x33, 0x73, 0x9f, 0x2e, 0x04, 0xfa, 0x0c, 0x63, 0xc9, 0xb3, 0x1c, 0xc8, 0x6b, 0x67,
+	0x68, 0xd1, 0x14, 0xcd, 0x97, 0x3b, 0xc6, 0xdb, 0xa6, 0x1a, 0xf1, 0x1d, 0x3a, 0x19, 0x85, 0xcc,
+	0x08, 0xef, 0x32, 0x8c, 0x7a, 0x78, 0x9d, 0xee, 0x1b, 0x2f, 0x39, 0x54, 0x68, 0x79, 0x3f, 0x62,
+	0x7f, 0xd7, 0xf2, 0x3f, 0xd4, 0x6a, 0x51, 0x2e, 0x73, 0x9f, 0xcd, 0x7f, 0xc6, 0x42, 0x41, 0x14,
+	0x6e, 0x88, 0xda, 0xeb, 0xb0, 0x3b, 0x48, 0x4d, 0xa4, 0x61, 0x3a, 0x6e, 0xa3, 0x01, 0x6e, 0x39,
+	0xe6, 0xe0, 0xf9, 0x50, 0x2a, 0xdd, 0xb4, 0xee, 0x9a, 0x4d, 0xd3, 0x49, 0x94, 0x84, 0x87, 0x24,
+	0x96, 0x44, 0xfd, 0x4d, 0x18, 0x69, 0xd0, 0xb3, 0x8a, 0xd5, 0x5c, 0xb5, 0x49, 0xe5, 0xa2, 0x92,
+	0xb8, 0xe8, 0xe9, 0x5a, 0x73, 0xd5, 0x16, 0x5b, 0xa9, 0x86, 0xef, 0x99, 0x56, 0x0f, 0xb9, 0x76,
+	0xc2, 0xa8, 0x73, 0x9c, 0x69, 0x26, 0x65, 0x9e, 0x88, 0xe5, 0x5b, 0x30, 0x1a, 0x60, 0x29, 0xe2,
+	0x9b, 0x89, 0xe6, 0x88, 0x9f, 0x66, 0x8e, 0x51, 0xfe, 0x02, 0x9d, 0xee, 0xc5, 0xd5, 0xcd, 0xeb,
+	0xad, 0x9a, 0xd1, 0x31, 0x97, 0xda, 0x76, 0xcb, 0x76, 0x8c, 0x46, 0xaa, 0xf5, 0x06, 0x61, 0xc7,
+	0xba, 0x63, 0xb6, 0x69, 0xc1, 0xe1, 0xbf, 0xb5, 0x6f, 0x32, 0x3a, 0x53, 0xcb, 0xfa, 0x27, 0xad,
+	0x6c, 0x98, 0x10, 0x97, 0x45, 0x95, 0x75, 0xde, 0xa4, 0xd2, 0xa2, 0x36, 0x14, 0x24, 0x3d, 0x4e,
+	0xb5, 0x96, 0xed, 0x98, 0xb5, 0xa0, 0x0b, 0xd2, 0x6d, 0x5f, 0x2b, 0xd2, 0xb1, 0xb6, 0x16, 0x8b,
+	0x2b, 0xf7, 0x74, 0xd9, 0x62, 0xb4, 0x3f, 0x91, 0xfa, 0x23, 0x21, 0xee, 0xc0, 0x7e, 0x99, 0x10,
+	0x22, 0x7f, 0x32, 0x2a, 0x31, 0x1e, 0xad, 0x44, 0x8e, 0xb9, 0xd4, 0x81, 0xe3, 0xfd, 0x97, 0x5c,
+	0x03, 0x24, 0x54, 0xe4, 0x75, 0x11, 0x4f, 0xb1, 0xed, 0xbe, 0x14, 0x7b, 0xc0, 0xe0, 0x84, 0xda,
+	0x2d, 0xc9, 0xdb, 0x86, 0xf1, 0xe0, 0x75, 0x41, 0x38, 0xcd, 0xe6, 0x95, 0xe2, 0x46, 0xb8, 0x21,
+	0x85, 0x9f, 0x0a, 0x5c, 0x23, 0x78, 0xa9, 0xd6, 0x56, 0xe3, 0xcb, 0x3d, 0xdf, 0xfe, 0xc1, 0x68,
+	0x3b, 0x19, 0xef, 0x94, 0x54, 0xe9, 0xc0, 0x84, 0x44, 0x15, 0x91, 0x73, 0x83, 0xc8, 0xb2, 0x2f,
+	0x52, 0x96, 0x1c, 0xf3, 0xae, 0x45, 0x63, 0xd9, 0xdb, 0x82, 0x0e, 0x96, 0x73, 0xc1, 0x4d, 0x73,
+	0x64, 0xce, 0xbd, 0xcb, 0xc2, 0xc7, 0x0d, 0x49, 0xbe, 0xad, 0xc2, 0x93, 0xbd, 0x3d, 0x74, 0x38,
+	0xd7, 0x4e, 0x2b, 0x45, 0x0d, 0x75, 0x4f, 0x82, 0xee, 0xf5, 0xb6, 0xd6, 0xbe, 0xe9, 0x6c, 0x36,
+	0x0e, 0xcf, 0x20, 0x17, 0x7c, 0x51, 0xd3, 0xfa, 0x77, 0x18, 0xcc, 0xa5, 0xf2, 0x47, 0x72, 0xdc,
+	0x86, 0xb1, 0x08, 0x39, 0x44, 0x92, 0x65, 0xd5, 0x03, 0xfb, 0xf4, 0x70, 0xb4, 0x66, 0x7c, 0x80,
+	0x72, 0x1f, 0x70, 0x9f, 0xb0, 0xf0, 0x99, 0x51, 0x36, 0xd8, 0xfe, 0x67, 0x1a, 0xe4, 0x37, 0xc0,
+	0x2a, 0x7d, 0x57, 0xd7, 0x97, 0xcd, 0x86, 0x99, 0xe3, 0x36, 0xe1, 0x81, 0x50, 0x4f, 0xee, 0x81,
+	0xd4, 0x5b, 0x87, 0x82, 0xcf, 0x45, 0x8d, 0x37, 0x0a, 0x8f, 0xab, 0x99, 0x04, 0x93, 0x55, 0xd0,
+	0x0d, 0x89, 0x38, 0xd1, 0x96, 0xb8, 0xd7, 0x6c, 0x05, 0xbe, 0x47, 0x31, 0x81, 0x4f, 0xa9, 0x3c,
+	0x92, 0x24, 0xf7, 0xe0, 0x80, 0x5c, 0x12, 0x91, 0x57, 0x99, 0x35, 0xd9, 0x2f, 0xd3, 0x24, 0xbf,
+	0xfc, 0x9a, 0x7d, 0xf7, 0x3c, 0x3c, 0xc6, 0xc9, 0xe2, 0x3b, 0x0c, 0x76, 0xba, 0x1f, 0x29, 0xe0,
+	0x29, 0x29, 0xe2, 0xfe, 0x2f, 0x23, 0x0a, 0xcf, 0x26, 0x6b, 0xec, 0xfa, 0xd6, 0x8e, 0x7f, 0xed,
+	0xf7, 0x7f, 0xf9, 0xc6, 0xd0, 0x33, 0x78, 0x58, 0x8f, 0xff, 0x62, 0x03, 0x1f, 0x30, 0x78, 0x5c,
+	0x6c, 0xca, 0xb1, 0xa8, 0xf0, 0x11, 0xfc, 0x7c, 0xa2, 0x50, 0x4a, 0xda, 0x9c, 0x40, 0xcd, 0x71,
+	0x50, 0x45, 0x3c, 0x25, 0x07, 0x45, 0x26, 0xfa, 0x06, 0x9d, 0xb4, 0x36, 0xf1, 0x3d, 0x06, 0xc3,
+	0xde, 0x09, 0x04, 0x13, 0xba, 0xf4, 0x54, 0xd3, 0x13, 0xb7, 0x27, 0x8c, 0xd3, 0x1c, 0xe3, 0x51,
+	0xd4, 0x94, 0x18, 0x1d, 0xfc, 0x56, 0x57, 0x3b, 0xda, 0x72, 0x2a, 0xb5, 0x0b, 0x16, 0xaf, 0x95,
+	0xda, 0x85, 0x8a, 0xd4, 0x5a, 0x89, 0xe3, 0x3a, 0x81, 0x53, 0x31, 0x01, 0x75, 0x4d, 0xf4, 0x0d,
+	0xab, 0x46, 0xb2, 0x79, 0x55, 0xf9, 0x84, 0xde, 0x12, 0xcb, 0x16, 0xfe, 0x7a, 0x20, 0x89, 0x6c,
+	0x1e, 0x98, 0x5f, 0x33, 0xc0, 0xfe, 0x72, 0x3c, 0x9e, 0x8b, 0xf7, 0x29, 0xfd, 0x0e, 0xa0, 0x70,
+	0x3e, 0xbd, 0x21, 0xa1, 0xbe, 0xcc, 0x51, 0xbf, 0x80, 0x17, 0xa4, 0xa8, 0x7b, 0x53, 0x83, 0xbe,
+	0x11, 0x98, 0xf8, 0x37, 0x3d, 0x42, 0xf8, 0x03, 0x06, 0xbb, 0xfc, 0x7b, 0x43, 0x9c, 0x51, 0x01,
+	0xea, 0x2b, 0x2e, 0x17, 0x66, 0xd3, 0x98, 0x24, 0x1e, 0x4e, 0xb4, 0x2d, 0x2d, 0xf2, 0x2d, 0xaf,
+	0x9b, 0x17, 0xdf, 0x67, 0x30, 0x12, 0xd8, 0xc8, 0x62, 0x0a, 0xd7, 0x5e, 0x7e, 0xcc, 0xa5, 0xb2,
+	0x21, 0xbc, 0x3a, 0xc7, 0x7b, 0x12, 0x8f, 0x27, 0xc3, 0xeb, 0xe0, 0x3f, 0x19, 0xec, 0x8b, 0xae,
+	0x95, 0xe2, 0xf3, 0x49, 0x63, 0x1e, 0x25, 0xf6, 0x85, 0x6c, 0xc6, 0x44, 0xe3, 0x0d, 0x4e, 0x63,
+	0x09, 0x3f, 0x9b, 0x25, 0x69, 0x42, 0x11, 0xe9, 0x18, 0xf5, 0x4d, 0x7d, 0xa3, 0x69, 0xac, 0x99,
+	0x9b, 0xf8, 0x77, 0x06, 0xe3, 0x92, 0xca, 0x30, 0x66, 0x42, 0xec, 0x45, 0xeb, 0x62, 0x46, 0x6b,
+	0x22, 0xbc, 0xc4, 0x09, 0x5f, 0xc7, 0x57, 0x06, 0x26, 0xec, 0xb8, 0x8c, 0xf1, 0x9d, 0x21, 0x38,
+	0x96, 0xa8, 0x08, 0x8e, 0xd7, 0x33, 0x41, 0x8f, 0x3c, 0x0b, 0x14, 0x6e, 0xe4, 0xd2, 0x17, 0x89,
+	0x72, 0x9d, 0x8b, 0x72, 0x19, 0x17, 0x07, 0x17, 0x05, 0xdf, 0x67, 0x30, 0xec, 0x55, 0x84, 0x55,
+	0x73, 0x75, 0xb8, 0xd2, 0xae, 0x9a, 0xab, 0xfb, 0x0a, 0xee, 0x09, 0xc6, 0xa1, 0x57, 0x8d, 0x76,
+	0xe7, 0x8c, 0x6f, 0x33, 0x80, 0x5e, 0xc9, 0x1b, 0x93, 0x3a, 0xf4, 0xf2, 0xef, 0x74, 0x72, 0x03,
+	0x82, 0x78, 0x8a, 0x43, 0x3c, 0x86, 0x47, 0xd4, 0x10, 0xb9, 0x7c, 0xbb, 0xfc, 0x15, 0x68, 0xd5,
+	0xfc, 0x1b, 0x51, 0x0f, 0x57, 0xcd, 0xbf, 0x51, 0x65, 0x72, 0x6d, 0x8a, 0x83, 0x7c, 0x1a, 0x27,
+	0xa5, 0x20, 0x79, 0xf5, 0x1c, 0x7f, 0xc9, 0x60, 0x6f, 0x5f, 0x3d, 0x17, 0xcf, 0x2a, 0x44, 0x91,
+	0x54, 0xca, 0x0b, 0xe7, 0x52, 0xdb, 0x11, 0xdc, 0xe7, 0x38, 0xdc, 0x79, 0x9c, 0x95, 0x6b, 0x6a,
+	0xd5, 0x8a, 0x5e, 0xa5, 0xba, 0xc8, 0x2b, 0xd5, 0xfa, 0x46, 0xb5, 0x9b, 0x01, 0x3f, 0x67, 0x80,
+	0xfd, 0x55, 0x6e, 0x4c, 0x8b, 0xc5, 0x49, 0xb8, 0x64, 0xcb, 0x0b, 0xea, 0xda, 0x19, 0xce, 0x42,
+	0xc7, 0x62, 0x1a, 0x16, 0x0e, 0xfe, 0x88, 0xc1, 0xee, 0xd0, 0x27, 0xa4, 0x38, 0x1f, 0x0f, 0x22,
+	0xfa, 0x83, 0xd4, 0xc2, 0x99, 0x94, 0x56, 0x84, 0x7b, 0x86, 0xe3, 0x3e, 0x85, 0x27, 0xa5, 0xb8,
+	0x0d, 0x6e, 0x59, 0xec, 0x6d, 0x2f, 0xdf, 0x67, 0x00, 0xbd, 0xfa, 0xac, 0x6a, 0xd8, 0xf5, 0x15,
+	0xed, 0x55, 0xc3, 0xae, 0xbf, 0x04, 0xaf, 0x3d, 0xcb, 0x41, 0x4e, 0xe1, 0x51, 0x29, 0xc8, 0xc6,
+	0xaa, 0x53, 0xa4, 0x5a, 0x70, 0xf7, 0xe8, 0x30, 0xec, 0x75, 0xa2, 0x9a, 0xb6, 0xc2, 0x15, 0xf4,
+	0x82, 0x9e, 0xb8, 0x3d, 0x81, 0x3b, 0xcd, 0xc1, 0x4d, 0xe3, 0x89, 0x04, 0xe0, 0xdc, 0x79, 0x6b,
+	0x8b, 0xc1, 0x84, 0xac, 0xc0, 0x8d, 0x17, 0x93, 0xaa, 0x13, 0xbd, 0x98, 0xbc, 0x90, 0xd5, 0x9c,
+	0xd8, 0x5c, 0xe5, 0x6c, 0x16, 0xf0, 0xc5, 0x2c, 0xeb, 0x87, 0x3f, 0x0a, 0xff, 0x61, 0x70, 0x28,
+	0xb6, 0xda, 0x8d, 0x8b, 0x09, 0xa1, 0xc6, 0x94, 0xe3, 0x0b, 0x97, 0x06, 0xea, 0x83, 0x38, 0xdf,
+	0xe4, 0x9c, 0xaf, 0xe0, 0xe5, 0xc1, 0x38, 0xeb, 0x1b, 0x76, 0x37, 0xba, 0x3f, 0x66, 0x30, 0x12,
+	0x28, 0x17, 0xaa, 0x76, 0xb2, 0x51, 0x65, 0x5b, 0xd5, 0x4e, 0x36, 0xb2, 0x66, 0xab, 0x7d, 0x9a,
+	0x13, 0x99, 0xc3, 0x19, 0xe5, 0x21, 0xb1, 0xc8, 0xeb, 0x9e, 0xbe, 0xe3, 0xec, 0x07, 0x0c, 0x46,
+	0x83, 0xe5, 0x52, 0x4c, 0x03, 0xc1, 0x1b, 0xdc, 0xf3, 0xe9, 0x8c, 0x12, 0x8f, 0xa1, 0x20, 0x70,
+	0x07, 0x7f, 0xca, 0x60, 0x77, 0xa8, 0x3c, 0x8e, 0xf3, 0x49, 0xcf, 0xfd, 0xfe, 0x92, 0xbe, 0x6a,
+	0xe2, 0x94, 0xd4, 0xf3, 0xb5, 0xe7, 0x39, 0xe4, 0x33, 0x38, 0xa7, 0x86, 0x4c, 0xe5, 0x7e, 0x9f,
+	0xda, 0x3f, 0x61, 0x80, 0xfd, 0x1f, 0x4a, 0xa8, 0xd6, 0x2d, 0xe9, 0x57, 0x1c, 0xaa, 0x75, 0x4b,
+	0xfe, 0x4d, 0x46, 0x82, 0xf9, 0x3f, 0x4c, 0x03, 0x7f, 0xc1, 0x60, 0x4f, 0xb8, 0x5e, 0x8a, 0x09,
+	0x55, 0x0c, 0x15, 0x85, 0x0b, 0x67, 0xd3, 0x9a, 0x11, 0xec, 0x0b, 0x1c, 0xf6, 0x59, 0x9c, 0x57,
+	0xc3, 0x16, 0xe5, 0x5b, 0x9f, 0xfc, 0x1f, 0x32, 0xd8, 0xdb, 0x57, 0x3d, 0xc6, 0x84, 0x58, 0xc2,
+	0x85, 0xed, 0xc2, 0xb9, 0xd4, 0x76, 0xa9, 0xef, 0x9d, 0x1c, 0x8f, 0x05, 0xfe, 0x95, 0xc1, 0xbe,
+	0xe8, 0x52, 0xa6, 0xea, 0xf0, 0x19, 0x5b, 0x68, 0x56, 0x1d, 0x3e, 0xe3, 0xab, 0xc8, 0x09, 0xce,
+	0x62, 0xe2, 0x5a, 0xa2, 0xe8, 0xd6, 0x56, 0x8b, 0xe2, 0x9a, 0xb4, 0x6f, 0x42, 0xdd, 0x58, 0x77,
+	0xcc, 0xf6, 0x26, 0xfe, 0x8e, 0xc1, 0xb8, 0xa4, 0x64, 0x8b, 0x99, 0xb0, 0x26, 0x3d, 0x76, 0x2a,
+	0xea, 0xc4, 0x09, 0xf6, 0xab, 0x32, 0xaa, 0x0e, 0x7e, 0x75, 0x08, 0x0e, 0xc4, 0xd4, 0x05, 0xf1,
+	0xa5, 0x14, 0xf7, 0x17, 0xd1, 0x61, 0x5c, 0x18, 0xa0, 0x07, 0x22, 0x78, 0x8b, 0x13, 0x7c, 0x03,
+	0x5f, 0x4b, 0x78, 0x1f, 0xa2, 0x8e, 0xa8, 0x7b, 0x9d, 0xe0, 0xc6, 0xf5, 0x6f, 0x0c, 0x0e, 0xc6,
+	0x95, 0x46, 0x31, 0x3b, 0x03, 0x2f, 0xc2, 0x8b, 0x83, 0x74, 0x41, 0x2a, 0xbc, 0xc4, 0x55, 0x78,
+	0x0e, 0xcf, 0x67, 0x54, 0xc1, 0xc1, 0x7f, 0x33, 0x18, 0x97, 0xd4, 0xa4, 0x54, 0x19, 0x1c, 0x5f,
+	0x4f, 0x2d, 0x5c, 0xcc, 0x68, 0x4d, 0xd4, 0xde, 0xe4, 0xd4, 0xca, 0xb8, 0x94, 0x60, 0xc7, 0xaa,
+	0x0e, 0xae, 0xed, 0x1b, 0xb4, 0xef, 0x0d, 0xc1, 0x54, 0xb2, 0xc2, 0x24, 0xde, 0xc8, 0xc4, 0x41,
+	0xb2, 0xeb, 0xbd, 0x99, 0x4f, 0x67, 0xa4, 0xcf, 0x32, 0xd7, 0xe7, 0x33, 0x78, 0x23, 0x83, 0x3e,
+	0x8e, 0x6c, 0x3e, 0xfb, 0x83, 0x7f, 0xd3, 0x1f, 0xce, 0xf9, 0x6c, 0x01, 0x75, 0xd2, 0x6e, 0xfa,
+	0x65, 0xb9, 0xae, 0x5e, 0x4d, 0x63, 0x08, 0xe3, 0xbf, 0x18, 0x4c, 0xc8, 0x6a, 0x65, 0x98, 0xf8,
+	0x8e, 0x2f, 0xb2, 0xae, 0xa9, 0x62, 0xa6, 0x2a, 0x5a, 0x6a, 0x65, 0xce, 0xec, 0x26, 0x5e, 0x4f,
+	0xb0, 0xb5, 0x2f, 0xba, 0x05, 0x3c, 0xe5, 0xca, 0xf4, 0x09, 0x83, 0xfd, 0xd2, 0xda, 0x20, 0x66,
+	0x44, 0xec, 0xc5, 0xf2, 0xc5, 0xcc, 0xf6, 0x89, 0x83, 0x29, 0xa7, 0xec, 0x2c, 0x5e, 0xfd, 0x68,
+	0x6b, 0x92, 0x7d, 0xbc, 0x35, 0xc9, 0xfe, 0xbc, 0x35, 0xc9, 0xbe, 0xfe, 0x70, 0x72, 0xdb, 0xc7,
+	0x0f, 0x27, 0xb7, 0xfd, 0xf1, 0xe1, 0xe4, 0xb6, 0xb7, 0x8a, 0x75, 0xab, 0x73, 0x7b, 0x7d, 0xa5,
+	0x54, 0xb5, 0xd7, 0xfa, 0x7a, 0xbe, 0x7b, 0x56, 0xff, 0x72, 0xf0, 0x7f, 0x53, 0xaf, 0xec, 0xe4,
+	0xff, 0x9d, 0x7a, 0xee, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x1f, 0x11, 0x70, 0x0a, 0x39, 0x3e,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2562,6 +3715,18 @@ type QueryClient interface {
 	ProviderStakes(ctx context.Context, in *QueryProviderStakesRequest, opts ...grpc.CallOption) (*QueryProviderStakesResponse, error)
 	ProviderRewards(ctx context.Context, in *QueryProviderRewardsRequest, opts ...grpc.CallOption) (*QueryProviderRewardsResponse, error)
 	ProviderRewardsAll(ctx context.Context, in *QueryProviderRewardsAllRequest, opts ...grpc.CallOption) (*QueryProviderRewardsAllResponse, error)
+	// Liveness queries
+	ProviderLiveness(ctx context.Context, in *QueryProviderLivenessRequest, opts ...grpc.CallOption) (*QueryProviderLivenessResponse, error)
+	ProvidersLiveness(ctx context.Context, in *QueryProvidersLivenessRequest, opts ...grpc.CallOption) (*QueryProvidersLivenessResponse, error)
+	PackfileUpdateProposal(ctx context.Context, in *QueryPackfileUpdateProposalRequest, opts ...grpc.CallOption) (*QueryPackfileUpdateProposalResponse, error)
+	PackfileUpdateProposals(ctx context.Context, in *QueryPackfileUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryPackfileUpdateProposalsResponse, error)
+	ReleaseAssetsUpdateProposal(ctx context.Context, in *QueryReleaseAssetsUpdateProposalRequest, opts ...grpc.CallOption) (*QueryReleaseAssetsUpdateProposalResponse, error)
+	ReleaseAssetsUpdateProposals(ctx context.Context, in *QueryReleaseAssetsUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryReleaseAssetsUpdateProposalsResponse, error)
+	LFSObjectUpdateProposal(ctx context.Context, in *QueryLFSObjectUpdateProposalRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalResponse, error)
+	LFSObjectUpdateProposalsByRepositoryId(ctx context.Context, in *QueryLFSObjectUpdateProposalsByRepositoryIdRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error)
+	LFSObjectUpdateProposals(ctx context.Context, in *QueryLFSObjectUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalsResponse, error)
+	RepositoryDeleteProposal(ctx context.Context, in *QueryRepositoryDeleteProposalRequest, opts ...grpc.CallOption) (*QueryRepositoryDeleteProposalResponse, error)
+	RepositoryDeleteProposals(ctx context.Context, in *QueryRepositoryDeleteProposalsRequest, opts ...grpc.CallOption) (*QueryRepositoryDeleteProposalsResponse, error)
 }
 
 type queryClient struct {
@@ -2797,6 +3962,105 @@ func (c *queryClient) ProviderRewardsAll(ctx context.Context, in *QueryProviderR
 	return out, nil
 }
 
+func (c *queryClient) ProviderLiveness(ctx context.Context, in *QueryProviderLivenessRequest, opts ...grpc.CallOption) (*QueryProviderLivenessResponse, error) {
+	out := new(QueryProviderLivenessResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/ProviderLiveness", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ProvidersLiveness(ctx context.Context, in *QueryProvidersLivenessRequest, opts ...grpc.CallOption) (*QueryProvidersLivenessResponse, error) {
+	out := new(QueryProvidersLivenessResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/ProvidersLiveness", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PackfileUpdateProposal(ctx context.Context, in *QueryPackfileUpdateProposalRequest, opts ...grpc.CallOption) (*QueryPackfileUpdateProposalResponse, error) {
+	out := new(QueryPackfileUpdateProposalResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/PackfileUpdateProposal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PackfileUpdateProposals(ctx context.Context, in *QueryPackfileUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryPackfileUpdateProposalsResponse, error) {
+	out := new(QueryPackfileUpdateProposalsResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/PackfileUpdateProposals", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ReleaseAssetsUpdateProposal(ctx context.Context, in *QueryReleaseAssetsUpdateProposalRequest, opts ...grpc.CallOption) (*QueryReleaseAssetsUpdateProposalResponse, error) {
+	out := new(QueryReleaseAssetsUpdateProposalResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/ReleaseAssetsUpdateProposal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ReleaseAssetsUpdateProposals(ctx context.Context, in *QueryReleaseAssetsUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryReleaseAssetsUpdateProposalsResponse, error) {
+	out := new(QueryReleaseAssetsUpdateProposalsResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/ReleaseAssetsUpdateProposals", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) LFSObjectUpdateProposal(ctx context.Context, in *QueryLFSObjectUpdateProposalRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalResponse, error) {
+	out := new(QueryLFSObjectUpdateProposalResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) LFSObjectUpdateProposalsByRepositoryId(ctx context.Context, in *QueryLFSObjectUpdateProposalsByRepositoryIdRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error) {
+	out := new(QueryLFSObjectUpdateProposalsByRepositoryIdResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposalsByRepositoryId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) LFSObjectUpdateProposals(ctx context.Context, in *QueryLFSObjectUpdateProposalsRequest, opts ...grpc.CallOption) (*QueryLFSObjectUpdateProposalsResponse, error) {
+	out := new(QueryLFSObjectUpdateProposalsResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposals", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RepositoryDeleteProposal(ctx context.Context, in *QueryRepositoryDeleteProposalRequest, opts ...grpc.CallOption) (*QueryRepositoryDeleteProposalResponse, error) {
+	out := new(QueryRepositoryDeleteProposalResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/RepositoryDeleteProposal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RepositoryDeleteProposals(ctx context.Context, in *QueryRepositoryDeleteProposalsRequest, opts ...grpc.CallOption) (*QueryRepositoryDeleteProposalsResponse, error) {
+	out := new(QueryRepositoryDeleteProposalsResponse)
+	err := c.cc.Invoke(ctx, "/gitopia.gitopia.storage.Query/RepositoryDeleteProposals", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Params queries the parameters of the module
@@ -2836,6 +4100,18 @@ type QueryServer interface {
 	ProviderStakes(context.Context, *QueryProviderStakesRequest) (*QueryProviderStakesResponse, error)
 	ProviderRewards(context.Context, *QueryProviderRewardsRequest) (*QueryProviderRewardsResponse, error)
 	ProviderRewardsAll(context.Context, *QueryProviderRewardsAllRequest) (*QueryProviderRewardsAllResponse, error)
+	// Liveness queries
+	ProviderLiveness(context.Context, *QueryProviderLivenessRequest) (*QueryProviderLivenessResponse, error)
+	ProvidersLiveness(context.Context, *QueryProvidersLivenessRequest) (*QueryProvidersLivenessResponse, error)
+	PackfileUpdateProposal(context.Context, *QueryPackfileUpdateProposalRequest) (*QueryPackfileUpdateProposalResponse, error)
+	PackfileUpdateProposals(context.Context, *QueryPackfileUpdateProposalsRequest) (*QueryPackfileUpdateProposalsResponse, error)
+	ReleaseAssetsUpdateProposal(context.Context, *QueryReleaseAssetsUpdateProposalRequest) (*QueryReleaseAssetsUpdateProposalResponse, error)
+	ReleaseAssetsUpdateProposals(context.Context, *QueryReleaseAssetsUpdateProposalsRequest) (*QueryReleaseAssetsUpdateProposalsResponse, error)
+	LFSObjectUpdateProposal(context.Context, *QueryLFSObjectUpdateProposalRequest) (*QueryLFSObjectUpdateProposalResponse, error)
+	LFSObjectUpdateProposalsByRepositoryId(context.Context, *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error)
+	LFSObjectUpdateProposals(context.Context, *QueryLFSObjectUpdateProposalsRequest) (*QueryLFSObjectUpdateProposalsResponse, error)
+	RepositoryDeleteProposal(context.Context, *QueryRepositoryDeleteProposalRequest) (*QueryRepositoryDeleteProposalResponse, error)
+	RepositoryDeleteProposals(context.Context, *QueryRepositoryDeleteProposalsRequest) (*QueryRepositoryDeleteProposalsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -2916,6 +4192,39 @@ func (*UnimplementedQueryServer) ProviderRewards(ctx context.Context, req *Query
 }
 func (*UnimplementedQueryServer) ProviderRewardsAll(ctx context.Context, req *QueryProviderRewardsAllRequest) (*QueryProviderRewardsAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProviderRewardsAll not implemented")
+}
+func (*UnimplementedQueryServer) ProviderLiveness(ctx context.Context, req *QueryProviderLivenessRequest) (*QueryProviderLivenessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProviderLiveness not implemented")
+}
+func (*UnimplementedQueryServer) ProvidersLiveness(ctx context.Context, req *QueryProvidersLivenessRequest) (*QueryProvidersLivenessResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProvidersLiveness not implemented")
+}
+func (*UnimplementedQueryServer) PackfileUpdateProposal(ctx context.Context, req *QueryPackfileUpdateProposalRequest) (*QueryPackfileUpdateProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PackfileUpdateProposal not implemented")
+}
+func (*UnimplementedQueryServer) PackfileUpdateProposals(ctx context.Context, req *QueryPackfileUpdateProposalsRequest) (*QueryPackfileUpdateProposalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PackfileUpdateProposals not implemented")
+}
+func (*UnimplementedQueryServer) ReleaseAssetsUpdateProposal(ctx context.Context, req *QueryReleaseAssetsUpdateProposalRequest) (*QueryReleaseAssetsUpdateProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReleaseAssetsUpdateProposal not implemented")
+}
+func (*UnimplementedQueryServer) ReleaseAssetsUpdateProposals(ctx context.Context, req *QueryReleaseAssetsUpdateProposalsRequest) (*QueryReleaseAssetsUpdateProposalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReleaseAssetsUpdateProposals not implemented")
+}
+func (*UnimplementedQueryServer) LFSObjectUpdateProposal(ctx context.Context, req *QueryLFSObjectUpdateProposalRequest) (*QueryLFSObjectUpdateProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LFSObjectUpdateProposal not implemented")
+}
+func (*UnimplementedQueryServer) LFSObjectUpdateProposalsByRepositoryId(ctx context.Context, req *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) (*QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LFSObjectUpdateProposalsByRepositoryId not implemented")
+}
+func (*UnimplementedQueryServer) LFSObjectUpdateProposals(ctx context.Context, req *QueryLFSObjectUpdateProposalsRequest) (*QueryLFSObjectUpdateProposalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LFSObjectUpdateProposals not implemented")
+}
+func (*UnimplementedQueryServer) RepositoryDeleteProposal(ctx context.Context, req *QueryRepositoryDeleteProposalRequest) (*QueryRepositoryDeleteProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RepositoryDeleteProposal not implemented")
+}
+func (*UnimplementedQueryServer) RepositoryDeleteProposals(ctx context.Context, req *QueryRepositoryDeleteProposalsRequest) (*QueryRepositoryDeleteProposalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RepositoryDeleteProposals not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -3372,6 +4681,204 @@ func _Query_ProviderRewardsAll_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ProviderLiveness_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProviderLivenessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ProviderLiveness(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/ProviderLiveness",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ProviderLiveness(ctx, req.(*QueryProviderLivenessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ProvidersLiveness_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProvidersLivenessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ProvidersLiveness(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/ProvidersLiveness",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ProvidersLiveness(ctx, req.(*QueryProvidersLivenessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PackfileUpdateProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPackfileUpdateProposalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PackfileUpdateProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/PackfileUpdateProposal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PackfileUpdateProposal(ctx, req.(*QueryPackfileUpdateProposalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PackfileUpdateProposals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPackfileUpdateProposalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PackfileUpdateProposals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/PackfileUpdateProposals",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PackfileUpdateProposals(ctx, req.(*QueryPackfileUpdateProposalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ReleaseAssetsUpdateProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryReleaseAssetsUpdateProposalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ReleaseAssetsUpdateProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/ReleaseAssetsUpdateProposal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ReleaseAssetsUpdateProposal(ctx, req.(*QueryReleaseAssetsUpdateProposalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ReleaseAssetsUpdateProposals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryReleaseAssetsUpdateProposalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ReleaseAssetsUpdateProposals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/ReleaseAssetsUpdateProposals",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ReleaseAssetsUpdateProposals(ctx, req.(*QueryReleaseAssetsUpdateProposalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_LFSObjectUpdateProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryLFSObjectUpdateProposalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).LFSObjectUpdateProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).LFSObjectUpdateProposal(ctx, req.(*QueryLFSObjectUpdateProposalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_LFSObjectUpdateProposalsByRepositoryId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryLFSObjectUpdateProposalsByRepositoryIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).LFSObjectUpdateProposalsByRepositoryId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposalsByRepositoryId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).LFSObjectUpdateProposalsByRepositoryId(ctx, req.(*QueryLFSObjectUpdateProposalsByRepositoryIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_LFSObjectUpdateProposals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryLFSObjectUpdateProposalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).LFSObjectUpdateProposals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/LFSObjectUpdateProposals",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).LFSObjectUpdateProposals(ctx, req.(*QueryLFSObjectUpdateProposalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RepositoryDeleteProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRepositoryDeleteProposalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RepositoryDeleteProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/RepositoryDeleteProposal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RepositoryDeleteProposal(ctx, req.(*QueryRepositoryDeleteProposalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RepositoryDeleteProposals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRepositoryDeleteProposalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RepositoryDeleteProposals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gitopia.gitopia.storage.Query/RepositoryDeleteProposals",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RepositoryDeleteProposals(ctx, req.(*QueryRepositoryDeleteProposalsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "gitopia.gitopia.storage.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -3475,6 +4982,50 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProviderRewardsAll",
 			Handler:    _Query_ProviderRewardsAll_Handler,
+		},
+		{
+			MethodName: "ProviderLiveness",
+			Handler:    _Query_ProviderLiveness_Handler,
+		},
+		{
+			MethodName: "ProvidersLiveness",
+			Handler:    _Query_ProvidersLiveness_Handler,
+		},
+		{
+			MethodName: "PackfileUpdateProposal",
+			Handler:    _Query_PackfileUpdateProposal_Handler,
+		},
+		{
+			MethodName: "PackfileUpdateProposals",
+			Handler:    _Query_PackfileUpdateProposals_Handler,
+		},
+		{
+			MethodName: "ReleaseAssetsUpdateProposal",
+			Handler:    _Query_ReleaseAssetsUpdateProposal_Handler,
+		},
+		{
+			MethodName: "ReleaseAssetsUpdateProposals",
+			Handler:    _Query_ReleaseAssetsUpdateProposals_Handler,
+		},
+		{
+			MethodName: "LFSObjectUpdateProposal",
+			Handler:    _Query_LFSObjectUpdateProposal_Handler,
+		},
+		{
+			MethodName: "LFSObjectUpdateProposalsByRepositoryId",
+			Handler:    _Query_LFSObjectUpdateProposalsByRepositoryId_Handler,
+		},
+		{
+			MethodName: "LFSObjectUpdateProposals",
+			Handler:    _Query_LFSObjectUpdateProposals_Handler,
+		},
+		{
+			MethodName: "RepositoryDeleteProposal",
+			Handler:    _Query_RepositoryDeleteProposal_Handler,
+		},
+		{
+			MethodName: "RepositoryDeleteProposals",
+			Handler:    _Query_RepositoryDeleteProposals_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -5246,6 +6797,847 @@ func (m *QueryProviderStakesResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryProviderLivenessRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryProviderLivenessRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryProviderLivenessRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryProviderLivenessResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryProviderLivenessResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryProviderLivenessResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.LivenessInfo.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryProvidersLivenessRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryProvidersLivenessRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryProvidersLivenessRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryProvidersLivenessResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryProvidersLivenessResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryProvidersLivenessResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.LivenessInfos) > 0 {
+		for iNdEx := len(m.LivenessInfos) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LivenessInfos[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryPackfileUpdateProposalRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryPackfileUpdateProposalRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryPackfileUpdateProposalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryPackfileUpdateProposalResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryPackfileUpdateProposalResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryPackfileUpdateProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.PackfileUpdateProposal.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryPackfileUpdateProposalsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryPackfileUpdateProposalsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryPackfileUpdateProposalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PackfileUpdateProposals) > 0 {
+		for iNdEx := len(m.PackfileUpdateProposals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PackfileUpdateProposals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Tag) > 0 {
+		i -= len(m.Tag)
+		copy(dAtA[i:], m.Tag)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Tag)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ReleaseAssetsProposal.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ReleaseAssetsProposals) > 0 {
+		for iNdEx := len(m.ReleaseAssetsProposals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ReleaseAssetsProposals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Oid) > 0 {
+		i -= len(m.Oid)
+		copy(dAtA[i:], m.Oid)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Oid)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.LfsObjectProposal.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.LfsObjectProposals) > 0 {
+		for iNdEx := len(m.LfsObjectProposals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LfsObjectProposals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.LfsObjectProposals) > 0 {
+		for iNdEx := len(m.LfsObjectProposals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LfsObjectProposals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.User) > 0 {
+		i -= len(m.User)
+		copy(dAtA[i:], m.User)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.User)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.RepositoryId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.RepositoryId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRepositoryDeleteProposalResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRepositoryDeleteProposalResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRepositoryDeleteProposalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.RepositoryDeleteProposal.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRepositoryDeleteProposalsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRepositoryDeleteProposalsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRepositoryDeleteProposalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.RepositoryDeleteProposals) > 0 {
+		for iNdEx := len(m.RepositoryDeleteProposals) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.RepositoryDeleteProposals[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -5929,6 +8321,337 @@ func (m *QueryProviderStakesResponse) Size() (n int) {
 	_ = l
 	if len(m.ProviderStakes) > 0 {
 		for _, e := range m.ProviderStakes {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryProviderLivenessRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryProviderLivenessResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.LivenessInfo.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryProvidersLivenessRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryProvidersLivenessResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.LivenessInfos) > 0 {
+		for _, e := range m.LivenessInfos {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryPackfileUpdateProposalRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryPackfileUpdateProposalResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.PackfileUpdateProposal.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryPackfileUpdateProposalsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryPackfileUpdateProposalsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PackfileUpdateProposals) > 0 {
+		for _, e := range m.PackfileUpdateProposals {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryReleaseAssetsUpdateProposalRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.Tag)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryReleaseAssetsUpdateProposalResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ReleaseAssetsProposal.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryReleaseAssetsUpdateProposalsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ReleaseAssetsProposals) > 0 {
+		for _, e := range m.ReleaseAssetsProposals {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.Oid)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.LfsObjectProposal.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.LfsObjectProposals) > 0 {
+		for _, e := range m.LfsObjectProposals {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryLFSObjectUpdateProposalsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.LfsObjectProposals) > 0 {
+		for _, e := range m.LfsObjectProposals {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryRepositoryDeleteProposalRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RepositoryId != 0 {
+		n += 1 + sovQuery(uint64(m.RepositoryId))
+	}
+	l = len(m.User)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryRepositoryDeleteProposalResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.RepositoryDeleteProposal.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryRepositoryDeleteProposalsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryRepositoryDeleteProposalsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.RepositoryDeleteProposals) > 0 {
+		for _, e := range m.RepositoryDeleteProposals {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -10303,6 +13026,2186 @@ func (m *QueryProviderStakesResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.ProviderStakes = append(m.ProviderStakes, ProviderStake{})
 			if err := m.ProviderStakes[len(m.ProviderStakes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryProviderLivenessRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryProviderLivenessRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryProviderLivenessRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryProviderLivenessResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryProviderLivenessResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryProviderLivenessResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.LivenessInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryProvidersLivenessRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryProvidersLivenessRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryProvidersLivenessRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryProvidersLivenessResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryProvidersLivenessResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryProvidersLivenessResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LivenessInfos", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LivenessInfos = append(m.LivenessInfos, ProviderLivenessInfo{})
+			if err := m.LivenessInfos[len(m.LivenessInfos)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryPackfileUpdateProposalRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryPackfileUpdateProposalResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PackfileUpdateProposal", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.PackfileUpdateProposal.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryPackfileUpdateProposalsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryPackfileUpdateProposalsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryPackfileUpdateProposalsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PackfileUpdateProposals", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PackfileUpdateProposals = append(m.PackfileUpdateProposals, ProposedPackfileUpdate{})
+			if err := m.PackfileUpdateProposals[len(m.PackfileUpdateProposals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryReleaseAssetsUpdateProposalRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Tag", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Tag = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryReleaseAssetsUpdateProposalResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReleaseAssetsProposal", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ReleaseAssetsProposal.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryReleaseAssetsUpdateProposalsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryReleaseAssetsUpdateProposalsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryReleaseAssetsUpdateProposalsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReleaseAssetsProposals", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReleaseAssetsProposals = append(m.ReleaseAssetsProposals, ProposedReleaseAssetsUpdate{})
+			if err := m.ReleaseAssetsProposals[len(m.ReleaseAssetsProposals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Oid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Oid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LfsObjectProposal", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.LfsObjectProposal.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsByRepositoryIdRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsByRepositoryIdRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalsByRepositoryIdResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsByRepositoryIdResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsByRepositoryIdResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LfsObjectProposals", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LfsObjectProposals = append(m.LfsObjectProposals, ProposedLFSObjectUpdate{})
+			if err := m.LfsObjectProposals[len(m.LfsObjectProposals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryLFSObjectUpdateProposalsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryLFSObjectUpdateProposalsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LfsObjectProposals", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LfsObjectProposals = append(m.LfsObjectProposals, ProposedLFSObjectUpdate{})
+			if err := m.LfsObjectProposals[len(m.LfsObjectProposals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRepositoryDeleteProposalRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryId", wireType)
+			}
+			m.RepositoryId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RepositoryId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field User", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.User = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRepositoryDeleteProposalResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryDeleteProposal", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RepositoryDeleteProposal.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRepositoryDeleteProposalsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryRepositoryDeleteProposalsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryRepositoryDeleteProposalsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RepositoryDeleteProposals", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RepositoryDeleteProposals = append(m.RepositoryDeleteProposals, ProposedRepositoryDelete{})
+			if err := m.RepositoryDeleteProposals[len(m.RepositoryDeleteProposals)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

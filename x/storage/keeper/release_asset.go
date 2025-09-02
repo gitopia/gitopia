@@ -95,6 +95,22 @@ func (k Keeper) GetReleaseAssets(ctx sdk.Context, repositoryId uint64, tag strin
 	return
 }
 
+// GetReleaseAssetsByRepositoryId returns all release assets by repository id
+func (k Keeper) GetReleaseAssetsByRepositoryId(ctx sdk.Context, repositoryId uint64) (list []types.ReleaseAsset) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseAssetKey))
+	iterator := sdk.KVStorePrefixIterator(store, []byte(fmt.Sprintf("%d-", repositoryId)))
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.ReleaseAsset
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
+}
+
 // GetReleaseAssetById returns a release asset from its release asset id
 func (k Keeper) GetReleaseAssetById(ctx sdk.Context, releaseAssetId uint64) (val types.ReleaseAsset, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ReleaseAssetKey))

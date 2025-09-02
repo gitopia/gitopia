@@ -120,7 +120,52 @@ service Query {
   }
 
   rpc ProviderRewardsAll(QueryProviderRewardsAllRequest) returns (QueryProviderRewardsAllResponse) {
-    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards-all";
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-rewards";
+  }
+
+  // Liveness queries
+  rpc ProviderLiveness(QueryProviderLivenessRequest) returns (QueryProviderLivenessResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/provider-liveness/{address}";
+  }
+
+  rpc ProvidersLiveness(QueryProvidersLivenessRequest) returns (QueryProvidersLivenessResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/providers-liveness";
+  }
+
+  rpc PackfileUpdateProposal(QueryPackfileUpdateProposalRequest) returns (QueryPackfileUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile-update-proposal/{repository_id}/{user}";
+  }
+
+  rpc PackfileUpdateProposals(QueryPackfileUpdateProposalsRequest) returns (QueryPackfileUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/packfile-update-proposals";
+  }
+
+  rpc ReleaseAssetsUpdateProposal(QueryReleaseAssetsUpdateProposalRequest) returns (QueryReleaseAssetsUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets-update-proposal/{repository_id}/{tag}/{user}";
+  }
+
+  rpc ReleaseAssetsUpdateProposals(QueryReleaseAssetsUpdateProposalsRequest) returns (QueryReleaseAssetsUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/release-assets-update-proposals";
+  }
+
+  rpc LFSObjectUpdateProposal(QueryLFSObjectUpdateProposalRequest) returns (QueryLFSObjectUpdateProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposal/{repository_id}/{oid}/{user}";
+  }
+
+  rpc LFSObjectUpdateProposalsByRepositoryId(QueryLFSObjectUpdateProposalsByRepositoryIdRequest) returns (QueryLFSObjectUpdateProposalsByRepositoryIdResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposals/{repository_id}/{user}";
+  }
+
+  rpc LFSObjectUpdateProposals(QueryLFSObjectUpdateProposalsRequest) returns (QueryLFSObjectUpdateProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/lfs-object-update-proposals";
+  }
+
+  rpc RepositoryDeleteProposal(QueryRepositoryDeleteProposalRequest) returns (QueryRepositoryDeleteProposalResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository-delete-proposal/{repository_id}/{user}";
+  }
+
+  rpc RepositoryDeleteProposals(QueryRepositoryDeleteProposalsRequest) returns (QueryRepositoryDeleteProposalsResponse) {
+    option (google.api.http).get = "/gitopia/gitopia/storage/repository-delete-proposals";
   }
 }
 
@@ -329,5 +374,106 @@ message QueryProviderStakesRequest {
 
 message QueryProviderStakesResponse {
   repeated ProviderStake provider_stakes = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// Liveness query messages
+message QueryProviderLivenessRequest {
+  string address = 1;
+}
+
+message QueryProviderLivenessResponse {
+  ProviderLivenessInfo liveness_info = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryProvidersLivenessRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryProvidersLivenessResponse {
+  repeated ProviderLivenessInfo liveness_infos = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryPackfileUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+}
+
+message QueryPackfileUpdateProposalResponse {
+  ProposedPackfileUpdate packfile_update_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPackfileUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryPackfileUpdateProposalsResponse {
+  repeated ProposedPackfileUpdate packfile_update_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryReleaseAssetsUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string tag = 2;
+  string user = 3;
+}
+
+message QueryReleaseAssetsUpdateProposalResponse {
+  ProposedReleaseAssetsUpdate release_assets_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryReleaseAssetsUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryReleaseAssetsUpdateProposalsResponse {
+  repeated ProposedReleaseAssetsUpdate release_assets_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLFSObjectUpdateProposalRequest {
+  uint64 repository_id = 1;
+  string oid = 2;
+  string user = 3;
+}
+
+message QueryLFSObjectUpdateProposalResponse {
+  ProposedLFSObjectUpdate lfs_object_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectUpdateProposalsByRepositoryIdRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+}
+
+message QueryLFSObjectUpdateProposalsByRepositoryIdResponse {
+  repeated ProposedLFSObjectUpdate lfs_object_proposals = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLFSObjectUpdateProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryLFSObjectUpdateProposalsResponse {
+  repeated ProposedLFSObjectUpdate lfs_object_proposals = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryRepositoryDeleteProposalRequest {
+  uint64 repository_id = 1;
+  string user = 2;
+}
+
+message QueryRepositoryDeleteProposalResponse {
+  ProposedRepositoryDelete repository_delete_proposal = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRepositoryDeleteProposalsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryRepositoryDeleteProposalsResponse {
+  repeated ProposedRepositoryDelete repository_delete_proposals = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

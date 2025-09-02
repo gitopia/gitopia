@@ -93,7 +93,7 @@ func (k Keeper) GetActiveProviders(ctx sdk.Context) (list []types.Provider) {
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Provider
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		if val.Status == types.ProviderStatus_PROVIDER_STATUS_ACTIVE {
+		if !val.Jailed && val.Status == types.Bonded {
 			list = append(list, val)
 		}
 	}

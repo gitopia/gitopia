@@ -14,21 +14,29 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgRegisterProvider{}, "storage/RegisterProvider", nil)
 	cdc.RegisterConcrete(&MsgUpdateProvider{}, "storage/UpdateProvider", nil)
 	cdc.RegisterConcrete(&MsgUpdateParams{}, "storage/UpdateParams", nil)
+	cdc.RegisterConcrete(&MsgClawbackProviderStake{}, "storage/ClawbackProviderStake", nil)
 	cdc.RegisterConcrete(&MsgUpdateRepositoryPackfile{}, "storage/UpdateRepositoryPackfile", nil)
-	cdc.RegisterConcrete(&MsgDeleteRepositoryPackfile{}, "storage/DeleteRepositoryPackfile", nil)
 	cdc.RegisterConcrete(&MsgSubmitChallengeResponse{}, "storage/SubmitChallengeResponse", nil)
 	cdc.RegisterConcrete(&MsgWithdrawProviderRewards{}, "storage/WithdrawProviderRewards", nil)
 	cdc.RegisterConcrete(&MsgUnregisterProvider{}, "storage/UnregisterProvider", nil)
 	cdc.RegisterConcrete(&MsgCompleteUnstake{}, "storage/CompleteUnstake", nil)
-	cdc.RegisterConcrete(&MsgUpdateReleaseAsset{}, "storage/UpdateReleaseAsset", nil)
-	cdc.RegisterConcrete(&MsgDeleteReleaseAsset{}, "storage/DeleteReleaseAsset", nil)
-	cdc.RegisterConcrete(&MsgMergePullRequest{}, "storage/MergePullRequest", nil)
+	cdc.RegisterConcrete(&MsgUpdateReleaseAssets{}, "storage/UpdateReleaseAssets", nil)
 	cdc.RegisterConcrete(&MsgUpdateLFSObject{}, "storage/UpdateLFSObject", nil)
-	cdc.RegisterConcrete(&MsgDeleteLFSObject{}, "storage/DeleteLFSObject", nil)
 	cdc.RegisterConcrete(&MsgIncreaseStake{}, "storage/IncreaseStake", nil)
 	cdc.RegisterConcrete(&MsgDecreaseStake{}, "storage/DecreaseStake", nil)
 	cdc.RegisterConcrete(&MsgCompleteDecreaseStake{}, "storage/CompleteDecreaseStake", nil)
-	cdc.RegisterConcrete(&MsgReactivateProvider{}, "storage/ReactivateProvider", nil)
+	cdc.RegisterConcrete(&MsgUnjailProvider{}, "storage/UnjailProvider", nil)
+	cdc.RegisterConcrete(&MsgProposeRepositoryPackfileUpdate{}, "storage/ProposeRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveRepositoryPackfileUpdate{}, "storage/ApproveRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectRepositoryPackfileUpdate{}, "storage/RejectRepositoryPackfileUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeReleaseAssetsUpdate{}, "storage/ProposeReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveReleaseAssetsUpdate{}, "storage/ApproveReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectReleaseAssetsUpdate{}, "storage/RejectReleaseAssetsUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeLFSObjectUpdate{}, "storage/ProposeLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgApproveLFSObjectUpdate{}, "storage/ApproveLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgRejectLFSObjectUpdate{}, "storage/RejectLFSObjectUpdate", nil)
+	cdc.RegisterConcrete(&MsgProposeRepositoryDelete{}, "storage/ProposeRepositoryDelete", nil)
+	cdc.RegisterConcrete(&MsgApproveRepositoryDelete{}, "storage/ApproveRepositoryDelete", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -37,21 +45,29 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRegisterProvider{},
 		&MsgUpdateProvider{},
 		&MsgUpdateParams{},
+		&MsgClawbackProviderStake{},
 		&MsgUpdateRepositoryPackfile{},
-		&MsgDeleteRepositoryPackfile{},
 		&MsgSubmitChallengeResponse{},
 		&MsgWithdrawProviderRewards{},
 		&MsgUnregisterProvider{},
 		&MsgCompleteUnstake{},
-		&MsgUpdateReleaseAsset{},
-		&MsgDeleteReleaseAsset{},
-		&MsgMergePullRequest{},
+		&MsgUpdateReleaseAssets{},
 		&MsgUpdateLFSObject{},
-		&MsgDeleteLFSObject{},
 		&MsgIncreaseStake{},
 		&MsgDecreaseStake{},
 		&MsgCompleteDecreaseStake{},
-		&MsgReactivateProvider{},
+		&MsgUnjailProvider{},
+		&MsgProposeRepositoryPackfileUpdate{},
+		&MsgApproveRepositoryPackfileUpdate{},
+		&MsgRejectRepositoryPackfileUpdate{},
+		&MsgProposeReleaseAssetsUpdate{},
+		&MsgApproveReleaseAssetsUpdate{},
+		&MsgRejectReleaseAssetsUpdate{},
+		&MsgProposeLFSObjectUpdate{},
+		&MsgApproveLFSObjectUpdate{},
+		&MsgRejectLFSObjectUpdate{},
+		&MsgProposeRepositoryDelete{},
+		&MsgApproveRepositoryDelete{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

@@ -16,11 +16,12 @@ const (
 
 var _ sdk.Msg = &MsgSetTag{}
 
-func NewMsgSetTag(creator string, repositoryId RepositoryId, tag MsgSetTag_Tag) *MsgSetTag {
+func NewMsgSetTag(creator string, repositoryId RepositoryId, tag MsgSetTag_Tag, packfileCid string) *MsgSetTag {
 	return &MsgSetTag{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Tag:          tag,
+		PackfileCid:  packfileCid,
 	}
 }
 
@@ -72,11 +73,12 @@ func (msg *MsgSetTag) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgMultiSetTag{}
 
-func NewMsgMultiSetTag(creator string, repositoryId RepositoryId, tags []MsgMultiSetTag_Tag) *MsgMultiSetTag {
+func NewMsgMultiSetTag(creator string, repositoryId RepositoryId, tags []MsgMultiSetTag_Tag, packfileCid string) *MsgMultiSetTag {
 	return &MsgMultiSetTag{
 		Creator:      creator,
 		RepositoryId: repositoryId,
 		Tags:         tags,
+		PackfileCid:  packfileCid,
 	}
 }
 

@@ -343,6 +343,15 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", pullRequest.Base.RepositoryId))
 	}
 
+	baseBranch, found := k.GetRepositoryBranch(ctx, pullRequest.Base.RepositoryId, pullRequest.Base.Branch)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("branch (%v) doesn't exist", pullRequest.Base.Branch))
+	}
+
+	if baseBranch.Sha != msg.BaseCommitSha {
+		return nil, fmt.Errorf("SHA mismatch: expected %s, got %s", baseBranch.Sha, msg.BaseCommitSha)
+	}
+
 	// check if dao requires a proposal to merge pull request
 	if baseRepository.Owner.Type == types.OwnerType_DAO {
 		dao, found := k.GetDao(ctx, baseRepository.Owner.Id)
@@ -358,13 +367,6 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("user (%v) doesn't have permission to perform this operation", msg.Creator))
 	}
 
-	id := k.AppendTask(ctx, types.Task{
-		Type:     types.TaskType(types.TypeSetPullRequestState),
-		State:    types.TaskState(types.StatePending),
-		Creator:  msg.Creator,
-		Provider: msg.Provider,
-	})
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -373,7 +375,6 @@ func (k msgServer) InvokeMergePullRequest(goCtx context.Context, msg *types.MsgI
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
@@ -407,13 +408,6 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 		return nil, err
 	}
 
-	id := k.AppendTask(ctx, types.Task{
-		Type:     types.TaskType(types.TypeSetPullRequestState),
-		State:    types.TaskState(types.StatePending),
-		Creator:  dao.Address,
-		Provider: msg.Provider,
-	})
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -422,7 +416,6 @@ func (k msgServer) InvokeDaoMergePullRequest(goCtx context.Context, msg *types.M
 			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(pullRequest.Base.RepositoryId, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
 			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
-			sdk.NewAttribute(types.EventAttributeTaskIdKey, strconv.FormatUint(id, 10)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 		),
 	)
@@ -1321,7 +1314,7 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("repository id (%d) doesn't exist", msg.RepositoryId))
 	}
 
-	DoRemovePullRequest(ctx, k, pullRequest, repository)
+	k.DoRemovePullRequest(ctx, pullRequest, repository)
 
 	repository.UpdatedAt = ctx.BlockTime().Unix()
 	k.SetRepository(ctx, repository)
@@ -1340,11 +1333,172 @@ func (k msgServer) DeletePullRequest(goCtx context.Context, msg *types.MsgDelete
 	return &types.MsgDeletePullRequestResponse{}, nil
 }
 
-func DoRemovePullRequest(ctx sdk.Context, k msgServer, pullRequest types.PullRequest, repository types.Repository) {
-	comments := k.GetAllPullRequestComment(ctx, repository.Id, pullRequest.Iid)
-	for _, comment := range comments {
-		k.RemovePullRequestComment(ctx, repository.Id, pullRequest.Iid, comment.CommentIid)
+func (k msgServer) MergePullRequest(goCtx context.Context, msg *types.MsgMergePullRequest) (*types.MsgMergePullRequestResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Get the pull request
+	pullRequest, found := k.GetRepositoryPullRequest(ctx, msg.RepositoryId, msg.PullRequestIid)
+	if !found {
+		return nil, fmt.Errorf("pull request not found")
 	}
 
-	k.RemoveRepositoryPullRequest(ctx, repository.Id, pullRequest.Iid)
+	// Check if pull request can be merged
+	if pullRequest.State == types.PullRequest_MERGED || pullRequest.State == types.PullRequest_CLOSED {
+		return nil, fmt.Errorf("can't merge pull request in state %s", pullRequest.State.String())
+	}
+
+	// Get the base repository
+	baseRepository, found := k.GetRepositoryById(ctx, pullRequest.Base.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("base repository not found")
+	}
+
+	// Optimistic concurrency control: check if the current CID matches the expected old_cid
+	packfile, found := k.storageKeeper.GetPackfile(ctx, baseRepository.Id)
+	if !found {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("packfile (%v) doesn't exist", baseRepository.Id))
+	}
+
+	// Check if the cid matches the cid provider updated the packfile
+	if packfile.Cid != msg.PackfileCid {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Errorf("CID mismatch: expected %s, got %s", packfile.Cid, msg.PackfileCid).Error())
+	}
+
+	// Get the base branch
+	baseBranch, found := k.GetRepositoryBranch(ctx, baseRepository.Id, pullRequest.Base.Branch)
+	if !found {
+		return nil, fmt.Errorf("base branch not found")
+	}
+
+	// Get the head repository and branch
+	headRepository, found := k.GetRepositoryById(ctx, pullRequest.Head.RepositoryId)
+	if !found {
+		return nil, fmt.Errorf("head repository not found")
+	}
+
+	headBranch, found := k.GetRepositoryBranch(ctx, headRepository.Id, pullRequest.Head.Branch)
+	if !found {
+		return nil, fmt.Errorf("head branch not found")
+	}
+
+	blockTime := ctx.BlockTime().Unix()
+
+	// Update branch references
+	pullRequest.Base.CommitSha = baseBranch.Sha
+	baseBranch.Sha = msg.MergeCommitSha
+	baseBranch.UpdatedAt = blockTime
+	pullRequest.Head.CommitSha = headBranch.Sha
+
+	// Update pull request state
+	pullRequest.State = types.PullRequest_MERGED
+	pullRequest.MergedAt = blockTime
+	pullRequest.MergedBy = msg.Creator
+	pullRequest.MergeCommitSha = msg.MergeCommitSha
+	pullRequest.UpdatedAt = blockTime
+
+	// Update repository and branch
+	k.SetRepositoryBranch(ctx, baseBranch)
+	k.SetPullRequest(ctx, pullRequest)
+
+	// Handle linked issues
+	for _, issueIid := range pullRequest.Issues {
+		issue, found := k.GetRepositoryIssue(ctx, baseRepository.Id, issueIid.Iid)
+		if !found {
+			continue
+		}
+		if issue.State != types.Issue_OPEN {
+			continue
+		}
+		if len(issue.Assignees) != 1 || pullRequest.Creator != issue.Assignees[0] {
+			continue
+		}
+
+		// Close issue
+		issue.State = types.Issue_CLOSED
+		issue.ClosedBy = msg.Creator
+		issue.ClosedAt = blockTime
+		issue.UpdatedAt = blockTime
+		k.SetIssue(ctx, issue)
+
+		// Handle bounties
+		for _, bountyId := range issue.Bounties {
+			bounty, found := k.GetBounty(ctx, bountyId)
+			if !found {
+				continue
+			}
+			if bounty.State != types.BountyStateSRCDEBITTED {
+				continue
+			}
+
+			rewardAccAddress, err := sdk.AccAddressFromBech32(pullRequest.Creator)
+			if err != nil {
+				continue
+			}
+
+			if err := k.bankKeeper.IsSendEnabledCoins(ctx, bounty.Amount...); err != nil {
+				continue
+			}
+			if k.bankKeeper.BlockedAddr(rewardAccAddress) {
+				continue
+			}
+
+			bountyAddress := GetBountyAddress(bounty.Id)
+			if err := k.bankKeeper.SendCoins(
+				ctx, bountyAddress, rewardAccAddress, bounty.Amount,
+			); err != nil {
+				continue
+			}
+
+			bounty.State = types.BountyStateDESTCREDITED
+			bounty.RewardedTo = pullRequest.Creator
+			bounty.ExpireAt = time.Time{}.Unix()
+			bounty.UpdatedAt = blockTime
+
+			k.SetBounty(ctx, bounty)
+		}
+	}
+
+	// Add system comment
+	pullRequest.CommentsCount += 1
+	comment := types.Comment{
+		Creator:      "GITOPIA",
+		RepositoryId: pullRequest.Base.RepositoryId,
+		ParentIid:    pullRequest.Iid,
+		Parent:       types.CommentParentPullRequest,
+		CommentIid:   pullRequest.CommentsCount,
+		Body:         utils.PullRequestToggleStateCommentBody(msg.Creator, pullRequest.State),
+		System:       true,
+		CreatedAt:    blockTime,
+		UpdatedAt:    blockTime,
+		CommentType:  types.CommentTypePullRequestMerged,
+	}
+
+	k.AppendComment(ctx, comment)
+
+	// Emit event
+	headJson, _ := json.Marshal(pullRequest.Head)
+	baseBranchJson, _ := json.Marshal(baseBranch)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.MergePullRequestEventKey),
+			sdk.NewAttribute(types.EventAttributeCreatorKey, msg.Creator),
+			sdk.NewAttribute(types.EventAttributePullRequestIdKey, strconv.FormatUint(pullRequest.Id, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestIidKey, strconv.FormatUint(pullRequest.Iid, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestStateKey, pullRequest.State.String()),
+			sdk.NewAttribute(types.EventAttributePullRequestMergeCommitShaKey, msg.MergeCommitSha),
+			sdk.NewAttribute(types.EventAttributeRepoNameKey, baseRepository.Name),
+			sdk.NewAttribute(types.EventAttributeRepoIdKey, strconv.FormatUint(baseRepository.Id, 10)),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerIdKey, baseRepository.Owner.Id),
+			sdk.NewAttribute(types.EventAttributeRepoOwnerTypeKey, baseRepository.Owner.Type.String()),
+			sdk.NewAttribute(types.EventAttributePullRequestHeadKey, string(headJson)),
+			sdk.NewAttribute(types.EventAttributeRepoBranchKey, string(baseBranchJson)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedByKey, pullRequest.MergedBy),
+			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(pullRequest.UpdatedAt, 10)),
+			sdk.NewAttribute(types.EventAttributePullRequestMergedAtKey, strconv.FormatInt(pullRequest.MergedAt, 10)),
+		),
+	)
+
+	return &types.MsgMergePullRequestResponse{}, nil
 }

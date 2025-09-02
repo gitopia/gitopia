@@ -225,12 +225,13 @@ func (msg *MsgUpdatePullRequestDescription) ValidateBasic() error {
 
 var _ sdk.Msg = &MsgInvokeMergePullRequest{}
 
-func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string) *MsgInvokeMergePullRequest {
+func NewMsgInvokeMergePullRequest(creator string, repositoryId uint64, iid uint64, provider string, baseCommitSha string) *MsgInvokeMergePullRequest {
 	return &MsgInvokeMergePullRequest{
-		Creator:      creator,
-		RepositoryId: repositoryId,
-		Iid:          iid,
-		Provider:     provider,
+		Creator:       creator,
+		RepositoryId:  repositoryId,
+		Iid:           iid,
+		Provider:      provider,
+		BaseCommitSha: baseCommitSha,
 	}
 }
 
@@ -782,4 +783,54 @@ func (msg *MsgDeletePullRequest) GetSignBytes() []byte {
 
 func (msg *MsgDeletePullRequest) ValidateBasic() error {
 	return sdkerrors.Wrapf(sdkerrors.ErrNotSupported, "tx WIP")
+}
+
+var _ sdk.Msg = &MsgMergePullRequest{}
+
+func NewMsgMergePullRequest(creator string, repositoryId uint64, pullRequestIid uint64, mergeCommitSha string, packfileCid string) *MsgMergePullRequest {
+	return &MsgMergePullRequest{
+		Creator:        creator,
+		RepositoryId:   repositoryId,
+		PullRequestIid: pullRequestIid,
+		MergeCommitSha: mergeCommitSha,
+		PackfileCid:    packfileCid,
+	}
+}
+
+func (msg *MsgMergePullRequest) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgMergePullRequest) Type() string {
+	return "MergePullRequest"
+}
+
+func (msg *MsgMergePullRequest) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgMergePullRequest) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+func (msg *MsgMergePullRequest) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+
+	if msg.MergeCommitSha == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "merge commit sha cannot be empty")
+	}
+
+	if msg.PackfileCid == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "packfile cid cannot be empty")
+	}
+
+	return nil
 }

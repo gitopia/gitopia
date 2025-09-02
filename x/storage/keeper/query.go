@@ -465,5 +465,186 @@ func (k Keeper) ProviderStakes(goCtx context.Context, req *types.QueryProviderSt
 		providerStakes = append(providerStakes, stake)
 		return false
 	})
-	return &types.QueryProviderStakesResponse{ProviderStakes: providerStakes}, nil
+
+	return &types.QueryProviderStakesResponse{
+		ProviderStakes: providerStakes,
+	}, nil
+}
+
+// Liveness query handlers
+
+// ProviderLiveness returns liveness info for a specific provider
+func (k Keeper) ProviderLiveness(goCtx context.Context, req *types.QueryProviderLivenessRequest) (*types.QueryProviderLivenessResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	livenessInfo := k.GetProviderLivenessInfo(ctx, req.Address)
+	if livenessInfo == nil {
+		return nil, status.Errorf(codes.NotFound, "liveness info not found for provider %s", req.Address)
+	}
+
+	return &types.QueryProviderLivenessResponse{
+		LivenessInfo: *livenessInfo,
+	}, nil
+}
+
+// ProvidersLiveness returns liveness info for all providers
+func (k Keeper) ProvidersLiveness(goCtx context.Context, req *types.QueryProvidersLivenessRequest) (*types.QueryProvidersLivenessResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	var livenessInfos []types.ProviderLivenessInfo
+	store := ctx.KVStore(k.storeKey)
+	livenessStore := prefix.NewStore(store, types.ProviderLivenessInfoPrefix)
+
+	pageRes, err := query.Paginate(livenessStore, req.Pagination, func(key []byte, value []byte) error {
+		var livenessInfo types.ProviderLivenessInfo
+		if err := k.cdc.Unmarshal(value, &livenessInfo); err != nil {
+			return err
+		}
+		livenessInfos = append(livenessInfos, livenessInfo)
+		return nil
+	})
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryProvidersLivenessResponse{
+		LivenessInfos: livenessInfos,
+		Pagination:    pageRes,
+	}, nil
+}
+
+func (k Keeper) PackfileUpdateProposal(goCtx context.Context, req *types.QueryPackfileUpdateProposalRequest) (*types.QueryPackfileUpdateProposalResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposal, found := k.GetPendingPackfileUpdateProposalForRepositoryUser(ctx, req.RepositoryId, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "packfile update proposal not found")
+	}
+
+	return &types.QueryPackfileUpdateProposalResponse{
+		PackfileUpdateProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) PackfileUpdateProposals(goCtx context.Context, req *types.QueryPackfileUpdateProposalsRequest) (*types.QueryPackfileUpdateProposalsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetAllProposedPackfileUpdates(ctx)
+
+	return &types.QueryPackfileUpdateProposalsResponse{
+		PackfileUpdateProposals: proposals,
+	}, nil
+}
+
+func (k Keeper) ReleaseAssetsUpdateProposal(goCtx context.Context, req *types.QueryReleaseAssetsUpdateProposalRequest) (*types.QueryReleaseAssetsUpdateProposalResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposal, found := k.GetPendingReleaseAssetsUpdateProposalForRepositoryTagUser(ctx, req.RepositoryId, req.Tag, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "release assets update proposal not found")
+	}
+
+	return &types.QueryReleaseAssetsUpdateProposalResponse{
+		ReleaseAssetsProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) ReleaseAssetsUpdateProposals(goCtx context.Context, req *types.QueryReleaseAssetsUpdateProposalsRequest) (*types.QueryReleaseAssetsUpdateProposalsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetAllProposedReleaseAssetsUpdates(ctx)
+
+	return &types.QueryReleaseAssetsUpdateProposalsResponse{
+		ReleaseAssetsProposals: proposals,
+	}, nil
+}
+
+func (k Keeper) LFSObjectUpdateProposal(goCtx context.Context, req *types.QueryLFSObjectUpdateProposalRequest) (*types.QueryLFSObjectUpdateProposalResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposal, found := k.GetPendingLFSObjectProposalsForRepositoryOid(ctx, req.RepositoryId, req.Oid, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "lfs object update proposal not found")
+	}
+
+	return &types.QueryLFSObjectUpdateProposalResponse{
+		LfsObjectProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) LFSObjectUpdateProposalsByRepositoryId(goCtx context.Context, req *types.QueryLFSObjectUpdateProposalsByRepositoryIdRequest) (*types.QueryLFSObjectUpdateProposalsByRepositoryIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetPendingLFSObjectProposalsForRepositoryUser(ctx, req.RepositoryId, req.User)
+
+	return &types.QueryLFSObjectUpdateProposalsByRepositoryIdResponse{
+		LfsObjectProposals: proposals,
+	}, nil
+}
+
+func (k Keeper) LFSObjectUpdateProposals(goCtx context.Context, req *types.QueryLFSObjectUpdateProposalsRequest) (*types.QueryLFSObjectUpdateProposalsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetAllProposedLFSObjectUpdates(ctx)
+
+	return &types.QueryLFSObjectUpdateProposalsResponse{
+		LfsObjectProposals: proposals,
+	}, nil
+}
+
+func (k Keeper) RepositoryDeleteProposal(goCtx context.Context, req *types.QueryRepositoryDeleteProposalRequest) (*types.QueryRepositoryDeleteProposalResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposal, found := k.GetPendingRepositoryDeleteProposalByRepositoryIdUser(ctx, req.RepositoryId, req.User)
+	if !found {
+		return nil, status.Error(codes.NotFound, "repository delete proposal not found")
+	}
+
+	return &types.QueryRepositoryDeleteProposalResponse{
+		RepositoryDeleteProposal: proposal,
+	}, nil
+}
+
+func (k Keeper) RepositoryDeleteProposals(goCtx context.Context, req *types.QueryRepositoryDeleteProposalsRequest) (*types.QueryRepositoryDeleteProposalsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	proposals := k.GetAllProposedRepositoryDeletes(ctx)
+
+	return &types.QueryRepositoryDeleteProposalsResponse{
+		RepositoryDeleteProposals: proposals,
+	}, nil
 }

@@ -97,6 +97,8 @@ func (k msgServer) DaoCreateRelease(goCtx context.Context, msg *types.MsgDaoCrea
 
 	k.SetRepository(ctx, repository)
 
+	attachmentsJson, _ := json.Marshal(release.Attachments)
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
@@ -110,6 +112,7 @@ func (k msgServer) DaoCreateRelease(goCtx context.Context, msg *types.MsgDaoCrea
 			sdk.NewAttribute(types.EventAttributeReleaseDescriptionKey, release.Description),
 			sdk.NewAttribute(types.EventAttributeReleaseDraftKey, strconv.FormatBool(release.Draft)),
 			sdk.NewAttribute(types.EventAttributeReleasePreReleaseKey, strconv.FormatBool(release.PreRelease)),
+			sdk.NewAttribute(types.EventAttributeReleaseAttachmentsKey, string(attachmentsJson)),
 			sdk.NewAttribute(types.EventAttributeProviderKey, msg.Provider),
 			sdk.NewAttribute(types.EventAttributeCreatedAtKey, strconv.FormatInt(release.CreatedAt, 10)),
 			sdk.NewAttribute(types.EventAttributeUpdatedAtKey, strconv.FormatInt(release.UpdatedAt, 10)),
