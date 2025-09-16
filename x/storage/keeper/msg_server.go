@@ -1469,13 +1469,6 @@ func (k msgServer) ApproveReleaseAssetsUpdate(goCtx context.Context, msg *types.
 
 	var userQuota gitopiatypes.UserQuota
 
-	// Check if provider is active
-	provider, found = k.GetProvider(ctx, proposal.Provider)
-	if !found || provider.Jailed || provider.Status != types.Bonded {
-		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
-		return nil, fmt.Errorf("provider is not active")
-	}
-
 	repository, found = k.gitopiaKeeper.GetRepositoryById(ctx, proposal.RepositoryId)
 	if !found {
 		k.RemoveProposedReleaseAssetsUpdate(ctx, proposal.Id)
