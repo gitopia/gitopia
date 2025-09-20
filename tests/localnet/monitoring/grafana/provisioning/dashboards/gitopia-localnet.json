@@ -1,0 +1,131 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Gitopia Localnet Storage Environment",
+    "tags": ["gitopia", "localnet", "storage", "blockchain"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Localnet Chain Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"gitopiad\"}",
+            "legendFormat": "Chain Status"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "DOWN"}}, "type": "value"},
+              {"options": {"1": {"text": "UP"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Storage Providers Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=~\"gitopia-storage-.*\"}",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "DOWN"}}, "type": "value"},
+              {"options": {"1": {"text": "UP"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "IPFS Services Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=~\"ipfs.*\"}",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "DOWN"}}, "type": "value"},
+              {"options": {"1": {"text": "UP"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Challenge Response Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(storage_challenge_responses_total[5m])",
+            "legendFormat": "{{job}} - Success"
+          },
+          {
+            "expr": "rate(storage_challenge_failures_total[5m])",
+            "legendFormat": "{{job}} - Failures"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Block Height",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "tendermint_consensus_height",
+            "legendFormat": "Block Height"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

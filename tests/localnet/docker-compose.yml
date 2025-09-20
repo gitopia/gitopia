@@ -7,7 +7,7 @@ services:
     volumes:
       - ./scripts/setup_chain.sh:/gitopia/setup.sh
       - ./data/gitopia/:/gitopia/.gitopia/
-      - gitopiad-binary:/gitopia/bin  # New volume to share the binary
+      # - gitopiad-binary:/gitopia/bin  # New volume to share the binary
     entrypoint:
       - /gitopia/setup.sh
     environment:
@@ -25,14 +25,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  git-server:
-    image: gitopia/git-server
-    ports:
-      - 5001:5000
-    volumes:
-      - ./data/repos:/var/repos
-      - ./data/attachments:/var/attachments
+    networks:
+      - storage-provider-test
 
   faucet:
     image: gitopia/faucet
@@ -45,98 +39,202 @@ services:
     depends_on:
       gitopiad:
         condition: service_healthy
+    networks:
+      - storage-provider-test
 
-  rewards:
-    image: gitopia/rewards
-    ports:
-      - 10500:10500
-    expose:
-      - 10500
-    environment:
-      - PATH=/usr/local/gitopia/bin:$PATH
-      - ENV=localnet
-    volumes:
-      - gitopiad-binary:/usr/local/gitopia/bin:ro  # Share the binary with the rewards service
-
+  # IPFS node for storage providers
   ipfs:
-    image: ipfs/go-ipfs:v0.10.0
+    container_name: ipfs
+    image: ipfs/kubo:v0.25.0
     ports:
-      - '5002:5001'
+      - "4001:4001" # ipfs swarm
+      - "5001:5001" # ipfs api
+      - "8080:8080" # ipfs gateway
     volumes:
-      - ./data/ipfs:/data/ipfs
+      - ipfs_data:/data/ipfs
+    networks:
+      - storage-provider-test
 
-  postgres:
-    image: postgres
+  # IPFS Cluster for distributed storage
+  cluster:
+    container_name: ipfs-cluster
+    image: ipfs/ipfs-cluster:v1.1.0
+    depends_on:
+      - ipfs
+    environment:
+      - CLUSTER_PEERNAME=${CLUSTER_PEERNAME:-cluster0}
+      - CLUSTER_SECRET=${CLUSTER_SECRET:-e11341a263ca30e7c1d57a34c7f9097d3c687532d09fcab07aa13286165806dc}
+      - CLUSTER_IPFSHTTP_NODEMULTIADDRESS=/dns4/ipfs/tcp/5001
+      - CLUSTER_CRDT_TRUSTEDPEERS=${CLUSTER_TRUSTED_PEERS:-*}
+      - CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS=/ip4/0.0.0.0/tcp/9094
     ports:
-      - '5432:5432'
+      - "9094:9094" # Cluster API
+      - "9096:9096" # Cluster swarm
+    volumes:
+      - cluster_data:/data/ipfs-cluster
+    networks:
+      - storage-provider-test
+
+  # Storage Provider
+  gitopia-storage:
+    container_name: gitopia-storage
+    image: gitopia/gitopia-storage:latest
+    depends_on:
+      - cluster
+      - gitopiad
+    ports:
+      - "5002:5000"
+    volumes:
+      - ./data/storage/repos:/var/repos
+      - ./data/storage/attachments:/var/attachments
+      - ./data/storage/lfs-objects:/var/lfs-objects
+      - ./config/storage-provider.toml:/etc/gitopia-storage/config.toml
+    networks:
+      - storage-provider-test
+    entrypoint: supervisord -c /etc/supervisord.conf
+
+  # Prometheus monitoring
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
     command:
-      [
-        "postgres",
-        "-cshared_preload_libraries=pg_stat_statements"
-      ]
-    environment:
-      POSTGRES_USER: graph-node
-      POSTGRES_PASSWORD: let-me-in
-      POSTGRES_DB: graph-node
-      PGDATA: "/data/postgres"
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    networks:
+      - storage-provider-test
+    restart: unless-stopped
 
-  graph-node:
-    image: graphprotocol/graph-node:v0.31.0
+  # Grafana monitoring
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
     ports:
-      - '8000:8000'
-      - '8001:8001'
-      - '8020:8020'
-      - '8030:8030'
-      - '8040:8040'
-    depends_on:
-      ipfs:
-        condition: service_started
-      postgres:
-        condition: service_started
-      firehose:
-        condition: service_healthy
-    extra_hosts:
-      - host.docker.internal:host-gateway
+      - "${GRAFANA_PORT:-3000}:3000"
     environment:
-      GRAPH_NODE_CONFIG: /etc/config.toml
-      postgres_host: postgres
-      postgres_user: graph-node
-      postgres_pass: let-me-in
-      postgres_db: graph-node
-      ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://host.docker.internal:8545'
-      GRAPH_LOG: debug
-      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'true'
-      GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 'true'
+      - GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - ./scripts/config.toml:/etc/config.toml
+      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    networks:
+      - storage-provider-test
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
-  firehose:
-    image: gitopia/gitopiad-firehose:latest
-    volumes:
-      - ./data/gitopia-node:/root/.gitopia
-      - ./scripts/setup_firehose.sh:/gitopia/setup.sh
-      - ./data/firehose:/data
-      - ./scripts/firehose.yaml:/app/firehose.yaml
-    entrypoint: /gitopia/setup.sh
-    environment:
-      - CHAIN_ID=localgitopia
-    ports:
-      - 9030:9030
-      - 26658:26657
-    expose:
-      - 9030
-    depends_on:
-      gitopiad:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:26657/status"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # rewards:
+  #   image: gitopia/rewards
+  #   ports:
+  #     - 10500:10500
+  #   expose:
+  #     - 10500
+  #   environment:
+  #     - PATH=/usr/local/gitopia/bin:$PATH
+  #     - ENV=localnet
+  #   volumes:
+  #     - gitopiad-binary:/usr/local/gitopia/bin:ro  # Share the binary with the rewards service
+
+#   ipfs:
+#     image: ipfs/go-ipfs:v0.10.0
+#     ports:
+#       - '5002:5001'
+#     volumes:
+#       - ./data/ipfs:/data/ipfs
+
+#   postgres:
+#     image: postgres
+#     ports:
+#       - '5432:5432'
+#     command:
+#       [
+#         "postgres",
+#         "-cshared_preload_libraries=pg_stat_statements"
+#       ]
+#     environment:
+#       POSTGRES_USER: graph-node
+#       POSTGRES_PASSWORD: let-me-in
+#       POSTGRES_DB: graph-node
+#       PGDATA: "/data/postgres"
+#       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+#     volumes:
+#       - ./data/postgres:/var/lib/postgresql/data
+
+#   graph-node:
+#     image: graphprotocol/graph-node:v0.31.0
+#     ports:
+#       - '8000:8000'
+#       - '8001:8001'
+#       - '8020:8020'
+#       - '8030:8030'
+#       - '8040:8040'
+#     depends_on:
+#       ipfs:
+#         condition: service_started
+#       postgres:
+#         condition: service_started
+#       firehose:
+#         condition: service_healthy
+#     extra_hosts:
+#       - host.docker.internal:host-gateway
+#     environment:
+#       GRAPH_NODE_CONFIG: /etc/config.toml
+#       postgres_host: postgres
+#       postgres_user: graph-node
+#       postgres_pass: let-me-in
+#       postgres_db: graph-node
+#       ipfs: 'ipfs:5001'
+#       ethereum: 'mainnet:http://host.docker.internal:8545'
+#       GRAPH_LOG: debug
+#       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 'true'
+#       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 'true'
+#     volumes:
+#       - ./scripts/config.toml:/etc/config.toml
+
+#   firehose:
+#     image: gitopia/gitopiad-firehose:latest
+#     volumes:
+#       - ./data/gitopia-node:/root/.gitopia
+#       - ./scripts/setup_firehose.sh:/gitopia/setup.sh
+#       - ./data/firehose:/data
+#       - ./scripts/firehose.yaml:/app/firehose.yaml
+#     entrypoint: /gitopia/setup.sh
+#     environment:
+#       - CHAIN_ID=localgitopia
+#     ports:
+#       - 9030:9030
+#       - 26658:26657
+#     expose:
+#       - 9030
+#     depends_on:
+#       gitopiad:
+#         condition: service_healthy
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:26657/status"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
 
 volumes:
   gitopiad-binary:
+  ipfs_data:
+  cluster_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  storage-provider-test:
+    external: true

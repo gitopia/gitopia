@@ -1,0 +1,47 @@
+groups:
+  - name: gitopia_localnet_alerts
+    rules:
+      - alert: GitopiaChainDown
+        expr: up{job="gitopiad"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Gitopia localnet chain is down"
+          description: "Gitopia localnet chain has been down for more than 1 minute"
+
+      - alert: StorageProviderDown
+        expr: up{job=~"gitopia-storage-.*"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Storage provider {{ $labels.job }} is down"
+          description: "Storage provider {{ $labels.job }} has been down for more than 2 minutes"
+
+      - alert: IPFSDown
+        expr: up{job="ipfs"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "IPFS node is down"
+          description: "IPFS node has been down for more than 2 minutes"
+
+      - alert: IPFSClusterDown
+        expr: up{job="ipfs-cluster"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "IPFS Cluster is down"
+          description: "IPFS Cluster has been down for more than 2 minutes"
+
+      - alert: HighChallengeFailureRate
+        expr: rate(storage_challenge_failures_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High challenge failure rate detected"
+          description: "Storage challenge failure rate is {{ $value }} per second"

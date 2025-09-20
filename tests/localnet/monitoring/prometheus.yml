@@ -1,0 +1,40 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Gitopia chain metrics
+  - job_name: 'gitopiad'
+    static_configs:
+      - targets: ['gitopiad:26660']
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # Storage Provider metrics
+  - job_name: 'gitopia-storage'
+    static_configs:
+      - targets: ['gitopia-storage:8080']
+    metrics_path: /metrics
+    scrape_interval: 10s
+
+  # IPFS metrics (if available)
+  - job_name: 'ipfs'
+    static_configs:
+      - targets: ['ipfs:5001']
+    metrics_path: /debug/metrics/prometheus
+    scrape_interval: 30s
+
+  # IPFS Cluster metrics (if available)
+  - job_name: 'ipfs-cluster'
+    static_configs:
+      - targets: ['cluster:9094']
+    metrics_path: /metrics
+    scrape_interval: 30s
