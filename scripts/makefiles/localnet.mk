@@ -38,8 +38,7 @@ localnet-start: localnet-setup-storage
 	@echo "Services will be available at:"
 	@echo "  - Gitopia Chain:        http://localhost:26657"
 	@echo "  - Gitopia API:          http://localhost:1317"
-	@echo "  - Storage Provider 1:   http://localhost:5002"
-	@echo "  - Storage Provider 2:   http://localhost:5003"
+	@echo "  - Storage Provider:     http://localhost:5002"
 	@echo "  - IPFS Gateway:         http://localhost:8080"
 	@echo "  - IPFS Cluster:         http://localhost:9094"
 	@echo "  - Grafana Dashboard:    http://localhost:3000 (admin/admin123)"
@@ -58,7 +57,7 @@ localnet-logs:
 	docker compose -f tests/localnet/docker-compose.yml logs -f
 
 localnet-logs-storage:
-	docker compose -f tests/localnet/docker-compose.yml logs -f gitopia-storage-1 gitopia-storage-2
+	docker compose -f tests/localnet/docker-compose.yml logs -f gitopia-storage
 
 localnet-status:
 	docker compose -f tests/localnet/docker-compose.yml ps

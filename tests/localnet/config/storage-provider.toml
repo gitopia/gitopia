@@ -1,40 +1,51 @@
 # Storage Provider Configuration
 
 # Server configuration
-SERVER_HOST = "0.0.0.0"
-SERVER_PORT = 5000
+WEB_SERVER_PORT = 5000
+GIT_REPOS_DIR = "/var/repos"
+LFS_OBJECTS_DIR = "/var/lfs-objects"
+ATTACHMENT_DIR = "/var/attachments"
+WORKING_DIR = "/app"
 
-# Gitopia chain configuration - Redundant endpoints for reliability
-TM_RPC_ENDPOINTS = ["http://gitopiad:26657", "http://gitopiad:26657"]
-TM_WS_ENDPOINT = "ws://gitopiad:26657/websocket"
-TM_WS_MAX_RECONNECT = 50
-TM_WS_RECONNECT_DELAY = "5s"
+GITOPIA_ADDR = "gitopiad:9090"
+TM_ADDR = "http://gitopiad:26657"
 CHAIN_ID = "localgitopia"
 
-# IPFS configuration
-IPFS_API_URL = "http://ipfs:5001"
-IPFS_CLUSTER_API_URL = "http://cluster:9094"
+# Development RPC Endpoints (can use single endpoint for local testing)
+TM_RPC_ENDPOINTS = [
+    "http://gitopiad:26657",
+    "http://gitopiad:26657"
+]
 
-# Storage configuration
-REPOS_BASE_PATH = "/var/repos"
-ATTACHMENTS_BASE_PATH = "/var/attachments"
-LFS_OBJECTS_BASE_PATH = "/var/lfs-objects"
-
-# Challenge response configuration - Enhanced for reliability
+# Development Challenge Response Configuration
 CHALLENGE_RESPONSE_TIMEOUT = "8s"
-CHALLENGE_MAX_CONCURRENT_RESPONSES = 3
-CHALLENGE_CONNECTION_HEALTH_CHECK = "30s"
-CHALLENGE_RETRY_ATTEMPTS = 3
-CHALLENGE_RETRY_DELAY = "1s"
-CHALLENGE_QUEUE_SIZE = 1000
+CHALLENGE_MAX_CONCURRENT_RESPONSES = 1   # Single connection for dev
+CHALLENGE_CONNECTION_HEALTH_CHECK = "10s"
 
-# Logging
-LOG_LEVEL = "info"
-LOG_FORMAT = "json"
+# Local IPFS Configuration
+IPFS_CLUSTER_PEER_HOST = "cluster"
+IPFS_CLUSTER_PEER_PORT = "9094"
+IPFS_HOST = "ipfs"
+IPFS_PORT = "5001"
 
-# Metrics
-METRICS_ENABLED = true
-METRICS_PORT = 8080
+# External Storage Configuration
+ENABLE_EXTERNAL_PINNING = false
+STORAGE_PROVIDERS = []
 
-# Database
-DATABASE_PATH = "/var/storage-provider-1.db"
+# Pinata Configuration
+PINATA_JWT = ""
+
+# Filebase Configuration
+FILEBASE_ACCESS_KEY = ""
+FILEBASE_SECRET_KEY = ""
+FILEBASE_BUCKET = "filebase-test"
+FILEBASE_REGION = "us-east-1"
+FILEBASE_ENDPOINT = "https://s3.filebase.com"
+
+# Faster cache clearing for development
+CACHE_REPO_MAX_AGE = "10m"
+CACHE_ASSET_MAX_AGE = "24h"
+CACHE_ASSET_MAX_SIZE = 1073741824    # 1GB for development
+CACHE_LFS_MAX_AGE = "168h"
+CACHE_LFS_MAX_SIZE = 10737418240     # 10GB for development
+CACHE_CLEAR_INTERVAL = "1m"

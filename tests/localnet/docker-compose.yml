@@ -26,7 +26,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - storage-provider-test
+      - gitopia-localnet
 
   faucet:
     image: gitopia/faucet
@@ -40,7 +40,7 @@ services:
       gitopiad:
         condition: service_healthy
     networks:
-      - storage-provider-test
+      - gitopia-localnet
 
   # IPFS node for storage providers
   ipfs:
@@ -53,7 +53,7 @@ services:
     volumes:
       - ipfs_data:/data/ipfs
     networks:
-      - storage-provider-test
+      - gitopia-localnet
 
   # IPFS Cluster for distributed storage
   cluster:
@@ -73,7 +73,7 @@ services:
     volumes:
       - cluster_data:/data/ipfs-cluster
     networks:
-      - storage-provider-test
+      - gitopia-localnet
 
   # Storage Provider
   gitopia-storage:
@@ -84,13 +84,15 @@ services:
       - gitopiad
     ports:
       - "5002:5000"
+    environment:
+      - GITOPIA_OPERATOR_MNEMONIC=${GITOPIA_OPERATOR_MNEMONIC:?err_mnemonic_not_set}
     volumes:
       - ./data/storage/repos:/var/repos
       - ./data/storage/attachments:/var/attachments
       - ./data/storage/lfs-objects:/var/lfs-objects
       - ./config/storage-provider.toml:/etc/gitopia-storage/config.toml
     networks:
-      - storage-provider-test
+      - gitopia-localnet
     entrypoint: supervisord -c /etc/supervisord.conf
 
   # Prometheus monitoring
@@ -112,7 +114,7 @@ services:
       - '--web.enable-lifecycle'
       - '--web.enable-admin-api'
     networks:
-      - storage-provider-test
+      - gitopia-localnet
     restart: unless-stopped
 
   # Grafana monitoring
@@ -131,7 +133,7 @@ services:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
       - grafana_data:/var/lib/grafana
     networks:
-      - storage-provider-test
+      - gitopia-localnet
     depends_on:
       - prometheus
     restart: unless-stopped
@@ -236,5 +238,5 @@ volumes:
   grafana_data:
 
 networks:
-  storage-provider-test:
-    external: true
+  gitopia-localnet:
+    external: false
