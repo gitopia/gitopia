@@ -1,5 +1,6 @@
 services:
   gitopiad:
+    container_name: gitopiad
     image: gitopia/gitopiad-e2e
     build:
       context: ../../
@@ -7,7 +8,7 @@ services:
     volumes:
       - ./scripts/setup_chain.sh:/gitopia/setup.sh
       - ./data/gitopia/:/gitopia/.gitopia/
-      # - gitopiad-binary:/gitopia/bin  # New volume to share the binary
+      - gitopiad-binary:/gitopia/bin  # New volume to share the binary
     entrypoint:
       - /gitopia/setup.sh
     environment:
@@ -18,6 +19,7 @@ services:
       - 9090:9090
       - 26657:26657
     expose:
+      - 1317
       - 9090
       - 26657
     healthcheck:
@@ -29,6 +31,7 @@ services:
       - gitopia-localnet
 
   faucet:
+    container_name: faucet
     image: gitopia/faucet
     ports:
       - 4500:4500
@@ -45,7 +48,7 @@ services:
   # IPFS node for storage providers
   ipfs:
     container_name: ipfs
-    image: ipfs/kubo:v0.25.0
+    image: ipfs/kubo
     ports:
       - "4001:4001" # ipfs swarm
       - "5001:5001" # ipfs api
@@ -58,7 +61,7 @@ services:
   # IPFS Cluster for distributed storage
   cluster:
     container_name: ipfs-cluster
-    image: ipfs/ipfs-cluster:v1.1.0
+    image: ipfs/ipfs-cluster
     depends_on:
       - ipfs
     environment:
@@ -78,10 +81,12 @@ services:
   # Storage Provider
   gitopia-storage:
     container_name: gitopia-storage
-    image: gitopia/gitopia-storage:latest
+    image: gitopia/gitopia-storage
     depends_on:
-      - cluster
-      - gitopiad
+      cluster:
+        condition: service_started
+      gitopiad:
+        condition: service_healthy
     ports:
       - "5002:5000"
     environment:
